@@ -7,6 +7,13 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "demos/typescript/sdf",
       "port": 5174
+    },
+    {
+      "name": "webgl-demos",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "demos/webgl",
+      "port": 5175
     }
   ]
 }

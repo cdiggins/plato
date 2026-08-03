@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plato — geometry demos</title>
+</head>
+<body>
+  <div class="landing">
+    <h1>Plato stdlib, running in the browser</h1>
+    <p class="lede">
+      Four demos over the same generated TypeScript. Every polyhedron, ring,
+      boolean and warp below is computed by members that
+      <code>Plato.TypeScriptWriter</code> emitted from the <code>stdlib/</code>
+      Plato sources — nothing here re-derives the maths.
+    </p>
+    <ul>
+      <li>
+        <a class="card" href="./polyhedra.html">
+          <strong>Polyhedra</strong>
+          <span>The five Platonic seeds and the Conway operators — ambo, truncate, dual, expand, snub — that name the Archimedean and Catalan solids.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./polygons.html">
+          <strong>Polygons</strong>
+          <span>Rings in the plane: area, perimeter, centroid, containment, winding, offsetting and triangulation.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./csg.html">
+          <strong>CSG</strong>
+          <span>Union, intersection and difference of closed solids, by plane-clipping every face fragment against the other solid.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./deformers.html">
+          <strong>Deformers</strong>
+          <span>Twist, bend, taper and the rest of the deformation catalog, applied vertex-wise to a dense mesh.</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <script type="module" src="/src/shared/landing.ts"></script>
+</body>
+</html>
