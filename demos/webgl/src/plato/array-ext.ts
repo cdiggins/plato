@@ -1851,6 +1851,15 @@ install('UndirectedEdgeCount', function (this: Any): number {
 // and these five are everything the conjugate gradient in `SparseMatrix.Solve`
 // asks of one. All five have an `Array<Number>` first parameter, so none is
 // emitted and the solver cannot take a single step without them.
+//
+// THE THREE THAT RETURN A VECTOR MUST BE EAGER. Conjugate gradient rebuilds the
+// iterate, the residual and the search direction on every iteration, each from
+// the last, so a lazy `Zip` makes iteration k a stack of k views over stacks of
+// views — and `Multiply(matrix, direction)` reads that stack once per matrix
+// entry. Measured on a 60-DOF bar with the iteration cap at 10 / 20 / 40 / 80:
+// 71 / 336 / 2437 / 6439 ms, which is cubic in the iteration count. Eagerly,
+// the same solves are flat in it. A 10x3x3 cantilever (1224 DOF) did not finish
+// in ten minutes lazily.
 
 install('SystemDot', function (this: Any, b: Any): number {
   let total = 0;
@@ -1858,13 +1867,13 @@ install('SystemDot', function (this: Any, b: Any): number {
   return total;
 });
 install('SystemSubtract', function (this: Any, b: Any) {
-  return this.Zip(b, (x: number, y: number) => x - y);
+  return eager(this.Count(), (i: number) => this.At(i) - b.At(i));
 });
 install('SystemAddScaled', function (this: Any, b: Any, t: number) {
-  return this.Zip(b, (x: number, y: number) => x + y * t);
+  return eager(this.Count(), (i: number) => this.At(i) + b.At(i) * t);
 });
 install('SystemProduct', function (this: Any, b: Any) {
-  return this.Zip(b, (x: number, y: number) => x * y);
+  return eager(this.Count(), (i: number) => this.At(i) * b.At(i));
 });
 install('SystemNorm', function (this: Any): number {
   return Math.sqrt(this.SystemDot(this));
