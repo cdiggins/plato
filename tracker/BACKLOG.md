@@ -26,6 +26,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
 | [plato-388](issues/plato-388.md) | Single verification policy manifest: one data file the gates, tests and plato_check all read | debt | p1 | M | med | plato | ready |  |
+| [plato-434](issues/plato-434.md) | Collision pair tests are unusable in TypeScript: sphere-box silently reports no contact, sphere-capsule throws, box corners duplicate | bug | p1 | M | med | plato | ready |  |
 | [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | ready |  |
 | [compiler-408](issues/compiler-408.md) | Transform operator aliases cannot be derived: an interface-typed parameter does not re-resolve per implementor | problem | p2 | M | med | compiler | ready |  |
 | [plato-277](issues/plato-277.md) | stdlib interface-gap burn-down: the 17 markers that need a language or interface decision | debt | p2 | M | low | plato | ready |  |
