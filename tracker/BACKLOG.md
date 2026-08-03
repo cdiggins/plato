@@ -19,7 +19,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-413](issues/plato-413.md) | Marching cubes: isosurface extraction from dense scalar grids and sampled SDFs | idea | p2 | M | low | plato | in-progress |  |
 | [plato-423](issues/plato-423.md) | Remeshing: subdivision, decimation, isotropic remeshing and smoothing | feature | p2 | L | med | plato | in-progress |  |
 | [plato-424](issues/plato-424.md) | Finite element analysis vocabulary: elements, assembly, and a linear-elastic solve | feature | p2 | L | med | plato | in-progress |  |
-| [plato-425](issues/plato-425.md) | Rigid body dynamics: fill in the future-tier integrator, contacts and constraints | feature | p2 | M | low | plato | in-progress |  |
 | [plato-426](issues/plato-426.md) | Cloth simulation: mass-spring and PBD cloth over the particle vocabulary | feature | p2 | M | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |

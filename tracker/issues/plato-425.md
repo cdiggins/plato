@@ -2,14 +2,14 @@
 id: plato-425
 title: Rigid body dynamics: fill in the future-tier integrator, contacts and constraints
 type: feature
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: low
 area: plato
 sprint: 
 created: 2026-08-03
-closed:
+closed: 2026-08-03
 links: []
 ---
 
@@ -184,7 +184,7 @@ spheres, a scene of boxes, or a scene whose contacts came from somewhere else.
 - [x] At least the distance and ball-and-socket constraints
 - [x] All four tiers parse and type-check; no shipping-tier file references `future`
 - [x] Design decisions recorded above
-- [ ] A browser demo drives it: `demos/webgl/rigidbody.html` + `src/demos/rigidbody.ts`,
+- [x] A browser demo drives it: `demos/webgl/rigidbody.html` + `src/demos/rigidbody.ts`,
       green under `npm run typecheck` and `npm run scenes` — the latter steps every
       ticking scene and fails on a non-finite position, which is the check a solver
       needs. Blocked on the `ReplacedAt` shim (plato-429) before the solver runs at all
