@@ -136,6 +136,38 @@ and differentiated for free, but that needs generic-over-numeric support Plato m
 - SDF ambient occlusion and soft shadows — cheap and famous, but arguably renderer policy
   rather than stdlib geometry.
 
+## Operator survey against Inigo Quilez's catalog
+
+Checked the library against https://iquilezles.org/articles/distfunctions/ and its 2D
+companion. What was already present: the four Boolean combinations, the three smooth ones,
+round, onion, elongate, displace, twist, cheap-bend, repetition and limited repetition.
+
+What was missing, and why the gaps clustered where they did:
+
+- **The 2D-to-3D lifts — extrusion and revolution.** These are the structural gap. They are
+  how a planar profile becomes a solid, and without them the planar primitive family this
+  issue added would have been decorative. Both landed as portable pieces rather than
+  field-level combinators: extrusion as a VALUE operator (`ExtrudedDistance`, taking an
+  already-sampled planar distance plus the out-of-plane coordinate) and revolution as a
+  DOMAIN operator (`RevolvedPoint`, mapping a spatial point to the planar query point). That
+  split keeps both lambda-free, which is what lets them port to GLSL/C++/CUDA alongside the
+  primitives.
+- **Mirroring** (`opSymX` / `opSymXZ`): pure domain folds, landed for both dimensions.
+- **Scale and transform** (`opScale`, `opTransform`): covered by `PlacedSdf*`.
+- **The smooth family was 3D-union-only.** `SmoothUnion` existed for `FunctionSdf3D` and
+  `BoundedSdf3D` and nothing else — no planar form, and no smooth intersection or difference
+  at any level despite the scalar kernels for both existing in `implicit-sdf.library.plato`
+  the whole time. Also no `ExclusiveOr` above the scalar layer, and no planar `Shell`. All
+  filled in, at both the `FunctionSdf` and the `BoundedSdf` level, with bound propagation for
+  the latter.
+- **Not ported:** chamfer / stairs / column unions, which are from Mercury's `hg_sdf` rather
+  than IQ, and the exotic primitives (octahedron, solid angle, triangle, quad). None of them
+  block anything; they are catalog-filling work whenever it is wanted.
+
+`ScalarFunctionField2D/3D` in `fields-implicits.library.plato` keeps the same
+3D-smooth-union-only asymmetry the SDF family had. Left alone deliberately: those are generic
+scalar fields, where CSG is a borrowed metaphor rather than the point of the type.
+
 ## Bedrock
 
 The seam is **what a field reports at a point**, owned by `fields.concepts.plato`. Today it

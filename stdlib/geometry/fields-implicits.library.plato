@@ -757,10 +757,44 @@ library FieldsImplicits
     Difference(a: FunctionSdf3D, b: FunctionSdf3D): FunctionSdf3D
         => FunctionSdf3D(p => a.Eval(p).Max(b.Eval(p).Negative));
 
+    // The part of the plane inside exactly one of the two shapes.
+    ExclusiveOr(a: FunctionSdf2D, b: FunctionSdf2D): FunctionSdf2D
+        => FunctionSdf2D(p => ExclusiveOrDistance(a.Eval(p), b.Eval(p)));
+
+    // The part of space inside exactly one of the two shapes.
+    ExclusiveOr(a: FunctionSdf3D, b: FunctionSdf3D): FunctionSdf3D
+        => FunctionSdf3D(p => ExclusiveOrDistance(a.Eval(p), b.Eval(p)));
+
+    // The union of two planar SDFs blended over blendRadius: the polynomial smooth
+    // minimum. Unlike the sharp Union, this is differentiable across the seam.
+    // Precondition: blendRadius is positive.
+    SmoothUnion(a: FunctionSdf2D, b: FunctionSdf2D, blendRadius: Number): FunctionSdf2D
+        => FunctionSdf2D(p => SmoothUnionDistance(a.Eval(p), b.Eval(p), blendRadius));
+
     // The union of two spatial SDFs blended over blendRadius: the polynomial
     // smooth minimum. Precondition: blendRadius is positive.
     SmoothUnion(a: FunctionSdf3D, b: FunctionSdf3D, blendRadius: Number): FunctionSdf3D
         => FunctionSdf3D(p => SmoothUnionDistance(a.Eval(p), b.Eval(p), blendRadius));
+
+    // The intersection of two planar SDFs blended over blendRadius: the De Morgan
+    // dual of the smooth union. Precondition: blendRadius is positive.
+    SmoothIntersection(a: FunctionSdf2D, b: FunctionSdf2D, blendRadius: Number): FunctionSdf2D
+        => FunctionSdf2D(p => SmoothIntersectionDistance(a.Eval(p), b.Eval(p), blendRadius));
+
+    // The intersection of two spatial SDFs blended over blendRadius.
+    // Precondition: blendRadius is positive.
+    SmoothIntersection(a: FunctionSdf3D, b: FunctionSdf3D, blendRadius: Number): FunctionSdf3D
+        => FunctionSdf3D(p => SmoothIntersectionDistance(a.Eval(p), b.Eval(p), blendRadius));
+
+    // The first planar shape with the second carved out, the cut filleted over
+    // blendRadius. Precondition: blendRadius is positive.
+    SmoothDifference(a: FunctionSdf2D, b: FunctionSdf2D, blendRadius: Number): FunctionSdf2D
+        => FunctionSdf2D(p => SmoothDifferenceDistance(a.Eval(p), b.Eval(p), blendRadius));
+
+    // The first spatial shape with the second carved out, the cut filleted over
+    // blendRadius. Precondition: blendRadius is positive.
+    SmoothDifference(a: FunctionSdf3D, b: FunctionSdf3D, blendRadius: Number): FunctionSdf3D
+        => FunctionSdf3D(p => SmoothDifferenceDistance(a.Eval(p), b.Eval(p), blendRadius));
 
     // The shape grown (positive amount) or shrunk (negative amount) by a constant
     // distance: the offset surface. Rounds convex edges by amount.
@@ -770,6 +804,11 @@ library FieldsImplicits
     // The shape grown or shrunk by a constant distance: the offset surface.
     Offset(self: FunctionSdf3D, amount: Number): FunctionSdf3D
         => FunctionSdf3D(p => self.Eval(p) - amount);
+
+    // The outline of a planar shape: the band within half of thickness on either
+    // side of its boundary curve. Precondition: thickness is positive.
+    Shell(self: FunctionSdf2D, thickness: Number): FunctionSdf2D
+        => FunctionSdf2D(p => self.Eval(p).Abs - thickness * 0.5);
 
     // The shell of a shape: the region within half of thickness on either side of
     // its surface. Precondition: thickness is positive.

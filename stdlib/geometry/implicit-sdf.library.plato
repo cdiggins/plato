@@ -8,6 +8,7 @@
 //  - Ray marching
 //  - SDF modifier application
 //  - Distance operators
+//  - Dimensional lifts and symmetry
 //  - Signed distance primitives
 //  - Sampled signed distance field evaluation
 //  - SDF combination tree evaluation
@@ -143,6 +144,23 @@ library ImplicitSdf
     Offset(self: BoundedSdf3D, amount: Number): BoundedSdf3D
         => (self.Sdf.Offset(amount), GrowBounds(self.Bounds, amount.Abs));
 
+    // Inside exactly one of the two shapes; bounds are the union of the operands,
+    // since the symmetric difference cannot reach outside either.
+    ExclusiveOr(a: BoundedSdf2D, b: BoundedSdf2D): BoundedSdf2D
+        => (a.Sdf.ExclusiveOr(b.Sdf), UnionOfBounds(a.Bounds, b.Bounds));
+
+    // Inside exactly one of the two shapes; bounds are the union of the operands.
+    ExclusiveOr(a: BoundedSdf3D, b: BoundedSdf3D): BoundedSdf3D
+        => (a.Sdf.ExclusiveOr(b.Sdf), UnionOfBounds(a.Bounds, b.Bounds));
+
+    // Smooth union over blendRadius; bounds are the union of the operands
+    // grown by blendRadius (blend can extend past either solid).
+    // Precondition: blendRadius is positive.
+    SmoothUnion(a: BoundedSdf2D, b: BoundedSdf2D, blendRadius: Number): BoundedSdf2D
+        => (
+            a.Sdf.SmoothUnion(b.Sdf, blendRadius),
+            GrowBounds(UnionOfBounds(a.Bounds, b.Bounds), blendRadius));
+
     // Smooth union over blendRadius; bounds are the union of the operands
     // grown by blendRadius (blend can extend past either solid).
     // Precondition: blendRadius is positive.
@@ -150,6 +168,32 @@ library ImplicitSdf
         => (
             a.Sdf.SmoothUnion(b.Sdf, blendRadius),
             GrowBounds(UnionOfBounds(a.Bounds, b.Bounds), blendRadius));
+
+    // Smooth intersection over blendRadius; bounds are the intersection of the
+    // operands grown by blendRadius — the fillet can bulge past the sharp corner.
+    // Precondition: blendRadius is positive.
+    SmoothIntersection(a: BoundedSdf2D, b: BoundedSdf2D, blendRadius: Number): BoundedSdf2D
+        => (
+            a.Sdf.SmoothIntersection(b.Sdf, blendRadius),
+            GrowBounds(IntersectionOfBounds(a.Bounds, b.Bounds), blendRadius));
+
+    // Smooth intersection over blendRadius; bounds are the intersection of the
+    // operands grown by blendRadius. Precondition: blendRadius is positive.
+    SmoothIntersection(a: BoundedSdf3D, b: BoundedSdf3D, blendRadius: Number): BoundedSdf3D
+        => (
+            a.Sdf.SmoothIntersection(b.Sdf, blendRadius),
+            GrowBounds(IntersectionOfBounds(a.Bounds, b.Bounds), blendRadius));
+
+    // Smooth difference over blendRadius; bounds stay those of `a` grown by
+    // blendRadius — subtraction only shrinks the solid, but the fillet rounds
+    // outward at the lip of the cut. Precondition: blendRadius is positive.
+    SmoothDifference(a: BoundedSdf2D, b: BoundedSdf2D, blendRadius: Number): BoundedSdf2D
+        => (a.Sdf.SmoothDifference(b.Sdf, blendRadius), GrowBounds(a.Bounds, blendRadius));
+
+    // Smooth difference over blendRadius; bounds stay those of `a` grown by
+    // blendRadius. Precondition: blendRadius is positive.
+    SmoothDifference(a: BoundedSdf3D, b: BoundedSdf3D, blendRadius: Number): BoundedSdf3D
+        => (a.Sdf.SmoothDifference(b.Sdf, blendRadius), GrowBounds(a.Bounds, blendRadius));
 
     //==
     // # Placed SDF evaluation
@@ -526,6 +570,63 @@ library ImplicitSdf
         => SmoothIntersectionDistance(a, b.Negative, blendRadius);
 
     //==
+    // # Dimensional lifts and symmetry
+    //
+    // Building a spatial shape out of a planar one, and folding a shape onto itself.
+    // Deliberately split into a VALUE half and a DOMAIN half so both stay under the
+    // same portability discipline as the primitives below — no lambdas, no field
+    // values, only points and numbers. Extrusion is a value operator: the caller
+    // samples the planar source at the point's own XY and hands the distance here.
+    // Revolution and mirroring are domain operators: they map the query position and
+    // the caller samples the source at the mapped point.
+
+    // The extruded distance: a planar shape swept along Z from -halfHeight to
+    // +halfHeight. planarDistance is the source's distance at (p.X, p.Y) and z is
+    // p.Z. Exact wherever the planar distance is, except in the wedge outside a rim
+    // where the wall and cap meet, which under-estimates slightly — the two
+    // constraints are combined, not measured jointly. (IQ: opExtrusion.)
+    ExtrudedDistance(planarDistance: Number, z: Number, halfHeight: Number): Number {
+        var w = Vector2D(planarDistance, z.Abs - halfHeight);
+        return w.X.Max(w.Y).Min(0.0)
+             + Vector2D(w.X.Max(0.0), w.Y.Max(0.0)).Magnitude;
+    }
+
+    // The planar position at which to sample a source being revolved about the Y
+    // axis: the distance from the axis, pulled in by offset, becomes the source's X
+    // and the height becomes its Y. An offset of zero revolves the shape about its
+    // own edge; a positive offset sweeps it around a ring of that radius. Exact.
+    // (IQ: opRevolution.)
+    RevolvedPoint(p: Point3D, offset: Number): Point2D
+        => Point2D(Vector2D(p.X, p.Z).Magnitude - offset, p.Y);
+
+    // The position folded onto the +X half-space. A source sampled there is mirrored
+    // about the YZ plane, and only its +X half is ever seen. Exact. (IQ: opSymX.)
+    MirroredX(p: Point3D): Point3D
+        => Point3D(p.X.Abs, p.Y, p.Z);
+
+    // The position folded onto the +Y half-space: mirrored about the XZ plane.
+    MirroredY(p: Point3D): Point3D
+        => Point3D(p.X, p.Y.Abs, p.Z);
+
+    // The position folded onto the +Z half-space: mirrored about the XY plane.
+    MirroredZ(p: Point3D): Point3D
+        => Point3D(p.X, p.Y, p.Z.Abs);
+
+    // The position folded into the +X, +Z quadrant: mirrored about the YZ and XY
+    // planes at once, which is the symmetry a solid of revolution already has.
+    // (IQ: opSymXZ.)
+    MirroredXZ(p: Point3D): Point3D
+        => Point3D(p.X.Abs, p.Y, p.Z.Abs);
+
+    // The planar position folded onto the +X half-plane: mirrored about the Y axis.
+    MirroredX(p: Point2D): Point2D
+        => Point2D(p.X.Abs, p.Y);
+
+    // The planar position folded onto the +Y half-plane: mirrored about the X axis.
+    MirroredY(p: Point2D): Point2D
+        => Point2D(p.X, p.Y.Abs);
+
+    //==
     // # Signed distance primitives
     //
     // Closed-form distance functions for primitives centred at the origin, after
@@ -606,6 +707,41 @@ library ImplicitSdf
     // (IQ: sdCapsule.)
     DistanceToCapsule(p: Point3D, a: Point3D, b: Point3D, radius: Number): Number
         => DistanceToSegment(a, b, p) - radius;
+
+    // The signed distance from a point to a cone with its apex at the origin and its
+    // axis along +Y, capped by a flat base at height: halfAngle is the angle between
+    // the axis and the slanted surface, so the base radius is height * tan(halfAngle).
+    // Exact everywhere, including the rim where the side meets the base — which is
+    // what makes it longer than the naive version that intersects an infinite cone
+    // with a half-space. Precondition: halfAngle lies strictly between zero and a
+    // quarter turn; height is positive. (IQ: sdCone.)
+    DistanceToCone(p: Point3D, halfAngle: Angle, height: Number): Number {
+        var slope = Vector2D(height * halfAngle.Sin / halfAngle.Cos, height.Negative);
+        var w = Vector2D(Vector2D(p.X, p.Z).Magnitude, p.Y.Negative);
+        var toSide = w - slope * (w.Dot(slope) / slope.LengthSquared).Clamp(0.0, 1.0);
+        var toBase = w - Vector2D(slope.X * (w.X / slope.X).Clamp(0.0, 1.0), slope.Y);
+        var orientation = slope.Y.Sign.ToNumber;
+        var outside = (orientation * (w.X * slope.Y - w.Y * slope.X))
+            .Max(orientation * (w.Y - slope.Y));
+        return toSide.LengthSquared.Min(toBase.LengthSquared).Sqrt * outside.Sign.ToNumber;
+    }
+
+    // The signed distance from a point to a capped cone (a conical frustum) centred
+    // at the origin with its axis along Y: bottomRadius at y = -halfHeight,
+    // topRadius at y = +halfHeight. Equal radii degenerate to a cylinder and a zero
+    // radius to a cone with its apex on the axis, so this subsumes both. Exact.
+    // Precondition: halfHeight and both radii are non-negative.
+    // (IQ: sdCappedCone.)
+    DistanceToCappedCone(p: Point3D, halfHeight: Number, bottomRadius: Number, topRadius: Number): Number {
+        var q = Vector2D(Vector2D(p.X, p.Z).Magnitude, p.Y);
+        var rim = Vector2D(topRadius, halfHeight);
+        var taper = Vector2D(topRadius - bottomRadius, 2.0 * halfHeight);
+        var capRadius = q.Y < 0.0 ? bottomRadius : topRadius;
+        var toCap = Vector2D(q.X - q.X.Min(capRadius), q.Y.Abs - halfHeight);
+        var toSide = q - rim + taper * ((rim - q).Dot(taper) / taper.LengthSquared).Clamp(0.0, 1.0);
+        var inside = toSide.X < 0.0 && toCap.Y < 0.0;
+        return toCap.LengthSquared.Min(toSide.LengthSquared).Sqrt * (inside ? -1.0 : 1.0);
+    }
 
     // A bound on the signed distance from a point to an axis-aligned ellipsoid with
     // the given semi-axis radii, centred at the origin. NOT exact: an ellipsoid has

@@ -42,6 +42,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-365](issues/plato-365.md) | Retire non-scalar primitives: PrimitiveTypes = scalars only, System.Numerics behind intrinsic bridge | debt | p2 | M | med | plato | idea |  |
 | [plato-370](issues/plato-370.md) | Double-precision scalars (approach must be re-designed — TirScalarLowerer is gone) | feature | p2 | L | med | plato | idea |  |
 | [plato-390](issues/plato-390.md) | Extract Plato.Verify: one policy engine behind the gates, the tests and plato_check | feature | p2 | L | med | plato | idea |  |
+| [plato-411](issues/plato-411.md) | Signed distance fields do not say whether their values are exact, a lower bound, or neither | problem | p2 | M | med | plato | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
 | [plato-334](issues/plato-334.md) | Query/solve result types share no interface: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |
@@ -52,6 +53,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-386](issues/plato-386.md) | ArrayIntrinsics.FlatMap leaks a mutable List through IReadOnlyList | debt | p3 | S | low | plato | idea |  |
 | [plato-394](issues/plato-394.md) | A function bound on a receiver type's own parameter emits an unsatisfiable C# constraint | problem | p3 | S | low | plato | idea |  |
 | [plato-395](issues/plato-395.md) | TimeVarying<TValue> carries no bound, so Change stays a throwing stub | debt | p3 | M | low | plato | idea |  |
+| [plato-410](issues/plato-410.md) | FieldJet2D/3D: a value+gradient jet type for differentiable scalar fields | idea | p3 | M | low | plato | idea |  |
 | [plato-076](issues/plato-076.md) | Port Gratify to Plato (feasibility: kernel vs framework) | idea | ? | ? | ? | plato | idea |  |
 | [plato-077](issues/plato-077.md) | Sum types + pattern matching in Plato (RFC first) | idea | ? | ? | ? | plato | idea |  |
 | [plato-078](issues/plato-078.md) | Revive and productionize the Plato TypeScript writer | feature | ? | ? | ? | plato | idea |  |

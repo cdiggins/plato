@@ -56,6 +56,55 @@ library ImplicitSdfLaws
         => DistanceToRing(p, radius, 0.0).LawEq(DistanceToCircle(p, radius).Abs);
 
     //==
+    // The cone family collapses onto the primitives it generalizes.
+    //
+    // DistanceToCappedCone, DistanceToCappedCylinder and DistanceToCone are three
+    // independently written exact bodies. Each law below forces two of them to agree
+    // on a shape both can describe, which is the only cheap way to catch a sign or
+    // index slip in a formula this long.
+
+    // A capped cone with equal radii IS a capped cylinder.
+    Law_EqualRadiusCappedConeIsCylinder(p: Point3D, halfHeight: Number, radius: Number): Boolean
+        => DistanceToCappedCone(p, halfHeight, radius, radius)
+            .LawEq(DistanceToCappedCylinder(p, halfHeight, radius));
+
+    // A cone with its apex at the origin opening along +Y is the capped cone that
+    // tapers to nothing, once the capped cone's centred frame is shifted onto the
+    // cone's apex-at-origin frame. Guarded to the body's own precondition: the half
+    // angle must be strictly between zero and a quarter turn.
+    Law_ConeIsDegenerateCappedCone(p: Point3D, halfAngle: Angle, height: Number): Boolean
+        => halfAngle.Sin <= 0.0 || halfAngle.Cos <= 0.0 || height <= 0.0
+        || DistanceToCone(p, halfAngle, height)
+            .LawEq(DistanceToCappedCone(
+                Point3D(p.X, p.Y - height * 0.5, p.Z),
+                height * 0.5,
+                height * halfAngle.Sin / halfAngle.Cos,
+                0.0));
+
+    //==
+    // Dimensional lifts.
+
+    // Extruding a circle along Z is a capped cylinder about Z — the same solid the
+    // spatial primitive describes about Y, so the axes are swapped to compare.
+    Law_ExtrudedCircleIsCappedCylinder(p: Point3D, radius: Number, halfHeight: Number): Boolean
+        => ExtrudedDistance(DistanceToCircle(Point2D(p.X, p.Y), radius), p.Z, halfHeight)
+            .LawEq(DistanceToCappedCylinder(Point3D(p.X, p.Z, p.Y), halfHeight, radius));
+
+    // Revolving about the Y axis with no offset sends a point to its distance from
+    // that axis, so a revolved planar circle centred on the axis is a sphere.
+    Law_RevolvedCircleIsSphere(p: Point3D, radius: Number): Boolean
+        => DistanceToCircle(RevolvedPoint(p, 0.0), radius).LawEq(DistanceToSphere(p, radius));
+
+    // Folding is idempotent: a position already in the +X half-space does not move.
+    Law_MirrorXIsIdempotent(p: Point3D): Boolean
+        => MirroredX(MirroredX(p)).X.LawEq(MirroredX(p).X);
+
+    // Folding both axes at once is folding each in turn.
+    Law_MirrorXZIsBothFolds(p: Point3D): Boolean
+        => MirroredXZ(p).X.LawEq(MirroredZ(MirroredX(p)).X)
+        && MirroredXZ(p).Z.LawEq(MirroredZ(MirroredX(p)).Z);
+
+    //==
     // Planar and spatial primitives agree on the plane they share.
     //
     // Each planar primitive must equal its spatial counterpart evaluated on the
