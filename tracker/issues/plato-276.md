@@ -59,3 +59,20 @@ Latent, not live — no type in the shipping generation reaches this synthesis, 
 should change. Both are POC backends. An explicit `At`/`Count` library body always wins over
 synthesis (lands in `ConcreteType.ImplementedFunctions`), so declaring bodies stays the escape
 hatch for shapes neither rule covers.
+
+## Update 2026-08-03 (SDF demo landing, commit fad466bb)
+
+No longer fully latent for TypeScript: the SDF demo's generation (stdlib
+foundation+geometry+graphics) emits `VectorN` with the wrong synthesis, now visible in
+`demos/typescript/sdf/src/plato/plato.g.ts`:
+
+```ts
+Count(): number { return 1; }
+At(index: number): number { return index === 0 ? this.Components : Intrinsics.ThrowOutOfRange(); }
+```
+
+Nothing in the demo calls VectorN, so no scene breaks — but the wrong members are now in
+shipped generated output, not just theoretically reachable. Note the synthesis call site
+moved: field-generated At/Count are now claimed early by
+`TypeScriptConcreteTypeWriter.WriteFieldGeneratedArrayMembers` (added in fad466bb so the
+Index-typed `At` overload cannot steal the member slot); the fix belongs there.
