@@ -2,14 +2,14 @@
 id: plato-445
 title: Extend the stdlib comparison with OCCT, Wolfram, and Three.js
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: S
 risk: low
 area: plato
 sprint: 
 created: 2026-08-04
-closed:
+closed: 2026-08-04
 links:
   - docs/reports/plato-stdlib-comparative-study-2026-08-04.md
 ---
@@ -42,5 +42,4 @@ comparison map, findings, and recommendations where they change the conclusions.
 - Repository-local link audit: 13 checked, none missing.
 - External source audit: all new OCCT, Wolfram, and Three.js citations opened from
   official project documentation on 2026-08-04.
-- `git diff --check`: passed before staging; `git diff --cached --check` remains the
-  pre-commit check.
+- `git diff --check` and `git diff --cached --check`: passed before the work commit.
