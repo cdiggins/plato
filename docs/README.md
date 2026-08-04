@@ -42,9 +42,12 @@ moves to [`archive/`](archive).
 Frozen at the moment they were written. Read them for the analysis, never for current state: a
 report is stale by construction. Never edit one to bring it up to date — write a new one.
 
+- [`Plato standard-library comparative study (2026-08-04, revision 2)`](reports/plato-stdlib-comparative-study-2026-08-04-r2.md)
+  — expanded comparison adding geometry3Sharp, Unity, Unreal Engine, Godot, and Blender
+  to the numerical, geometry, CAD, symbolic-numeric, and graphics-runtime study.
 - [`Plato standard-library comparative study (2026-08-04)`](reports/plato-stdlib-comparative-study-2026-08-04.md)
-  — expanded comparison covering numerical and geometry libraries, the OCCT CAD kernel,
-  Wolfram's symbolic-numeric region system, and the Three.js browser graphics runtime.
+  — earlier expansion covering the OCCT CAD kernel, Wolfram's symbolic-numeric region
+  system, and the Three.js browser graphics runtime; retained as a frozen snapshot.
 - [`Plato standard-library comparative study (2026-08-03)`](reports/plato-stdlib-comparative-study-2026-08-03.md)
   — initial comparison with numerical, graphics-math, computational-geometry, mesh-processing,
   and planar-geometry libraries; retained as the earlier frozen snapshot.

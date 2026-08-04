@@ -30,17 +30,19 @@ index where these systems change the design recommendations.
 
 ## Done means
 
-- [ ] geometry3Sharp is compared as an executable C# geometry and dynamic-mesh library.
-- [ ] Unity, Unreal Engine, and Godot receive distinct scene, mesh, execution, and
+- [x] geometry3Sharp is compared as an executable C# geometry and dynamic-mesh library.
+- [x] Unity, Unreal Engine, and Godot receive distinct scene, mesh, execution, and
       integration comparisons.
-- [ ] Blender is compared as a dynamic-topology and procedural-authoring environment.
-- [ ] The report distinguishes direct algorithm references, runtime consumers, and
+- [x] Blender is compared as a dynamic-topology and procedural-authoring environment.
+- [x] The report distinguishes direct algorithm references, runtime consumers, and
       authoring hosts rather than presenting one generic engine category.
-- [ ] New claims use official sources, local links resolve, and the index retains every
+- [x] New claims use official sources, local links resolve, and the index retains every
       frozen revision.
 
 ## Verification
 
-- Audit repository-local links from the report directory.
-- Open every new external citation from the official project source.
-- Run `git diff --cached --check` before each commit.
+- Repository-local link audit: 13 checked, none missing.
+- External source audit: 13 new citations checked against official project sources.
+  Direct extraction failed for two Blender pages, but Blender's official documentation
+  search index resolved both canonical URLs and their relevant content.
+- `git diff --check`: passed; `git diff --cached --check` remains the pre-commit check.
