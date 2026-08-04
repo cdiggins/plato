@@ -17,7 +17,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-409](issues/plato-409.md) | FieldJet2D/3D: value+gradient jets, differentiable SDFs, transforms, ray marching, and the missing distance primitives | idea | p2 | L | low | plato | in-progress |  |
 | [plato-412](issues/plato-412.md) | ToSdf: concrete geometry shapes as signed distance fields | feature | p2 | M | low | plato | in-progress |  |
 | [plato-413](issues/plato-413.md) | Marching cubes: isosurface extraction from dense scalar grids and sampled SDFs | idea | p2 | M | low | plato | in-progress |  |
-| [plato-439](issues/plato-439.md) | geometry-samples: rebuild the TS samples on stdlib types, port missing builders back to stdlib | feature | p2 | L | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
@@ -27,6 +26,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-441](issues/plato-441.md) | TypeScript writer silently drops same-name overloads: Ray3D.Intersect(Triangle3D) never reaches the output | bug | p1 | M | low | plato | ready |  |
 | [plato-443](issues/plato-443.md) | Interface-typed fields bind Self to the containing type: TubeSurface.Path is ICurve3D<TubeSurface>, so no real curve fits | bug | p1 | M | low | plato | ready |  |
 | [plato-444](issues/plato-444.md) | TriangleMesh3D.LoopSubdivided returns NaN for every original vertex | bug | p1 | M | low | plato | ready |  |
+| [plato-447](issues/plato-447.md) | VertexNormalVectors scans every face per vertex: 152s for a 7680-vertex mesh, unusable at demo scale | bug | p1 | S | low | plato | ready |  |
 | [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | ready |  |
 | [compiler-408](issues/compiler-408.md) | Transform operator aliases cannot be derived: an interface-typed parameter does not re-resolve per implementor | problem | p2 | M | med | compiler | ready |  |
 | [plato-277](issues/plato-277.md) | stdlib interface-gap burn-down: the 17 markers that need a language or interface decision | debt | p2 | M | low | plato | ready |  |
@@ -43,6 +43,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-437](issues/plato-437.md) | Cloth: mass-spring substeps are quadratic, and CollideWith keeps only one of three overloads | bug | p2 | S | low | plato | ready |  |
 | [plato-440](issues/plato-440.md) | Sum-typed parameters have no TypeScript surface: LaplacianSmoothed, TaubinSmoothed and the Decimated family are uncallable | bug | p2 | M | low | plato | ready |  |
 | [plato-442](issues/plato-442.md) | Builders for the spatial structures, hulls and Delaunay: the types and queries ship, nothing constructs them | problem | p2 | L | med | plato | ready |  |
+| [plato-446](issues/plato-446.md) | CornerTwinTable is quadratic in corner count: TopologyOf costs ~1s for a 1280-face mesh | debt | p2 | M | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-427](issues/plato-427.md) | Finite elements: nodal stress smoothing, hexahedral and higher-order elements | feature | p3 | M | low | plato | ready |  |
