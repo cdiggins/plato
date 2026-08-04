@@ -1,9 +1,13 @@
 # Geometry Samples (TypeScript)
 
 A browser for geometry algorithms and data structures built on the **Plato**
-geometry library, in the spirit of the Three.js example browser: sample list
+standard library, in the spirit of the Three.js example browser: sample list
 on the left, 3D viewer and syntax-colored source on the right (with tabs for
-the sample driver, the Plato source, and the generated TypeScript).
+the sample driver, the Plato library files it leans on, and the generated
+TypeScript).
+
+The samples are drivers, not implementations: the geometry belongs to the
+stdlib, and each sample says which part of it it is showing.
 
 ```
 npm install
@@ -37,29 +41,49 @@ TypeScript reads like the C# equivalent:
 ```
 ../../../stdlib/   Forward Plato stdlib — the source of all geometry types
 src/plato/         plato.g.ts — GENERATED TypeScript (do not edit; gen:plato)
-src/core/          Scene-description types and mesh-building helpers. No Three.js.
+src/core/          Scene description + IArray interop. No geometry of its own.
 src/samples/       One module per algorithm; pure build() → Drawable[]; runs in Node.
 src/adapters/      three.ts — only Three.js boundary module
 src/app/           Browser shell: viewer, sample list, tabbed code panel
 tests/             node:test conformance, sample invariants, adapter round-trips
 ```
 
+A `Drawable` carries stdlib geometry — a `TriangleMesh3D`, an array of `Line3D`,
+an array of `Point3D` — not flat number arrays. Flattening happens once, in the
+Three.js adapter.
+
 ## Samples
 
-| Sample | What it demonstrates |
+Each row names the stdlib entry point the sample is built on.
+
+| Sample | Stdlib it exercises |
 |---|---|
-| Parametric Surface | Tessellating f(u,v); fluent `u.Turns().Cos()` angles |
-| Icosphere Subdivision | Recursive refinement; `a.MidPoint(b).Normalize()` |
-| Value-Noise Terrain | fBm heightfield; `v00.Lerp(v10, fx)` |
-| Delaunay Triangulation | Bowyer-Watson; `p.DistanceSquared(center)` |
-| Convex Hull | Monotone chain; the turn test is `(a-o).Cross(b-o)` |
-| Spline + Tube Sweep | Catmull-Rom + parallel transport, fully fluent |
-| Octree | Adaptive subdivision; `min.MidPoint(max)` |
-| BVH (AABB Tree) | Median split; `min.Min(v)` / `max.Max(v)` bounds |
-| Half-Edge + Smoothing | One-ring traversal; `p.Lerp(ringAverage, lambda)` |
-| Raycasting | Moller-Trumbore, reads identically to the C# version |
-| Poisson Disk Sampling | Bridson blue noise; `(gy - 2).Max(0)` grid clamps |
-| Marching Squares | Iso-contours of a metaball field |
+| Parametric Surface | `Torus` / `Supertoroid` (IParametricSurface) → `ToQuadMesh` |
+| Icosphere Subdivision | `PolygonMesh3D.Icosahedron`, `TriangleMesh3D.SplitEdges` |
+| Value-Noise Terrain | `ValueNoise2D` in a `ScalarFunctionField2D` → `ToTriangleMesh` |
+| Delaunay Triangulation | `Triangle2D.Circumcenter`, `Bounds2D.HaltonPoints2D` |
+| Convex Hull | `Point2D.TwiceSignedArea`, fills a `ConvexHull2D` |
+| Spline + Tube Sweep | `CatmullRomCurve3D` wrapped in a `TubeSurface` |
+| Octree | `Bounds3D` split / containment |
+| BVH (AABB Tree) | `Bounds3D.UnionOfBounds`, `Triangle3D.Centroid` |
+| Connectivity + Smoothing | `TriangleMesh3D.TopologyOf`, `VertexNeighborTable` |
+| Raycasting | `Triangle3D.Raycast` (Möller–Trumbore) over `Primitives` |
+| Poisson Disk Sampling | `Bounds2D.PoissonDiskPoints2D` |
+| Marching Squares | `MetaBallSystem2D`, `IScalarField2D.IsoContour` |
+
+### What is deliberately still TypeScript
+
+The insertion loops — Bowyer-Watson, monotone chain, octree and BVH
+construction — stay in the samples. They need a sort and a growable tree, and
+the forward vocabulary has neither yet; `tracker/issues/plato-442.md` records
+the decision and what it would take. Those samples still use stdlib types and
+predicates throughout.
+
+A few calls are avoided with a comment naming the issue: `LaplacianSmoothed`
+(sum-typed parameter, plato-440), `Triangle3D.Bounds` and
+`UniformLaplacianField` (overload collapse returns 2D results, plato-441),
+`LoopSubdivided` (returns NaN, plato-444). The adapter falls back to Three.js
+for vertex normals above a size cap (plato-447).
 
 ## Adding a sample
 

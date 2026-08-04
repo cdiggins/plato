@@ -39,12 +39,21 @@ export function flattenPoints(points: readonly Point3D[]): number[] {
     return out;
 }
 
+/**
+ * Above this vertex count the adapter computes normals with Three.js instead of
+ * the stdlib. `TriangleMesh3D.VertexNormalVectors` scans every face for every
+ * vertex, so it is quadratic and takes minutes on a mesh of a few thousand
+ * vertices (plato-447). Drop the cap when that is fixed.
+ */
+const MAX_STDLIB_NORMAL_VERTICES = 1000;
+
 export function meshDataToBufferGeometry(mesh: MeshData): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position',
-        new THREE.Float32BufferAttribute(flattenPoints(toArray(mesh.mesh.Positions)), 3));
+    const positions = toArray(mesh.mesh.Positions);
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(flattenPoints(positions), 3));
     geometry.setIndex(meshIndices(mesh.mesh));
-    if (mesh.flatShading) {
+
+    if (mesh.flatShading || positions.length > MAX_STDLIB_NORMAL_VERTICES) {
         geometry.computeVertexNormals();
     } else {
         // Area-weighted vertex normals from the stdlib, not from Three.js.

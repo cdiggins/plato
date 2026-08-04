@@ -14,6 +14,9 @@ import { Viewer } from './viewer.js';
 
 hljs.registerLanguage('typescript', typescript);
 
+/** Sources longer than this are shown unhighlighted; see renderCode. */
+const MAX_HIGHLIGHT_CHARS = 400_000;
+
 const viewer = new Viewer(document.getElementById('viewer')!);
 const list = document.getElementById('sample-list')!;
 const codeElement = document.getElementById('code')!;
@@ -46,7 +49,10 @@ function renderCode(): void {
 
     codeElement.textContent = active.source;
     codeElement.removeAttribute('data-highlighted');
-    hljs.highlightElement(codeElement as HTMLElement);
+    // The generated library is megabytes of TypeScript; highlighting it locks the
+    // renderer for tens of seconds. Above the cap, show it as plain text.
+    if (active.source.length <= MAX_HIGHLIGHT_CHARS)
+        hljs.highlightElement(codeElement as HTMLElement);
     codeElement.parentElement!.parentElement!.scrollTop = 0;
 }
 

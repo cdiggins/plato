@@ -26,10 +26,14 @@ export const vertexRings = (mesh: TriangleMesh3D): number[][] =>
 
 /**
  * One uniform-Laplacian step: every vertex moves `strength` of the way toward
- * the average of its one-ring, which the stdlib topology tables supply.
+ * the average of its one-ring.
+ *
+ * The rings are passed in rather than derived, because smoothing moves
+ * positions and never changes connectivity — and `TopologyOf` is a quadratic
+ * corner-twin search, so rebuilding it per iteration dominates everything else
+ * (plato-446).
  */
-export function laplacianStep(mesh: TriangleMesh3D, strength: number): TriangleMesh3D {
-    const rings = vertexRings(mesh);
+export function laplacianStep(mesh: TriangleMesh3D, rings: number[][], strength: number): TriangleMesh3D {
     const points = meshVertices(mesh);
     const moved = points.map((p, i) => {
         const ring = rings[i];
@@ -43,9 +47,10 @@ export function laplacianStep(mesh: TriangleMesh3D, strength: number): TriangleM
 }
 
 export function laplacianSmooth(mesh: TriangleMesh3D, strength: number, iterations: number): TriangleMesh3D {
+    const rings = vertexRings(mesh);
     let current = mesh;
     for (let i = 0; i < iterations; i++)
-        current = laplacianStep(current, strength);
+        current = laplacianStep(current, rings, strength);
     return current;
 }
 
