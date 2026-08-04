@@ -15,7 +15,7 @@ npm run gen:plato  # regenerate src/plato/plato.g.ts from demos/plato-src/
 ## The Plato pipeline
 
 Algorithms and types are written once in Plato
-([`../../stdlib-legacy/geometry.plato`](../../plato-src/geometry.plato)) and
+([`../../plato-src/geometry.plato`](../../plato-src/geometry.plato)) and
 generated to TypeScript by [`Plato.TypeScriptWriter`](../../../writers/Plato.TypeScriptWriter).
 The same source also targets Rust (see
 [`../../rust/geometry-samples`](../../rust/geometry-samples)) and C#. The
@@ -35,7 +35,7 @@ generated library is designed so TypeScript reads like the C# equivalent:
 ## Architecture
 
 ```
-../../stdlib-legacy/   geometry.plato — shared Plato source for TS and Rust demos
+../../plato-src/   geometry.plato — shared Plato source for TS and Rust demos
 src/plato/         plato.g.ts — GENERATED TypeScript (do not edit; gen:plato)
 src/core/          Scene-description types and mesh-building helpers. No Three.js.
 src/samples/       One module per algorithm; pure build() → Drawable[]; runs in Node.
@@ -63,7 +63,7 @@ tests/             node:test conformance, sample invariants, adapter round-trips
 
 ## Adding a sample
 
-1. If new geometry is needed, add it to `../../stdlib-legacy/geometry.plato` and run
+1. If new geometry is needed, add it to `../../plato-src/geometry.plato` and run
    `npm run gen:plato` (and regenerate Rust with `../../rust/geometry-samples/gen-plato.ps1`).
 2. Create `src/samples/mySample.ts` exporting the algorithm plus a `Sample`
    object whose `build()` returns `Drawable[]`.

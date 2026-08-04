@@ -39,9 +39,9 @@ public static class PlatoSource
 
     /// <summary>The small hand-curated demo library (also the GLSL writer's reference input).</summary>
     public static Compilation CompileDemoLibrary()
-        => CompileFolder(FindRepoFolder("demos/stdlib-legacy"));
+        => CompileFolder(FindRepoFolder("demos/plato-src"));
 
     /// <summary>The production standard library: the stress case.</summary>
     public static Compilation CompileStandardLibrary()
-        => CompileFolder(FindRepoFolder("stdlib-legacy"));
+        => CompileFolder(FindRepoFolder("legacy/stdlib-legacy"));
 }

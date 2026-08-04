@@ -10,7 +10,7 @@ Plan and decisions: `docs/archive/plato-navigation-index-plan.md` in the studio 
 ## Using it
 
 ```csharp
-var index = NavigationIndex.Build(SourceSnapshot.FromDirectory("stdlib-legacy"));
+var index = NavigationIndex.Build(SourceSnapshot.FromDirectory("legacy/stdlib-legacy"));
 
 var hit = index.FindAt(file, line, column);
 var definitions = index.GetDefinitions(hit);          // 1..N — a call offers every overload
@@ -33,10 +33,10 @@ answers every query the original does.
 ### CLI
 
 ```bash
-dotnet run --project Plato.Navigation.CLI -c Release -- stats --root stdlib-legacy --root stdlib-legacy-tests
-dotnet run --project Plato.Navigation.CLI -c Release -- search Number --kind exact --root stdlib-legacy
-dotnet run --project Plato.Navigation.CLI -c Release -- refs stdlib-legacy/primitives.plato 4 5 --root stdlib-legacy
-dotnet run --project Plato.Navigation.CLI -c Release -- export index.json --root stdlib-legacy
+dotnet run --project src/Plato.Navigation.CLI -c Release -- stats --root stdlib
+dotnet run --project src/Plato.Navigation.CLI -c Release -- search Number --kind exact --root stdlib
+dotnet run --project src/Plato.Navigation.CLI -c Release -- refs stdlib/foundation/primitives.plato 4 5 --root stdlib
+dotnet run --project src/Plato.Navigation.CLI -c Release -- export index.json --root stdlib
 ```
 
 Positions are 0-based line and column; printed locations are 1-based.
@@ -73,7 +73,8 @@ and an `Operator` token.
 
 ## Correctness
 
-`Plato.Navigation.Tests` gates the library against `stdlib-legacy` + `stdlib-legacy-tests` (decision D9):
+`Plato.Navigation.Tests` gates the library against the forward `stdlib` (which includes its
+law/witness packet under `stdlib/tests/`; see `tests/Plato.Navigation.Tests/Corpus.cs`):
 
 - an **exhaustive identifier sweep** — every one of the ~7.5k identifiers the parser produces must
   be a definition site, a reference site, or a name the binder reported it could not resolve;

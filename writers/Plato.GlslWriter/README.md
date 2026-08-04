@@ -121,7 +121,7 @@ is the curated primitive + vector library each demo builds on.
 
 ## Verification
 
-The original demo library (`demos/stdlib-legacy/geometry.plato`, 66 functions) and
+The original demo library (`demos/plato-src/geometry.plato`, 66 functions) and
 all eight `demos/glsl` libraries compile, link and render in WebGL2 with zero
 skips. Full stdlib (`stdlib-legacy`): 1433 emitted / 960 skipped (see below).
 

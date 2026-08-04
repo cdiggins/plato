@@ -372,7 +372,7 @@ fixtures) exercise everything above and compile in the repo gates. To check a co
 minimal `.plato` file and run the front end over its folder:
 
 ```
-dotnet run --project Plato.CLI -c Release -- lint <folder>
+dotnet run --project src/Plato.CLI -c Release -- lint <folder>
 ```
 
 If this document and the compiler disagree, the compiler is right — fix the document (and say so

@@ -2,7 +2,7 @@
 # Run from anywhere; paths are anchored to this script.
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$cli  = Join-Path $root '..\..\Plato.CLI'
+$cli  = Join-Path $root '..\..\src\Plato.CLI'
 $src  = Join-Path $root 'src'
 $out  = Join-Path $root 'out'
 $tmp  = Join-Path $root '.build'

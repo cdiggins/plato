@@ -21,8 +21,8 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $platoRoot   = Split-Path -Parent $PSScriptRoot
-$cliProj     = Join-Path $platoRoot 'Plato.CLI\Plato.CLI.csproj'
-$platoSrc    = Join-Path $platoRoot 'stdlib-legacy'
+$cliProj     = Join-Path $platoRoot 'src\Plato.CLI\Plato.CLI.csproj'
+$platoSrc    = Join-Path $platoRoot 'legacy\stdlib-legacy'
 $testProj    = Join-Path $PSScriptRoot 'Ara3D.Csg.Tests'
 $generated   = Join-Path $testProj 'Generated'
 $mergedInput = Join-Path $env:TEMP 'plato-csg\merged-src'

@@ -55,7 +55,7 @@ Everything from **Normalize** onward lives in `Plato.Compiler/Checking/` (the ch
 ## Build / test / gate (from `C:\Users\cdigg\git\studio\submodules\Plato`; use absolute paths)
 
 - Build compiler: `dotnet build Plato.Compiler/Plato.Compiler.csproj -c Debug`
-- Build codegen path: `dotnet build Plato.CLI/Plato.CLI.csproj -c Release`
+- Build codegen path: `dotnet build src/Plato.CLI/Plato.CLI.csproj -c Release`
 - Full test suite (currently **80/80**): `dotnet test PlatoTests/PlatoTests.csproj -c Debug`
 - Flip-invariant gates: `--filter "FullyQualifiedName~EmitDifferential|FullyQualifiedName~EmitFlagOn|FullyQualifiedName~FallbackDiagnostics"`
 - Byte-identity gate (PowerShell, from studio root): `.\tools\regen-plato.ps1`
