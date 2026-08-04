@@ -13,7 +13,8 @@
 
 import * as THREE from 'three';
 import type { Drawable, LinesData, MeshData, PointsData } from '../core/types.js';
-import { Vector3D } from '../plato/plato.g.js';
+import { Point3D, TriangleMesh3D, Vector3D } from '../plato/plato.g.js';
+import { meshFromIndices, meshIndices, toArray } from '../core/meshBuilder.js';
 
 const DEFAULT_MESH_COLOR = 0x8899aa;
 
@@ -23,14 +24,34 @@ export function vector3DToThree(v: Vector3D): THREE.Vector3 {
     return new THREE.Vector3(v.X, v.Y, v.Z);
 }
 
+export function point3DToThree(p: Point3D): THREE.Vector3 {
+    return new THREE.Vector3(p.X, p.Y, p.Z);
+}
+
+/** Flattens Plato points into the xyz triples a BufferAttribute wants. */
+export function flattenPoints(points: readonly Point3D[]): number[] {
+    const out = new Array<number>(points.length * 3);
+    for (let i = 0; i < points.length; i++) {
+        out[i * 3] = points[i].X;
+        out[i * 3 + 1] = points[i].Y;
+        out[i * 3 + 2] = points[i].Z;
+    }
+    return out;
+}
+
 export function meshDataToBufferGeometry(mesh: MeshData): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(mesh.positions, 3));
-    geometry.setIndex(mesh.indices);
-    if (mesh.normals && !mesh.flatShading)
-        geometry.setAttribute('normal', new THREE.Float32BufferAttribute(mesh.normals, 3));
-    else
+    geometry.setAttribute('position',
+        new THREE.Float32BufferAttribute(flattenPoints(toArray(mesh.mesh.Positions)), 3));
+    geometry.setIndex(meshIndices(mesh.mesh));
+    if (mesh.flatShading) {
         geometry.computeVertexNormals();
+    } else {
+        // Area-weighted vertex normals from the stdlib, not from Three.js.
+        const normals = toArray(mesh.mesh.VertexNormalVectors());
+        geometry.setAttribute('normal', new THREE.Float32BufferAttribute(
+            normals.flatMap(n => [n.X, n.Y, n.Z]), 3));
+    }
     return geometry;
 }
 
@@ -50,7 +71,8 @@ export function meshDataToObject3D(mesh: MeshData): THREE.Mesh {
 
 export function linesDataToObject3D(lines: LinesData): THREE.LineSegments {
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(lines.positions, 3));
+    const ends = lines.segments.flatMap(s => [s.A, s.B]);
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(flattenPoints(ends), 3));
     const material = new THREE.LineBasicMaterial({
         color: lines.color ?? 0xffffff,
         transparent: lines.opacity !== undefined && lines.opacity < 1,
@@ -61,7 +83,7 @@ export function linesDataToObject3D(lines: LinesData): THREE.LineSegments {
 
 export function pointsDataToObject3D(points: PointsData): THREE.Points {
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(points.positions, 3));
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(flattenPoints(points.points), 3));
     const material = new THREE.PointsMaterial({
         color: points.color ?? 0xffffff,
         size: points.size ?? 0.05,
@@ -91,23 +113,17 @@ export function threeVectorToVector3D(v: THREE.Vector3): Vector3D {
     return new Vector3D(v.x, v.y, v.z);
 }
 
-export function bufferGeometryToMeshData(geometry: THREE.BufferGeometry): MeshData {
+export function bufferGeometryToMesh(geometry: THREE.BufferGeometry): TriangleMesh3D {
     const position = geometry.getAttribute('position');
-    const positions = Array.from(position.array as ArrayLike<number>).slice(0, position.count * 3);
+    const positions: Point3D[] = [];
+    for (let i = 0; i < position.count; i++)
+        positions.push(new Point3D(position.getX(i), position.getY(i), position.getZ(i)));
 
-    let indices: number[];
-    if (geometry.index) {
-        indices = Array.from(geometry.index.array as ArrayLike<number>);
-    } else {
-        indices = Array.from({ length: position.count }, (_, i) => i); // soup -> trivial index
-    }
+    const indices = geometry.index
+        ? Array.from(geometry.index.array as ArrayLike<number>)
+        : Array.from({ length: position.count }, (_, i) => i); // soup -> trivial index
 
-    const normalAttr = geometry.getAttribute('normal');
-    const normals = normalAttr
-        ? Array.from(normalAttr.array as ArrayLike<number>).slice(0, normalAttr.count * 3)
-        : undefined;
-
-    return { kind: 'mesh', positions, indices, normals };
+    return meshFromIndices(positions, indices);
 }
 
 // ---- lifetime --------------------------------------------------------------

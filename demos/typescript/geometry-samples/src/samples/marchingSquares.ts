@@ -1,84 +1,54 @@
-// Marching squares: extracting iso-contours of a scalar field.
+// Marching squares: iso-contours of a scalar field.
 //
-// Sample the field on a grid; each cell gets a 4-bit mask from which corners
-// are above the iso value. A 16-entry table says which cell edges the contour
-// crosses, and linear interpolation places the crossing precisely. This is
-// the 2D sibling of marching cubes. The field here is a set of "metaballs".
+// Both halves are stdlib. `MetaBallSystem2D` is a set of radial falloff
+// kernels (the Wyvill cubic) summed and offset by a threshold, so its zero
+// level set is the blob outline — and because it implements IScalarField2D,
+// any field operation applies to it.
+//
+// `IScalarField2D.IsoContour(domain, resolution, isoLevel)` is the stdlib's
+// marching squares: sample the field on a lattice, read each cell's four
+// corners into a 4-bit configuration, and look up which edges the contour
+// crosses. It is numbered to match marching cubes in `library Voxels`, and
+// each segment is wound with the at-or-above region on its left.
 
-import type { Sample } from '../core/types.js';
-import { Vector2D } from '../plato/plato.g.js';
+import type { Drawable, Sample } from '../core/types.js';
+import {
+    Bounds2D, IntegerVector2, Line3D, MetaBall2D, MetaBallSystem2D, Point2D, Point3D,
+} from '../plato/plato.g.js';
+import { fromArray, toArray } from '../core/meshBuilder.js';
 
-export type Field2 = (x: number, y: number) => number;
+/** Three metaballs: a smooth field whose contours change topology with the level. */
+export const metaballs = new MetaBallSystem2D(fromArray([
+    new MetaBall2D(new Point2D(-0.5, 0.1), 0.95, 1.0),
+    new MetaBall2D(new Point2D(0.45, 0.25), 0.85, 0.85),
+    new MetaBall2D(new Point2D(0.1, -0.45), 0.75, 0.7),
+]), 0);
 
-/** Edge order: 0 = bottom, 1 = right, 2 = top, 3 = left. */
-const CASES: number[][] = [
-    [], [3, 0], [0, 1], [3, 1], [1, 2], [3, 0, 1, 2], [0, 2], [3, 2],
-    [2, 3], [0, 2], [0, 1, 2, 3], [1, 2], [1, 3], [0, 1], [3, 0], [],
-];
+export const domain = new Bounds2D(new Point2D(-1.6, -1.4), new Point2D(1.6, 1.4));
 
-export function marchingSquares(
-    f: Field2, iso: number, min: Vector2D, max: Vector2D, resolution: number): Vector2D[] {
-    const segments: Vector2D[] = []; // consecutive pairs form line segments
-    const dx = (max.X - min.X) / resolution;
-    const dy = (max.Y - min.Y) / resolution;
-
-    for (let j = 0; j < resolution; j++) {
-        for (let i = 0; i < resolution; i++) {
-            const x0 = min.X + i * dx, y0 = min.Y + j * dy;
-            const x1 = x0 + dx, y1 = y0 + dy;
-            const v = [f(x0, y0), f(x1, y0), f(x1, y1), f(x0, y1)];
-            const mask = (v[0] > iso ? 1 : 0) | (v[1] > iso ? 2 : 0) |
-                         (v[2] > iso ? 4 : 0) | (v[3] > iso ? 8 : 0);
-
-            // Where does the contour cross each edge? (linear interpolation)
-            const lerpT = (a: number, b: number) => (iso - a) / (b - a);
-            const onEdge = (e: number): Vector2D => {
-                switch (e) {
-                    case 0: return new Vector2D(x0 + dx * lerpT(v[0], v[1]), y0);
-                    case 1: return new Vector2D(x1, y0 + dy * lerpT(v[1], v[2]));
-                    case 2: return new Vector2D(x0 + dx * lerpT(v[3], v[2]), y1);
-                    default: return new Vector2D(x0, y0 + dy * lerpT(v[0], v[3]));
-                }
-            };
-            const edges = CASES[mask];
-            for (let e = 0; e < edges.length; e += 2)
-                segments.push(onEdge(edges[e]), onEdge(edges[e + 1]));
-        }
-    }
-    return segments;
+/** The contour of the field at one level, lifted into the drawing plane. */
+export function contourAt(isoLevel: number, height: number): Line3D[] {
+    const segments = toArray(metaballs.IsoContour(domain, new IntegerVector2(160, 140), isoLevel));
+    const lift = (p: Point2D): Point3D => new Point3D(p.X, height, p.Y);
+    return segments.map(s => new Line3D(lift(s.A), lift(s.B)));
 }
-
-/** Three metaballs: smooth field with interesting topology changes. */
-export const metaballs: Field2 = (x, y) => {
-    const point = new Vector2D(x, y);
-    const blobs = [
-        { center: new Vector2D(-0.5, 0.1), weight: 0.28 },
-        { center: new Vector2D(0.45, 0.25), weight: 0.22 },
-        { center: new Vector2D(0.1, -0.45), weight: 0.18 },
-    ];
-    let sum = 0;
-    for (const b of blobs)
-        sum += b.weight / (point.DistanceSquared(b.center) + 0.03);
-    return sum;
-};
 
 export const marchingSquaresSample: Sample = {
     id: 'marching-squares',
     title: 'Marching Squares',
-    description: 'Iso-contours of a metaball field via the 16-case cell lookup table.',
-    build() {
-        const min = new Vector2D(-1.6, -1.4), max = new Vector2D(1.6, 1.4);
-        const isoLevels = [
-            { iso: 1.0, color: 0x4da3ff, y: 0.0 },
-            { iso: 1.8, color: 0xffd166, y: 0.012 },
-            { iso: 3.2, color: 0xff6b6b, y: 0.024 },
+    description: 'IScalarField2D.IsoContour over a stdlib MetaBallSystem2D, at three levels.',
+    build(): Drawable[] {
+        // The field peaks near 1 at a ball centre, so the levels stay inside (0, 1):
+        // an iso level at or above the maximum has no crossing to find.
+        const levels = [
+            { iso: 0.15, color: 0x4da3ff, height: 0.0 },
+            { iso: 0.4, color: 0xffd166, height: 0.012 },
+            { iso: 0.75, color: 0xff6b6b, height: 0.024 },
         ];
-        return isoLevels.map(({ iso, color, y }) => {
-            const segs = marchingSquares(metaballs, iso, min, max, 110);
-            const positions: number[] = [];
-            for (const p of segs)
-                positions.push(p.X, y, p.Y);
-            return { kind: 'lines', positions, color } as const;
-        });
+        return levels.map(({ iso, color, height }): Drawable => ({
+            kind: 'lines',
+            segments: contourAt(iso, height),
+            color,
+        }));
     },
 };

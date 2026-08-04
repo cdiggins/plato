@@ -5,37 +5,53 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-    bufferGeometryToMeshData,
+    bufferGeometryToMesh,
     meshDataToBufferGeometry,
+    point3DToThree,
     threeVectorToVector3D,
     vector3DToThree,
 } from '../src/adapters/three.js';
 import { buildIcosphere } from '../src/samples/icosphere.js';
-import { Vector3D } from '../src/plato/plato.g.js';
+import { meshIndices, meshVertices } from '../src/core/meshBuilder.js';
+import { Point3D, Vector3D } from '../src/plato/plato.g.js';
 
 test('mesh -> BufferGeometry -> mesh round-trips positions and indices', () => {
     const mesh = buildIcosphere(2);
-    const geometry = meshDataToBufferGeometry(mesh);
-    const back = bufferGeometryToMeshData(geometry);
+    const geometry = meshDataToBufferGeometry({ kind: 'mesh', mesh });
+    const back = bufferGeometryToMesh(geometry);
 
-    assert.equal(back.positions.length, mesh.positions.length);
-    for (let i = 0; i < mesh.positions.length; i++)
-        assert.ok(Math.abs(back.positions[i] - mesh.positions[i]) < 1e-6, `position ${i}`);
+    const before = meshVertices(mesh);
+    const after = meshVertices(back);
+    assert.equal(after.length, before.length);
+    for (let i = 0; i < before.length; i++)
+        assert.ok(before[i].Distance(after[i]) < 1e-6, `position ${i}`);
 
-    assert.deepEqual(back.indices, mesh.indices);
-    assert.ok(back.normals && back.normals.length === mesh.positions.length, 'normals present');
+    assert.deepEqual(meshIndices(back), meshIndices(mesh));
+
+    // Smooth shading takes its normals from the stdlib, one per vertex.
+    const normals = geometry.getAttribute('normal');
+    assert.equal(normals.count, before.length, 'one normal per vertex');
 });
 
 test('non-indexed BufferGeometry gets a trivial index', () => {
     const mesh = buildIcosphere(0);
-    const geometry = meshDataToBufferGeometry(mesh).toNonIndexed();
-    const back = bufferGeometryToMeshData(geometry);
-    assert.equal(back.indices.length, back.positions.length / 3);
-    assert.deepEqual(back.indices.slice(0, 3), [0, 1, 2]);
+    const geometry = meshDataToBufferGeometry({ kind: 'mesh', mesh }).toNonIndexed();
+    const back = bufferGeometryToMesh(geometry);
+    assert.equal(meshIndices(back).length, meshVertices(back).length);
+    assert.deepEqual(meshIndices(back).slice(0, 3), [0, 1, 2]);
 });
 
-test('Vector3D conversions round-trip', () => {
+test('flat shading asks Three.js for face normals instead', () => {
+    const mesh = buildIcosphere(1);
+    const geometry = meshDataToBufferGeometry({ kind: 'mesh', mesh, flatShading: true });
+    assert.ok(geometry.getAttribute('normal'), 'normals computed');
+});
+
+test('vector and point conversions round-trip', () => {
     const v = new Vector3D(1.5, -2.25, 3.75);
-    const roundTripped = threeVectorToVector3D(vector3DToThree(v));
-    assert.ok(roundTripped.Equals(v));
+    assert.ok(threeVectorToVector3D(vector3DToThree(v)).Equals(v));
+
+    const p = new Point3D(-0.5, 4, 2.125);
+    const back = point3DToThree(p);
+    assert.deepEqual([back.x, back.y, back.z], [p.X, p.Y, p.Z]);
 });

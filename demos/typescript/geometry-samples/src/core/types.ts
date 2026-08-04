@@ -1,26 +1,27 @@
 // Scene-description types shared by all samples.
 //
-// Geometry itself comes from the generated Plato library (src/plato/plato.g.ts);
-// these types only describe what to draw. The adapter layer
-// (src/adapters/three.ts) converts Drawables into Three.js objects.
+// Geometry itself is the generated Plato stdlib (src/plato/plato.g.ts): a mesh
+// IS a TriangleMesh3D, a point cloud IS an array of Point3D. These types only
+// say how to draw it. Flattening to renderer buffers happens once, in the
+// adapter layer (src/adapters/three.ts).
 
-/** An indexed triangle mesh. Positions are flat [x0,y0,z0, x1,y1,z1, ...]. */
+import type { Line3D, Point3D, TriangleMesh3D } from '../plato/plato.g.js';
+
+/** A Plato triangle mesh, drawn as a surface. */
 export interface MeshData {
     kind: 'mesh';
-    positions: number[];
-    indices: number[];
-    /** Optional; computed from faces by the adapter when absent. */
-    normals?: number[];
+    mesh: TriangleMesh3D;
     color?: number;
     opacity?: number;
+    /** Faceted shading; when false the adapter uses stdlib vertex normals. */
     flatShading?: boolean;
     wireframe?: boolean;
 }
 
-/** Disjoint line segments: every consecutive pair of points is one segment. */
+/** Disjoint line segments. */
 export interface LinesData {
     kind: 'lines';
-    positions: number[];
+    segments: Line3D[];
     color?: number;
     opacity?: number;
 }
@@ -28,7 +29,7 @@ export interface LinesData {
 /** A point cloud. */
 export interface PointsData {
     kind: 'points';
-    positions: number[];
+    points: Point3D[];
     color?: number;
     size?: number;
 }

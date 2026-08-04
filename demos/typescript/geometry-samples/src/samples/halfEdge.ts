@@ -1,122 +1,82 @@
-// Half-edge mesh data structure + Laplacian smoothing.
+// Mesh connectivity + Laplacian smoothing, both from the stdlib.
 //
-// Every triangle contributes three directed half-edges. Each half-edge knows
-// its origin vertex, the next half-edge around its face, and its twin (the
-// opposite direction across the shared edge). This makes one-ring vertex
-// traversal O(degree) with no searching: twin(next(next(e))) is the next
-// outgoing edge around the origin of e.
+// `TriangleMesh3D.TopologyOf()` builds the corner-twin structure Plato uses in
+// place of a half-edge record: corner 3f+k of face f, its undirected edge, and
+// the twin corner across that edge (-1 on a boundary). From it,
+// `VertexNeighborTable` gives every vertex's one-ring, and
+// `UniformLaplacianField` gives the vector each vertex would move along.
+//
+// The smoothing step is written out here rather than calling the stdlib's own,
+// for two reasons, both writer bugs rather than library ones:
+//   * `LaplacianSmoothed` takes the sum type `LaplacianWeighting`, and sum types
+//     are C#-only in v1 (CHK320), so it has no TypeScript surface — plato-440.
+//   * `UniformLaplacianField` resolves to the Vector2D overload of
+//     `UniformLaplacian` and returns 2D vectors for a 3D mesh — plato-441.
 
-import type { MeshData, Sample } from '../core/types.js';
-import { Vector3D } from '../plato/plato.g.js';
-import { computeVertexNormals, translateMesh, vertexAt } from '../core/meshBuilder.js';
+import type { Drawable, Sample } from '../core/types.js';
+import { Point3D, TriangleMesh3D, Vector3D } from '../plato/plato.g.js';
+import { fromArray, meshVertices, toArray, translateMesh } from '../core/meshBuilder.js';
 import { buildIcosphere } from './icosphere.js';
 import { valueNoise } from './terrain.js';
 
-export interface HalfEdge {
-    origin: number; // vertex index at the start of the edge
-    next: number;   // next half-edge counter-clockwise around the face
-    twin: number;   // opposite half-edge, or -1 on a boundary
+/** The one-ring neighbours of every vertex, from stdlib topology. */
+export const vertexRings = (mesh: TriangleMesh3D): number[][] =>
+    toArray(mesh.VertexNeighborTable(mesh.TopologyOf()))
+        .map(ring => toArray(ring).map(v => v.Value));
+
+/**
+ * One uniform-Laplacian step: every vertex moves `strength` of the way toward
+ * the average of its one-ring, which the stdlib topology tables supply.
+ */
+export function laplacianStep(mesh: TriangleMesh3D, strength: number): TriangleMesh3D {
+    const rings = vertexRings(mesh);
+    const points = meshVertices(mesh);
+    const moved = points.map((p, i) => {
+        const ring = rings[i];
+        if (ring.length === 0)
+            return p;
+        const sum = ring.reduce((acc, n) => acc.Add(points[n].PositionVector()), new Vector3D(0, 0, 0));
+        const average = new Point3D(0, 0, 0).Add(sum.Multiply(1 / ring.length));
+        return p.Lerp(average, strength);
+    });
+    return new TriangleMesh3D(fromArray(moved), mesh.Faces);
 }
 
-export interface HalfEdgeMesh {
-    halfEdges: HalfEdge[];
-    /** One outgoing half-edge per vertex. */
-    vertexEdge: number[];
-    vertexCount: number;
-}
-
-export function buildHalfEdgeMesh(indices: number[], vertexCount: number): HalfEdgeMesh {
-    const halfEdges: HalfEdge[] = [];
-    const vertexEdge = new Array<number>(vertexCount).fill(-1);
-    const edgeMap = new Map<string, number>(); // "from_to" -> half-edge index
-
-    for (let f = 0; f < indices.length; f += 3) {
-        const base = halfEdges.length;
-        for (let k = 0; k < 3; k++) {
-            const from = indices[f + k];
-            const to = indices[f + ((k + 1) % 3)];
-            halfEdges.push({ origin: from, next: base + ((k + 1) % 3), twin: -1 });
-            edgeMap.set(`${from}_${to}`, base + k);
-            vertexEdge[from] = base + k;
-        }
-    }
-    for (const [key, e] of edgeMap) {
-        const [from, to] = key.split('_');
-        const twin = edgeMap.get(`${to}_${from}`);
-        if (twin !== undefined)
-            halfEdges[e].twin = twin;
-    }
-    return { halfEdges, vertexEdge, vertexCount };
-}
-
-/** Visits the one-ring neighbor vertices of v (closed meshes). */
-export function oneRing(mesh: HalfEdgeMesh, v: number): number[] {
-    const result: number[] = [];
-    const start = mesh.vertexEdge[v];
-    let e = start;
-    do {
-        const he = mesh.halfEdges[e];
-        result.push(mesh.halfEdges[he.next].origin);
-        e = mesh.halfEdges[mesh.halfEdges[he.next].next].twin; // next outgoing edge
-    } while (e !== start && e !== -1);
-    return result;
-}
-
-/** Uniform Laplacian smoothing: move each vertex toward its ring average. */
-export function laplacianSmooth(positions: number[], mesh: HalfEdgeMesh, lambda: number, iterations: number): number[] {
-    let current = positions.slice();
-    for (let iter = 0; iter < iterations; iter++) {
-        const next = current.slice();
-        for (let v = 0; v < mesh.vertexCount; v++) {
-            const ring = oneRing(mesh, v);
-            let avg = new Vector3D(0, 0, 0);
-            for (const n of ring)
-                avg = avg.Add(vertexAt(current, n));
-            avg = avg.Multiply(1 / ring.length);
-            const moved = vertexAt(current, v).Lerp(avg, lambda);
-            next[v * 3] = moved.X;
-            next[v * 3 + 1] = moved.Y;
-            next[v * 3 + 2] = moved.Z;
-        }
-        current = next;
-    }
+export function laplacianSmooth(mesh: TriangleMesh3D, strength: number, iterations: number): TriangleMesh3D {
+    let current = mesh;
+    for (let i = 0; i < iterations; i++)
+        current = laplacianStep(current, strength);
     return current;
 }
 
 /** An icosphere with noisy radius: the smoothing test subject. */
-export function noisySphere(): MeshData {
-    const mesh = buildIcosphere(3);
-    for (let i = 0; i < mesh.positions.length; i += 3) {
-        const dir = vertexAt(mesh.positions, i / 3).Normalize();
-        const bump = 1 + 0.28 * (valueNoise(dir.X * 5 + 5, dir.Y * 5 + dir.Z * 4 + 5) - 0.5) * 2;
-        const p = dir.Multiply(bump);
-        mesh.positions[i] = p.X;
-        mesh.positions[i + 1] = p.Y;
-        mesh.positions[i + 2] = p.Z;
-    }
-    return mesh;
+export function noisySphere(): TriangleMesh3D {
+    return buildIcosphere(3).Deform(p => {
+        const dir = p.PositionVector().Normalize();
+        const bump = 1 + 0.28 * valueNoise(dir.X * 5 + 5, dir.Y * 5 + dir.Z * 4 + 5);
+        return new Point3D(0, 0, 0).Add(dir.Multiply(bump));
+    });
 }
 
 export const halfEdgeSample: Sample = {
     id: 'half-edge',
-    title: 'Half-Edge + Smoothing',
-    description: 'Half-edge connectivity drives one-ring Laplacian smoothing (before / after).',
-    build() {
+    title: 'Connectivity + Smoothing',
+    description: 'TriangleMesh3D.TopologyOf drives the one-ring tables behind ' +
+        'UniformLaplacianField (before / after).',
+    build(): Drawable[] {
         const noisy = noisySphere();
-        const he = buildHalfEdgeMesh(noisy.indices, noisy.positions.length / 3);
-        const smoothedPositions = laplacianSmooth(noisy.positions, he, 0.6, 12);
-
-        const smoothed: MeshData = {
-            kind: 'mesh',
-            positions: smoothedPositions,
-            indices: noisy.indices.slice(),
-            normals: computeVertexNormals(smoothedPositions, noisy.indices),
-            color: 0x6fbf73,
-        };
-        noisy.color = 0xff8c66;
-        noisy.flatShading = true;
-        translateMesh(noisy, new Vector3D(-1.4, 0, 0));
-        translateMesh(smoothed, new Vector3D(1.4, 0, 0));
-        return [noisy, smoothed];
+        return [
+            {
+                kind: 'mesh',
+                mesh: translateMesh(noisy, new Vector3D(-1.4, 0, 0)),
+                color: 0xff8c66,
+                flatShading: true,
+            },
+            {
+                kind: 'mesh',
+                mesh: translateMesh(laplacianSmooth(noisy, 0.6, 12), new Vector3D(1.4, 0, 0)),
+                color: 0x6fbf73,
+            },
+        ];
     },
 };

@@ -1,52 +1,34 @@
-// Ray-triangle intersection (Moller-Trumbore).
+// Raycasting a triangle mesh.
 //
-// Solves the ray/triangle equation directly with two cross products, giving
-// the barycentric coordinates (u, v) and the distance t in one pass, with no
-// precomputed plane. Written fluently against the Plato vector library -
-// compare with the C# version, which reads identically.
+// `Triangle3D.Raycast(Ray3D)` is the stdlib's Moller-Trumbore intersection: it
+// solves the ray/triangle system for the barycentric pair and the distance in
+// one pass, with no precomputed plane, and returns the full RayHit3D record
+// (distance, position, ray-facing normal, barycentric coordinate, UV).
+//
+// The sweep over the mesh's triangles is brute force. `TriangleMesh3D.Primitives`
+// gathers the faces into concrete Triangle3D values; the BVH sample is the
+// version that prunes.
 
-import type { MeshData, Sample } from '../core/types.js';
-import { Vector3D } from '../plato/plato.g.js';
-import { pushVectors, vertexAt } from '../core/meshBuilder.js';
+import type { Drawable, Sample } from '../core/types.js';
+import {
+    Direction3D, Line3D, Point3D, Ray3D, RayHit3D, TriangleMesh3D, Vector3D,
+} from '../plato/plato.g.js';
+import { toArray } from '../core/meshBuilder.js';
 import { buildIcosphere } from './icosphere.js';
 
-export interface RayHit {
-    t: number;
-    point: Vector3D;
+export interface MeshHit {
+    hit: RayHit3D;
     triangle: number;
 }
 
-export function intersectTriangle(
-    origin: Vector3D, dir: Vector3D, a: Vector3D, b: Vector3D, c: Vector3D): number | null {
-    const e1 = b.Subtract(a);
-    const e2 = c.Subtract(a);
-    const p = dir.Cross(e2);
-    const det = e1.Dot(p);
-    if (det.Abs() < 1e-10)
-        return null; // parallel to the triangle plane
-    const inv = 1 / det;
-    const s = origin.Subtract(a);
-    const u = s.Dot(p) * inv;
-    if (u < 0 || u > 1)
-        return null;
-    const q = s.Cross(e1);
-    const v = dir.Dot(q) * inv;
-    if (v < 0 || u + v > 1)
-        return null;
-    const t = e2.Dot(q) * inv;
-    return t > 1e-9 ? t : null;
-}
-
-/** Closest hit against every triangle (brute force; see the BVH sample). */
-export function raycastMesh(mesh: MeshData, origin: Vector3D, dir: Vector3D): RayHit | null {
-    let best: RayHit | null = null;
-    for (let tri = 0; tri < mesh.indices.length / 3; tri++) {
-        const a = vertexAt(mesh.positions, mesh.indices[tri * 3]);
-        const b = vertexAt(mesh.positions, mesh.indices[tri * 3 + 1]);
-        const c = vertexAt(mesh.positions, mesh.indices[tri * 3 + 2]);
-        const t = intersectTriangle(origin, dir, a, b, c);
-        if (t !== null && (!best || t < best.t))
-            best = { t, point: origin.Add(dir.Multiply(t)), triangle: tri };
+/** Closest hit against every triangle of the mesh. */
+export function raycastMesh(mesh: TriangleMesh3D, ray: Ray3D): MeshHit | null {
+    let best: MeshHit | null = null;
+    const triangles = toArray(mesh.Primitives());
+    for (let i = 0; i < triangles.length; i++) {
+        const hit = triangles[i].Raycast(ray);
+        if (hit.Hit && (best === null || hit.Distance < best.hit.Distance))
+            best = { hit, triangle: i };
     }
     return best;
 }
@@ -54,34 +36,33 @@ export function raycastMesh(mesh: MeshData, origin: Vector3D, dir: Vector3D): Ra
 export const raycastSample: Sample = {
     id: 'raycast',
     title: 'Raycasting',
-    description: 'Moller-Trumbore ray-triangle intersection: a ray grid vs. an icosphere.',
-    build() {
+    description: 'Triangle3D.Raycast (Moller-Trumbore) swept over TriangleMesh3D.Primitives.',
+    build(): Drawable[] {
         const mesh = buildIcosphere(2);
-        mesh.color = 0x4da3ff;
-        mesh.opacity = 0.45;
+        const direction = new Direction3D(new Vector3D(0, 0, -1));
 
-        const rays: number[] = [];
-        const hits: number[] = [];
-        const misses: number[] = [];
-        const dir = new Vector3D(0, 0, -1);
+        const rays: Line3D[] = [];
+        const misses: Line3D[] = [];
+        const hits: Point3D[] = [];
         for (let iy = 0; iy < 9; iy++) {
             for (let ix = 0; ix < 9; ix++) {
-                const origin = new Vector3D((ix / 8 - 0.5) * 2.6, (iy / 8 - 0.5) * 2.6, 2.2);
-                const hit = raycastMesh(mesh, origin, dir);
-                if (hit) {
-                    pushVectors(rays, origin, hit.point);
-                    pushVectors(hits, hit.point);
+                const origin = new Point3D((ix / 8 - 0.5) * 2.6, (iy / 8 - 0.5) * 2.6, 2.2);
+                const ray = new Ray3D(origin, direction);
+                const found = raycastMesh(mesh, ray);
+                if (found) {
+                    rays.push(new Line3D(origin, found.hit.Position));
+                    hits.push(found.hit.Position);
                 } else {
-                    pushVectors(misses, origin, origin.Add(dir.Multiply(4.4)));
+                    misses.push(new Line3D(origin, ray.PointAt(4.4)));
                 }
             }
         }
 
         return [
-            mesh,
-            { kind: 'lines', positions: rays, color: 0xffd166, opacity: 0.9 },
-            { kind: 'lines', positions: misses, color: 0x39414e, opacity: 0.5 },
-            { kind: 'points', positions: hits, color: 0xff6b6b, size: 0.07 },
+            { kind: 'mesh', mesh, color: 0x4da3ff, opacity: 0.45 },
+            { kind: 'lines', segments: rays, color: 0xffd166, opacity: 0.9 },
+            { kind: 'lines', segments: misses, color: 0x39414e, opacity: 0.5 },
+            { kind: 'points', points: hits, color: 0xff6b6b, size: 0.07 },
         ];
     },
 };

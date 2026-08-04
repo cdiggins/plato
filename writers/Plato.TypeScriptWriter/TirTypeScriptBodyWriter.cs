@@ -267,10 +267,15 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
                 return;
 
             case TirConditional cond:
+                // Both branches are still in return position: a body that returns a
+                // tuple literal from either arm needs the same TupleN -> declared-type
+                // substitution a bare return gets.
                 WriteCondition(cond.Condition);
                 Write(" ? ");
+                _atReturnPosition = atReturn;
                 WriteNode(cond.IfTrue);
                 Write(" : ");
+                _atReturnPosition = atReturn;
                 WriteNode(cond.IfFalse);
                 return;
 
@@ -386,6 +391,13 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
                 Write(")");
                 return;
             }
+            // A tuple expression constructs the DECLARED type structurally
+            // (docs/SEMANTICS.md, "Tuples construct types structurally"), so a body
+            // returning `(true, t, ...)` for a RayHit3D must emit that type — not the
+            // TupleN carrier, whose fields are positional and answer to no member name.
+            if (atReturn && name.StartsWith("Tuple")
+                && !string.IsNullOrEmpty(_declaredReturnTypeName) && _declaredReturnTypeName != name)
+                name = _declaredReturnTypeName;
             Write($"new {name}(");
             WriteArgs(args);
             Write(")");
@@ -395,6 +407,21 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
         // Some receivers must be parenthesized: "1.Subtract" is a syntax error, and a ternary or
         // lambda receiver would otherwise bind the member access to its last operand only.
         var receiver = StripCoerce(args[0]);
+
+        // Integer division truncates, Number division does not — but both Plato types
+        // map to the native `number`, so they SHARE one prototype and only the first
+        // 'Divide' installed on it survives. That is Number's. Emit the integer case
+        // inline instead of dispatching, or `i / 3` silently yields a fractional index.
+        if (name == "Divide" && args.Count == 2 && receiver.Type?.Def?.Name == "Integer")
+        {
+            Write("Math.trunc(");
+            WriteNode(args[0]);
+            Write(" / ");
+            WriteNode(args[1]);
+            Write(")");
+            return;
+        }
+
         if (receiver is TirLiteral || receiver is TirConditional || receiver is TirLambda || receiver is TirAssign)
         {
             Write("(");
@@ -405,6 +432,17 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
         {
             WriteNode(args[0]);
         }
+        // A constant read through the tree's constant idiom writes the TYPE as the
+        // receiver (`Point3D.Origin`). That lands as a static call, but a constant
+        // whose declaration names its receiver `self` rather than `_` is emitted as an
+        // INSTANCE method, so the static does not exist. Route through the class's
+        // zero value, which is what such a body reads its receiver for.
+        if (receiver is TirTypeRef typeRef
+            && typeRef.TypeDef != null
+            && !TypeScriptWriter.NativePrimitives.ContainsKey(typeRef.TypeDef.Name)
+            && _tw.IsInstanceMemberOf(typeRef.TypeDef, name))
+            Write(".Default");
+
         Write(".");
         Write(name);
 

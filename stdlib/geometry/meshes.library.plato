@@ -363,6 +363,77 @@ library Meshes
         => AllQuadFaceIndices(self.ColumnCount, self.RowCount, closedU, closedV);
 
     //==
+    // # Tessellating a parametric surface
+    //
+    // The grid-shaped tessellation the face-index routine above was written for.
+    // UV is the unit square, U the column direction and V the row direction,
+    // matching `library Surfaces` and `library Solids`.
+
+    // The parameter for the col-th of nCols samples across one direction. A closed
+    // direction spans [0, 1) in nCols steps, because its last sample is the wrap
+    // back to the first; an open direction spans [0, 1] in nCols - 1 steps, so both
+    // endpoints are sampled. Precondition: nCols > 1.
+    GridParameter(col: Integer, nCols: Integer, closed: Boolean): Number
+        => col.ToNumber / (closed ? nCols : nCols - 1).ToNumber;
+
+    // The nCols x nRows grid of surface points, row-major, so that index
+    // row * nCols + col is the sample at (GridParameter(col, ...),
+    // GridParameter(row, ...)) — the layout QuadFaceIndices indexes into.
+    // Preconditions: nCols > 1, nRows > 1.
+    GridPositions(self: IParametricSurface, nCols: Integer, nRows: Integer): Array2D<Point3D>
+        => MakeArray2D(nCols, nRows, (col, row) =>
+            self.Eval(UvCoordinate(GridParameter(col, nCols, self.ClosedU),
+                                   GridParameter(row, nRows, self.ClosedV))));
+
+    // The surface sampled on an nCols x nRows grid of UV parameters and joined into
+    // a quad mesh. A direction the surface reports closed seams shut — its last ring
+    // of cells wraps back to the first sample rather than duplicating it — so a torus
+    // tessellates watertight with no seam vertices.
+    // (https://en.wikipedia.org/wiki/Parametric_surface)
+    // Preconditions: nCols > 1, nRows > 1.
+    ToQuadMesh(self: IParametricSurface, nCols: Integer, nRows: Integer): QuadMesh3D
+        => (self.GridPositions(nCols, nRows).Elements,
+            AllQuadFaceIndices(nCols, nRows, self.ClosedU, self.ClosedV).Elements);
+
+    // The same tessellation as ToQuadMesh, split into triangles.
+    // Preconditions: nCols > 1, nRows > 1.
+    ToTriangleMesh(self: IParametricSurface, nCols: Integer, nRows: Integer): TriangleMesh3D
+        => self.ToQuadMesh(nCols, nRows).ToTriangleMesh;
+
+    //==
+    // # The graph of a 2D scalar field
+    //
+    // A field over the plane, drawn as the surface z = f(x, y) — the standard
+    // reading of a heightfield, a noise field or a potential.
+    // Convention: see CONVENTIONS.md - World space (Z-up), so the field's own two
+    // coordinates are X and Y and its value is the elevation.
+
+    // One point of a field's graph: the sample position carrying the field's value
+    // there as its elevation.
+    GraphPoint(self: IScalarField2D, xy: Point2D): Point3D
+        => Point3D(xy.X, xy.Y, self.Eval(xy));
+
+    // The nCols x nRows grid of graph points over `domain`, row-major: X varies
+    // along a row, Y down the rows, Z is the field value there.
+    // Preconditions: nCols > 1, nRows > 1.
+    GraphPositions(self: IScalarField2D, domain: Bounds2D, nCols: Integer, nRows: Integer): Array2D<Point3D>
+        => MakeArray2D(nCols, nRows, (col, row) =>
+            self.GraphPoint(domain.FromUnitSquare(
+                Point2D(GridParameter(col, nCols, false), GridParameter(row, nRows, false)))));
+
+    // The field's graph over `domain` as a quad mesh: an open grid in both
+    // directions, so no cell wraps and the boundary samples are the domain corners.
+    // Preconditions: nCols > 1, nRows > 1.
+    ToQuadMesh(self: IScalarField2D, domain: Bounds2D, nCols: Integer, nRows: Integer): QuadMesh3D
+        => (self.GraphPositions(domain, nCols, nRows).Elements,
+            AllQuadFaceIndices(nCols, nRows, false, false).Elements);
+
+    // The same graph, split into triangles.
+    // Preconditions: nCols > 1, nRows > 1.
+    ToTriangleMesh(self: IScalarField2D, domain: Bounds2D, nCols: Integer, nRows: Integer): TriangleMesh3D
+        => self.ToQuadMesh(domain, nCols, nRows).ToTriangleMesh;
+
+    //==
     // IPointCloud3D — anything that can shed its structure to a bare point cloud.
 
     // The number of points once reduced to a bare cloud.

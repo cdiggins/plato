@@ -62,6 +62,27 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
 
     public bool IsNativePrimitive => TypeDef != null && TypeScriptWriter.NativePrimitives.ContainsKey(TypeDef.Name);
 
+    /// <summary>
+    /// True when `name` is emitted on `type` as an INSTANCE member rather than a
+    /// static — that is, when the library function reaching it names a receiver
+    /// (`Origin(self: IOriginBased)`) instead of discarding one (`Tau(_: Number)`).
+    /// A call written in static position has to be routed through a value for those.
+    /// </summary>
+    public bool IsInstanceMemberOf(TypeDef type, string name)
+    {
+        if (type == null || Writer?.Compilation == null)
+            return false;
+        var ct = Writer.Compilation.ConcreteTypes.FirstOrDefault(c => c.TypeDef == type);
+        if (ct == null)
+            return false;
+        var matches = ct.ConcreteFunctions
+            .Concat(ct.ImplementedFunctions)
+            .Where(f => f.Name == name)
+            .ToList();
+        return matches.Count > 0
+               && matches.All(f => f.ParameterNames.Count > 0 && f.ParameterNames[0] != "_");
+    }
+
     public bool HasFieldNamed(string name)
         => HasFieldNamed(TypeDef, name);
 
@@ -214,8 +235,13 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
 
     /// <summary>
     /// Writes an IArray library function over a concrete element type (e.g. Sum of an
-    /// IArray of Number) as a module-level function: it cannot become a method of the
-    /// generic Arr class.
+    /// IArray of Number) as a module-level function: its signature is not generic in
+    /// the element type, so it cannot become a method of the generic Arr class.
+    ///
+    /// Bodies still CALL these in UFCS receiver position (`points.BoundsOfPoints()`),
+    /// because that is how they read in Plato, so the module function is paired with a
+    /// forwarding install on Arr.prototype. Without it every such call is a runtime
+    /// "not a function".
     /// </summary>
     public TypeScriptTypeWriter WriteFreeArrayFunction(FunctionInstance f)
     {
@@ -223,7 +249,9 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
             return WriteLine($"// Skipped: overload or duplicate function '{f.Name}'");
 
         var fi = ToFunctionInfo(f);
-        return Write(fi.FunctionSignature()).WriteBody(fi, true);
+        Write(fi.FunctionSignature()).WriteBody(fi, true);
+        return WriteLine($"Intrinsics.Install(Arr.prototype, '{fi.Name}', " +
+                         $"function(this: unknown, ...args: never[]) {{ return ({fi.Name} as (...xs: never[]) => unknown)(this as never, ...args); }});");
     }
 
     /// <summary>

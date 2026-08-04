@@ -217,6 +217,14 @@ namespace Ara3D.Geometry.TypeScriptWriter
                     TypeWriter.Write(TypeWriter.BodyText(fi, true));
                 }
                 TypeWriter.WriteLine(");");
+
+                // The constant idiom dispatches on an IGNORED receiver of the result type
+                // (`Zero(_: Number): Number`), so bodies call these on an instance —
+                // `this.Zero()` inside Saturate — as well as on the constructor. Forward
+                // the instance form to the static, or every such body is a runtime
+                // "not a function".
+                TypeWriter.WriteLine($"Intrinsics.Install({iface}.prototype, '{fi.Name}', " +
+                                     $"function(this: unknown, ...args: never[]) {{ return ({iface} as unknown as Record<string, (...xs: never[]) => unknown>)['{fi.Name}'](...args); }});");
             }
         }
 

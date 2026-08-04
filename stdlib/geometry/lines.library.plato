@@ -325,6 +325,52 @@ library Lines
             : (true, s.PointAt(t), t);
     }
 
+    //==
+    // # Ray - triangle
+    //
+    // Moller-Trumbore: solve the ray/triangle system directly for the barycentric
+    // pair and the distance, with no precomputed plane
+    // (https://en.wikipedia.org/wiki/Moller-Trumbore_intersection_algorithm).
+    // The determinant is the scalar triple product of the two edge vectors and the
+    // ray direction, so it vanishes exactly when the ray is parallel to the
+    // triangle's plane. Backfaces are NOT culled: a hit is reported whichever side
+    // the ray arrives from.
+
+    // The unnormalized barycentric-and-distance solution of the ray/triangle system,
+    // as (determinant, u, v, t). Meaningful only where the determinant is non-zero;
+    // the containment and forward-facing tests are TriangleHit's, not this one's.
+    MollerTrumbore(r: Ray3D, t: Triangle3D): Number4
+    {
+        var e1 = t.A.Between(t.B);
+        var e2 = t.A.Between(t.C);
+        var p = r.Direction.Vector.Cross(e2);
+        var det = e1.Dot(p);
+        var s = t.A.Between(r.Origin);
+        var q = s.Cross(e1);
+        return (det, s.Dot(p), r.Direction.Vector.Dot(q), e2.Dot(q));
+    }
+
+    // Where the ray strikes the triangle. Misses when the ray is parallel to the
+    // triangle's plane, when the crossing point falls outside the triangle, or when
+    // it lies behind the ray origin. The reported normal is the triangle's own,
+    // flipped when the ray arrives from behind it, so it always opposes the ray.
+    // Face is 0 on a hit and -1 on a miss: a lone triangle is its own face 0.
+    Raycast(tri: Triangle3D, r: Ray3D): RayHit3D
+    {
+        var m = MollerTrumbore(r, tri);
+        var inv = 1.0 / m.X;
+        var u = m.Y * inv;
+        var v = m.Z * inv;
+        var t = m.W * inv;
+        var inside = u >= 0.0 && v >= 0.0 && u + v <= 1.0;
+        var n = tri.Normal;
+        var facing = n.Vector.Dot(r.Direction.Vector) <= 0.0 ? n : Direction3D(n.Vector.Negative);
+        return m.X == 0.0 || !inside || t < 0.0
+            ? (false, 0.0, r.Origin, n, FaceIndex(-1), BarycentricCoordinate(0.0, 0.0, 0.0), UvCoordinate(0.0, 0.0))
+            : (true, t, r.PointAt(t), facing, FaceIndex(0),
+               BarycentricCoordinate(1.0 - u - v, u, v), UvCoordinate(u, v));
+    }
+
     // True when `point` lies on or behind the boundary plane
     // (Dot(Normal, point) <= Distance). Boundary inclusive.
     Contains(h: HalfSpace, point: Point3D): Boolean

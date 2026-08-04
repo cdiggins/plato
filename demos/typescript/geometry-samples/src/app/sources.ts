@@ -2,12 +2,18 @@
 // contents as a string; this is browser-only, which is why it lives in app/
 // and not in the sample registry.
 
-import platoSource from '../../../../../stdlib/foundation/vectors.types.plato?raw';
+import meshesLibrary from '../../../../../stdlib/geometry/meshes.library.plato?raw';
+import fieldsLibrary from '../../../../../stdlib/geometry/fields-implicits.library.plato?raw';
 import platoGenerated from '../plato/plato.g.ts?raw';
 
-/** Extra code-panel tabs shown for every sample. */
+/**
+ * Extra code-panel tabs shown for every sample: the two stdlib library files
+ * carrying the tessellation and contouring the samples lean on, plus the
+ * generated TypeScript they are compiled into.
+ */
 export const sharedTabs: { label: string; source: string }[] = [
-    { label: 'vectors.types.plato', source: platoSource },
+    { label: 'meshes.library.plato', source: meshesLibrary },
+    { label: 'fields-implicits.library.plato', source: fieldsLibrary },
     { label: 'plato.g.ts', source: platoGenerated },
 ];
 

@@ -10,6 +10,7 @@
 //  - Flat node tree and graph accessors
 //  - Sampled signed distance field lattice geometry
 //  - Function-valued implicit shape algebra
+//  - Marching squares — cell numbering, case table, kernel, driver, entry points
 //  - Time-varying field bodies
 
 library FieldsImplicits
@@ -1127,6 +1128,166 @@ library FieldsImplicits
     // The change in the vector at the point from the earlier instant to the later.
     ChangeBetween(self: ITimeVaryingVectorField2D, point: Point2D, earlier: Instant, later: Instant): Vector2D
         => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
+
+    //==
+    // # Marching squares — cell numbering
+    //
+    // The 2D sibling of marching cubes (`library Voxels`), and numbered to match
+    // it. Corners 0-3 are the loop (0,0), (1,0), (1,1), (0,1) in (x, y); edge e
+    // joins corner e to corner (e + 1) % 4, so edge 0 is the bottom, 1 the right,
+    // 2 the top and 3 the left. As in the cubes, a corner bit is set when that
+    // corner is BELOW the iso level — outside the extracted region — so case 0 is
+    // wholly inside and case 15 wholly outside, and both are uncut.
+    // (https://en.wikipedia.org/wiki/Marching_squares)
+
+    // The X offset (0 or 1) of cell corner c: corners 1 and 2 are the far side.
+    MarchingSquaresCornerOffsetX(c: Integer): Integer
+        => (c == 1 || c == 2) ? 1 : 0;
+
+    // The Y offset (0 or 1) of cell corner c: corners 2 and 3 are the upper edge.
+    MarchingSquaresCornerOffsetY(c: Integer): Integer
+        => c / 2;
+
+    //==
+    // # Marching squares — the case table
+    //
+    // One row of four entries per configuration: up to two segments, each a pair
+    // of edge indices, terminated by -1. Row c begins at c * 4. A segment runs
+    // from its first edge to its second so that the extracted region — the
+    // at-or-above side — lies to its LEFT, matching the counter-clockwise-outside
+    // winding the tree uses everywhere else.
+    // Convention: see CONVENTIONS.md - Winding.
+    //
+    // Cases 5 and 10 are the saddles, where all four edges are cut and the two
+    // pairings are equally consistent with the corner values. They are resolved
+    // SEPARATED: each cut corner gets its own segment, so the two at-or-above
+    // corners of case 5 are disjoint rather than joined through the middle. The
+    // alternative needs the center sample the cell does not have.
+    //
+    // Dispatched on `Line2D` — the type the extraction produces — following the
+    // tree's constant idiom, and read as `Line2D.MarchingSquaresCaseTable`. Build
+    // it ONCE per extraction and pass it down: an array literal allocates on every
+    // evaluation.
+    MarchingSquaresCaseTable(_: Line2D): Array<Integer>
+        => [
+            -1, -1, -1, -1,
+             3,  0, -1, -1,
+             0,  1, -1, -1,
+             3,  1, -1, -1,
+             1,  2, -1, -1,
+             1,  0,  3,  2,
+             0,  2, -1, -1,
+             3,  2, -1, -1,
+             2,  3, -1, -1,
+             2,  0, -1, -1,
+             0,  3,  2,  1,
+             2,  1, -1, -1,
+             1,  3, -1, -1,
+             1,  0, -1, -1,
+             0,  3, -1, -1,
+            -1, -1, -1, -1,
+        ];
+
+    //==
+    // # Marching squares — the cell kernel
+
+    // The sampled value at corner `corner` of the cell whose minimum corner is
+    // lattice node `cell`.
+    MarchingSquaresCornerValue(cell: IntegerVector2, corner: Integer, valueAt: Function2<Integer, Integer, Number>): Number
+        => valueAt(
+            cell.X + MarchingSquaresCornerOffsetX(corner),
+            cell.Y + MarchingSquaresCornerOffsetY(corner));
+
+    // The world position of corner `corner` of the cell whose minimum corner is
+    // lattice node `cell`.
+    MarchingSquaresCornerPoint(cell: IntegerVector2, corner: Integer, pointAt: Function2<Integer, Integer, Point2D>): Point2D
+        => pointAt(
+            cell.X + MarchingSquaresCornerOffsetX(corner),
+            cell.Y + MarchingSquaresCornerOffsetY(corner));
+
+    // 1 when cell corner `corner` is below isoLevel, 0 when at or above it.
+    MarchingSquaresCornerBit(cell: IntegerVector2, corner: Integer, valueAt: Function2<Integer, Integer, Number>, isoLevel: Number): Integer
+        => MarchingSquaresCornerValue(cell, corner, valueAt) < isoLevel ? 1 : 0;
+
+    // The configuration index of a cell: the four corner bits, corner c in bit c.
+    MarchingSquaresCase(cell: IntegerVector2, valueAt: Function2<Integer, Integer, Number>, isoLevel: Number): Integer
+        => MarchingSquaresCornerBit(cell, 0, valueAt, isoLevel)
+         + MarchingSquaresCornerBit(cell, 1, valueAt, isoLevel) * 2
+         + MarchingSquaresCornerBit(cell, 2, valueAt, isoLevel) * 4
+         + MarchingSquaresCornerBit(cell, 3, valueAt, isoLevel) * 8;
+
+    // How many segments the case table lists for configuration c: 0, 1 or 2.
+    MarchingSquaresSegmentCount(table: Array<Integer>, c: Integer): Integer
+        => table[c * 4] < 0 ? 0 : (table[c * 4 + 2] < 0 ? 1 : 2);
+
+    // Where the contour crosses cell edge e: the linear interpolation of the
+    // edge's two corner positions at the parameter where the corner values reach
+    // isoLevel. Equal corner values carry no crossing information, so they fall
+    // back to the edge midpoint.
+    MarchingSquaresEdgePoint(edge: Integer, cell: IntegerVector2, valueAt: Function2<Integer, Integer, Number>, pointAt: Function2<Integer, Integer, Point2D>, isoLevel: Number)
+        : Point2D
+    {
+        var a = edge;
+        var b = (edge + 1) % 4;
+        var va = MarchingSquaresCornerValue(cell, a, valueAt);
+        var vb = MarchingSquaresCornerValue(cell, b, valueAt);
+        var t = va == vb ? 0.5 : va.InverseLerp(vb, isoLevel);
+        return MarchingSquaresCornerPoint(cell, a, pointAt)
+            .Lerp(MarchingSquaresCornerPoint(cell, b, pointAt), t);
+    }
+
+    // The contour segments of one cell. Empty for the two uncut configurations.
+    MarchingSquaresCell(table: Array<Integer>, cell: IntegerVector2, valueAt: Function2<Integer, Integer, Number>, pointAt: Function2<Integer, Integer, Point2D>, isoLevel: Number)
+        : Array<Line2D>
+    {
+        var c = MarchingSquaresCase(cell, valueAt, isoLevel);
+        var row = c * 4;
+        return MarchingSquaresSegmentCount(table, c).MapRange(s =>
+            Line2D(
+                MarchingSquaresEdgePoint(table[row + s * 2], cell, valueAt, pointAt, isoLevel),
+                MarchingSquaresEdgePoint(table[row + s * 2 + 1], cell, valueAt, pointAt, isoLevel)));
+    }
+
+    //==
+    // # Marching squares — the lattice driver and entry points
+
+    // The iso-contour at isoLevel through a scalar lattice of nodeCounts sampled
+    // nodes, as unordered segments. `valueAt` reports the sample at a node and
+    // `pointAt` its world position; both are called only with in-range indices.
+    // A lattice of n nodes on an axis marches n - 1 cells, so an axis with fewer
+    // than two nodes contributes nothing.
+    //
+    // Segments arrive in cell order, not walked into loops: chaining them into
+    // closed polygons is a separate pass, and one that has to decide what to do
+    // at the saddles.
+    MarchingSquaresLattice(nodeCounts: IntegerVector2, valueAt: Function2<Integer, Integer, Number>, pointAt: Function2<Integer, Integer, Point2D>, isoLevel: Number)
+        : Array<Line2D>
+    {
+        var table = Line2D.MarchingSquaresCaseTable;
+        var columns = (nodeCounts.X - 1).Max(0);
+        var rows = (nodeCounts.Y - 1).Max(0);
+        var cells = MapRange(columns * rows, n => IntegerVector2(n % columns, n / columns));
+        return cells.FlatMap(cell => MarchingSquaresCell(table, cell, valueAt, pointAt, isoLevel));
+    }
+
+    // The iso-contour of a 2D scalar field over `domain`, sampled on a grid of
+    // `resolution` nodes per axis. The boundary of the region where the field is
+    // at or above isoLevel, to within the sampling resolution.
+    // Preconditions: both resolution components exceed one.
+    IsoContour(self: IScalarField2D, domain: Bounds2D, resolution: IntegerVector2, isoLevel: Number): Array<Line2D>
+        => MarchingSquaresLattice(
+            resolution,
+            (i, j) => self.Eval(IsoContourNode(domain, resolution, i, j)),
+            (i, j) => IsoContourNode(domain, resolution, i, j),
+            isoLevel);
+
+    // The world position of lattice node (i, j) of an iso-contour grid: the
+    // domain corners are sampled, so node 0 sits on the low edge and node
+    // resolution - 1 on the high edge.
+    IsoContourNode(domain: Bounds2D, resolution: IntegerVector2, i: Integer, j: Integer): Point2D
+        => domain.FromUnitSquare(Point2D(
+            i.ToNumber / (resolution.X - 1).ToNumber,
+            j.ToNumber / (resolution.Y - 1).ToNumber));
 
     //==
     // # ITimeVaryingVectorField3D

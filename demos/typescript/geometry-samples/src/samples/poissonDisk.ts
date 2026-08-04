@@ -1,91 +1,53 @@
-// Poisson disk sampling (Bridson's algorithm).
+// Blue noise vs. white noise.
 //
-// Produces "blue noise": points at least r apart but tightly packed. A
-// background grid with cell size r / sqrt(2) holds at most one sample per
-// cell, so a distance check only needs to look at nearby cells - O(n) total.
+// `Bounds2D.PoissonDiskPoints2D(radius, attempts, seed)` is the stdlib's
+// Poisson-disk sampler: no two points closer than `radius`, but otherwise as
+// tightly packed as that constraint allows. Beside it, the same number of
+// independent uniform samples drawn with `SampleUnit` — same density, visibly
+// worse distribution: clumps and voids, which is what "white noise" looks like
+// and why blue noise is preferred for sampling patterns.
+//
+// The stdlib sampler is stateless: it takes a seed rather than carrying a
+// generator, so the same arguments always give the same point set.
 
-import type { Sample } from '../core/types.js';
-import { Vector2D } from '../plato/plato.g.js';
-import { makeRng, range, type Rng } from '../core/random.js';
+import type { Drawable, Sample } from '../core/types.js';
+import { Bounds2D, Line3D, Point2D, Point3D } from '../plato/plato.g.js';
+import { toArray } from '../core/meshBuilder.js';
+import { makeRng, range } from '../core/random.js';
 
-export function poissonDisk(width: number, height: number, r: number, rng: Rng, k = 30): Vector2D[] {
-    const cell = r / Math.SQRT2;
-    const gw = (width / cell).Floor() + 1;
-    const gh = (height / cell).Floor() + 1;
-    const grid = new Array<number>(gw * gh).fill(-1);
-    const samples: Vector2D[] = [];
-    const active: number[] = [];
+const RADIUS = 0.11;
+const ATTEMPTS = 30;
 
-    const gridIndex = (p: Vector2D) =>
-        (p.Y / cell).Floor().Min(gh - 1) * gw + (p.X / cell).Floor().Min(gw - 1);
+/** Lifts a planar sample into the drawing plane, offset to its panel. */
+const lift = (p: Point2D, dx: number): Point3D => new Point3D(p.X + dx, 0, p.Y);
 
-    const farFromNeighbors = (p: Vector2D): boolean => {
-        const gx = (p.X / cell).Floor(), gy = (p.Y / cell).Floor();
-        for (let y = (gy - 2).Max(0); y <= (gy + 2).Min(gh - 1); y++) {
-            for (let x = (gx - 2).Max(0); x <= (gx + 2).Min(gw - 1); x++) {
-                const s = grid[y * gw + x];
-                if (s >= 0 && samples[s].DistanceSquared(p) < r * r)
-                    return false;
-            }
-        }
-        return true;
-    };
-
-    const emit = (p: Vector2D) => {
-        grid[gridIndex(p)] = samples.length;
-        active.push(samples.length);
-        samples.push(p);
-    };
-    emit(new Vector2D(width / 2, height / 2));
-
-    while (active.length > 0) {
-        const pick = (rng() * active.length).Floor();
-        const around = samples[active[pick]];
-        let placed = false;
-        for (let attempt = 0; attempt < k; attempt++) {
-            // Uniform in the annulus [r, 2r] around the active sample.
-            const angle = rng().Turns();
-            const dist = r * range(rng, 1, 4).Sqrt();
-            const p = around.Add(new Vector2D(angle.Cos() * dist, angle.Sin() * dist));
-            if (p.X >= 0 && p.X < width && p.Y >= 0 && p.Y < height && farFromNeighbors(p)) {
-                emit(p);
-                placed = true;
-                break;
-            }
-        }
-        if (!placed)
-            active.splice(pick, 1); // exhausted: retire this sample
-    }
-    return samples;
-}
+export const poissonPoints = (region: Bounds2D): Point2D[] =>
+    toArray(region.PoissonDiskPoints2D(RADIUS, ATTEMPTS, 31));
 
 export const poissonDiskSample: Sample = {
     id: 'poisson-disk',
     title: 'Poisson Disk Sampling',
-    description: "Bridson's blue-noise sampling next to plain white noise, same point count.",
-    build() {
-        const rng = makeRng(31);
-        const blue = poissonDisk(2.2, 2.2, 0.11, rng);
-
-        const bluePts: number[] = [];
-        for (const p of blue)
-            bluePts.push(p.X - 2.4, 0, p.Y - 1.1);
+    description: 'Bounds2D.PoissonDiskPoints2D beside plain white noise at the same count.',
+    build(): Drawable[] {
+        const region = new Bounds2D(new Point2D(-1.1, -1.1), new Point2D(1.1, 1.1));
+        const blue = poissonPoints(region);
 
         // The same number of uniformly random points, for comparison.
-        const whitePts: number[] = [];
-        for (let i = 0; i < blue.length; i++)
-            whitePts.push(range(rng, 0.2, 2.4), 0, range(rng, -1.1, 1.1));
+        const rng = makeRng(31);
+        const white = blue.map(() => new Point2D(range(rng, -1.1, 1.1), range(rng, -1.1, 1.1)));
 
-        const frame: number[] = [];
-        for (const x0 of [-2.4, 0.2])
-            frame.push(
-                x0, 0, -1.1, x0 + 2.2, 0, -1.1, x0 + 2.2, 0, -1.1, x0 + 2.2, 0, 1.1,
-                x0 + 2.2, 0, 1.1, x0, 0, 1.1, x0, 0, 1.1, x0, 0, -1.1);
+        const panel = (dx: number): Line3D[] => {
+            const corners = [
+                new Point3D(dx - 1.1, 0, -1.1), new Point3D(dx + 1.1, 0, -1.1),
+                new Point3D(dx + 1.1, 0, 1.1), new Point3D(dx - 1.1, 0, 1.1),
+            ];
+            return corners.map((c, i) => new Line3D(c, corners[(i + 1) % 4]));
+        };
 
         return [
-            { kind: 'points', positions: bluePts, color: 0x7fc4ff, size: 0.06 },
-            { kind: 'points', positions: whitePts, color: 0xff8c66, size: 0.06 },
-            { kind: 'lines', positions: frame, color: 0x39414e },
+            { kind: 'points', points: blue.map(p => lift(p, -1.3)), color: 0x7fc4ff, size: 0.06 },
+            { kind: 'points', points: white.map(p => lift(p, 1.3)), color: 0xff8c66, size: 0.06 },
+            { kind: 'lines', segments: [...panel(-1.3), ...panel(1.3)], color: 0x39414e },
         ];
     },
 };

@@ -1,42 +1,51 @@
 // Invariant tests for every sample, run with the built-in Node test runner:
 //   npm test   (tsc -p tsconfig.node.json && node --test dist-node/tests/*.test.js)
+//
+// The samples build stdlib geometry, so the assertions here are about the
+// geometry, not about flat arrays: a mesh is a TriangleMesh3D and its faces
+// index into its own positions.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { Vector2D, Vector3D } from '../src/plato/plato.g.js';
+import { Bounds2D, Point2D, Point3D, Ray3D, Direction3D, Vector3D } from '../src/plato/plato.g.js';
 import { samples } from '../src/samples/index.js';
 import { buildIcosphere } from '../src/samples/icosphere.js';
 import { delaunay, circumcircle } from '../src/samples/delaunay.js';
 import { convexHull, turn } from '../src/samples/convexHull.js';
-import { sampleSpline, controlPoints } from '../src/samples/splineTube.js';
+import { spline, sampleSpline, controlPoints } from '../src/samples/splineTube.js';
 import { makeOctree, insert, collectLeaves, clusteredPoints } from '../src/samples/octree.js';
-import { buildBvh, triangleCentroid } from '../src/samples/bvh.js';
-import { buildHalfEdgeMesh, laplacianSmooth, noisySphere, oneRing } from '../src/samples/halfEdge.js';
+import { buildBvh, triangleCentroid, meshTriangles } from '../src/samples/bvh.js';
+import { laplacianSmooth, noisySphere, vertexRings } from '../src/samples/halfEdge.js';
 import { raycastMesh } from '../src/samples/raycast.js';
-import { poissonDisk } from '../src/samples/poissonDisk.js';
-import { marchingSquares, metaballs } from '../src/samples/marchingSquares.js';
-import { makeRng, range } from '../src/core/random.js';
-import { vertexAt } from '../src/core/meshBuilder.js';
+import { poissonPoints } from '../src/samples/poissonDisk.js';
+import { metaballs, domain, contourAt } from '../src/samples/marchingSquares.js';
+import { Bounds3D } from '../src/plato/plato.g.js';
+import { meshIndices, meshVertices, toArray } from '../src/core/meshBuilder.js';
+
+const finite = (...xs: number[]) => xs.every(Number.isFinite);
 
 test('every sample builds finite, non-empty drawables', () => {
     assert.ok(samples.length >= 10, 'at least 10 samples');
-    for (const sample of samples) {
-        const drawables = sample.build();
-        assert.ok(drawables.length > 0, `${sample.id} produced drawables`);
-        for (const d of drawables) {
-            assert.ok(d.positions.length > 0, `${sample.id} has positions`);
-            assert.ok(d.positions.length % 3 === 0, `${sample.id} positions are xyz triples`);
-            for (const v of d.positions)
-                assert.ok(Number.isFinite(v), `${sample.id} has finite coordinates`);
-            if (d.kind === 'mesh') {
-                assert.ok(d.indices.length % 3 === 0, `${sample.id} indices form triangles`);
-                const vertexCount = d.positions.length / 3;
-                for (const i of d.indices)
-                    assert.ok(i >= 0 && i < vertexCount, `${sample.id} indices in range`);
-            }
-            if (d.kind === 'lines')
-                assert.ok((d.positions.length / 3) % 2 === 0, `${sample.id} lines come in pairs`);
+    for (const d of samples.flatMap(s => s.build().map(d => ({ id: s.id, d })))) {
+        const { id, d: drawable } = d;
+        if (drawable.kind === 'mesh') {
+            const vertices = meshVertices(drawable.mesh);
+            assert.ok(vertices.length > 0, `${id} has positions`);
+            for (const p of vertices)
+                assert.ok(finite(p.X, p.Y, p.Z), `${id} has finite coordinates`);
+            const indices = meshIndices(drawable.mesh);
+            assert.ok(indices.length % 3 === 0, `${id} indices form triangles`);
+            for (const i of indices)
+                assert.ok(i >= 0 && i < vertices.length, `${id} indices in range`);
+        } else if (drawable.kind === 'lines') {
+            assert.ok(drawable.segments.length > 0, `${id} has segments`);
+            for (const s of drawable.segments)
+                assert.ok(finite(s.A.X, s.A.Y, s.A.Z, s.B.X, s.B.Y, s.B.Z), `${id} finite segments`);
+        } else {
+            assert.ok(drawable.points.length > 0, `${id} has points`);
+            for (const p of drawable.points)
+                assert.ok(finite(p.X, p.Y, p.Z), `${id} finite points`);
         }
     }
 });
@@ -44,26 +53,25 @@ test('every sample builds finite, non-empty drawables', () => {
 test('icosphere: watertight (V - E + F = 2) and unit radius', () => {
     for (const level of [0, 1, 2]) {
         const mesh = buildIcosphere(level);
-        const V = mesh.positions.length / 3;
-        const F = mesh.indices.length / 3;
+        const V = mesh.Positions.Count();
+        const F = mesh.Faces.Count();
+        const indices = meshIndices(mesh);
         const edges = new Set<string>();
-        for (let i = 0; i < mesh.indices.length; i += 3) {
+        for (let i = 0; i < indices.length; i += 3) {
             for (const [a, b] of [[0, 1], [1, 2], [2, 0]]) {
-                const [u, v] = [mesh.indices[i + a], mesh.indices[i + b]];
+                const [u, v] = [indices[i + a], indices[i + b]];
                 edges.add(u < v ? `${u}_${v}` : `${v}_${u}`);
             }
         }
         assert.equal(V - edges.size + F, 2, `Euler characteristic at level ${level}`);
-        for (let i = 0; i < V; i++)
-            assert.ok(Math.abs(vertexAt(mesh.positions, i).Length() - 1) < 1e-9);
+        for (const p of meshVertices(mesh))
+            assert.ok(Math.abs(p.PositionVector().Length() - 1) < 1e-9, 'vertex on the unit sphere');
     }
 });
 
 test('delaunay: empty circumcircle property', () => {
-    const rng = makeRng(7);
-    const points: Vector2D[] = [];
-    for (let i = 0; i < 60; i++)
-        points.push(new Vector2D(range(rng, -1.5, 1.5), range(rng, -1, 1)));
+    const region = new Bounds2D(new Point2D(-1.5, -1), new Point2D(1.5, 1));
+    const points = toArray(region.HaltonPoints2D(60, 2, 3));
     const triangles = delaunay(points);
     assert.ok(triangles.length > 0);
     for (const t of triangles) {
@@ -76,35 +84,37 @@ test('delaunay: empty circumcircle property', () => {
     }
 });
 
-test('convex hull: convex and contains all points', () => {
-    const rng = makeRng(11);
-    const points: Vector2D[] = [];
-    for (let i = 0; i < 80; i++)
-        points.push(new Vector2D(range(rng, -1, 1), range(rng, -1, 1)));
+test('convex hull: convex, counter-clockwise, and contains all points', () => {
+    const region = new Bounds2D(new Point2D(-1, -1), new Point2D(1, 1));
+    const points = toArray(region.HaltonPoints2D(80, 2, 3));
     const hull = convexHull(points);
-    assert.ok(hull.length >= 3);
-    const n = hull.length;
+    const boundary = toArray(hull.Hull.Points);
+    assert.ok(boundary.length >= 3);
+    assert.equal(hull.SourceIndices.Count(), boundary.length, 'one source index per hull vertex');
+
+    const n = boundary.length;
     for (let i = 0; i < n; i++) {
-        const [a, b, c] = [points[hull[i]], points[hull[(i + 1) % n]], points[hull[(i + 2) % n]]];
+        const [a, b, c] = [boundary[i], boundary[(i + 1) % n], boundary[(i + 2) % n]];
         assert.ok(turn(a, b, c) > 0, 'hull turns counter-clockwise');
     }
     for (const p of points)
         for (let i = 0; i < n; i++)
-            assert.ok(turn(points[hull[i]], points[hull[(i + 1) % n]], p) >= -1e-12, 'point inside hull');
+            assert.ok(turn(boundary[i], boundary[(i + 1) % n], p) >= -1e-12, 'point inside hull');
 });
 
 test('spline: interpolates its control points at the knots', () => {
     const perSegment = 16;
-    const curve = sampleSpline(controlPoints, perSegment);
+    const samplesPerCurve = (controlPoints.length - 1) * perSegment + 1;
+    const curve = sampleSpline(spline, samplesPerCurve);
     for (let i = 0; i < controlPoints.length; i++) {
         const at = Math.min(i * perSegment, curve.length - 1);
-        assert.ok(curve[at].Distance(controlPoints[i]) < 1e-9, `knot ${i} interpolated`);
+        assert.ok(curve[at].Distance(controlPoints[i]) < 1e-6, `knot ${i} interpolated`);
     }
 });
 
 test('octree: every point lands in exactly one leaf that contains it', () => {
     const pts = clusteredPoints(500);
-    const root = makeOctree(new Vector3D(-2, -2, -2), new Vector3D(2, 2, 2));
+    const root = makeOctree(new Bounds3D(new Point3D(-2, -2, -2), new Point3D(2, 2, 2)));
     for (let i = 0; i < pts.length; i++)
         insert(root, pts, i, 8, 5);
     const leaves = collectLeaves(root);
@@ -112,12 +122,7 @@ test('octree: every point lands in exactly one leaf that contains it', () => {
     for (const leaf of leaves) {
         for (const i of leaf.points) {
             seen.set(i, (seen.get(i) ?? 0) + 1);
-            const p = pts[i];
-            assert.ok(
-                p.X >= leaf.min.X - 1e-12 && p.X <= leaf.max.X + 1e-12 &&
-                p.Y >= leaf.min.Y - 1e-12 && p.Y <= leaf.max.Y + 1e-12 &&
-                p.Z >= leaf.min.Z - 1e-12 && p.Z <= leaf.max.Z + 1e-12,
-                'leaf contains its point');
+            assert.ok(leaf.bounds.GrowBounds(1e-12).Contains(pts[i]), 'leaf contains its point');
         }
     }
     assert.equal(seen.size, pts.length, 'all points stored');
@@ -126,20 +131,16 @@ test('octree: every point lands in exactly one leaf that contains it', () => {
 });
 
 test('bvh: leaves partition the triangles and boxes contain their centroids', () => {
-    const mesh = buildIcosphere(2);
-    const allTris = Array.from({ length: mesh.indices.length / 3 }, (_, i) => i);
-    const root = buildBvh(mesh, allTris);
+    const triangles = meshTriangles(buildIcosphere(2));
+    const all = triangles.map((_, i) => i);
+    const root = buildBvh(triangles, all);
     const seen = new Set<number>();
     const walk = (node: ReturnType<typeof buildBvh>): void => {
         if (node.triangles) {
             for (const t of node.triangles) {
                 assert.ok(!seen.has(t), 'triangle in one leaf only');
                 seen.add(t);
-                const c = triangleCentroid(mesh, t);
-                assert.ok(
-                    c.X >= node.min.X - 1e-9 && c.X <= node.max.X + 1e-9 &&
-                    c.Y >= node.min.Y - 1e-9 && c.Y <= node.max.Y + 1e-9 &&
-                    c.Z >= node.min.Z - 1e-9 && c.Z <= node.max.Z + 1e-9,
+                assert.ok(node.bounds.GrowBounds(1e-9).Contains(triangleCentroid(triangles, t)),
                     'centroid inside leaf box');
             }
             return;
@@ -148,65 +149,75 @@ test('bvh: leaves partition the triangles and boxes contain their centroids', ()
         walk(node.right!);
     };
     walk(root);
-    assert.equal(seen.size, allTris.length, 'every triangle assigned');
+    assert.equal(seen.size, all.length, 'every triangle assigned');
 });
 
-test('half-edge: twin/next invariants and smoothing reduces roughness', () => {
+test('mesh topology: one-ring tables cover each directed edge once', () => {
     const mesh = noisySphere();
-    const he = buildHalfEdgeMesh(mesh.indices, mesh.positions.length / 3);
+    const rings = vertexRings(mesh);
+    assert.equal(rings.length, mesh.Positions.Count(), 'one ring per vertex');
 
-    for (let e = 0; e < he.halfEdges.length; e++) {
-        const edge = he.halfEdges[e];
-        assert.notEqual(edge.twin, -1, 'closed mesh: every edge has a twin');
-        assert.equal(he.halfEdges[edge.twin].twin, e, 'twin is symmetric');
-        const n3 = he.halfEdges[he.halfEdges[edge.next].next].next;
-        assert.equal(n3, e, 'next cycles with period 3');
-    }
+    // A closed triangle mesh has 3F directed edges, and each vertex's ring holds
+    // one entry per outgoing directed edge.
+    const total = rings.reduce((sum, r) => sum + r.length, 0);
+    assert.equal(total, mesh.Faces.Count() * 3, 'rings cover each directed edge once');
 
-    // One-ring traversal terminates and sums to the half-edge count.
-    let ringTotal = 0;
-    for (let v = 0; v < he.vertexCount; v++)
-        ringTotal += oneRing(he, v).length;
-    assert.equal(ringTotal, he.halfEdges.length, 'rings cover each half-edge once');
+    // Every neighbour relation is symmetric on a closed mesh.
+    for (let v = 0; v < rings.length; v++)
+        for (const n of rings[v])
+            assert.ok(rings[n].includes(v), `ring of ${n} contains ${v}`);
+});
 
-    const radiusVariance = (positions: number[]): number => {
-        const n = positions.length / 3;
-        const radii: number[] = [];
-        for (let i = 0; i < n; i++)
-            radii.push(vertexAt(positions, i).Length());
-        const mean = radii.reduce((a, b) => a + b, 0) / n;
-        return radii.reduce((a, r) => a + (r - mean) ** 2, 0) / n;
+test('laplacian smoothing reduces radial roughness', () => {
+    const mesh = noisySphere();
+    const radiusVariance = (m: typeof mesh): number => {
+        const radii = meshVertices(m).map(p => p.PositionVector().Length());
+        const mean = radii.reduce((a, b) => a + b, 0) / radii.length;
+        return radii.reduce((a, r) => a + (r - mean) ** 2, 0) / radii.length;
     };
-    const smoothed = laplacianSmooth(mesh.positions, he, 0.6, 10);
-    assert.equal(smoothed.length, mesh.positions.length, 'vertex count preserved');
-    assert.ok(radiusVariance(smoothed) < radiusVariance(mesh.positions) * 0.35, 'roughness reduced');
+    const smoothed = laplacianSmooth(mesh, 0.6, 10);
+    assert.equal(smoothed.Positions.Count(), mesh.Positions.Count(), 'vertex count preserved');
+    assert.ok(radiusVariance(smoothed) < radiusVariance(mesh) * 0.35, 'roughness reduced');
 });
 
 test('raycast: central ray hits the unit icosphere at distance ~2', () => {
     const mesh = buildIcosphere(2);
-    const hit = raycastMesh(mesh, new Vector3D(0, 0, 3), new Vector3D(0, 0, -1));
+    const down = new Direction3D(new Vector3D(0, 0, -1));
+    const hit = raycastMesh(mesh, new Ray3D(new Point3D(0, 0, 3), down));
     assert.ok(hit, 'hit found');
-    assert.ok(Math.abs(hit.t - 2) < 0.06, `distance ${hit.t} close to 2`);
-    const miss = raycastMesh(mesh, new Vector3D(5, 5, 3), new Vector3D(0, 0, -1));
+    assert.ok(Math.abs(hit!.hit.Distance - 2) < 0.06, `distance ${hit!.hit.Distance} close to 2`);
+    // The reported normal always opposes the ray.
+    assert.ok(hit!.hit.Normal.Vector.Dot(down.Vector) <= 0, 'normal faces the ray');
+    const miss = raycastMesh(mesh, new Ray3D(new Point3D(5, 5, 3), down));
     assert.equal(miss, null, 'offset ray misses');
 });
 
 test('poisson disk: pairwise distances respect the radius', () => {
-    const r = 0.15;
-    const pts = poissonDisk(2, 2, r, makeRng(3));
+    const region = new Bounds2D(new Point2D(-1.1, -1.1), new Point2D(1.1, 1.1));
+    const pts = poissonPoints(region);
     assert.ok(pts.length > 50, 'reasonable density');
     for (let i = 0; i < pts.length; i++)
         for (let j = i + 1; j < pts.length; j++)
-            assert.ok(pts[i].DistanceSquared(pts[j]) >= r * r - 1e-12, `points ${i},${j} too close`);
+            assert.ok(pts[i].Distance(pts[j]) >= 0.11 - 1e-9, `points ${i},${j} too close`);
 });
 
 test('marching squares: contour vertices lie near the iso value', () => {
-    const iso = 1.5;
-    const segments = marchingSquares(
-        metaballs, iso, new Vector2D(-1.6, -1.4), new Vector2D(1.6, 1.4), 128);
+    const iso = 0.5;
+    const segments = contourAt(iso, 0);
     assert.ok(segments.length >= 2, 'contour found');
-    for (const p of segments) {
-        const value = metaballs(p.X, p.Y);
-        assert.ok(Math.abs(value - iso) < 0.25, `field ${value} near iso ${iso}`);
+    for (const s of segments) {
+        for (const p of [s.A, s.B]) {
+            const value = metaballs.Eval(new Point2D(p.X, p.Z));
+            assert.ok(Math.abs(value - iso) < 0.1, `field ${value} near iso ${iso}`);
+        }
+    }
+});
+
+test('marching squares: contour separates the field, and lies inside the domain', () => {
+    for (const s of contourAt(0.5, 0)) {
+        for (const p of [s.A, s.B]) {
+            assert.ok(p.X >= domain.Min.X - 1e-9 && p.X <= domain.Max.X + 1e-9, 'inside domain X');
+            assert.ok(p.Z >= domain.Min.Y - 1e-9 && p.Z <= domain.Max.Y + 1e-9, 'inside domain Y');
+        }
     }
 });

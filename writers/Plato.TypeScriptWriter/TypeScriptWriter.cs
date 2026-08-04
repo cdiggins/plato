@@ -263,6 +263,7 @@ declare global {
     interface Number {
         Range(): IArray<number>;
         MapRange<T>(f: (i: number) => T): IArray<T>;
+        MakeArray2D<T>(rows: number, f: (column: number, row: number) => T): IArray2D<T>;
         Equals(b: number): boolean;
         NotEquals(b: number): boolean;
     }
@@ -287,18 +288,50 @@ Intrinsics.Install(Number.prototype, 'Range', function(this: number): IArray<num
 Intrinsics.Install(Number.prototype, 'MapRange', function<T>(this: number, f: (i: number) => T): IArray<T> {
     return Intrinsics.Range(this.valueOf()).Map(f);
 });
+// Row-major, matching Collections.FlattenIndex: Elements[row * ColumnCount + column].
+Intrinsics.Install(Number.prototype, 'MakeArray2D', function<T>(this: number, rows: number, f: (column: number, row: number) => T): IArray2D<T> {
+    const columns = this.valueOf();
+    return new Arr2D<T>(columns, rows, new Arr<T>(columns * rows, i => f(i % columns, Math.floor(i / columns))));
+});
 
+// Array2D / Array3D declare Elements, ColumnCount, RowCount and LayerCount as
+// FIELDS in primitives.types.plato, so generated bodies read them property-style
+// (`grid.Elements`, not `grid.Elements()`). The representation below matches that:
+// shape and elements are properties; At, which takes arguments, is a method.
 export interface IArray2D<T> {
     At(column: number, row: number): T;
-    RowCount(): number;
-    ColumnCount(): number;
+    readonly Elements: IArray<T>;
+    readonly ColumnCount: number;
+    readonly RowCount: number;
+}
+
+/** The Array2D representation: a flat row-major element view plus its shape. */
+export class Arr2D<T> implements IArray2D<T> {
+    constructor(
+        readonly ColumnCount: number,
+        readonly RowCount: number,
+        readonly Elements: IArray<T>) {}
+    At(column: number, row: number): T { return this.Elements.At(row * this.ColumnCount + column); }
 }
 
 export interface IArray3D<T> {
     At(column: number, row: number, layer: number): T;
-    RowCount(): number;
-    ColumnCount(): number;
-    LayerCount(): number;
+    readonly Elements: IArray<T>;
+    readonly ColumnCount: number;
+    readonly RowCount: number;
+    readonly LayerCount: number;
+}
+
+/** The Array3D representation: a flat row-major element view plus its shape. */
+export class Arr3D<T> implements IArray3D<T> {
+    constructor(
+        readonly ColumnCount: number,
+        readonly RowCount: number,
+        readonly LayerCount: number,
+        readonly Elements: IArray<T>) {}
+    At(column: number, row: number, layer: number): T {
+        return this.Elements.At((layer * this.RowCount + row) * this.ColumnCount + column);
+    }
 }
 
 ").WriteLine();
@@ -338,24 +371,35 @@ export interface IArray3D<T> {
             interfaceWriter.IndentLevel = IndentLevel + 1;
             classWriter.IndentLevel = IndentLevel + 1;
             freeFunctionWriter.IndentLevel = IndentLevel;
-            foreach (var predefined in new[] { "At", "Count", "Map", "Reduce" })
+            foreach (var predefined in new[] { "At", "Count", "Map", "Reduce", "FlatMap" })
                 classWriter.ClaimedNames.Add(predefined);
 
-            foreach (var f in Compilation.Libraries.AllFunctions())
+            // The receiver types whose functions become Arr members: the array type
+            // under either spelling, plus every interface it implements.
+            var arrayReceiverNames = new HashSet<string> { "IArray", "Array" };
+            foreach (var ct in Compilation.ConcreteTypes.Where(c => arrayReceiverNames.Contains(c.TypeDef.Name)))
+                foreach (var i in ct.AllInterfaces)
+                    arrayReceiverNames.Add(i.Name);
+
+            // Functions reaching the array type: spelled `interface IArray` in the legacy
+            // stdlib and `primitive Array` in the forward one, plus the interfaces Array
+            // implements (IIndexable, ICountable, ...) — a body calls `points.First()` on
+            // a plain array, so those have to land on Arr too. Explicitly NOT IArrayLike /
+            // IArray2D / IArray3D, which are other shapes with their own representations.
+            //
+            // The array-typed overload claims each name FIRST. An interface-typed
+            // sibling usually reaches the array by re-materializing it
+            // (`Any(self: IIndexable) => Count.MapRange(At).Any(f)`), so letting that one
+            // win the member slot makes it call itself: same name, same receiver, forever.
+            var arrayFunctions = Compilation.Libraries.AllFunctions()
+                .Where(f => f.NumParameters > 0 && f.Body != null)
+                .Where(f => arrayReceiverNames.Contains(f.Parameters[0].Type.Def.Name))
+                .OrderByDescending(f => f.Parameters[0].Type.Def.Name == "Array"
+                                     || f.Parameters[0].Type.Def.Name == "IArray")
+                .ToList();
+
+            foreach (var f in arrayFunctions)
             {
-                if (f.NumParameters == 0)
-                    continue;
-
-                // Only functions on the array type itself (not IArrayLike, IArray2D, ...).
-                // The legacy stdlib spells it `interface IArray`; the forward stdlib
-                // spells it `primitive Array` — both funnel into the same Arr surface.
-                var pt = f.Parameters[0].Type;
-                if (pt.Def.Name != "IArray" && pt.Def.Name != "Array")
-                    continue;
-
-                // We are going to skip functions that do not have a body
-                if (f.Body == null)
-                    continue;
 
                 var fi = new FunctionInstance(f, null, null, FunctionInstanceKind.InterfaceExtension);
 
@@ -376,6 +420,7 @@ export interface IArray3D<T> {
             WriteLine("Count(): number;");
             WriteLine("Map<TR>(f: (x: T) => TR): IArray<TR>;");
             WriteLine("Reduce<TAcc>(init: TAcc, f: (acc: TAcc, x: T) => TAcc): TAcc;");
+            WriteLine("FlatMap<TR>(f: (x: T) => IArray<TR>): IArray<TR>;");
             WriteTrimmed(interfaceWriter.ToString());
             WriteEndBlock();
             WriteLine();
@@ -404,6 +449,17 @@ export interface IArray3D<T> {
             WriteLine("    let acc = init;");
             WriteLine("    for (let i = 0; i < this._count; i++) acc = f(acc, this.At(i));");
             WriteLine("    return acc;");
+            WriteLine("}");
+            // The fifth array intrinsic: the only length-varying producer, so unlike
+            // Map it cannot be a lazy view over a known count. Concatenating eagerly
+            // is what makes the result's own Count answerable.
+            WriteLine("FlatMap<TR>(f: (x: T) => IArray<TR>): IArray<TR> {");
+            WriteLine("    const out: TR[] = [];");
+            WriteLine("    for (let i = 0; i < this._count; i++) {");
+            WriteLine("        const row = f(this.At(i));");
+            WriteLine("        for (let j = 0; j < row.Count(); j++) out.push(row.At(j));");
+            WriteLine("    }");
+            WriteLine("    return new Arr<TR>(out.length, i => out[i]);");
             WriteLine("}");
             WriteTrimmed(classWriter.ToString());
             WriteEndBlock();

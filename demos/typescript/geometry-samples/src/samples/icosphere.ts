@@ -1,65 +1,52 @@
-// Icosphere by recursive subdivision.
+// Icosphere by recursive 4:1 subdivision.
 //
-// Start from a regular icosahedron and repeatedly split every triangle into
-// four, projecting new vertices onto the unit sphere. A midpoint cache keyed
-// on the edge guarantees that shared edges reuse the same vertex, keeping the
-// mesh watertight (V - E + F = 2).
+// The seed is the stdlib's regular icosahedron (one of the five Platonic solids
+// in `library Polyhedra`). Each level is `TriangleMesh3D.SplitEdges` with every
+// edge marked: each edge gains its midpoint and each triangle becomes four.
+// Projecting onto the unit sphere is what turns the refinement into a sphere
+// rather than a subdivided icosahedron.
+//
+// The edge-midpoint bookkeeping that keeps the mesh watertight is stdlib
+// topology, so V - E + F = 2 holds at every level (asserted in tests).
+//
+// `LoopSubdivided` would be the smoother alternative, but it currently returns
+// NaN for every original vertex — see plato-444.
 
-import type { MeshData, Sample } from '../core/types.js';
-import { Vector3D } from '../plato/plato.g.js';
-import { meshFromVertices } from '../core/meshBuilder.js';
+import type { Drawable, Sample } from '../core/types.js';
+import { PolygonMesh3D, Point3D, TriangleMesh3D, Vector3D } from '../plato/plato.g.js';
+import { fromArray, translateMesh } from '../core/meshBuilder.js';
 
-export function buildIcosphere(subdivisions: number): MeshData {
-    const t = (1 + (5).Sqrt()) / 2;
-    let vertices: Vector3D[] = [
-        new Vector3D(-1, t, 0), new Vector3D(1, t, 0), new Vector3D(-1, -t, 0), new Vector3D(1, -t, 0),
-        new Vector3D(0, -1, t), new Vector3D(0, 1, t), new Vector3D(0, -1, -t), new Vector3D(0, 1, -t),
-        new Vector3D(t, 0, -1), new Vector3D(t, 0, 1), new Vector3D(-t, 0, -1), new Vector3D(-t, 0, 1),
-    ].map(v => v.Normalize());
-    let faces: number[] = [
-        0, 11, 5, 0, 5, 1, 0, 1, 7, 0, 7, 10, 0, 10, 11,
-        1, 5, 9, 5, 11, 4, 11, 10, 2, 10, 7, 6, 7, 1, 8,
-        3, 9, 4, 3, 4, 2, 3, 2, 6, 3, 6, 8, 3, 8, 9,
-        4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7, 9, 8, 1,
-    ];
+/** Pushes every vertex out to the unit sphere. */
+const projectToSphere = (mesh: TriangleMesh3D): TriangleMesh3D =>
+    mesh.Deform(p => new Point3D(0, 0, 0).Add(p.PositionVector().Normalize()));
 
-    for (let level = 0; level < subdivisions; level++) {
-        const cache = new Map<string, number>();
-        const midpointIndex = (a: number, b: number): number => {
-            const key = a < b ? `${a}_${b}` : `${b}_${a}`;
-            let index = cache.get(key);
-            if (index === undefined) {
-                index = vertices.length;
-                vertices.push(vertices[a].MidPoint(vertices[b]).Normalize());
-                cache.set(key, index);
-            }
-            return index;
-        };
-        const next: number[] = [];
-        for (let i = 0; i < faces.length; i += 3) {
-            const [a, b, c] = [faces[i], faces[i + 1], faces[i + 2]];
-            const [ab, bc, ca] = [midpointIndex(a, b), midpointIndex(b, c), midpointIndex(c, a)];
-            next.push(a, ab, ca, b, bc, ab, c, ca, bc, ab, bc, ca);
-        }
-        faces = next;
-    }
+/** One 4:1 split: every edge of the mesh gains a midpoint. */
+function splitEveryEdge(mesh: TriangleMesh3D): TriangleMesh3D {
+    const topology = mesh.TopologyOf();
+    const everyEdge = fromArray(new Array<boolean>(topology.UndirectedEdges.Count()).fill(true));
+    return mesh.SplitEdges(topology, everyEdge);
+}
 
-    return meshFromVertices(vertices, faces);
+export function buildIcosphere(subdivisions: number): TriangleMesh3D {
+    let mesh = projectToSphere(PolygonMesh3D.Icosahedron().ToTriangleMesh());
+    for (let level = 0; level < subdivisions; level++)
+        mesh = projectToSphere(splitEveryEdge(mesh));
+    return mesh;
 }
 
 export const icosphereSample: Sample = {
     id: 'icosphere',
     title: 'Icosphere Subdivision',
-    description: 'Recursive triangle subdivision of an icosahedron with an edge-midpoint cache.',
-    build() {
+    description: 'Polyhedra.Icosahedron seeded, then TriangleMesh3D.SplitEdges 4:1, ' +
+        'reprojected to the sphere at each level.',
+    build(): Drawable[] {
         const levels = [0, 1, 2, 3];
-        return levels.map((level, i) => {
-            const mesh = buildIcosphere(level);
-            for (let j = 0; j < mesh.positions.length; j += 3)
-                mesh.positions[j] += (i - (levels.length - 1) / 2) * 2.3;
-            mesh.color = 0x4da3ff;
-            mesh.flatShading = true;
-            return mesh;
-        });
+        return levels.map((level, i): Drawable => ({
+            kind: 'mesh',
+            mesh: translateMesh(buildIcosphere(level),
+                new Vector3D((i - (levels.length - 1) / 2) * 2.3, 0, 0)),
+            color: 0x4da3ff,
+            flatShading: true,
+        }));
     },
 };
