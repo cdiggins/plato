@@ -6,8 +6,7 @@
 // mesh built this way maximizes the minimum angle over all triangulations.
 
 import type { Sample } from '../core/types.js';
-import { Vector2D } from '../plato/plato.g.js';
-import { makeRng, range } from '../core/random.js';
+import { Bounds2D, Point2D, Vector2D } from '../plato/plato.g.js';
 
 export interface Triangle2 { a: number; b: number; c: number; }
 
@@ -61,10 +60,12 @@ export const delaunaySample: Sample = {
     title: 'Delaunay Triangulation',
     description: 'Bowyer-Watson incremental insertion with the empty-circumcircle property.',
     build() {
-        const rng = makeRng(7);
+        // A low-discrepancy Halton point set from the stdlib sampling library.
+        const region = new Bounds2D(new Point2D(-1.6, -1.2), new Point2D(1.6, 1.2));
+        const halton = region.HaltonPoints2D(120, 2, 3);
         const points: Vector2D[] = [];
-        for (let i = 0; i < 120; i++)
-            points.push(new Vector2D(range(rng, -1.6, 1.6), range(rng, -1.2, 1.2)));
+        for (let i = 0; i < halton.Count(); i++)
+            points.push(halton.At(i).PositionVector());
         const triangles = delaunay(points);
 
         const positions: number[] = [];

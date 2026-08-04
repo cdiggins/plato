@@ -13,10 +13,10 @@ import { computeVertexNormals, pushVectors } from '../core/meshBuilder.js';
 /** Uniform Catmull-Rom: evaluates the segment p1..p2 at t in [0, 1]. */
 export function catmullRom(p0: Vector3D, p1: Vector3D, p2: Vector3D, p3: Vector3D, t: number): Vector3D {
     const t2 = t * t, t3 = t2 * t;
-    return p0.Scale(-0.5 * t3 + t2 - 0.5 * t)
-        .Add(p1.Scale(1.5 * t3 - 2.5 * t2 + 1))
-        .Add(p2.Scale(-1.5 * t3 + 2 * t2 + 0.5 * t))
-        .Add(p3.Scale(0.5 * t3 - 0.5 * t2));
+    return p0.Multiply(-0.5 * t3 + t2 - 0.5 * t)
+        .Add(p1.Multiply(1.5 * t3 - 2.5 * t2 + 1))
+        .Add(p2.Multiply(-1.5 * t3 + 2 * t2 + 0.5 * t))
+        .Add(p3.Multiply(0.5 * t3 - 0.5 * t2));
 }
 
 /** Samples an open Catmull-Rom curve through the control points. */
@@ -37,17 +37,17 @@ export function tubeMesh(curve: Vector3D[], radius: number, radialSegments: numb
         curve[(i + 1).Min(curve.length - 1)].Subtract(curve[(i - 1).Max(0)]).Normalize());
 
     // Initial normal: any direction perpendicular to the first tangent.
-    let normal = tangents[0].Perpendicular();
+    let normal = tangents[0].AnyPerpendicular();
 
     const positions: number[] = [];
     for (let i = 0; i < curve.length; i++) {
         // Parallel transport: remove the tangent component, keep the rest.
-        normal = normal.Subtract(tangents[i].Scale(normal.Dot(tangents[i]))).Normalize();
+        normal = normal.Subtract(tangents[i].Multiply(normal.Dot(tangents[i]))).Normalize();
         const binormal = tangents[i].Cross(normal);
         for (let j = 0; j < radialSegments; j++) {
             const a = (j / radialSegments).Turns();
             pushVectors(positions,
-                curve[i].Add(normal.Scale(a.Cos() * radius)).Add(binormal.Scale(a.Sin() * radius)));
+                curve[i].Add(normal.Multiply(a.Cos() * radius)).Add(binormal.Multiply(a.Sin() * radius)));
         }
     }
     const indices: number[] = [];

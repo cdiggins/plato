@@ -318,6 +318,18 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
             case "Character.Compare":
                 body = $"return this < {arg} ? -1 : this > {arg} ? 1 : 0;";
                 return true;
+            case "Number.Pi":
+                body = "return Math.PI;";
+                return true;
+            case "Number.MinValue":
+                body = "return -globalThis.Number.MAX_VALUE;";
+                return true;
+            case "Number.MaxValue":
+                body = "return globalThis.Number.MAX_VALUE;";
+                return true;
+            case "Number.Epsilon":
+                body = "return globalThis.Number.MIN_VALUE;";
+                return true;
             case "Number.Sqrt":
                 body = "return Math.sqrt(this);";
                 return true;

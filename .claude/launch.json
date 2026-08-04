@@ -4,23 +4,44 @@
     {
       "name": "sdf-demo",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "cwd": "demos/typescript/sdf",
       "port": 5174
     },
     {
       "name": "webgl-demos",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "cwd": "demos/webgl",
       "port": 5175
     },
     {
       "name": "webgl-demos-alt",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "--port", "5185", "--strictPort"],
+      "runtimeArgs": [
+        "vite",
+        "--port",
+        "5185",
+        "--strictPort"
+      ],
       "cwd": "demos/webgl",
       "port": 5185
+    },
+    {
+      "name": "geometry-samples",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "cwd": "demos/typescript/geometry-samples",
+      "port": 5173
     }
   ]
 }

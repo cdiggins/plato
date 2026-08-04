@@ -346,16 +346,15 @@ export interface IArray3D<T> {
                 if (f.NumParameters == 0)
                     continue;
 
+                // Only functions on the array type itself (not IArrayLike, IArray2D, ...).
+                // The legacy stdlib spells it `interface IArray`; the forward stdlib
+                // spells it `primitive Array` — both funnel into the same Arr surface.
                 var pt = f.Parameters[0].Type;
-                if (!pt.Def.IsInterface())
+                if (pt.Def.Name != "IArray" && pt.Def.Name != "Array")
                     continue;
 
                 // We are going to skip functions that do not have a body
                 if (f.Body == null)
-                    continue;
-
-                // Only functions on IArray itself (not IArrayLike, IArray2D, ...)
-                if (pt.Def.Name != "IArray" && pt.Def.Name != "Array")
                     continue;
 
                 var fi = new FunctionInstance(f, null, null, FunctionInstanceKind.InterfaceExtension);

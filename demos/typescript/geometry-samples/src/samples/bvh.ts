@@ -24,7 +24,7 @@ export function triangleCentroid(mesh: MeshData, t: number): Vector3D {
     const a = vertexAt(mesh.positions, mesh.indices[t * 3]);
     const b = vertexAt(mesh.positions, mesh.indices[t * 3 + 1]);
     const c = vertexAt(mesh.positions, mesh.indices[t * 3 + 2]);
-    return a.Add(b).Add(c).Scale(1 / 3);
+    return a.Add(b).Add(c).Multiply(1 / 3);
 }
 
 function triangleBounds(mesh: MeshData, t: number): { min: Vector3D; max: Vector3D } {

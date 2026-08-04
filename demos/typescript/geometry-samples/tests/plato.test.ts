@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { Vector2D, Vector3D, Constants } from '../src/plato/plato.g.js';
+import { Vector2D, Vector3D, Point2D } from '../src/plato/plato.g.js';
 
 const approx = (a: number, b: number, eps = 1e-12) =>
     assert.ok(Math.abs(a - b) < eps, `${a} ~ ${b}`);
@@ -34,7 +34,7 @@ test('angles: Turns/Degrees constructors and trig', () => {
     approx((0.25).Turns().Sin(), 1);
     approx((180).Degrees().Cos(), -1);
     approx((1).Turns().Sin(), 0, 1e-9);
-    approx(Constants.Pi, Math.PI, 1e-9);
+    approx(Number.Pi(), Math.PI, 1e-9);
 });
 
 test('vector algebra identities', () => {
@@ -46,17 +46,17 @@ test('vector algebra identities', () => {
     approx(a.Cross(b).Dot(a), 0, 1e-12); // cross product is orthogonal
     approx(a.Cross(b).Dot(b), 0, 1e-12);
     approx(a.Normalize().Length(), 1);
-    approx(a.Scale(2).Length(), a.Length() * 2);
+    approx(a.Multiply(2).Length(), a.Length() * 2);
     approx(a.Distance(b), b.Subtract(a).Length());
     assert.ok(a.Lerp(b, 0).Equals(a) && a.Lerp(b, 1).Equals(b), 'lerp endpoints');
     assert.ok(a.MidPoint(b).Equals(a.Lerp(b, 0.5)), 'midpoint = lerp 0.5');
-    approx(a.Perpendicular().Dot(a), 0, 1e-12);
-    approx(a.Perpendicular().Length(), 1);
+    approx(a.AnyPerpendicular().Dot(a), 0, 1e-12);
+    approx(a.AnyPerpendicular().Length(), 1);
 
     const v = new Vector2D(3, 4);
     approx(v.Length(), 5);
     approx(v.Cross(new Vector2D(-4, 3)), 25); // perpendicular: full magnitude
-    approx((0.25).Turns().UnitCircle().Distance(new Vector2D(0, 1)), 0, 1e-9);
+    approx((0.25).Turns().PointOnUnitCircle().Distance(new Point2D(0, 1)), 0, 1e-9);
 });
 
 test('reflection preserves length and reverses the normal component', () => {

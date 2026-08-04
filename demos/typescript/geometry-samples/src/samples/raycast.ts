@@ -46,7 +46,7 @@ export function raycastMesh(mesh: MeshData, origin: Vector3D, dir: Vector3D): Ra
         const c = vertexAt(mesh.positions, mesh.indices[tri * 3 + 2]);
         const t = intersectTriangle(origin, dir, a, b, c);
         if (t !== null && (!best || t < best.t))
-            best = { t, point: origin.Add(dir.Scale(t)), triangle: tri };
+            best = { t, point: origin.Add(dir.Multiply(t)), triangle: tri };
     }
     return best;
 }
@@ -72,7 +72,7 @@ export const raycastSample: Sample = {
                     pushVectors(rays, origin, hit.point);
                     pushVectors(hits, hit.point);
                 } else {
-                    pushVectors(misses, origin, origin.Add(dir.Scale(4.4)));
+                    pushVectors(misses, origin, origin.Add(dir.Multiply(4.4)));
                 }
             }
         }

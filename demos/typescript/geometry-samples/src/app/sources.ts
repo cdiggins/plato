@@ -2,12 +2,12 @@
 // contents as a string; this is browser-only, which is why it lives in app/
 // and not in the sample registry.
 
-import platoSource from '../../../../stdlib-legacy/geometry.plato?raw';
+import platoSource from '../../../../../stdlib/foundation/vectors.types.plato?raw';
 import platoGenerated from '../plato/plato.g.ts?raw';
 
 /** Extra code-panel tabs shown for every sample. */
 export const sharedTabs: { label: string; source: string }[] = [
-    { label: 'geometry.plato', source: platoSource },
+    { label: 'vectors.types.plato', source: platoSource },
     { label: 'plato.g.ts', source: platoGenerated },
 ];
 

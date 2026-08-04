@@ -72,7 +72,7 @@ export function laplacianSmooth(positions: number[], mesh: HalfEdgeMesh, lambda:
             let avg = new Vector3D(0, 0, 0);
             for (const n of ring)
                 avg = avg.Add(vertexAt(current, n));
-            avg = avg.Scale(1 / ring.length);
+            avg = avg.Multiply(1 / ring.length);
             const moved = vertexAt(current, v).Lerp(avg, lambda);
             next[v * 3] = moved.X;
             next[v * 3 + 1] = moved.Y;
@@ -89,7 +89,7 @@ export function noisySphere(): MeshData {
     for (let i = 0; i < mesh.positions.length; i += 3) {
         const dir = vertexAt(mesh.positions, i / 3).Normalize();
         const bump = 1 + 0.28 * (valueNoise(dir.X * 5 + 5, dir.Y * 5 + dir.Z * 4 + 5) - 0.5) * 2;
-        const p = dir.Scale(bump);
+        const p = dir.Multiply(bump);
         mesh.positions[i] = p.X;
         mesh.positions[i + 1] = p.Y;
         mesh.positions[i + 2] = p.Z;

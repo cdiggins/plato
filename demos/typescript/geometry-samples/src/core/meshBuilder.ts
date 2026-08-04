@@ -32,7 +32,7 @@ export function computeVertexNormals(positions: number[], indices: number[]): nu
     for (let i = 0; i < normals.length; i += 3) {
         const n = new Vector3D(normals[i], normals[i + 1], normals[i + 2]);
         const len = n.Length();
-        const unit = len > 1e-12 ? n.Scale(1 / len) : n;
+        const unit = len > 1e-12 ? n.Multiply(1 / len) : n;
         normals[i] = unit.X;
         normals[i + 1] = unit.Y;
         normals[i + 2] = unit.Z;

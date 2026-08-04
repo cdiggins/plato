@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "build:node": "tsc -p tsconfig.node.json",
-    "gen:plato": "dotnet run --project ../../../src/Plato.CLI -- ../../plato-src ./src/plato --typescript",
+    "gen:plato": "dotnet run --project ../../../src/Plato.CLI -c Release -- ../../../stdlib/foundation ../../../stdlib/geometry ../../../stdlib/graphics --out=./src/plato --typescript && node ./scripts/stamp-nocheck.mjs",
     "test": "npm run build:node && node --test \"dist-node/tests/*.test.js\"",
     "typecheck": "tsc -p tsconfig.json"
   },

@@ -1,28 +1,19 @@
 // Heightfield terrain from fractal value noise.
 //
-// Value noise: hash the integer lattice, then interpolate with a smoothstep.
-// Fractal Brownian motion (fBm) sums several octaves at doubling frequency
-// and halving amplitude. The result displaces a grid mesh vertically.
+// The noise itself is the stdlib's ValueNoise2D: random values on the integer
+// lattice, smoothly faded between lattice points. Fractal Brownian motion
+// (fBm) sums several octaves at doubling frequency and halving amplitude.
+// The result displaces a grid mesh vertically.
 
 import type { Sample } from '../core/types.js';
-import { Vector3D } from '../plato/plato.g.js';
+import { Point2D, ValueNoise2D, Vector3D } from '../plato/plato.g.js';
 import { gridMesh } from '../core/meshBuilder.js';
 
-/** Deterministic pseudo-random value in [0, 1) for an integer lattice point. */
-function latticeHash(ix: number, iz: number): number {
-    const h = Math.sin(ix * 127.1 + iz * 311.7) * 43758.5453;
-    return h - h.Floor();
-}
+const noise = ValueNoise2D.Create(1234, 1);
 
-const smoothstep = (t: number): number => t * t * (3 - 2 * t);
-
-export function valueNoise(x: number, z: number): number {
-    const ix = x.Floor(), iz = z.Floor();
-    const fx = smoothstep(x - ix), fz = smoothstep(z - iz);
-    const v00 = latticeHash(ix, iz), v10 = latticeHash(ix + 1, iz);
-    const v01 = latticeHash(ix, iz + 1), v11 = latticeHash(ix + 1, iz + 1);
-    return v00.Lerp(v10, fx).Lerp(v01.Lerp(v11, fx), fz); // bilinear, in [0, 1)
-}
+/** Stdlib value noise at (x, z), in [-1, 1]. */
+export const valueNoise = (x: number, z: number): number =>
+    noise.Eval(new Point2D(x, z));
 
 export function fbm(x: number, z: number, octaves = 4): number {
     let sum = 0, amplitude = 0.5, frequency = 1, total = 0;
@@ -32,7 +23,7 @@ export function fbm(x: number, z: number, octaves = 4): number {
         amplitude *= 0.5;
         frequency *= 2;
     }
-    return sum / total; // normalized back to [0, 1)
+    return sum / total; // normalized back to [-1, 1]
 }
 
 export const terrainSample: Sample = {
@@ -44,7 +35,7 @@ export const terrainSample: Sample = {
         const mesh = gridMesh(120, 120, (u, v) =>
             new Vector3D(
                 (u - 0.5) * size,
-                fbm(u * 5, v * 5) * height - height * 0.5,
+                fbm(u * 5, v * 5) * height * 0.5,
                 (v - 0.5) * size));
         mesh.color = 0x6fbf73;
         mesh.flatShading = true;
