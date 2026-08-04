@@ -38,6 +38,8 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-431](issues/plato-431.md) | ToInteger truncates where CONVENTIONS.md says it rounds, and it changes derived counts | bug | p2 | S | med | plato | ready |  |
 | [plato-432](issues/plato-432.md) | Marching cubes evaluates the field eight times per cell: every cell re-reads its own corners | debt | p2 | M | low | plato | ready |  |
 | [plato-437](issues/plato-437.md) | Cloth: mass-spring substeps are quadratic, and CollideWith keeps only one of three overloads | bug | p2 | S | low | plato | ready |  |
+| [plato-440](issues/plato-440.md) | Sum-typed parameters have no TypeScript surface: LaplacianSmoothed, TaubinSmoothed and the Decimated family are uncallable | bug | p2 | M | low | plato | ready |  |
+| [plato-441](issues/plato-441.md) | TypeScript writer silently drops same-name overloads: Ray3D.Intersect(Triangle3D) never reaches the output | bug | p2 | M | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-427](issues/plato-427.md) | Finite elements: nodal stress smoothing, hexahedral and higher-order elements | feature | p3 | M | low | plato | ready |  |
