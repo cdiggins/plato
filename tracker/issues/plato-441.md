@@ -3,7 +3,7 @@ id: plato-441
 title: "TypeScript writer silently drops same-name overloads: Ray3D.Intersect(Triangle3D) never reaches the output"
 type: bug
 status: ready
-priority: p2
+priority: p1
 effort: M
 risk: low
 area: plato
@@ -33,6 +33,23 @@ added to `lines.library.plato` beside the existing `Intersect(r: Ray3D, pl: Plan
 and never appeared in the output. It was renamed to `Raycast(tri: Triangle3D, ...)` —
 receiver moved so the name is unique — to get a TypeScript surface at all. That is a
 library shape chosen to dodge a writer limitation, which is backwards.
+
+## Why this is p1: the failure is silent and WRONG, not absent
+
+Raised from p2 once the 2D/3D pairs were found. Where the surviving overload has a
+compatible argument list, the call succeeds and returns the wrong type:
+
+- `Triangle3D.Bounds()` returns a **Bounds2D**. `BoundsOfPoints` has `Array<Point2D>`
+  and `Array<Point3D>` overloads; the 2D one is emitted, and the 3D one is a comment.
+  A BVH built on it partitions in the XY plane and silently loses Z.
+- `TriangleMesh3D.UniformLaplacianField(topology)` returns **Vector2D** values for the
+  same reason, so `position + laplacian` yields `Z = NaN` — which is how this was
+  noticed at all.
+- plato-444 (`LoopSubdivided` returning NaN) is probably a third instance.
+
+Both were worked around in `demos/typescript/geometry-samples` by not calling them;
+each workaround carries a comment pointing here. Nothing warns a consumer, and the
+`@ts-nocheck` on the generated file means the type checker will not either.
 
 ## Approach
 
