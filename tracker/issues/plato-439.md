@@ -49,7 +49,7 @@ type exists with no way to build it.
 | No way to draw a 2D scalar field as a surface. | **Filled** — `GraphPoint`, `GraphPositions`, `ToQuadMesh`, `ToTriangleMesh` over `IScalarField2D`, same file |
 | No ray/triangle intersection; only ray/plane. | **Filled** — `MollerTrumbore` + `Raycast(Triangle3D, Ray3D)` in `lines.library.plato` |
 | 2D iso-contour extraction. `MarchingCubes*` shipped for 3D; the 2D sibling was absent. | **Filled** — marching squares in `fields-implicits.library.plato`, numbered to match the cubes |
-| `ConvexHull2D` / `Octree3D` / `Bvh3D` / `KdTree3D` ship with query bodies and no builders; Delaunay absent. | **Not filled** — needs an ordering primitive and a growable tree. plato-442 |
+| `ConvexHull2D` / `Octree3D` / `Bvh3D` / `KdTree3D` ship with query bodies and no builders; Delaunay absent. | **Not filled** — needs an ordering primitive and a growable tree. plato-442 — *mostly filled the same day, see the update below* |
 
 ## Writer defects this surfaced
 
@@ -66,3 +66,27 @@ Filed rather than fixed: plato-440 (sum-typed parameters), plato-441 (overload
 collapse, raised to p1 — it returns wrong types silently), plato-443 (interface-typed
 fields bind Self to the owner), plato-444 (`LoopSubdivided` NaN), plato-446
 (quadratic `CornerTwinTable`), plato-447 (quadratic `VertexNormalVectors`).
+
+## Update 2026-08-04 (plato-442 closed; the builder gap mostly filled)
+
+The last row of the gap table is now out of date. plato-442 closed the same day
+and its stated blockers did not hold: ordering landed as an ordinary library
+body (`SortedIndices` / `Sort`, `stdlib/foundation/sorting.library.plato`)
+rather than an intrinsic, and the "growable tree" prerequisite was false —
+`var` / `while` / `List` / `Buffer` accumulate-and-patch loops were already in
+the language, as `triangulation.library.plato` demonstrates.
+
+Filled since: `ConvexHull` (monotone chain,
+`stdlib/geometry/geometry.library.plato`), `BuildBvh` (median split),
+`BuildOctree` and `BuildLooseOctree`
+(`stdlib/geometry/spatial-structures.library.plato`). The geometry-samples
+convex-hull sample no longer carries its own hull implementation — it calls the
+stdlib builder — and the TypeScript backend grew the `List`/`Buffer` prelude to
+run these bodies. Any reading of this issue that describes the demo as holding
+ported-out hull, BVH or octree construction is stale.
+
+Still not filled, deferred per
+`tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md`:
+kd-tree builders, the 2D BVH and quadtree twins, quickhull for `ConvexHull3D`,
+and Delaunay. Nothing else in this issue changes; the writer defects and the
+other filled gaps are unaffected.

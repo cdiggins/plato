@@ -70,6 +70,16 @@ constructor and everything else is a reindexing of it. `Reduce` and `FlatMap`
 stay because a Plato body is a pure expression with no loop and no recursion
 contract — GLSL forbids recursion outright.
 
+> **Correction 2026-08-04.** The "no loop" half of that sentence is wrong and
+> always was. A block body may use `var`, `if` and `while`, and the affine
+> `List<T>` / `Buffer<T>` builders give it scratch storage — `stdlib/LIBRARIES.md`
+> ground rule 2 and `docs/SEMANTICS.md` §3 both say so, and the ear-clipping
+> triangulator has been an accumulate-and-patch loop since it landed. The half
+> that is true, and that carries the argument here on its own, is the recursion
+> contract: bodies have none, GLSL forbids recursion, so a folding kernel and an
+> explicit work stack are the two available shapes and `Reduce`/`FlatMap` earn
+> their place as the first. Nothing else in this issue depends on the wrong half.
+
 ### Array2D / Array3D got an honest layout
 
 They were opaque and field-less, which is why their construction and traversal

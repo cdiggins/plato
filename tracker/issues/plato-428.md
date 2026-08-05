@@ -78,3 +78,27 @@ Two smaller gaps worth folding in:
 - [ ] Hinge, slider and fixed joints, with limits and motors
 - [ ] A broad phase over `Bounds3D`
 - [ ] All four tiers parse and type-check
+
+## Update 2026-08-04 (two premises corrected; scope unchanged)
+
+**Item 1, the iteration question.** "A pure functional expression of 'refine
+until converged' needs a bounded fold with an explicit iteration cap" overstates
+the constraint. A block body may use `var`, `if` and `while`
+(`stdlib/LIBRARIES.md` ground rule 2, `docs/SEMANTICS.md` §3), so GJK's simplex
+refinement and EPA's expansion can be written as a `while` on the tolerance with
+a cap, not only as a fold. What genuinely holds is the no-recursion contract
+(GLSL forbids it) and the iteration cap itself, which is required for a bounded
+body regardless of which form is chosen. The design question this issue names —
+the shape of the simplex record, and what the cap is — is unchanged; only the
+claim that the loop form was unavailable is wrong.
+
+**Item 3, the broad phase.** `spatial.concepts.plato` still declares the
+interfaces, and plato-442 has since added a builder:
+`BuildBvh(Array<Bounds3D>, Integer): Bvh3D`
+(`stdlib/geometry/spatial-structures.library.plato`). A BVH broad phase can now
+be written entirely against shipping stdlib rather than waiting on a
+construction story. Sweep-and-prune remains the simpler alternative and this
+issue does not choose between them.
+
+Nothing here changes the scope, the `Done means` list, or the reason the three
+pieces were split out of plato-425.

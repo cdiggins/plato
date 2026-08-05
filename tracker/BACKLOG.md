@@ -43,7 +43,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-432](issues/plato-432.md) | Marching cubes evaluates the field eight times per cell: every cell re-reads its own corners | debt | p2 | M | low | plato | ready |  |
 | [plato-437](issues/plato-437.md) | Cloth: mass-spring substeps are quadratic, and CollideWith keeps only one of three overloads | bug | p2 | S | low | plato | ready |  |
 | [plato-440](issues/plato-440.md) | Sum-typed parameters have no TypeScript surface: LaplacianSmoothed, TaubinSmoothed and the Decimated family are uncallable | bug | p2 | M | low | plato | ready |  |
-| [plato-442](issues/plato-442.md) | Builders for the spatial structures, hulls and Delaunay: the types and queries ship, nothing constructs them | problem | p2 | L | med | plato | ready |  |
 | [plato-446](issues/plato-446.md) | CornerTwinTable is quadratic in corner count: TopologyOf costs ~1s for a 1280-face mesh | debt | p2 | M | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |

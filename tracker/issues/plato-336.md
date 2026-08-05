@@ -141,3 +141,47 @@ told which to implement — that guidance is part of the work, not an optional e
 - Related existing items: plato-334 (shared result interfaces) is the natural home for
   the result-type half; plato-079 (sentinels/Option) governs how "no source vertex"
   should be spelled.
+
+## Update 2026-08-04 (hull landed; the provenance complaint survives)
+
+Two premises in this issue are now false, and one of the two is exactly the
+outcome the Prevention section warned against.
+
+- "No `ConvexHull`, `Delaunay`, or hull-shaped type anywhere in `stdlib/`" was
+  already out of date before this update: `ConvexHull2D` and `ConvexHull3D` are
+  declared types (`stdlib/geometry/geometry.types.plato:98,111`) with query
+  bodies in `stdlib/geometry/geometry.library.plato`.
+- "no convex-hull *operation* exists" is now false too. plato-442 landed
+  `ConvexHull(Array<Point2D>): ConvexHull2D` — a monotone-chain builder —
+  at `stdlib/geometry/geometry.library.plato:242`.
+
+The file references above also predate the 2026-07-30 stdlib reorganisation:
+`meshes.concepts.plato` and `meshes-indexed.library.plato` now live under
+`stdlib/geometry/`, and there is no `stdlib/meshes.plato`.
+
+The hull half of this issue is therefore answered, and answered the way the
+Prevention section asked for: `ConvexHull2D` and `ConvexHull3D` each carry
+`SourceIndices: Array<ItemIndex>`, documented as index-aligned with the hull's
+own points, with `SourceOf` and `SourcePoints` reading it. The correspondence is
+a field of the result type rather than an attribute-name convention — option 3
+was not taken — so the `Done means` item "convex hull, if landed, uses the same
+correspondence vocabulary from the start" is satisfied for the hull.
+
+What survives is the triangulation half, unchanged: `Meshable3D.ToTriangleMesh`
+and `Meshable2D.Triangulate` (`stdlib/geometry/meshes.concepts.plato:30,48`)
+still return a bare mesh with no declared mapping, and no guidance exists on
+which interface a new implementer should target. The hull now supplies the
+precedent that half was missing — a `SourceIndices` array index-aligned with the
+output, named in the type — so option 1 has a shape to copy rather than to
+invent.
+
+One nuance the issue could not have known: the landed ear-clipping bodies
+(`stdlib/geometry/triangulation.library.plato:581-671`) happen to reuse the
+input point array verbatim as the output vertex array, so for those specific
+implementations the correspondence is the identity. That makes the loss
+unobservable today for the same reason the original issue gave, not fixed; the
+interface still permits an implementation that renumbers, and says nothing when
+one does.
+
+`Delaunay` genuinely does not exist anywhere in the tree (verified 2026-08-04 by
+symbol search, zero hits), and remains deferred per the decision above.

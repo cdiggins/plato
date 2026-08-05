@@ -55,3 +55,23 @@ quadratic is in the Plato body, but the constant factor is the backend's.
 - [ ] A timing recorded here for the same level-3 icosphere, before and after.
 - [ ] The "build it once and pass it down" advice in `remeshing.library.plato` kept,
       since it stays good practice, but no longer load-bearing.
+
+## Update 2026-08-04 (plato-442 closed — the sort exists)
+
+The Approach section above is stale where it says "Without a sort or a hash
+primitive (plato-442 covers the missing ordering vocabulary)". plato-442 closed
+the same day and ordering landed as a library reference body:
+`SortedIndices(xs, lessOrEqual): Array<Integer>` and `Sort(xs, lessOrEqual)` in
+`stdlib/foundation/sorting.library.plato` (bottom-up merge over an index
+`Buffer`, stable, recursion-free).
+
+So the grouping no longer waits on a decision. `SortedIndices` over the directed
+edges keyed by their unordered vertex pair gives the grouping directly in
+O(n log n), and the permutation form is the one that maps back to corner
+indices. The bucket-over-vertex-index alternative sketched above is still a valid
+choice and may be the cheaper one, but it is now a choice between two available
+routes rather than a workaround for a missing primitive.
+
+Unchanged: the measurement, the quadratic itself, and every `Done means` item.
+There is still no hash primitive, so if a design wants hashing rather than
+ordering, that gap is real.

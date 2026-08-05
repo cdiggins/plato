@@ -83,6 +83,20 @@ argument), and Plato has no loop form — so nothing can drive a per-constraint
 sweep over one. This is the real reason the fold is the answer, not a
 preference.
 
+> **Correction 2026-08-04.** "Plato has no loop form" is false and was false when
+> this was written. A block body may use `var`, `if` and `while`, and
+> `List<T>` / `Buffer<T>` support `Add` / `Set` / `Freeze` — `stdlib/LIBRARIES.md`
+> ground rule 2 and `docs/SEMANTICS.md` §3, with the ear clipper in
+> `stdlib/geometry/triangulation.library.plato` as the worked example. A `while`
+> over the constraint array CAN drive a `Buffer<ClothVertex>` sweep, so the
+> in-place O(constraints) version is expressible and the O(vertices x
+> constraints) cost recorded above is a real cost, not an unavoidable one. The
+> lambda-capture half of the objection stands: the sweep has to be a statement
+> loop in the body, not a builder threaded through a `Reduce`. This does not
+> change what shipped — the fold is correct and its arithmetic is identical —
+> but it does mean the performance follow-up has a route that this issue
+> recorded as closed.
+
 *Rejected: a Jacobi sweep.* Evaluating every constraint against the same input
 and averaging the per-vertex corrections needs only one rebuild per sweep, but
 doing that in O(constraints) rather than O(vertices x constraints) needs a

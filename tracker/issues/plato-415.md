@@ -135,7 +135,7 @@ polygon. Every downstream consumer that needs triangles today has to leave the t
    gate (`tools/regen-triangulation.ps1`). Items 9 and 13 are unblocked.
 2. ~~Predicates and repair (item 5).~~ Landed. Every later item can now state
    "precondition: simple" and have callers able to honour it.
-3. Convex hull + `IsConvex` (item 4). The type exists; a monotone-chain hull is a fold.
+3. ~~Convex hull + `IsConvex` (item 4).~~ Partly landed — see the update below.
 
 **Long term** — a complete constructive polygon kernel: Booleans, offsetting and Delaunay,
 which together make the polygon vocabulary a working modelling surface rather than a
@@ -193,3 +193,33 @@ only when someone is about to work on it, taking the catalogue entry as the star
   rot; items that never get picked up never get examined; and the design decisions above
   stay unresolved, so two people could start adjacent items with incompatible answers to
   the index-vs-value and robustness questions.
+
+## Update 2026-08-04 (plato-442: the point-set hull landed)
+
+Catalogue item 4 and short-term item 3 are partly overtaken. plato-442 landed a
+monotone-chain `ConvexHull(Array<Point2D>): ConvexHull2D`
+(`stdlib/geometry/geometry.library.plato:242`), so the sentence in the opening
+paragraph — "`ConvexHull2D` exists as a type with no operation producing one" —
+is no longer true of point sets. `IsConvex` also exists, but as
+`IsConvex(IConvexShape): Boolean` (`geometry.library.plato:74`), which is the
+tautological trait test over shapes already known convex, not the predicate item
+4 asked for.
+
+What item 4 still wants, unchanged:
+
+- `HullOf(Polygon2D): ConvexPolygon2D` — the wrapper from a polygon to a
+  polygon, on top of the point-set builder that now exists.
+- `IsConvex(Polygon2D)` — the real test on an arbitrary ring.
+- Hertel–Mehlhorn convex partition.
+
+The note about the hull being "a fold" was also wrong in spirit: the landed body
+is a work-stack loop over `SortedIndices`, not a fold, which matches the
+assumption already recorded above that `while` and the affine builders are in
+the checked language. Item 13's Delaunay half is untouched and still absent —
+Bowyer–Watson needs a multiset/edge-cancellation vocabulary nothing in the tree
+provides.
+
+One assumption is now stronger rather than weaker: ordering exists.
+`SortedIndices` / `Sort` (`stdlib/foundation/sorting.library.plato`) are
+available to any sweep-line, rotating-calipers or Delaunay work in items 2, 3, 8
+and 13, which previously would have had to supply their own.
