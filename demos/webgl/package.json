@@ -12,7 +12,7 @@
     "probe": "tsx scripts/probe.mts",
     "smoke": "tsx scripts/smoke.mts",
     "scenes": "tsx scripts/scenes.mts",
-    "gen:plato": "dotnet run --project ../../src/Plato.CLI -c Release -- ../../stdlib/foundation ../../stdlib/geometry ../../stdlib/graphics ../../stdlib/future --out=./src/plato --typescript && node ./scripts/stamp-nocheck.mjs"
+    "gen:plato": "dotnet run --project ../../src/Plato.CLI -c Release -- ../../stdlib/foundation ../../stdlib/geometry ../../stdlib/graphics ../../stdlib/future ./plato-src --out=./src/plato --typescript && node ./scripts/stamp-nocheck.mjs"
   },
   "dependencies": {
     "three": "^0.170.0"

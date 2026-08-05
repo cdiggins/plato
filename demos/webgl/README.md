@@ -40,7 +40,7 @@ npm run build
 ```
 index.html            Landing page linking every demo
 polyhedra.html        One page per demo, one entry each
-polygons.html         (csg, deformers, curves, surfaces, noise, colors,
+polygons.html         (conway, csg, deformers, curves, surfaces, noise, colors,
                        transforms, marching, voxels, lattices, sampling,
                        remeshing, fea, rigidbody, cloth)
 src/
@@ -142,8 +142,11 @@ npm run gen:plato
 ```
 
 Runs `Plato.CLI --typescript` over `stdlib/foundation`, `stdlib/geometry`,
-`stdlib/graphics` and `stdlib/future`, then stamps `@ts-nocheck` on the output.
-Re-run `npm run smoke` and `npm run scenes` afterwards.
+`stdlib/graphics`, `stdlib/future` and this app's own `plato-src/` (the
+demo-side vocabulary — currently `polyhedron-studio.plato`, the operator
+dispatch, face-aspect colouring, explode and spherize the `conway` page runs
+on), then stamps `@ts-nocheck` on the output. Re-run `npm run smoke` and
+`npm run scenes` afterwards.
 
 `future` is in the recipe because the simulation and analysis pages have nowhere
 else to get a library from. It is the tier the repo does not lint and does not

@@ -1,0 +1,161 @@
+//==
+// # Polyhedron studio — the demo's own geometry, in Plato
+//
+// The demo-side vocabulary of the WebGL polyhedron studio: everything the page
+// computes that is not already stdlib vocabulary lives here, so the TypeScript
+// on the page builds inputs and repacks outputs and nothing else.
+//
+// Sections, in order:
+//  - The operator catalog as an indexed dispatch
+//  - Face aspects: scalar readings per face
+//  - Face colouring: aspect scalars through a colour ramp
+//  - Presentation meshes: explode and spherize
+//
+// Compiled together with the stdlib tiers (see the app's `gen:plato` recipe),
+// so every stdlib member is in scope by name.
+
+library PolyhedronStudio
+{
+    //==
+    // # The operator catalog as an indexed dispatch
+    //
+    // One entry per Conway operator the stdlib defines, dispatchable by index so
+    // a UI list can drive it without a sum type (sum-typed parameters have no
+    // TypeScript surface yet — plato-440). Order is the UI's order, gentlest
+    // first; index 0 is the identity so "no operator" needs no special case.
+    //
+    //   0 none        7 zip (dk)
+    //   1 dual        8 ortho (jj)
+    //   2 ambo        9 meta (kj)
+    //   3 truncate   10 gyro (ds, chiral)
+    //   4 kis        11 expand
+    //   5 join       12 snub (chiral)
+    //   6 needle     13 chamfer
+    //                14 propeller (chiral)
+    //                15 bevel (ta)
+    //                16 reflect
+    //
+    // `amount` feeds whichever free parameter the operator has — the apex height
+    // of kis / join / needle, the face shrink of expand / snub / chamfer — and is
+    // ignored by the parameter-free operators. `twist` feeds snub alone.
+
+    // The number of operators in the catalog, for a UI that sizes its list.
+    ConwayOperatorCount(_: PolygonMesh3D): Integer
+        => 17;
+
+    // The catalog dispatch. An index outside the table is the identity, so a
+    // stale UI value cannot throw.
+    ApplyConwayOperator(self: PolygonMesh3D, op: Integer, amount: Number, twist: Angle): PolygonMesh3D
+        => op == 1 ? self.Dual
+         : op == 2 ? self.Ambo
+         : op == 3 ? self.Truncate
+         : op == 4 ? self.Kis(amount)
+         : op == 5 ? self.Join(amount)
+         : op == 6 ? self.Needle(amount)
+         : op == 7 ? self.Zip
+         : op == 8 ? self.Ortho
+         : op == 9 ? self.Meta
+         : op == 10 ? self.Gyro
+         : op == 11 ? self.Expand(amount)
+         : op == 12 ? self.Snub(amount, twist)
+         : op == 13 ? self.Chamfer(amount)
+         : op == 14 ? self.Propeller
+         : op == 15 ? self.Bevel
+         : op == 16 ? self.Reflect
+         : self;
+
+    //==
+    // # Face aspects: scalar readings per face
+    //
+    // One scalar per face, dispatchable by index like the operators:
+    //
+    //   0 arity       — how many sides the face has
+    //   1 area        — the Newell area of the face
+    //   2 radius      — how far the face's centroid sits from the origin
+    //   3 planarity   — the face's worst out-of-plane deviation
+    //
+    // Arity is what makes an Archimedean's face families pop apart; radius
+    // separates the face rings of a Catalan; planarity lights up exactly the
+    // faces that ProjectedToUnitSphere bent.
+
+    // The aspect scalar of one face. An index outside the table reads as arity.
+    FaceAspect(self: PolygonMesh3D, face: Integer, aspect: Integer): Number
+        => aspect == 1 ? self.FaceArea(face)
+         : aspect == 2 ? self.FaceCentroid(face).PositionVector.Magnitude
+         : aspect == 3 ? self.FacePlanarityDeviation(face)
+         : self.FaceArity(face).ToNumber;
+
+    // Every face's aspect scalar, in face order.
+    FaceAspects(self: PolygonMesh3D, aspect: Integer): Array<Number>
+        => self.FaceCount.MapRange(f => self.FaceAspect(f, aspect));
+
+    // The scalars pushed affinely onto [0, 1]. A constant array — every face
+    // alike, the usual case for a face-transitive solid — maps to one half
+    // rather than dividing by zero.
+    NormalizedToUnit(values: Array<Number>): Array<Number>
+    {
+        var lowest = values.Reduce(Number.MaxValue, (acc, v) => acc.Min(v));
+        var highest = values.Reduce(Number.MinValue, (acc, v) => acc.Max(v));
+        var span = highest - lowest;
+        return span <= 0.0
+            ? values.Map(v => 0.5)
+            : values.Map(v => (v - lowest) / span);
+    }
+
+    //==
+    // # Face colouring: aspect scalars through a colour ramp
+    //
+    // The ramp is deep indigo through teal to warm gold — monotonic in lightness
+    // so a larger reading is always the brighter face, which is the property that
+    // makes a colouring readable at a glance (the same argument as viridis:
+    // https://en.wikipedia.org/wiki/Color_gradient#Scientific_visualization).
+
+    // The studio's colour ramp, as stops in linear light.
+    StudioRamp(_: ColorGradient): ColorGradient
+        => ColorGradient([
+            ColorStop(0.0, Color(0.05, 0.03, 0.25, 1.0)),
+            ColorStop(0.35, Color(0.02, 0.28, 0.45, 1.0)),
+            ColorStop(0.65, Color(0.05, 0.6, 0.35, 1.0)),
+            ColorStop(0.85, Color(0.6, 0.75, 0.1, 1.0)),
+            ColorStop(1.0, Color(1.0, 0.85, 0.25, 1.0))]);
+
+    // Every face coloured by its normalized aspect through the studio ramp.
+    FaceAspectColors(self: PolygonMesh3D, aspect: Integer): Array<Color>
+        => NormalizedToUnit(self.FaceAspects(aspect))
+            .Map(t => ColorGradient.StudioRamp.ColorAtParameter(t));
+
+    //==
+    // # Presentation meshes: explode and spherize
+    //
+    // Two whole-mesh maps the page's presentation sliders drive. Both return an
+    // ordinary PolygonMesh3D so everything above — colouring included — applies
+    // to their results unchanged.
+
+    // The face table renumbered corner-wise: face f's row is its own corner
+    // numbers. The shape every per-face presentation starts from, since giving
+    // each face its own copy of every vertex is what lets faces move apart.
+    CornerNumberedFaces(self: PolygonMesh3D): Array<Array<VertexIndex>>
+        => self.FaceCount.MapRange(f =>
+            self.FaceArity(f).MapRange(slot =>
+                VertexIndex(self.FaceCorner(f, slot).Value)));
+
+    // Every face slid outward along its own unit normal by `amount`. At zero the
+    // mesh only looks unchanged — the vertices are duplicated per face, so the
+    // topology is a disjoint union of faces, and the edge and Euler readings
+    // above will say so honestly.
+    Exploded(self: PolygonMesh3D, amount: Number): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            self.CornerCount.MapRange(c =>
+                (self.CornerPosition(CornerIndex(c)).PositionVector
+                    + self.FaceUnitNormal(self.CornerFace(CornerIndex(c)).Value) * amount).ToPoint),
+            self.CornerNumberedFaces);
+
+    // Every vertex pulled toward its own projection on the unit sphere: 0 keeps
+    // the solid, 1 IS ProjectedToUnitSphere, and the slider between them shows
+    // exactly what that projection costs a face-transitive Catalan — watch the
+    // planarity aspect light up as t rises.
+    Spherized(self: PolygonMesh3D, t: Number): PolygonMesh3D
+        => (self.Positions.Map(p =>
+                p.PositionVector.Lerp(p.PositionVector.Normalize, t).ToPoint),
+            self.Faces);
+}

@@ -56,6 +56,7 @@ Object.defineProperty(globalThis, 'document', {
 
 const pages = [
   'polyhedra',
+  'conway',
   'polygons',
   'csg',
   'deformers',

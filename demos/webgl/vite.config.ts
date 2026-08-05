@@ -18,6 +18,7 @@ export default defineConfig({
       input: {
         index: page('index'),
         polyhedra: page('polyhedra'),
+        conway: page('conway'),
         polygons: page('polygons'),
         csg: page('csg'),
         deformers: page('deformers'),
