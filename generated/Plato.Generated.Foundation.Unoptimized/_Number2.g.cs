@@ -97,14 +97,14 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Number2 Modulo(Number2 b) => this.ZipComponents(b, (x, y)  => x.Modulo(y));
         [MethodImpl(AggressiveInlining)]  public static Number2 operator %(Number2 a, Number2 b) => a.Modulo(b);
         [MethodImpl(AggressiveInlining)] public Number2 Modulo(Number scalar){
-            var _var80 = scalar;
-            return this.MapComponents((x)  => x.Modulo(_var80));
+            var _var81 = scalar;
+            return this.MapComponents((x)  => x.Modulo(_var81));
         }
 
         [MethodImpl(AggressiveInlining)]  public static Number2 operator %(Number2 self, Number scalar) => self.Modulo(scalar);
         [MethodImpl(AggressiveInlining)] public Number2 Lerp(Number2 b, Number t){
-            var _var81 = t;
-            return this.ZipComponents(b, (x, y)  => x.Add(y.Subtract(x).Multiply(_var81)));
+            var _var82 = t;
+            return this.ZipComponents(b, (x, y)  => x.Add(y.Subtract(x).Multiply(_var82)));
         }
 
         [MethodImpl(AggressiveInlining)] public Number Magnitude() => this.MagnitudeSquared().Sqrt();

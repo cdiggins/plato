@@ -1,0 +1,91 @@
+//==
+// # Sorting
+//
+// The ordering vocabulary: a stable sorted-permutation function and the sorted
+// array it induces. `SortedIndices` is the primary form — construction passes
+// (convex hulls, median-split trees) need to map sorted positions back to
+// source indices, which a sorted copy loses.
+//
+// These are reference bodies, not intrinsics: they are expressible from the
+// existing kernel (plato-378 admission rule), so backends recover native speed
+// through the override table (plato-368), not by growing the intrinsic list.
+// See tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md.
+//
+// The algorithm is bottom-up merge sort over an index buffer: O(n log n),
+// stable (ties keep source order because the left run wins them), and free of
+// recursion, which the body contract requires (GLSL forbids recursion).
+// https://en.wikipedia.org/wiki/Merge_sort#Bottom-up_implementation
+
+library Sorting
+{
+    // The permutation that sorts `xs`: element k of the result is the index of
+    // the k-th smallest element of `xs` under `lessOrEqual`. Stable: equal
+    // elements keep their source order. `lessOrEqual` must be a total order's
+    // comparison (transitive, total); a partial or inconsistent comparer
+    // yields an arbitrary permutation, never an out-of-range index.
+    SortedIndices(xs: Array<$T>, lessOrEqual: Function2<$T, $T, Boolean>): Array<Integer>
+    {
+        var n = xs.Count;
+        var src = new Buffer<Integer>(n);
+        var i = 0;
+        while (i < n)
+        {
+            src = src.Set(i, i);
+            i = i + 1;
+        }
+        var dst = new Buffer<Integer>(n);
+        var width = 1;
+        while (width < n)
+        {
+            var lo = 0;
+            while (lo < n)
+            {
+                var mid = (lo + width).Min(n);
+                var hi = (lo + width + width).Min(n);
+                var a = lo;
+                var b = mid;
+                var k = lo;
+                // The nesting is load-bearing: `&&` is `And`, an ordinary
+                // function of two evaluated arguments, so it does NOT
+                // short-circuit — a combined condition would read past the
+                // exhausted run.
+                while (k < hi)
+                {
+                    if (a >= mid)
+                    {
+                        dst = dst.Set(k, src.At(b));
+                        b = b + 1;
+                    }
+                    else if (b >= hi)
+                    {
+                        dst = dst.Set(k, src.At(a));
+                        a = a + 1;
+                    }
+                    else if (lessOrEqual(xs[src.At(a)], xs[src.At(b)]))
+                    {
+                        dst = dst.Set(k, src.At(a));
+                        a = a + 1;
+                    }
+                    else
+                    {
+                        dst = dst.Set(k, src.At(b));
+                        b = b + 1;
+                    }
+                    k = k + 1;
+                }
+                lo = lo + width + width;
+            }
+            var merged = dst;
+            dst = src;
+            src = merged;
+            width = width + width;
+        }
+        return src.Freeze();
+    }
+
+    // A new array holding the elements of `xs` in ascending `lessOrEqual`
+    // order. Stable, as SortedIndices is. When positions matter — attributes
+    // to carry along, source indices to report — use SortedIndices instead.
+    Sort(xs: Array<$T>, lessOrEqual: Function2<$T, $T, Boolean>): Array<$T>
+        => xs.SortedIndices(lessOrEqual).Map(i => xs[i]);
+}

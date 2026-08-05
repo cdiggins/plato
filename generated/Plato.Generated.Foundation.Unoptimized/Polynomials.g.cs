@@ -151,12 +151,12 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number Eval(this Polynomial p, Number x) => p.Coefficients.HornerEval(x);
         [MethodImpl(AggressiveInlining)] public static Number Eval(this Monomial m, Number x) => m.Coefficient.Multiply(x.Pow(m.Power.ToNumber));
         [MethodImpl(AggressiveInlining)] public static Number Eval(this SparsePolynomial p, Number x){
-            var _var90 = p;
+            var _var91 = p;
             {
-                var _var89 = x;
+                var _var90 = x;
                 {
-                    var _var88 = p;
-                    return ((Integer)p.Powers.Count).MapRange((i)  => _var88.Coefficients[i].Multiply(_var89.Pow(_var90.Powers[i].ToNumber))).Reduce(((Number)0), (acc, term)  => acc.Add(term));
+                    var _var89 = p;
+                    return ((Integer)p.Powers.Count).MapRange((i)  => _var89.Coefficients[i].Multiply(_var90.Pow(_var91.Powers[i].ToNumber))).Reduce(((Number)0), (acc, term)  => acc.Add(term));
                 }
             }
         }

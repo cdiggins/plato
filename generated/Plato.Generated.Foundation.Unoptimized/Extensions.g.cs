@@ -228,5 +228,79 @@ namespace Ara3D.Geometry
             }
         }
 
+        [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Integer> SortedIndices<_T0>(this IReadOnlyList<_T0> xs, System.Func<_T0, _T0, Boolean> lessOrEqual){
+            var n = ((Integer)xs.Count);
+            var src = new PlatoBuffer<Integer>(n);
+            var i = ((Integer)0);
+            while (i.LessThan(n))
+            {
+                {
+                    src = src.Set(i, i);
+                    i = i.Add(((Integer)1));
+                }
+            }
+
+            var dst = new PlatoBuffer<Integer>(n);
+            var width = ((Integer)1);
+            while (width.LessThan(n))
+            {
+                {
+                    var lo = ((Integer)0);
+                    while (lo.LessThan(n))
+                    {
+                        {
+                            var mid = lo.Add(width).Min(n);
+                            var hi = lo.Add(width).Add(width).Min(n);
+                            var a = lo;
+                            var b = mid;
+                            var k = lo;
+                            while (k.LessThan(hi))
+                            {
+                                {
+                                    if (a.GreaterThanOrEquals(mid))
+                                    {
+                                        dst = dst.Set(k, src[b]);
+                                        b = b.Add(((Integer)1));
+                                    }
+                                    else
+                                    if (b.GreaterThanOrEquals(hi))
+                                    {
+                                        dst = dst.Set(k, src[a]);
+                                        a = a.Add(((Integer)1));
+                                    }
+                                    else
+                                    if (lessOrEqual.Invoke(xs[src[a]], xs[src[b]]))
+                                    {
+                                        dst = dst.Set(k, src[a]);
+                                        a = a.Add(((Integer)1));
+                                    }
+                                    else
+                                    {
+                                        dst = dst.Set(k, src[b]);
+                                        b = b.Add(((Integer)1));
+                                    }
+                                    k = k.Add(((Integer)1));
+                                }
+                            }
+
+                            lo = lo.Add(width).Add(width);
+                        }
+                    }
+
+                    var merged = dst;
+                    dst = src;
+                    src = merged;
+                    width = width.Add(width);
+                }
+            }
+
+            return src.Freeze();
+        }
+
+        [MethodImpl(AggressiveInlining)] public static IReadOnlyList<_T0> Sort<_T0>(this IReadOnlyList<_T0> xs, System.Func<_T0, _T0, Boolean> lessOrEqual){
+            var _var52 = xs;
+            return xs.SortedIndices(lessOrEqual).Map((i)  => _var52[i]);
+        }
+
     }
 }

@@ -40,18 +40,18 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number AtanhRadians(this Number self) => ((Number)1).Add(self).Divide(((Number)1).Subtract(self)).NaturalLog().Multiply(((Number)0.5));
         [MethodImpl(AggressiveInlining)] public static Boolean IsFinite(this Number self) => self.IsNaN.Not().And(self.IsInfinite.Not());
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<_T0> Repeat<_T0>(this Integer n, _T0 x){
-            var _var489 = x;
-            return n.MapRange((i)  => _var489);
+            var _var490 = x;
+            return n.MapRange((i)  => _var490);
         }
 
         [MethodImpl(AggressiveInlining)] public static Array2D<_T0> MakeArray2D<_T0>(this Integer columns, Integer rows, System.Func<Integer, Integer, _T0> f){
-            var _var492 = columns;
+            var _var493 = columns;
             {
-                var _var491 = columns;
+                var _var492 = columns;
                 {
-                    var _var490 = f;
+                    var _var491 = f;
                     {
-                        var elements = columns.Multiply(rows).MapRange((i)  => _var490.Invoke(i.Modulo(_var491), i.Divide(_var492)));
+                        var elements = columns.Multiply(rows).MapRange((i)  => _var491.Invoke(i.Modulo(_var492), i.Divide(_var493)));
                         return (elements, columns, rows);
                     }
                 }
@@ -59,16 +59,16 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static Array3D<_T0> MakeArray3D<_T0>(this Integer columns, Integer rows, Integer layers, System.Func<Integer, Integer, Integer, _T0> f){
-            var _var496 = rows;
+            var _var497 = rows;
             {
-                var _var495 = columns;
+                var _var496 = columns;
                 {
-                    var _var494 = columns;
+                    var _var495 = columns;
                     {
-                        var _var493 = f;
+                        var _var494 = f;
                         {
                             var plane = columns.Multiply(rows);
-                            var elements = plane.Multiply(layers).MapRange((i)  => _var493.Invoke(i.Modulo(_var494), i.Divide(_var495).Modulo(_var496), i.Divide(plane)));
+                            var elements = plane.Multiply(layers).MapRange((i)  => _var494.Invoke(i.Modulo(_var495), i.Divide(_var496).Modulo(_var497), i.Divide(plane)));
                             return (elements, columns, rows, layers);
                         }
                     }

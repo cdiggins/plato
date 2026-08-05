@@ -71,13 +71,13 @@ namespace Ara3D.Geometry
         // Implemented interface functions
         [MethodImpl(AggressiveInlining)] public Number TotalWeight() => this.Weights.Reduce(((Number)0), (total, weight)  => total.Add(weight));
         [MethodImpl(AggressiveInlining)] public Number Mean(){
-            var _var69 = this;
-            return ((Integer)this.Weights.Count).Range().Map((i)  => i.ToNumber.Multiply(_var69.Weights[i])).Reduce(((Number)0), (total, term)  => total.Add(term)).Divide(this.TotalWeight());
+            var _var70 = this;
+            return ((Integer)this.Weights.Count).Range().Map((i)  => i.ToNumber.Multiply(_var70.Weights[i])).Reduce(((Number)0), (total, term)  => total.Add(term)).Divide(this.TotalWeight());
         }
 
         [MethodImpl(AggressiveInlining)] public Number Variance(){
-            var _var70 = this;
-            return ((Integer)this.Weights.Count).Range().Map((i)  => i.ToNumber.Square().Multiply(_var70.Weights[i])).Reduce(((Number)0), (total, term)  => total.Add(term)).Divide(this.TotalWeight()).Subtract(this.Mean().Square());
+            var _var71 = this;
+            return ((Integer)this.Weights.Count).Range().Map((i)  => i.ToNumber.Square().Multiply(_var71.Weights[i])).Reduce(((Number)0), (total, term)  => total.Add(term)).Divide(this.TotalWeight()).Subtract(this.Mean().Square());
         }
 
         [MethodImpl(AggressiveInlining)] public Number Pdf(Number value){
@@ -86,10 +86,10 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public Number Cdf(Number value){
-            var _var71 = this;
+            var _var72 = this;
             {
                 var k = value.Floor().ToInteger;
-                return k.LessThan(((Integer)0)) ? ((Number)0) : k.GreaterThanOrEquals(((Integer)this.Weights.Count).Subtract(((Integer)1))) ? ((Number)1) : k.Add(((Integer)1)).Range().Map((i)  => _var71.Weights[i]).Reduce(((Number)0), (total, weight)  => total.Add(weight)).Divide(this.TotalWeight());
+                return k.LessThan(((Integer)0)) ? ((Number)0) : k.GreaterThanOrEquals(((Integer)this.Weights.Count).Subtract(((Integer)1))) ? ((Number)1) : k.Add(((Integer)1)).Range().Map((i)  => _var72.Weights[i]).Reduce(((Number)0), (total, weight)  => total.Add(weight)).Divide(this.TotalWeight());
             }
         }
 

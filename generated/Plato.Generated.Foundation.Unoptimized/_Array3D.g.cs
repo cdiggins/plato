@@ -99,23 +99,23 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public T Last() => this.At(this.Count.Subtract(((Integer)1)));
         [MethodImpl(AggressiveInlining)] public T Middle() => this.At(this.Count.Divide(((Integer)2)));
         [MethodImpl(AggressiveInlining)] public _T0 Reduce<_T0>(_T0 acc, System.Func<_T0, T, _T0> f){
-            var _var62 = this;
-            return this.Count.MapRange((i)  => _var62.At(i)).Reduce(acc, f);
+            var _var63 = this;
+            return this.Count.MapRange((i)  => _var63.At(i)).Reduce(acc, f);
         }
 
         [MethodImpl(AggressiveInlining)] public IReadOnlyList<_T0> Map<_T0>(System.Func<T, _T0> f){
-            var _var63 = this;
-            return this.Count.MapRange((i)  => _var63.At(i)).Map(f);
+            var _var64 = this;
+            return this.Count.MapRange((i)  => _var64.At(i)).Map(f);
         }
 
         [MethodImpl(AggressiveInlining)] public Boolean All(System.Func<T, Boolean> predicate){
-            var _var64 = this;
-            return this.Count.MapRange((i)  => _var64.At(i)).All(predicate);
+            var _var65 = this;
+            return this.Count.MapRange((i)  => _var65.At(i)).All(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public Boolean Any(System.Func<T, Boolean> predicate){
-            var _var65 = this;
-            return this.Count.MapRange((i)  => _var65.At(i)).Any(predicate);
+            var _var66 = this;
+            return this.Count.MapRange((i)  => _var66.At(i)).Any(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public Boolean IsEmpty() => this.Count.Equals(((Integer)0));

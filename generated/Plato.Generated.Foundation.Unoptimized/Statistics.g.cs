@@ -54,10 +54,10 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number CorrelationMagnitude(this LinearFit self) => self.RSquared.Sqrt();
         [MethodImpl(AggressiveInlining)] public static Integer Degree(this PolynomialFit self) => ((Integer)self.Coefficients.Count).Subtract(((Integer)1));
         [MethodImpl(AggressiveInlining)] public static Number Predict(this PolynomialFit self, Number x){
-            var _var498 = x;
+            var _var499 = x;
             {
-                var _var497 = self;
-                return ((Integer)self.Coefficients.Count).Range().Map((k)  => _var497.Coefficients[k].Multiply(_var498.Pow(k.ToNumber))).Reduce(((Number)0), (total, term)  => total.Add(term));
+                var _var498 = self;
+                return ((Integer)self.Coefficients.Count).Range().Map((k)  => _var498.Coefficients[k].Multiply(_var499.Pow(k.ToNumber))).Reduce(((Number)0), (total, term)  => total.Add(term));
             }
         }
 

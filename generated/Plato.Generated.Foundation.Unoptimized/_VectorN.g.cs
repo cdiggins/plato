@@ -99,28 +99,28 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public VectorN Negative() => this.MapComponents((x)  => x.Negative());
         [MethodImpl(AggressiveInlining)]  public static VectorN operator -(VectorN self) => self.Negative();
         [MethodImpl(AggressiveInlining)] public VectorN Multiply(Number scalar){
-            var _var76 = scalar;
-            return this.MapComponents((x)  => x.Multiply(_var76));
+            var _var77 = scalar;
+            return this.MapComponents((x)  => x.Multiply(_var77));
         }
 
         [MethodImpl(AggressiveInlining)]  public static VectorN operator *(VectorN self, Number scalar) => self.Multiply(scalar);
         [MethodImpl(AggressiveInlining)] public VectorN Divide(Number scalar){
-            var _var77 = scalar;
-            return this.MapComponents((x)  => x.Divide(_var77));
+            var _var78 = scalar;
+            return this.MapComponents((x)  => x.Divide(_var78));
         }
 
         [MethodImpl(AggressiveInlining)]  public static VectorN operator /(VectorN self, Number scalar) => self.Divide(scalar);
         [MethodImpl(AggressiveInlining)] public VectorN Modulo(Number scalar){
-            var _var78 = scalar;
-            return this.MapComponents((x)  => x.Modulo(_var78));
+            var _var79 = scalar;
+            return this.MapComponents((x)  => x.Modulo(_var79));
         }
 
         [MethodImpl(AggressiveInlining)]  public static VectorN operator %(VectorN self, Number scalar) => self.Modulo(scalar);
         [MethodImpl(AggressiveInlining)] public VectorN Min(VectorN b) => this.ZipComponents(b, (x, y)  => x.Min(y));
         [MethodImpl(AggressiveInlining)] public VectorN Max(VectorN b) => this.ZipComponents(b, (x, y)  => x.Max(y));
         [MethodImpl(AggressiveInlining)] public VectorN Lerp(VectorN b, Number t){
-            var _var79 = t;
-            return this.ZipComponents(b, (x, y)  => x.Add(y.Subtract(x).Multiply(_var79)));
+            var _var80 = t;
+            return this.ZipComponents(b, (x, y)  => x.Add(y.Subtract(x).Multiply(_var80)));
         }
 
         [MethodImpl(AggressiveInlining)] public Number Magnitude() => this.MagnitudeSquared().Sqrt();

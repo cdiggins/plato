@@ -80,12 +80,12 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Number Variance() => ((Number)1).Subtract(this.Concentration.BesselI1().Divide(this.Concentration.BesselI0()));
         [MethodImpl(AggressiveInlining)] public Number Pdf(Number value) => this.Concentration.Multiply(value.Subtract(this.MeanDirection.Radians).Angle().Cos()).Exp().Divide(Ara3D.Geometry.Number.Tau().Multiply(this.Concentration.BesselI0()));
         [MethodImpl(AggressiveInlining)] public Number Cdf(Number value){
-            var _var66 = this;
+            var _var67 = this;
             {
                 var x = value.Subtract(this.MeanDirection.Radians);
                 var wrapped = x.Subtract(Ara3D.Geometry.Number.Tau().Multiply(x.Add(Ara3D.Geometry.Number.Pi).Divide(Ara3D.Geometry.Number.Tau()).Floor()));
                 var uniformPart = ((Number)0.5).Add(wrapped.Divide(Ara3D.Geometry.Number.Tau()));
-                return this.Concentration.LessThanOrEquals(((Number)0)) ? uniformPart : uniformPart.Add(((Integer)32).MapRange((j)  => j.Add(((Integer)1)).VonMisesBesselI(_var66.Concentration).Multiply(j.ToNumber.Add(((Number)1)).Multiply(wrapped).Angle().Sin()).Divide(j.ToNumber.Add(((Number)1)))).SumOf().Divide(Ara3D.Geometry.Number.Pi.Multiply(this.Concentration.BesselI0())));
+                return this.Concentration.LessThanOrEquals(((Number)0)) ? uniformPart : uniformPart.Add(((Integer)32).MapRange((j)  => j.Add(((Integer)1)).VonMisesBesselI(_var67.Concentration).Multiply(j.ToNumber.Add(((Number)1)).Multiply(wrapped).Angle().Sin()).Divide(j.ToNumber.Add(((Number)1)))).SumOf().Divide(Ara3D.Geometry.Number.Pi.Multiply(this.Concentration.BesselI0())));
             }
         }
 

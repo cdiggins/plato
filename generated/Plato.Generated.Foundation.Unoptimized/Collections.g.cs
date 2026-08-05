@@ -17,226 +17,226 @@ namespace Ara3D.Geometry
     public static class Collections
     {
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Color> LinearSpace(this Color a, Color b, Integer count){
-            var _var92 = b;
+            var _var93 = b;
             {
-                var _var91 = a;
-                return count.Fractions().Map((t)  => _var91.Lerp(_var92, t));
+                var _var92 = a;
+                return count.Fractions().Map((t)  => _var92.Lerp(_var93, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Color> LinearSpaceExclusive(this Color a, Color b, Integer count){
-            var _var94 = b;
+            var _var95 = b;
             {
-                var _var93 = a;
-                return count.FractionsExclusive().Map((t)  => _var93.Lerp(_var94, t));
+                var _var94 = a;
+                return count.FractionsExclusive().Map((t)  => _var94.Lerp(_var95, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean IsNone(this GraphVertexIndex self) => self.Value.LessThan(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsPresent(this GraphVertexIndex self) => self.Value.GreaterThanOrEquals(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Complex> LinearSpace(this Complex a, Complex b, Integer count){
-            var _var96 = b;
+            var _var97 = b;
             {
-                var _var95 = a;
-                return count.Fractions().Map((t)  => _var95.Lerp(_var96, t));
+                var _var96 = a;
+                return count.Fractions().Map((t)  => _var96.Lerp(_var97, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Complex> LinearSpaceExclusive(this Complex a, Complex b, Integer count){
-            var _var98 = b;
+            var _var99 = b;
             {
-                var _var97 = a;
-                return count.FractionsExclusive().Map((t)  => _var97.Lerp(_var98, t));
+                var _var98 = a;
+                return count.FractionsExclusive().Map((t)  => _var98.Lerp(_var99, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Proportion> LinearSpace(this Proportion a, Proportion b, Integer count){
-            var _var100 = b;
+            var _var101 = b;
             {
-                var _var99 = a;
-                return count.Fractions().Map((t)  => _var99.Lerp(_var100, t));
+                var _var100 = a;
+                return count.Fractions().Map((t)  => _var100.Lerp(_var101, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Proportion> LinearSpaceExclusive(this Proportion a, Proportion b, Integer count){
-            var _var102 = b;
+            var _var103 = b;
             {
-                var _var101 = a;
-                return count.FractionsExclusive().Map((t)  => _var101.Lerp(_var102, t));
+                var _var102 = a;
+                return count.FractionsExclusive().Map((t)  => _var102.Lerp(_var103, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Percent> LinearSpace(this Percent a, Percent b, Integer count){
-            var _var104 = b;
+            var _var105 = b;
             {
-                var _var103 = a;
-                return count.Fractions().Map((t)  => _var103.Lerp(_var104, t));
+                var _var104 = a;
+                return count.Fractions().Map((t)  => _var104.Lerp(_var105, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Percent> LinearSpaceExclusive(this Percent a, Percent b, Integer count){
-            var _var106 = b;
+            var _var107 = b;
             {
-                var _var105 = a;
-                return count.FractionsExclusive().Map((t)  => _var105.Lerp(_var106, t));
+                var _var106 = a;
+                return count.FractionsExclusive().Map((t)  => _var106.Lerp(_var107, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Probability> LinearSpace(this Probability a, Probability b, Integer count){
-            var _var108 = b;
+            var _var109 = b;
             {
-                var _var107 = a;
-                return count.Fractions().Map((t)  => _var107.Lerp(_var108, t));
+                var _var108 = a;
+                return count.Fractions().Map((t)  => _var108.Lerp(_var109, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Probability> LinearSpaceExclusive(this Probability a, Probability b, Integer count){
-            var _var110 = b;
+            var _var111 = b;
             {
-                var _var109 = a;
-                return count.FractionsExclusive().Map((t)  => _var109.Lerp(_var110, t));
+                var _var110 = a;
+                return count.FractionsExclusive().Map((t)  => _var110.Lerp(_var111, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean IsNone(this ItemIndex self) => self.Value.LessThan(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsPresent(this ItemIndex self) => self.Value.GreaterThanOrEquals(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<DualNumber> LinearSpace(this DualNumber a, DualNumber b, Integer count){
-            var _var112 = b;
+            var _var113 = b;
             {
-                var _var111 = a;
-                return count.Fractions().Map((t)  => _var111.Lerp(_var112, t));
+                var _var112 = a;
+                return count.Fractions().Map((t)  => _var112.Lerp(_var113, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<DualNumber> LinearSpaceExclusive(this DualNumber a, DualNumber b, Integer count){
-            var _var114 = b;
+            var _var115 = b;
             {
-                var _var113 = a;
-                return count.FractionsExclusive().Map((t)  => _var113.Lerp(_var114, t));
+                var _var114 = a;
+                return count.FractionsExclusive().Map((t)  => _var114.Lerp(_var115, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Point2D> LinearSpace(this Point2D a, Point2D b, Integer count){
-            var _var116 = b;
+            var _var117 = b;
             {
-                var _var115 = a;
-                return count.Fractions().Map((t)  => _var115.Lerp(_var116, t));
+                var _var116 = a;
+                return count.Fractions().Map((t)  => _var116.Lerp(_var117, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Point2D> LinearSpaceExclusive(this Point2D a, Point2D b, Integer count){
-            var _var118 = b;
+            var _var119 = b;
             {
-                var _var117 = a;
-                return count.FractionsExclusive().Map((t)  => _var117.Lerp(_var118, t));
+                var _var118 = a;
+                return count.FractionsExclusive().Map((t)  => _var118.Lerp(_var119, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Point3D> LinearSpace(this Point3D a, Point3D b, Integer count){
-            var _var120 = b;
+            var _var121 = b;
             {
-                var _var119 = a;
-                return count.Fractions().Map((t)  => _var119.Lerp(_var120, t));
+                var _var120 = a;
+                return count.Fractions().Map((t)  => _var120.Lerp(_var121, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Point3D> LinearSpaceExclusive(this Point3D a, Point3D b, Integer count){
-            var _var122 = b;
+            var _var123 = b;
             {
-                var _var121 = a;
-                return count.FractionsExclusive().Map((t)  => _var121.Lerp(_var122, t));
+                var _var122 = a;
+                return count.FractionsExclusive().Map((t)  => _var122.Lerp(_var123, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<PointN> LinearSpace(this PointN a, PointN b, Integer count){
-            var _var124 = b;
+            var _var125 = b;
             {
-                var _var123 = a;
-                return count.Fractions().Map((t)  => _var123.Lerp(_var124, t));
+                var _var124 = a;
+                return count.Fractions().Map((t)  => _var124.Lerp(_var125, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<PointN> LinearSpaceExclusive(this PointN a, PointN b, Integer count){
-            var _var126 = b;
+            var _var127 = b;
             {
-                var _var125 = a;
-                return count.FractionsExclusive().Map((t)  => _var125.Lerp(_var126, t));
+                var _var126 = a;
+                return count.FractionsExclusive().Map((t)  => _var126.Lerp(_var127, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<UvCoordinate> LinearSpace(this UvCoordinate a, UvCoordinate b, Integer count){
-            var _var128 = b;
+            var _var129 = b;
             {
-                var _var127 = a;
-                return count.Fractions().Map((t)  => _var127.Lerp(_var128, t));
+                var _var128 = a;
+                return count.Fractions().Map((t)  => _var128.Lerp(_var129, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<UvCoordinate> LinearSpaceExclusive(this UvCoordinate a, UvCoordinate b, Integer count){
-            var _var130 = b;
+            var _var131 = b;
             {
-                var _var129 = a;
-                return count.FractionsExclusive().Map((t)  => _var129.Lerp(_var130, t));
+                var _var130 = a;
+                return count.FractionsExclusive().Map((t)  => _var130.Lerp(_var131, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<UvwCoordinate> LinearSpace(this UvwCoordinate a, UvwCoordinate b, Integer count){
-            var _var132 = b;
+            var _var133 = b;
             {
-                var _var131 = a;
-                return count.Fractions().Map((t)  => _var131.Lerp(_var132, t));
+                var _var132 = a;
+                return count.Fractions().Map((t)  => _var132.Lerp(_var133, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<UvwCoordinate> LinearSpaceExclusive(this UvwCoordinate a, UvwCoordinate b, Integer count){
-            var _var134 = b;
+            var _var135 = b;
             {
-                var _var133 = a;
-                return count.FractionsExclusive().Map((t)  => _var133.Lerp(_var134, t));
+                var _var134 = a;
+                return count.FractionsExclusive().Map((t)  => _var134.Lerp(_var135, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> LinearSpace(this Number a, Number b, Integer count){
-            var _var136 = b;
+            var _var137 = b;
             {
-                var _var135 = a;
-                return count.Fractions().Map((t)  => _var135.Lerp(_var136, t));
+                var _var136 = a;
+                return count.Fractions().Map((t)  => _var136.Lerp(_var137, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> LinearSpaceExclusive(this Number a, Number b, Integer count){
-            var _var138 = b;
+            var _var139 = b;
             {
-                var _var137 = a;
-                return count.FractionsExclusive().Map((t)  => _var137.Lerp(_var138, t));
+                var _var138 = a;
+                return count.FractionsExclusive().Map((t)  => _var138.Lerp(_var139, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> Fractions(this Integer count){
-            var _var139 = count;
-            return count.Range().Map((i)  => i.ToNumber.Divide(_var139.Subtract(((Integer)1)).ToNumber));
+            var _var140 = count;
+            return count.Range().Map((i)  => i.ToNumber.Divide(_var140.Subtract(((Integer)1)).ToNumber));
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> FractionsExclusive(this Integer count){
-            var _var140 = count;
-            return count.Range().Map((i)  => i.ToNumber.Divide(_var140.ToNumber));
+            var _var141 = count;
+            return count.Range().Map((i)  => i.ToNumber.Divide(_var141.ToNumber));
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> LinearSpace(this Integer count) => count.Fractions();
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> LinearSpaceExclusive(this Integer count) => count.FractionsExclusive();
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Integer> LinearSpace(this Integer a, Integer b, Integer count){
-            var _var142 = b;
+            var _var143 = b;
             {
-                var _var141 = a;
-                return count.Fractions().Map((t)  => _var141.Lerp(_var142, t));
+                var _var142 = a;
+                return count.Fractions().Map((t)  => _var142.Lerp(_var143, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Integer> LinearSpaceExclusive(this Integer a, Integer b, Integer count){
-            var _var144 = b;
+            var _var145 = b;
             {
-                var _var143 = a;
-                return count.FractionsExclusive().Map((t)  => _var143.Lerp(_var144, t));
+                var _var144 = a;
+                return count.FractionsExclusive().Map((t)  => _var144.Lerp(_var145, t));
             }
         }
 
@@ -244,882 +244,882 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Boolean IsNotEmpty(this String self) => self.Count.GreaterThan(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsSingleton(this String self) => self.Count.Equals(((Integer)1));
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<ElectricCurrent> LinearSpace(this ElectricCurrent a, ElectricCurrent b, Integer count){
-            var _var146 = b;
+            var _var147 = b;
             {
-                var _var145 = a;
-                return count.Fractions().Map((t)  => _var145.Lerp(_var146, t));
+                var _var146 = a;
+                return count.Fractions().Map((t)  => _var146.Lerp(_var147, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<ElectricCurrent> LinearSpaceExclusive(this ElectricCurrent a, ElectricCurrent b, Integer count){
-            var _var148 = b;
+            var _var149 = b;
             {
-                var _var147 = a;
-                return count.FractionsExclusive().Map((t)  => _var147.Lerp(_var148, t));
+                var _var148 = a;
+                return count.FractionsExclusive().Map((t)  => _var148.Lerp(_var149, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<ElectricCharge> LinearSpace(this ElectricCharge a, ElectricCharge b, Integer count){
-            var _var150 = b;
+            var _var151 = b;
             {
-                var _var149 = a;
-                return count.Fractions().Map((t)  => _var149.Lerp(_var150, t));
+                var _var150 = a;
+                return count.Fractions().Map((t)  => _var150.Lerp(_var151, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<ElectricCharge> LinearSpaceExclusive(this ElectricCharge a, ElectricCharge b, Integer count){
-            var _var152 = b;
+            var _var153 = b;
             {
-                var _var151 = a;
-                return count.FractionsExclusive().Map((t)  => _var151.Lerp(_var152, t));
+                var _var152 = a;
+                return count.FractionsExclusive().Map((t)  => _var152.Lerp(_var153, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Voltage> LinearSpace(this Voltage a, Voltage b, Integer count){
-            var _var154 = b;
+            var _var155 = b;
             {
-                var _var153 = a;
-                return count.Fractions().Map((t)  => _var153.Lerp(_var154, t));
+                var _var154 = a;
+                return count.Fractions().Map((t)  => _var154.Lerp(_var155, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Voltage> LinearSpaceExclusive(this Voltage a, Voltage b, Integer count){
-            var _var156 = b;
+            var _var157 = b;
             {
-                var _var155 = a;
-                return count.FractionsExclusive().Map((t)  => _var155.Lerp(_var156, t));
+                var _var156 = a;
+                return count.FractionsExclusive().Map((t)  => _var156.Lerp(_var157, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Resistance> LinearSpace(this Resistance a, Resistance b, Integer count){
-            var _var158 = b;
+            var _var159 = b;
             {
-                var _var157 = a;
-                return count.Fractions().Map((t)  => _var157.Lerp(_var158, t));
+                var _var158 = a;
+                return count.Fractions().Map((t)  => _var158.Lerp(_var159, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Resistance> LinearSpaceExclusive(this Resistance a, Resistance b, Integer count){
-            var _var160 = b;
+            var _var161 = b;
             {
-                var _var159 = a;
-                return count.FractionsExclusive().Map((t)  => _var159.Lerp(_var160, t));
+                var _var160 = a;
+                return count.FractionsExclusive().Map((t)  => _var160.Lerp(_var161, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Capacitance> LinearSpace(this Capacitance a, Capacitance b, Integer count){
-            var _var162 = b;
+            var _var163 = b;
             {
-                var _var161 = a;
-                return count.Fractions().Map((t)  => _var161.Lerp(_var162, t));
+                var _var162 = a;
+                return count.Fractions().Map((t)  => _var162.Lerp(_var163, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Capacitance> LinearSpaceExclusive(this Capacitance a, Capacitance b, Integer count){
-            var _var164 = b;
+            var _var165 = b;
             {
-                var _var163 = a;
-                return count.FractionsExclusive().Map((t)  => _var163.Lerp(_var164, t));
+                var _var164 = a;
+                return count.FractionsExclusive().Map((t)  => _var164.Lerp(_var165, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Inductance> LinearSpace(this Inductance a, Inductance b, Integer count){
-            var _var166 = b;
+            var _var167 = b;
             {
-                var _var165 = a;
-                return count.Fractions().Map((t)  => _var165.Lerp(_var166, t));
+                var _var166 = a;
+                return count.Fractions().Map((t)  => _var166.Lerp(_var167, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Inductance> LinearSpaceExclusive(this Inductance a, Inductance b, Integer count){
-            var _var168 = b;
+            var _var169 = b;
             {
-                var _var167 = a;
-                return count.FractionsExclusive().Map((t)  => _var167.Lerp(_var168, t));
+                var _var168 = a;
+                return count.FractionsExclusive().Map((t)  => _var168.Lerp(_var169, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Angle> LinearSpace(this Angle a, Angle b, Integer count){
-            var _var170 = b;
+            var _var171 = b;
             {
-                var _var169 = a;
-                return count.Fractions().Map((t)  => _var169.Lerp(_var170, t));
+                var _var170 = a;
+                return count.Fractions().Map((t)  => _var170.Lerp(_var171, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Angle> LinearSpaceExclusive(this Angle a, Angle b, Integer count){
-            var _var172 = b;
+            var _var173 = b;
             {
-                var _var171 = a;
-                return count.FractionsExclusive().Map((t)  => _var171.Lerp(_var172, t));
+                var _var172 = a;
+                return count.FractionsExclusive().Map((t)  => _var172.Lerp(_var173, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<SolidAngle> LinearSpace(this SolidAngle a, SolidAngle b, Integer count){
-            var _var174 = b;
+            var _var175 = b;
             {
-                var _var173 = a;
-                return count.Fractions().Map((t)  => _var173.Lerp(_var174, t));
+                var _var174 = a;
+                return count.Fractions().Map((t)  => _var174.Lerp(_var175, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<SolidAngle> LinearSpaceExclusive(this SolidAngle a, SolidAngle b, Integer count){
-            var _var176 = b;
+            var _var177 = b;
             {
-                var _var175 = a;
-                return count.FractionsExclusive().Map((t)  => _var175.Lerp(_var176, t));
+                var _var176 = a;
+                return count.FractionsExclusive().Map((t)  => _var176.Lerp(_var177, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Length> LinearSpace(this Length a, Length b, Integer count){
-            var _var178 = b;
+            var _var179 = b;
             {
-                var _var177 = a;
-                return count.Fractions().Map((t)  => _var177.Lerp(_var178, t));
+                var _var178 = a;
+                return count.Fractions().Map((t)  => _var178.Lerp(_var179, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Length> LinearSpaceExclusive(this Length a, Length b, Integer count){
-            var _var180 = b;
+            var _var181 = b;
             {
-                var _var179 = a;
-                return count.FractionsExclusive().Map((t)  => _var179.Lerp(_var180, t));
+                var _var180 = a;
+                return count.FractionsExclusive().Map((t)  => _var180.Lerp(_var181, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Area> LinearSpace(this Area a, Area b, Integer count){
-            var _var182 = b;
+            var _var183 = b;
             {
-                var _var181 = a;
-                return count.Fractions().Map((t)  => _var181.Lerp(_var182, t));
+                var _var182 = a;
+                return count.Fractions().Map((t)  => _var182.Lerp(_var183, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Area> LinearSpaceExclusive(this Area a, Area b, Integer count){
-            var _var184 = b;
+            var _var185 = b;
             {
-                var _var183 = a;
-                return count.FractionsExclusive().Map((t)  => _var183.Lerp(_var184, t));
+                var _var184 = a;
+                return count.FractionsExclusive().Map((t)  => _var184.Lerp(_var185, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Volume> LinearSpace(this Volume a, Volume b, Integer count){
-            var _var186 = b;
+            var _var187 = b;
             {
-                var _var185 = a;
-                return count.Fractions().Map((t)  => _var185.Lerp(_var186, t));
+                var _var186 = a;
+                return count.Fractions().Map((t)  => _var186.Lerp(_var187, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Volume> LinearSpaceExclusive(this Volume a, Volume b, Integer count){
-            var _var188 = b;
+            var _var189 = b;
             {
-                var _var187 = a;
-                return count.FractionsExclusive().Map((t)  => _var187.Lerp(_var188, t));
+                var _var188 = a;
+                return count.FractionsExclusive().Map((t)  => _var188.Lerp(_var189, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<WaveNumber> LinearSpace(this WaveNumber a, WaveNumber b, Integer count){
-            var _var190 = b;
+            var _var191 = b;
             {
-                var _var189 = a;
-                return count.Fractions().Map((t)  => _var189.Lerp(_var190, t));
+                var _var190 = a;
+                return count.Fractions().Map((t)  => _var190.Lerp(_var191, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<WaveNumber> LinearSpaceExclusive(this WaveNumber a, WaveNumber b, Integer count){
-            var _var192 = b;
+            var _var193 = b;
             {
-                var _var191 = a;
-                return count.FractionsExclusive().Map((t)  => _var191.Lerp(_var192, t));
+                var _var192 = a;
+                return count.FractionsExclusive().Map((t)  => _var192.Lerp(_var193, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Curvature> LinearSpace(this Curvature a, Curvature b, Integer count){
-            var _var194 = b;
+            var _var195 = b;
             {
-                var _var193 = a;
-                return count.Fractions().Map((t)  => _var193.Lerp(_var194, t));
+                var _var194 = a;
+                return count.Fractions().Map((t)  => _var194.Lerp(_var195, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Curvature> LinearSpaceExclusive(this Curvature a, Curvature b, Integer count){
-            var _var196 = b;
+            var _var197 = b;
             {
-                var _var195 = a;
-                return count.FractionsExclusive().Map((t)  => _var195.Lerp(_var196, t));
+                var _var196 = a;
+                return count.FractionsExclusive().Map((t)  => _var196.Lerp(_var197, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Speed> LinearSpace(this Speed a, Speed b, Integer count){
-            var _var198 = b;
+            var _var199 = b;
             {
-                var _var197 = a;
-                return count.Fractions().Map((t)  => _var197.Lerp(_var198, t));
+                var _var198 = a;
+                return count.Fractions().Map((t)  => _var198.Lerp(_var199, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Speed> LinearSpaceExclusive(this Speed a, Speed b, Integer count){
-            var _var200 = b;
+            var _var201 = b;
             {
-                var _var199 = a;
-                return count.FractionsExclusive().Map((t)  => _var199.Lerp(_var200, t));
+                var _var200 = a;
+                return count.FractionsExclusive().Map((t)  => _var200.Lerp(_var201, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Acceleration> LinearSpace(this Acceleration a, Acceleration b, Integer count){
-            var _var202 = b;
+            var _var203 = b;
             {
-                var _var201 = a;
-                return count.Fractions().Map((t)  => _var201.Lerp(_var202, t));
+                var _var202 = a;
+                return count.Fractions().Map((t)  => _var202.Lerp(_var203, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Acceleration> LinearSpaceExclusive(this Acceleration a, Acceleration b, Integer count){
-            var _var204 = b;
+            var _var205 = b;
             {
-                var _var203 = a;
-                return count.FractionsExclusive().Map((t)  => _var203.Lerp(_var204, t));
+                var _var204 = a;
+                return count.FractionsExclusive().Map((t)  => _var204.Lerp(_var205, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Jerk> LinearSpace(this Jerk a, Jerk b, Integer count){
-            var _var206 = b;
+            var _var207 = b;
             {
-                var _var205 = a;
-                return count.Fractions().Map((t)  => _var205.Lerp(_var206, t));
+                var _var206 = a;
+                return count.Fractions().Map((t)  => _var206.Lerp(_var207, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Jerk> LinearSpaceExclusive(this Jerk a, Jerk b, Integer count){
-            var _var208 = b;
+            var _var209 = b;
             {
-                var _var207 = a;
-                return count.FractionsExclusive().Map((t)  => _var207.Lerp(_var208, t));
+                var _var208 = a;
+                return count.FractionsExclusive().Map((t)  => _var208.Lerp(_var209, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<AngularVelocity> LinearSpace(this AngularVelocity a, AngularVelocity b, Integer count){
-            var _var210 = b;
+            var _var211 = b;
             {
-                var _var209 = a;
-                return count.Fractions().Map((t)  => _var209.Lerp(_var210, t));
+                var _var210 = a;
+                return count.Fractions().Map((t)  => _var210.Lerp(_var211, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<AngularVelocity> LinearSpaceExclusive(this AngularVelocity a, AngularVelocity b, Integer count){
-            var _var212 = b;
+            var _var213 = b;
             {
-                var _var211 = a;
-                return count.FractionsExclusive().Map((t)  => _var211.Lerp(_var212, t));
+                var _var212 = a;
+                return count.FractionsExclusive().Map((t)  => _var212.Lerp(_var213, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<AngularAcceleration> LinearSpace(this AngularAcceleration a, AngularAcceleration b, Integer count){
-            var _var214 = b;
+            var _var215 = b;
             {
-                var _var213 = a;
-                return count.Fractions().Map((t)  => _var213.Lerp(_var214, t));
+                var _var214 = a;
+                return count.Fractions().Map((t)  => _var214.Lerp(_var215, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<AngularAcceleration> LinearSpaceExclusive(this AngularAcceleration a, AngularAcceleration b, Integer count){
-            var _var216 = b;
+            var _var217 = b;
             {
-                var _var215 = a;
-                return count.FractionsExclusive().Map((t)  => _var215.Lerp(_var216, t));
+                var _var216 = a;
+                return count.FractionsExclusive().Map((t)  => _var216.Lerp(_var217, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Frequency> LinearSpace(this Frequency a, Frequency b, Integer count){
-            var _var218 = b;
+            var _var219 = b;
             {
-                var _var217 = a;
-                return count.Fractions().Map((t)  => _var217.Lerp(_var218, t));
+                var _var218 = a;
+                return count.Fractions().Map((t)  => _var218.Lerp(_var219, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Frequency> LinearSpaceExclusive(this Frequency a, Frequency b, Integer count){
-            var _var220 = b;
+            var _var221 = b;
             {
-                var _var219 = a;
-                return count.FractionsExclusive().Map((t)  => _var219.Lerp(_var220, t));
+                var _var220 = a;
+                return count.FractionsExclusive().Map((t)  => _var220.Lerp(_var221, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Pressure> LinearSpace(this Pressure a, Pressure b, Integer count){
-            var _var222 = b;
+            var _var223 = b;
             {
-                var _var221 = a;
-                return count.Fractions().Map((t)  => _var221.Lerp(_var222, t));
+                var _var222 = a;
+                return count.Fractions().Map((t)  => _var222.Lerp(_var223, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Pressure> LinearSpaceExclusive(this Pressure a, Pressure b, Integer count){
-            var _var224 = b;
+            var _var225 = b;
             {
-                var _var223 = a;
-                return count.FractionsExclusive().Map((t)  => _var223.Lerp(_var224, t));
+                var _var224 = a;
+                return count.FractionsExclusive().Map((t)  => _var224.Lerp(_var225, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Stiffness> LinearSpace(this Stiffness a, Stiffness b, Integer count){
-            var _var226 = b;
+            var _var227 = b;
             {
-                var _var225 = a;
-                return count.Fractions().Map((t)  => _var225.Lerp(_var226, t));
+                var _var226 = a;
+                return count.Fractions().Map((t)  => _var226.Lerp(_var227, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Stiffness> LinearSpaceExclusive(this Stiffness a, Stiffness b, Integer count){
-            var _var228 = b;
+            var _var229 = b;
             {
-                var _var227 = a;
-                return count.FractionsExclusive().Map((t)  => _var227.Lerp(_var228, t));
+                var _var228 = a;
+                return count.FractionsExclusive().Map((t)  => _var228.Lerp(_var229, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<DampingCoefficient> LinearSpace(this DampingCoefficient a, DampingCoefficient b, Integer count){
-            var _var230 = b;
+            var _var231 = b;
             {
-                var _var229 = a;
-                return count.Fractions().Map((t)  => _var229.Lerp(_var230, t));
+                var _var230 = a;
+                return count.Fractions().Map((t)  => _var230.Lerp(_var231, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<DampingCoefficient> LinearSpaceExclusive(this DampingCoefficient a, DampingCoefficient b, Integer count){
-            var _var232 = b;
+            var _var233 = b;
             {
-                var _var231 = a;
-                return count.FractionsExclusive().Map((t)  => _var231.Lerp(_var232, t));
+                var _var232 = a;
+                return count.FractionsExclusive().Map((t)  => _var232.Lerp(_var233, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<DynamicViscosity> LinearSpace(this DynamicViscosity a, DynamicViscosity b, Integer count){
-            var _var234 = b;
+            var _var235 = b;
             {
-                var _var233 = a;
-                return count.Fractions().Map((t)  => _var233.Lerp(_var234, t));
+                var _var234 = a;
+                return count.Fractions().Map((t)  => _var234.Lerp(_var235, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<DynamicViscosity> LinearSpaceExclusive(this DynamicViscosity a, DynamicViscosity b, Integer count){
-            var _var236 = b;
+            var _var237 = b;
             {
-                var _var235 = a;
-                return count.FractionsExclusive().Map((t)  => _var235.Lerp(_var236, t));
+                var _var236 = a;
+                return count.FractionsExclusive().Map((t)  => _var236.Lerp(_var237, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<KinematicViscosity> LinearSpace(this KinematicViscosity a, KinematicViscosity b, Integer count){
-            var _var238 = b;
+            var _var239 = b;
             {
-                var _var237 = a;
-                return count.Fractions().Map((t)  => _var237.Lerp(_var238, t));
+                var _var238 = a;
+                return count.Fractions().Map((t)  => _var238.Lerp(_var239, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<KinematicViscosity> LinearSpaceExclusive(this KinematicViscosity a, KinematicViscosity b, Integer count){
-            var _var240 = b;
+            var _var241 = b;
             {
-                var _var239 = a;
-                return count.FractionsExclusive().Map((t)  => _var239.Lerp(_var240, t));
+                var _var240 = a;
+                return count.FractionsExclusive().Map((t)  => _var240.Lerp(_var241, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<MassFlowRate> LinearSpace(this MassFlowRate a, MassFlowRate b, Integer count){
-            var _var242 = b;
+            var _var243 = b;
             {
-                var _var241 = a;
-                return count.Fractions().Map((t)  => _var241.Lerp(_var242, t));
+                var _var242 = a;
+                return count.Fractions().Map((t)  => _var242.Lerp(_var243, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<MassFlowRate> LinearSpaceExclusive(this MassFlowRate a, MassFlowRate b, Integer count){
-            var _var244 = b;
+            var _var245 = b;
             {
-                var _var243 = a;
-                return count.FractionsExclusive().Map((t)  => _var243.Lerp(_var244, t));
+                var _var244 = a;
+                return count.FractionsExclusive().Map((t)  => _var244.Lerp(_var245, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<VolumetricFlowRate> LinearSpace(this VolumetricFlowRate a, VolumetricFlowRate b, Integer count){
-            var _var246 = b;
+            var _var247 = b;
             {
-                var _var245 = a;
-                return count.Fractions().Map((t)  => _var245.Lerp(_var246, t));
+                var _var246 = a;
+                return count.Fractions().Map((t)  => _var246.Lerp(_var247, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<VolumetricFlowRate> LinearSpaceExclusive(this VolumetricFlowRate a, VolumetricFlowRate b, Integer count){
-            var _var248 = b;
+            var _var249 = b;
             {
-                var _var247 = a;
-                return count.FractionsExclusive().Map((t)  => _var247.Lerp(_var248, t));
+                var _var248 = a;
+                return count.FractionsExclusive().Map((t)  => _var248.Lerp(_var249, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Strain> LinearSpace(this Strain a, Strain b, Integer count){
-            var _var250 = b;
+            var _var251 = b;
             {
-                var _var249 = a;
-                return count.Fractions().Map((t)  => _var249.Lerp(_var250, t));
+                var _var250 = a;
+                return count.Fractions().Map((t)  => _var250.Lerp(_var251, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Strain> LinearSpaceExclusive(this Strain a, Strain b, Integer count){
-            var _var252 = b;
+            var _var253 = b;
             {
-                var _var251 = a;
-                return count.FractionsExclusive().Map((t)  => _var251.Lerp(_var252, t));
+                var _var252 = a;
+                return count.FractionsExclusive().Map((t)  => _var252.Lerp(_var253, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Mass> LinearSpace(this Mass a, Mass b, Integer count){
-            var _var254 = b;
+            var _var255 = b;
             {
-                var _var253 = a;
-                return count.Fractions().Map((t)  => _var253.Lerp(_var254, t));
+                var _var254 = a;
+                return count.Fractions().Map((t)  => _var254.Lerp(_var255, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Mass> LinearSpaceExclusive(this Mass a, Mass b, Integer count){
-            var _var256 = b;
+            var _var257 = b;
             {
-                var _var255 = a;
-                return count.FractionsExclusive().Map((t)  => _var255.Lerp(_var256, t));
+                var _var256 = a;
+                return count.FractionsExclusive().Map((t)  => _var256.Lerp(_var257, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Density> LinearSpace(this Density a, Density b, Integer count){
-            var _var258 = b;
+            var _var259 = b;
             {
-                var _var257 = a;
-                return count.Fractions().Map((t)  => _var257.Lerp(_var258, t));
+                var _var258 = a;
+                return count.Fractions().Map((t)  => _var258.Lerp(_var259, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Density> LinearSpaceExclusive(this Density a, Density b, Integer count){
-            var _var260 = b;
+            var _var261 = b;
             {
-                var _var259 = a;
-                return count.FractionsExclusive().Map((t)  => _var259.Lerp(_var260, t));
+                var _var260 = a;
+                return count.FractionsExclusive().Map((t)  => _var260.Lerp(_var261, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<ArealDensity> LinearSpace(this ArealDensity a, ArealDensity b, Integer count){
-            var _var262 = b;
+            var _var263 = b;
             {
-                var _var261 = a;
-                return count.Fractions().Map((t)  => _var261.Lerp(_var262, t));
+                var _var262 = a;
+                return count.Fractions().Map((t)  => _var262.Lerp(_var263, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<ArealDensity> LinearSpaceExclusive(this ArealDensity a, ArealDensity b, Integer count){
-            var _var264 = b;
+            var _var265 = b;
             {
-                var _var263 = a;
-                return count.FractionsExclusive().Map((t)  => _var263.Lerp(_var264, t));
+                var _var264 = a;
+                return count.FractionsExclusive().Map((t)  => _var264.Lerp(_var265, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<LinearDensity> LinearSpace(this LinearDensity a, LinearDensity b, Integer count){
-            var _var266 = b;
+            var _var267 = b;
             {
-                var _var265 = a;
-                return count.Fractions().Map((t)  => _var265.Lerp(_var266, t));
+                var _var266 = a;
+                return count.Fractions().Map((t)  => _var266.Lerp(_var267, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<LinearDensity> LinearSpaceExclusive(this LinearDensity a, LinearDensity b, Integer count){
-            var _var268 = b;
+            var _var269 = b;
             {
-                var _var267 = a;
-                return count.FractionsExclusive().Map((t)  => _var267.Lerp(_var268, t));
+                var _var268 = a;
+                return count.FractionsExclusive().Map((t)  => _var268.Lerp(_var269, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Force> LinearSpace(this Force a, Force b, Integer count){
-            var _var270 = b;
+            var _var271 = b;
             {
-                var _var269 = a;
-                return count.Fractions().Map((t)  => _var269.Lerp(_var270, t));
+                var _var270 = a;
+                return count.Fractions().Map((t)  => _var270.Lerp(_var271, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Force> LinearSpaceExclusive(this Force a, Force b, Integer count){
-            var _var272 = b;
+            var _var273 = b;
             {
-                var _var271 = a;
-                return count.FractionsExclusive().Map((t)  => _var271.Lerp(_var272, t));
+                var _var272 = a;
+                return count.FractionsExclusive().Map((t)  => _var272.Lerp(_var273, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Torque> LinearSpace(this Torque a, Torque b, Integer count){
-            var _var274 = b;
+            var _var275 = b;
             {
-                var _var273 = a;
-                return count.Fractions().Map((t)  => _var273.Lerp(_var274, t));
+                var _var274 = a;
+                return count.Fractions().Map((t)  => _var274.Lerp(_var275, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Torque> LinearSpaceExclusive(this Torque a, Torque b, Integer count){
-            var _var276 = b;
+            var _var277 = b;
             {
-                var _var275 = a;
-                return count.FractionsExclusive().Map((t)  => _var275.Lerp(_var276, t));
+                var _var276 = a;
+                return count.FractionsExclusive().Map((t)  => _var276.Lerp(_var277, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Impulse> LinearSpace(this Impulse a, Impulse b, Integer count){
-            var _var278 = b;
+            var _var279 = b;
             {
-                var _var277 = a;
-                return count.Fractions().Map((t)  => _var277.Lerp(_var278, t));
+                var _var278 = a;
+                return count.Fractions().Map((t)  => _var278.Lerp(_var279, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Impulse> LinearSpaceExclusive(this Impulse a, Impulse b, Integer count){
-            var _var280 = b;
+            var _var281 = b;
             {
-                var _var279 = a;
-                return count.FractionsExclusive().Map((t)  => _var279.Lerp(_var280, t));
+                var _var280 = a;
+                return count.FractionsExclusive().Map((t)  => _var280.Lerp(_var281, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Momentum> LinearSpace(this Momentum a, Momentum b, Integer count){
-            var _var282 = b;
+            var _var283 = b;
             {
-                var _var281 = a;
-                return count.Fractions().Map((t)  => _var281.Lerp(_var282, t));
+                var _var282 = a;
+                return count.Fractions().Map((t)  => _var282.Lerp(_var283, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Momentum> LinearSpaceExclusive(this Momentum a, Momentum b, Integer count){
-            var _var284 = b;
+            var _var285 = b;
             {
-                var _var283 = a;
-                return count.FractionsExclusive().Map((t)  => _var283.Lerp(_var284, t));
+                var _var284 = a;
+                return count.FractionsExclusive().Map((t)  => _var284.Lerp(_var285, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<AngularMomentum> LinearSpace(this AngularMomentum a, AngularMomentum b, Integer count){
-            var _var286 = b;
+            var _var287 = b;
             {
-                var _var285 = a;
-                return count.Fractions().Map((t)  => _var285.Lerp(_var286, t));
+                var _var286 = a;
+                return count.Fractions().Map((t)  => _var286.Lerp(_var287, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<AngularMomentum> LinearSpaceExclusive(this AngularMomentum a, AngularMomentum b, Integer count){
-            var _var288 = b;
+            var _var289 = b;
             {
-                var _var287 = a;
-                return count.FractionsExclusive().Map((t)  => _var287.Lerp(_var288, t));
+                var _var288 = a;
+                return count.FractionsExclusive().Map((t)  => _var288.Lerp(_var289, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<MomentOfInertia> LinearSpace(this MomentOfInertia a, MomentOfInertia b, Integer count){
-            var _var290 = b;
+            var _var291 = b;
             {
-                var _var289 = a;
-                return count.Fractions().Map((t)  => _var289.Lerp(_var290, t));
+                var _var290 = a;
+                return count.Fractions().Map((t)  => _var290.Lerp(_var291, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<MomentOfInertia> LinearSpaceExclusive(this MomentOfInertia a, MomentOfInertia b, Integer count){
-            var _var292 = b;
+            var _var293 = b;
             {
-                var _var291 = a;
-                return count.FractionsExclusive().Map((t)  => _var291.Lerp(_var292, t));
+                var _var292 = a;
+                return count.FractionsExclusive().Map((t)  => _var292.Lerp(_var293, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Energy> LinearSpace(this Energy a, Energy b, Integer count){
-            var _var294 = b;
+            var _var295 = b;
             {
-                var _var293 = a;
-                return count.Fractions().Map((t)  => _var293.Lerp(_var294, t));
+                var _var294 = a;
+                return count.Fractions().Map((t)  => _var294.Lerp(_var295, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Energy> LinearSpaceExclusive(this Energy a, Energy b, Integer count){
-            var _var296 = b;
+            var _var297 = b;
             {
-                var _var295 = a;
-                return count.FractionsExclusive().Map((t)  => _var295.Lerp(_var296, t));
+                var _var296 = a;
+                return count.FractionsExclusive().Map((t)  => _var296.Lerp(_var297, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Power> LinearSpace(this Power a, Power b, Integer count){
-            var _var298 = b;
+            var _var299 = b;
             {
-                var _var297 = a;
-                return count.Fractions().Map((t)  => _var297.Lerp(_var298, t));
+                var _var298 = a;
+                return count.Fractions().Map((t)  => _var298.Lerp(_var299, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Power> LinearSpaceExclusive(this Power a, Power b, Integer count){
-            var _var300 = b;
+            var _var301 = b;
             {
-                var _var299 = a;
-                return count.FractionsExclusive().Map((t)  => _var299.Lerp(_var300, t));
+                var _var300 = a;
+                return count.FractionsExclusive().Map((t)  => _var300.Lerp(_var301, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<LuminousIntensity> LinearSpace(this LuminousIntensity a, LuminousIntensity b, Integer count){
-            var _var302 = b;
+            var _var303 = b;
             {
-                var _var301 = a;
-                return count.Fractions().Map((t)  => _var301.Lerp(_var302, t));
+                var _var302 = a;
+                return count.Fractions().Map((t)  => _var302.Lerp(_var303, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<LuminousIntensity> LinearSpaceExclusive(this LuminousIntensity a, LuminousIntensity b, Integer count){
-            var _var304 = b;
+            var _var305 = b;
             {
-                var _var303 = a;
-                return count.FractionsExclusive().Map((t)  => _var303.Lerp(_var304, t));
+                var _var304 = a;
+                return count.FractionsExclusive().Map((t)  => _var304.Lerp(_var305, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<LuminousFlux> LinearSpace(this LuminousFlux a, LuminousFlux b, Integer count){
-            var _var306 = b;
+            var _var307 = b;
             {
-                var _var305 = a;
-                return count.Fractions().Map((t)  => _var305.Lerp(_var306, t));
+                var _var306 = a;
+                return count.Fractions().Map((t)  => _var306.Lerp(_var307, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<LuminousFlux> LinearSpaceExclusive(this LuminousFlux a, LuminousFlux b, Integer count){
-            var _var308 = b;
+            var _var309 = b;
             {
-                var _var307 = a;
-                return count.FractionsExclusive().Map((t)  => _var307.Lerp(_var308, t));
+                var _var308 = a;
+                return count.FractionsExclusive().Map((t)  => _var308.Lerp(_var309, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Illuminance> LinearSpace(this Illuminance a, Illuminance b, Integer count){
-            var _var310 = b;
+            var _var311 = b;
             {
-                var _var309 = a;
-                return count.Fractions().Map((t)  => _var309.Lerp(_var310, t));
+                var _var310 = a;
+                return count.Fractions().Map((t)  => _var310.Lerp(_var311, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Illuminance> LinearSpaceExclusive(this Illuminance a, Illuminance b, Integer count){
-            var _var312 = b;
+            var _var313 = b;
             {
-                var _var311 = a;
-                return count.FractionsExclusive().Map((t)  => _var311.Lerp(_var312, t));
+                var _var312 = a;
+                return count.FractionsExclusive().Map((t)  => _var312.Lerp(_var313, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Luminance> LinearSpace(this Luminance a, Luminance b, Integer count){
-            var _var314 = b;
+            var _var315 = b;
             {
-                var _var313 = a;
-                return count.Fractions().Map((t)  => _var313.Lerp(_var314, t));
+                var _var314 = a;
+                return count.Fractions().Map((t)  => _var314.Lerp(_var315, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Luminance> LinearSpaceExclusive(this Luminance a, Luminance b, Integer count){
-            var _var316 = b;
+            var _var317 = b;
             {
-                var _var315 = a;
-                return count.FractionsExclusive().Map((t)  => _var315.Lerp(_var316, t));
+                var _var316 = a;
+                return count.FractionsExclusive().Map((t)  => _var316.Lerp(_var317, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Irradiance> LinearSpace(this Irradiance a, Irradiance b, Integer count){
-            var _var318 = b;
+            var _var319 = b;
             {
-                var _var317 = a;
-                return count.Fractions().Map((t)  => _var317.Lerp(_var318, t));
+                var _var318 = a;
+                return count.Fractions().Map((t)  => _var318.Lerp(_var319, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Irradiance> LinearSpaceExclusive(this Irradiance a, Irradiance b, Integer count){
-            var _var320 = b;
+            var _var321 = b;
             {
-                var _var319 = a;
-                return count.FractionsExclusive().Map((t)  => _var319.Lerp(_var320, t));
+                var _var320 = a;
+                return count.FractionsExclusive().Map((t)  => _var320.Lerp(_var321, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Temperature> LinearSpace(this Temperature a, Temperature b, Integer count){
-            var _var322 = b;
+            var _var323 = b;
             {
-                var _var321 = a;
-                return count.Fractions().Map((t)  => _var321.Lerp(_var322, t));
+                var _var322 = a;
+                return count.Fractions().Map((t)  => _var322.Lerp(_var323, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Temperature> LinearSpaceExclusive(this Temperature a, Temperature b, Integer count){
-            var _var324 = b;
+            var _var325 = b;
             {
-                var _var323 = a;
-                return count.FractionsExclusive().Map((t)  => _var323.Lerp(_var324, t));
+                var _var324 = a;
+                return count.FractionsExclusive().Map((t)  => _var324.Lerp(_var325, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<TemperatureDelta> LinearSpace(this TemperatureDelta a, TemperatureDelta b, Integer count){
-            var _var326 = b;
+            var _var327 = b;
             {
-                var _var325 = a;
-                return count.Fractions().Map((t)  => _var325.Lerp(_var326, t));
+                var _var326 = a;
+                return count.Fractions().Map((t)  => _var326.Lerp(_var327, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<TemperatureDelta> LinearSpaceExclusive(this TemperatureDelta a, TemperatureDelta b, Integer count){
-            var _var328 = b;
+            var _var329 = b;
             {
-                var _var327 = a;
-                return count.FractionsExclusive().Map((t)  => _var327.Lerp(_var328, t));
+                var _var328 = a;
+                return count.FractionsExclusive().Map((t)  => _var328.Lerp(_var329, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<HeatCapacity> LinearSpace(this HeatCapacity a, HeatCapacity b, Integer count){
-            var _var330 = b;
+            var _var331 = b;
             {
-                var _var329 = a;
-                return count.Fractions().Map((t)  => _var329.Lerp(_var330, t));
+                var _var330 = a;
+                return count.Fractions().Map((t)  => _var330.Lerp(_var331, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<HeatCapacity> LinearSpaceExclusive(this HeatCapacity a, HeatCapacity b, Integer count){
-            var _var332 = b;
+            var _var333 = b;
             {
-                var _var331 = a;
-                return count.FractionsExclusive().Map((t)  => _var331.Lerp(_var332, t));
+                var _var332 = a;
+                return count.FractionsExclusive().Map((t)  => _var332.Lerp(_var333, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<ThermalConductivity> LinearSpace(this ThermalConductivity a, ThermalConductivity b, Integer count){
-            var _var334 = b;
+            var _var335 = b;
             {
-                var _var333 = a;
-                return count.Fractions().Map((t)  => _var333.Lerp(_var334, t));
+                var _var334 = a;
+                return count.Fractions().Map((t)  => _var334.Lerp(_var335, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<ThermalConductivity> LinearSpaceExclusive(this ThermalConductivity a, ThermalConductivity b, Integer count){
-            var _var336 = b;
+            var _var337 = b;
             {
-                var _var335 = a;
-                return count.FractionsExclusive().Map((t)  => _var335.Lerp(_var336, t));
+                var _var336 = a;
+                return count.FractionsExclusive().Map((t)  => _var336.Lerp(_var337, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<AmountOfSubstance> LinearSpace(this AmountOfSubstance a, AmountOfSubstance b, Integer count){
-            var _var338 = b;
+            var _var339 = b;
             {
-                var _var337 = a;
-                return count.Fractions().Map((t)  => _var337.Lerp(_var338, t));
+                var _var338 = a;
+                return count.Fractions().Map((t)  => _var338.Lerp(_var339, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<AmountOfSubstance> LinearSpaceExclusive(this AmountOfSubstance a, AmountOfSubstance b, Integer count){
-            var _var340 = b;
+            var _var341 = b;
             {
-                var _var339 = a;
-                return count.FractionsExclusive().Map((t)  => _var339.Lerp(_var340, t));
+                var _var340 = a;
+                return count.FractionsExclusive().Map((t)  => _var340.Lerp(_var341, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Quaternion> LinearSpace(this Quaternion a, Quaternion b, Integer count){
-            var _var342 = b;
+            var _var343 = b;
             {
-                var _var341 = a;
-                return count.Fractions().Map((t)  => _var341.Lerp(_var342, t));
+                var _var342 = a;
+                return count.Fractions().Map((t)  => _var342.Lerp(_var343, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Quaternion> LinearSpaceExclusive(this Quaternion a, Quaternion b, Integer count){
-            var _var344 = b;
+            var _var345 = b;
             {
-                var _var343 = a;
-                return count.FractionsExclusive().Map((t)  => _var343.Lerp(_var344, t));
+                var _var344 = a;
+                return count.FractionsExclusive().Map((t)  => _var344.Lerp(_var345, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Rotation2D> LinearSpace(this Rotation2D a, Rotation2D b, Integer count){
-            var _var346 = b;
+            var _var347 = b;
             {
-                var _var345 = a;
-                return count.Fractions().Map((t)  => _var345.Lerp(_var346, t));
+                var _var346 = a;
+                return count.Fractions().Map((t)  => _var346.Lerp(_var347, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Rotation2D> LinearSpaceExclusive(this Rotation2D a, Rotation2D b, Integer count){
-            var _var348 = b;
+            var _var349 = b;
             {
-                var _var347 = a;
-                return count.FractionsExclusive().Map((t)  => _var347.Lerp(_var348, t));
+                var _var348 = a;
+                return count.FractionsExclusive().Map((t)  => _var348.Lerp(_var349, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Duration> LinearSpace(this Duration a, Duration b, Integer count){
-            var _var350 = b;
+            var _var351 = b;
             {
-                var _var349 = a;
-                return count.Fractions().Map((t)  => _var349.Lerp(_var350, t));
+                var _var350 = a;
+                return count.Fractions().Map((t)  => _var350.Lerp(_var351, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Duration> LinearSpaceExclusive(this Duration a, Duration b, Integer count){
-            var _var352 = b;
+            var _var353 = b;
             {
-                var _var351 = a;
-                return count.FractionsExclusive().Map((t)  => _var351.Lerp(_var352, t));
+                var _var352 = a;
+                return count.FractionsExclusive().Map((t)  => _var352.Lerp(_var353, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Pose2D> LinearSpace(this Pose2D a, Pose2D b, Integer count){
-            var _var354 = b;
+            var _var355 = b;
             {
-                var _var353 = a;
-                return count.Fractions().Map((t)  => _var353.Lerp(_var354, t));
+                var _var354 = a;
+                return count.Fractions().Map((t)  => _var354.Lerp(_var355, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Pose2D> LinearSpaceExclusive(this Pose2D a, Pose2D b, Integer count){
-            var _var356 = b;
+            var _var357 = b;
             {
-                var _var355 = a;
-                return count.FractionsExclusive().Map((t)  => _var355.Lerp(_var356, t));
+                var _var356 = a;
+                return count.FractionsExclusive().Map((t)  => _var356.Lerp(_var357, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Pose3D> LinearSpace(this Pose3D a, Pose3D b, Integer count){
-            var _var358 = b;
+            var _var359 = b;
             {
-                var _var357 = a;
-                return count.Fractions().Map((t)  => _var357.Lerp(_var358, t));
+                var _var358 = a;
+                return count.Fractions().Map((t)  => _var358.Lerp(_var359, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Pose3D> LinearSpaceExclusive(this Pose3D a, Pose3D b, Integer count){
-            var _var360 = b;
+            var _var361 = b;
             {
-                var _var359 = a;
-                return count.FractionsExclusive().Map((t)  => _var359.Lerp(_var360, t));
+                var _var360 = a;
+                return count.FractionsExclusive().Map((t)  => _var360.Lerp(_var361, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Vector2D> LinearSpace(this Vector2D a, Vector2D b, Integer count){
-            var _var362 = b;
+            var _var363 = b;
             {
-                var _var361 = a;
-                return count.Fractions().Map((t)  => _var361.Lerp(_var362, t));
+                var _var362 = a;
+                return count.Fractions().Map((t)  => _var362.Lerp(_var363, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Vector2D> LinearSpaceExclusive(this Vector2D a, Vector2D b, Integer count){
-            var _var364 = b;
+            var _var365 = b;
             {
-                var _var363 = a;
-                return count.FractionsExclusive().Map((t)  => _var363.Lerp(_var364, t));
+                var _var364 = a;
+                return count.FractionsExclusive().Map((t)  => _var364.Lerp(_var365, t));
             }
         }
 
@@ -1130,41 +1130,41 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number Last(this Vector2D self) => self.At(self.Count.Subtract(((Integer)1)));
         [MethodImpl(AggressiveInlining)] public static Number Middle(this Vector2D self) => self.At(self.Count.Divide(((Integer)2)));
         [MethodImpl(AggressiveInlining)] public static _T0 Reduce<_T0>(this Vector2D xs, _T0 acc, System.Func<_T0, Number, _T0> f){
-            var _var365 = xs;
-            return xs.Count.MapRange((i)  => _var365.At(i)).Reduce(acc, f);
+            var _var366 = xs;
+            return xs.Count.MapRange((i)  => _var366.At(i)).Reduce(acc, f);
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<_T0> Map<_T0>(this Vector2D xs, System.Func<Number, _T0> f){
-            var _var366 = xs;
-            return xs.Count.MapRange((i)  => _var366.At(i)).Map(f);
+            var _var367 = xs;
+            return xs.Count.MapRange((i)  => _var367.At(i)).Map(f);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean All(this Vector2D xs, System.Func<Number, Boolean> predicate){
-            var _var367 = xs;
-            return xs.Count.MapRange((i)  => _var367.At(i)).All(predicate);
+            var _var368 = xs;
+            return xs.Count.MapRange((i)  => _var368.At(i)).All(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Any(this Vector2D xs, System.Func<Number, Boolean> predicate){
-            var _var368 = xs;
-            return xs.Count.MapRange((i)  => _var368.At(i)).Any(predicate);
+            var _var369 = xs;
+            return xs.Count.MapRange((i)  => _var369.At(i)).Any(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean IsEmpty(this Vector2D self) => self.Count.Equals(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsNotEmpty(this Vector2D self) => self.Count.GreaterThan(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsSingleton(this Vector2D self) => self.Count.Equals(((Integer)1));
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Vector3D> LinearSpace(this Vector3D a, Vector3D b, Integer count){
-            var _var370 = b;
+            var _var371 = b;
             {
-                var _var369 = a;
-                return count.Fractions().Map((t)  => _var369.Lerp(_var370, t));
+                var _var370 = a;
+                return count.Fractions().Map((t)  => _var370.Lerp(_var371, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Vector3D> LinearSpaceExclusive(this Vector3D a, Vector3D b, Integer count){
-            var _var372 = b;
+            var _var373 = b;
             {
-                var _var371 = a;
-                return count.FractionsExclusive().Map((t)  => _var371.Lerp(_var372, t));
+                var _var372 = a;
+                return count.FractionsExclusive().Map((t)  => _var372.Lerp(_var373, t));
             }
         }
 
@@ -1175,41 +1175,41 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number Last(this Vector3D self) => self.At(self.Count.Subtract(((Integer)1)));
         [MethodImpl(AggressiveInlining)] public static Number Middle(this Vector3D self) => self.At(self.Count.Divide(((Integer)2)));
         [MethodImpl(AggressiveInlining)] public static _T0 Reduce<_T0>(this Vector3D xs, _T0 acc, System.Func<_T0, Number, _T0> f){
-            var _var373 = xs;
-            return xs.Count.MapRange((i)  => _var373.At(i)).Reduce(acc, f);
+            var _var374 = xs;
+            return xs.Count.MapRange((i)  => _var374.At(i)).Reduce(acc, f);
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<_T0> Map<_T0>(this Vector3D xs, System.Func<Number, _T0> f){
-            var _var374 = xs;
-            return xs.Count.MapRange((i)  => _var374.At(i)).Map(f);
+            var _var375 = xs;
+            return xs.Count.MapRange((i)  => _var375.At(i)).Map(f);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean All(this Vector3D xs, System.Func<Number, Boolean> predicate){
-            var _var375 = xs;
-            return xs.Count.MapRange((i)  => _var375.At(i)).All(predicate);
+            var _var376 = xs;
+            return xs.Count.MapRange((i)  => _var376.At(i)).All(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Any(this Vector3D xs, System.Func<Number, Boolean> predicate){
-            var _var376 = xs;
-            return xs.Count.MapRange((i)  => _var376.At(i)).Any(predicate);
+            var _var377 = xs;
+            return xs.Count.MapRange((i)  => _var377.At(i)).Any(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean IsEmpty(this Vector3D self) => self.Count.Equals(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsNotEmpty(this Vector3D self) => self.Count.GreaterThan(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsSingleton(this Vector3D self) => self.Count.Equals(((Integer)1));
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<VectorN> LinearSpace(this VectorN a, VectorN b, Integer count){
-            var _var378 = b;
+            var _var379 = b;
             {
-                var _var377 = a;
-                return count.Fractions().Map((t)  => _var377.Lerp(_var378, t));
+                var _var378 = a;
+                return count.Fractions().Map((t)  => _var378.Lerp(_var379, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<VectorN> LinearSpaceExclusive(this VectorN a, VectorN b, Integer count){
-            var _var380 = b;
+            var _var381 = b;
             {
-                var _var379 = a;
-                return count.FractionsExclusive().Map((t)  => _var379.Lerp(_var380, t));
+                var _var380 = a;
+                return count.FractionsExclusive().Map((t)  => _var380.Lerp(_var381, t));
             }
         }
 
@@ -1220,41 +1220,41 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number Last(this VectorN self) => self.At(self.Count.Subtract(((Integer)1)));
         [MethodImpl(AggressiveInlining)] public static Number Middle(this VectorN self) => self.At(self.Count.Divide(((Integer)2)));
         [MethodImpl(AggressiveInlining)] public static _T0 Reduce<_T0>(this VectorN xs, _T0 acc, System.Func<_T0, Number, _T0> f){
-            var _var381 = xs;
-            return xs.Count.MapRange((i)  => _var381.At(i)).Reduce(acc, f);
+            var _var382 = xs;
+            return xs.Count.MapRange((i)  => _var382.At(i)).Reduce(acc, f);
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<_T0> Map<_T0>(this VectorN xs, System.Func<Number, _T0> f){
-            var _var382 = xs;
-            return xs.Count.MapRange((i)  => _var382.At(i)).Map(f);
+            var _var383 = xs;
+            return xs.Count.MapRange((i)  => _var383.At(i)).Map(f);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean All(this VectorN xs, System.Func<Number, Boolean> predicate){
-            var _var383 = xs;
-            return xs.Count.MapRange((i)  => _var383.At(i)).All(predicate);
+            var _var384 = xs;
+            return xs.Count.MapRange((i)  => _var384.At(i)).All(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Any(this VectorN xs, System.Func<Number, Boolean> predicate){
-            var _var384 = xs;
-            return xs.Count.MapRange((i)  => _var384.At(i)).Any(predicate);
+            var _var385 = xs;
+            return xs.Count.MapRange((i)  => _var385.At(i)).Any(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean IsEmpty(this VectorN self) => self.Count.Equals(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsNotEmpty(this VectorN self) => self.Count.GreaterThan(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsSingleton(this VectorN self) => self.Count.Equals(((Integer)1));
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number2> LinearSpace(this Number2 a, Number2 b, Integer count){
-            var _var386 = b;
+            var _var387 = b;
             {
-                var _var385 = a;
-                return count.Fractions().Map((t)  => _var385.Lerp(_var386, t));
+                var _var386 = a;
+                return count.Fractions().Map((t)  => _var386.Lerp(_var387, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number2> LinearSpaceExclusive(this Number2 a, Number2 b, Integer count){
-            var _var388 = b;
+            var _var389 = b;
             {
-                var _var387 = a;
-                return count.FractionsExclusive().Map((t)  => _var387.Lerp(_var388, t));
+                var _var388 = a;
+                return count.FractionsExclusive().Map((t)  => _var388.Lerp(_var389, t));
             }
         }
 
@@ -1265,41 +1265,41 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number Last(this Number2 self) => self.At(self.Count.Subtract(((Integer)1)));
         [MethodImpl(AggressiveInlining)] public static Number Middle(this Number2 self) => self.At(self.Count.Divide(((Integer)2)));
         [MethodImpl(AggressiveInlining)] public static _T0 Reduce<_T0>(this Number2 xs, _T0 acc, System.Func<_T0, Number, _T0> f){
-            var _var389 = xs;
-            return xs.Count.MapRange((i)  => _var389.At(i)).Reduce(acc, f);
+            var _var390 = xs;
+            return xs.Count.MapRange((i)  => _var390.At(i)).Reduce(acc, f);
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<_T0> Map<_T0>(this Number2 xs, System.Func<Number, _T0> f){
-            var _var390 = xs;
-            return xs.Count.MapRange((i)  => _var390.At(i)).Map(f);
+            var _var391 = xs;
+            return xs.Count.MapRange((i)  => _var391.At(i)).Map(f);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean All(this Number2 xs, System.Func<Number, Boolean> predicate){
-            var _var391 = xs;
-            return xs.Count.MapRange((i)  => _var391.At(i)).All(predicate);
+            var _var392 = xs;
+            return xs.Count.MapRange((i)  => _var392.At(i)).All(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Any(this Number2 xs, System.Func<Number, Boolean> predicate){
-            var _var392 = xs;
-            return xs.Count.MapRange((i)  => _var392.At(i)).Any(predicate);
+            var _var393 = xs;
+            return xs.Count.MapRange((i)  => _var393.At(i)).Any(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean IsEmpty(this Number2 self) => self.Count.Equals(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsNotEmpty(this Number2 self) => self.Count.GreaterThan(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsSingleton(this Number2 self) => self.Count.Equals(((Integer)1));
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number3> LinearSpace(this Number3 a, Number3 b, Integer count){
-            var _var394 = b;
+            var _var395 = b;
             {
-                var _var393 = a;
-                return count.Fractions().Map((t)  => _var393.Lerp(_var394, t));
+                var _var394 = a;
+                return count.Fractions().Map((t)  => _var394.Lerp(_var395, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number3> LinearSpaceExclusive(this Number3 a, Number3 b, Integer count){
-            var _var396 = b;
+            var _var397 = b;
             {
-                var _var395 = a;
-                return count.FractionsExclusive().Map((t)  => _var395.Lerp(_var396, t));
+                var _var396 = a;
+                return count.FractionsExclusive().Map((t)  => _var396.Lerp(_var397, t));
             }
         }
 
@@ -1310,41 +1310,41 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number Last(this Number3 self) => self.At(self.Count.Subtract(((Integer)1)));
         [MethodImpl(AggressiveInlining)] public static Number Middle(this Number3 self) => self.At(self.Count.Divide(((Integer)2)));
         [MethodImpl(AggressiveInlining)] public static _T0 Reduce<_T0>(this Number3 xs, _T0 acc, System.Func<_T0, Number, _T0> f){
-            var _var397 = xs;
-            return xs.Count.MapRange((i)  => _var397.At(i)).Reduce(acc, f);
+            var _var398 = xs;
+            return xs.Count.MapRange((i)  => _var398.At(i)).Reduce(acc, f);
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<_T0> Map<_T0>(this Number3 xs, System.Func<Number, _T0> f){
-            var _var398 = xs;
-            return xs.Count.MapRange((i)  => _var398.At(i)).Map(f);
+            var _var399 = xs;
+            return xs.Count.MapRange((i)  => _var399.At(i)).Map(f);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean All(this Number3 xs, System.Func<Number, Boolean> predicate){
-            var _var399 = xs;
-            return xs.Count.MapRange((i)  => _var399.At(i)).All(predicate);
+            var _var400 = xs;
+            return xs.Count.MapRange((i)  => _var400.At(i)).All(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Any(this Number3 xs, System.Func<Number, Boolean> predicate){
-            var _var400 = xs;
-            return xs.Count.MapRange((i)  => _var400.At(i)).Any(predicate);
+            var _var401 = xs;
+            return xs.Count.MapRange((i)  => _var401.At(i)).Any(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean IsEmpty(this Number3 self) => self.Count.Equals(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsNotEmpty(this Number3 self) => self.Count.GreaterThan(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsSingleton(this Number3 self) => self.Count.Equals(((Integer)1));
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number4> LinearSpace(this Number4 a, Number4 b, Integer count){
-            var _var402 = b;
+            var _var403 = b;
             {
-                var _var401 = a;
-                return count.Fractions().Map((t)  => _var401.Lerp(_var402, t));
+                var _var402 = a;
+                return count.Fractions().Map((t)  => _var402.Lerp(_var403, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number4> LinearSpaceExclusive(this Number4 a, Number4 b, Integer count){
-            var _var404 = b;
+            var _var405 = b;
             {
-                var _var403 = a;
-                return count.FractionsExclusive().Map((t)  => _var403.Lerp(_var404, t));
+                var _var404 = a;
+                return count.FractionsExclusive().Map((t)  => _var404.Lerp(_var405, t));
             }
         }
 
@@ -1355,41 +1355,41 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number Last(this Number4 self) => self.At(self.Count.Subtract(((Integer)1)));
         [MethodImpl(AggressiveInlining)] public static Number Middle(this Number4 self) => self.At(self.Count.Divide(((Integer)2)));
         [MethodImpl(AggressiveInlining)] public static _T0 Reduce<_T0>(this Number4 xs, _T0 acc, System.Func<_T0, Number, _T0> f){
-            var _var405 = xs;
-            return xs.Count.MapRange((i)  => _var405.At(i)).Reduce(acc, f);
+            var _var406 = xs;
+            return xs.Count.MapRange((i)  => _var406.At(i)).Reduce(acc, f);
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<_T0> Map<_T0>(this Number4 xs, System.Func<Number, _T0> f){
-            var _var406 = xs;
-            return xs.Count.MapRange((i)  => _var406.At(i)).Map(f);
+            var _var407 = xs;
+            return xs.Count.MapRange((i)  => _var407.At(i)).Map(f);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean All(this Number4 xs, System.Func<Number, Boolean> predicate){
-            var _var407 = xs;
-            return xs.Count.MapRange((i)  => _var407.At(i)).All(predicate);
+            var _var408 = xs;
+            return xs.Count.MapRange((i)  => _var408.At(i)).All(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Any(this Number4 xs, System.Func<Number, Boolean> predicate){
-            var _var408 = xs;
-            return xs.Count.MapRange((i)  => _var408.At(i)).Any(predicate);
+            var _var409 = xs;
+            return xs.Count.MapRange((i)  => _var409.At(i)).Any(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean IsEmpty(this Number4 self) => self.Count.Equals(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsNotEmpty(this Number4 self) => self.Count.GreaterThan(((Integer)0));
         [MethodImpl(AggressiveInlining)] public static Boolean IsSingleton(this Number4 self) => self.Count.Equals(((Integer)1));
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number8> LinearSpace(this Number8 a, Number8 b, Integer count){
-            var _var410 = b;
+            var _var411 = b;
             {
-                var _var409 = a;
-                return count.Fractions().Map((t)  => _var409.Lerp(_var410, t));
+                var _var410 = a;
+                return count.Fractions().Map((t)  => _var410.Lerp(_var411, t));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number8> LinearSpaceExclusive(this Number8 a, Number8 b, Integer count){
-            var _var412 = b;
+            var _var413 = b;
             {
-                var _var411 = a;
-                return count.FractionsExclusive().Map((t)  => _var411.Lerp(_var412, t));
+                var _var412 = a;
+                return count.FractionsExclusive().Map((t)  => _var412.Lerp(_var413, t));
             }
         }
 
@@ -1400,23 +1400,23 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number Last(this Number8 self) => self.At(self.Count.Subtract(((Integer)1)));
         [MethodImpl(AggressiveInlining)] public static Number Middle(this Number8 self) => self.At(self.Count.Divide(((Integer)2)));
         [MethodImpl(AggressiveInlining)] public static _T0 Reduce<_T0>(this Number8 xs, _T0 acc, System.Func<_T0, Number, _T0> f){
-            var _var413 = xs;
-            return xs.Count.MapRange((i)  => _var413.At(i)).Reduce(acc, f);
+            var _var414 = xs;
+            return xs.Count.MapRange((i)  => _var414.At(i)).Reduce(acc, f);
         }
 
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<_T0> Map<_T0>(this Number8 xs, System.Func<Number, _T0> f){
-            var _var414 = xs;
-            return xs.Count.MapRange((i)  => _var414.At(i)).Map(f);
+            var _var415 = xs;
+            return xs.Count.MapRange((i)  => _var415.At(i)).Map(f);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean All(this Number8 xs, System.Func<Number, Boolean> predicate){
-            var _var415 = xs;
-            return xs.Count.MapRange((i)  => _var415.At(i)).All(predicate);
+            var _var416 = xs;
+            return xs.Count.MapRange((i)  => _var416.At(i)).All(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Any(this Number8 xs, System.Func<Number, Boolean> predicate){
-            var _var416 = xs;
-            return xs.Count.MapRange((i)  => _var416.At(i)).Any(predicate);
+            var _var417 = xs;
+            return xs.Count.MapRange((i)  => _var417.At(i)).Any(predicate);
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean IsEmpty(this Number8 self) => self.Count.Equals(((Integer)0));

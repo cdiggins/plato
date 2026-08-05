@@ -23,18 +23,18 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Boolean IsExplicitZero(this SparseMatrixEntry self) => self.Value.Equals(((Number)0));
         [MethodImpl(AggressiveInlining)] public static Integer DiagonalOffset(this SparseMatrixEntry self) => self.Column.Subtract(self.Row);
         [MethodImpl(AggressiveInlining)] public static Number ElementAt(this SparseMatrix self, Integer row, Integer column){
-            var _var486 = column;
+            var _var487 = column;
             {
-                var _var485 = row;
-                return self.Entries.Reduce(((Number)0), (total, e)  => total.Add(e.Row.Equals(_var485).And(e.Column.Equals(_var486)) ? e.Value : ((Number)0)));
+                var _var486 = row;
+                return self.Entries.Reduce(((Number)0), (total, e)  => total.Add(e.Row.Equals(_var486).And(e.Column.Equals(_var487)) ? e.Value : ((Number)0)));
             }
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean IsStored(this SparseMatrix self, Integer row, Integer column){
-            var _var488 = column;
+            var _var489 = column;
             {
-                var _var487 = row;
-                return self.Entries.Any((e)  => e.Row.Equals(_var487).And(e.Column.Equals(_var488)));
+                var _var488 = row;
+                return self.Entries.Any((e)  => e.Row.Equals(_var488).And(e.Column.Equals(_var489)));
             }
         }
 

@@ -1,0 +1,48 @@
+// Law library for the sorting vocabulary (stdlib/foundation/sorting.library.plato).
+//
+// Same harness and conventions as foundation.laws.plato: Law_-prefixed Boolean
+// functions, invoked by the reflection runner with seeded pseudorandom instances.
+// Sorting is total over any input, so unlike the triangulation laws nothing here
+// needs to be held back for ill-formed instances: every law below holds for ANY
+// array the runner produces.
+library SortingLaws
+{
+    // The result of SortedIndices is a permutation of [0, n): right length, and
+    // every position of the input named exactly once.
+    Law_SortedIndicesIsAPermutation(xs: Array<Number>): Boolean
+        => xs.SortedIndices((a, b) => a <= b).IsPermutationOfRange(xs.Count);
+
+    // Sorting orders the elements: every adjacent pair of the output is in
+    // ascending order.
+    Law_SortOrdersAdjacentPairs(xs: Array<Number>): Boolean
+        => xs.Sort((a, b) => a <= b).AdjacentPairsAscend;
+
+    // Sorting neither invents nor drops elements.
+    Law_SortPreservesCount(xs: Array<Number>): Boolean
+        => xs.Sort((a, b) => a <= b).Count == xs.Count;
+
+    // Stability: when two elements compare equal, their source order survives.
+    // Keys are folded into a handful of buckets so the pseudorandom input
+    // actually produces ties for the law to bite on.
+    Law_SortedIndicesIsStable(xs: Array<Integer>): Boolean
+    {
+        var keys = xs.Map(x => x % 4);
+        var perm = keys.SortedIndices((a, b) => a <= b);
+        return (perm.Count - 1).Greater(0).MapRange(i =>
+            keys[perm[i]] != keys[perm[i + 1]] || perm[i] < perm[i + 1]).All(b => b);
+    }
+
+    //==
+    // Helpers. No Law_ prefix, so the runner ignores them.
+
+    // True when `perm` has length n and names every index in [0, n) at least
+    // once — which, at that length, means exactly once.
+    IsPermutationOfRange(perm: Array<Integer>, n: Integer): Boolean
+        => perm.Count == n
+        && n.MapRange(i => perm.Any(j => j == i)).All(b => b);
+
+    // True when every adjacent pair is in ascending order (vacuously true for
+    // fewer than two elements).
+    AdjacentPairsAscend(s: Array<Number>): Boolean
+        => (s.Count - 1).Greater(0).MapRange(i => s[i] <= s[i + 1]).All(b => b);
+}

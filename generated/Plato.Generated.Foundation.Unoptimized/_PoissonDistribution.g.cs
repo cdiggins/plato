@@ -78,10 +78,10 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public Number Cdf(Number value){
-            var _var68 = this;
+            var _var69 = this;
             {
                 var k = value.Floor().ToInteger;
-                return k.LessThan(((Integer)0)) ? ((Number)0) : k.Add(((Integer)1)).Range().Map((i)  => _var68.Pdf(i.ToNumber)).Reduce(((Number)0), (total, mass)  => total.Add(mass));
+                return k.LessThan(((Integer)0)) ? ((Number)0) : k.Add(((Integer)1)).Range().Map((i)  => _var69.Pdf(i.ToNumber)).Reduce(((Number)0), (total, mass)  => total.Add(mass));
             }
         }
 

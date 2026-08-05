@@ -17,10 +17,10 @@ namespace Ara3D.Geometry
     public static class Colors
     {
         [MethodImpl(AggressiveInlining)] public static Integer StopIndexAt(this ColorGradient self, Number t){
-            var _var418 = t;
+            var _var419 = t;
             {
-                var _var417 = self;
-                return ((Integer)self.Stops.Count).Range().Reduce(((Integer)0), (acc, i)  => _var417.Stops[i].Position.LessThanOrEquals(_var418) ? i : acc);
+                var _var418 = self;
+                return ((Integer)self.Stops.Count).Range().Reduce(((Integer)0), (acc, i)  => _var418.Stops[i].Position.LessThanOrEquals(_var419) ? i : acc);
             }
         }
 

@@ -86,20 +86,20 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public MatrixN Negative() => (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Negative()));
         [MethodImpl(AggressiveInlining)]  public static MatrixN operator -(MatrixN self) => self.Negative();
         [MethodImpl(AggressiveInlining)] public MatrixN Multiply(Number scalar){
-            var _var52 = scalar;
-            return (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Multiply(_var52)));
+            var _var53 = scalar;
+            return (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Multiply(_var53)));
         }
 
         [MethodImpl(AggressiveInlining)]  public static MatrixN operator *(MatrixN self, Number scalar) => self.Multiply(scalar);
         [MethodImpl(AggressiveInlining)] public MatrixN Divide(Number scalar){
-            var _var53 = scalar;
-            return (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Divide(_var53)));
+            var _var54 = scalar;
+            return (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Divide(_var54)));
         }
 
         [MethodImpl(AggressiveInlining)]  public static MatrixN operator /(MatrixN self, Number scalar) => self.Divide(scalar);
         [MethodImpl(AggressiveInlining)] public MatrixN Modulo(Number scalar){
-            var _var54 = scalar;
-            return (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Modulo(_var54)));
+            var _var55 = scalar;
+            return (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Modulo(_var55)));
         }
 
         [MethodImpl(AggressiveInlining)]  public static MatrixN operator %(MatrixN self, Number scalar) => self.Modulo(scalar);

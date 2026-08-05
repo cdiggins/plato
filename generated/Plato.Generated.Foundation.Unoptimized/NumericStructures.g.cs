@@ -24,17 +24,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Boolean SameShape(this Matrix2x2 a, Matrix2x2 b) => a.RowCount().Equals(b.RowCount()).And(a.ColumnCount().Equals(b.ColumnCount()));
         [MethodImpl(AggressiveInlining)] public static Number DiagonalElement(this Matrix2x2 self, Integer i) => self.ElementAt(i, i);
         [MethodImpl(AggressiveInlining)] public static Number Trace(this Matrix2x2 self){
-            var _var419 = self;
-            return self.RowCount().MapRange((i)  => _var419.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
+            var _var420 = self;
+            return self.RowCount().MapRange((i)  => _var420.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number FrobeniusNorm(this Matrix2x2 self){
-            var _var422 = self;
+            var _var423 = self;
             {
-                var _var421 = self;
+                var _var422 = self;
                 {
-                    var _var420 = self;
-                    return self.ElementCount().MapRange((k)  => _var420.ElementAt(k.Divide(_var421.ColumnCount()), k.Modulo(_var422.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
+                    var _var421 = self;
+                    return self.ElementCount().MapRange((k)  => _var421.ElementAt(k.Divide(_var422.ColumnCount()), k.Modulo(_var423.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
                 }
             }
         }
@@ -49,17 +49,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Boolean SameShape(this Matrix3x3 a, Matrix3x3 b) => a.RowCount().Equals(b.RowCount()).And(a.ColumnCount().Equals(b.ColumnCount()));
         [MethodImpl(AggressiveInlining)] public static Number DiagonalElement(this Matrix3x3 self, Integer i) => self.ElementAt(i, i);
         [MethodImpl(AggressiveInlining)] public static Number Trace(this Matrix3x3 self){
-            var _var423 = self;
-            return self.RowCount().MapRange((i)  => _var423.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
+            var _var424 = self;
+            return self.RowCount().MapRange((i)  => _var424.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number FrobeniusNorm(this Matrix3x3 self){
-            var _var426 = self;
+            var _var427 = self;
             {
-                var _var425 = self;
+                var _var426 = self;
                 {
-                    var _var424 = self;
-                    return self.ElementCount().MapRange((k)  => _var424.ElementAt(k.Divide(_var425.ColumnCount()), k.Modulo(_var426.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
+                    var _var425 = self;
+                    return self.ElementCount().MapRange((k)  => _var425.ElementAt(k.Divide(_var426.ColumnCount()), k.Modulo(_var427.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
                 }
             }
         }
@@ -74,17 +74,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Boolean SameShape(this Matrix4x4 a, Matrix4x4 b) => a.RowCount().Equals(b.RowCount()).And(a.ColumnCount().Equals(b.ColumnCount()));
         [MethodImpl(AggressiveInlining)] public static Number DiagonalElement(this Matrix4x4 self, Integer i) => self.ElementAt(i, i);
         [MethodImpl(AggressiveInlining)] public static Number Trace(this Matrix4x4 self){
-            var _var427 = self;
-            return self.RowCount().MapRange((i)  => _var427.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
+            var _var428 = self;
+            return self.RowCount().MapRange((i)  => _var428.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number FrobeniusNorm(this Matrix4x4 self){
-            var _var430 = self;
+            var _var431 = self;
             {
-                var _var429 = self;
+                var _var430 = self;
                 {
-                    var _var428 = self;
-                    return self.ElementCount().MapRange((k)  => _var428.ElementAt(k.Divide(_var429.ColumnCount()), k.Modulo(_var430.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
+                    var _var429 = self;
+                    return self.ElementCount().MapRange((k)  => _var429.ElementAt(k.Divide(_var430.ColumnCount()), k.Modulo(_var431.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
                 }
             }
         }
@@ -98,17 +98,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Boolean SameShape(this Matrix3x2 a, Matrix3x2 b) => a.RowCount().Equals(b.RowCount()).And(a.ColumnCount().Equals(b.ColumnCount()));
         [MethodImpl(AggressiveInlining)] public static Number DiagonalElement(this Matrix3x2 self, Integer i) => self.ElementAt(i, i);
         [MethodImpl(AggressiveInlining)] public static Number Trace(this Matrix3x2 self){
-            var _var431 = self;
-            return self.RowCount().MapRange((i)  => _var431.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
+            var _var432 = self;
+            return self.RowCount().MapRange((i)  => _var432.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number FrobeniusNorm(this Matrix3x2 self){
-            var _var434 = self;
+            var _var435 = self;
             {
-                var _var433 = self;
+                var _var434 = self;
                 {
-                    var _var432 = self;
-                    return self.ElementCount().MapRange((k)  => _var432.ElementAt(k.Divide(_var433.ColumnCount()), k.Modulo(_var434.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
+                    var _var433 = self;
+                    return self.ElementCount().MapRange((k)  => _var433.ElementAt(k.Divide(_var434.ColumnCount()), k.Modulo(_var435.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
                 }
             }
         }
@@ -122,17 +122,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Boolean SameShape(this Matrix4x3 a, Matrix4x3 b) => a.RowCount().Equals(b.RowCount()).And(a.ColumnCount().Equals(b.ColumnCount()));
         [MethodImpl(AggressiveInlining)] public static Number DiagonalElement(this Matrix4x3 self, Integer i) => self.ElementAt(i, i);
         [MethodImpl(AggressiveInlining)] public static Number Trace(this Matrix4x3 self){
-            var _var435 = self;
-            return self.RowCount().MapRange((i)  => _var435.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
+            var _var436 = self;
+            return self.RowCount().MapRange((i)  => _var436.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number FrobeniusNorm(this Matrix4x3 self){
-            var _var438 = self;
+            var _var439 = self;
             {
-                var _var437 = self;
+                var _var438 = self;
                 {
-                    var _var436 = self;
-                    return self.ElementCount().MapRange((k)  => _var436.ElementAt(k.Divide(_var437.ColumnCount()), k.Modulo(_var438.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
+                    var _var437 = self;
+                    return self.ElementCount().MapRange((k)  => _var437.ElementAt(k.Divide(_var438.ColumnCount()), k.Modulo(_var439.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
                 }
             }
         }
@@ -147,17 +147,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Boolean SameShape(this MatrixN a, MatrixN b) => a.RowCount().Equals(b.RowCount()).And(a.ColumnCount().Equals(b.ColumnCount()));
         [MethodImpl(AggressiveInlining)] public static Number DiagonalElement(this MatrixN self, Integer i) => self.ElementAt(i, i);
         [MethodImpl(AggressiveInlining)] public static Number Trace(this MatrixN self){
-            var _var439 = self;
-            return self.RowCount().MapRange((i)  => _var439.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
+            var _var440 = self;
+            return self.RowCount().MapRange((i)  => _var440.ElementAt(i, i)).Reduce(((Number)0), (acc, x)  => acc.Add(x));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number FrobeniusNorm(this MatrixN self){
-            var _var442 = self;
+            var _var443 = self;
             {
-                var _var441 = self;
+                var _var442 = self;
                 {
-                    var _var440 = self;
-                    return self.ElementCount().MapRange((k)  => _var440.ElementAt(k.Divide(_var441.ColumnCount()), k.Modulo(_var442.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
+                    var _var441 = self;
+                    return self.ElementCount().MapRange((k)  => _var441.ElementAt(k.Divide(_var442.ColumnCount()), k.Modulo(_var443.ColumnCount())).Square()).Reduce(((Number)0), (acc, x)  => acc.Add(x)).Sqrt();
                 }
             }
         }
@@ -488,17 +488,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Vector2D Reciprocal(this Vector2D self) => self.MapComponents((x)  => x.Reciprocal());
         [MethodImpl(AggressiveInlining)] public static Vector2D Pow(this Vector2D self, Vector2D power) => self.ZipComponents(power, (x, y)  => x.Pow(y));
         [MethodImpl(AggressiveInlining)] public static Vector2D Pow(this Vector2D self, Number power){
-            var _var443 = power;
-            return self.MapComponents((x)  => x.Pow(_var443));
+            var _var444 = power;
+            return self.MapComponents((x)  => x.Pow(_var444));
         }
 
         [MethodImpl(AggressiveInlining)] public static Vector2D CopySign(this Vector2D self, Vector2D sign) => self.ZipComponents(sign, (x, y)  => x.CopySign(y));
         [MethodImpl(AggressiveInlining)] public static Vector2D FusedMultiplyAdd(this Vector2D self, Vector2D y, Vector2D z) => self.ZipComponents(y, z, (a, b, c)  => a.FusedMultiplyAdd(b, c));
         [MethodImpl(AggressiveInlining)] public static Vector2D Clamp(this Vector2D self, Number lo, Number hi){
-            var _var445 = hi;
+            var _var446 = hi;
             {
-                var _var444 = lo;
-                return self.MapComponents((x)  => x.Clamp(_var444, _var445));
+                var _var445 = lo;
+                return self.MapComponents((x)  => x.Clamp(_var445, _var446));
             }
         }
 
@@ -506,21 +506,21 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Vector2D OneMinus(this Vector2D self) => self.MapComponents((x)  => x.OneMinus());
         [MethodImpl(AggressiveInlining)] public static Vector2D RoundedToNearest(this Vector2D self) => self.MapComponents((x)  => x.RoundedToNearest());
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostEqual(this Vector2D a, Vector2D b, Number tolerance){
-            var _var446 = tolerance;
-            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var446));
+            var _var447 = tolerance;
+            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var447));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostZero(this Vector2D self, Number tolerance){
-            var _var447 = tolerance;
-            return self.AllComponents((x)  => x.AlmostZero(_var447));
+            var _var448 = tolerance;
+            return self.AllComponents((x)  => x.AlmostZero(_var448));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Between(this Vector2D self, Vector2D lower, Vector2D upper) => self.AllZipComponents(lower, upper, (x, a, b)  => x.Between(a, b));
         [MethodImpl(AggressiveInlining)] public static Boolean IsFinite(this Vector2D self) => self.AllComponents((x)  => x.IsFinite());
         [MethodImpl(AggressiveInlining)] public static Boolean HasNaN(this Vector2D self) => self.AnyComponent((x)  => x.IsNaN);
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> ComponentArray(this Vector2D self){
-            var _var448 = self;
-            return self.Count.Range().Map((i)  => _var448.At(i));
+            var _var449 = self;
+            return self.Count.Range().Map((i)  => _var449.At(i));
         }
 
         [MethodImpl(AggressiveInlining)] public static Vector2D MapComponents(this Vector2D self, System.Func<Number, Number> f) => Ara3D.Geometry.Vector2D.FromComponents(self.ComponentArray().Map(f));
@@ -569,17 +569,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Vector3D Reciprocal(this Vector3D self) => self.MapComponents((x)  => x.Reciprocal());
         [MethodImpl(AggressiveInlining)] public static Vector3D Pow(this Vector3D self, Vector3D power) => self.ZipComponents(power, (x, y)  => x.Pow(y));
         [MethodImpl(AggressiveInlining)] public static Vector3D Pow(this Vector3D self, Number power){
-            var _var449 = power;
-            return self.MapComponents((x)  => x.Pow(_var449));
+            var _var450 = power;
+            return self.MapComponents((x)  => x.Pow(_var450));
         }
 
         [MethodImpl(AggressiveInlining)] public static Vector3D CopySign(this Vector3D self, Vector3D sign) => self.ZipComponents(sign, (x, y)  => x.CopySign(y));
         [MethodImpl(AggressiveInlining)] public static Vector3D FusedMultiplyAdd(this Vector3D self, Vector3D y, Vector3D z) => self.ZipComponents(y, z, (a, b, c)  => a.FusedMultiplyAdd(b, c));
         [MethodImpl(AggressiveInlining)] public static Vector3D Clamp(this Vector3D self, Number lo, Number hi){
-            var _var451 = hi;
+            var _var452 = hi;
             {
-                var _var450 = lo;
-                return self.MapComponents((x)  => x.Clamp(_var450, _var451));
+                var _var451 = lo;
+                return self.MapComponents((x)  => x.Clamp(_var451, _var452));
             }
         }
 
@@ -587,21 +587,21 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Vector3D OneMinus(this Vector3D self) => self.MapComponents((x)  => x.OneMinus());
         [MethodImpl(AggressiveInlining)] public static Vector3D RoundedToNearest(this Vector3D self) => self.MapComponents((x)  => x.RoundedToNearest());
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostEqual(this Vector3D a, Vector3D b, Number tolerance){
-            var _var452 = tolerance;
-            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var452));
+            var _var453 = tolerance;
+            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var453));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostZero(this Vector3D self, Number tolerance){
-            var _var453 = tolerance;
-            return self.AllComponents((x)  => x.AlmostZero(_var453));
+            var _var454 = tolerance;
+            return self.AllComponents((x)  => x.AlmostZero(_var454));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Between(this Vector3D self, Vector3D lower, Vector3D upper) => self.AllZipComponents(lower, upper, (x, a, b)  => x.Between(a, b));
         [MethodImpl(AggressiveInlining)] public static Boolean IsFinite(this Vector3D self) => self.AllComponents((x)  => x.IsFinite());
         [MethodImpl(AggressiveInlining)] public static Boolean HasNaN(this Vector3D self) => self.AnyComponent((x)  => x.IsNaN);
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> ComponentArray(this Vector3D self){
-            var _var454 = self;
-            return self.Count.Range().Map((i)  => _var454.At(i));
+            var _var455 = self;
+            return self.Count.Range().Map((i)  => _var455.At(i));
         }
 
         [MethodImpl(AggressiveInlining)] public static Vector3D MapComponents(this Vector3D self, System.Func<Number, Number> f) => Ara3D.Geometry.Vector3D.FromComponents(self.ComponentArray().Map(f));
@@ -644,17 +644,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static VectorN Reciprocal(this VectorN self) => self.MapComponents((x)  => x.Reciprocal());
         [MethodImpl(AggressiveInlining)] public static VectorN Pow(this VectorN self, VectorN power) => self.ZipComponents(power, (x, y)  => x.Pow(y));
         [MethodImpl(AggressiveInlining)] public static VectorN Pow(this VectorN self, Number power){
-            var _var455 = power;
-            return self.MapComponents((x)  => x.Pow(_var455));
+            var _var456 = power;
+            return self.MapComponents((x)  => x.Pow(_var456));
         }
 
         [MethodImpl(AggressiveInlining)] public static VectorN CopySign(this VectorN self, VectorN sign) => self.ZipComponents(sign, (x, y)  => x.CopySign(y));
         [MethodImpl(AggressiveInlining)] public static VectorN FusedMultiplyAdd(this VectorN self, VectorN y, VectorN z) => self.ZipComponents(y, z, (a, b, c)  => a.FusedMultiplyAdd(b, c));
         [MethodImpl(AggressiveInlining)] public static VectorN Clamp(this VectorN self, Number lo, Number hi){
-            var _var457 = hi;
+            var _var458 = hi;
             {
-                var _var456 = lo;
-                return self.MapComponents((x)  => x.Clamp(_var456, _var457));
+                var _var457 = lo;
+                return self.MapComponents((x)  => x.Clamp(_var457, _var458));
             }
         }
 
@@ -662,21 +662,21 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static VectorN OneMinus(this VectorN self) => self.MapComponents((x)  => x.OneMinus());
         [MethodImpl(AggressiveInlining)] public static VectorN RoundedToNearest(this VectorN self) => self.MapComponents((x)  => x.RoundedToNearest());
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostEqual(this VectorN a, VectorN b, Number tolerance){
-            var _var458 = tolerance;
-            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var458));
+            var _var459 = tolerance;
+            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var459));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostZero(this VectorN self, Number tolerance){
-            var _var459 = tolerance;
-            return self.AllComponents((x)  => x.AlmostZero(_var459));
+            var _var460 = tolerance;
+            return self.AllComponents((x)  => x.AlmostZero(_var460));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Between(this VectorN self, VectorN lower, VectorN upper) => self.AllZipComponents(lower, upper, (x, a, b)  => x.Between(a, b));
         [MethodImpl(AggressiveInlining)] public static Boolean IsFinite(this VectorN self) => self.AllComponents((x)  => x.IsFinite());
         [MethodImpl(AggressiveInlining)] public static Boolean HasNaN(this VectorN self) => self.AnyComponent((x)  => x.IsNaN);
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> ComponentArray(this VectorN self){
-            var _var460 = self;
-            return self.Count.Range().Map((i)  => _var460.At(i));
+            var _var461 = self;
+            return self.Count.Range().Map((i)  => _var461.At(i));
         }
 
         [MethodImpl(AggressiveInlining)] public static VectorN MapComponents(this VectorN self, System.Func<Number, Number> f) => Ara3D.Geometry.VectorN.FromComponents(self.ComponentArray().Map(f));
@@ -719,17 +719,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number2 Reciprocal(this Number2 self) => self.MapComponents((x)  => x.Reciprocal());
         [MethodImpl(AggressiveInlining)] public static Number2 Pow(this Number2 self, Number2 power) => self.ZipComponents(power, (x, y)  => x.Pow(y));
         [MethodImpl(AggressiveInlining)] public static Number2 Pow(this Number2 self, Number power){
-            var _var461 = power;
-            return self.MapComponents((x)  => x.Pow(_var461));
+            var _var462 = power;
+            return self.MapComponents((x)  => x.Pow(_var462));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number2 CopySign(this Number2 self, Number2 sign) => self.ZipComponents(sign, (x, y)  => x.CopySign(y));
         [MethodImpl(AggressiveInlining)] public static Number2 FusedMultiplyAdd(this Number2 self, Number2 y, Number2 z) => self.ZipComponents(y, z, (a, b, c)  => a.FusedMultiplyAdd(b, c));
         [MethodImpl(AggressiveInlining)] public static Number2 Clamp(this Number2 self, Number lo, Number hi){
-            var _var463 = hi;
+            var _var464 = hi;
             {
-                var _var462 = lo;
-                return self.MapComponents((x)  => x.Clamp(_var462, _var463));
+                var _var463 = lo;
+                return self.MapComponents((x)  => x.Clamp(_var463, _var464));
             }
         }
 
@@ -737,21 +737,21 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number2 OneMinus(this Number2 self) => self.MapComponents((x)  => x.OneMinus());
         [MethodImpl(AggressiveInlining)] public static Number2 RoundedToNearest(this Number2 self) => self.MapComponents((x)  => x.RoundedToNearest());
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostEqual(this Number2 a, Number2 b, Number tolerance){
-            var _var464 = tolerance;
-            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var464));
+            var _var465 = tolerance;
+            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var465));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostZero(this Number2 self, Number tolerance){
-            var _var465 = tolerance;
-            return self.AllComponents((x)  => x.AlmostZero(_var465));
+            var _var466 = tolerance;
+            return self.AllComponents((x)  => x.AlmostZero(_var466));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Between(this Number2 self, Number2 lower, Number2 upper) => self.AllZipComponents(lower, upper, (x, a, b)  => x.Between(a, b));
         [MethodImpl(AggressiveInlining)] public static Boolean IsFinite(this Number2 self) => self.AllComponents((x)  => x.IsFinite());
         [MethodImpl(AggressiveInlining)] public static Boolean HasNaN(this Number2 self) => self.AnyComponent((x)  => x.IsNaN);
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> ComponentArray(this Number2 self){
-            var _var466 = self;
-            return self.Count.Range().Map((i)  => _var466.At(i));
+            var _var467 = self;
+            return self.Count.Range().Map((i)  => _var467.At(i));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number2 MapComponents(this Number2 self, System.Func<Number, Number> f) => Ara3D.Geometry.Number2.FromComponents(self.ComponentArray().Map(f));
@@ -793,17 +793,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number3 Reciprocal(this Number3 self) => self.MapComponents((x)  => x.Reciprocal());
         [MethodImpl(AggressiveInlining)] public static Number3 Pow(this Number3 self, Number3 power) => self.ZipComponents(power, (x, y)  => x.Pow(y));
         [MethodImpl(AggressiveInlining)] public static Number3 Pow(this Number3 self, Number power){
-            var _var467 = power;
-            return self.MapComponents((x)  => x.Pow(_var467));
+            var _var468 = power;
+            return self.MapComponents((x)  => x.Pow(_var468));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number3 CopySign(this Number3 self, Number3 sign) => self.ZipComponents(sign, (x, y)  => x.CopySign(y));
         [MethodImpl(AggressiveInlining)] public static Number3 FusedMultiplyAdd(this Number3 self, Number3 y, Number3 z) => self.ZipComponents(y, z, (a, b, c)  => a.FusedMultiplyAdd(b, c));
         [MethodImpl(AggressiveInlining)] public static Number3 Clamp(this Number3 self, Number lo, Number hi){
-            var _var469 = hi;
+            var _var470 = hi;
             {
-                var _var468 = lo;
-                return self.MapComponents((x)  => x.Clamp(_var468, _var469));
+                var _var469 = lo;
+                return self.MapComponents((x)  => x.Clamp(_var469, _var470));
             }
         }
 
@@ -811,21 +811,21 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number3 OneMinus(this Number3 self) => self.MapComponents((x)  => x.OneMinus());
         [MethodImpl(AggressiveInlining)] public static Number3 RoundedToNearest(this Number3 self) => self.MapComponents((x)  => x.RoundedToNearest());
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostEqual(this Number3 a, Number3 b, Number tolerance){
-            var _var470 = tolerance;
-            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var470));
+            var _var471 = tolerance;
+            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var471));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostZero(this Number3 self, Number tolerance){
-            var _var471 = tolerance;
-            return self.AllComponents((x)  => x.AlmostZero(_var471));
+            var _var472 = tolerance;
+            return self.AllComponents((x)  => x.AlmostZero(_var472));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Between(this Number3 self, Number3 lower, Number3 upper) => self.AllZipComponents(lower, upper, (x, a, b)  => x.Between(a, b));
         [MethodImpl(AggressiveInlining)] public static Boolean IsFinite(this Number3 self) => self.AllComponents((x)  => x.IsFinite());
         [MethodImpl(AggressiveInlining)] public static Boolean HasNaN(this Number3 self) => self.AnyComponent((x)  => x.IsNaN);
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> ComponentArray(this Number3 self){
-            var _var472 = self;
-            return self.Count.Range().Map((i)  => _var472.At(i));
+            var _var473 = self;
+            return self.Count.Range().Map((i)  => _var473.At(i));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number3 MapComponents(this Number3 self, System.Func<Number, Number> f) => Ara3D.Geometry.Number3.FromComponents(self.ComponentArray().Map(f));
@@ -867,17 +867,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number4 Reciprocal(this Number4 self) => self.MapComponents((x)  => x.Reciprocal());
         [MethodImpl(AggressiveInlining)] public static Number4 Pow(this Number4 self, Number4 power) => self.ZipComponents(power, (x, y)  => x.Pow(y));
         [MethodImpl(AggressiveInlining)] public static Number4 Pow(this Number4 self, Number power){
-            var _var473 = power;
-            return self.MapComponents((x)  => x.Pow(_var473));
+            var _var474 = power;
+            return self.MapComponents((x)  => x.Pow(_var474));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number4 CopySign(this Number4 self, Number4 sign) => self.ZipComponents(sign, (x, y)  => x.CopySign(y));
         [MethodImpl(AggressiveInlining)] public static Number4 FusedMultiplyAdd(this Number4 self, Number4 y, Number4 z) => self.ZipComponents(y, z, (a, b, c)  => a.FusedMultiplyAdd(b, c));
         [MethodImpl(AggressiveInlining)] public static Number4 Clamp(this Number4 self, Number lo, Number hi){
-            var _var475 = hi;
+            var _var476 = hi;
             {
-                var _var474 = lo;
-                return self.MapComponents((x)  => x.Clamp(_var474, _var475));
+                var _var475 = lo;
+                return self.MapComponents((x)  => x.Clamp(_var475, _var476));
             }
         }
 
@@ -885,21 +885,21 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number4 OneMinus(this Number4 self) => self.MapComponents((x)  => x.OneMinus());
         [MethodImpl(AggressiveInlining)] public static Number4 RoundedToNearest(this Number4 self) => self.MapComponents((x)  => x.RoundedToNearest());
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostEqual(this Number4 a, Number4 b, Number tolerance){
-            var _var476 = tolerance;
-            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var476));
+            var _var477 = tolerance;
+            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var477));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostZero(this Number4 self, Number tolerance){
-            var _var477 = tolerance;
-            return self.AllComponents((x)  => x.AlmostZero(_var477));
+            var _var478 = tolerance;
+            return self.AllComponents((x)  => x.AlmostZero(_var478));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Between(this Number4 self, Number4 lower, Number4 upper) => self.AllZipComponents(lower, upper, (x, a, b)  => x.Between(a, b));
         [MethodImpl(AggressiveInlining)] public static Boolean IsFinite(this Number4 self) => self.AllComponents((x)  => x.IsFinite());
         [MethodImpl(AggressiveInlining)] public static Boolean HasNaN(this Number4 self) => self.AnyComponent((x)  => x.IsNaN);
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> ComponentArray(this Number4 self){
-            var _var478 = self;
-            return self.Count.Range().Map((i)  => _var478.At(i));
+            var _var479 = self;
+            return self.Count.Range().Map((i)  => _var479.At(i));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number4 MapComponents(this Number4 self, System.Func<Number, Number> f) => Ara3D.Geometry.Number4.FromComponents(self.ComponentArray().Map(f));
@@ -941,17 +941,17 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number8 Reciprocal(this Number8 self) => self.MapComponents((x)  => x.Reciprocal());
         [MethodImpl(AggressiveInlining)] public static Number8 Pow(this Number8 self, Number8 power) => self.ZipComponents(power, (x, y)  => x.Pow(y));
         [MethodImpl(AggressiveInlining)] public static Number8 Pow(this Number8 self, Number power){
-            var _var479 = power;
-            return self.MapComponents((x)  => x.Pow(_var479));
+            var _var480 = power;
+            return self.MapComponents((x)  => x.Pow(_var480));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number8 CopySign(this Number8 self, Number8 sign) => self.ZipComponents(sign, (x, y)  => x.CopySign(y));
         [MethodImpl(AggressiveInlining)] public static Number8 FusedMultiplyAdd(this Number8 self, Number8 y, Number8 z) => self.ZipComponents(y, z, (a, b, c)  => a.FusedMultiplyAdd(b, c));
         [MethodImpl(AggressiveInlining)] public static Number8 Clamp(this Number8 self, Number lo, Number hi){
-            var _var481 = hi;
+            var _var482 = hi;
             {
-                var _var480 = lo;
-                return self.MapComponents((x)  => x.Clamp(_var480, _var481));
+                var _var481 = lo;
+                return self.MapComponents((x)  => x.Clamp(_var481, _var482));
             }
         }
 
@@ -959,21 +959,21 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number8 OneMinus(this Number8 self) => self.MapComponents((x)  => x.OneMinus());
         [MethodImpl(AggressiveInlining)] public static Number8 RoundedToNearest(this Number8 self) => self.MapComponents((x)  => x.RoundedToNearest());
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostEqual(this Number8 a, Number8 b, Number tolerance){
-            var _var482 = tolerance;
-            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var482));
+            var _var483 = tolerance;
+            return a.AllZipComponents(b, (x, y)  => x.AlmostEqual(y, _var483));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean AlmostZero(this Number8 self, Number tolerance){
-            var _var483 = tolerance;
-            return self.AllComponents((x)  => x.AlmostZero(_var483));
+            var _var484 = tolerance;
+            return self.AllComponents((x)  => x.AlmostZero(_var484));
         }
 
         [MethodImpl(AggressiveInlining)] public static Boolean Between(this Number8 self, Number8 lower, Number8 upper) => self.AllZipComponents(lower, upper, (x, a, b)  => x.Between(a, b));
         [MethodImpl(AggressiveInlining)] public static Boolean IsFinite(this Number8 self) => self.AllComponents((x)  => x.IsFinite());
         [MethodImpl(AggressiveInlining)] public static Boolean HasNaN(this Number8 self) => self.AnyComponent((x)  => x.IsNaN);
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Number> ComponentArray(this Number8 self){
-            var _var484 = self;
-            return self.Count.Range().Map((i)  => _var484.At(i));
+            var _var485 = self;
+            return self.Count.Range().Map((i)  => _var485.At(i));
         }
 
         [MethodImpl(AggressiveInlining)] public static Number8 MapComponents(this Number8 self, System.Func<Number, Number> f) => Ara3D.Geometry.Number8.FromComponents(self.ComponentArray().Map(f));

@@ -103,16 +103,16 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Vector3D Modulo(Vector3D b) => this.ZipComponents(b, (x, y)  => x.Modulo(y));
         [MethodImpl(AggressiveInlining)]  public static Vector3D operator %(Vector3D a, Vector3D b) => a.Modulo(b);
         [MethodImpl(AggressiveInlining)] public Vector3D Modulo(Number scalar){
-            var _var74 = scalar;
-            return this.MapComponents((x)  => x.Modulo(_var74));
+            var _var75 = scalar;
+            return this.MapComponents((x)  => x.Modulo(_var75));
         }
 
         [MethodImpl(AggressiveInlining)]  public static Vector3D operator %(Vector3D self, Number scalar) => self.Modulo(scalar);
         [MethodImpl(AggressiveInlining)] public Vector3D Min(Vector3D b) => this.ZipComponents(b, (x, y)  => x.Min(y));
         [MethodImpl(AggressiveInlining)] public Vector3D Max(Vector3D b) => this.ZipComponents(b, (x, y)  => x.Max(y));
         [MethodImpl(AggressiveInlining)] public Vector3D Lerp(Vector3D b, Number t){
-            var _var75 = t;
-            return this.ZipComponents(b, (x, y)  => x.Add(y.Subtract(x).Multiply(_var75)));
+            var _var76 = t;
+            return this.ZipComponents(b, (x, y)  => x.Add(y.Subtract(x).Multiply(_var76)));
         }
 
         [MethodImpl(AggressiveInlining)] public Number Magnitude() => this.MagnitudeSquared().Sqrt();
