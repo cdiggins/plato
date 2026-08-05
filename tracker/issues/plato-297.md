@@ -73,6 +73,17 @@ Strengthens the **polyhedron → polygon mesh → triangle mesh** seam in `solid
 
 ## Progress
 
+2026-08-05: The extended Conway set landed in `polyhedra.library.plato`
+(5395fa97): kis, join, needle, zip, ortho, meta, gyro, chamfer, propeller and
+reflect, all on the corner numbering with no side tables, plus a "Reading a
+polyhedron" section (face/total area, enclosed volume, edge lengths and ratio,
+planarity deviation, sphericity, Euler characteristic) and the ColorHSV <->
+Color conversions. Demonstrated end to end in the WebGL polyhedron studio
+(09cc85b9, `demos/webgl/conway.html`): operator workbench, chains, both
+catalogs, dual pairs, chamfer-to-Goldberg and a sphericity ladder, with face
+colouring computed in Plato (`demos/webgl/plato-src/polyhedron-studio.plato`).
+Probe: all operator topologies match the closed forms in TypeScript.
+
 2026-07-30: Conway expand, snub and bevel landed in Plato stdlib
 (`polyhedra-conway-expansion.library.plato`, submodule commits f20ddf0 / 5133e3d /
 b92d4c2): expand and snub share the corner-numbered shrink(+twist) construction,
