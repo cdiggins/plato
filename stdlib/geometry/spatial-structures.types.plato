@@ -146,7 +146,9 @@ type KdTreeNode2D
 
 // A kd-tree (https://en.wikipedia.org/wiki/K-d_tree) over a copy of its 2D
 // point set: nearest-neighbor and range queries. Node 0 is the root;
-// PointIndices is the leaf-order permutation of Points.
+// PointIndices is the leaf-order permutation of Points. No builder yet:
+// instances come from a host that emits this encoding — see
+// tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md.
 type KdTree2D
     implements IValue, ISpatialIndex2D, INearestNeighbor2D
 {
@@ -169,7 +171,9 @@ type KdTreeNode3D
 
 // A kd-tree over a copy of its 3D point set: nearest-neighbor and range
 // queries. Node 0 is the root; PointIndices is the leaf-order permutation
-// of Points.
+// of Points. No builder yet: instances come from a host that emits this
+// encoding — see
+// tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md.
 type KdTree3D
     implements IValue, ISpatialIndex3D, INearestNeighbor3D
 {
@@ -450,7 +454,9 @@ type BvhNode2D
 // A binary bounding volume hierarchy
 // (https://en.wikipedia.org/wiki/Bounding_volume_hierarchy) over 2D
 // primitives. Node 0 is the root; PrimitiveIndices is the leaf-order
-// permutation of the caller's primitive list.
+// permutation of the caller's primitive list. No builder yet: instances come
+// from a host, until BuildBvh (spatial-structures.library.plato) gains a 2D
+// twin — see tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md.
 type Bvh2D
     implements IValue, ISpatialIndex2D
 {
@@ -472,6 +478,8 @@ type BvhNode3D
 // A binary bounding volume hierarchy over 3D primitives: the standard
 // ray-tracing and broad-phase accelerator. Node 0 is the root;
 // PrimitiveIndices is the leaf-order permutation of the caller's primitives.
+// Instances come from BuildBvh (spatial-structures.library.plato) or from a
+// host that emits the same encoding.
 type Bvh3D
     implements IValue, ISpatialIndex3D, IRaycast3D
 {
@@ -495,7 +503,9 @@ type QuadtreeNode
 
 // A quadtree (https://en.wikipedia.org/wiki/Quadtree) over a square 2D region.
 // Node 0 is the root and covers Bounds; each level splits its square into four
-// equal quadrants, to at most MaxDepth levels below the root.
+// equal quadrants, to at most MaxDepth levels below the root. No builder yet:
+// instances come from a host, until BuildOctree
+// (spatial-structures.library.plato) gains a 2D twin.
 type Quadtree2D
     implements IValue, ISpatialIndex2D
 {
@@ -518,7 +528,9 @@ type OctreeNode
 
 // An octree (https://en.wikipedia.org/wiki/Octree) over a cubic 3D region.
 // Node 0 is the root and covers Bounds; each level splits its cube into eight
-// equal octants, to at most MaxDepth levels below the root.
+// equal octants, to at most MaxDepth levels below the root. Instances come
+// from BuildOctree (spatial-structures.library.plato) or from a host that
+// emits the same encoding.
 type Octree3D
     implements IValue, ISpatialIndex3D
 {
@@ -530,7 +542,8 @@ type Octree3D
 
 // An octree whose node bounds are enlarged by the factor Looseness (1 means
 // exact; 2 is common), letting each item live wholly inside one node:
-// cheap incremental updates for moving objects.
+// cheap incremental updates for moving objects. Instances come from
+// BuildLooseOctree (spatial-structures.library.plato) or from a host.
 type LooseOctree3D
     implements IValue, ISpatialIndex3D
 {

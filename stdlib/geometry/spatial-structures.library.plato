@@ -778,4 +778,263 @@ library SpatialStructures
     // node bounds.
     CandidatesInBounds(self: LooseOctree3D, bounds: Bounds3D): Array<ItemIndex>
         => self.Octree.CandidatesInBounds(bounds);
+
+    //==
+    // # Builders
+    //
+    // Construction of the hierarchies above, in Plato, per
+    // tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md.
+    // These are reference bodies — correct and portable first (STYLE_GUIDE.md,
+    // geometry priority); a backend recovers native speed through its override
+    // table (plato-368). An explicit work stack replaces recursion, because
+    // construction depth is a property of the data and bodies carry no
+    // recursion contract; the stack is a List whose live height is tracked
+    // beside it, so popped slots are reused rather than reallocated.
+
+    // Pushes a frame onto a List-backed stack whose live height is `top`:
+    // overwrites a dead slot when one exists, appends otherwise.
+    PushedFrame(stack: List<IntegerVector3>, top: Integer, frame: IntegerVector3): List<IntegerVector3>
+        => top < stack.Count ? stack.Set(top, frame) : stack.Add(frame);
+
+    // The IntegerVector4 overload of PushedFrame, for frames carrying a depth.
+    PushedFrame(stack: List<IntegerVector4>, top: Integer, frame: IntegerVector4): List<IntegerVector4>
+        => top < stack.Count ? stack.Set(top, frame) : stack.Add(frame);
+
+    // The union of the bounds named by one range of the permutation.
+    // Precondition: start < end.
+    RangeBounds(bounds: Array<Bounds3D>, perm: Buffer<Integer>, start: Integer, end: Integer): Bounds3D
+    {
+        var b = bounds[perm.At(start)];
+        var i = start + 1;
+        while (i < end)
+        {
+            b = b.Union(bounds[perm.At(i)]);
+            i = i + 1;
+        }
+        return b;
+    }
+
+    // The coordinate of a point along a split axis: 0 is X, 1 is Y, 2 is Z.
+    AxisCoordinate(p: Point3D, axis: Integer): Number
+        => axis == 0 ? p.X : axis == 1 ? p.Y : p.Z;
+
+    // The axis (0, 1, 2) along which the bounds extend furthest.
+    WidestAxis(b: Bounds3D): Integer
+    {
+        var dx = b.Max.X - b.Min.X;
+        var dy = b.Max.Y - b.Min.Y;
+        var dz = b.Max.Z - b.Min.Z;
+        return dx >= dy && dx >= dz ? 0 : (dy >= dz ? 1 : 2);
+    }
+
+    // Builds a binary BVH over primitive bounds by median split: each node
+    // sorts its range of the permutation by centroid along the widest axis of
+    // the centroid extents and splits at the middle, until a range fits
+    // maxLeafSize (clamped to at least 1). Deterministic, and the split
+    // recurses on strictly smaller non-empty ranges, so it terminates. The
+    // permutation ends in leaf order, as the queries above require.
+    BuildBvh(primitiveBounds: Array<Bounds3D>, maxLeafSize: Integer): Bvh3D
+    {
+        var n = primitiveBounds.Count;
+        if (n == 0)
+        {
+            return (new List<BvhNode3D>().Freeze(), new List<ItemIndex>().Freeze());
+        }
+        var leafSize = maxLeafSize.Greater(1);
+        var perm = new Buffer<Integer>(n);
+        var i = 0;
+        while (i < n)
+        {
+            perm = perm.Set(i, i);
+            i = i + 1;
+        }
+        var placeholder = BvhNode3D(primitiveBounds[0],
+            SpatialNodeIndex(-1), SpatialNodeIndex(-1), IntegerInterval(0, 0));
+        var nodes = new List<BvhNode3D>().Add(placeholder);
+        var stack = new List<IntegerVector3>().Add(IntegerVector3(0, 0, n));
+        var top = 1;
+        while (top > 0)
+        {
+            top = top - 1;
+            var frame = stack.At(top);
+            var node = frame.X;
+            var start = frame.Y;
+            var end = frame.Z;
+            var nodeBounds = primitiveBounds.RangeBounds(perm, start, end);
+            if (end - start <= leafSize)
+            {
+                nodes = nodes.Set(node, BvhNode3D(nodeBounds,
+                    SpatialNodeIndex(-1), SpatialNodeIndex(-1), IntegerInterval(start, end)));
+            }
+            else
+            {
+                var count = end - start;
+                var centroids = new Buffer<Point3D>(count);
+                var j = 0;
+                while (j < count)
+                {
+                    centroids = centroids.Set(j, primitiveBounds[perm.At(start + j)].Center);
+                    j = j + 1;
+                }
+                var centroidArray = centroids.Freeze();
+                var axis = centroidArray.BoundsOfPoints.WidestAxis;
+                var order = centroidArray.SortedIndices((a, b) =>
+                    a.AxisCoordinate(axis) <= b.AxisCoordinate(axis));
+                var reordered = new Buffer<Integer>(count);
+                j = 0;
+                while (j < count)
+                {
+                    reordered = reordered.Set(j, perm.At(start + order[j]));
+                    j = j + 1;
+                }
+                j = 0;
+                while (j < count)
+                {
+                    perm = perm.Set(start + j, reordered.At(j));
+                    j = j + 1;
+                }
+                var mid = start + count / 2;
+                var left = nodes.Count;
+                nodes = nodes.Add(placeholder).Add(placeholder);
+                nodes = nodes.Set(node, BvhNode3D(nodeBounds,
+                    SpatialNodeIndex(left), SpatialNodeIndex(left + 1), IntegerInterval(start, start)));
+                stack = stack.PushedFrame(top, IntegerVector3(left, start, mid));
+                top = top + 1;
+                stack = stack.PushedFrame(top, IntegerVector3(left + 1, mid, end));
+                top = top + 1;
+            }
+        }
+        return (nodes.Freeze(), perm.Freeze().Map(v => ItemIndex(v)));
+    }
+
+    // The octant of `p` around `center`, X varying fastest as the node types
+    // require: bit 0 set when p.X >= center.X, bit 1 for Y, bit 2 for Z.
+    OctantOf(p: Point3D, center: Point3D): Integer
+        => (p.X >= center.X ? 1 : 0) + (p.Y >= center.Y ? 2 : 0) + (p.Z >= center.Z ? 4 : 0);
+
+    // The o-th octant of a bounds, X varying fastest: bit 0 picks the +X
+    // half, bit 1 the +Y half, bit 2 the +Z half.
+    OctantBounds(b: Bounds3D, o: Integer): Bounds3D
+    {
+        var c = b.Center;
+        var highX = o % 2 == 1;
+        var highY = o / 2 % 2 == 1;
+        var highZ = o / 4 == 1;
+        return (Point3D(highX ? c.X : b.Min.X, highY ? c.Y : b.Min.Y, highZ ? c.Z : b.Min.Z),
+                Point3D(highX ? b.Max.X : c.X, highY ? b.Max.Y : c.Y, highZ ? b.Max.Z : c.Z));
+    }
+
+    // Builds an octree over a point set: the root is the smallest cube
+    // containing the points, an overfull node partitions its range into the
+    // eight octants around its center (stably, so source order survives within
+    // an octant), and splitting stops at maxDepth (clamped to at least 0) or
+    // when a range fits maxLeafSize (clamped to at least 1). Every internal
+    // node carries all eight children, empty octants as empty leaves; items
+    // land only in leaves. The depth cap is what guarantees termination when
+    // coincident points cannot be separated.
+    BuildOctree(points: Array<Point3D>, maxDepth: Integer, maxLeafSize: Integer): Octree3D
+    {
+        var n = points.Count;
+        var depthCap = maxDepth.Greater(0);
+        if (n == 0)
+        {
+            return (Point3D(0.0, 0.0, 0.0).CenteredBounds(0.0, 0.0, 0.0),
+                new List<OctreeNode>().Freeze(), new List<ItemIndex>().Freeze(), depthCap);
+        }
+        var pointBounds = points.BoundsOfPoints;
+        var size = (pointBounds.Max.X - pointBounds.Min.X)
+            .Max(pointBounds.Max.Y - pointBounds.Min.Y)
+            .Max(pointBounds.Max.Z - pointBounds.Min.Z);
+        var root = pointBounds.Center.CenteredBounds(size, size, size);
+        var leafSize = maxLeafSize.Greater(1);
+        var perm = new Buffer<Integer>(n);
+        var i = 0;
+        while (i < n)
+        {
+            perm = perm.Set(i, i);
+            i = i + 1;
+        }
+        var nodes = new List<OctreeNode>()
+            .Add(OctreeNode(root, SpatialNodeIndex(-1), IntegerInterval(0, 0)));
+        var stack = new List<IntegerVector4>().Add(IntegerVector4(0, 0, n, 0));
+        var top = 1;
+        while (top > 0)
+        {
+            top = top - 1;
+            var frame = stack.At(top);
+            var node = frame.X;
+            var start = frame.Y;
+            var end = frame.Z;
+            var depth = frame.W;
+            var nodeBounds = nodes.At(node).Bounds;
+            var count = end - start;
+            if (count <= leafSize || depth >= depthCap)
+            {
+                nodes = nodes.Set(node, OctreeNode(nodeBounds,
+                    SpatialNodeIndex(-1), IntegerInterval(start, end)));
+            }
+            else
+            {
+                var center = nodeBounds.Center;
+                var keys = new Buffer<Integer>(count);
+                var j = 0;
+                while (j < count)
+                {
+                    keys = keys.Set(j, points[perm.At(start + j)].OctantOf(center));
+                    j = j + 1;
+                }
+                var keyArray = keys.Freeze();
+                var order = keyArray.SortedIndices((a, b) => a <= b);
+                var reordered = new Buffer<Integer>(count);
+                j = 0;
+                while (j < count)
+                {
+                    reordered = reordered.Set(j, perm.At(start + order[j]));
+                    j = j + 1;
+                }
+                j = 0;
+                while (j < count)
+                {
+                    perm = perm.Set(start + j, reordered.At(j));
+                    j = j + 1;
+                }
+                var sortedKeys = order.Map(t => keyArray[t]);
+                var firstChild = nodes.Count;
+                var childStart = start;
+                var octant = 0;
+                while (octant < 8)
+                {
+                    var childCount = sortedKeys.Reduce(0, (acc, key) => key == octant ? acc + 1 : acc);
+                    nodes = nodes.Add(OctreeNode(nodeBounds.OctantBounds(octant),
+                        SpatialNodeIndex(-1), IntegerInterval(childStart, childStart + childCount)));
+                    stack = stack.PushedFrame(top,
+                        IntegerVector4(firstChild + octant, childStart, childStart + childCount, depth + 1));
+                    top = top + 1;
+                    childStart = childStart + childCount;
+                    octant = octant + 1;
+                }
+                nodes = nodes.Set(node, OctreeNode(nodeBounds,
+                    SpatialNodeIndex(firstChild), IntegerInterval(start, start)));
+            }
+        }
+        return (root, nodes.Freeze(), perm.Freeze().Map(v => ItemIndex(v)), depthCap);
+    }
+
+    // A loose octree over point ITEMS with a shared radius: the inner octree
+    // is built over the points, then every stored node bound is enlarged about
+    // its center by `looseness` (clamped to at least 1), which is what lets an
+    // item of that radius live wholly inside one node.
+    BuildLooseOctree(points: Array<Point3D>, maxDepth: Integer, maxLeafSize: Integer,
+        looseness: Number): LooseOctree3D
+    {
+        var factor = looseness.Max(1.0);
+        var octree = points.BuildOctree(maxDepth, maxLeafSize);
+        var loosened = octree.Nodes.Map(nd => OctreeNode(
+            nd.Bounds.Center.CenteredBounds(
+                (nd.Bounds.Max.X - nd.Bounds.Min.X) * factor,
+                (nd.Bounds.Max.Y - nd.Bounds.Min.Y) * factor,
+                (nd.Bounds.Max.Z - nd.Bounds.Min.Z) * factor),
+            nd.FirstChild, nd.Items));
+        return ((octree.Bounds, loosened, octree.ItemIndices, octree.MaxDepth), factor);
+    }
 }

@@ -203,9 +203,9 @@ library GeometryTraits
     // # Convex hull readings
     //
     // The counts, degeneracy tests, and provenance lookups of the hull records in
-    // `geometry.types.plato`. Computing a hull needs a sorting surface this
-    // vocabulary does not declare; what follows is everything that reads off the
-    // record once an implementation has produced it.
+    // `geometry.types.plato`, plus the 2D constructor. The 3D hull remains
+    // read-only: instances arrive from a host until a quickhull lands (see
+    // tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md).
 
     //==
     // # 2D hulls
@@ -229,6 +229,67 @@ library GeometryTraits
     // an empty, single-point, or collinear input produces.
     IsDegenerate(self: ConvexHull2D): Boolean
         => self.HullVertexCount < 3;
+
+    // The convex hull of a point set, by the monotone-chain sweep
+    // (https://en.wikipedia.org/wiki/Convex_hull_algorithms): sort the points
+    // lexicographically, then grow the lower and the upper chain, popping every
+    // corner that fails to turn left. O(n log n) in the sort, O(n) after it.
+    // Collinear boundary points are dropped — every emitted corner turns
+    // strictly left — so the hull is the minimal vertex set, wound
+    // counter-clockwise as CONVENTIONS.md requires. Inputs with fewer than
+    // three points, or without three non-collinear ones, yield a degenerate
+    // record (IsDegenerate) carrying the surviving chain.
+    ConvexHull(points: Array<Point2D>): ConvexHull2D
+    {
+        var n = points.Count;
+        if (n <= 2)
+        {
+            return (Polygon2D(points), n.MapRange(i => ItemIndex(i)));
+        }
+        var order = points.SortedIndices((a, b) => a.X < b.X || (a.X == b.X && a.Y <= b.Y));
+        var chain = new Buffer<Integer>(n + n);
+        var k = 0;
+        var i = 0;
+        while (i < n)
+        {
+            var lowerPoint = points[order[i]];
+            var popping = true;
+            // The nesting is load-bearing: `&&` is `And`, an ordinary function
+            // of two evaluated arguments, so it does not short-circuit — a
+            // combined guard would read chain slots that do not exist yet.
+            while (popping)
+            {
+                if (k < 2) { popping = false; }
+                else if (TwiceSignedArea(points[chain.At(k - 2)], points[chain.At(k - 1)], lowerPoint) <= 0.0) { k = k - 1; }
+                else { popping = false; }
+            }
+            chain = chain.Set(k, order[i]);
+            k = k + 1;
+            i = i + 1;
+        }
+        // The upper chain may pop down to, but never through, the completed
+        // lower chain plus its own first point.
+        var floor = k + 1;
+        i = n - 2;
+        while (i >= 0)
+        {
+            var upperPoint = points[order[i]];
+            var popping = true;
+            while (popping)
+            {
+                if (k < floor) { popping = false; }
+                else if (TwiceSignedArea(points[chain.At(k - 2)], points[chain.At(k - 1)], upperPoint) <= 0.0) { k = k - 1; }
+                else { popping = false; }
+            }
+            chain = chain.Set(k, order[i]);
+            k = k + 1;
+            i = i - 1;
+        }
+        // The final slot repeats the first vertex; drop it.
+        var m = k - 1;
+        return (Polygon2D(m.MapRange(j => points[chain.At(j)])),
+            m.MapRange(j => ItemIndex(chain.At(j))));
+    }
 
     //==
     // # 3D hulls

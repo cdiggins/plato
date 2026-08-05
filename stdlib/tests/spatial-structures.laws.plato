@@ -1,0 +1,114 @@
+// Law library for the spatial-structure builders
+// (stdlib/geometry/spatial-structures.library.plato ConvexHull / BuildBvh /
+// BuildOctree, per tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md).
+//
+// Same harness and conventions as foundation.laws.plato: Law_-prefixed Boolean
+// functions, invoked by the reflection runner with seeded pseudorandom
+// instances. A pseudorandom point or bounds array is always a VALID input to
+// these builders — unlike the triangulation laws nothing needs a
+// well-formedness assumption — so every law below holds for any input.
+//
+// What is deliberately not here: geometric containment of the input points by
+// the hull. That predicate is exact only with exact arithmetic; stated over
+// floats it fails on near-collinear inputs the runner will eventually produce,
+// and a law that fails on legitimate inputs is worse than no law. The
+// convexity law below IS robust, because it re-runs the identical
+// TwiceSignedArea comparisons the builder used to admit each corner.
+library SpatialStructureLaws
+{
+    //==
+    // # ConvexHull2D
+
+    // Every hull vertex is one of the input points, at the position its
+    // provenance names.
+    Law_HullVerticesComeFromTheInput(points: Array<Point2D>): Boolean
+    {
+        var hull = points.ConvexHull;
+        return hull.SourceIndices.Count == hull.HullVertexCount
+            && hull.SourceIndices.All(s => s.Value >= 0 && s.Value < points.Count)
+            && hull.HullVertexCount.MapRange(v =>
+                hull.Hull.Points[v].X == points[hull.SourceOf(v).Value].X
+                && hull.Hull.Points[v].Y == points[hull.SourceOf(v).Value].Y).All(b => b);
+    }
+
+    // A non-degenerate hull turns strictly left at every corner: convex,
+    // counter-clockwise, no collinear vertices.
+    Law_HullIsConvexAndCounterClockwise(points: Array<Point2D>): Boolean
+    {
+        var hull = points.ConvexHull;
+        var m = hull.HullVertexCount;
+        return hull.IsDegenerate
+            || m.MapRange(v => TwiceSignedArea(
+                hull.Hull.Points[v],
+                hull.Hull.Points[(v + 1) % m],
+                hull.Hull.Points[(v + 2) % m]) > 0.0).All(b => b);
+    }
+
+    // The hull never has more vertices than the input has points.
+    Law_HullIsNoBiggerThanItsInput(points: Array<Point2D>): Boolean
+        => points.ConvexHull.HullVertexCount <= points.Count;
+
+    //==
+    // # Bvh3D
+
+    // The permutation names every primitive exactly once.
+    Law_BvhPermutationIsComplete(bounds: Array<Bounds3D>): Boolean
+        => bounds.BuildBvh(4).PrimitiveIndices.IsItemPermutation(bounds.Count);
+
+    // The leaves partition the permutation: every position of it lies in
+    // exactly one leaf range, and internal ranges are empty.
+    Law_BvhLeavesPartitionThePermutation(bounds: Array<Bounds3D>): Boolean
+        => bounds.BuildBvh(4).Nodes.LeavesPartition(
+            bounds.Count, n => n.LeftChild.Value < 0 && n.RightChild.Value < 0,
+            n2 => n2.Primitives);
+
+    // A binary tree with a two-way split at every internal node has exactly
+    // 2L - 1 nodes for L leaves.
+    Law_BvhIsAFullBinaryTree(bounds: Array<Bounds3D>): Boolean
+    {
+        var tree = bounds.BuildBvh(4);
+        var leafCount = tree.Nodes.Reduce(0, (acc, n) =>
+            n.LeftChild.Value < 0 && n.RightChild.Value < 0 ? acc + 1 : acc);
+        return tree.Nodes.Count == (bounds.Count == 0 ? 0 : leafCount * 2 - 1);
+    }
+
+    //==
+    // # Octree3D
+
+    // The permutation names every point exactly once.
+    Law_OctreePermutationIsComplete(points: Array<Point3D>): Boolean
+        => points.BuildOctree(8, 4).ItemIndices.IsItemPermutation(points.Count);
+
+    // The leaves partition the permutation; internal ranges are empty.
+    Law_OctreeLeavesPartitionThePermutation(points: Array<Point3D>): Boolean
+        => points.BuildOctree(8, 4).Nodes.LeavesPartition(
+            points.Count, n => n.FirstChild.Value < 0, n2 => n2.Items);
+
+    // Every internal node's eight children exist in the node array.
+    Law_OctreeChildrenAreConsecutiveAndPresent(points: Array<Point3D>): Boolean
+    {
+        var tree = points.BuildOctree(8, 4);
+        return tree.Nodes.All(n => n.FirstChild.Value < 0
+            || (n.FirstChild.Value > 0 && n.FirstChild.Value + 8 <= tree.Nodes.Count));
+    }
+
+    //==
+    // Helpers. No Law_ prefix, so the runner ignores them.
+
+    // True when `perm` has length n and names every index in [0, n) at least
+    // once — which, at that length, means exactly once.
+    IsItemPermutation(perm: Array<ItemIndex>, n: Integer): Boolean
+        => perm.Count == n
+        && n.MapRange(i => perm.Any(p => p.Value == i)).All(b => b);
+
+    // True when the leaf ranges of `nodes` cover every position of [0, n)
+    // exactly once and every internal range is empty. `isLeaf` classifies a
+    // node; `rangeOf` reads its half-open range.
+    LeavesPartition(nodes: Array<$TNode>, n: Integer,
+        isLeaf: Function1<$TNode, Boolean>,
+        rangeOf: Function1<$TNode, IntegerInterval>): Boolean
+        => nodes.All(nd => isLeaf(nd) || rangeOf(nd).Start == rangeOf(nd).End)
+        && n.MapRange(i => nodes.Reduce(0, (acc, nd) =>
+                isLeaf(nd) && rangeOf(nd).Start <= i && i < rangeOf(nd).End
+                    ? acc + 1 : acc) == 1).All(b => b);
+}

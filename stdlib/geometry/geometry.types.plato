@@ -94,6 +94,7 @@ type SphereFit3D
 // counter-clockwise, plus the index of the source point each hull vertex came
 // from. SourceIndices is index-aligned with the polygon's own Points.
 // (https://en.wikipedia.org/wiki/Convex_hull_algorithms)
+// Instances come from ConvexHull (geometry.library.plato) or from a host.
 type ConvexHull2D
     implements IValue
 {
@@ -105,6 +106,8 @@ type ConvexHull2D
 // normals, plus the index of the source point each hull vertex came from.
 // SourceIndices is index-aligned with the mesh's own Positions.
 // (https://en.wikipedia.org/wiki/Quickhull)
+// No builder yet: instances come from a host, until a quickhull lands — see
+// tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md.
 type ConvexHull3D
     implements IValue
 {
