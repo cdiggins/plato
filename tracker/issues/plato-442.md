@@ -2,14 +2,14 @@
 id: plato-442
 title: "Builders for the spatial structures, hulls and Delaunay: the types and queries ship, nothing constructs them"
 type: problem
-status: ready
+status: done
 priority: p2
 effort: L
 risk: med
 area: plato
 sprint: 
 created: 2026-08-04
-closed:
+closed: 2026-08-04
 links: [plato-439]
 ---
 
@@ -65,10 +65,38 @@ declared query-first, which suggests the second, but nothing says so.
 
 ## Done means
 
-- [ ] A decision recorded in `tracker/decisions/` on whether spatial-structure
+- [x] A decision recorded in `tracker/decisions/` on whether spatial-structure
       construction belongs in Plato or in the host.
-- [ ] If in Plato: an ordering primitive, then `Bvh3D` and `Octree3D` builders.
-- [ ] If in Plato: `ConvexHull2D` gets a monotone-chain constructor, and the
+- [x] If in Plato: an ordering primitive, then `Bvh3D` and `Octree3D` builders.
+- [x] If in Plato: `ConvexHull2D` gets a monotone-chain constructor, and the
       geometry-samples convex-hull sample calls it.
-- [ ] Either way, the query-only types say in their doc comments where instances are
+- [x] Either way, the query-only types say in their doc comments where instances are
       expected to come from.
+
+## Closed 2026-08-04
+
+Decision: construction belongs in Plato
+(`tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md`).
+The issue's second premise was wrong — `var`/`while`/`List`/`Buffer`
+accumulate-and-patch loops already exist (the ear clipper is one) — so only
+ordering was genuinely missing, and under the plato-378 admission rule it
+landed as a LIBRARY reference body, not an intrinsic: `SortedIndices` / `Sort`
+(`stdlib/foundation/sorting.library.plato`, bottom-up merge over an index
+Buffer, stable, recursion-free).
+
+Shipped: `ConvexHull` (monotone chain, `geometry.library.plato`), `BuildBvh`
+(median split), `BuildOctree` / `BuildLooseOctree`
+(`spatial-structures.library.plato`). The geometry-samples convex-hull sample
+now calls the stdlib builder, and the TypeScript backend grew the List/Buffer
+prelude to run them.
+
+Verification: rungs 0-4 green (plato_check + cold gate + staging, which
+needed a snapshot re-pin for a pre-existing splines parse gap); foundation
+codegen + `SortingTests.cs` execute the sort (37/37); the geometry-samples
+Node suite executes hull/BVH/octree invariants (26/26). Laws are staged in
+`stdlib/tests/sorting.laws.plato` and `spatial-structures.laws.plato` for
+when the law runner unblocks (plato-308).
+
+Deferred, per the decision: kd-tree builders, 2D BVH/quadtree twins,
+quickhull for `ConvexHull3D`, and Delaunay (needs multiset vocabulary) — the
+query-only types now name their expected source.

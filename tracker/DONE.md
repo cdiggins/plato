@@ -3,6 +3,8 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-08-04 — [plato-442](issues/plato-442.md) — Builders for the spatial structures, hulls and Delaunay — done (decision f9948e96, sort d52bda7b+b68442d2, builders 63868232, TS backend f23d6519); SortedIndices/Sort + ConvexHull/BuildBvh/BuildOctree/BuildLooseOctree; executed via foundation tests (37/37) and geometry-samples Node suite (26/26); Delaunay + kd builders deferred per decision
+- 2026-08-04 — [plato-439](issues/plato-439.md) — geometry-samples: rebuild the TS samples on stdlib types, port missing builders back to stdlib — done (b7f6a682 + follow-up); samples rebuilt on stdlib types, four gaps filled in stdlib/geometry, six writer defects fixed, six filed
 - 2026-08-04 — [plato-445](issues/plato-445.md) — Extend the stdlib comparison with OCCT, Wolfram, and Three.js — done (0ce707b2)
 - 2026-08-03 — [plato-436](issues/plato-436.md) — TypeScript writer: Arr is a lazy view with no memoization, so library members are super-linear in their own iteration counts — done (7dcd7d06) — Arr memoizes; five cases at arithmetic cost; demo workarounds deleted
 - 2026-08-03 — [plato-435](issues/plato-435.md) — Compare Plato stdlib with external numerical and geometry libraries — done (73fb760b)
