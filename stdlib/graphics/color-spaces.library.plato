@@ -7,6 +7,49 @@
 library ColorSpaces
 {
     //==
+    // # ColorHSV — conversion to and from linear RGB
+    //
+    // The standard hexcone mapping (https://en.wikipedia.org/wiki/HSL_and_HSV):
+    // hue picks the sector of the colour wheel, saturation how far from the grey
+    // axis, value the height. The components are treated as LINEAR-light, matching
+    // `Color`'s convention — an HSV triple that came from sRGB bytes must be
+    // decoded first, exactly as the named-colour table warns.
+
+    // One channel of the hexcone: the piecewise-linear wave for a channel offset
+    // `shift` sectors around the wheel from red. `k` is the hue in sectors
+    // (six per turn), and the wave is 1 at the channel's own sector, falling
+    // linearly to 0 two sectors away.
+    HsvChannel(self: ColorHSV, shift: Number): Number
+    {
+        var k = (shift + self.Hue.Turns * 6.0).Modulo(6.0);
+        return self.Value
+            - self.Value * self.Saturation * k.Min(4.0 - k).Clamp(0.0, 1.0);
+    }
+
+    // The linear RGB reading of an HSV triple, fully opaque.
+    ToColor(self: ColorHSV): Color
+        => (self.HsvChannel(5.0), self.HsvChannel(3.0), self.HsvChannel(1.0), 1.0);
+
+    // The hexcone reading of a linear colour: value is the largest channel,
+    // saturation the spread over it, hue the sector the largest channel picks.
+    // Grey (zero spread) reads as hue zero, black additionally as saturation
+    // zero; alpha does not participate.
+    ToColorHSV(self: Color): ColorHSV
+    {
+        var value = self.R.Max(self.G).Max(self.B);
+        var spread = value - self.R.Min(self.G).Min(self.B);
+        var sector =
+            spread == 0.0 ? 0.0
+            : value == self.R ? ((self.G - self.B) / spread).Modulo(6.0)
+            : value == self.G ? (self.B - self.R) / spread + 2.0
+            : (self.R - self.G) / spread + 4.0;
+        return ColorHSV(
+            (sector / 6.0).Turns,
+            value == 0.0 ? 0.0 : spread / value,
+            value);
+    }
+
+    //==
     // # Chromaticity
 
     // Both xy coordinates participate in the digest.

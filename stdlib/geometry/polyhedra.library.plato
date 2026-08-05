@@ -7,6 +7,10 @@
 //  - The expand, bevel and snub Archimedeans
 //  - Dual, ambo and truncate on polygon meshes
 //  - Expand, snub and bevel on polygon meshes
+//  - Kis, join and needle on polygon meshes
+//  - Ortho, meta and gyro on polygon meshes
+//  - Chamfer, propeller, zip and reflect on polygon meshes
+//  - Reading a polyhedron
 //  - Polyhedral dual pairings on the solid kinds
 //  - The five Platonic solids as polygon meshes
 
@@ -493,6 +497,443 @@ library Polyhedra
     // reachable by literal truncation), which a caller may accept or relax.
     Bevel(self: PolygonMesh3D): PolygonMesh3D
         => self.Ambo.Truncate;
+
+    //==
+    // # Kis, join and needle on polygon meshes
+    //
+    // Three more Conway operators
+    // (https://en.wikipedia.org/wiki/Conway_polyhedron_notation), all built from
+    // one new vertex block: an APEX per face, the face's centroid pushed out along
+    // its own outward normal by `height`. At height zero the apex sits in the face
+    // plane, which is the flat fan / rhombic reading of each operator; a positive
+    // height raises it, and a negative one dents the face inward.
+    //
+    //   kis     one triangle per CORNER      (a pyramid raised on every face)
+    //   join    one quad per EDGE            (the rhombic form; j = da)
+    //   needle  two triangles per EDGE       (n = kd, the dual of truncate)
+    //
+    // The vertex numbering is the original numbering followed by the face
+    // numbering, so again no lookup table is built. Preconditions as for the
+    // operators above: a closed manifold mesh with convex faces. Nothing here
+    // normalizes the result onto the unit sphere.
+
+    //==
+    // The shared vertex block.
+
+    // One apex per face: the face centroid displaced along its outward unit
+    // normal. Height is in model units, so scale the mesh first if a comparable
+    // spike across several solids is wanted.
+    FaceApexPoints(self: PolygonMesh3D, height: Number): Array<Point3D>
+        => self.FaceCount.MapRange(f =>
+            (self.FaceCentroid(f).PositionVector + self.FaceUnitNormal(f) * height).ToPoint);
+
+    // The apex of a face, read as a vertex of a mesh whose vertex block starts
+    // with the original vertices.
+    ApexVertex(self: PolygonMesh3D, face: FaceIndex): VertexIndex
+        => VertexIndex(self.VertexCount + face.Value);
+
+    //==
+    // Kis — raise a pyramid on every face
+    // (https://en.wikipedia.org/wiki/Kleetope). Every face of arity n becomes n
+    // triangles meeting at its apex. Tetrahedron -> triakis tetrahedron,
+    // octahedron -> tetrakis hexahedron at the right height. The Conway identity
+    // is k = dtd, but the direct construction below needs no dual and so stays
+    // exact on a mesh whose face planes pass near the origin.
+    // V' = V + F, E' = E + C, F' = C.
+
+    // The triangle a corner contributes: its own edge, closed onto its face's
+    // apex. Wound counter-clockwise seen from outside, like the face it replaces.
+    KisFaceOfCorner(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+        => [self.CornerVertex(corner),
+            self.CornerDestination(corner),
+            self.ApexVertex(self.CornerFace(corner))];
+
+    // One apex per face; one triangle per corner.
+    Kis(self: PolygonMesh3D, height: Number): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            Concatenate(self.Positions, self.FaceApexPoints(height)),
+            self.CornerCount.MapRange(c => self.KisFaceOfCorner(CornerIndex(c))));
+
+    //==
+    // Join — the Conway identity j = da, one rhombus per edge
+    // (https://en.wikipedia.org/wiki/Rhombic_dodecahedron is jC). Each edge
+    // becomes a quadrilateral spanning its two endpoints and the two face apexes
+    // beside it, so the result is face-transitive whenever the seed is regular.
+    // Height zero (apex = centroid) is the classical join.
+    // V' = V + F, E' = 2E, F' = E.
+
+    // The rhombus left where an edge was: endpoint, far face's apex, other
+    // endpoint, near face's apex. The far apex comes first because the near
+    // face lies to the LEFT of the corner's directed edge, and taking it first
+    // would wind the quad clockwise seen from outside.
+    // Precondition: `corner` is canonical (one call per undirected edge).
+    JoinFaceOfEdge(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+        => [self.CornerVertex(corner),
+            self.ApexVertex(self.CornerFace(self.TwinCorner(corner))),
+            self.CornerDestination(corner),
+            self.ApexVertex(self.CornerFace(corner))];
+
+    // One apex per face; one quad per undirected edge.
+    Join(self: PolygonMesh3D, height: Number): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            Concatenate(self.Positions, self.FaceApexPoints(height)),
+            self.EdgeStitchFaces((m, c) => [m.JoinFaceOfEdge(c)]));
+
+    //==
+    // Needle — the Conway identity n = kd, equivalently the dual of truncate
+    // (https://en.wikipedia.org/wiki/Conway_polyhedron_notation). Each edge
+    // becomes two long thin triangles reaching between the apexes of the faces
+    // on either side of it, which is what the name describes; the original edge
+    // survives only as the diagonal neither triangle uses.
+    // V' = V + F, E' = 3E, F' = 2E.
+
+    // The two needles of an edge: each endpoint joined to both neighbouring
+    // apexes, wound so the pair share the apex-to-apex edge in opposite senses.
+    // Precondition: `corner` is canonical.
+    NeedleFacesOfEdge(self: PolygonMesh3D, corner: CornerIndex): Array<Array<VertexIndex>>
+    {
+        var near = self.ApexVertex(self.CornerFace(corner));
+        var far = self.ApexVertex(self.CornerFace(self.TwinCorner(corner)));
+        return [[self.CornerVertex(corner), far, near],
+                [self.CornerDestination(corner), near, far]];
+    }
+
+    // One apex per face; two triangles per undirected edge.
+    Needle(self: PolygonMesh3D, height: Number): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            Concatenate(self.Positions, self.FaceApexPoints(height)),
+            self.EdgeStitchFaces((m, c) => m.NeedleFacesOfEdge(c)));
+
+    //==
+    // # Ortho, meta and gyro on polygon meshes
+    //
+    // The three Conway operators that subdivide every face without moving any
+    // original vertex (https://en.wikipedia.org/wiki/Conway_polyhedron_notation):
+    //
+    //   ortho   one quad per CORNER          (o = jj = de)
+    //   meta    two triangles per CORNER     (m = kj = db)
+    //   gyro    one pentagon per CORNER      (g = ds, chiral)
+    //
+    // Ortho and meta share one vertex block — the original vertices, then the
+    // edge midpoints in undirected-edge order, then the face centroids — which is
+    // the same three-block layout Catmull-Clark uses, and the reason ortho is the
+    // topology of one Catmull-Clark step. Gyro needs the one-third points along
+    // each directed edge instead of the midpoints, which is `TruncationPoints`
+    // reused unchanged.
+    //
+    // Preconditions as above. None of the three normalizes its result.
+
+    //==
+    // Ortho and meta.
+
+    // Original vertices, then one vertex per undirected edge, then one per face.
+    SubdividedVertices(self: PolygonMesh3D): Array<Point3D>
+        => Concatenate(
+            Concatenate(self.Positions, self.UndirectedEdgeMidpoints),
+            self.FaceCentroids);
+
+    // A corner's edge midpoint, read as a vertex of `SubdividedVertices`.
+    EdgeMidVertex(self: PolygonMesh3D, corner: CornerIndex): VertexIndex
+        => VertexIndex(self.VertexCount + self.CornerUndirectedEdge(corner).Value);
+
+    // A corner's face centroid, read as a vertex of `SubdividedVertices`.
+    FaceCentroidVertex(self: PolygonMesh3D, corner: CornerIndex): VertexIndex
+        => VertexIndex(self.VertexCount + self.UndirectedEdgeCount + self.CornerFace(corner).Value);
+
+    // The quad a corner contributes to an ortho: its own edge midpoint, the
+    // vertex the corner points at, the next edge's midpoint, and the centroid.
+    OrthoFaceOfCorner(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+        => [self.EdgeMidVertex(corner),
+            self.CornerDestination(corner),
+            self.EdgeMidVertex(self.NextCorner(corner)),
+            self.FaceCentroidVertex(corner)];
+
+    // Ortho (https://en.wikipedia.org/wiki/Conway_polyhedron_notation): every
+    // n-gon becomes n quadrilaterals. Cube -> the topology of a subdivided cube,
+    // dodecahedron -> the pentagonal-quad form. o = jj = de.
+    // V' = V + E + F, E' = 4E, F' = C.
+    Ortho(self: PolygonMesh3D): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            self.SubdividedVertices,
+            self.CornerCount.MapRange(c => self.OrthoFaceOfCorner(CornerIndex(c))));
+
+    // The half of a corner nearer its own vertex: vertex, edge midpoint, centroid.
+    MetaFirstFaceOfCorner(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+        => [self.CornerVertex(corner),
+            self.EdgeMidVertex(corner),
+            self.FaceCentroidVertex(corner)];
+
+    // The far half: edge midpoint, the vertex the corner points at, centroid.
+    MetaSecondFaceOfCorner(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+        => [self.EdgeMidVertex(corner),
+            self.CornerDestination(corner),
+            self.FaceCentroidVertex(corner)];
+
+    // Meta (https://en.wikipedia.org/wiki/Conway_polyhedron_notation): every
+    // n-gon becomes 2n triangles — the barycentric subdivision of the surface,
+    // and the finest of the operators that keeps every original vertex. m = kj = db.
+    // V' = V + E + F, E' = 6E, F' = 2C.
+    Meta(self: PolygonMesh3D): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            self.SubdividedVertices,
+            Concatenate(
+                self.CornerCount.MapRange(c => self.MetaFirstFaceOfCorner(CornerIndex(c))),
+                self.CornerCount.MapRange(c => self.MetaSecondFaceOfCorner(CornerIndex(c)))));
+
+    //==
+    // Gyro.
+
+    // The one-third points along every directed edge, then the original
+    // vertices, then the face centroids. The corner block comes first so a
+    // corner number IS its own vertex number, as in truncate.
+    GyroVertices(self: PolygonMesh3D): Array<Point3D>
+        => Concatenate(
+            Concatenate(self.TruncationPoints, self.Positions),
+            self.FaceCentroids);
+
+    // An original vertex, read as a vertex of `GyroVertices`.
+    GyroSeedVertex(self: PolygonMesh3D, vertex: VertexIndex): VertexIndex
+        => VertexIndex(self.CornerCount + vertex.Value);
+
+    // A face centroid, read as a vertex of `GyroVertices`.
+    GyroCentroidVertex(self: PolygonMesh3D, face: FaceIndex): VertexIndex
+        => VertexIndex(self.CornerCount + self.VertexCount + face.Value);
+
+    // The pentagon a corner contributes: the face centroid, this corner's
+    // one-third point, its twin's (the two-thirds point of the same edge), the
+    // vertex the corner points at, and the next corner's one-third point. The
+    // twin's point is what makes gyro CHIRAL — swapping it for the previous
+    // corner's gives the mirror operator.
+    GyroFaceOfCorner(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+        => [self.GyroCentroidVertex(self.CornerFace(corner)),
+            VertexIndex(corner.Value),
+            VertexIndex(self.TwinCorner(corner).Value),
+            self.GyroSeedVertex(self.CornerDestination(corner)),
+            VertexIndex(self.NextCorner(corner).Value)];
+
+    // Gyro (https://en.wikipedia.org/wiki/Conway_polyhedron_notation): every
+    // n-gon becomes n pentagons. It is the dual of snub (g = ds), so gT is the
+    // pentagonal icositetrahedron's tetrahedral cousin and gD the pentagonal
+    // hexecontahedron's family. Chiral, like snub.
+    // V' = V + 2E + F, E' = 5E, F' = C.
+    Gyro(self: PolygonMesh3D): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            self.GyroVertices,
+            self.CornerCount.MapRange(c => self.GyroFaceOfCorner(CornerIndex(c))));
+
+    //==
+    // # Chamfer, propeller, zip and reflect on polygon meshes
+    //
+    // The last operators of the catalog
+    // (https://en.wikipedia.org/wiki/Conway_polyhedron_notation), plus the mirror
+    // that makes the chiral ones legible:
+    //
+    //   chamfer    one hexagon per EDGE, faces kept parallel   (c)
+    //   propeller  one rotated n-gon per face + one quad per CORNER (p, chiral)
+    //   zip        the Conway identity z = dk, i.e. truncate of the dual
+    //   reflect    the mirror image, with every face loop reversed (r)
+    //
+    // Chamfer reuses `TwistedFacePoints` at zero twist — the same shrunk corner
+    // block expand is built from — but keeps the ORIGINAL vertices as well, which
+    // is what leaves the seed's faces parallel to where they started rather than
+    // pulled apart. Propeller reuses `TruncationPoints`, the one-third points gyro
+    // and truncate already share.
+
+    //==
+    // Chamfer.
+
+    // The shrunk corner points, then the original vertices.
+    ChamferVertices(self: PolygonMesh3D, shrink: Number): Array<Point3D>
+        => Concatenate(self.TwistedFacePoints(shrink, Angle(0.0)), self.Positions);
+
+    // An original vertex, read as a vertex of `ChamferVertices`.
+    ChamferSeedVertex(self: PolygonMesh3D, vertex: VertexIndex): VertexIndex
+        => VertexIndex(self.CornerCount + vertex.Value);
+
+    // The hexagon straddling an edge: endpoint, the two shrunk points of the
+    // face on the far side, the other endpoint, then the two of the near face.
+    // The far side is traversed first for the same winding reason as `Join`.
+    // Precondition: `corner` is canonical.
+    ChamferFaceOfEdge(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+    {
+        var twin = self.TwinCorner(corner);
+        return [self.ChamferSeedVertex(self.CornerVertex(corner)),
+                VertexIndex(self.NextCorner(twin).Value),
+                VertexIndex(twin.Value),
+                self.ChamferSeedVertex(self.CornerDestination(corner)),
+                VertexIndex(self.NextCorner(corner).Value),
+                VertexIndex(corner.Value)];
+    }
+
+    // Chamfer (https://en.wikipedia.org/wiki/Chamfer_(geometry)): every edge is
+    // replaced by a hexagon and every original face survives as a shrunk copy of
+    // itself, in its own plane. cC is the chamfered cube; iterating it is the
+    // usual route to a Goldberg polyhedron.
+    // V' = V + C, E' = 4E, F' = F + E.
+    Chamfer(self: PolygonMesh3D, shrink: Number): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            self.ChamferVertices(shrink),
+            Concatenate(
+                self.FaceCount.MapRange(f => self.MovedFaceOfFace(f)),
+                self.EdgeStitchFaces((m, c) => [m.ChamferFaceOfEdge(c)])));
+
+    //==
+    // Propeller.
+
+    // The one-third points along every directed edge, then the original
+    // vertices. The corner block leads, so `MovedFaceOfFace` names the rotated
+    // inner copy of a face without any adjustment.
+    PropellerVertices(self: PolygonMesh3D): Array<Point3D>
+        => Concatenate(self.TruncationPoints, self.Positions);
+
+    // The quad between the inner copy and the boundary at one corner: this
+    // corner's one-third point, the two-thirds point of the same edge (its
+    // twin's), the vertex the corner points at, and the next corner's
+    // one-third point.
+    PropellerFaceOfCorner(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+        => [VertexIndex(corner.Value),
+            VertexIndex(self.TwinCorner(corner).Value),
+            VertexIndex(self.CornerCount + self.CornerDestination(corner).Value),
+            VertexIndex(self.NextCorner(corner).Value)];
+
+    // Propeller (https://en.wikipedia.org/wiki/Conway_polyhedron_notation):
+    // each face keeps a rotated copy of itself and the ring left over is filled
+    // by one quadrilateral per corner — four blades around each face, which is
+    // the name. Chiral; `Reflect` gives the other hand.
+    // V' = V + C, E' = 5E, F' = F + C.
+    Propeller(self: PolygonMesh3D): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            self.PropellerVertices,
+            Concatenate(
+                self.FaceCount.MapRange(f => self.MovedFaceOfFace(f)),
+                self.CornerCount.MapRange(c => self.PropellerFaceOfCorner(CornerIndex(c)))));
+
+    //==
+    // Zip and reflect.
+
+    // Zip (bitruncation): the Conway identity z = dk, which is truncate of the
+    // dual. zC is the truncated octahedron, where tC is the truncated cube — the
+    // two differ because zip cuts the DUAL's corners, not the seed's.
+    // Precondition, inherited from `Dual`: no face plane passes through the origin.
+    // V' = C, E' = 3E, F' = V + F.
+    Zip(self: PolygonMesh3D): PolygonMesh3D
+        => self.Dual.Truncate;
+
+    // A face loop taken backwards: the winding fix a mirror needs, since
+    // negating one coordinate reverses handedness and would otherwise turn every
+    // face inside out.
+    ReversedFace(self: PolygonMesh3D, face: Integer): Array<VertexIndex>
+        => self.FaceArity(face).MapRange(slot =>
+            self.Faces.Row(face)[self.FaceArity(face) - 1 - slot]);
+
+    // Reflect (https://en.wikipedia.org/wiki/Chirality_(mathematics)): the mirror
+    // image through the yz plane, with every face loop reversed so the result is
+    // still wound counter-clockwise seen from outside. Identity on an achiral
+    // solid up to a rotation; on snub, gyro or propeller it is the other
+    // enantiomer. V, E and F are unchanged.
+    Reflect(self: PolygonMesh3D): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            self.Positions.Map(p => Point3D(-p.X, p.Y, p.Z)),
+            self.FaceCount.MapRange(f => self.ReversedFace(f)));
+
+    //==
+    // # Reading a polyhedron
+    //
+    // The measurements a Conway program is judged by. Every one is a fold over
+    // the face or corner numbering, so they hold for any closed polygon mesh and
+    // not only for the catalog above.
+    //
+    // Two of them are named away from the `IVolume` obligations
+    // (`geometry.concepts.plato`) on purpose: `PolygonMesh3D` is a combinatorial
+    // boundary that may be open or non-convex, so it does not claim to be a solid
+    // with a volume — `EnclosedVolume` and `TotalFaceArea` are readings that
+    // happen to coincide with those obligations when the mesh IS closed and
+    // outward-wound, and are meaningless when it is not.
+
+    // The area of one face: the magnitude of its Newell vector area
+    // (`polygons.library.plato`). Exact for a planar face and the least-squares
+    // reading of a nearly planar one, which is the same bargain `FaceUnitNormal`
+    // makes.
+    FaceArea(self: PolygonMesh3D, face: Integer): Number
+        => self.FacePositions(face).VectorArea.Magnitude;
+
+    // Every face area, in face order.
+    FaceAreas(self: PolygonMesh3D): Array<Number>
+        => self.FaceCount.MapRange(f => self.FaceArea(f));
+
+    // The total boundary area. Coincides with the `SurfaceArea` obligation when
+    // the mesh is a closed solid's boundary.
+    TotalFaceArea(self: PolygonMesh3D): Number
+        => SumOf(self.FaceAreas);
+
+    // The signed volume the faces enclose, by the divergence theorem: one third
+    // of the sum over faces of centroid . vectorArea
+    // (https://en.wikipedia.org/wiki/Divergence_theorem). Positive for a closed
+    // mesh wound counter-clockwise seen from outside; a negative reading means
+    // the winding is inverted, and a reading near zero on a mesh with faces means
+    // it is not closed.
+    EnclosedVolume(self: PolygonMesh3D): Number
+        => SumOf(self.FaceCount.MapRange(f =>
+            self.FaceCentroid(f).PositionVector.Dot(self.FacePositions(f).VectorArea))) / 3.0;
+
+    // The length of the edge a corner directs: from its own vertex to the next
+    // corner's.
+    CornerEdgeLength(self: PolygonMesh3D, corner: CornerIndex): Number
+        => self.CornerPosition(corner).Distance(self.CornerPosition(self.NextCorner(corner)));
+
+    // Every undirected edge's length, in edge-index order — folded over the
+    // corners keeping the canonical half of each twin pair, exactly as
+    // `UndirectedEdgeMidpoints` does. `Repeat(0, …)` is the empty seed.
+    UndirectedEdgeLengths(self: PolygonMesh3D): Array<Number>
+        => self.CornerCount
+            .MapRange(c => CornerIndex(c))
+            .Reduce(Repeat(0, 0.0),
+                (acc, c) => self.IsCanonicalCorner(c) ? acc.Append(self.CornerEdgeLength(c)) : acc);
+
+    // The longest edge divided by the shortest: one for a solid with all edges
+    // equal, which is what the uniformity constants of the expand and snub
+    // catalog entries above are chosen to achieve. Undefined (division by zero)
+    // on a mesh with a degenerate edge.
+    EdgeLengthRatio(self: PolygonMesh3D): Number
+    {
+        var lengths = self.UndirectedEdgeLengths;
+        var longest = lengths.Reduce(0.0, (acc, len) => acc.Max(len));
+        var shortest = lengths.Reduce(longest, (acc, len) => acc.Min(len));
+        return longest / shortest;
+    }
+
+    // The worst distance from a face's own vertices to that face's plane. Zero
+    // to rounding for every solid in the catalog above; non-zero is exactly the
+    // damage `ProjectedToUnitSphere` does to a face-transitive Catalan.
+    FacePlanarityDeviation(self: PolygonMesh3D, face: Integer): Number
+    {
+        var normal = self.FaceUnitNormal(face);
+        var centroid = self.FaceCentroid(face);
+        return self.FacePositions(face)
+            .Map(p => normal.Dot(centroid.Between(p)).Abs)
+            .Reduce(0.0, (acc, d) => acc.Max(d));
+    }
+
+    // The worst face planarity deviation over the whole mesh.
+    PlanarityDeviation(self: PolygonMesh3D): Number
+        => self.FaceCount
+            .MapRange(f => self.FacePlanarityDeviation(f))
+            .Reduce(0.0, (acc, d) => acc.Max(d));
+
+    // Sphericity: the surface area of a ball of the same volume, over the actual
+    // surface area (https://en.wikipedia.org/wiki/Sphericity). One for a ball and
+    // below one for everything else, so it rises monotonically along a Conway
+    // program that adds faces. Precondition: a closed, outward-wound mesh.
+    Sphericity(self: PolygonMesh3D): Number
+        => Number.Pi.Pow(1.0 / 3.0)
+            * (6.0 * self.EnclosedVolume).Pow(2.0 / 3.0)
+            / self.TotalFaceArea;
+
+    // The Euler characteristic V - E + F: two for every closed surface of genus
+    // zero, which every operator above preserves
+    // (https://en.wikipedia.org/wiki/Euler_characteristic).
+    EulerCharacteristic(self: PolygonMesh3D): Integer
+        => self.VertexCount - self.UndirectedEdgeCount + self.FaceCount;
 
     //==
     // # Polyhedral dual pairings on the solid kinds
