@@ -62,7 +62,7 @@ Each row names the stdlib entry point the sample is built on.
 | Icosphere Subdivision | `PolygonMesh3D.Icosahedron`, `TriangleMesh3D.SplitEdges` |
 | Value-Noise Terrain | `ValueNoise2D` in a `ScalarFunctionField2D` → `ToTriangleMesh` |
 | Delaunay Triangulation | `Triangle2D.Circumcenter`, `Bounds2D.HaltonPoints2D` |
-| Convex Hull | `Point2D.TwiceSignedArea`, fills a `ConvexHull2D` |
+| Convex Hull | `GeometryTraits.ConvexHull` (monotone chain), returning a `ConvexHull2D` |
 | Spline + Tube Sweep | `CatmullRomCurve3D` wrapped in a `TubeSurface` |
 | Octree | `Bounds3D` split / containment |
 | BVH (AABB Tree) | `Bounds3D.UnionOfBounds`, `Triangle3D.Centroid` |
@@ -73,11 +73,26 @@ Each row names the stdlib entry point the sample is built on.
 
 ### What is deliberately still TypeScript
 
-The insertion loops — Bowyer-Watson, monotone chain, octree and BVH
-construction — stay in the samples. They need a sort and a growable tree, and
-the forward vocabulary has neither yet; `tracker/issues/plato-442.md` records
-the decision and what it would take. Those samples still use stdlib types and
-predicates throughout.
+Only **Bowyer-Watson** (Delaunay) remains a TypeScript insertion loop. It needs
+multiset/cancellation vocabulary that has no owner in the forward stdlib yet, so
+it is explicitly deferred by
+[`tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md`](../../../tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md).
+It still uses stdlib types and predicates throughout.
+
+The rest moved into Plato under `plato-442`. `SortedIndices` / `Sort`
+(`stdlib/foundation/sorting.library.plato`) supply the ordering the builders
+needed, and the growable-tree objection was wrong as stated — bodies have had
+`var`, `while` and the `List`/`Buffer` builders all along. So:
+
+- The **Convex Hull** sample now calls the stdlib `ConvexHull` directly.
+- `BuildBvh`, `BuildOctree` and `BuildLooseOctree`
+  (`stdlib/geometry/spatial-structures.library.plato`) exist and run through
+  this demo's generated TypeScript — `tests/stdlib-builders.test.ts` executes
+  their invariants. The **Octree** and **BVH** samples have not yet been
+  rewritten onto them and still build their trees in TypeScript.
+
+Not built in Plato at all, in any form: kd-trees, `Bvh2D`, `Quadtree2D`,
+`ConvexHull3D` (quickhull), and Delaunay.
 
 A few calls are avoided with a comment naming the issue: `LaplacianSmoothed`
 (sum-typed parameter, plato-440), `Triangle3D.Bounds` and

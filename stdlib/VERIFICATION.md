@@ -73,7 +73,10 @@ runs a function body, and it is still being brought up
 correct, that a sign is right — is backed by human inspection, not by a test.** That is the single
 most important thing this document has to say.
 
-**One library escapes that, and how it does is worth copying.** `tools\regen-triangulation.ps1`
+**Three libraries escape that today, by three different routes, and how they do it is worth
+copying.**
+
+`tools\regen-triangulation.ps1`
 reaches rung 6 for `geometry/triangulation.library.plato` without waiting for plato-308: it
 generates a SUBSET that does compile — foundation plus the triangulator's declaration closure —
 and runs `tests\Plato.Triangulation.Tests` over it, asserting that the emitted triangles tile the
@@ -89,6 +92,27 @@ pseudorandom instances, and a pseudorandom `Array<Point2D>` is a self-intersecti
 `Polygon2D` declares away but nothing can yet check. Laws that hold for *any* input live there;
 the ones needing a well-formed polygon live in the harness. That split is the general rule, not a
 detail of this library.
+
+The other two arrived with [plato-442](../tracker/issues/plato-442.md) and use the two backends
+that already compile, rather than a bespoke subset script:
+
+- **`foundation/sorting.library.plato`** executes through the ordinary foundation codegen path
+  (rung 5 is green for that tier), asserted by
+  `tests\Plato.Generated.Foundation.Tests\SortingTests.cs` — permutation, stability and
+  sortedness over `SortedIndices` / `Sort`.
+- **`geometry/spatial-structures.library.plato`** and the `ConvexHull` body in
+  `geometry/geometry.library.plato` execute through the **TypeScript** backend, asserted by
+  `demos\typescript\geometry-samples\tests\stdlib-builders.test.ts` — permutation, leaf
+  partition and tree-shape invariants over `BuildBvh` / `BuildOctree` / `BuildLooseOctree`.
+
+Both are genuinely executable gates on stdlib bodies, and both are cheap because they ride an
+existing green path. Neither is **the law runner**: they are hand-written assertions in a host
+language, not `Law_*` members discovered by reflection, so they do not discharge rung 6 for the
+tree as a whole. The corresponding laws are staged in
+[`tests/spatial-structures.laws.plato`](tests/spatial-structures.laws.plato) and
+[`tests/sorting.laws.plato`](tests/sorting.laws.plato), waiting on the runner. For the runner's
+own live status, measure — see "Reading the current state" below; do not quote this paragraph
+or the conformance suite's README for it.
 
 ---
 
@@ -435,8 +459,9 @@ merge step throws on collision. Then run `regen-forward-conformance.ps1 -Test`.
 **A new intrinsic.** Write the Plato body first. If it compiles, the function belongs in a
 `*.library.plato` file and you are done — a backend recovers native speed through its override
 table ([plato-368](../tracker/issues/plato-368.md)), never by re-adding a bodiless declaration.
-If it genuinely cannot be written in Plato (it needs a loop, bit-level access, or a
-representation constant): add the counterpart in `src/Plato.Intrinsics`, raise the
+If it genuinely cannot be written in Plato (it needs recursion, bit-level access, or a
+representation constant — **not** merely a loop, which bodies have: see
+[`LIBRARIES.md`](LIBRARIES.md) ground rule 2): add the counterpart in `src/Plato.Intrinsics`, raise the
 `IntrinsicContractSizeTests` ceiling in the same commit stating which of those three reasons
 applies, and add a `Plato.Intrinsics.Tests` case for it.
 

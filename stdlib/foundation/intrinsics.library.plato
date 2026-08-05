@@ -157,8 +157,12 @@ library Intrinsics
     // Every other array function in the previous contract is a reindexing of
     // MapRange, with a reference body in `primitives.library.plato`.
     //
-    // Reduce and FlatMap cannot follow: a Plato body is a pure expression with
-    // no loop and no recursion contract (GLSL forbids recursion outright).
+    // Reduce and FlatMap cannot follow: neither is a reindexing of MapRange.
+    // (An earlier note here said a body is a pure expression "with no loop".
+    // That is false — bodies may use var/while/if and the List/Buffer builders,
+    // per LIBRARIES.md ground rule 2. Only the no-recursion contract holds,
+    // GLSL forbidding recursion outright. Whether these two are now expressible
+    // and so belong in a library file per plato-378 has not been re-examined.)
 
     Count(xs: Array<$T>): Integer;
     At(xs: Array<$T>, n: Integer): $T;

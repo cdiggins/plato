@@ -156,6 +156,7 @@ naming; `grep "^library " */*.library.plato` is the live list.
 | `matrices-ops.library.plato` | `MatricesOps` | reference bodies for `Matrix3x2`/`Matrix4x4`, including invert, decompose and the `Create*` factories |
 | `rotations-ops.library.plato` | `RotationsOps` | reference bodies for `Quaternion`, including `Slerp` and `CreateFromRotationMatrix` |
 | `hashing.library.plato` | `Hashing` | `CombineHash`, the fold the per-type `Hash` reference bodies are written against |
+| `sorting.library.plato` | `Sorting` | `SortedIndices` / `Sort` — a stable, recursion-free bottom-up merge sort over an index `Buffer`. A reference body, not an intrinsic (plato-378): backends recover native speed through the override table |
 | `transforms.library.plato` | `Transforms` | point conversion, pose, TRS, affine and projective application, frames and bases, motors, rotation conversion, and the `Identity(_: T)` family |
 | `statistics.library.plato` | `Statistics` | univariate summary bodies and the bivariate covariance / correlation / fit readings |
 | `random.library.plato` | `Random` | the shared numerical helpers and the per-distribution bodies, alongside P9's `ProbabilityDistribution` traits |

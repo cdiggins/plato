@@ -1,13 +1,26 @@
 # Plato.ForwardConformanceTests
 
-Conformance suite for the **forward** stdlib (`submodules/Plato/stdlib`, the v3 vocabulary),
-the sibling of `Ara3D.SDK.ConformanceTests` (which covers `stdlib-legacy`).
+Conformance suite for the **forward** stdlib (`stdlib/`, the v3 vocabulary),
+the sibling of `Ara3D.SDK.ConformanceTests` (which covers `legacy/stdlib-legacy`).
 
 It runs the same reflection law runner (`LawTests`) and manifest machinery
 (`ConformanceSupport`) over C# generated from the forward stdlib merged with the forward law
-packet (`submodules/Plato/stdlib-tests/foundation.laws.plato`), against `Plato.Intrinsics`.
+packet (`stdlib/tests/`), against `Plato.Intrinsics`.
 
-## Status (2026-07-29): codegen SUCCEEDS; blocked on generated-C# compile errors
+## Status — MEASURED 2026-07-29, NOT RE-MEASURED SINCE
+
+> **Do not read the rest of this section as current.** Every number below is a snapshot taken on
+> **2026-07-29** and has not been re-taken. It is known to have moved: `docs/gate-log.md` records
+> a conformance row at commit `36369e5` (2026-07-31) reading **44 pass / 0 fail / 3 skip**, which
+> the "neither builds nor runs" sentence below contradicts, and `plato-308`'s own title had
+> already dropped from 324 errors to 85 by 2026-07-30. The error inventory here is kept as
+> history — the shape of the four clusters is still the useful part — not as a status report.
+>
+> **To learn the current state, measure it**: `tools/regen-forward-conformance.ps1 -Test`, or read
+> the last row of [`docs/gate-log.md`](../../../docs/gate-log.md). When this section and a gate
+> disagree, the gate is right.
+
+### Snapshot of 2026-07-29: codegen SUCCEEDS; blocked on generated-C# compile errors
 
 **The 2026-07-28 codegen blocker is fixed.** `CSharpTypeWriter.WriteBody` no longer throws on a
 bodied member with no ground TIR — it emits a throwing stub, records the member in
@@ -71,8 +84,10 @@ Deliberately **not** added to any `.sln`. `Generated/` is script-produced and gi
 
 ## The law packet
 
-`submodules/Plato/stdlib-tests/foundation.laws.plato` (`library FoundationLaws`) currently
-covers the interval remap kit (`At`/`ParameterOf`/`Remap`), the generic `IntervalLike`
-containment surface, and the concrete `Bounds2D`/`Bounds3D` AABB operations. Every member it
-references was verified against the forward library source. Grow it the same way the legacy
-`stdlib-legacy-tests/laws.plato` grew.
+The packet is `stdlib/tests/`, one `*.laws.plato` file per domain — it moved there from the old
+top-level `stdlib-tests/`. `foundation.laws.plato` (`library FoundationLaws`) covers the interval
+remap kit (`At`/`ParameterOf`/`Remap`), the generic `IntervalLike` containment surface, and the
+concrete `Bounds2D`/`Bounds3D` AABB operations; siblings cover easing, polyhedra, implicit SDFs,
+special numerics, shape surfaces, triangulation, sorting and the spatial structures. Every member
+a law references must be verified against the forward library source first. See
+[`stdlib/tests/README.md`](../../../stdlib/tests/README.md).

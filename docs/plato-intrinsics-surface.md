@@ -67,9 +67,20 @@ interface was the outlier and had no implementer.
 | `LessThan`, `GreaterThan`, `GreaterThanOrEquals`, `Compare`, `Clamp` on Number and Integer | already generic over `Orderable` in `foundation/core.library.plato` — deleted outright, not re-derived |
 
 The array kernel is the load-bearing part: `MapRange` is the ONLY constructor and every
-reshaping function is a reindexing of it. `Reduce` and `FlatMap` stay because a Plato body is a
-pure expression with no loop and no recursion contract (GLSL forbids recursion outright), so
-the fold and the length-varying producer cannot be written.
+reshaping function is a reindexing of it. `Reduce` and `FlatMap` stay bodiless: neither is a
+reindexing of `MapRange`, so neither follows the others out of the contract.
+
+**The reason originally given for that no longer holds, and is worth stating precisely.** It
+used to read "a Plato body is a pure expression with no loop and no recursion". Only the
+recursion half is true. A body may use `var`, `while`, `if`, `new List<T>()` /
+`new Buffer<T>(n)` and `Add` / `Set` / `Freeze` — see
+[`stdlib/LIBRARIES.md`](../stdlib/LIBRARIES.md) ground rule 2, and the ear-clipping
+triangulator in `geometry/triangulation.library.plato`, which is a full accumulate-and-patch
+loop over a node pool. What a body may not do is **recurse** (GLSL forbids recursion outright),
+which is why the tree builders in `geometry/spatial-structures.library.plato` carry an explicit
+work stack rather than recursive calls. Whether `Reduce` and `FlatMap` are now expressible from
+the procedural vocabulary — and so, under the plato-378 admission rule, belong in a
+`*.library.plato` file rather than the contract — has not been re-examined.
 
 **Cost, stated plainly.** A derived view is a closure per element. On C# these used to bind to
 `Ara3D.Collections`, which is faster. The reference body fixes the SEMANTICS; recovering the

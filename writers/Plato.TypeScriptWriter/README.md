@@ -35,7 +35,8 @@ closed; splitting output would create cyclic imports). It contains, in order:
 
 1. A hand-written intrinsics prelude (`Intrinsics` namespace: `Install`,
    `MakeArray`, `Range`, structural equality, throw helpers) plus minimal
-   `IArray2D`/`IArray3D` interfaces.
+   `IArray2D`/`IArray3D` interfaces, and the `List<T>` / `Buffer<T>` affine
+   builder classes (see below).
 2. One `export interface` per Plato interface.
 3. The `IArray<T>` interface and the `Arr<T>` class — a memoizing functional
    view (count plus indexing function): each element is computed at most once,
@@ -70,6 +71,20 @@ Because `Number` and `Integer` share one prototype, colliding overloads are
 resolved first-writer-wins (Number is processed first); e.g. a separate
 truncating `Integer.Divide` cannot coexist with `Number.Divide` under the same
 name. This mirrors JavaScript's single number type.
+
+### The affine builders
+
+The prelude ships `List<T>` and `Buffer<T>`, the `unique` builder types of
+`primitives.plato`. Plato guarantees a single live reference, so the generated
+rebind-after-mutate style (`xs = xs.Add(x)`) is honoured by mutating in place
+and returning `this`; `Freeze` hands the storage to an `Arr` without copying.
+`Buffer` intentionally shadows Node's global byte `Buffer` inside the generated
+module.
+
+This is what lets statement-bodied stdlib functions that accumulate — the
+sorting and spatial-structure builders — run under TypeScript rather than
+throwing. `demos/typescript/geometry-samples/tests/stdlib-builders.test.ts`
+executes them.
 
 ### Methods, not getters
 
