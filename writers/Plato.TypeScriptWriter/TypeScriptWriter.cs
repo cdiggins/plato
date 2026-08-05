@@ -257,6 +257,33 @@ export namespace Intrinsics {
     }
 }
 
+// The affine builders of primitives.plato. Plato guarantees a single live
+// reference, so the generated rebind-after-mutate style (`xs = xs.Add(x)`)
+// is honoured by mutating in place and returning `this`; Freeze hands the
+// storage to an Arr without copying. Buffer intentionally shadows Node's
+// global byte Buffer inside the generated module.
+export class List<T> {
+    private readonly xs: T[] = [];
+    Count(): number { return this.xs.length; }
+    At(i: number): T { return this.xs[i]; }
+    Add(x: T): List<T> { this.xs.push(x); return this; }
+    AddRange(values: IArray<T>): List<T> {
+        for (let i = 0; i < values.Count(); i++) this.xs.push(values.At(i));
+        return this;
+    }
+    Set(i: number, x: T): List<T> { this.xs[i] = x; return this; }
+    Freeze(): IArray<T> { const xs = this.xs; return new Arr<T>(xs.length, i => xs[i]); }
+}
+
+export class Buffer<T> {
+    private readonly xs: T[];
+    constructor(n: number) { this.xs = new globalThis.Array<T>(n); }
+    Count(): number { return this.xs.length; }
+    At(i: number): T { return this.xs[i]; }
+    Set(i: number, x: T): Buffer<T> { this.xs[i] = x; return this; }
+    Freeze(): IArray<T> { const xs = this.xs; return new Arr<T>(xs.length, i => xs[i]); }
+}
+
 // Helpers referenced by generated bodies whose Plato originals are in
 // IgnoredFunctions, so the prototype methods must be installed here by hand.
 declare global {

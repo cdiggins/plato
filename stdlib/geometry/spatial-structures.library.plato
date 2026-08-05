@@ -789,16 +789,10 @@ library SpatialStructures
     // table (plato-368). An explicit work stack replaces recursion, because
     // construction depth is a property of the data and bodies carry no
     // recursion contract; the stack is a List whose live height is tracked
-    // beside it, so popped slots are reused rather than reallocated.
-
-    // Pushes a frame onto a List-backed stack whose live height is `top`:
-    // overwrites a dead slot when one exists, appends otherwise.
-    PushedFrame(stack: List<IntegerVector3>, top: Integer, frame: IntegerVector3): List<IntegerVector3>
-        => top < stack.Count ? stack.Set(top, frame) : stack.Add(frame);
-
-    // The IntegerVector4 overload of PushedFrame, for frames carrying a depth.
-    PushedFrame(stack: List<IntegerVector4>, top: Integer, frame: IntegerVector4): List<IntegerVector4>
-        => top < stack.Count ? stack.Set(top, frame) : stack.Add(frame);
+    // beside it, so popped slots are reused rather than reallocated. The push
+    // is inlined at each site (overwrite a dead slot when one exists, append
+    // otherwise) rather than a List-receiver helper: backends install library
+    // functions on their array types, not on the affine builders.
 
     // The union of the bounds named by one range of the permutation.
     // Precondition: start < end.
@@ -870,14 +864,23 @@ library SpatialStructures
             {
                 var count = end - start;
                 var centroids = new Buffer<Point3D>(count);
+                // The centroid extents accumulate through the Bounds3D-Bounds3D
+                // Union rather than BoundsOfPoints: overloads that differ only
+                // in the array element type collapse to one prototype slot in
+                // the TypeScript backend, so bodies meant to run everywhere
+                // avoid them.
+                var firstCentroid = primitiveBounds[perm.At(start)].Center;
+                var centroidBounds = Bounds3D(firstCentroid, firstCentroid);
                 var j = 0;
                 while (j < count)
                 {
-                    centroids = centroids.Set(j, primitiveBounds[perm.At(start + j)].Center);
+                    var centroid = primitiveBounds[perm.At(start + j)].Center;
+                    centroids = centroids.Set(j, centroid);
+                    centroidBounds = centroidBounds.Union(Bounds3D(centroid, centroid));
                     j = j + 1;
                 }
                 var centroidArray = centroids.Freeze();
-                var axis = centroidArray.BoundsOfPoints.WidestAxis;
+                var axis = centroidBounds.WidestAxis;
                 var order = centroidArray.SortedIndices((a, b) =>
                     a.AxisCoordinate(axis) <= b.AxisCoordinate(axis));
                 var reordered = new Buffer<Integer>(count);
@@ -898,9 +901,13 @@ library SpatialStructures
                 nodes = nodes.Add(placeholder).Add(placeholder);
                 nodes = nodes.Set(node, BvhNode3D(nodeBounds,
                     SpatialNodeIndex(left), SpatialNodeIndex(left + 1), IntegerInterval(start, start)));
-                stack = stack.PushedFrame(top, IntegerVector3(left, start, mid));
+                stack = top < stack.Count
+                    ? stack.Set(top, IntegerVector3(left, start, mid))
+                    : stack.Add(IntegerVector3(left, start, mid));
                 top = top + 1;
-                stack = stack.PushedFrame(top, IntegerVector3(left + 1, mid, end));
+                stack = top < stack.Count
+                    ? stack.Set(top, IntegerVector3(left + 1, mid, end))
+                    : stack.Add(IntegerVector3(left + 1, mid, end));
                 top = top + 1;
             }
         }
@@ -941,11 +948,22 @@ library SpatialStructures
             return (Point3D(0.0, 0.0, 0.0).CenteredBounds(0.0, 0.0, 0.0),
                 new List<OctreeNode>().Freeze(), new List<ItemIndex>().Freeze(), depthCap);
         }
-        var pointBounds = points.BoundsOfPoints;
-        var size = (pointBounds.Max.X - pointBounds.Min.X)
+        // Point extents through the Bounds3D-Bounds3D Union, for the same
+        // backend-overload reason as in BuildBvh.
+        var pointBounds = Bounds3D(points[0], points[0]);
+        var b = 1;
+        while (b < n)
+        {
+            pointBounds = pointBounds.Union(Bounds3D(points[b], points[b]));
+            b = b + 1;
+        }
+        var halfSize = ((pointBounds.Max.X - pointBounds.Min.X)
             .Max(pointBounds.Max.Y - pointBounds.Min.Y)
-            .Max(pointBounds.Max.Z - pointBounds.Min.Z);
-        var root = pointBounds.Center.CenteredBounds(size, size, size);
+            .Max(pointBounds.Max.Z - pointBounds.Min.Z)) * 0.5;
+        // The union with the exact extents absorbs the floating-point dust the
+        // centred cube can shave off its far faces, so every point is inside.
+        var root = pointBounds.Center.CenteredBounds(halfSize, halfSize, halfSize)
+            .Union(pointBounds);
         var leafSize = maxLeafSize.Greater(1);
         var perm = new Buffer<Integer>(n);
         var i = 0;
@@ -1007,8 +1025,9 @@ library SpatialStructures
                     var childCount = sortedKeys.Reduce(0, (acc, key) => key == octant ? acc + 1 : acc);
                     nodes = nodes.Add(OctreeNode(nodeBounds.OctantBounds(octant),
                         SpatialNodeIndex(-1), IntegerInterval(childStart, childStart + childCount)));
-                    stack = stack.PushedFrame(top,
-                        IntegerVector4(firstChild + octant, childStart, childStart + childCount, depth + 1));
+                    stack = top < stack.Count
+                        ? stack.Set(top, IntegerVector4(firstChild + octant, childStart, childStart + childCount, depth + 1))
+                        : stack.Add(IntegerVector4(firstChild + octant, childStart, childStart + childCount, depth + 1));
                     top = top + 1;
                     childStart = childStart + childCount;
                     octant = octant + 1;
@@ -1029,12 +1048,15 @@ library SpatialStructures
     {
         var factor = looseness.Max(1.0);
         var octree = points.BuildOctree(maxDepth, maxLeafSize);
+        var half = factor * 0.5;
         var loosened = octree.Nodes.Map(nd => OctreeNode(
             nd.Bounds.Center.CenteredBounds(
-                (nd.Bounds.Max.X - nd.Bounds.Min.X) * factor,
-                (nd.Bounds.Max.Y - nd.Bounds.Min.Y) * factor,
-                (nd.Bounds.Max.Z - nd.Bounds.Min.Z) * factor),
+                (nd.Bounds.Max.X - nd.Bounds.Min.X) * half,
+                (nd.Bounds.Max.Y - nd.Bounds.Min.Y) * half,
+                (nd.Bounds.Max.Z - nd.Bounds.Min.Z) * half),
             nd.FirstChild, nd.Items));
-        return ((octree.Bounds, loosened, octree.ItemIndices, octree.MaxDepth), factor);
+        // The inner constructor is named because a nested bare tuple does not
+        // survive the TypeScript backend (it emits a TupleN, not an Octree3D).
+        return (Octree3D(octree.Bounds, loosened, octree.ItemIndices, octree.MaxDepth), factor);
     }
 }
