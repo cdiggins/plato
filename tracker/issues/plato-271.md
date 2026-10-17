@@ -71,3 +71,29 @@ One ADR page with the three decisions and rejected alternatives; link from plato
 
 Pros: cheap; prevents divergent float/double forks  
 Cons: doesn't ship capability; may need revisit when scalar polymorphism lands
+
+## Proposal 2026-10-17: sized types as storage types beside a single `Number`
+
+From the B-rep meshing investigation in bim-open-toolkit
+(`sandbox/step-brep-mesh/TARGET-LANGUAGE.md`, sections 5 and 7), which measured the backends at
+`f6e02cf0`. Two decisions, answering the first and third questions of this issue:
+
+1. **`Number` and `Integer` keep one width per compilation.** 64-bit by default on CPU backends
+   (C#, C++, Rust, TypeScript), 32-bit only in an explicit GPU profile (GLSL, CUDA, WGSL). The
+   arithmetic scalar stays single because the stdlib is not scalar-polymorphic ([plato-252]);
+   a second arithmetic scalar would need a twin of every type over `Number`. A library that needs
+   64 bits says so with a law over a `MachineEpsilon` computed from basic operations. This is
+   the redesign [plato-370] asks for and the fix [plato-449] waits on: `Math.fround` only in a
+   32-bit compilation. `Integer` is at least 32 bits with unspecified overflow.
+2. **Sized types exist only for storage and boundaries:** `Float32`, `Float64`, `Integer32`,
+   `Integer64`, `Unsigned32` (`Unsigned64` if hashing moves into Plato). No literals; explicit
+   conversion to and from `Number` and `Integer` in both directions; arithmetic only where the
+   width fixes it (wraparound and bitwise on the integers, comparison on all). `Array<T>` and
+   `Buffer<T>` over them need nothing new, and the wrapper-scalar layout makes `Buffer<Float32>`
+   a free view onto a GPU or GLB buffer. A backend without the width reports it unsupported.
+   Uses: GLB float32 vertices, BOS int32 fixed point, glTF uint32 indices, Philox rounds
+   ([plato-451]), JSON witnesses, quantization laws.
+
+Guard: a lint that sized types appear only in boundary records, so library bodies do not drift
+back to a two-scalar stdlib. Rejected: a per-field representation annotation (`@float32`), which
+hides the rounding a law needs to name.
