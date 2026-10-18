@@ -53,22 +53,71 @@ public sealed partial class Interpreter
     /// <summary>How well a run-time argument type fits a declared parameter type, by the checker's
     /// tiers: 0 exact, 1 generic, 2 interface, 3 conversion; null when it does not fit.</summary>
     public int? MatchCost(TypeExpression param, TypeExpression arg)
+        => MatchCost(param, arg, new Dictionary<string, TypeExpression>());
+
+    /// <summary>As <see cref="MatchCost(TypeExpression, TypeExpression)"/>, with the type variables
+    /// one parameter list shares: the first argument that mentions a variable (directly, or through
+    /// the type arguments of the interface instance it implements) binds it, and a later argument
+    /// must fit the binding. <c>Subtract(x: IDifference&lt;$D&gt;, delta: $D)</c> on two Point2D
+    /// values does not fit, because Point2D binds $D to Vector2D.</summary>
+    private int? MatchCost(TypeExpression param, TypeExpression arg, Dictionary<string, TypeExpression> bindings)
     {
         if (param?.Def == null)
             return 1;
-        if (param.IsTypeVariable || param.IsTypeParameter || param.Name == "Self" || param.Name == "Any")
+        if (param.IsTypeVariable || param.IsTypeParameter)
+        {
+            if (bindings.TryGetValue(param.Name, out var bound) && IsBindable(bound))
+            {
+                var inner = MatchCost(bound, arg, bindings);
+                return inner == null ? null : Math.Max(1, inner.Value);
+            }
+            if (IsBindable(arg))
+                bindings[param.Name] = arg;
+            return 1;
+        }
+        if (param.Name == "Self" || param.Name == "Any")
             return 1;
         if (arg?.Def == null)
             return null;
         if (param.Def.IsInterface())
-            return ConceptClosure.FindInstance(arg, param.Def.Name) != null ? 2 : (int?)null;
+        {
+            var instance = ConceptClosure.FindInstance(arg, param.Def.Name);
+            if (instance == null)
+                return null;
+            Unify(param, instance, bindings);
+            return 2;
+        }
         if (arg.Def.Name == param.Def.Name)
+        {
+            Unify(param, arg, bindings);
             return 0;
+        }
         if (arg.Def.Name == "Integer" && param.Def.Name == "Number")
             return 3;
         if (HasConversion(arg, param))
             return 3;
         return null;
+    }
+
+    /// <summary>A type that can stand as a binding: concrete, not a variable, parameter or Any.</summary>
+    private static bool IsBindable(TypeExpression t)
+        => t?.Def != null && !t.IsTypeVariable && !t.IsTypeParameter && t.Name != "Self" && t.Name != "Any";
+
+    /// <summary>Binds the type variables in a pattern's type arguments to the actual's, positionally.</summary>
+    private static void Unify(TypeExpression pattern, TypeExpression actual, Dictionary<string, TypeExpression> bindings)
+    {
+        var n = Math.Min(pattern.TypeArgs.Count, actual.TypeArgs.Count);
+        for (var i = 0; i < n; i++)
+        {
+            var p = pattern.TypeArgs[i];
+            var a = actual.TypeArgs[i];
+            if (p?.Def == null || !IsBindable(a))
+                continue;
+            if (p.IsTypeVariable || p.IsTypeParameter)
+                bindings.TryAdd(p.Name, a);
+            else
+                Unify(p, a, bindings);
+        }
     }
 
     /// <summary>A user conversion (a one-parameter function named after the target type that takes
@@ -90,11 +139,15 @@ public sealed partial class Interpreter
     /// declaration order. Arguments needing a conversion come back converted.</summary>
     public FunctionDef ResolveByValues(string name, IReadOnlyList<object> args, out object[] converted,
         bool allowInterfaceDeclarations = true)
+        => ResolveByValues(name, args, out converted, out _, allowInterfaceDeclarations);
+
+    private FunctionDef ResolveByValues(string name, IReadOnlyList<object> args, out object[] converted,
+        out int bestCost, bool allowInterfaceDeclarations)
     {
         converted = args.ToArray();
         var argTypes = args.Select(TypeOf).ToList();
         FunctionDef best = null;
-        var bestCost = int.MaxValue;
+        bestCost = int.MaxValue;
         var bestRank = int.MaxValue;
         foreach (var f in FunctionsNamed(name))
         {
@@ -102,16 +155,10 @@ public sealed partial class Interpreter
                 continue;
             if (!allowInterfaceDeclarations && f.FunctionType == FunctionType.Interface)
                 continue;
-            var cost = 0;
-            var ok = true;
-            for (var i = 0; i < args.Count && ok; i++)
-            {
-                var c = MatchCost(f.Parameters[i].Type, argTypes[i]);
-                if (c == null) ok = false;
-                else cost += c.Value;
-            }
-            if (!ok)
+            var costs = CostsOf(f, argTypes);
+            if (costs == null)
                 continue;
+            var cost = costs.Sum();
             var rank = (f.FunctionType == FunctionType.Interface ? 2 : 0) + (f.Body == null && f.FunctionType == FunctionType.Library ? 1 : 0);
             if (cost < bestCost || (cost == bestCost && rank < bestRank))
             {
@@ -122,10 +169,65 @@ public sealed partial class Interpreter
         }
         if (best == null)
             return null;
+        var bestCosts = CostsOf(best, argTypes);
         for (var i = 0; i < args.Count; i++)
-            if (MatchCost(best.Parameters[i].Type, argTypes[i]) == 3)
+            if (bestCosts[i] == 3)
                 converted[i] = CoerceTo(args[i], best.Parameters[i].Type);
         return best;
+    }
+
+    /// <summary>The tier cost of each argument against its parameter, with the type variables
+    /// bound across the list; null when some argument does not fit.</summary>
+    private int[] CostsOf(FunctionDef f, IReadOnlyList<TypeExpression> argTypes)
+    {
+        var bindings = new Dictionary<string, TypeExpression>();
+        var costs = new int[argTypes.Count];
+        for (var i = 0; i < argTypes.Count; i++)
+        {
+            var c = MatchCost(f.Parameters[i].Type, argTypes[i], bindings);
+            if (c == null)
+                return null;
+            costs[i] = c.Value;
+        }
+        return costs;
+    }
+
+    private int? CostOf(FunctionDef f, IReadOnlyList<TypeExpression> argTypes)
+        => CostsOf(f, argTypes)?.Sum();
+
+    private static bool IsAbstract(TypeExpression t)
+        => t?.Def == null || t.IsTypeVariable || t.IsTypeParameter || t.Name == "Self" || t.Name == "Any" || t.Def.IsInterface();
+
+    /// <summary>A statically resolved callee with an abstract parameter (an interface, a type
+    /// variable) was chosen inside a generic body, before the argument types were known. Once the
+    /// values are known, a non-interface overload that fits them strictly better takes over, the
+    /// decision the monomorphizer makes after substitution; a callee the values do not fit at
+    /// all is replaced by whichever one they do fit. Arguments needing a conversion come back
+    /// converted.</summary>
+    private FunctionDef Redispatch(FunctionDef f, ref IReadOnlyList<object> args)
+    {
+        if (!f.Parameters.Any(p => IsAbstract(p.Type)))
+            return f;
+        var own = CostOf(f, args.Select(TypeOf).ToList());
+        var best = ResolveByValues(f.Name, args, out var converted, out var bestCost, allowInterfaceDeclarations: false);
+        if (best == null || ReferenceEquals(best, f) || (own != null && bestCost >= own.Value))
+            return f;
+        args = converted;
+        return best;
+    }
+
+    /// <summary>A call written type-level on a named-receiver function (<c>Point2D.Origin</c>,
+    /// where <c>Origin(x: IOriginBased&lt;$D&gt;)</c> reads <c>x</c>) receives the type's default
+    /// value, as the C# writer's <c>default(Point2D).Origin()</c> does.</summary>
+    private IReadOnlyList<object> TypeRefReceiverAsDefault(FunctionDef f, IReadOnlyList<object> args)
+    {
+        if (args.Count == 0 || args[0] is not TypeToken tk || f.Parameters.Count == 0 || f.Parameters[0].Name == "_")
+            return args;
+        if (tk.Type?.Def == null || !tk.Type.Def.IsConcrete())
+            return args;
+        var copy = args.ToArray();
+        copy[0] = DefaultValue(tk.Type);
+        return copy;
     }
 
     /// <summary>A call whose static callee is an interface declaration: re-dispatch on the receiver's

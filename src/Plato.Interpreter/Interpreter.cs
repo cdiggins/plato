@@ -309,10 +309,16 @@ public sealed partial class Interpreter
                 return ApplyHost(f, args);
 
             case FunctionType.Interface:
-                return DispatchInterface(f, args, site);
+                return DispatchInterface(f, TypeRefReceiverAsDefault(f, args), site);
 
             case FunctionType.Library:
+            {
+                args = TypeRefReceiverAsDefault(f, args);
+                var g = Redispatch(f, ref args);
+                if (!ReferenceEquals(g, f))
+                    return Apply(g, args, site);
                 return f.Body == null ? ApplyHost(f, args) : InvokeBody(f, args);
+            }
 
             default:
                 throw new EvaluationException($"cannot apply a {f.FunctionType} function '{f.Name}'");
