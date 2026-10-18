@@ -52,6 +52,13 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-438](issues/plato-438.md) | PlatoTests: TypeScript UseTir byte-identity test fails on number/Number casing | bug | p3 | S | low | plato | ready |  |
 | [repo-401](issues/repo-401.md) | record-gates.py --full passes the retired --scalar=float flag | bug | p3 | S | low | repo | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
+| [plato-454](issues/plato-454.md) | C# writer drops the parentheses of a conditional used as a condition | bug | ? | ? | ? | plato | ready |  |
+| [plato-455](issues/plato-455.md) | C# writer emits a raw indexer for a typed-index subscript (m.Faces[f]) | bug | ? | ? | ? | plato | ready |  |
+| [plato-456](issues/plato-456.md) | C# writer does not generate IIndexable functions for Array receivers | bug | ? | ? | ? | plato | ready |  |
+| [plato-457](issues/plato-457.md) | C# writer does not escape C# keywords used as Plato names | bug | ? | ? | ? | plato | ready |  |
+| [plato-458](issues/plato-458.md) | C# writer's sum-type Equals compares inactive cases' fields | bug | ? | ? | ? | plato | ready |  |
+| [plato-459](issues/plato-459.md) | C# writer stubs bodiless functions three different ways | bug | ? | ? | ? | plato | ready |  |
+| [stdlib-460](issues/stdlib-460.md) | Three geometry-tier functions emit C# that does not compile (Contains on an existential, Constants.UniformWeights) | bug | ? | ? | ? | stdlib | ready |  |
 | [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | p1 | L | med | plato | idea |  |
 | [compiler-416](issues/compiler-416.md) | Library functions taking Buffer<T> as first parameter are silently dropped from emitted C# | problem | p2 | M | med | compiler | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
