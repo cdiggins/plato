@@ -17,6 +17,12 @@ public static class Program
           refs <file> <line> <col>       references to the symbol at a position (0-based)
           export <out.json>              write the whole index, sources included, as JSON
           simplify [--code C] [--write]  propose (or apply) redundancy-removing rewrites
+          lawbench --touch <file> [--recursive] [--exclude F] [--filter L] [--profile P] [--types|--all-types] [--phases]
+                                         time warm law runs: cold, unchanged, after an edit to
+                                         <file> (three times, one appended line each, then restored);
+                                         --types checks the changed files' functions,
+                                         --all-types every function; --phases prints the
+                                         compiler's timed phase log
         """;
 
     public static int Main(string[] args)
@@ -42,6 +48,8 @@ public static class Program
             return Stats(roots);
         if (verb == "bench")
             return Bench(roots);
+        if (verb == "lawbench")
+            return LawBench(args, roots);
         if (verb == "simplify")
             return Simplify(roots, Option(args, "--code"), args.Contains("--write"));
 
@@ -113,6 +121,56 @@ public static class Program
         var last = indexer.LastUpdate;
         Console.WriteLine($"  last update    : parsed {last.FilesParsed} of {last.Files}, reused {last.FilesReused}, "
                           + $"parse {last.ParseTime.TotalMilliseconds:F0} ms, bind {last.BindTime.TotalMilliseconds:F0} ms");
+        return 0;
+    }
+
+    /// <summary>Times the warm law runner the way an editing session uses it. The roots are the
+    /// law run's folders, in order. The touched file is rewritten and then restored, so point it
+    /// at a copy, never at a file another session is editing.</summary>
+    private static int LawBench(IReadOnlyList<string> args, IReadOnlyList<DirectoryPath> roots)
+    {
+        var touch = Option(args, "--touch");
+        if (touch == null || !File.Exists(touch))
+            return Fail("lawbench needs --touch <existing file>");
+        var profile = Ara3D.Geometry.Compiler.Types.NumberProfile.TryParse(Option(args, "--profile") ?? "cpu64");
+        if (profile == null)
+            return Fail("unknown --profile");
+        var filter = Option(args, "--filter");
+        var request = new LawRunRequest
+        {
+            Folders = roots.Select(r => r.Value).ToList(),
+            Recursive = args.Contains("--recursive"),
+            Exclude = Options(args, "--exclude"),
+            Profile = profile,
+            TypeCheck = args.Contains("--types") ? TypeCheckScope.ChangedFiles : args.Contains("--all-types") ? TypeCheckScope.All : TypeCheckScope.None,
+            Options = new Ara3D.Geometry.Interpreter.LawRunOptions { Filters = filter == null ? null : Ara3D.Geometry.Interpreter.LawSelection.SplitList(filter) },
+        };
+        var phases = args.Contains("--phases") ? new Ara3D.Geometry.Compiler.Logger() : null;
+        var runner = new WarmLawRunner { CompileLogger = phases };
+        var original = File.ReadAllText(touch);
+        void Time(string label)
+        {
+            var timer = Stopwatch.StartNew();
+            var o = runner.Run(request);
+            Console.WriteLine($"{label,-22}: {timer.Elapsed.TotalSeconds,5:F1} s  (read {o.ReadTime.TotalSeconds:F1}, parse {o.ParseTime.TotalSeconds:F1} over {o.FilesParsed} files, "
+                              + $"compile {o.CompileTime.TotalSeconds:F1}, {(o.TypeErrors == null ? "" : $"types {o.TypeCheckTime.TotalSeconds:F1} over {o.FilesTypeChecked} files ({o.TypeErrors.Count} errors), ")}laws {o.LawTime.TotalSeconds:F1}; {o.Results.Count} laws, "
+                              + $"{o.Results.Count(r => r.Status == Ara3D.Geometry.Interpreter.LawStatus.Pass)} pass{(o.Compiled ? "" : "; " + string.Join("; ", o.Errors.Take(3)))}; "
+                              + $"heap {GC.GetTotalMemory(false) >> 20} MB)");
+        }
+        Time("cold");
+        Time("unchanged");
+        for (var i = 1; i <= 3; i++)
+        {
+            try
+            {
+                File.WriteAllText(touch, original + $"\n// lawbench edit {i}\n");
+                Time($"after edit {i}");
+            }
+            finally { File.WriteAllText(touch, original); }
+        }
+        Time("restored");
+        foreach (var m in phases?.Messages ?? new List<string>())
+            Console.WriteLine(m);
         return 0;
     }
 

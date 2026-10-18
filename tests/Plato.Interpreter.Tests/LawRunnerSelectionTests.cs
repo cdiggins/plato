@@ -83,6 +83,29 @@ public class LawRunnerSelectionTests
             Is.EqualTo(new[] { "Law_ColorHolds", "LawFixtureShapes.Law_HoldsWhenTrue" }));
 
     [Test]
+    public void No_list_and_no_file_means_no_filter()
+        => Assert.That(LawSelection.FromArguments(Array.Empty<string>(), Array.Empty<string>()), Is.Null);
+
+    [Test]
+    public void Lists_and_files_combine()
+    {
+        var file = Path.GetTempFileName();
+        try
+        {
+            File.WriteAllText(file, "# one per line\nLawFixtureColors\n");
+            Assert.That(LawSelection.FromArguments(new[] { "Law_A,Law_B", "Law_C" }, new[] { file }),
+                Is.EqualTo(new[] { "Law_A", "Law_B", "Law_C", "LawFixtureColors" }));
+            File.WriteAllText(file, "\n# nothing\n");
+            Assert.That(LawSelection.FromArguments(Array.Empty<string>(), new[] { file }), Is.Empty);
+        }
+        finally { File.Delete(file); }
+    }
+
+    [Test]
+    public void A_missing_list_file_is_an_error()
+        => Assert.Throws<FileNotFoundException>(() => LawSelection.FromArguments(Array.Empty<string>(), new[] { "no-such-law-list.txt" }));
+
+    [Test]
     public void Unmatched_filters_are_named()
         => Assert.That(Runner(new[] { "Law_ColorHolds", "Law_Misspelt" }).UnmatchedFilters, Is.EqualTo(new[] { "Law_Misspelt" }));
 }

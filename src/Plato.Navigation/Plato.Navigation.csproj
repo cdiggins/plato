@@ -3,7 +3,8 @@
   <!--
     Plato.Navigation — a queryable navigation index (go-to-def, find-refs, outline, search)
     over a snapshot of Plato source. Reuses the compiler's parser and binder; it does NOT
-    contain a second resolver, a writer, MCP, a file watcher, or any IDE dependency.
+    contain a second resolver, a writer, MCP, a file watcher, or any IDE dependency. It also
+    hosts warm law runs through the interpreter (WarmLawRunner).
     Plan: docs/plato-navigation-index-plan.md (studio repo). Tracker: plato-236.
   -->
 
@@ -21,6 +22,8 @@
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
     <ProjectReference Include="..\Plato.AST\Plato.AST.csproj" />
     <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
+    <!-- WarmLawRunner: law runs over a compilation kept between calls (TKT-331). -->
+    <ProjectReference Include="..\Plato.Interpreter\Plato.Interpreter.csproj" />
   </ItemGroup>
 
 </Project>

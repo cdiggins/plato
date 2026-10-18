@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
+using Ara3D.Geometry.Navigation;
 using Ara3D.Logging;
 using Ara3D.Utils;
 
@@ -32,7 +33,7 @@ namespace Ara3D.Geometry.CLI
         {
             var recursive = args.Contains("--recursive");
             var laws = args.Contains("--laws");
-            var excluded = Flags(args, "--exclude=").ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var excluded = Flags(args, "--exclude=").ToList();
             var profileName = Flags(args, "--profile=").LastOrDefault() ?? NumberProfile.Default.Name;
             var profile = NumberProfile.TryParse(profileName);
             if (profile == null)
@@ -40,8 +41,13 @@ namespace Ara3D.Geometry.CLI
                 Console.Error.WriteLine($"Unknown --profile '{profileName}'; one of: {NumberProfile.Names}");
                 return 1;
             }
-            if (!TryFilters(args, out var filters))
+            IReadOnlyList<string> filters;
+            try { filters = LawSelection.FromArguments(Flags(args, "--filter="), Flags(args, "--laws-from=")); }
+            catch (FileNotFoundException e)
+            {
+                Console.Error.WriteLine(e.Message);
                 return 1;
+            }
             var options = new LawRunOptions { Filters = filters };
             if (int.TryParse(Flags(args, "--trials=").LastOrDefault(), out var trials)) options.Trials = trials;
             if (int.TryParse(Flags(args, "--seed=").LastOrDefault(), out var seed)) options.Seed = seed;
@@ -64,22 +70,12 @@ namespace Ara3D.Geometry.CLI
             }
 
             var timer = Stopwatch.StartNew();
-            var files = new List<FilePath>();
-            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var root in folders)
+            List<FilePath> files;
+            try { files = LawProgram.SourceFiles(folders, recursive, excluded).Select(f => new FilePath(f)).ToList(); }
+            catch (DirectoryNotFoundException e)
             {
-                if (!Directory.Exists(root))
-                {
-                    Console.Error.WriteLine($"Input folder not found: {root}");
-                    return 1;
-                }
-                foreach (var f in Directory.GetFiles(root, "*.plato", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
-                {
-                    if (f.EndsWith(".spec.plato", StringComparison.OrdinalIgnoreCase) || excluded.Contains(Path.GetFileName(f)))
-                        continue;
-                    if (seen.Add(Path.GetFullPath(f)))
-                        files.Add(new FilePath(f));
-                }
+                Console.Error.WriteLine(e.Message);
+                return 1;
             }
 
             var docs = files.Select(f => (File: f, Doc: new Document(f, Ara3D.Logging.Logger.Null))).ToList();
@@ -91,13 +87,11 @@ namespace Ara3D.Geometry.CLI
                 return 1;
             }
             var compilation = new Compilation(Ara3D.Logging.Logger.Null, docs.Select(d => d.Doc.Ast));
-            if (!compilation.CompletedCompilation)
+            var errors = WarmLawRunner.CompileErrors(compilation);
+            if (errors.Count > 0)
             {
-                foreach (var e in compilation.InternalErrors)
+                foreach (var e in errors)
                     Console.Error.WriteLine(e);
-                foreach (var e in compilation.SymbolFactory?.Errors ?? new List<Ara3D.Geometry.Compiler.Symbols.ResolutionError>())
-                    Console.Error.WriteLine($"RESOLVE {e.Message}");
-                Console.Error.WriteLine("Compilation was not completed");
                 return 1;
             }
             var compiled = timer.Elapsed;
@@ -187,26 +181,6 @@ namespace Ara3D.Geometry.CLI
             var regressions = changes.Count(c => c.Regression);
             Console.WriteLine($"baseline: {changes.Count} verdicts changed, {regressions} regressed");
             return regressions > 0 ? 1 : 0;
-        }
-
-        /// <summary>Every --filter (a comma list) and every --laws-from file (one name per line),
-        /// as one list; null when neither names anything, so every law runs. An empty list file
-        /// selects no law. False, with the error printed, for a list file that cannot be read.</summary>
-        private static bool TryFilters(string[] args, out IReadOnlyList<string> filters)
-        {
-            var list = Flags(args, "--filter=").SelectMany(LawSelection.SplitList).ToList();
-            var files = Flags(args, "--laws-from=").ToList();
-            filters = list.Count == 0 && files.Count == 0 ? null : list;
-            foreach (var file in files)
-            {
-                if (!File.Exists(file))
-                {
-                    Console.Error.WriteLine($"--laws-from file not found: {file}");
-                    return false;
-                }
-                list.AddRange(LawSelection.ParseListFile(File.ReadAllText(file)));
-            }
-            return true;
         }
 
         private static IEnumerable<string> Flags(string[] args, string prefix)

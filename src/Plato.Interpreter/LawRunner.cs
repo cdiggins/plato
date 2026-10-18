@@ -88,6 +88,24 @@ public static class LawSelection
     public static IReadOnlyList<string> ParseListFile(string text)
         => text.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0 && !l.StartsWith('#')).ToList();
 
+    /// <summary>The filters given as comma lists (<c>--filter</c>) and as list files
+    /// (<c>--laws-from</c>), together; null when neither is given, so every law runs. An empty
+    /// list file selects no law. Throws <see cref="FileNotFoundException"/> for a missing file.</summary>
+    public static IReadOnlyList<string> FromArguments(IEnumerable<string> commaLists, IEnumerable<string> listFiles)
+    {
+        var lists = commaLists.SelectMany(SplitList).ToList();
+        var files = listFiles.ToList();
+        if (lists.Count == 0 && files.Count == 0)
+            return null;
+        foreach (var file in files)
+        {
+            if (!File.Exists(file))
+                throw new FileNotFoundException($"law list file not found: {file}", file);
+            lists.AddRange(ParseListFile(File.ReadAllText(file)));
+        }
+        return lists;
+    }
+
     /// <summary>The filters no law matches, so a misspelt name in a list is reported, not
     /// silently ignored.</summary>
     public static IReadOnlyList<string> Unmatched(IEnumerable<FunctionDef> laws, IEnumerable<string> filters)

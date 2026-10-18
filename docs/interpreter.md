@@ -251,6 +251,60 @@ already failed in the baseline do not fail the check. The baseline is read befor
 `--report` and `--baseline` may name the same file to check and then advance it.
 `LawReport` and `LawVerdict` in `LawRunner.cs` hold the format and the comparison.
 
+## Warm law runs
+
+`plato run` compiles the whole program before its first law, every time; on a large program
+that compilation is nearly all of a filtered run. `WarmLawRunner` (`src/Plato.Navigation`)
+keeps it between runs for a long-lived host, and the `plato_laws` tool of the navigation MCP
+server is that host. Its arguments are the CLI's flags (`folders`, `recursive`, `exclude`,
+`filter`, `lawsFrom`, `profile`, `trials`, `seed`, `budget`, `report`, `baseline`), and it
+chooses files through the same `LawProgram.SourceFiles`, so the two reach the same verdicts.
+
+Each run reads the files and compares their contents with the last run's:
+
+- **Nothing changed**: the compilation and the interpreter are reused, with every body already
+  elaborated, so the run costs the laws alone.
+- **A file changed**: only that file is parsed again (the runner keeps its own `ParseCache`), and
+  the program is compiled once more, because the compiler has no incremental mode. The
+  interpreter is rebuilt on the new compilation.
+
+A run can also type-check (`TypeCheckScope`, the tool's `types` argument). `ChangedFiles`, the
+tool's default, checks only the functions declared in files whose text changed since the last
+check and keeps every other file's last errors, so an edit costs a fraction of a second of
+checking; `All` checks every function once per compilation, which also catches a caller in an
+unchanged file that the edit broke. Type errors come back with file, line, code and message,
+the same location rule `plato_check` uses.
+
+`Plato.Navigation.CLI lawbench` measures the cases on any set of folders: cold, unchanged, and
+after three edits to one file (`--types` or `--all-types` adds the type check, `--phases` the
+compiler's timed phase log). Point `--touch` at a copy, since the bench rewrites that file and
+restores it.
+
+Measured on 2026-10-18 over the STEP library (the three stdlib tiers plus a copy of
+`sandbox/step-brep-mesh`, recursive, the three `brep.*` stdlib files excluded, `cpu64`, one law
+selected; 250 files, about 14,400 functions), on a machine shared with other sessions:
+
+| Run | Time | Where it goes |
+|---|---|---|
+| `plato run --laws --filter=<one law>`, cold CLI | about 33 s | 32.5 s compiling, 0.3 s on the law |
+| Warm, first run (`lawbench`, 15:55) | 19.8 s | 9 to 10 s parsing, 9 to 12 s compiling |
+| Warm, no file changed (`lawbench` and `plato_laws`) | 0.4 s | the law alone |
+| Warm, one file changed, writer tables built in the constructor (`lawbench`, 15:55 to 15:59) | 8.6 to 12.6 s | 0.1 s parsing, 7.9 to 11.8 s compiling |
+| Warm, one file changed, writer tables built on first use (`lawbench`, 16:00) | 5.7 s | 0.1 s parsing, 5.0 s compiling, 0.6 s on the law |
+| `plato_laws` round trip after a one-body edit, with the changed-file type check (18:05) | 4.8 to 6.0 s (six runs: 4.8, 4.9, 4.9, 5.4, 5.5, 6.0) | 4.1 to 5.5 s compiling, 0.2 to 0.3 s type-checking the file, 0.3 to 0.4 s on the law |
+
+Between 16:05 and 17:55 the machine ran ten to twenty-five times slower under outside load, and
+readings from then were discarded; one 18:05 round trip of 24 s, whose compile alone took 16.5 s,
+was taken during such a spike and is left out of the range above. The compiler's own phase log
+(`lawbench --phases`) shows where a recompile went before the writer tables moved: resolution
+about 0.7 s, reifying library functions about 3.5 s, and building the code writers'
+`LibraryFunctions` and `ConcreteTypes` tables about 5.3 s. The interpreter reads neither table,
+so `Compilation` builds them on first use; the generated C# of the foundation tier is
+byte-identical either way. A check of every function took 6 to 21 s on this program in these runs, which
+is why `ChangedFiles` is the default. What remains of an edit is whole-program resolution and
+reification, so getting reliably under 5 s needs an incremental compiler, not more from this
+runner.
+
 The STEP design folder compiles with the three stdlib tiers plus the sandbox under `--recursive`,
 excluding the three `brep.*.plato` stdlib files the sandbox redeclares; the exact invocation is in
 the dated report.
