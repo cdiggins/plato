@@ -848,12 +848,14 @@ namespace Ara3D.Geometry.CSharpWriter
             // one, and a duplicate would be CS0111 rather than a fixed error.
             var emittedSignatures = new HashSet<string>();
 
-            // The Array intrinsics (declared without a body on an Array receiver: Map, Reduce,
-            // Zip, ...) come from the handwritten runtime. An IIndexable function of the same name
-            // would be a second, ambiguous overload on IReadOnlyList, so it is left to the runtime.
-            var arrayIntrinsicNames = new HashSet<string>(System.Linq.Enumerable.Select(
+            // A name the Array library itself declares (Map, Reduce, Zip, ...: bodied in the stdlib
+            // or supplied by the runtime) belongs to Array. The IIndexable version of it is written
+            // in terms of the Array one (`MapRange(xs.Count, i => xs[i]).Map(f)`), so emitting it
+            // on IReadOnlyList would either take the Array function's C# signature (and recurse
+            // into itself) or add an ambiguous overload.
+            var arrayFunctionNames = new HashSet<string>(System.Linq.Enumerable.Select(
                 System.Linq.Enumerable.Where(Compilation.Libraries.AllFunctions(),
-                    g => g.NumParameters > 0 && g.Body == null && IsListExtensionReceiver(g.Parameters[0].Type)),
+                    g => g.NumParameters > 0 && IsListExtensionReceiver(g.Parameters[0].Type)),
                 g => g.Name));
 
             foreach (var f in Compilation.Libraries.AllFunctions())
@@ -866,7 +868,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 // LastIndex, First, Last, ...) reaches arrays only if it is written here as
                 // extensions on IReadOnlyList (plato-456).
                 var indexable = IsIndexableReceiver(f.Parameters[0].Type);
-                if (indexable && arrayIntrinsicNames.Contains(f.Name))
+                if (indexable && arrayFunctionNames.Contains(f.Name))
                     continue;
                 if (!indexable && !IsListExtensionReceiver(f.Parameters[0].Type))
                     continue;
