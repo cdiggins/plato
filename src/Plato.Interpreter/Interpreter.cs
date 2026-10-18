@@ -31,6 +31,9 @@ public sealed partial class Interpreter
     /// exceeded", so a caller can bound one evaluation (the law runner sets it per law).</summary>
     public DateTime? Deadline { get; set; }
 
+    /// <summary>When set, every bodied activation is timed into it (see <see cref="CallProfile"/>).</summary>
+    public CallProfile Profiler { get; set; }
+
     private readonly TypeChecker _checker;
     private readonly Elaborator _elaborator;
     private readonly Dictionary<FunctionDef, TirFunction> _tir = new Dictionary<FunctionDef, TirFunction>();
@@ -401,6 +404,8 @@ public sealed partial class Interpreter
             _depth = 0;
             throw new EvaluationException($"recursion deeper than {MaxDepth} activations in {f.Name}");
         }
+        var profiler = Profiler;
+        profiler?.Enter(f);
         try
         {
             var result = EvalBody(tir.Body, env);
@@ -420,6 +425,7 @@ public sealed partial class Interpreter
         finally
         {
             _depth--;
+            profiler?.Exit();
         }
     }
 
