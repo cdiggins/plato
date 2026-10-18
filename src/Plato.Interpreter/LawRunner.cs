@@ -57,6 +57,9 @@ public sealed class LawRunOptions
     public int IntegerMin { get; set; } = -1;
     public int IntegerMax { get; set; } = 12;
     public int Seed { get; set; } = 0;
+    /// <summary>Seconds one law may take over all its cases before it is reported as an error;
+    /// null for no limit.</summary>
+    public double? BudgetSeconds { get; set; }
     /// <summary>Only laws whose name contains this run.</summary>
     public string Filter { get; set; }
     public string LawPrefix { get; set; } = "Law_";
@@ -115,6 +118,7 @@ public sealed class LawRunner
         var cases = exhaustive ? Product(domains) : Sample(law, domains);
 
         var trials = 0;
+        Interpreter.Deadline = Options.BudgetSeconds is double budget ? DateTime.UtcNow.AddSeconds(budget) : null;
         foreach (var args in cases)
         {
             trials++;

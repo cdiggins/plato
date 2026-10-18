@@ -8,7 +8,7 @@ using Ara3D.Utils;
 namespace Ara3D.Geometry.CLI
 {
     // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|gpu32]
-    //                [--filter=<substring>] [--trials=N] [--seed=N] [--call=<Name>]
+    //                [--filter=<substring>] [--trials=N] [--seed=N] [--budget=<seconds per law>] [--call=<Name>]
     //
     // Compiles the input roots as one program (top-level files, or every subfolder with --recursive,
     // *.spec.plato always skipped) and runs it in this process through the interpreter: no C# is
@@ -36,6 +36,7 @@ namespace Ara3D.Geometry.CLI
             var options = new LawRunOptions { Filter = Flags(args, "--filter=").LastOrDefault() };
             if (int.TryParse(Flags(args, "--trials=").LastOrDefault(), out var trials)) options.Trials = trials;
             if (int.TryParse(Flags(args, "--seed=").LastOrDefault(), out var seed)) options.Seed = seed;
+            if (double.TryParse(Flags(args, "--budget=").LastOrDefault(), out var budget)) options.BudgetSeconds = budget;
             var calls = Flags(args, "--call=").ToList();
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             if (folders.Count == 0 || (!laws && calls.Count == 0))

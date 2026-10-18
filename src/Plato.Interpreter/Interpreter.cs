@@ -27,6 +27,10 @@ public sealed partial class Interpreter
     /// <summary>Activations deeper than this are a fault, not a stack overflow.</summary>
     public int MaxDepth { get; set; } = 20_000;
 
+    /// <summary>When set, an activation that starts after this instant faults with "time budget
+    /// exceeded", so a caller can bound one evaluation (the law runner sets it per law).</summary>
+    public DateTime? Deadline { get; set; }
+
     private readonly TypeChecker _checker;
     private readonly Elaborator _elaborator;
     private readonly Dictionary<FunctionDef, TirFunction> _tir = new Dictionary<FunctionDef, TirFunction>();
@@ -390,6 +394,8 @@ public sealed partial class Interpreter
                 env.Define(f.Parameters[i], args[i]);
         }
 
+        if (Deadline != null && DateTime.UtcNow > Deadline.Value)
+            throw new EvaluationException("time budget exceeded");
         if (++_depth > MaxDepth)
         {
             _depth = 0;
