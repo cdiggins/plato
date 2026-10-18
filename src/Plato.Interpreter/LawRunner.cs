@@ -240,7 +240,9 @@ public sealed class LawRunner
     /// <summary>The values of every nullary witness of a type, evaluated once.</summary>
     public IReadOnlyList<object> WitnessesOf(TypeExpression t)
     {
-        var key = t.Def.Name;
+        // Keyed by the whole type, arguments included: an Array<Diagnostic> witness must not
+        // serve an Array<Integer> parameter.
+        var key = t.ToString();
         if (_witnessCache.TryGetValue(key, out var cached))
             return cached;
         var list = new List<object>();
@@ -249,7 +251,7 @@ public sealed class LawRunner
         {
             if (!f.Name.StartsWith(Options.WitnessPrefix, StringComparison.Ordinal) || f.Body == null)
                 continue;
-            if (f.ReturnType?.Def?.Name != key)
+            if (f.ReturnType?.ToString() != key)
                 continue;
             object[] args;
             if (f.Parameters.Count == 0)
