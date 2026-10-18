@@ -87,7 +87,10 @@ namespace Ara3D.Geometry.CSharpWriter
         public IReadOnlyList<string> Generics { get; private set; }
         public IReadOnlyList<string> TypeGenerics { get; }
         public int NumParameters => ParameterNames.Count;
-        public IReadOnlyList<string> ParameterNames => Function.ParameterNames;
+        // C# identifiers: a parameter spelled like a C# keyword is escaped (plato-457).
+        public IReadOnlyList<string> ParameterNames
+            => _parameterNames ??= Function.ParameterNames.Select(CSharpTypeWriter.Identifier).ToList();
+        private IReadOnlyList<string> _parameterNames;
         public string FirstParameterName => ParameterNames[0];
         public IReadOnlyList<string> ParameterTypes { get; private set; }
         public IEnumerable<string> MethodParameterNames => ParameterNames.Skip(1);

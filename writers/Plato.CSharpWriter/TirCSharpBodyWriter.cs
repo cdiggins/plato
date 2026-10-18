@@ -212,7 +212,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
             case TirLet let:
                 Write("var ");
-                Write(let.Def?.Name ?? "?");
+                Write(CSharpTypeWriter.Identifier(let.Def?.Name) ?? "?");
                 Write(" = ");
                 WriteNode(let.Value);
                 WriteLine(";");
@@ -297,12 +297,12 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 var isThis = idx == 0 && !_isStatic && _lambdaDepth == 0;
                 // Under scalar erasure the parameter's declared C# type is already the primitive, so
                 // the reference is bare; any boundary cast is an explicit TirCoerce node.
-                Write(isThis ? "this" : p.Def?.Name ?? "?");
+                Write(isThis ? "this" : CSharpTypeWriter.Identifier(p.Def?.Name) ?? "?");
                 return;
             }
 
             case TirVariable v:
-                Write(v.Def?.Name ?? "?");
+                Write(CSharpTypeWriter.Identifier(v.Def?.Name) ?? "?");
                 return;
 
             case TirTypeRef t:
@@ -318,7 +318,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             case TirLet let:
                 // A let in expression position (statement-position lets are handled in
                 // WriteStatement); the reference writes the same `var` form.
-                Write($"var {let.Def?.Name ?? "?"} = ");
+                Write($"var {CSharpTypeWriter.Identifier(let.Def?.Name) ?? "?"} = ");
                 WriteNode(let.Value);
                 return;
 
@@ -412,7 +412,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     return;
                 }
                 Write("(");
-                Write(string.Join(", ", lam.Parameters.Select(p => p.Name)));
+                Write(string.Join(", ", lam.Parameters.Select(p => CSharpTypeWriter.Identifier(p.Name))));
                 Write(") ");
                 _lambdaDepth++;
                 // The reference constructs a fresh body writer per lambda, whose constructor

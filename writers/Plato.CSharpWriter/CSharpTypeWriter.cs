@@ -526,23 +526,29 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         return WriteEndBlock();
     }
 
+    // Every C# reserved keyword (an identifier spelled like one needs `@`), plus the contextual
+    // keywords that can bite in the positions the writer emits names (escaping those is harmless).
     public static HashSet<string> CSharpKeywords = new HashSet<string>()
     {
-        "this", "base", "new", "null", "true", "false", "default", 
-        "class", "struct", "interface", "record", "where",
-        "ref", "in", "out", "params",
-        "if", "else", "for", "foreach", "while", "do", "switch", "case", "break", "continue", 
-        "return", "throw", "try", "catch", "finally", "using", "namespace", "until", 
-        "lock", "fixed", "unsafe", "checked", "unchecked", "goto", "async", "await",
-        "public", "private", "protected", "internal", "static", "readonly", "volatile", "const", "abstract", "virtual", "override", "sealed",
-        "void", "object", "type", "dynamic", "int", "float", "char", "bool", "double", "decimal", "string",
-        "typeof", "nameof", "sizeof", "is", "as",
+        "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked",
+        "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else",
+        "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for",
+        "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock",
+        "long", "namespace", "new", "null", "object", "operator", "out", "override", "params",
+        "private", "protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short",
+        "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw", "true",
+        "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort", "using", "virtual",
+        "void", "volatile", "while",
+        "async", "await", "dynamic", "nameof", "record", "type", "until", "where", "var",
     };
 
-    public static bool IsReserved(string fieldName)
-    {
-        return CSharpKeywords.Contains(fieldName);
-    }
+    public static bool IsReserved(string name)
+        => CSharpKeywords.Contains(name);
+
+    // A Plato name as a C# identifier: verbatim (`@short`) when it is spelled like a keyword
+    // (plato-457). Every parameter, local and lambda parameter the writer emits goes through it.
+    public static string Identifier(string name)
+        => name != null && IsReserved(name) ? "@" + name : name;
 
     /// <summary>
     /// The constructor / With / Create parameter name for a field. Normally the field name with a
