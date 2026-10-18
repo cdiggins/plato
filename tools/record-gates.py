@@ -54,7 +54,7 @@ LAW_PACKET = "stdlib/tests"
 
 # The shipping recipe (docs/plato-library-map.md). Kept beside the codegen call it feeds.
 RECIPE = [
-    "--csharp-style=extensions", "--scalar=float", "--optimize", "--optimize-arrays",
+    "--csharp-style=extensions", "--optimize", "--optimize-arrays",
     "--inline", "--loops", "--static-abstract",
 ]
 
