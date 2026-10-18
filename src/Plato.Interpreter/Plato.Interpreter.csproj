@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The Plato interpreter: an evaluator over the elaborated Typed IR (TIR) that runs any
+       function of a Compilation on values built in the interpreter, with no code generation and
+       no host build. docs/interpreter.md is the design; TKT-317 in the bim-open-toolkit
+       repository is the ticket that asked for it. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+    <RootNamespace>Ara3D.Geometry.Interpreter</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
+  </ItemGroup>
+
+</Project>

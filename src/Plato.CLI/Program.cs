@@ -29,6 +29,10 @@ namespace Ara3D.Geometry.CLI
             if (args.Length > 0 && args[0] == "lint")
                 return Lint(args.Skip(1).ToArray(), logger);
 
+            // Plato.CLI run <folder>... --laws: evaluate the program in this process (RunCommand.cs).
+            if (args.Length > 0 && args[0] == "run")
+                return RunCommand.Run(args.Skip(1).ToArray(), logger);
+
             var typeScript = args.Contains("--typescript");
             var rust = args.Contains("--rust");
             var glsl = args.Contains("--glsl");
