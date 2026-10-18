@@ -28,6 +28,7 @@ Maintained, descriptive, superseded by editing rather than by writing a successo
 - [`compiler-pipeline.md`](compiler-pipeline.md), [`type-checker-handoff.md`](type-checker-handoff.md),
   [`plato-emitter-phases.md`](plato-emitter-phases.md) — source to generated code.
 - [`plato-intrinsics-surface.md`](plato-intrinsics-surface.md), [`plato-struct-surface.md`](plato-struct-surface.md) — the backend contracts.
+- [`interpreter.md`](interpreter.md) — the TIR evaluator, its law runner, and `plato run`; no code generation.
 - [`affine-types.md`](affine-types.md), [`affine-types-overview.md`](affine-types-overview.md) — the `unique` feature.
 - [`verification-inventory.md`](verification-inventory.md) — every tool that checks this repo.
 
@@ -42,6 +43,9 @@ moves to [`archive/`](archive).
 Frozen at the moment they were written. Read them for the analysis, never for current state: a
 report is stale by construction. Never edit one to bring it up to date — write a new one.
 
+- [`Interpreter turnaround and first law results (2026-10-17)`](reports/interpreter-turnaround-2026-10-17.md)
+  — edit-to-verdict times for the interpreter and the generate-build-run path on the STEP design
+  folder, the law classification, and the interpreter defects found.
 - [`Plato standard-library comparative study (2026-08-04, revision 2)`](reports/plato-stdlib-comparative-study-2026-08-04-r2.md)
   — expanded comparison adding geometry3Sharp, Unity, Unreal Engine, Godot, and Blender
   to the numerical, geometry, CAD, symbolic-numeric, and graphics-runtime study.
