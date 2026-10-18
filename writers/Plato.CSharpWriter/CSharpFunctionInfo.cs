@@ -76,6 +76,18 @@ namespace Ara3D.Geometry.CSharpWriter
         }
 
 
+        /// <summary>Re-declares the receiver of an interface-typed function on a runtime type
+        /// with the same type arguments (IIndexable&lt;_T0&gt; becomes IReadOnlyList&lt;_T0&gt;), so
+        /// the body, which only uses the interface's members, is emitted as an extension on
+        /// the runtime type.</summary>
+        public void RetargetReceiver(string fromGenericName, string toGenericName)
+        {
+            var recv = ParameterTypes[0];
+            if (recv.StartsWith(fromGenericName + "<"))
+                ParameterTypes = ParameterTypes.Skip(1)
+                    .Prepend(toGenericName + recv.Substring(fromGenericName.Length)).ToList();
+        }
+
         public ITypeToCSharp TypeToCSharp { get; }
         public FunctionInstance Function { get; }
         public string Name => Function.Name;
@@ -127,7 +139,29 @@ namespace Ara3D.Geometry.CSharpWriter
         public string FunctionAnnotation => IsProperty ? "" : Annotation;
         public string Constraints
             => Function.ConstrainedTypeVariables.Select(ConstraintString).JoinStrings("")
-               + InheritedConstraints;
+               + InheritedConstraints
+               + string.Concat(_parameterConstraints);
+
+        private readonly List<string> _parameterConstraints = new List<string>();
+
+        /// <summary>Turns each non-receiver parameter typed by <paramref name="interfaceName"/>
+        /// into a type parameter constrained to it. A typed index (BrepFaceIndex) both implements
+        /// IIndex and converts to Integer, so overloads on Integer and IIndex are ambiguous in C#
+        /// (CS0121) unless the IIndex one binds the argument's own type.</summary>
+        public void GenericizeInterfaceParameters(string interfaceName)
+        {
+            var types = ParameterTypes.ToList();
+            for (var i = 1; i < types.Count; i++)
+            {
+                if (types[i] != interfaceName)
+                    continue;
+                var name = $"_TI{i}";
+                types[i] = name;
+                AllGenerics.Add(name);
+                _parameterConstraints.Add($" where {name} : {interfaceName}");
+            }
+            ParameterTypes = types;
+        }
 
         /// <summary>
         /// plato-382: the `where` clauses this function's own type variables INHERIT from the

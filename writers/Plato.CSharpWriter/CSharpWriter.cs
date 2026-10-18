@@ -825,6 +825,12 @@ namespace Ara3D.Geometry.CSharpWriter
         // ExtensionStylePlan, and moved members are only discovered while writing a concrete type's
         // own file — so before this a library function with an array receiver was emitted by NO
         // writer at all and every call site of it was a CS1061.
+        private const string IndexableInterfaceName = "IIndexable";
+
+        // A receiver typed by the one-dimensional IIndexable<T> interface itself.
+        private static bool IsIndexableReceiver(TypeExpression pt)
+            => pt?.Def != null && pt.Def.IsInterface() && pt.Def.Name == IndexableInterfaceName;
+
         private static bool IsListExtensionReceiver(TypeExpression pt)
             => pt?.Def != null
                && (pt.Def.IsInterface()
@@ -842,12 +848,27 @@ namespace Ara3D.Geometry.CSharpWriter
             // one, and a duplicate would be CS0111 rather than a fixed error.
             var emittedSignatures = new HashSet<string>();
 
+            // The Array intrinsics (declared without a body on an Array receiver: Map, Reduce,
+            // Zip, ...) come from the handwritten runtime. An IIndexable function of the same name
+            // would be a second, ambiguous overload on IReadOnlyList, so it is left to the runtime.
+            var arrayIntrinsicNames = new HashSet<string>(System.Linq.Enumerable.Select(
+                System.Linq.Enumerable.Where(Compilation.Libraries.AllFunctions(),
+                    g => g.NumParameters > 0 && g.Body == null && IsListExtensionReceiver(g.Parameters[0].Type)),
+                g => g.Name));
+
             foreach (var f in Compilation.Libraries.AllFunctions())
             {
                 if (f.NumParameters == 0)
                     continue;
 
-                if (!IsListExtensionReceiver(f.Parameters[0].Type))
+                // Array<T> implements IIndexable<T>, but Array is a runtime IReadOnlyList with no
+                // generated struct, so the IIndexable library (IsValidIndex, At(IIndex),
+                // LastIndex, First, Last, ...) reaches arrays only if it is written here as
+                // extensions on IReadOnlyList (plato-456).
+                var indexable = IsIndexableReceiver(f.Parameters[0].Type);
+                if (indexable && arrayIntrinsicNames.Contains(f.Name))
+                    continue;
+                if (!indexable && !IsListExtensionReceiver(f.Parameters[0].Type))
                     continue;
 
                 // Declared-only functions (the array INTRINSICS: Map/Reduce/Zip/...) are provided
@@ -862,6 +883,11 @@ namespace Ara3D.Geometry.CSharpWriter
                 var interfaceWriter = NewDefaultTypeWriter();
                 var fi = new FunctionInstance(f, null, null, FunctionInstanceKind.InterfaceExtension);
                 var cfi = new CSharpFunctionInfo(fi, null, interfaceWriter);
+                if (indexable)
+                {
+                    cfi.RetargetReceiver(IndexableInterfaceName, "IReadOnlyList");
+                    cfi.GenericizeInterfaceParameters("IIndex");
+                }
                 if (!emittedSignatures.Add(
                         $"{cfi.Name}{cfi.ExtensionGenericsString}({cfi.ParameterTypes.JoinStringsWithComma()})"))
                     continue;
