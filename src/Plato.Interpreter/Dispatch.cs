@@ -303,6 +303,8 @@ public sealed partial class Interpreter
         var derived = ShapeDerived(decl.Name, args, out var handled);
         if (handled)
             return derived;
+        if (TryPrimitiveMember(decl.Name, args, out var member))
+            return member;
         if (decl.Body != null)
             return InvokeBody(decl, args);
         throw new HostObligationException($"{decl.OwnerType?.Name}.{decl.Name} on {TypeOf(args.Count > 0 ? args[0] : null)}");
@@ -357,6 +359,8 @@ public sealed partial class Interpreter
         var derived = ShapeDerived(name, args, out var handled);
         if (handled)
             return derived;
+        if (TryPrimitiveMember(name, args, out var member))
+            return member;
 
         throw new EvaluationException(
             $"cannot resolve '{name}' for ({string.Join(", ", args.Select(a => TypeOf(a)))})");
@@ -408,6 +412,30 @@ public sealed partial class Interpreter
         }
         handled = false;
         return null;
+    }
+
+    /// <summary>A member the C# runtime gives a primitive struct directly, with no Plato
+    /// declaration behind it (<c>String.Count</c> and <c>String.At</c> discharge the
+    /// <c>ICountable</c> and indexing interfaces <c>String</c> declares): the host entry keyed by
+    /// the arguments' run-time type names, when the receiver is a primitive.</summary>
+    private bool TryPrimitiveMember(string name, IReadOnlyList<object> args, out object result)
+    {
+        result = null;
+        if (args.Count == 0 || TypeOf(args[0]).Def?.IsPrimitiveDeclaration != true)
+            return false;
+        var key = $"{name}({string.Join(", ", args.Select(a => TypeOf(a).Def?.Name ?? "?"))})";
+        if (!Host.TryGet(key, out var impl))
+            return false;
+        try
+        {
+            result = impl(this, args);
+            return true;
+        }
+        catch (EvaluationException) { throw; }
+        catch (Exception e) when (IsRuntimeFault(e))
+        {
+            throw new EvaluationException($"{key}: {e.Message}", e);
+        }
     }
 
     private static object SingleIndexableField(PlatoRecord r)

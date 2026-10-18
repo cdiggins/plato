@@ -30,6 +30,13 @@ public sealed class HostIntrinsics
     public bool TryGet(FunctionDef f, out Impl impl)
         => _table.TryGetValue(KeyOf(f), out impl);
 
+    /// <summary>The entry for a key built from run-time types rather than a declaration: the
+    /// members the C# runtime gives a primitive struct with no Plato declaration behind them
+    /// (<c>String.Count</c>, <c>String.At</c>), reached through an interface the primitive
+    /// declares (<c>ICountable</c>).</summary>
+    public bool TryGet(string key, out Impl impl)
+        => _table.TryGetValue(key, out impl);
+
     public IEnumerable<string> Keys => _table.Keys;
 
     private void Add(string key, Impl impl) => _table[key] = impl;

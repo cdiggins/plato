@@ -191,3 +191,23 @@ The four verdicts that are not passes are the library's, not the interpreter's:
   constants written as loops, `IsWellFormed` asked per sample point by `CheckGrid`, the laws that
   mesh one model several times in one expression, and the four verdicts above. The C# backend has
   no memo, so causes 1 to 3 cost it too, at native speed.
+
+## Later the same day: top-level Number parameters
+
+The supervisor asked about the "Limits" entry of `../interpreter.md`, which says a law parameter
+typed `Number`, `String`, `Character` or `Array<T>` gets a one-value domain (an empty
+`Number()` record) and errors. That defect was fixed on 2026-10-17 in 1a3298fa
+(`ValueGenerator.FiniteDomain` skips `primitive` declarations), which the pinned CLI 062b8dc7
+already contains: `StepToMeshLaws.Law_TighterChordalStaysWithinLooserBound(m, o, chordal: Number)`
+passes 25 cases under both 062b8dc7 and 93907bd7. The entry in `../interpreter.md` is stale; that
+file is TKT-331's fence today.
+
+No test guarded the fix, so `ValueDomainTests` now runs five laws over top-level `Number`,
+`String`, `Character`, `Array<Number>` and `Number` beside `Integer` parameters, each sending its
+value through a host intrinsic. Writing it found one more gap: `s.Count` on a `String` was a host
+obligation (`ICountable.Count on String`). `String` declares `ICountable`, and the C# runtime
+gives the `String` struct `Count` and `At` as members with no Plato declaration behind them; the
+interpreter's host table had both entries, but interface dispatch never looked there. A member of
+an interface that nothing implements on a primitive receiver now falls back to the host entry
+keyed by the arguments' run-time types. The interpreter's 66 tests pass, and the stdlib law run
+keeps 137 pass, 8 fail, 3 error (compile 10.0 s, laws 2.0 s, the machine quieter by then).
