@@ -197,8 +197,9 @@ not in the evaluator, so a different convention is a different driver over the s
   (a `primitive` declaration such as `Number`, `String`, `Character`, `Array<T>` or
   `FunctionN<...>` is not one: its values are generated at the top level of a law as in a field,
   fixed in 1a3298fa and guarded by `ValueDomainTests`), and `Integer`, which ranges over a closed
-  interval wide enough to reach every witness a selector such as `WitnessAt(k)` can pick plus an out-of-range value. A law whose parameters are
-  all finite, with a product no larger than `MaxExhaustive`, runs every case.
+  interval wide enough to reach every witness a selector such as `WitnessAt(k)` can pick plus an
+  out-of-range value. A law whose parameters are all finite, with a product no larger than
+  `MaxExhaustive`, runs every case.
 - Otherwise the law is **sampled**, `Trials` times, each draw taking a witness or a generated
   value with equal chance when both exist. `ValueGenerator` follows the C# conformance runner's
   policy (a `Number` is one of ten special values three times in ten and otherwise uniform in
