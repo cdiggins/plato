@@ -193,8 +193,9 @@ not in the evaluator, so a different convention is a different driver over the s
   faults, the runner evaluates the measure on the failing witness and prints it beside the
   witness, so a report names how far off the result was, not only that it was.
 - A `_` parameter ranges over the type token of its declared type.
-- **Finite domains are exhausted**: `Boolean`, a sum of payload-free cases, a zero-field type,
-  and `Integer`, which ranges over a closed interval wide enough to reach every witness a
+- **Finite domains are exhausted**: `Boolean`, a sum of payload-free cases, a zero-field type
+  (a `primitive` declaration such as `Number` or `String` is not one: its values are generated,
+  at the top level of a law as in a field, guarded by `ValueDomainTests`), and `Integer`, which ranges over a closed interval wide enough to reach every witness a
   selector such as `WitnessAt(k)` can pick plus an out-of-range value. A law whose parameters are
   all finite, with a product no larger than `MaxExhaustive`, runs every case.
 - Otherwise the law is **sampled**, `Trials` times, each draw taking a witness or a generated
@@ -347,13 +348,6 @@ crept in.
 What the interpreter does not do yet, found by running the STEP design folder and the stdlib
 laws; the dated report has the counts and the exact messages.
 
-- A law parameter whose type is a primitive other than `Boolean` or `Integer` (`Number`,
-  `String`, `Character`, `Array<T>`, `FunctionN<...>`) is given the wrong domain: the finite-domain
-  rule for a zero-field product type matches the primitive's `TypeDef`, so the whole domain is one
-  empty record (`Number()`), and the first host intrinsic the value reaches faults with a cast
-  error. Nested occurrences of the same types, as fields of a record, are generated correctly;
-  only top-level parameters are affected. Until it is fixed, a law with such a parameter is an
-  `error`, not a verdict.
 - A static callee is applied as resolved, and only an interface *declaration* is re-dispatched.
   When the checker resolved a call on a type-variable-typed expression to a generic *library*
   function whose parameter is an interface (`Add(x: IOriginBased<$D>, delta: $D)` chosen for
@@ -365,6 +359,4 @@ laws; the dated report has the counts and the exact messages.
 - `Type.Name` in value position, where `Name`'s first parameter is a value rather than `_`
   (`Point2D.Origin` with `Origin(x: IOriginBased<$D>)`), passes the type token as the value and
   faults at the first field read.
-- Per-law elapsed time is recorded on each `LawResult` but not printed by `plato run`, so a slow
-  law has to be found with `--filter`.
 - `--exclude` matches a file name anywhere under the roots; there is no way to exclude a folder.
