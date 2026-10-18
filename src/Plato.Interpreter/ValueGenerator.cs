@@ -138,6 +138,9 @@ public sealed class ValueGenerator
             return null;
         if (t.Def.Name == "Boolean")
             return new object[] { false, true };
+        // A `primitive` declaration (Number, Array, ...) has no fields but is not an empty record.
+        if (t.Def.IsPrimitiveDeclaration)
+            return null;
         if (t.Def.IsSum && t.Def.Cases.All(c => c.Fields.Count == 0))
             return t.Def.Cases.Select(c => (object)new PlatoSum(t, c, Array.Empty<object>())).ToList();
         if (t.Def.IsConcrete() && !t.Def.IsSum && t.Def.Fields.Count == 0)
