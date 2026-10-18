@@ -124,6 +124,8 @@ library UnitFixtures
     HalfOfThree(): Number => Half(3);
     IntegerQuotient(a: Integer, b: Integer): Integer => a / b;
     AddNumbers(a: Number, b: Number): Number => a + b;
+    // CallMemoTests: 1/x tells 0.0 from -0.0, which compare equal.
+    Reciprocal(x: Number): Number => 1.0 / x;
     PointOnePlusPointTwo(): Number => 0.1 + 0.2;
     MultiplyIntegers(a: Integer, b: Integer): Integer => a * b;
     BothSides(a: Boolean, b: Boolean): Boolean => a && b;

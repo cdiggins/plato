@@ -20,6 +20,10 @@ public sealed class PlatoRecord
     public PlatoRecord(TypeExpression type, object[] fields)
         => (Type, Fields) = (type, fields);
 
+    private MemoHashCache _memoHash;
+    internal bool TryMemoHash(out int hash) => _memoHash.TryGet(Def.Name.GetHashCode(), Fields, out hash);
+    internal bool MemoHashEquals(PlatoRecord other) => MemoHashCache.MayEqual(_memoHash, other._memoHash);
+
     public int IndexOf(string fieldName)
     {
         var fs = Def.Fields;
@@ -44,6 +48,10 @@ public sealed class PlatoSum
     public PlatoSum(TypeExpression type, SumCaseDef sumCase, object[] fields)
         => (Type, Case, Fields) = (type, sumCase, fields);
 
+    private MemoHashCache _memoHash;
+    internal bool TryMemoHash(out int hash) => _memoHash.TryGet(HashCode.Combine(Def.Name, Case.Tag), Fields, out hash);
+    internal bool MemoHashEquals(PlatoSum other) => MemoHashCache.MayEqual(_memoHash, other._memoHash);
+
     public override string ToString() => ValueFormat.Format(this);
 }
 
@@ -62,7 +70,31 @@ public sealed class PlatoArray
     public PlatoArray(TypeExpression elementType, IReadOnlyList<object> items)
         => (ElementType, Items) = (elementType, items);
 
+    private MemoHashCache _memoHash;
+    internal bool TryMemoHash(out int hash) => _memoHash.TryGet(Items.Count, Items, out hash);
+    internal bool MemoHashEquals(PlatoArray other) => MemoHashCache.MayEqual(_memoHash, other._memoHash);
+
     public override string ToString() => ValueFormat.Format(this);
+}
+
+/// <summary>The <see cref="MemoValue"/> hash of an immutable record, sum or array, computed on
+/// first use and kept in the value, so a large model passed to many calls is hashed once.</summary>
+internal struct MemoHashCache
+{
+    private int _hash;
+    private byte _state; // 0 not computed, 1 computed, 2 the value holds a builder and has no hash
+
+    public bool TryGet(int seed, IReadOnlyList<object> items, out int hash)
+    {
+        if (_state == 0)
+            _state = MemoValue.TryCombine(seed, items, out _hash) ? (byte)1 : (byte)2;
+        hash = _hash;
+        return _state == 1;
+    }
+
+    /// <summary>False only when both hashes are known and differ.</summary>
+    public static bool MayEqual(MemoHashCache a, MemoHashCache b)
+        => a._state != 1 || b._state != 1 || a._hash == b._hash;
 }
 
 /// <summary>The two affine builders, List&lt;T&gt; (growable) and Buffer&lt;T&gt; (fixed-size).

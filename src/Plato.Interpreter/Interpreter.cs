@@ -34,6 +34,10 @@ public sealed partial class Interpreter
     /// <summary>When set, every bodied activation is timed into it (see <see cref="CallProfile"/>).</summary>
     public CallProfile Profiler { get; set; }
 
+    /// <summary>Remembers the results of expensive calls (see <see cref="CallMemo"/>); null
+    /// evaluates every call.</summary>
+    public CallMemo Memo { get; set; } = new CallMemo();
+
     private readonly TypeChecker _checker;
     private readonly Elaborator _elaborator;
     private readonly Dictionary<FunctionDef, TirFunction> _tir = new Dictionary<FunctionDef, TirFunction>();
@@ -64,7 +68,10 @@ public sealed partial class Interpreter
     public IEnumerable<FunctionDef> Functions => Compilation.FunctionDefinitions;
 
     /// <summary>Time spent checking and elaborating bodies on first use (a cost figure for reports).</summary>
-    public TimeSpan ElaborationTime { get; private set; }
+    public TimeSpan ElaborationTime
+        => TimeSpan.FromSeconds((double)_elaborationTicks / System.Diagnostics.Stopwatch.Frequency);
+
+    private long _elaborationTicks;
 
     /// <summary>How many run-time overload resolutions were performed (a cost figure for reports).</summary>
     public long ResolutionCount { get; internal set; }
@@ -80,10 +87,10 @@ public sealed partial class Interpreter
             return null;
         if (_tir.TryGetValue(f, out var tir))
             return tir;
-        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var start = System.Diagnostics.Stopwatch.GetTimestamp();
         var result = _checker.Check(f);
         tir = _elaborator.Elaborate(result);
-        ElaborationTime += sw.Elapsed;
+        _elaborationTicks += System.Diagnostics.Stopwatch.GetTimestamp() - start;
         _tir[f] = tir;
         return tir;
     }
@@ -388,6 +395,24 @@ public sealed partial class Interpreter
         if (args.Count != tir.Parameters.Count)
             throw new EvaluationException($"{f.Name} takes {tir.Parameters.Count} arguments, got {args.Count}");
 
+        var memo = Memo;
+        if (memo == null)
+            return Activate(f, tir, args);
+        var stats = memo.StatsOf(f);
+        if (memo.TryGet(stats, args, out var key, out var remembered))
+            return remembered;
+        var start = System.Diagnostics.Stopwatch.GetTimestamp();
+        var elaboration = _elaborationTicks;
+        var result = Activate(f, tir, args);
+        memo.Record(stats, args, key, result,
+            System.Diagnostics.Stopwatch.GetTimestamp() - start - (_elaborationTicks - elaboration));
+        return result;
+    }
+
+    /// <summary>One activation of a bodied function: the parameters bound, the body evaluated,
+    /// the result coerced to the declared return type.</summary>
+    private object Activate(FunctionDef f, TirFunction tir, IReadOnlyList<object> args)
+    {
         var self = args.Count > 0 ? ReceiverType(f, args[0]) : null;
         var env = new Environment(null, self);
         for (var i = 0; i < args.Count; i++)

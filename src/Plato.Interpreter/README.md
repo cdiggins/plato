@@ -116,6 +116,15 @@ for which no value can be built is skipped with the reason.
   language intends; the differential test allows this divergence explicitly.
 - **Arrays are eager.** The C# runtime's `MapRange` is lazy. Eagerness is simpler and costs
   memory only at sizes the law runner does not reach.
+- **Expensive calls are remembered.** Plato is pure, so `CallMemo.cs` answers a repeated call
+  of an expensive bodied function from a table instead of evaluating it again: a law that
+  meshes its model three times in one expression, a constant written as a loop, a depth
+  recursion over the same references. A function joins the table once its mean cost, without
+  elaboration, reaches `CallMemo.ThresholdMicroseconds`; keys compare Numbers bit for bit and
+  values with their run-time types, and builders are never keys or remembered results. The
+  price is memory, bounded per function by `CallMemo.MaxEntriesPerFunction`, and an evaluation
+  whose cost no longer shows how often the library repeats itself; set `Interpreter.Memo` to
+  null to evaluate every call, as the C# backend does.
 - **Laziness per function, not per program.** Checking and elaborating a body on first use
   means a law over a small part of a library pays only for what it calls, and means the
   interpreter never reports a type error in a function nothing reaches.
@@ -203,6 +212,8 @@ from the program itself.
 | `Interpreter.cs` | Evaluation of each TIR node kind; running a body; the public `Call`, `Invoke`, `Evaluate` |
 | `Dispatch.cs` | Run-time overload resolution, interface re-dispatch, syntactic calls, conversions, `default`, construction |
 | `Values.cs` | The value model: records, sums, arrays, builders, functions, type tokens; structural equality; formatting |
+| `CallMemo.cs` | The memo of expensive calls and the stricter equality its keys use |
+| `CallProfile.cs` | Calls, inclusive and self time per bodied function, collected when `Interpreter.Profiler` is set |
 | `Numbers.cs` | The arithmetic a `NumberProfile` gives Number and Integer |
 | `HostIntrinsics.cs` | The host half of `intrinsics.library.plato`, keyed by declared signature |
 | `Environment.cs` | Bindings in scope during evaluation; the snapshot a lambda captures |

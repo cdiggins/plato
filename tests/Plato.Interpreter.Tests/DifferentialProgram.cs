@@ -27,14 +27,6 @@ public sealed class DifferentialProgram
     private static readonly Lazy<DifferentialProgram> _instance = new(Build);
     public static DifferentialProgram Instance => _instance.Value;
 
-    public static string RepoRoot()
-    {
-        for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
-            if (Directory.Exists(Path.Combine(dir.FullName, "stdlib", "foundation")))
-                return dir.FullName;
-        throw new DirectoryNotFoundException("stdlib/foundation not found above " + AppContext.BaseDirectory);
-    }
-
     public static AstNode Parse(string path)
     {
         var parser = CommonParsers.PlatoParser(new ParserInput(File.ReadAllText(path), path), Ara3D.Logging.Logger.Null);
@@ -46,7 +38,7 @@ public sealed class DifferentialProgram
     private static DifferentialProgram Build()
     {
         var sw = Stopwatch.StartNew();
-        var root = RepoRoot();
+        var root = TestSupport.RepoRoot;
         var foundation = Directory.GetFiles(Path.Combine(root, "stdlib", "foundation"), "*.plato", SearchOption.AllDirectories)
             .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
             .Select(Parse)

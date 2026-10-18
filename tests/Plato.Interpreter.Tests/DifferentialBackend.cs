@@ -63,7 +63,7 @@ public sealed class DifferentialBackend
     }
 
     private static IEnumerable<string> IntrinsicsSources()
-        => Directory.GetFiles(Path.Combine(DifferentialProgram.RepoRoot(), "src", "Plato.Intrinsics"), "*.cs", SearchOption.TopDirectoryOnly);
+        => Directory.GetFiles(Path.Combine(TestSupport.RepoRoot, "src", "Plato.Intrinsics"), "*.cs", SearchOption.TopDirectoryOnly);
 
     // The trusted platform assemblies minus the stale Ara3D.Geometry package, which declares the
     // same wrapper scalars the generated code does (see SumTypeCodegenTests.CompileAndLoad).
