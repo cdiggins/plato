@@ -253,6 +253,21 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
     // --- expressions ---------------------------------------------------------
 
+    // A C# indexer takes an int, which an Integer converts to implicitly. A typed index (a
+    // product type whose one field is an Integer, such as BrepFaceIndex) converts to Integer, but
+    // C# will not chain two user-defined conversions, so the subscript names the Integer step
+    // (plato-455). No conversion to int is added to the index types themselves: Plato has none.
+    private void WriteIndexArgument(TirNode index)
+    {
+        var type = TirRewrite.StripCoerce(index)?.Type;
+        var def = type?.Def;
+        var typedIndex = def != null && type.Name != "Integer" && !def.IsSum
+            && def.Fields.Count == 1 && def.Fields[0].Type?.Name == "Integer";
+        if (typedIndex) Write("((Integer)");
+        WriteNode(index);
+        if (typedIndex) Write(")");
+    }
+
     private void WriteArgs(IEnumerable<TirNode> args)
     {
         var first = true;
@@ -728,7 +743,13 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             }
             WriteNode(args[0]);
             Write("[");
-            WriteArgs(args.Skip(1));
+            var firstIndex = true;
+            foreach (var index in args.Skip(1))
+            {
+                if (!firstIndex) Write(", ");
+                firstIndex = false;
+                WriteIndexArgument(index);
+            }
             Write("]");
             return;
         }
