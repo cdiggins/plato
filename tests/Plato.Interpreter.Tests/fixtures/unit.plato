@@ -109,6 +109,15 @@ library UnitFixtures
         }
         return b.Freeze();
     }
+    // Defect D5 of the 2026-10-18 rerun: a fresh Buffer holds its element type's default, so
+    // the slots never set read as false, not as no value (ReferencedVertexCount in the STEP
+    // mesher counts the positions an element cites this way).
+    BufferMarkedCount(n: Integer, k: Integer): Integer
+    {
+        var seen = new Buffer<Boolean>(n);
+        seen = seen.Set(k, true);
+        return seen.Freeze().Map(b => b ? 1 : 0).Reduce(0, (c, x) => c + x);
+    }
 
     // Integer and Number mixing
     Half(x: Number): Number => x / 2.0;

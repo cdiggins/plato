@@ -517,7 +517,10 @@ public sealed partial class Interpreter
             case "List":
                 return new PlatoBuilder(HostIntrinsics.ElementTypeOf(type, 0), false, 0);
             case "Buffer":
-                return new PlatoBuilder(HostIntrinsics.ElementTypeOf(type, 0), true, args.Count > 0 ? (int)(long)args[0] : 0);
+            {
+                var element = HostIntrinsics.ElementTypeOf(type, 0);
+                return new PlatoBuilder(element, true, args.Count > 0 ? (int)(long)args[0] : 0, DefaultValue(element));
+            }
         }
         return Construct(type.Def, type, args);
     }

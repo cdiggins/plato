@@ -134,6 +134,9 @@ public class UnitTests
     [Test]
     public void Buffer_builder_freeze() => Assert.That(Longs(Call("BufferCountdown", 3L)), Is.EqualTo(new long[] { 3, 2, 1 }));
 
+    [Test]
+    public void Buffer_slots_never_set_hold_the_default() => Assert.That(Call("BufferMarkedCount", 4L, 2L), Is.EqualTo(1L));
+
     // --- numbers --------------------------------------------------------------
 
     [Test]

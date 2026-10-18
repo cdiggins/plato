@@ -67,7 +67,8 @@ public sealed class PlatoArray
 
 /// <summary>The two affine builders, List&lt;T&gt; (growable) and Buffer&lt;T&gt; (fixed-size).
 /// A mutator returns the same builder; Freeze hands the storage to an Array and invalidates the
-/// builder, exactly as PlatoList and PlatoBuffer in the C# runtime do.</summary>
+/// builder, exactly as PlatoList and PlatoBuffer in the C# runtime do. A new Buffer's slots hold
+/// <c>fill</c>, the element type's default, as the runtime's <c>new T[n]</c> does.</summary>
 public sealed class PlatoBuilder
 {
     public bool IsBuffer { get; }
@@ -75,14 +76,14 @@ public sealed class PlatoBuilder
     private List<object> _items;
     private bool _frozen;
 
-    public PlatoBuilder(TypeExpression elementType, bool isBuffer, int capacity)
+    public PlatoBuilder(TypeExpression elementType, bool isBuffer, int capacity, object fill = null)
     {
         ElementType = elementType;
         IsBuffer = isBuffer;
         _items = new List<object>(capacity);
         if (isBuffer)
             for (var i = 0; i < capacity; i++)
-                _items.Add(null);
+                _items.Add(fill);
     }
 
     private void CheckLive()

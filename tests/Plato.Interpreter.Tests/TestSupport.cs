@@ -13,18 +13,22 @@ public static class TestSupport
 {
     public static readonly string[] StdlibTiers = { "foundation", "geometry", "graphics" };
 
-    /// <summary>The repository root: the nearest ancestor of the test output folder holding
-    /// <c>stdlib/foundation</c>.</summary>
+    /// <summary>The repository root: the nearest ancestor holding <c>stdlib/foundation</c> of the
+    /// test output folder, or, for a build into a private <c>--artifacts-path</c> outside the
+    /// checkout, of this source file.</summary>
     public static string RepoRoot
+        => RootAbove(AppContext.BaseDirectory) ?? RootAbove(Path.GetDirectoryName(SourceFile()))
+           ?? throw new DirectoryNotFoundException("no stdlib/foundation above " + AppContext.BaseDirectory);
+
+    private static string RootAbove(string start)
     {
-        get
-        {
-            for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
-                if (Directory.Exists(Path.Combine(dir.FullName, "stdlib", "foundation")))
-                    return dir.FullName;
-            throw new DirectoryNotFoundException("no stdlib/foundation above " + AppContext.BaseDirectory);
-        }
+        for (var dir = new DirectoryInfo(start); dir != null; dir = dir.Parent)
+            if (Directory.Exists(Path.Combine(dir.FullName, "stdlib", "foundation")))
+                return dir.FullName;
+        return null;
     }
+
+    private static string SourceFile([System.Runtime.CompilerServices.CallerFilePath] string path = "") => path;
 
     public static string StdlibFolder(string tier)
         => Path.Combine(RepoRoot, "stdlib", tier);
