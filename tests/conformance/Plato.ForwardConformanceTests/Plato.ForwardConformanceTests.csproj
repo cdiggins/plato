@@ -28,6 +28,9 @@
     <Platforms>AnyCPU;x64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
+    <!-- The generated forward stdlib declares INumericalLimits<Self>; the intrinsics implement
+         it only under this symbol (as in Plato.Generated.Foundation.Unoptimized). -->
+    <DefineConstants>$(DefineConstants);PLATO_FORWARD_CONCEPTS</DefineConstants>
   </PropertyGroup>
 
   <Import Project="..\..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />

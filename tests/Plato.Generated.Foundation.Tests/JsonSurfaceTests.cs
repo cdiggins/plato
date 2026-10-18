@@ -133,9 +133,9 @@ public class JsonSurfaceTests
         var p = new Point3D(float.NaN, float.PositiveInfinity, float.NegativeInfinity);
         Assert.That(p.ToJson(), Is.EqualTo("{\"X\":\"NaN\",\"Y\":\"Infinity\",\"Z\":\"-Infinity\"}"));
         var q = Point3D.Parse(p.ToJson());
-        Assert.That(float.IsNaN(q.X), Is.True);
-        Assert.That(float.IsPositiveInfinity(q.Y), Is.True);
-        Assert.That(float.IsNegativeInfinity(q.Z), Is.True);
+        Assert.That(double.IsNaN(q.X.Value), Is.True);
+        Assert.That(double.IsPositiveInfinity(q.Y.Value), Is.True);
+        Assert.That(double.IsNegativeInfinity(q.Z.Value), Is.True);
     }
 
     [Test]

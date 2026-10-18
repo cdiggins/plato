@@ -14,7 +14,9 @@
 #   2. build      the generated project (net8.0, DEFAULT LangVersion — hard rule 3).
 #   3. test       optional (-Test): tests\Plato.Generated.Foundation.Tests.
 #
-# Usage: .\tools\regen-foundation.ps1 [-WhatIf] [-Test] [-Flags '--optimize','--inline']
+# Usage: .\tools\regen-foundation.ps1 [-WhatIf] [-Test] [-Profile cpu64|gpu32] [-Flags '--optimize','--inline']
+#   -Profile  the Number profile (docs/SEMANTICS.md section 1): passed to the CLI as --profile= and
+#             to the build and test as -p:PlatoNumberProfile=. Default cpu64, the tracked output.
 #   -WhatIf   generate into .temp\regen-foundation and report how many files would change,
 #             leaving the tracked output untouched. Use it to see whether the checked-in
 #             emission still matches the library before deciding to refresh it. It does not
@@ -27,6 +29,8 @@
 param(
     [switch]   $WhatIf,
     [switch]   $Test,
+    [ValidateSet('cpu64', 'gpu32')]
+    [string]   $Profile = 'cpu64',
     [string[]] $Flags = @()
 )
 
@@ -57,9 +61,9 @@ if (-not (Test-Path $dest)) { New-Item -ItemType Directory -Path $dest -Force | 
 # types it emits, so a *.g.cs left from a deleted type would survive and still compile.
 Get-ChildItem -Path $dest -Filter '*.g.cs' -File -ErrorAction SilentlyContinue | Remove-Item -Force
 
-$generated = Run-Step "generate (stdlib\foundation$(if ($Flags) { ' ' + ($Flags -join ' ') }))" {
+$generated = Run-Step "generate (stdlib\foundation, $Profile$(if ($Flags) { ' ' + ($Flags -join ' ') }))" {
     $out = & dotnet run --project (Join-Path $root 'src\Plato.CLI\Plato.CLI.csproj') -c Release -- `
-        $source $dest '--csharp-style=extensions' @Flags
+        $source $dest '--csharp-style=extensions' "--profile=$Profile" @Flags
     $ok = ($LASTEXITCODE -eq 0)
     # Generate mode exits 0 when an individual body fails to lower — those become throwing stubs
     # and are only visible on this console line, so a silent green here would be a wrong green.
@@ -86,13 +90,15 @@ if ($generated -and $WhatIf) {
 
 if ($generated -and -not $WhatIf) {
     Run-Step 'build (net8.0 Release)' {
-        & dotnet build $project -c 'Release' --nologo -v q
+        # Out-Host: dotnet's lines must not join the block's return value, or $ok becomes a non-empty
+        # array, which is truthy, and a failed build reads as PASS.
+        & dotnet build $project -c 'Release' --nologo -v q "-p:PlatoNumberProfile=$Profile" | Out-Host
         $LASTEXITCODE -eq 0
     } | Out-Null
 
     if ($Test) {
         Run-Step 'Plato.Generated.Foundation.Tests' {
-            & dotnet test (Join-Path $root 'tests\Plato.Generated.Foundation.Tests') -c Release --nologo -v q
+            & dotnet test (Join-Path $root 'tests\Plato.Generated.Foundation.Tests') -c Release --nologo -v q "-p:PlatoNumberProfile=$Profile" | Out-Host
             $LASTEXITCODE -eq 0
         } | Out-Null
     }

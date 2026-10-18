@@ -22,7 +22,7 @@ namespace Plato.ForwardConformanceTests
 
         static readonly Dictionary<Type, string> PrimitiveTypeNames = new()
         {
-            { typeof(float), "Number" },
+            { typeof(NumberValue), "Number" },
             { typeof(int), "Integer" },
             { typeof(bool), "Boolean" },
             { typeof(char), "Character" },
