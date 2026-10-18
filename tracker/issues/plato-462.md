@@ -2,14 +2,14 @@
 id: plato-462
 title: Interpreter: 'a conditional's condition is not a Boolean: null' in Map < ReferencedVertexCount < Oracle_AngleDefectSum on the hollow-box witness
 type: bug
-status: ready
+status: done
 priority: p2
 effort: S
 risk: low
 area: plato
 sprint: 
 created: 2026-10-18
-closed:
+closed: 2026-10-18
 links: [src/Plato.Interpreter/Interpreter.cs, docs/reports/interpreter-turnaround-2026-10-17.md]
 ---
 
