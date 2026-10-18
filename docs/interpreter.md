@@ -221,6 +221,7 @@ that a law that fails on generated input in one engine fails in the other.
 ```
 Plato.CLI run <folder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>]
                           [--profile=cpu64|gpu32] [--filter=<text>[,<text>...]] [--laws-from=<file>]
+                          [--report=<file>] [--baseline=<file>]
                           [--trials=N] [--seed=N] [--budget=<seconds>]
 ```
 
@@ -236,6 +237,19 @@ skipped. Both may repeat, and the run covers the union. An entry that selects no
 on stderr, so a misspelt name in a list does not pass silently. `--trials` and `--seed` set the
 sampling, and `--budget` stops one law after that many seconds and reports it as an error. The exit code is 1 on a parse or compile failure and when any law fails or errors;
 skipped laws and host obligations are listed but do not fail the run.
+
+`--report=<file>` writes a verdict file: one tab-separated line per law, sorted by name, holding
+the full name, the verdict (`pass`, `fail`, `error`, `obligation`, `skipped`) and the first
+failing witness, the fault or the reason, flattened to one line. Two overloads with one name
+carry their parameter types. A committed verdict file records which laws held at a commit, and
+two of them diff line by line. `--baseline=<file>` compares the run with a verdict file and
+prints every law whose verdict changed (`regressed`, `changed`, `new`, or, in a run without
+filters, `removed`); only verdicts are compared, never the witness text. With `--baseline` the
+exit code says only whether something regressed: 1 when a law the baseline records as passing
+fails, errors, is skipped, becomes an obligation, or (in an unfiltered run) is gone; laws that
+already failed in the baseline do not fail the check. The baseline is read before the run, so
+`--report` and `--baseline` may name the same file to check and then advance it.
+`LawReport` and `LawVerdict` in `LawRunner.cs` hold the format and the comparison.
 
 The STEP design folder compiles with the three stdlib tiers plus the sandbox under `--recursive`,
 excluding the three `brep.*.plato` stdlib files the sandbox redeclares; the exact invocation is in

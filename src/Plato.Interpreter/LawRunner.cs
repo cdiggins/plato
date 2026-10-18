@@ -337,3 +337,92 @@ public sealed class LawRunner
         return _gen.Generate(d.Generate[rng.Next(d.Generate.Count)], rng);
     }
 }
+
+/// <summary>One line of a verdict file: the law's name, its verdict (<c>pass</c>, <c>fail</c>,
+/// <c>error</c>, <c>obligation</c>, <c>skipped</c>), and the first failing witness, the fault, or
+/// the reason, on one line.</summary>
+public sealed record LawVerdict(string Name, string Verdict, string Detail);
+
+/// <summary>A verdict that differs between a baseline and a run. <c>Before</c> is null for a law
+/// the baseline lacks, <c>After</c> for a law the run no longer has.</summary>
+public sealed record LawChange(string Name, string Before, string After)
+{
+    public const string PassVerdict = "pass";
+
+    /// <summary>A law that passed and now does not, or that passed and is gone from a whole run.</summary>
+    public bool Regression => Before == PassVerdict && After != PassVerdict;
+
+    public override string ToString()
+        => $"{(After == null ? "removed" : Regression ? "regressed" : Before == null ? "new" : "changed"),-10} {Name}  {Before ?? "-"} -> {After ?? "-"}";
+}
+
+/// <summary>
+/// Verdict files: one tab-separated <see cref="LawVerdict"/> per line, sorted by name, so two runs
+/// diff line by line and a committed file records which laws held. A name shared by two laws
+/// (overloads in one class) carries the parameter types. <see cref="Compare"/> checks a run
+/// against a baseline file; only the verdicts are compared, never the witness text.
+/// </summary>
+public static class LawReport
+{
+    /// <summary>Witnesses and faults are cut to this many characters, so one huge value cannot
+    /// swamp the file.</summary>
+    public const int MaxDetail = 400;
+
+    public static IReadOnlyList<LawVerdict> Verdicts(IEnumerable<LawResult> results)
+    {
+        var list = results.ToList();
+        var shared = list.GroupBy(r => r.Name).Where(g => g.Count() > 1).Select(g => g.Key).ToHashSet();
+        return list
+            .Select(r => new LawVerdict(
+                shared.Contains(r.Name) ? $"{r.Name}({string.Join(", ", r.Law.Parameters.Select(p => p.Type))})" : r.Name,
+                r.Status.ToString().ToLowerInvariant(),
+                OneLine(Detail(r))))
+            .OrderBy(v => v.Name, StringComparer.Ordinal)
+            .ToList();
+    }
+
+    private static string Detail(LawResult r)
+        => r.Status switch
+        {
+            LawStatus.Pass => "",
+            LawStatus.Fail => r.FormatWitness(),
+            LawStatus.Error => $"{r.FormatWitness()}  {r.Message}",
+            _ => r.Message ?? "",
+        };
+
+    private static string OneLine(string text)
+    {
+        var flat = string.Join(" ", text.Split(new[] { '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)).Trim();
+        return flat.Length <= MaxDetail ? flat : flat.Substring(0, MaxDetail) + "...";
+    }
+
+    public static string Format(IEnumerable<LawVerdict> verdicts)
+        => string.Concat(verdicts.Select(v => $"{v.Name}\t{v.Verdict}\t{v.Detail}\n"));
+
+    /// <summary>The verdicts of a file written by <see cref="Format"/>; blank lines and <c>#</c>
+    /// lines are skipped.</summary>
+    public static IReadOnlyList<LawVerdict> Parse(string text)
+        => text.Split('\n')
+            .Select(l => l.TrimEnd('\r'))
+            .Where(l => l.Trim().Length > 0 && !l.StartsWith('#'))
+            .Select(l => l.Split('\t', 3))
+            .Select(f => new LawVerdict(f[0].Trim(), f.Length > 1 ? f[1].Trim() : "", f.Length > 2 ? f[2] : ""))
+            .ToList();
+
+    /// <summary>Every law whose verdict differs, sorted by name. A law the baseline lacks is
+    /// listed as new. A baseline law absent from the run is listed as removed only when the run
+    /// covered every law (<paramref name="wholeRun"/>); a filtered run leaves it out, because the
+    /// filter, not a change, is why it did not run.</summary>
+    public static IReadOnlyList<LawChange> Compare(IEnumerable<LawVerdict> baseline, IEnumerable<LawVerdict> current, bool wholeRun)
+    {
+        var before = baseline.GroupBy(v => v.Name).ToDictionary(g => g.Key, g => g.Last().Verdict);
+        var after = current.GroupBy(v => v.Name).ToDictionary(g => g.Key, g => g.Last().Verdict);
+        var changed = after
+            .Where(kv => before.GetValueOrDefault(kv.Key) != kv.Value)
+            .Select(kv => new LawChange(kv.Key, before.GetValueOrDefault(kv.Key), kv.Value));
+        var removed = wholeRun
+            ? before.Where(kv => !after.ContainsKey(kv.Key)).Select(kv => new LawChange(kv.Key, kv.Value, null))
+            : Enumerable.Empty<LawChange>();
+        return changed.Concat(removed).OrderBy(c => c.Name, StringComparer.Ordinal).ToList();
+    }
+}
