@@ -47,7 +47,7 @@ namespace PlatoTests
         // The count drifts with library growth: this is a ceiling to LOWER, never to raise. At 0 it is
         // also a floor in practice — any new diagnostic is a regression.
         // Worklist: SummarizeForwardStdLibDiagnostics.
-        private const int MaxFunctionsWithDiagnostics = 0;
+        private static readonly int MaxFunctionsWithDiagnostics = CheckerTestSupport.RatchetCeiling("typecheck");
 
         /// <summary>Empty when the file parses; otherwise the failure, so one bad file cannot mask the rest.</summary>
         private static string ParseFailure(string path)

@@ -44,7 +44,7 @@ namespace PlatoTests
         //             Concatenable, ...). All 32 of the 32. Burn-down: plato-277 / plato-325.
         //
         // A ceiling to LOWER, never to raise. Lower it in the same commit that earns it.
-        private const int MaxLintRatchet = 32;
+        private static readonly int MaxLintRatchet = CheckerTestSupport.RatchetCeiling("lint");
 
         // The Linter runs every rule from its constructor.
         private static Linter LintForwardStdLib()

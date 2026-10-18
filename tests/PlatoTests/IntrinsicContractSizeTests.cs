@@ -33,7 +33,7 @@ namespace PlatoTests
         // Measured 2026-07-31 after plato-378: 65 (was 141).
         //   Number 26, Integer 18, Array 5, Boolean 3, Character/String 2, List 7, Buffer 4.
         // A ceiling to LOWER, never to raise without a stated reason.
-        private const int MaxIntrinsics = 65;
+        private static readonly int MaxIntrinsics = CheckerTestSupport.RatchetCeiling("intrinsics");
 
         /// <summary>A bodiless signature: `Name(params): ReturnType;` at library-member indent,
         /// with no `=>`. Comment lines are stripped first so a signature quoted in a doc comment
