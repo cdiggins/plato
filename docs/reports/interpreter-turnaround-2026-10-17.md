@@ -238,3 +238,139 @@ law; the sandbox does not use the form.
   generated here; the foundation tier with its two law files stands in, as the task allowed.
 - An idle machine: see Setup. Every figure above was taken while other sessions were building
   and committing.
+
+## Rerun on 2026-10-18 after the evaluator fixes and the resolution memo
+
+Plato at a966dfc4 (`--budget=<seconds per law>` for `plato run`), which follows the three
+evaluator fixes 2908660d, 1a3298fa and 1e22c813 (the groups D1, D2 and D3 above) and the
+resolution memo b31cbfae (run-time resolution cached per call shape, and the `slow` list).
+bim-open-toolkit at a82033f4; the sandbox has grown since the 17th (the `08-pipeline` and
+`09-tooling` law files are new). Same machine, still shared with other sessions. The commands are
+the ones in Setup with `--budget=60` added: a law that runs past 60 s is reported as an error with
+the message `time budget exceeded`. Without the budget the first sweep spent 33 minutes inside
+`StepToMeshWitnessesLaws.Law_HollowBoxOuterMeshVolumePositive` and a further 40 minutes in its
+sibling before it was killed; the budget bounds a sweep at about 14 minutes.
+
+The three summary lines:
+
+```
+compiled 250 files, 14349 functions, profile cpu64 (13.1s)
+734 laws: 402 pass, 77 fail, 43 error, 123 obligation, 89 skipped; 2421 bodies elaborated in 0.9s; 371 run-time resolutions; laws 802.3s, total 815.5s
+
+compiled 250 files, 14349 functions, profile gpu32 (20.7s)
+734 laws: 402 pass, 77 fail, 43 error, 123 obligation, 89 skipped; 2452 bodies elaborated in 1.1s; 374 run-time resolutions; laws 796.2s, total 816.9s
+
+compiled 163 files, 9987 functions, profile cpu64 (16.5s)
+148 laws: 137 pass, 8 fail, 3 error; 435 bodies elaborated in 0.5s; 179 run-time resolutions; laws 1.4s, total 17.9s
+```
+
+Counts, the 17th against the 18th. The sandbox columns are cpu64; gpu32 gives the same counts,
+with two laws trading verdicts: `BrepWitnessesLaws.Law_BoxValidatesClean` passes under cpu64 and
+fails under gpu32 at `w = 5.566, d = 2, h = 6.130`, and `Law_WitnessGreenAreaMatchesFacts` the
+reverse at `k = 4, f = 0`, both tolerance edges of the 32-bit profile.
+
+| Status | Sandbox, 17th | Sandbox, 18th | Stdlib, 17th | Stdlib, 18th |
+|---|---|---|---|---|
+| pass | 301 | 402 | 43 | 137 |
+| fail | 66 | 77 | 3 | 8 |
+| error, evaluator or generator fault | 69 | 20 | 81 | 0 |
+| error, law fault on generated input | 0 | 13 | 3 | 3 |
+| error, time budget exceeded (60 s) | not measured | 10 | not measured | 0 |
+| obligation | 215 | 123 | 18 | 0 |
+| skipped | 83 | 89 | 0 | 0 |
+| laws time, cpu64 | 452.8 s | 802.3 s | not recorded | 1.4 s |
+
+The `slow` list (laws of a second or more, cpu64; gpu32 names the same laws):
+
+```
+slow       StepToMeshWitnessesLaws.Law_PlantedBadFaceHasTwoErrors  60.0s over 1 cases
+slow       StepToMeshWitnessesLaws.Law_PlantedBadFaceIsDiagnosed  60.0s over 1 cases
+slow       StepToMeshLaws.Law_PowerOfTwoScalingScalesPositions  60.0s over 2 cases
+slow       StepToMeshWitnessesLaws.Law_WitnessEdgeReversalPreservesMesh  60.0s over 16 cases
+slow       StepToMeshWitnessesLaws.Law_PlantedBadFaceErrorsStayInTheSheet  60.0s over 1 cases
+slow       StepToMeshLaws.Law_ValidationIsIdempotent  60.0s over 1 cases
+slow       StepToMeshLaws.Law_EveryDiagnosticIsLocated  60.0s over 1 cases
+slow       StepToMeshWitnessesLaws.Law_HollowBoxMeshVolumeIsDifference  60.0s over 10 cases
+slow       StepToMeshWitnessesLaws.Law_HollowBoxOuterMeshVolumePositive  60.0s over 18 cases
+slow       BrepWitnessesLaws.Law_WitnessIsOracleClean  60.0s over 2 cases
+slow       BrepWitnessesLaws.Law_WitnessDivergenceVolumeMatchesFacts  31.6s over 114 cases
+slow       BrepWitnessesLaws.Law_WitnessValidatesClean  24.5s over 9 cases
+slow       BrepWitnessesLaws.Law_BoxValidatesClean  10.5s over 25 cases
+slow       ToolingGeneratorsLaws.Law_PerturbedShellVolumeFollowsFactor  8.5s over 25 cases
+slow       BrepWitnessesLaws.Law_WitnessIsStructurallyClean  8.2s over 9 cases
+```
+
+The ten laws over budget are the first ten lines: each meshes a whole `BrepModel` witness per
+case (a hollow box, a planted bad face, a validation of the full pipeline). They account for 600 s
+of the 802 s; the other 724 laws take about 200 s, against 452 s for 734 laws on the 17th.
+
+Sandbox errors other than the budget, by message (cpu64; gpu32 identical):
+
+| Message | Count | Example law | Cause |
+|---|---|---|---|
+| `no field 'Face' on Diagnostic` | 11 | `ModelMeshAssemblyLaws.Law_AssemblyKeepsTheNumbering` (in `CanAssemble`) | D4 below |
+| `no field 'Edge' on Diagnostic` | 3 | `EdgeDiscretizingLaws.Law_RefineKeepsUnrequestedEdges` | D4 |
+| `no field 'Value' on Diagnostic` | 3 | `ModelMeshesLaws.Law_RestrictionKeepsTheElementsOfTheFaces` | D4 |
+| `no field 'Sources' on Diagnostic` | 1 | `ModelMeshNumberingLaws.Law_NumberingCountsCitedEdgeInteriors` | D4 |
+| `no field 'Checks' on Diagnostic` | 1 | `BrepCheckingLaws.Law_MergeAllIsCleanExactlyWhenEveryPartIsClean` (in `Merge < MergeAll`) | D4 |
+| `Add(Integer, Integer): Unable to cast object of type 'Ara3D.Geometry.Interpreter.PlatoRecord' to type 'System.Int64'.` | 1 | `BrepFoundationLaws.Law_IntegerTotalAddsOverConcatenation` (in `IntegerTotal`) | D4 |
+| `At(Array, Integer): Index was out of range.` | 13 | `FaceMeshingLaws.Law_UnwrapMovesByWholePeriods` (in `AreTwinSteps < Any < PlacedTwinStep < Unwrap`) | a generated `UvLoop` or `ModelMesh` with negative indices; an unguarded precondition, like the 17th's `Law_HoledTriangulation*` errors |
+
+**D4. The witness for an `Array<T>` parameter is drawn from any `Witness_*` returning an `Array`,
+whatever its element type.** `Law_IntegerTotalAddsOverConcatenation(xs: Array<Integer>, ys:
+Array<Integer>)` is run with `xs = [Diagnostic(Severity.Error, "P21-SYNTAX", "An entity instance
+could not be parsed and was skipped.", Provenance.AtInstance(StepInstanceId(125)), NaN)]` and
+`ys = [-6]`, and `Law_AssemblyKeepsTheNumbering(m, faceMeshes: Array<FaceMesh>, n)` with the same
+Diagnostic as its one face mesh. The 20 laws in the first six rows have no verdict for that
+reason. Fixed in 062b8dc7 (witnesses matched on the whole type, type arguments included) after the
+sweeps above ran; the rerun of those 20 laws is recorded at the end of this section.
+
+**D5. A conditional's condition evaluates to null inside a meshing pipeline.** One sandbox law, in
+the unbudgeted sweep, after 33 minutes; under the 60 s budget the same law is reported as over
+budget at the same case, so the fault is not in the budgeted output. The full line from the
+unbudgeted run, verbatim:
+
+```
+error      StepToMeshWitnessesLaws.Law_HollowBoxOuterMeshVolumePositive  case 18: a = 5.785732621227266, b = 0.5  a conditional's condition is not a Boolean: null (in Map < ReferencedVertexCount < Oracle_AngleDefectSum < Law_AngleDefectMatchesBrepEuler < CheckAll < CheckShells < Check_AngleDefectMatchesBrepEuler < CrossReport < Map < ForLevel < CrossCheck < CrossCheck < Validated < RunOutcome < MeshChosenFaces < MeshModel < WitnessOutcome < WitnessMesh < Law_HollowBoxOuterMeshVolumePositive)
+```
+
+Sandbox obligations, by bodiless function (cpu64; gpu32 identical). All 123 are genuine: no
+`IOriginBased.Offset` or `IVector.Broadcast` line remains, so D2 is gone.
+
+| Function | Laws | Example |
+|---|---|---|
+| `DecodeRaw(Part21File, DecodePolicy)` | 42 | `StepReadingLaws.Law_RawFaceFlagsAreTheFiles` |
+| `SlotOf(Part21File, Integer, String, String)` | 25 | `StepWhereRulesLaws.Law_Where_ConversionBasedUnit_WR1` |
+| `CompletePeriodicRegion(BrepModel, BrepFaceIndex, Array, FaceMeshingCriteria)` | 18 | `StepToMeshWitnessesLaws.Law_WitnessMeshesOk` |
+| `Reduced(RawDecodedModel)` | 11 | `StepRawWitnessesLaws.Law_RawUnitCubePreparesToUnitBox` |
+| `ParseStep(String)` | 10 | `Part21ReadingLaws.Law_ParsePrintParseIsIdentity` |
+| `ProjectBySearch(BrepSurface, GeometrySet, Point3D)` | 8 | `BrepWitnessesLaws.Law_WitnessIsStructurallyClean` |
+| `FlatRecord(Array, String)` | 5 | `StepSchemaModelLaws.Law_SchemaDerivesAreInherited` |
+| `InstancePosition(Part21File, StepInstanceId)` | 2 | `Part21ReadingLaws.Law_InstancePositionIsExact` |
+| `BSplineSideCollapses(BSplineSurfaceData, DomainSide, LengthTolerance)` | 2 | `BrepCheckingLaws.Law_CornerNormalIsFaceNormal` |
+
+The 89 skipped: 73 `GeometrySet` (nesting deeper than 6, no witness), 8 `BSplineSurfaceData`
+(type variable), 2 `PipelineState`, and 6 new ones for function-typed parameters
+(`Function1<Integer, Boolean>` and the like, in the `09-tooling` law-runner laws).
+
+Stdlib: no obligation and no evaluator error remain. The 3 errors are the 17th's
+`TriangulationLaws.Law_HoledTriangulation*` out-of-range reads on a one-point polygon. The 8
+failures are unguarded preconditions on generated input: `ImplicitSdfLaws.Law_BoxIsBoxSlice`
+(negative half extents), `Law_VerticalCapsuleIsCapsuleAlongY` (negative height and radius),
+`Law_EqualRadiusCappedConeIsCylinder` (negative half height), `Law_ConeIsDegenerateCappedCone`,
+the two `SurfacesShapesLaws.Law_Hyperboloid*SatisfiesItsEquation` (reversed interval), and
+`Law_SuperellipsoidPolesAreOnTheAxis` and `Law_Superformula3DPolesAreOnTheAxis` (negative
+exponents). The 94 laws that moved from error or obligation to pass are D1, D2 and D3 fixed.
+
+What changed and why: the evaluator fixes turned the D1 errors and D2 obligations into verdicts
+(101 more passes in the sandbox, 94 in the stdlib), the memo cut the stdlib's law time to 1.4 s
+and the sandbox's per-law cost by about half, and the new pipeline laws that mesh whole models now
+dominate the sweep, which is why the budget exists.
+
+After 062b8dc7 (witnesses matched on the whole type), the 20 D4 laws rerun one at a time with
+`--filter=<law> --budget=60` under cpu64: 19 pass (25 cases each); 1 error,
+`ModelMeshesLaws.Law_RestrictionKeepsTheElementsOfTheFaces` at case 11 with `At(Array, Integer):
+Index was out of range (in CornerUvAt < RestrictedToFaces < Law_...)` on a generated `ModelMesh`
+whose faces are `[BrepFaceIndex(-6), BrepFaceIndex(5), BrepFaceIndex(8), BrepFaceIndex(3)]`, an
+unguarded precondition of the same kind as the 13 `At` errors above, not an evaluator fault. With
+that, the sandbox's evaluator-or-generator error row is 0 and its pass count 421 of 734.
