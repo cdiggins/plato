@@ -422,7 +422,8 @@ namespace Ara3D.Geometry.CSharpWriter
         //   - a PRIVATE all-fields constructor (named args, so the 10-field tuple cap is irrelevant);
         //   - one public static factory per case, setting its own fields and defaulting the rest;
         //   - a bool Is<Case> predicate per case (the match lowering's branch condition);
-        //   - structural Equals / NotEquals / GetHashCode / ToString over Kind + all flattened fields.
+        //   - structural Equals / NotEquals / GetHashCode over Kind + the active case's fields;
+        //     ToString over Kind + all flattened fields.
         // The ternary-chain ToString avoids the switch-expression CS8509 the design doc calls out.
         // ============================================================================
         public void WriteSumType(IReadOnlyList<Ara3D.Geometry.Compiler.Symbols.SumCaseField> flat)
@@ -498,20 +499,29 @@ namespace Ara3D.Geometry.CSharpWriter
                 tw.WriteLine($"{Attr} public {boolT} {c.PredicateName}() => Kind == {c.TagConstName};");
             tw.WriteLine();
 
-            // Structural equality / hashing / ToString over Kind + all flattened fields.
+            // Structural equality and hashing over Kind and the ACTIVE case's fields only (plato-458).
+            // An inactive case's fields hold default, which for an array is null: comparing them
+            // threw NullReferenceException, and they carry no meaning anyway.
             tw.WriteLine("// Object virtual function overrides: Equals, GetHashCode, ToString");
             var eqTerms = new List<string> { "Kind == other.Kind" };
-            foreach (var fn in FieldNames)
-                eqTerms.Add($"{fn}.Equals(other.{fn})");
+            foreach (var c in cases.Where(c => c.Fields.Count > 0))
+            {
+                var caseEq = c.Fields.Select(f => $"{f.FlatName}.Equals(other.{f.FlatName})").JoinStrings(" && ");
+                eqTerms.Add($"(Kind != {c.TagConstName} || ({caseEq}))");
+            }
             var eqBody = string.Join(" && ", eqTerms);
             tw.WriteLine($"{Attr} public {boolT} Equals({Name} other) => {eqBody};");
             tw.WriteLine($"{Attr} public {boolT} NotEquals({Name} other) => !({eqBody});");
             tw.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other) : false;");
             tw.WriteLine($"{Attr} public static {boolT} operator==({Name} a, {Name} b) => a.Equals(b);");
             tw.WriteLine($"{Attr} public static {boolT} operator!=({Name} a, {Name} b) => !a.Equals(b);");
-            var hashArgs = new List<string> { "Kind" };
-            hashArgs.AddRange(FieldNames);
-            tw.WriteLine($"{Attr} public override int GetHashCode() => Intrinsics.CombineHashCodes({hashArgs.JoinStringsWithComma()});");
+            var hashBody = "Intrinsics.CombineHashCodes(Kind)";
+            foreach (var c in cases.Where(c => c.Fields.Count > 0).Reverse())
+            {
+                var args = c.Fields.Select(f => f.FlatName).Prepend("Kind").JoinStringsWithComma();
+                hashBody = $"Kind == {c.TagConstName} ? Intrinsics.CombineHashCodes({args}) : {hashBody}";
+            }
+            tw.WriteLine($"{Attr} public override int GetHashCode() => {hashBody};");
             tw.WriteLine();
 
             // The sum serializes as its honest layout — the Kind discriminant plus every flattened

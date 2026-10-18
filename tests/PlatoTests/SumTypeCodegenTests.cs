@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -226,6 +226,31 @@ namespace Ara3D.Geometry
             // The qualified case constructor (Pen) builds a Move segment.
             var pen = lib.GetMethod("Pen").Invoke(null, new[] { Point(1, 1) });
             Assert.AreEqual(0, seg.GetField("Kind").GetValue(pen)); // Kind_Move
+        }
+
+        /// <summary>
+        /// plato-458: equality and hashing read only the active case. A Dot leaves the Poly case's
+        /// array at null; comparing every flattened field dereferenced it.
+        /// </summary>
+        [Test]
+        public static void SumEquality_ComparesOnlyTheActiveCase()
+        {
+            var w = Emit("sum-with-array.plato");
+            // The generated projects compile with ImplicitUsings; the array field needs the one
+            // for System.Collections.Generic.
+            var asm = CompileAndLoad(Prelude, "global using System; global using System.Collections.Generic;",
+                w.Files["_Shape.g.cs"].ToString());
+            var shape = asm.GetType("Ara3D.Geometry.Shape", true);
+            object Dot(int n) => shape.GetMethod("Dot").Invoke(null, new object[] { (Ara3D.Geometry.Integer)n });
+            object Poly(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Integer> c) => shape.GetMethod("Poly").Invoke(null, new object[] { c });
+
+            Assert.AreEqual(true, Dot(3).Equals(Dot(3)));
+            Assert.AreEqual(false, Dot(3).Equals(Dot(4)));
+            Assert.AreEqual(Dot(3).GetHashCode(), Dot(3).GetHashCode());
+            var corners = new Ara3D.Geometry.Integer[] { 1, 2, 3 };
+            Assert.AreEqual(true, Poly(corners).Equals(Poly(corners)));
+            Assert.AreEqual(false, Poly(corners).Equals(Dot(3)));
+            Assert.AreEqual(false, Dot(3).Equals(Poly(corners)));
         }
 
         /// <summary>

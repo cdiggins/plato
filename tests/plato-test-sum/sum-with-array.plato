@@ -1,0 +1,19 @@
+// Positive fixture (plato-458): a sum whose second case holds an array. A value of the first
+// case leaves that array at its default (null in C#), so equality must compare only the active
+// case's fields.
+
+type Integer { }
+type Boolean { }
+type Array<T> { }
+
+type Shape
+    = Dot(Size: Integer)
+    | Poly(Corners: Array<Integer>);
+
+library Shapes {
+    IsDot(s: Shape): Boolean =>
+        match (s) {
+            Dot(n) => true;
+            Poly(c) => false;
+        };
+}
