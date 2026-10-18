@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-18 — [plato-388](issues/plato-388.md) — Single verification policy manifest: one data file the gates, tests and plato_check all read — done (7a4ec6bb)
 - 2026-10-18 — [plato-372](issues/plato-372.md) — Studio gate scripts are stale: check-stdlib-fast lints stdlib top-only and finds no files — done (studio 97709b28 forwarder; studio check-stdlib-fast -PlatoRoot plato: STDLIB FAST GATE PASS 2026-10-18)
 - 2026-10-18 — [repo-401](issues/repo-401.md) — record-gates.py --full passes the retired --scalar=float flag — done (25502274)
 - 2026-10-18 — [plato-462](issues/plato-462.md) — Interpreter: 'a conditional's condition is not a Boolean: null' in Map < ReferencedVertexCount < Oracle_AngleDefectSum on the hollow-box witness — done (8cbf8894): new Buffer<T>(n) slots hold the element default; verified on RestrictedToShell of Witness_HollowBox(5.785732621227266, 0.5), 8 of 16 positions unreferenced per shell

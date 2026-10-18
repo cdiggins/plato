@@ -2,14 +2,14 @@
 id: plato-388
 title: Single verification policy manifest: one data file the gates, tests and plato_check all read
 type: debt
-status: ready
+status: done
 priority: p1
 effort: M
 risk: med
 area: plato
 sprint: 
 created: 2026-08-01
-closed:
+closed: 2026-10-18
 links: [stdlib/VERIFICATION.md, docs/verification-inventory.md, tools/check-stdlib-fast.ps1, tools/stage-stdlib.ps1, tools/record-gates.py, tools/export-types-context.ps1, tests/PlatoTests/CheckerTestSupport.cs]
 ---
 
@@ -60,8 +60,8 @@ the manifest, so the duplication cannot grow back.
 
 ## Done means
 
-- [ ] `stdlib/verification.json` exists and declares tiers, per-tier checks, ratchet ceilings and the codegen recipe.
-- [ ] Every consumer listed above reads it; no tier list literal remains in any of them.
-- [ ] The type-checker ceiling and the codegen recipe each have exactly one copy.
-- [ ] A test fails if a tier list or ceiling reappears outside the manifest.
-- [ ] `stdlib/VERIFICATION.md` points at the manifest instead of restating the scope tables.
+- [x] `stdlib/verification.json` exists and declares tiers, per-tier checks, ratchet ceilings and the codegen recipe.
+- [x] Every consumer listed above reads it; no tier list literal remains in any of them.
+- [x] The type-checker ceiling and the codegen recipe each have exactly one copy.
+- [x] A test fails if a tier list or ceiling reappears outside the manifest.
+- [x] `stdlib/VERIFICATION.md` points at the manifest instead of restating the scope tables.

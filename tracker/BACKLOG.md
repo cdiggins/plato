@@ -22,7 +22,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
-| [plato-388](issues/plato-388.md) | Single verification policy manifest: one data file the gates, tests and plato_check all read | debt | p1 | M | med | plato | ready |  |
 | [plato-434](issues/plato-434.md) | Collision pair tests are unusable in TypeScript: sphere-box silently reports no contact, sphere-capsule throws, box corners duplicate | bug | p1 | M | med | plato | ready |  |
 | [plato-441](issues/plato-441.md) | TypeScript writer silently drops same-name overloads: Ray3D.Intersect(Triangle3D) never reaches the output | bug | p1 | M | low | plato | ready |  |
 | [plato-443](issues/plato-443.md) | Interface-typed fields bind Self to the containing type: TubeSurface.Path is ICurve3D<TubeSurface>, so no real curve fits | bug | p1 | M | low | plato | ready |  |
