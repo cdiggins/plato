@@ -19,8 +19,10 @@
 
 // ## Scalars
 
-// A 64-bit floating-point approximation of a real number.
-// (https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
+// A real number, approximated by the arithmetic of the compilation's Number profile
+// (docs/SEMANTICS.md section 1): IEEE 754 binary64 under cpu64, the default, and binary32
+// under gpu32. One profile holds for the whole program; there is no second floating type.
+// (https://en.wikipedia.org/wiki/IEEE_754)
 primitive Number
     implements IReal
 { }

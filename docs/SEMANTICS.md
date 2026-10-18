@@ -34,11 +34,33 @@ structure (with one deliberate exception: tuple construction, §6). Generic and 
 code is **monomorphized**: the compiler stamps a concrete copy per implementing type, so there is
 no runtime dispatch, no boxing, and no abstraction penalty.
 
-Scalars: `Number` (the floating scalar — 32-bit float in all current backends), `Integer`,
-`Boolean`, plus minimal `String`/`Character`. Literals: `0` is `Integer`, `0.0` is `Number`,
-`true`/`false` are `Boolean`. Semantically distinct quantities get distinct types (`Angle` is not
-`Number`; `Point2D` minus `Point2D` is `Vector2D`) — this is convention enforced by the stdlib's
-type definitions, not special compiler machinery.
+Scalars: `Number` (the floating scalar), `Integer`, `Boolean`, plus minimal
+`String`/`Character`. Literals: `0` is `Integer`, `0.0` is `Number`, `true`/`false` are `Boolean`.
+Semantically distinct quantities get distinct types (`Angle` is not `Number`; `Point2D` minus
+`Point2D` is `Vector2D`) — this is convention enforced by the stdlib's type definitions, not
+special compiler machinery.
+
+`Number` is an abstract real. A **Number profile**, chosen once per compilation, binds it (and
+`Integer`) to one machine arithmetic for the whole program, so a program means one thing per
+profile. There is no second floating type and no per-declaration width.
+
+| Profile | `Number` | `Integer` | Selected by |
+|---|---|---|---|
+| `cpu64` (default) | IEEE 754 binary64 | 32-bit two's complement today; 64-bit storage, exact within ±(2^53 − 1), is the stated target | nothing, or `Plato.CLI --profile=cpu64` |
+| `gpu32` | IEEE 754 binary32 | 32-bit two's complement | `Plato.CLI --profile=gpu32` |
+
+Where each backend stands (2026-10-17): the C# writer implements both profiles. Its output names
+the machine number `NumberValue`, an alias `src/Plato.Intrinsics/NumberProfile.cs` binds from the
+MSBuild property `PlatoNumberProfile` (`dotnet build -p:PlatoNumberProfile=gpu32`); the emitted
+`NumberProfile.g.cs` stops a build whose property disagrees with the profile the code was
+generated under, and every emitted file names its profile in the header. The other writers ignore
+the profile and keep fixed types: TypeScript and Rust binary64, C++, CUDA and GLSL binary32.
+Literals are emitted exactly for the profile (shortest round-trip digits, invariant culture).
+Basic operations, `Sqrt` and the elementary functions are the host's (`System.Math` or
+`System.MathF` in C#). Library precision requirements (`requires Number.ResolutionAt(1.0e8) <=
+1.0e-6`, checked at compile time against the profile) and Plato-owned correctly rounded elementary
+functions under `cpu64` are designed but not built; see the STEP B-rep design's
+`TARGET-LANGUAGE.md` section 5 in bim-open-toolkit.
 
 ## 2. `type` — products and sums
 
@@ -361,7 +383,8 @@ Explicitly absent, so nobody infers them from the C#-flavored syntax:
   today, not statically enforced. `stdlib/foundation/primitives.plato` is the authority.
 - **OO** — no inheritance between types, no virtual dispatch, no visibility modifiers, no
   heterogeneous collections through interfaces, no runtime type tests (`is`/`as` are not language).
-- **Double precision** — `Number` is 32-bit in every current backend; there is no `Double`.
+- **A second floating type** — there is no `Double` or `Float32` beside `Number`; the width is
+  the compilation's Number profile (§1), not a type.
 - **I/O, strings-as-workhorse, modules, reflection** — out of scope by design; the host language
   owns them.
 
