@@ -35,7 +35,7 @@
 @ _Vector3.g.cs :: Number Dot(this Vector3 self, Vector3 right)
   [MethodImpl(AggressiveInlining)] public static Number Dot(this Vector3 self, Vector3 right) => self.Dot(right);
 @ Constants.g.cs :: Number Pi()
-  [MethodImpl(AggressiveInlining)] public static Number Pi() => ((Number)3.141592653589793);
+  [MethodImpl(AggressiveInlining)] public static Number Pi() => ((Number)3.141592653589793D);
 @ Constants.g.cs :: Number TwoPi()
   [MethodImpl(AggressiveInlining)] public static Number TwoPi() => Constants.Pi().Twice();
 @ Constants.g.cs :: Number HalfPi()
@@ -47,7 +47,7 @@
 @ Vectors.g.cs :: Angle Angle(this Vector2 a, Vector2 b)
   [MethodImpl(AggressiveInlining)] public static Angle Angle(this Vector2 a, Vector2 b) => a.Dot(b).Divide(a.Magnitude().Multiply(b.Magnitude())).Acos();
 @ Vectors.g.cs :: Boolean IsParallel(this Vector2 a, Vector2 b)
-  [MethodImpl(AggressiveInlining)] public static Boolean IsParallel(this Vector2 a, Vector2 b) => a.Dot(b).Abs().GreaterThanOrEquals(((Number)1).Subtract(Constants.Epsilon()));
+  [MethodImpl(AggressiveInlining)] public static Boolean IsParallel(this Vector2 a, Vector2 b) => a.Dot(b).Abs().GreaterThanOrEquals(((Number)1D).Subtract(Constants.Epsilon()));
 @ Angles.g.cs :: Number Turns(this Angle x)
   [MethodImpl(AggressiveInlining)] public static Number Turns(this Angle x) => x.Radians().Divide(Constants.TwoPi());
 @ Angles.g.cs :: Angle Turns(this Number x)

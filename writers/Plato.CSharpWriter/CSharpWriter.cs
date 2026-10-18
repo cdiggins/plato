@@ -732,6 +732,38 @@ namespace Ara3D.Geometry.CSharpWriter
             return this;
         }
 
+        // A literal's C# spelling. A Number literal is spelled for the profile, exactly and in the
+        // invariant culture: under cpu64 the shortest round-trip binary64 digits with a `D` suffix,
+        // under gpu32 the value rounded once to binary32 with an `F` suffix, so C# never rounds it
+        // a second time. (The front end parses Number literals to binary64, so a gpu32 literal is
+        // rounded from that, not from its decimal text; a decimal halfway between two binary32
+        // values after binary64 rounding is the only case that differs.)
+        public string LiteralString(object value)
+        {
+            var inv = System.Globalization.CultureInfo.InvariantCulture;
+            switch (value)
+            {
+                case double d:
+                {
+                    var rounded = Profile.NumberBits == 32 ? (float)d : d;
+                    if (!double.IsFinite(rounded))
+                        return $"{NumberRuntimeType}." + (double.IsNaN(rounded) ? "NaN"
+                            : rounded > 0 ? "PositiveInfinity" : "NegativeInfinity");
+                    return Profile.NumberBits == 32
+                        ? ((float)d).ToString("R", inv) + "F"
+                        : d.ToString("R", inv) + "D";
+                }
+                case float f:
+                    return LiteralString((double)f);
+                case long l:
+                    return l.ToString(inv);
+                case int i:
+                    return i.ToString(inv);
+                default:
+                    return value.ToLiteralString();
+            }
+        }
+
         // Stops the C# build when it is not under the profile this code was written for: the
         // runtime binds NumberValue from the MSBuild property PlatoNumberProfile, and literals here
         // are spelled for this writer's profile.

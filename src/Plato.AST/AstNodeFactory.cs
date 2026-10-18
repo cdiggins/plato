@@ -318,7 +318,7 @@ namespace Ara3D.Geometry.AST
 
             if (literal.FloatLiteral.Present)
             {
-                return AstConstant.Create(double.Parse(literal.Text));
+                return AstConstant.Create(double.Parse(literal.Text, System.Globalization.CultureInfo.InvariantCulture));
             }
 
             if (literal.HexLiteral.Present)
@@ -546,7 +546,7 @@ namespace Ara3D.Geometry.AST
                         char.Parse(cstCharLiteral.Text.Substring(1, cstCharLiteral.Text.Length - 2)));
 
                 case CstFloatLiteral cstFloatLiteral:
-                    return AstConstant.Create(double.Parse(cstFloatLiteral.Text));
+                    return AstConstant.Create(double.Parse(cstFloatLiteral.Text, System.Globalization.CultureInfo.InvariantCulture));
 
                 case CstNullLiteral _:
                     throw new NotImplementedException("null");

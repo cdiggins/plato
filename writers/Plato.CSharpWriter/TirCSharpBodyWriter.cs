@@ -273,7 +273,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirLiteral lit:
-                Write($"(({lit.LiteralType}){lit.Value.ToLiteralString()})");
+                Write($"(({lit.LiteralType}){_tw.Writer.LiteralString(lit.Value)})");
                 return;
 
             case TirParameter p:
