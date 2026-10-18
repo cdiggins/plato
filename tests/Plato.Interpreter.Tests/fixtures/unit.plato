@@ -1,0 +1,138 @@
+// Fixtures for the interpreter's unit tests (UnitTests.cs). Compiled together with
+// stdlib/foundation, so the primitives, the array combinators and NumberInterval are in scope.
+// Every function here is small and has one exact expected value in the test beside it.
+
+type UPair
+{
+    A: Number;
+    B: Integer;
+}
+
+type UShape
+    = Circle(Radius: Number)
+    | Rect(Width: Number, Height: Number)
+    | Empty;
+
+type UCounter
+{
+    Value: Integer;
+}
+
+library UnitFixtures
+{
+    // Products
+    MakePair(a: Number, b: Integer): UPair => UPair(a, b);
+    PairA(p: UPair): Number => p.A;
+    PairB(p: UPair): Integer => p.B;
+    PairAsTuple(a: Number, b: Integer): UPair => (a, b);
+
+    // Sums
+    MakeCircle(r: Number): UShape => UShape.Circle(r);
+    MakeRect(w: Number, h: Number): UShape => UShape.Rect(w, h);
+    MakeEmpty(): UShape => UShape.Empty;
+    Area(s: UShape): Number
+        => match (s) {
+            Circle(r) => r * r * 3.0;
+            Rect(w, h) => w * h;
+            Empty => 0.0;
+        };
+    IsEmpty(s: UShape): Boolean
+        => match (s) {
+            Circle(r) => false;
+            Rect(w, h) => false;
+            Empty => true;
+        };
+    RadiusSum(a: UShape, b: UShape): Number
+        => match (a) {
+            Circle(r) => match (b) {
+                Circle(r2) => r + r2;
+                Rect(w, h) => r;
+                Empty => r;
+            };
+            Rect(w, h) => w;
+            Empty => 0.0;
+        };
+
+    // Arrays
+    ArrayLiteral(): Array<Integer> => [1, 2, 3];
+    ArrayAt(i: Integer): Integer => [10, 20, 30][i];
+    Squares(n: Integer): Array<Integer> => n.MapRange(i => i * i);
+    SumBelow(n: Integer): Integer => n.MapRange(i => i).Reduce(0, (acc, x) => acc + x);
+    Duplicate(xs: Array<Integer>): Array<Integer> => xs.FlatMap(x => [x, x]);
+    Doubled(xs: Array<Integer>): Array<Integer> => xs.Map(x => x * 2);
+    AllEven(xs: Array<Integer>): Boolean => xs.All(x => x % 2 == 0);
+
+    // Lambdas, closures, blocks
+    ScaledBy(xs: Array<Number>, k: Number): Array<Number>
+    {
+        var scale = k * 2.0;
+        return xs.Map(x => x * scale);
+    }
+    TriangleSum(n: Integer): Integer
+    {
+        var i = 0;
+        var acc = 0;
+        while (i < n)
+        {
+            acc = acc + i;
+            i = i + 1;
+        }
+        return acc;
+    }
+    AbsByIf(x: Number): Number
+    {
+        if (x < 0.0)
+        {
+            return 0.0 - x;
+        }
+        return x;
+    }
+    ListTens(n: Integer): Array<Integer>
+    {
+        var xs = new List<Integer>();
+        var i = 0;
+        while (i < n)
+        {
+            xs = xs.Add(i * 10);
+            i = i + 1;
+        }
+        return xs.Freeze();
+    }
+    BufferCountdown(n: Integer): Array<Integer>
+    {
+        var b = new Buffer<Integer>(n);
+        var i = 0;
+        while (i < n)
+        {
+            b = b.Set(i, n - i);
+            i = i + 1;
+        }
+        return b.Freeze();
+    }
+
+    // Integer and Number mixing
+    Half(x: Number): Number => x / 2.0;
+    HalfOfThree(): Number => Half(3);
+    IntegerQuotient(a: Integer, b: Integer): Integer => a / b;
+    AddNumbers(a: Number, b: Number): Number => a + b;
+    PointOnePlusPointTwo(): Number => 0.1 + 0.2;
+    MultiplyIntegers(a: Integer, b: Integer): Integer => a * b;
+    BothSides(a: Boolean, b: Boolean): Boolean => a && b;
+
+    // Generics and interface dispatch
+    ApplyTwice(f: Function1<$T, $T>, x: $T): $T => f(f(x));
+    PlusTwo(x: Integer): Integer => ApplyTwice(y => y + 1, x);
+    ContainsCenter(self: IInterval<$T>): Boolean => self.Contains(self.Center);
+    UnitIntervalContainsCenter(): Boolean => ContainsCenter(NumberInterval(0.0, 10.0));
+
+    // Underscore receivers and witnesses
+    TwoPi(): Number => Number.Pi * 2.0;
+    Witness_UCounter(_: UCounter): UCounter => UCounter(7);
+    WitnessValue(): Integer => UCounter.Witness_UCounter.Value;
+
+    // default, recursion, host obligation
+    DefaultPair(): UPair => default;
+    RecursiveFactorial(n: Integer): Integer => n <= 1 ? 1 : n * RecursiveFactorial(n - 1);
+    Mystery(x: Number): Number;
+    CallsMystery(x: Number): Number => Mystery(x) + 1.0;
+}
