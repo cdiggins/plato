@@ -37,7 +37,29 @@ public sealed partial class Interpreter
         }
     }
 
+    /// <summary>The run-time types of arrays, builders and untyped functions, one object per
+    /// (head, element type object): TypeOf is asked on every dispatch, and a fresh type per call
+    /// made every later lookup keyed by it miss.</summary>
+    private readonly Dictionary<(string, TypeExpression), TypeExpression> _instances
+        = new Dictionary<(string, TypeExpression), TypeExpression>(InstanceKeyComparer.Instance);
+
+    private sealed class InstanceKeyComparer : IEqualityComparer<(string, TypeExpression)>
+    {
+        public static readonly InstanceKeyComparer Instance = new InstanceKeyComparer();
+        public bool Equals((string, TypeExpression) a, (string, TypeExpression) b)
+            => ReferenceEquals(a.Item2, b.Item2) && string.Equals(a.Item1, b.Item1, StringComparison.Ordinal);
+        public int GetHashCode((string, TypeExpression) k)
+            => HashCode.Combine(StringComparer.Ordinal.GetHashCode(k.Item1), System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(k.Item2));
+    }
+
     private TypeExpression Instance(string name, TypeExpression arg = null)
+    {
+        if (!_instances.TryGetValue((name, arg), out var t))
+            _instances[(name, arg)] = t = NewInstance(name, arg);
+        return t;
+    }
+
+    private TypeExpression NewInstance(string name, TypeExpression arg)
     {
         var def = Compilation.GetTypeDef(name);
         if (def == null)
@@ -150,44 +172,94 @@ public sealed partial class Interpreter
         public int[] Costs;
     }
 
-    private readonly Dictionary<string, Resolution> _resolutions = new Dictionary<string, Resolution>(StringComparer.Ordinal);
-    private readonly Dictionary<TypeExpression, string> _typeKeys = new Dictionary<TypeExpression, string>(ReferenceEqualityComparer.Instance);
+    private readonly Dictionary<ShapeKey, Resolution> _resolutions = new Dictionary<ShapeKey, Resolution>();
+    private readonly Dictionary<TypeExpression, int> _typeIds = new Dictionary<TypeExpression, int>(ReferenceEqualityComparer.Instance);
+    private readonly Dictionary<string, int> _typeIdsByText = new Dictionary<string, int>(StringComparer.Ordinal);
+    private readonly ShapeKey _probe = new ShapeKey();
 
-    /// <summary>The memo key of a resolution: the name, the interface flag, and each argument's
-    /// run-time type. Resolution depends on nothing else, so one outcome serves every call with
-    /// the same shape; without this memo a law over a small model spends most of its time
-    /// resolving the same few hundred call shapes tens of thousands of times.</summary>
-    private string ResolutionKey(string head, IReadOnlyList<TypeExpression> argTypes, bool allowInterfaceDeclarations)
+    /// <summary>A small number standing for a run-time type: equal for types that print the same,
+    /// computed once per type object.</summary>
+    private int TypeId(TypeExpression t)
     {
-        var sb = new System.Text.StringBuilder(head, 64);
-        sb.Append(allowInterfaceDeclarations ? '+' : '-');
-        foreach (var t in argTypes)
+        if (!_typeIds.TryGetValue(t, out var id))
         {
-            if (!_typeKeys.TryGetValue(t, out var key))
-                _typeKeys[t] = key = t.ToString();
-            sb.Append('|').Append(key);
+            var text = t.ToString();
+            if (!_typeIdsByText.TryGetValue(text, out id))
+                _typeIdsByText[text] = id = _typeIdsByText.Count;
+            _typeIds[t] = id;
         }
-        return sb.ToString();
+        return id;
+    }
+
+    /// <summary>The memo key of a resolution: the head (a name with the interface flag, or the
+    /// function being redispatched) and each argument's run-time type. Resolution depends on
+    /// nothing else, so one outcome serves every call with the same shape; without this memo a law
+    /// over a small model spends most of its time resolving the same few hundred call shapes tens
+    /// of thousands of times.</summary>
+    private sealed class ShapeKey : IEquatable<ShapeKey>
+    {
+        public object Head;
+        public bool Flag;
+        public int[] Ids = new int[8];
+        public int Count;
+        private int _hash;
+
+        public void Set(object head, bool flag, IReadOnlyList<object> args, Interpreter interp)
+        {
+            Head = head;
+            Flag = flag;
+            Count = args.Count;
+            if (Ids.Length < Count)
+                Ids = new int[Count];
+            var h = HashCode.Combine(head, flag);
+            for (var i = 0; i < Count; i++)
+                h = HashCode.Combine(h, Ids[i] = interp.TypeId(interp.TypeOf(args[i])));
+            _hash = h;
+        }
+
+        public ShapeKey Copy()
+            => new ShapeKey { Head = Head, Flag = Flag, Ids = Ids.AsSpan(0, Count).ToArray(), Count = Count, _hash = _hash };
+
+        public bool Equals(ShapeKey o)
+            => o != null && _hash == o._hash && Count == o.Count && Flag == o.Flag && Equals(Head, o.Head)
+               && Ids.AsSpan(0, Count).SequenceEqual(o.Ids.AsSpan(0, o.Count));
+
+        public override bool Equals(object obj) => Equals(obj as ShapeKey);
+        public override int GetHashCode() => _hash;
+    }
+
+    /// <summary>The memoized resolution for this head and these argument values; <paramref name="compute"/>
+    /// runs on the first call of each shape.</summary>
+    private Resolution Memoized(object head, bool flag, IReadOnlyList<object> args, Func<List<TypeExpression>, Resolution> compute)
+    {
+        _probe.Set(head, flag, args, this);
+        if (_resolutions.TryGetValue(_probe, out var r))
+            return r;
+        var key = _probe.Copy();
+        r = compute(args.Select(TypeOf).ToList());
+        _resolutions[key] = r;
+        return r;
     }
 
     private FunctionDef ResolveByValues(string name, IReadOnlyList<object> args, out object[] converted,
         out int bestCost, bool allowInterfaceDeclarations)
     {
-        converted = args.ToArray();
-        var argTypes = args.Select(TypeOf).ToList();
-        var key = ResolutionKey(name, argTypes, allowInterfaceDeclarations);
-        if (!_resolutions.TryGetValue(key, out var r))
-        {
-            r = Resolve(name, argTypes, allowInterfaceDeclarations);
-            _resolutions[key] = r;
-        }
+        var r = Memoized(name, allowInterfaceDeclarations, args, ts => Resolve(name, ts, allowInterfaceDeclarations));
         bestCost = r.BestCost;
-        if (r.Best == null)
-            return null;
-        for (var i = 0; i < args.Count; i++)
-            if (r.Costs[i] == 3)
-                converted[i] = CoerceTo(args[i], r.Best.Parameters[i].Type);
+        converted = Converted(r, args);
         return r.Best;
+    }
+
+    /// <summary>The arguments with each one the resolution marks as needing a conversion converted;
+    /// a copy, since callers own the array they get.</summary>
+    private object[] Converted(Resolution r, IReadOnlyList<object> args)
+    {
+        var converted = args.ToArray();
+        if (r.Best != null && r.Costs != null)
+            for (var i = 0; i < converted.Length; i++)
+                if (r.Costs[i] == 3)
+                    converted[i] = CoerceTo(converted[i], r.Best.Parameters[i].Type);
+        return converted;
     }
 
     private Resolution Resolve(string name, IReadOnlyList<TypeExpression> argTypes, bool allowInterfaceDeclarations)
@@ -254,24 +326,17 @@ public sealed partial class Interpreter
             _hasAbstractParameter[f] = abstractParams = f.Parameters.Any(p => IsAbstract(p.Type));
         if (!abstractParams)
             return f;
-        var argTypes = args.Select(TypeOf).ToList();
-        var key = ResolutionKey("#" + f.Id, argTypes, false);
-        if (!_resolutions.TryGetValue(key, out var r))
+        var r = Memoized(f, false, args, argTypes =>
         {
             var own = CostOf(f, argTypes);
             var candidate = Resolve(f.Name, argTypes, allowInterfaceDeclarations: false);
-            r = candidate.Best == null || ReferenceEquals(candidate.Best, f) || (own != null && candidate.BestCost >= own.Value)
+            return candidate.Best == null || ReferenceEquals(candidate.Best, f) || (own != null && candidate.BestCost >= own.Value)
                 ? new Resolution { Best = f, BestCost = own ?? 0, Costs = null }
                 : candidate;
-            _resolutions[key] = r;
-        }
+        });
         if (ReferenceEquals(r.Best, f))
             return f;
-        var converted = args.ToArray();
-        for (var i = 0; i < converted.Length; i++)
-            if (r.Costs[i] == 3)
-                converted[i] = CoerceTo(converted[i], r.Best.Parameters[i].Type);
-        args = converted;
+        args = Converted(r, args);
         return r.Best;
     }
 
