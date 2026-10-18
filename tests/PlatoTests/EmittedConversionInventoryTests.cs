@@ -70,7 +70,7 @@ namespace PlatoTests
             {
                 ExtensionStyle = true,
             };
-            w.WriteAll("float");
+            w.WriteAll();
 
             var signatures = w.Files.Values
                 .SelectMany(sb => sb.ToString().Replace("\r\n", "\n").Split('\n'))

@@ -86,7 +86,7 @@ namespace PlatoTests
             {
                 ExtensionStyle = true,
             };
-            w.WriteAll("float");
+            w.WriteAll();
             return w;
         }
 

@@ -1,5 +1,6 @@
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Logging;
 using Ara3D.Utils;
 using Ara3D.Geometry.CSharpWriter;
@@ -13,7 +14,7 @@ namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--loops] [--static-abstract] [--dump-tir=<dir>] [--inline-report]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--loops] [--static-abstract] [--dump-tir=<dir>] [--inline-report] [--profile=cpu64|gpu32]
         //        Plato.CLI <inputFolder>... --out=<outputFolder> [same flags]
         //        Plato.CLI lint <inputFolder>... [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
@@ -91,6 +92,24 @@ namespace Ara3D.Geometry.CLI
             if (scalarFlag != null)
             {
                 Console.Error.WriteLine($"'{scalarFlag}' is no longer supported: scalar erasure was retired 2026-08-01 and wrapper scalars are the only representation. Drop the flag.");
+                return 1;
+            }
+
+            // --profile=<name>: the Number profile, the arithmetic Number and Integer mean in this
+            // compilation (docs/SEMANTICS.md section 1). cpu64 (default): Number is binary64;
+            // gpu32: binary32. The C# output must then be built with the same MSBuild property,
+            // -p:PlatoNumberProfile=<name>; the emitted NumberProfile.g.cs checks.
+            var profileName = args.Where(a => a.StartsWith("--profile="))
+                .Select(a => a.Substring("--profile=".Length)).LastOrDefault();
+            var profile = profileName == null ? NumberProfile.Default : NumberProfile.TryParse(profileName);
+            if (profile == null)
+            {
+                Console.Error.WriteLine($"Unknown --profile value '{profileName}' (expected one of: {NumberProfile.Names})");
+                return 1;
+            }
+            if (profileName != null && (typeScript || rust || glsl || cpp || cuda))
+            {
+                Console.Error.WriteLine("--profile= is implemented by the C# writer only; the other writers still use their fixed scalar types.");
                 return 1;
             }
 
@@ -190,7 +209,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract);
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract, profile);
                 logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
                 if (output.DegradedBodies.Count > 0)
                 {

@@ -38,7 +38,6 @@ namespace PlatoTests
             var writer = new CSharpWriter(compilation, "unused-fallback-diagnostics")
             {
                 Namespace = "Ara3D.Geometry",
-                FloatType = "float",
             };
 
             var eligible = 0;

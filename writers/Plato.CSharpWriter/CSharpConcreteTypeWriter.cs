@@ -56,7 +56,6 @@ namespace Ara3D.Geometry.CSharpWriter
         {
             ConcreteType = t;
             TypeWriter = typeWriter;
-            var floatType = Writer.FloatType;
 
             // Sum type (wave-2, plato-232): a tagged struct â€” one `int Kind` discriminant plus the
             // flattened per-case fields â€” emitted by a dedicated path (design doc Â§5). The flattened
@@ -183,11 +182,11 @@ namespace Ara3D.Geometry.CSharpWriter
                     TypeWriter.WriteLine($"{Attr} public static implicit operator {fieldType}({Name} self) => self.{fieldName};");
                 }
 
-                // A Number payload also unwraps straight to the built-in floating type, saving
-                // callers a second hop. Same one-way rule: no inbound bridge from float/int.
+                // A Number payload also unwraps straight to the machine number (the profile's
+                // NumberValue), saving callers a second hop. Same one-way rule: no inbound bridge.
                 if (fieldType == "Number")
                 {
-                    TypeWriter.WriteLine($"{Attr} public static implicit operator {floatType}({Name} value) => value.{fieldName};");
+                    TypeWriter.WriteLine($"{Attr} public static implicit operator {CSharpWriter.NumberRuntimeType}({Name} value) => value.{fieldName};");
                 }
                 TypeWriter.WriteLine();
             }

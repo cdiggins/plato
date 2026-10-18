@@ -81,7 +81,7 @@ library Quantities
                 {
                     ExtensionStyle = true,
                 };
-                w.WriteAll("float");
+                w.WriteAll();
                 foreach (var kv in w.Files)
                     TestContext.WriteLine($"======== {kv.Key}\n{kv.Value}");
                 return w;

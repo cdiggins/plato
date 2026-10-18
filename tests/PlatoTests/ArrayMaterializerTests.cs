@@ -23,10 +23,10 @@ namespace PlatoTests
         public static void FlagOnlyRenamesMapCallSitesInMaterializationPositions()
         {
             var off = new CSharpWriter(CheckerTestSupport.CompileStdLib(), "unused-off");
-            off.WriteAll("float");
+            off.WriteAll();
 
             var on = new CSharpWriter(CheckerTestSupport.CompileStdLib(), "unused-on") { OptimizeArrays = true };
-            on.WriteAll("float");
+            on.WriteAll();
 
             Assert.AreEqual(off.Files.Count, on.Files.Count);
 

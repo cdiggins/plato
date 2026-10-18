@@ -89,7 +89,7 @@ library Mixers
                 {
                     ExtensionStyle = true,
                 };
-                w.WriteAll("float");
+                w.WriteAll();
                 return w;
             }
             finally

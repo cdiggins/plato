@@ -57,7 +57,7 @@ namespace PlatoTests
                 InlineCalls = true, LowerLoops = true,
             };
             // Builds the extension plans + moved-member tables the inliner's emittability checks read.
-            w.WriteAll("float");
+            w.WriteAll();
             return w;
         }
 

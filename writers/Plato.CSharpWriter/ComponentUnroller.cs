@@ -51,8 +51,8 @@ namespace Ara3D.Geometry.CSharpWriter
 
     /// <summary>Emission-only marker: direct component access "recv.Field", or
     /// "((CastTo)recv.Field)" when the raw field is not the Plato component type (the
-    /// float-backed one-component primitives Number/Angle expose a raw "float Value" field;
-    /// the cast reproduces the implicit float->Number conversion that the Components
+    /// one-component primitives Number/Angle expose a raw "NumberValue Value" field;
+    /// the cast reproduces the implicit NumberValue->Number conversion that the Components
     /// wrapper performed). Produced solely by ComponentUnroller; CSharpFunctionBodyWriter
     /// knows how to write it.</summary>
     public class ComponentAccessExpression : Expression
@@ -290,11 +290,11 @@ namespace Ara3D.Geometry.CSharpWriter
             if (fields == null || fields.Count == 0)
                 return null;
 
-            // The float-backed one-component primitives (Number, Angle) expose a raw
-            // "float Value" field; accessing it directly needs an explicit cast back to the
+            // The one-component primitives (Number, Angle) expose a raw machine-number
+            // "NumberValue Value" field; accessing it directly needs an explicit cast back to the
             // Plato component type (see ComponentAccessExpression).
             var isPrimitive = CSharpWriter.PrimitiveTypes.TryGetValue(typeName, out var prim);
-            var castTo = isPrimitive && prim == "float" ? "Number" : null;
+            var castTo = isPrimitive && prim == CSharpWriter.NumberRuntimeType ? "Number" : null;
             const string scalarComponentPrim = null;
 
             switch (name)

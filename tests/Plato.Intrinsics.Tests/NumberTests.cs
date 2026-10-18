@@ -14,8 +14,8 @@ public static class NumberTests
     [TestCase(1f)]
     [TestCase(-1.5f)]
     [TestCase(3.4028235e38f)]
-    [TestCase(float.Epsilon)]
-    public static void ConstructionKeepsTheExactBits(float f)
+    [TestCase(NumberValue.Epsilon)]
+    public static void ConstructionKeepsTheExactBits(NumberValue f)
     {
         Assert.That(new Number(f).Value, Is.EqualTo(f));
         Assert.That(Number.FromSystem(f).Value, Is.EqualTo(f));
@@ -24,10 +24,10 @@ public static class NumberTests
     [TestCase(0f)]
     [TestCase(-2.25f)]
     [TestCase(1e-30f)]
-    public static void FloatRoundTripsThroughBothImplicitConversions(float f)
+    public static void FloatRoundTripsThroughBothImplicitConversions(NumberValue f)
     {
         Number n = f;
-        float back = n;
+        NumberValue back = n;
         Assert.That(back, Is.EqualTo(f));
     }
 
@@ -89,10 +89,10 @@ public static class NumberTests
     {
         Assert.Multiple(() =>
         {
-            Assert.That(Number.MinValue.Value, Is.EqualTo(float.MinValue));
-            Assert.That(Number.MaxValue.Value, Is.EqualTo(float.MaxValue));
-            Assert.That(Number.Pi.Value, Is.EqualTo(MathF.PI));
-            Assert.That(Number.Epsilon.Value, Is.EqualTo(float.Epsilon));
+            Assert.That(Number.MinValue.Value, Is.EqualTo(NumberValue.MinValue));
+            Assert.That(Number.MaxValue.Value, Is.EqualTo(NumberValue.MaxValue));
+            Assert.That(Number.Pi.Value, Is.EqualTo(NumberMath.PI));
+            Assert.That(Number.Epsilon.Value, Is.EqualTo(NumberValue.Epsilon));
         });
     }
 
@@ -104,29 +104,29 @@ public static class NumberTests
     [Test]
     public static void DivisionByZeroYieldsInfinityNotAnException()
     {
-        Assert.That((((Number)1f) / (Number)0f).Value, Is.EqualTo(float.PositiveInfinity));
-        Assert.That((((Number)(-1f)) / (Number)0f).Value, Is.EqualTo(float.NegativeInfinity));
-        Assert.That(float.IsNaN((((Number)0f) / (Number)0f).Value));
+        Assert.That((((Number)1f) / (Number)0f).Value, Is.EqualTo(NumberValue.PositiveInfinity));
+        Assert.That((((Number)(-1f)) / (Number)0f).Value, Is.EqualTo(NumberValue.NegativeInfinity));
+        Assert.That(NumberValue.IsNaN((((Number)0f) / (Number)0f).Value));
     }
 
     [Test]
     public static void NaNPropagatesThroughArithmetic()
     {
-        Number nan = float.NaN;
+        Number nan = NumberValue.NaN;
         Number one = 1f;
         Assert.Multiple(() =>
         {
-            Assert.That(float.IsNaN((nan + one).Value));
-            Assert.That(float.IsNaN((nan * one).Value));
-            Assert.That(float.IsNaN((nan - one).Value));
-            Assert.That(float.IsNaN((-nan).Value));
+            Assert.That(NumberValue.IsNaN((nan + one).Value));
+            Assert.That(NumberValue.IsNaN((nan * one).Value));
+            Assert.That(NumberValue.IsNaN((nan - one).Value));
+            Assert.That(NumberValue.IsNaN((-nan).Value));
         });
     }
 
     [Test]
     public static void EveryComparisonWithNaNIsFalse()
     {
-        Number nan = float.NaN;
+        Number nan = NumberValue.NaN;
         Number one = 1f;
         Assert.Multiple(() =>
         {
@@ -140,11 +140,11 @@ public static class NumberTests
     [Test]
     public static void InfinityArithmetic()
     {
-        Number inf = float.PositiveInfinity;
+        Number inf = NumberValue.PositiveInfinity;
         Assert.Multiple(() =>
         {
-            Assert.That((inf + (Number)1f).Value, Is.EqualTo(float.PositiveInfinity));
-            Assert.That(float.IsNaN((inf - inf).Value));
+            Assert.That((inf + (Number)1f).Value, Is.EqualTo(NumberValue.PositiveInfinity));
+            Assert.That(NumberValue.IsNaN((inf - inf).Value));
             Assert.That((((Number)1f) / inf).Value, Is.EqualTo(0f));
         });
     }
@@ -166,8 +166,8 @@ public static class NumberTests
     [Test]
     public static void StructEqualityIsFieldWiseNotIeee()
     {
-        Number nan = float.NaN;
-        Number alsoNan = float.NaN;
+        Number nan = NumberValue.NaN;
+        Number alsoNan = NumberValue.NaN;
         Assert.That(nan.Equals(alsoNan), "field-wise ValueType equality: NaN equals NaN");
         Assert.That((bool)(nan >= alsoNan), Is.False, "IEEE comparison still says otherwise");
     }

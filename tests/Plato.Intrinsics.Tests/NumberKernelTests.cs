@@ -12,39 +12,39 @@ namespace Plato.IntrinsicsTests;
 [TestFixture]
 public static class NumberKernelTests
 {
-    private const float Tolerance = 1e-6f;
+    private const NumberValue Tolerance = 1e-6f;
 
-    private static Number N(float f)
+    private static Number N(NumberValue f)
         => f;
 
     [TestCase(-3.5f)]
     [TestCase(-0.5f)]
     [TestCase(0f)]
     [TestCase(2.25f)]
-    public static void FloorIsTheLargestIntegerNotAbove(float f)
-        => Assert.That(N(f).Floor.Value, Is.EqualTo(MathF.Floor(f)));
+    public static void FloorIsTheLargestIntegerNotAbove(NumberValue f)
+        => Assert.That(N(f).Floor.Value, Is.EqualTo(NumberMath.Floor(f)));
 
     [TestCase(0f)]
     [TestCase(0.25f)]
     [TestCase(2f)]
     [TestCase(16f)]
-    public static void SqrtExpAndNaturalLogForwardToMathF(float f)
+    public static void SqrtExpAndNaturalLogForwardToMathF(NumberValue f)
     {
         var n = N(f);
         Assert.Multiple(() =>
         {
-            Assert.That(n.Sqrt.Value, Is.EqualTo(MathF.Sqrt(f)));
-            Assert.That(n.Exp.Value, Is.EqualTo(MathF.Exp(f)));
-            Assert.That(n.NaturalLog.Value, Is.EqualTo(MathF.Log(f)));
+            Assert.That(n.Sqrt.Value, Is.EqualTo(NumberMath.Sqrt(f)));
+            Assert.That(n.Exp.Value, Is.EqualTo(NumberMath.Exp(f)));
+            Assert.That(n.NaturalLog.Value, Is.EqualTo(NumberMath.Log(f)));
         });
     }
 
     [Test]
     public static void SqrtAndNaturalLogOutsideTheirDomain()
     {
-        Assert.That(float.IsNaN(N(-1f).Sqrt.Value));
-        Assert.That(float.IsNaN(N(-1f).NaturalLog.Value));
-        Assert.That(N(0f).NaturalLog.Value, Is.EqualTo(float.NegativeInfinity));
+        Assert.That(NumberValue.IsNaN(N(-1f).Sqrt.Value));
+        Assert.That(NumberValue.IsNaN(N(-1f).NaturalLog.Value));
+        Assert.That(N(0f).NaturalLog.Value, Is.EqualTo(NumberValue.NegativeInfinity));
     }
 
     [Test]
@@ -57,30 +57,30 @@ public static class NumberKernelTests
     [TestCase(0f)]
     [TestCase(0.7f)]
     [TestCase(-2.5f)]
-    public static void SinAndCosTakeRadians(float f)
+    public static void SinAndCosTakeRadians(NumberValue f)
     {
         var n = N(f);
-        Assert.That(n.Sin.Value, Is.EqualTo(MathF.Sin(f)).Within(Tolerance));
-        Assert.That(n.Cos.Value, Is.EqualTo(MathF.Cos(f)).Within(Tolerance));
+        Assert.That(n.Sin.Value, Is.EqualTo(NumberMath.Sin(f)).Within(Tolerance));
+        Assert.That(n.Cos.Value, Is.EqualTo(NumberMath.Cos(f)).Within(Tolerance));
     }
 
     [Test]
     public static void SinAndCosAtTheQuarterTurns()
     {
-        var halfPi = N(MathF.PI / 2);
+        var halfPi = N(NumberMath.PI / 2);
         Assert.Multiple(() =>
         {
             Assert.That(halfPi.Sin.Value, Is.EqualTo(1f).Within(Tolerance));
             Assert.That(halfPi.Cos.Value, Is.EqualTo(0f).Within(Tolerance));
-            Assert.That(N(MathF.PI).Sin.Value, Is.EqualTo(0f).Within(Tolerance));
-            Assert.That(N(MathF.PI).Cos.Value, Is.EqualTo(-1f).Within(Tolerance));
+            Assert.That(N(NumberMath.PI).Sin.Value, Is.EqualTo(0f).Within(Tolerance));
+            Assert.That(N(NumberMath.PI).Cos.Value, Is.EqualTo(-1f).Within(Tolerance));
         });
     }
 
     [TestCase(0f)]
     [TestCase(0.7f)]
     [TestCase(-2.5f)]
-    public static void ThePythagoreanIdentityHolds(float f)
+    public static void ThePythagoreanIdentityHolds(NumberValue f)
     {
         var n = N(f);
         var s = n.Sin.Value;
@@ -93,10 +93,10 @@ public static class NumberKernelTests
     {
         Assert.Multiple(() =>
         {
-            Assert.That(N(1f).Atan2Radians(0f).Value, Is.EqualTo(MathF.PI / 2).Within(Tolerance));
-            Assert.That(N(1f).Atan2Radians(1f).Value, Is.EqualTo(MathF.PI / 4).Within(Tolerance));
-            Assert.That(N(0f).Atan2Radians(-1f).Value, Is.EqualTo(MathF.PI).Within(Tolerance));
-            Assert.That(N(-1f).Atan2Radians(1f).Value, Is.EqualTo(-MathF.PI / 4).Within(Tolerance));
+            Assert.That(N(1f).Atan2Radians(0f).Value, Is.EqualTo(NumberMath.PI / 2).Within(Tolerance));
+            Assert.That(N(1f).Atan2Radians(1f).Value, Is.EqualTo(NumberMath.PI / 4).Within(Tolerance));
+            Assert.That(N(0f).Atan2Radians(-1f).Value, Is.EqualTo(NumberMath.PI).Within(Tolerance));
+            Assert.That(N(-1f).Atan2Radians(1f).Value, Is.EqualTo(-NumberMath.PI / 4).Within(Tolerance));
             Assert.That(N(0f).Atan2Radians(0f).Value, Is.EqualTo(0f));
         });
     }
@@ -133,12 +133,12 @@ public static class NumberKernelTests
     {
         Assert.Multiple(() =>
         {
-            Assert.That((bool)N(float.NaN).IsNaN);
+            Assert.That((bool)N(NumberValue.NaN).IsNaN);
             Assert.That((bool)N(1f).IsNaN, Is.False);
-            Assert.That((bool)N(float.PositiveInfinity).IsInfinite);
-            Assert.That((bool)N(float.NegativeInfinity).IsInfinite);
+            Assert.That((bool)N(NumberValue.PositiveInfinity).IsInfinite);
+            Assert.That((bool)N(NumberValue.NegativeInfinity).IsInfinite);
             Assert.That((bool)N(1f).IsInfinite, Is.False);
-            Assert.That((bool)N(float.NaN).IsInfinite, Is.False);
+            Assert.That((bool)N(NumberValue.NaN).IsInfinite, Is.False);
         });
     }
 
@@ -154,11 +154,11 @@ public static class NumberKernelTests
     }
 
     [Test]
-    public static void HashAgreesWithTheWrappedFloat()
+    public static void HashAgreesWithTheWrappedMachineNumber()
     {
         var hash = N(2.5f).Hash.Value;
         var again = N(2.5f).Hash.Value;
-        Assert.That(hash, Is.EqualTo(2.5f.GetHashCode()));
+        Assert.That(hash, Is.EqualTo(((NumberValue)2.5f).GetHashCode()));
         Assert.That(hash, Is.EqualTo(again));
     }
 }

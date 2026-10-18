@@ -80,7 +80,7 @@ type InterfaceVectorN implements IArray<Number>
             {
                 File.WriteAllText(Path.Combine(dir, "corpus.plato"), Source);
                 var w = new CSharpWriter(CheckerTestSupport.CompileFolder(dir), "unused-at-count");
-                w.WriteAll("float");
+                w.WriteAll();
                 return w;
             }
             finally

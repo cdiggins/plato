@@ -75,7 +75,7 @@ library ArrayKernels
             {
                 File.WriteAllText(Path.Combine(dir, "corpus.plato"), Source);
                 var w = new CSharpWriter(CheckerTestSupport.CompileFolder(dir), "unused-array-recv");
-                w.WriteAll("float");
+                w.WriteAll();
                 Assert.IsTrue(w.Files.ContainsKey("Extensions.g.cs"), "no generated Extensions.g.cs");
                 var text = w.Files["Extensions.g.cs"].ToString();
                 TestContext.WriteLine(text);

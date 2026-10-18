@@ -6,8 +6,8 @@ using static System.Runtime.CompilerServices.MethodImplOptions;
 namespace Ara3D.Geometry
 {
     /// <summary>
-    /// A simple wrapper around the built-in <c>float</c> type,
-    /// forwarding all arithmetic and common methods to <c>float</c>.
+    /// A simple wrapper around the machine type the Number profile selects (<c>NumberValue</c>:
+    /// <c>double</c> under cpu64, <c>float</c> under gpu32; see NumberProfile.cs), forwarding all arithmetic to it.
     /// The Plato math intrinsics live in <see cref="NumberIntrinsics"/> as extension methods
     /// (all-extension-methods runtime: struct = field + constructor + operators + conversions).
     /// </summary>
@@ -15,33 +15,33 @@ namespace Ara3D.Geometry
     public readonly partial struct Number
     {
         // -------------------------------------------------------------------------------
-        // Field (the wrapped float)
+        // Field (the wrapped machine number)
         // -------------------------------------------------------------------------------
 
-        [DataMember] public readonly float Value;
+        [DataMember] public readonly NumberValue Value;
 
         // -------------------------------------------------------------------------------
         // Constructors
         // -------------------------------------------------------------------------------
 
         [MethodImpl(AggressiveInlining)]
-        public Number(float value) => Value = value;
+        public Number(NumberValue value) => Value = value;
 
         // -------------------------------------------------------------------------------
-        // Convert to/from float
+        // Convert to/from the machine number
         // -------------------------------------------------------------------------------
 
         [MethodImpl(AggressiveInlining)]
-        public static Number FromSystem(float f) => new(f);
+        public static Number FromSystem(NumberValue f) => new(f);
 
         [MethodImpl(AggressiveInlining)]
-        public static implicit operator Number(float f) => FromSystem(f);
+        public static implicit operator Number(NumberValue f) => FromSystem(f);
 
         [MethodImpl(AggressiveInlining)]
-        public static implicit operator float(Number n) => n.Value;
+        public static implicit operator NumberValue(Number n) => n.Value;
 
         // -------------------------------------------------------------------------------
-        // Operators (forward to float)
+        // Operators (forward to the machine number)
         // -------------------------------------------------------------------------------
         [MethodImpl(AggressiveInlining)]
         public static Number operator +(Number a, Number b)
@@ -97,10 +97,10 @@ namespace Ara3D.Geometry
         // partial struct declares them (plato-378 constant migration).
         // ------------------------------------------------------------------------------
 
-        public static Number MinValue = float.MinValue;
-        public static Number MaxValue = float.MaxValue;
-        public static Number Pi = MathF.PI;
-        public static Number Epsilon = float.Epsilon;
+        public static Number MinValue = NumberValue.MinValue;
+        public static Number MaxValue = NumberValue.MaxValue;
+        public static Number Pi = NumberMath.PI;
+        public static Number Epsilon = NumberValue.Epsilon;
 
         // ------------------------------------------------------------------------------
         // The rest of the Number half of the intrinsic contract. These are INSTANCE
@@ -118,20 +118,20 @@ namespace Ara3D.Geometry
         // ------------------------------------------------------------------------------
 
         public Integer Hash { [MethodImpl(AggressiveInlining)] get => Value.GetHashCode(); }
-        public Number Floor { [MethodImpl(AggressiveInlining)] get => MathF.Floor(Value); }
-        public Number Sqrt { [MethodImpl(AggressiveInlining)] get => MathF.Sqrt(Value); }
-        public Number Exp { [MethodImpl(AggressiveInlining)] get => MathF.Exp(Value); }
-        public Number NaturalLog { [MethodImpl(AggressiveInlining)] get => MathF.Log(Value); }
-        public Number Sin { [MethodImpl(AggressiveInlining)] get => MathF.Sin(Value); }
-        public Number Cos { [MethodImpl(AggressiveInlining)] get => MathF.Cos(Value); }
-        public Boolean IsNaN { [MethodImpl(AggressiveInlining)] get => float.IsNaN(Value); }
-        public Boolean IsInfinite { [MethodImpl(AggressiveInlining)] get => float.IsInfinity(Value); }
+        public Number Floor { [MethodImpl(AggressiveInlining)] get => NumberMath.Floor(Value); }
+        public Number Sqrt { [MethodImpl(AggressiveInlining)] get => NumberMath.Sqrt(Value); }
+        public Number Exp { [MethodImpl(AggressiveInlining)] get => NumberMath.Exp(Value); }
+        public Number NaturalLog { [MethodImpl(AggressiveInlining)] get => NumberMath.Log(Value); }
+        public Number Sin { [MethodImpl(AggressiveInlining)] get => NumberMath.Sin(Value); }
+        public Number Cos { [MethodImpl(AggressiveInlining)] get => NumberMath.Cos(Value); }
+        public Boolean IsNaN { [MethodImpl(AggressiveInlining)] get => NumberValue.IsNaN(Value); }
+        public Boolean IsInfinite { [MethodImpl(AggressiveInlining)] get => NumberValue.IsInfinity(Value); }
         public Integer ToInteger { [MethodImpl(AggressiveInlining)] get => (int)Value; }
 
-        [MethodImpl(AggressiveInlining)] public Number Round(Integer digits) => MathF.Round(Value, digits.Value);
-        [MethodImpl(AggressiveInlining)] public Number Pow(Number power) => MathF.Pow(Value, power.Value);
-        [MethodImpl(AggressiveInlining)] public Number FusedMultiplyAdd(Number y, Number z) => MathF.FusedMultiplyAdd(Value, y.Value, z.Value);
-        [MethodImpl(AggressiveInlining)] public Number Atan2Radians(Number x) => MathF.Atan2(Value, x.Value);
+        [MethodImpl(AggressiveInlining)] public Number Round(Integer digits) => NumberMath.Round(Value, digits.Value);
+        [MethodImpl(AggressiveInlining)] public Number Pow(Number power) => NumberMath.Pow(Value, power.Value);
+        [MethodImpl(AggressiveInlining)] public Number FusedMultiplyAdd(Number y, Number z) => NumberMath.FusedMultiplyAdd(Value, y.Value, z.Value);
+        [MethodImpl(AggressiveInlining)] public Number Atan2Radians(Number x) => NumberMath.Atan2(Value, x.Value);
 
 #if PLATO_FORWARD_CONCEPTS
         // `INumericalLimits<Self>` declares MinValue / MaxValue as INSTANCE members, and the

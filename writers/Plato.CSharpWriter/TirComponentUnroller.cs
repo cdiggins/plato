@@ -280,11 +280,11 @@ public static class TirComponentUnroller
         if (fields == null || fields.Count == 0)
             return null;
 
-        // The float-backed one-component primitives (Number, Angle) expose a raw
-        // "float Value" field; accessing it directly needs an explicit cast back to the
+        // The one-component primitives (Number, Angle) expose a raw machine-number
+        // "NumberValue Value" field; accessing it directly needs an explicit cast back to the
         // Plato component type.
         var isPrimitive = CSharpWriter.PrimitiveTypes.TryGetValue(typeName, out var prim);
-        var castTo = isPrimitive && prim == "float" ? "Number" : null;
+        var castTo = isPrimitive && prim == CSharpWriter.NumberRuntimeType ? "Number" : null;
         const string scalarComponentPrim = null;
         var compPlatoType = writer.GetComponentPlatoType(typeName);
 

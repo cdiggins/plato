@@ -29,7 +29,7 @@ namespace PlatoTests
                 InlineCalls = true,
                 LowerLoops = true,
             };
-            w.WriteAll("float");
+            w.WriteAll();
             return w;
         }
 

@@ -111,7 +111,7 @@ type Blend<T>
                 {
                     ExtensionStyle = true,
                 };
-                w.WriteAll("float");
+                w.WriteAll();
                 return w;
             }
             finally

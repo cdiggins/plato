@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     {
         public override Number Read(ref Utf8JsonReader reader, System.Type type, JsonSerializerOptions options)
             => reader.TokenType == JsonTokenType.String
-                ? (float)NonFinite(reader.GetString())
-                : reader.GetSingle();
+                ? (NumberValue)NonFinite(reader.GetString())
+                : PlatoNumberProfile.ReadJson(ref reader);
 
         public override void Write(Utf8JsonWriter writer, Number value, JsonSerializerOptions options)
         {
-            if (float.IsFinite(value.Value))
+            if (NumberValue.IsFinite(value.Value))
                 writer.WriteNumberValue(value.Value);
             else
                 writer.WriteStringValue(PlatoJson.NonFiniteName(value.Value));
