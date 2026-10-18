@@ -27,8 +27,19 @@ public sealed class HostIntrinsics
     public static string KeyOf(FunctionDef f)
         => $"{f.Name}({string.Join(", ", f.Parameters.Select(p => p.Type?.Def?.Name ?? "?"))})";
 
+    /// <summary>The entry of a declaration, looked up by <see cref="KeyOf"/> once per function:
+    /// building the key string on every host call cost more than most host operations.</summary>
     public bool TryGet(FunctionDef f, out Impl impl)
-        => _table.TryGetValue(KeyOf(f), out impl);
+    {
+        if (!_byFunction.TryGetValue(f, out impl))
+        {
+            _table.TryGetValue(KeyOf(f), out impl);
+            _byFunction[f] = impl;
+        }
+        return impl != null;
+    }
+
+    private readonly Dictionary<FunctionDef, Impl> _byFunction = new Dictionary<FunctionDef, Impl>(ReferenceEqualityComparer.Instance);
 
     /// <summary>The entry for a key built from run-time types rather than a declaration: the
     /// members the C# runtime gives a primitive struct with no Plato declaration behind them
