@@ -4,10 +4,11 @@
 
 .DESCRIPTION
     Runs Plato.ContextExport over:
-      1. The shipping stdlib/ tiers as one list — every concept first, then
-         every type, each group sorted by name →
-         stdlib/types-and-concepts.txt  (tracked)
-         The `future` tier is excluded: it is declared, not shipped.
+      1. The stdlib/ tiers the policy's `index` check covers
+         (stdlib/verification.json, read through tools/verification-policy.ps1)
+         as one list — every concept first, then every type, each group sorted
+         by name → stdlib/types-and-concepts.txt  (tracked)
+         The `future` tier is not covered: it is declared, not shipped.
       2. Flat declaration dump of legacy/stdlib-legacy →
          docs/types-and-concepts-context.txt  (tracked)
          .temp/types-and-concepts-context-stats.txt  (gitignored)
@@ -46,8 +47,9 @@ $IndexOutput = Join-Path $PlatoRoot 'stdlib\types-and-concepts.txt'
 $StatsFile = Join-Path $PlatoRoot '.temp\types-and-concepts-context-stats.txt'
 $TempDir = Join-Path $PlatoRoot '.temp'
 
-# Shipped tiers, in dependency order. `future` is deliberately absent.
-$Tiers = @('foundation', 'geometry', 'graphics')
+. (Join-Path $PSScriptRoot 'verification-policy.ps1')
+# The tiers the index covers, in dependency order, from the policy manifest (plato-388).
+$Tiers = Get-PolicyTiers (Get-VerificationPolicy $PlatoRoot) 'index'
 
 New-Item -ItemType Directory -Force $TempDir | Out-Null
 New-Item -ItemType Directory -Force (Split-Path $FlatOutput) | Out-Null

@@ -40,9 +40,10 @@ submodule working tree**, which is not this checkout. See "Structural observatio
 - **Runs** three gates: `Plato.CLI lint <tiers> --strict`; the PlatoTests type-checker ratchet, by
   test-name filter; and `export-types-context.ps1 -Check -IndexOnly` for declaration-index
   freshness.
-- **Corpus** the shipping tiers, named explicitly because `Plato.CLI lint` enumerates each root
-  top-directory-only — linting `stdlib` itself finds nothing. Tier list is a literal in the script.
-  `future` joins only under `-IncludeFuture`.
+- **Corpus** the tiers the manifest's `lint` check covers, named explicitly because `Plato.CLI lint`
+  enumerates each root top-directory-only — linting `stdlib` itself finds nothing. Read from
+  `stdlib/verification.json` through `tools/verification-policy.ps1`. The exempt tiers join only
+  under `-IncludeFuture`.
 - **Input** `-SkipLint`, `-SkipRatchet`, `-SkipIndex`, `-IncludeFuture`, `-Folders a,b`. `-Folders`
   lints an explicit set of roots compiled as one program — the cumulative-tier subset form.
 - **Output** PASS/FAIL table with per-gate seconds; failing gates replay their captured output.
@@ -80,8 +81,8 @@ submodule working tree**, which is not this checkout. See "Structural observatio
 - **Where** `plato`, PowerShell.
 - **Runs** mirrors `stdlib/` into a staging area outside every git tree, then lints the copy with a
   **pinned** `Plato.CLI` publish snapshot rather than the live build.
-- **Corpus** shipping tiers by default, its own literal list. `-Folders` bypasses staging and lints
-  the named roots in place.
+- **Corpus** the manifest's `lint` tiers by default (`verification-policy.ps1` reads JSON only, so
+  this needs no compiler). `-Folders` bypasses staging and lints the named roots in place.
 - **Input** `-NoSync`, `-Snapshot` (rebuild and re-pin the binary), `-IncludeFuture`, `-Folders`.
 - **Output** full lint output, a summary, and a baseline pinned on the first green run, all in the
   staging area. Exit code is the CLI's.
@@ -97,8 +98,8 @@ submodule working tree**, which is not this checkout. See "Structural observatio
 - **Where** `plato`, PowerShell over `src/Plato.ContextExport`.
 - **Runs** two exports: a sorted interface-then-type index of the shipping tiers, and a flat
   declaration dump of `legacy/stdlib-legacy`.
-- **Corpus** shipping tiers for the index, its own literal list; `future` is deliberately absent
-  because it is declared, not shipped.
+- **Corpus** the manifest's `index` tiers; `future` is absent from that check because it is
+  declared, not shipped.
 - **Input** `-Check` (regenerate to a temp location, compare against the tracked file, exit 1 on
   difference, write nothing), `-IndexOnly`.
 - **Output** writes the tracked `stdlib/types-and-concepts.txt` and
@@ -113,20 +114,23 @@ submodule working tree**, which is not this checkout. See "Structural observatio
 
 ## B. Cold gate scripts — studio repo
 
-Both resolve their paths under `studio/submodules/Plato`, a separate working tree from this
-checkout. Confirm which tree you are gating before trusting a result here — see
-[plato-372](../tracker/issues/plato-372.md).
+Each resolves its Plato paths under `-PlatoRoot`, else `$env:PLATO_ROOT`, else
+`studio/submodules/Plato`, a separate working tree from this checkout. Confirm which tree you are
+gating before trusting a result here. `check-stdlib-fast.ps1` there is a forwarder to this repo's
+script ([plato-372](../tracker/issues/plato-372.md)); the other two read this repo's
+`stdlib/verification.json` through `tools/verification-policy.ps1`, so the Plato checkout must
+include plato-388.
 
 ### `studio/tools/check-all.ps1`
 
 - **Runs** the full battery: a checksum tripwire over the frozen V1 artifacts, `lint --strict` over
   `stdlib-legacy`, `lint --strict` over the forward shipping tiers, and the SDK build plus its
   geometry tests.
-- **Corpus** forward shipping tiers, another literal list.
+- **Corpus** the manifest's `lint` tiers.
 - **Output** PASS/FAIL table, exit code, timing rows.
 - **Answers** "is the whole monorepo green?" Intended to run once at the end of a mission.
 - **Note** its first gate runs the frozen-V1 tripwire, which [`AGENTS.md`](../AGENTS.md) records as
-  retired. Its Plato project and library paths match the pre-restructure layout.
+  retired.
 
 ### `studio/tools/regen-forward-conformance.ps1`
 
@@ -135,9 +139,9 @@ checkout. Confirm which tree you are gating before trusting a result here — se
   no resolution errors and at least one `Law_` function, proving the library and the laws resolve
   against each other. Stage 2 (`-Codegen` / `-Test`) generates C# with the shipping recipe, builds
   it, and runs the reflection law runner.
-- **Corpus** stage 1 reads all four tiers; stage 2 excludes `future` — expressed not as a tier list
-  but as a directory filter over the merged input. `-IncludeFuture` opts back in.
-- **Input** `-Codegen`, `-Test`, `-IncludeFuture`, `-Configuration`.
+- **Corpus** stage 1 reads all four tiers; stage 2 reads the manifest's `codegen` tiers, with the
+  manifest's `codegenRecipe` flags. `-IncludeFuture` opts the exempt tiers back in.
+- **Input** `-Codegen`, `-Test`, `-IncludeFuture`, `-Configuration`, `-PlatoRoot`.
 - **Output** generated `.g.cs` into the conformance suite's `Generated/` folder; console; timing rows.
 - **Answers** rungs 5 and 6 — "does the library become C#, and does that C# compute the right
   answers?"
@@ -228,7 +232,8 @@ authority for its own ceiling; none is restated here.
 
 ### Shared helper
 
-`tests/PlatoTests/CheckerTestSupport.cs` — holds the `ShippingTiers` and `AllTiers` lists, the
+`tests/PlatoTests/CheckerTestSupport.cs` — loads `stdlib/verification.json` (`Policy`,
+`RatchetCeiling`) and derives `ShippingTiers` and `AllTiers` from it, the
 walk-up folder resolution that lets fixtures find source folders from the test output directory,
 recursive `.plato` enumeration, and multi-root compilation matching how `Plato.CLI lint` treats
 several roots as one program.
@@ -241,7 +246,8 @@ several roots as one program.
 
 - **Runs** the CLI build, `lint --strict`, and PlatoTests. With `--full`, also empties the
   conformance `Generated/` folder, regenerates with the shipping recipe, and runs the law runner.
-- **Corpus** shipping tiers, its own `TIERS` constant; `--include-future` appends.
+- **Corpus** the manifest's `lint` and `codegen` tiers, and its `codegenRecipe`;
+  `--include-future` takes every tier.
 - **Input** `--full`, `--dry-run`, `--include-future`.
 - **Output** current state into `docs/status-report-snapshot.json`, merging with prior rows and
   marking rows it did not run as stale rather than dropping them; one appended row to
@@ -315,9 +321,9 @@ Work tracking, not verification. Listed for completeness of the `tools/` folder.
 | `KnownFailures.json` | humans | `LawTests` | yes |
 | `.temp/csharp-build-logs/*.log` | `dotnet-build-record.ps1` | `record-csharp-build-errors.py` | no |
 
-Every file above is an **output**. There is no input data file: every policy decision — which tiers
-a check covers, which ceiling applies, which flags the codegen recipe uses — is expressed in code,
-once per tool. That is [plato-388](../tracker/issues/plato-388.md).
+Every file above is an **output**. The one input is `stdlib/verification.json`: which tiers each
+check covers, the ratchet ceilings, and the codegen recipe flags
+([plato-388](../tracker/issues/plato-388.md)).
 
 ---
 
@@ -325,14 +331,12 @@ once per tool. That is [plato-388](../tracker/issues/plato-388.md).
 
 | Fact | Locations |
 |---|---|
-| shipping tier list | `check-stdlib-fast.ps1`, `stage-stdlib.ps1`, `export-types-context.ps1`, `record-gates.py`, `CheckerTestSupport.cs`, studio `check-all.ps1` |
-| the `future` exclusion rule | all of the above, plus studio `regen-forward-conformance.ps1`, which expresses it as a directory filter rather than a tier list |
-| type-checker ratchet ceiling | the constant in `ForwardStdLibCheckerTests`, and the MCP server's `--ratchet` launch argument |
-| codegen recipe flags | `record-gates.py`, studio `regen-forward-conformance.ps1` |
+| ratchet ceilings | `stdlib/verification.json`, and still the `const` in each of `ForwardStdLibCheckerTests`, `ForwardStdLibLintTests` and `IntrinsicContractSizeTests`; the type-checker ceiling also in the MCP server's `--ratchet` launch argument |
 | the static checks themselves | `Plato.CLI lint`, `CheckMcpTools.cs`, the PlatoTests fixtures |
 | PASS/FAIL table with timing | `check-stdlib-fast.ps1`, studio `check-all.ps1`, `record-gates.py` |
 
-Nothing asserts that any of these copies agree. Three languages, two repositories, three execution
+The tier lists, the `future` rule and the codegen recipe now live only in `stdlib/verification.json`.
+Nothing yet asserts that the remaining copies agree. Three languages, two repositories, three execution
 models. Tracked as [plato-388](../tracker/issues/plato-388.md) (agree on *what* to check) and
 [plato-390](../tracker/issues/plato-390.md) (agree on *how*).
 

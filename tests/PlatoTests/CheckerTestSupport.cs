@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Logging;
@@ -44,17 +45,52 @@ namespace PlatoTests
         public static string FindForwardStdLib()
             => FindFolder("stdlib");
 
-        /// <summary>The tiers that are CONVERTED to C# and LINTED by default (stdlib-377).
-        /// `future` is deliberately absent: it is aspirational vocabulary that must parse and
-        /// type-check, but is neither emitted nor linted unless explicitly asked for. The tier
-        /// rule (stdlib/README.md) is that nothing reaches into `future`, so these three compile
-        /// on their own with no dangling references.</summary>
-        public static readonly IReadOnlyList<string> ShippingTiers =
-            new[] { "foundation", "geometry", "graphics" };
+        /// <summary>The verification policy, `stdlib/verification.json` (plato-388): which tiers
+        /// each check covers, the ratchet ceilings, and the codegen recipe. The one copy every
+        /// gate, fixture and server reads; `stdlib/VERIFICATION.md` explains it.</summary>
+        public sealed record VerificationPolicy(
+            IReadOnlyList<string> Tiers,
+            IReadOnlyDictionary<string, IReadOnlyList<string>> Checks,
+            IReadOnlyDictionary<string, int> Ratchets,
+            IReadOnlyList<string> CodegenRecipe)
+        {
+            public static VerificationPolicy Load(string path)
+            {
+                using var doc = JsonDocument.Parse(File.ReadAllText(path));
+                var root = doc.RootElement;
+                static IReadOnlyList<string> Strings(JsonElement e)
+                    => e.EnumerateArray().Select(x => x.GetString()!).ToList();
+                return new VerificationPolicy(
+                    Strings(root.GetProperty("tiers")),
+                    root.GetProperty("checks").EnumerateObject()
+                        .ToDictionary(p => p.Name, p => Strings(p.Value)),
+                    root.GetProperty("ratchets").EnumerateObject()
+                        .ToDictionary(p => p.Name, p => p.Value.GetProperty("ceiling").GetInt32()),
+                    Strings(root.GetProperty("codegenRecipe")));
+            }
+
+            /// <summary>The tiers a check covers, in dependency order.</summary>
+            public IReadOnlyList<string> TiersFor(string check) => Checks[check];
+        }
+
+        private static readonly Lazy<VerificationPolicy> PolicyFile = new(() =>
+            VerificationPolicy.Load(Path.Combine(FindForwardStdLib(), "verification.json")));
+
+        public static VerificationPolicy Policy => PolicyFile.Value;
+
+        /// <summary>The ceiling a named ratchet enforces (`typecheck`, `lint`, `intrinsics`).
+        /// Lowered, never raised: see stdlib/VERIFICATION.md.</summary>
+        public static int RatchetCeiling(string ratchet) => Policy.Ratchets[ratchet];
+
+        /// <summary>The tiers that are CONVERTED to C# and LINTED by default (stdlib-377): the
+        /// policy's `codegen` check. `future` is absent from it: aspirational vocabulary that must
+        /// parse and type-check, but is neither emitted nor linted unless explicitly asked for. The
+        /// tier rule (stdlib/README.md) is that nothing reaches into `future`, so the covered tiers
+        /// compile on their own with no dangling references.</summary>
+        public static IReadOnlyList<string> ShippingTiers => Policy.TiersFor("codegen");
 
         /// <summary>Every tier, including `future` — the parse/type-check population.</summary>
-        public static readonly IReadOnlyList<string> AllTiers =
-            new[] { "foundation", "geometry", "graphics", "future" };
+        public static IReadOnlyList<string> AllTiers => Policy.Tiers;
 
         /// <summary>The forward corpus is the TIER folders, never the whole `stdlib/` tree
         /// (stdlib-398). `stdlib/tests/` sits there too and is a SEPARATE program: the law packet is

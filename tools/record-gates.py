@@ -40,23 +40,28 @@ CLI = "src/Plato.CLI/Plato.CLI.csproj"
 PLATO_TESTS = "tests/PlatoTests/PlatoTests.csproj"
 CONFORMANCE = "tests/conformance/Plato.ForwardConformanceTests/Plato.ForwardConformanceTests.csproj"
 GENERATED = "tests/conformance/Plato.ForwardConformanceTests/Generated"
-# The tiers that are LINTED and CONVERTED to C# (stdlib-377). `stdlib/future` is aspirational
-# vocabulary: it must parse and type-check — PlatoTests enforces that over all four tiers — but it
-# is not linted and not emitted unless --include-future is passed. Nothing reaches into `future`,
-# so the three below compile as a closed program.
-TIERS = ["stdlib/foundation", "stdlib/geometry", "stdlib/graphics"]
-FUTURE_TIER = "stdlib/future"
+# Which tiers each check covers, the ratchet ceilings and the codegen recipe are policy, read from
+# stdlib/verification.json (plato-388; stdlib/VERIFICATION.md explains it). `stdlib/future` is
+# aspirational vocabulary: it must parse and type-check — PlatoTests enforces that over all four
+# tiers — but it is neither linted nor emitted unless --include-future is passed. Nothing reaches
+# into `future`, so the covered tiers compile as a closed program.
+POLICY = json.loads((PLATO / "stdlib" / "verification.json").read_text(encoding="utf-8"))
+
+
+def tier_folders(check: str, include_all: bool) -> list[str]:
+    """The tier folders a check covers (every tier with include_all), relative to the repo root."""
+    names = POLICY["tiers"] if include_all else POLICY["checks"][check]
+    return [f"{POLICY['root']}/{t}" for t in names]
+
+
 # The forward law packet (Law_*/Witness_* libraries). It lives inside stdlib/ but is NOT a tier:
 # only the codegen step below merges it with the library, exactly as the conformance run does.
 # Plato.CLI enumerates each root top-directory-only, so naming it beside the tiers is not a
 # duplicate (stdlib-398).
-LAW_PACKET = "stdlib/tests"
+LAW_PACKET = POLICY["lawPacket"]
 
-# The shipping recipe (docs/plato-library-map.md). Kept beside the codegen call it feeds.
-RECIPE = [
-    "--csharp-style=extensions", "--optimize", "--optimize-arrays",
-    "--inline", "--loops", "--static-abstract",
-]
+# The shipping recipe (docs/plato-library-map.md), from the manifest.
+RECIPE = POLICY["codegenRecipe"]
 
 
 def run(args: list[str]) -> tuple[str, int, float]:
@@ -104,8 +109,9 @@ def measure(full: bool, include_future: bool = False) -> tuple[list[dict], dict,
     """Run the gates. Returns (gate rows, lint block, extras for the log row)."""
     gates: list[dict] = []
     extras: dict = {}
-    tiers = [*TIERS, FUTURE_TIER] if include_future else list(TIERS)
-    scope = "four stdlib tiers" if include_future else "three shipping stdlib tiers"
+    tiers = tier_folders("lint", include_future)
+    codegen_tiers = tier_folders("codegen", include_future)
+    scope = f"{len(tiers)} stdlib tiers" + ("" if include_future else ", shipping only")
 
     out, code, secs = run(["dotnet", "build", CLI, "-c", "Release", "--nologo", "-v", "q"])
     gates.append(gate("Plato.CLI build (Release)", "PASS" if code == 0 else "FAIL", secs,
@@ -138,7 +144,7 @@ def measure(full: bool, include_future: bool = False) -> tuple[list[dict], dict,
         shutil.rmtree(PLATO / GENERATED)
     (PLATO / GENERATED).mkdir(parents=True, exist_ok=True)
     out, code, secs = run(["dotnet", "run", "--project", CLI, "-c", "Release", "--no-build", "--",
-                           *tiers, LAW_PACKET, f"--out={GENERATED}", *RECIPE])
+                           *codegen_tiers, LAW_PACKET, f"--out={GENERATED}", *RECIPE])
     files = len(list((PLATO / GENERATED).glob("*.g.cs"))) if (PLATO / GENERATED).is_dir() else 0
     degraded = int(m.group(1)) if (m := re.search(r"DEGRADED bodies[^:]*: (\d+)", out)) else None
     extras["codegen"] = {"files": files, "degraded": degraded}

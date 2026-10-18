@@ -1,0 +1,48 @@
+{
+  "$comment": [
+    "The verification policy for stdlib/ (plato-388). Every gate, fixture and server reads this",
+    "file instead of carrying its own tier list, ceiling or recipe; stdlib/VERIFICATION.md",
+    "explains the policy and docs/verification-inventory.md lists the readers.",
+    "tiers: the subfolders of stdlib/, in dependency order. stdlib/tests is the law packet, not a tier.",
+    "checks: for each check, the tiers it covers. A tier absent from a check's list is exempt from it",
+    "(stdlib-377: `future` parses and type-checks but is neither linted, indexed nor converted to C#).",
+    "ratchets: the ceilings the PlatoTests ratchets enforce. A ceiling is lowered, never raised;",
+    "say why in the test's comment when one has to move up.",
+    "codegenRecipe: the C# writer flags of the shipping recipe (docs/plato-library-map.md)."
+  ],
+  "root": "stdlib",
+  "lawPacket": "stdlib/tests",
+  "tiers": ["foundation", "geometry", "graphics", "future"],
+  "checks": {
+    "parse": ["foundation", "geometry", "graphics", "future"],
+    "typecheck": ["foundation", "geometry", "graphics", "future"],
+    "lint": ["foundation", "geometry", "graphics"],
+    "index": ["foundation", "geometry", "graphics"],
+    "codegen": ["foundation", "geometry", "graphics"]
+  },
+  "ratchets": {
+    "typecheck": {
+      "ceiling": 0,
+      "unit": "functions with type-checker diagnostics",
+      "test": "ForwardStdLibCheckerTests.ForwardStdLibDiagnosticCountDoesNotRegress"
+    },
+    "lint": {
+      "ceiling": 32,
+      "unit": "lint findings of severity Error or Warning (Info excluded)",
+      "test": "ForwardStdLibLintTests.ForwardStdLibLintRatchetDoesNotRegress"
+    },
+    "intrinsics": {
+      "ceiling": 65,
+      "unit": "bodiless declarations in stdlib/foundation/intrinsics.library.plato",
+      "test": "IntrinsicContractSizeTests.IntrinsicContractDoesNotGrow"
+    }
+  },
+  "codegenRecipe": [
+    "--csharp-style=extensions",
+    "--optimize",
+    "--optimize-arrays",
+    "--inline",
+    "--loops",
+    "--static-abstract"
+  ]
+}

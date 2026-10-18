@@ -26,10 +26,13 @@ Scope: this folder (`stdlib/`, the current "forward" standard library) and its t
   "Scope differences" below).
 - **Corpus** — the set of `.plato` files a given tool actually reads. Different tools read
   different corpora, which is why their numbers legitimately differ.
-- **Ratchet** — a test that asserts a defect count never exceeds a fixed ceiling (a constant in
-  the test). When you reduce the count, you lower the ceiling in the same commit; it is never
-  raised without a written justification. This stops old defects from quietly multiplying while
-  they are being burned down.
+- **Ratchet** — a test that asserts a defect count never exceeds a fixed ceiling (declared in
+  the policy manifest, below). When you reduce the count, you lower the ceiling in the same
+  commit; it is never raised without a written justification. This stops old defects from
+  quietly multiplying while they are being burned down.
+- **Policy manifest** — [`verification.json`](verification.json), the one data file that says
+  which tiers each check covers, the ratchet ceilings, and the codegen recipe. Every gate
+  script, test fixture and server reads it; nothing restates it (plato-388).
 - **Law** — a Boolean function named `Law_*` in `stdlib/tests/` stating a property that
   should always hold (e.g. that an operation is commutative). Running the laws is the only check
   that actually *executes* library code. `Witness_*` functions are helpers that construct example
@@ -141,8 +144,8 @@ Read the `plato-mcp` skill before using it. Two gotchas that matter for validati
 powershell -File tools/check-stdlib-fast.ps1
 ```
 
-Three checks, a PASS/FAIL table, failing output replayed: `lint --strict` over the three shipping
-tiers, the type-checker ratchet, and index freshness — whether `types-and-concepts.txt` still
+Three checks, a PASS/FAIL table, failing output replayed: `lint --strict` over the tiers the
+manifest's `lint` check covers, the type-checker ratchet, and index freshness — whether `types-and-concepts.txt` still
 matches the source (the rule it enforces is in [`AGENTS.md`](AGENTS.md)). Flags: `-SkipLint`,
 `-SkipRatchet`, `-SkipIndex`, `-IncludeFuture`, `-Folders a,b` (lint an explicit subset of tiers).
 
@@ -163,12 +166,11 @@ history row to [`docs/gate-log.md`](../docs/gate-log.md). Note that it **regener
 it tests** — a test suite that passes against a stale `Generated/` folder is the easiest wrong
 green in this repo to produce.
 
-> **The studio copies of the gate scripts are stale.** They predate the repo reorganization: they reference
-> `submodules\Plato\Plato.CLI\` and lint only the top level of `stdlib`, which now finds **zero
-> files** and passes as a wrong green ([plato-372](../tracker/issues/plato-372.md)). Prefer the
-> repo-local `tools/check-stdlib-fast.ps1` and `tools/stage-stdlib.ps1`, which derive every path
-> from their own location. `regen-forward-conformance.ps1` and `check-all.ps1` exist only in
-> studio.
+> **Studio gates.** `studio/tools/check-stdlib-fast.ps1` forwards to this repo's script
+> ([plato-372](../tracker/issues/plato-372.md)). `regen-forward-conformance.ps1` and
+> `check-all.ps1` exist only in studio; both take `-PlatoRoot` (else `$env:PLATO_ROOT`, else
+> `submodules\Plato`) and read this repo's `verification.json`, so the checkout they gate must
+> include plato-388.
 
 ---
 
@@ -353,19 +355,21 @@ written against concrete types until that is fixed.
 
 Three ceilings, all enforced **in tests**, none in a log:
 
-| Ratchet | Constant | Scope |
-|---|---|---|
-| lint findings (errors + warnings, Info excluded) | `ForwardStdLibLintTests.MaxLintRatchet` | foundation + geometry + graphics |
-| type-checker diagnostics | `ForwardStdLibCheckerTests.MaxFunctionsWithDiagnostics` | all four tiers |
-| intrinsic contract size | `IntrinsicContractSizeTests.MaxIntrinsics` | `intrinsics.library.plato` |
+| Ratchet | Manifest key | Enforced by | Scope |
+|---|---|---|---|
+| lint findings (errors + warnings, Info excluded) | `ratchets.lint` | `ForwardStdLibLintTests` | the manifest's `lint` tiers |
+| type-checker diagnostics | `ratchets.typecheck` | `ForwardStdLibCheckerTests` | the manifest's `typecheck` tiers |
+| intrinsic contract size | `ratchets.intrinsics` | `IntrinsicContractSizeTests` | `intrinsics.library.plato` |
 
-**The constant in the test is the only copy of each ceiling.** Do not restate its value here or in
-any other document — a second copy goes stale silently while the enforced one moves.
+**The manifest holds the one declared copy of each ceiling**, read by
+`CheckerTestSupport.RatchetCeiling`. Do not restate a value here or in any other document — a
+second copy goes stale silently while the declared one moves. A ratchet test that still carries
+its ceiling as a `const` is a second copy; replace the constant with the `RatchetCeiling` call.
 
 The rule is the same for all three: **a ceiling is lowered, never raised.** When you earn a lower
-number, lower the constant in the same commit. If a ceiling genuinely has to move up, say why in
-the comment above the constant — that comment is the historical record of what the number is made
-of, and it is worth reading before touching the number.
+number, lower the manifest value in the same commit. If a ceiling genuinely has to move up, say
+why in the comment above the test's assertion — that comment is the historical record of what the
+number is made of, and it is worth reading before touching the number.
 
 A recorded number nobody asserts on is a number that drifts. `docs/gate-log.md` and
 `status-report-snapshot.json` are history and reporting; they are not gates.
@@ -373,14 +377,10 @@ A recorded number nobody asserts on is a number that drifts. `docs/gate-log.md` 
 ### Scope differences (why the numbers disagree)
 
 `stdlib/future` is aspirational vocabulary — declarations for domains the library intends to
-cover but does not implement yet. It is held to a lower bar **on purpose**:
-
-| | foundation / geometry / graphics | future |
-|---|---|---|
-| parses | yes | yes |
-| type-checks (0 diagnostics) | yes | yes |
-| linted | yes | only with a flag |
-| converted to C# | yes | only with a flag |
+cover but does not implement yet. It is held to a lower bar **on purpose**: it parses and
+type-checks like every tier, but is neither linted, indexed nor converted to C# unless a flag asks.
+Which tiers each check covers is the `checks` matrix in [`verification.json`](verification.json);
+a tier absent from a check's list is exempt from it. Read the matrix there rather than a copy here.
 
 Opt `future` back in with `-IncludeFuture` (PowerShell gates), `--include-future`
 (`record-gates.py`), or the `SummarizeForwardStdLibLintIncludingFuture` reporting test. Parsing
@@ -391,8 +391,8 @@ wrong. Before comparing two numbers, check they cover the same corpus:
 
 | Tool | Corpus |
 |---|---|
-| lint ratchet test | shipping tiers only |
-| `record-gates.py` / `lint --strict` | shipping tiers (all four with the flag) |
+| lint ratchet test | the manifest's `lint` tiers |
+| `record-gates.py` / `lint --strict` | the manifest's `lint` tiers (every tier with the flag) |
 | `plato_check` | all four tiers **plus** `stdlib/tests/` |
 | `SummarizeForwardStdLibLintIncludingFuture` | all four tiers, reporting only |
 

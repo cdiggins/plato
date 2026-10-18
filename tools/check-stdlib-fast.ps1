@@ -15,10 +15,11 @@
 #   -Folders lints an explicit set of roots instead of all of stdlib/, each enumerated
 #   top-directory-only and compiled as ONE program — the cumulative-tier subset form, e.g.
 #   -Folders stdlib\foundation,stdlib\geometry. Relative paths resolve against the repo root.
-#   -IncludeFuture adds stdlib\future to the default root list (stdlib-377). It is OFF by
-#   default: `future` is aspirational vocabulary that is neither linted nor converted to C#,
-#   and its findings would drown the shipping tiers'. It must still parse and type-check,
-#   which the checker ratchet below covers — that one always reads all four tiers.
+#   -IncludeFuture adds every tier the lint check exempts (stdlib\future today) to the root
+#   list. Which tiers the lint check covers is policy, read from stdlib\verification.json
+#   through tools\verification-policy.ps1 (plato-388); `future` is exempt (stdlib-377) because
+#   its findings would drown the shipping tiers'. It must still parse and type-check, which the
+#   checker ratchet below covers — that one always reads all four tiers.
 # Exit code: 0 if all executed gates pass, 1 otherwise.
 param(
     [switch]$SkipLint,
@@ -32,6 +33,7 @@ $ErrorActionPreference = 'Continue'
 $root = Split-Path -Parent $PSScriptRoot   # Plato repo root (parent of tools/)
 $results = [System.Collections.Generic.List[object]]::new()
 . (Join-Path $PSScriptRoot 'gate-timing.ps1')
+. (Join-Path $PSScriptRoot 'verification-policy.ps1')
 
 # Unlike check-all's Run-Quiet, failures replay their captured output: this script is an
 # agent inner loop, and a bare FAIL row would just force an immediate re-run for the details.
@@ -56,12 +58,11 @@ if (-not $SkipLint) {
             if ([System.IO.Path]::IsPathRooted($_)) { $_ } else { Join-Path $root $_ } })
     } else {
         # stdlib is split into dependency-ordered tier folders and Plato.CLI enumerates each
-        # root top-directory-only, so the default gate names the shipping tiers explicitly.
-        # Linting the bare `stdlib` folder would find ZERO files. `future` joins only under
-        # -IncludeFuture; nothing reaches into it, so the three compile on their own.
-        $tiers = @('foundation','geometry','graphics')
-        if ($IncludeFuture) { $tiers += 'future' }
-        $tiers | ForEach-Object { Join-Path $root "stdlib\$_" }
+        # root top-directory-only, so the default gate names the tier folders the policy's
+        # lint check covers. Linting the bare `stdlib` folder would find ZERO files. The exempt
+        # tiers join only under -IncludeFuture; nothing reaches into them, so the covered
+        # tiers compile on their own.
+        Get-PolicyTierFolders (Get-VerificationPolicy) 'lint' -IncludeAll:$IncludeFuture
     }
     $name = if ($Folders) { "lint --strict ($($Folders -join ' + '))" }
             elseif ($IncludeFuture) { 'lint --strict (stdlib forward + future)' }
