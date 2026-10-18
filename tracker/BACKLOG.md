@@ -44,6 +44,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-437](issues/plato-437.md) | Cloth: mass-spring substeps are quadratic, and CollideWith keeps only one of three overloads | bug | p2 | S | low | plato | ready |  |
 | [plato-440](issues/plato-440.md) | Sum-typed parameters have no TypeScript surface: LaplacianSmoothed, TaubinSmoothed and the Decimated family are uncallable | bug | p2 | M | low | plato | ready |  |
 | [plato-446](issues/plato-446.md) | CornerTwinTable is quadratic in corner count: TopologyOf costs ~1s for a 1280-face mesh | debt | p2 | M | low | plato | ready |  |
+| [plato-462](issues/plato-462.md) | Interpreter: 'a conditional's condition is not a Boolean: null' in Map < ReferencedVertexCount < Oracle_AngleDefectSum on the hollow-box witness | bug | p2 | S | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-427](issues/plato-427.md) | Finite elements: nodal stress smoothing, hexahedral and higher-order elements | feature | p3 | M | low | plato | ready |  |
