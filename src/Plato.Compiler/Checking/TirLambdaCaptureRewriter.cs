@@ -40,9 +40,6 @@ public static class TirLambdaCaptureRewriter
         if (captures.Count == 0)
             return body;
 
-        if (!IsStatement(body))
-            body = new TirReturn(body, body.Origin);
-
         // plato-308: the substitution is planned for ALL captures first and applied in ONE
         // rebuild. It stays keyed on NODE IDENTITY (the captured reference itself), which is what
         // confines it to the occurrences inside the lambda: keying it on the parameter DEFINITION
@@ -80,7 +77,15 @@ public static class TirLambdaCaptureRewriter
                 byNode[capture] = new TirVariable(def, capture.Type, capture.Origin);
         }
 
+        // Every capture may have been skipped (all lambda-bound or locals): then nothing is
+        // hoisted and the body keeps its shape. Statementizing it anyway handed the writer a
+        // `return e;` where it expected an expression, which it emitted as `=> /*?*/` (plato-461).
+        if (lets.Count == 0)
+            return body;
+
         body = ReplaceNodes(body, byNode);
+        if (!IsStatement(body))
+            body = new TirReturn(body, body.Origin);
 
         // Innermost block = the first capture in pre-order, as the reference rewriter produced.
         foreach (var let in lets)
