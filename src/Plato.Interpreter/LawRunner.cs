@@ -23,7 +23,7 @@ public sealed class LawResult
     public object Measure { get; init; }
     public TimeSpan Elapsed { get; init; }
 
-    public string Name => $"{Law.OwnerType?.Name}.{Law.Name}";
+    public string Name => LawSelection.FullName(Law);
 
     public override string ToString()
     {
@@ -60,11 +60,41 @@ public sealed class LawRunOptions
     /// <summary>Seconds one law may take over all its cases before it is reported as an error;
     /// null for no limit.</summary>
     public double? BudgetSeconds { get; set; }
-    /// <summary>Only laws whose name contains this run.</summary>
-    public string Filter { get; set; }
+    /// <summary>Only laws matching one of these run (see <see cref="LawSelection.Matches"/>); null
+    /// runs every law, an empty list runs none.</summary>
+    public IReadOnlyList<string> Filters { get; set; }
     public string LawPrefix { get; set; } = "Law_";
     public string WitnessPrefix { get; set; } = "Witness_";
     public string MeasurePrefix { get; set; } = "Measure_";
+}
+
+/// <summary>Which laws a run covers. A filter matches a law when its text occurs, ignoring case, in
+/// the law's full name <c>Owner.Law_Name</c>, so one entry can name a law, its class, or both
+/// (<c>Law_Area</c>, <c>Rect2D</c>, <c>Rect2D.Law_Area</c>). A law runs when any filter matches it.</summary>
+public static class LawSelection
+{
+    public static string FullName(FunctionDef law)
+        => $"{law.OwnerType?.Name}.{law.Name}";
+
+    public static bool Matches(FunctionDef law, IEnumerable<string> filters)
+        => filters.Any(f => FullName(law).Contains(f, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>The entries of a comma-separated list, trimmed, empty ones dropped.</summary>
+    public static IReadOnlyList<string> SplitList(string list)
+        => list.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+    /// <summary>The entries of a law list file: one law or class name per line; blank lines and
+    /// lines starting with <c>#</c> are skipped.</summary>
+    public static IReadOnlyList<string> ParseListFile(string text)
+        => text.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0 && !l.StartsWith('#')).ToList();
+
+    /// <summary>The filters no law matches, so a misspelt name in a list is reported, not
+    /// silently ignored.</summary>
+    public static IReadOnlyList<string> Unmatched(IEnumerable<FunctionDef> laws, IEnumerable<string> filters)
+    {
+        var names = laws.Select(FullName).ToList();
+        return filters.Where(f => !names.Any(n => n.Contains(f, StringComparison.OrdinalIgnoreCase))).ToList();
+    }
 }
 
 /// <summary>
@@ -92,11 +122,19 @@ public sealed class LawRunner
         _gen = new ValueGenerator(interpreter);
     }
 
-    public IEnumerable<FunctionDef> Laws
+    /// <summary>Every law of the compilation, the filters ignored.</summary>
+    public IEnumerable<FunctionDef> AllLaws
         => Interpreter.Functions.Where(f => f.Name.StartsWith(Options.LawPrefix, StringComparison.Ordinal)
                                             && f.Body != null
-                                            && f.ReturnType?.Def?.Name == "Boolean"
-                                            && (Options.Filter == null || f.Name.Contains(Options.Filter, StringComparison.OrdinalIgnoreCase)));
+                                            && f.ReturnType?.Def?.Name == "Boolean");
+
+    /// <summary>The laws the filters select.</summary>
+    public IEnumerable<FunctionDef> Laws
+        => AllLaws.Where(f => Options.Filters == null || LawSelection.Matches(f, Options.Filters));
+
+    /// <summary>The filters that select no law.</summary>
+    public IReadOnlyList<string> UnmatchedFilters
+        => Options.Filters == null ? Array.Empty<string>() : LawSelection.Unmatched(AllLaws, Options.Filters);
 
     public IReadOnlyList<LawResult> RunAll()
         => Laws.Select(Run).ToList();

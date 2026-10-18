@@ -220,7 +220,8 @@ that a law that fails on generated input in one engine fails in the other.
 
 ```
 Plato.CLI run <folder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>]
-                          [--profile=cpu64|gpu32] [--filter=<text>] [--trials=N] [--seed=N]
+                          [--profile=cpu64|gpu32] [--filter=<text>[,<text>...]] [--laws-from=<file>]
+                          [--trials=N] [--seed=N] [--budget=<seconds>]
 ```
 
 `RunCommand.cs` compiles the roots as one program (top-level files, or every subfolder with
@@ -228,8 +229,12 @@ Plato.CLI run <folder>... (--laws | --call=<Name>) [--recursive] [--exclude=<fil
 the grammar) and runs it in this process. `--laws` prints one line per law and a summary line
 with the counts, the number of bodies elaborated, and the compile and law times separately.
 `--call=<Name>` invokes a nullary function, or a `_`-receiver one as `Type.Name`, and prints its
-value. `--filter` keeps the laws whose name contains the text; `--trials` and `--seed` set the
-sampling. The exit code is 1 on a parse or compile failure and when any law fails or errors;
+value. `--filter` takes a comma-separated list and keeps the laws whose full name
+(`Owner.Law_Name`) contains any entry, ignoring case, so an entry names a law, its class, or both;
+`--laws-from=<file>` adds the entries of a file, one per line, blank lines and `#` comments
+skipped. Both may repeat, and the run covers the union. An entry that selects no law is reported
+on stderr, so a misspelt name in a list does not pass silently. `--trials` and `--seed` set the
+sampling, and `--budget` stops one law after that many seconds and reports it as an error. The exit code is 1 on a parse or compile failure and when any law fails or errors;
 skipped laws and host obligations are listed but do not fail the run.
 
 The STEP design folder compiles with the three stdlib tiers plus the sandbox under `--recursive`,

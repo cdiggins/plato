@@ -8,14 +8,17 @@ using Ara3D.Utils;
 namespace Ara3D.Geometry.CLI
 {
     // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|gpu32]
-    //                [--filter=<substring>] [--trials=N] [--seed=N] [--budget=<seconds per law>] [--call=<Name>]
+    //                [--filter=<text>[,<text>...]] [--laws-from=<file>] [--trials=N] [--seed=N] [--budget=<seconds per law>] [--call=<Name>]
     //
     // Compiles the input roots as one program (top-level files, or every subfolder with --recursive,
     // *.spec.plato always skipped) and runs it in this process through the interpreter: no C# is
     // emitted or built. --laws evaluates every Law_* over the Witness_* values and generated
     // values and prints one line per law: pass, fail with the first failing witness (and the law's
     // Measure_ companion when one exists), error with the fault, obligation with the bodiless
-    // function reached, or skipped with the reason. --call=<Name> invokes a nullary function (or
+    // function reached, or skipped with the reason. --filter keeps the laws whose full name
+    // (Owner.Law_Name) contains any of its comma-separated texts, ignoring case; --laws-from adds
+    // the names in a file, one per line (blank lines and # comments skipped); a name that
+    // selects no law is reported on stderr. --call=<Name> invokes a nullary function (or
     // a `_`-receiver one as Type.Name) and prints its value. Exit code 1 on a parse or compile
     // failure, or when any law fails or errors; skipped laws and host obligations do not fail
     // the run, they are listed.
@@ -33,7 +36,9 @@ namespace Ara3D.Geometry.CLI
                 Console.Error.WriteLine($"Unknown --profile '{profileName}'; one of: {NumberProfile.Names}");
                 return 1;
             }
-            var options = new LawRunOptions { Filter = Flags(args, "--filter=").LastOrDefault() };
+            if (!TryFilters(args, out var filters))
+                return 1;
+            var options = new LawRunOptions { Filters = filters };
             if (int.TryParse(Flags(args, "--trials=").LastOrDefault(), out var trials)) options.Trials = trials;
             if (int.TryParse(Flags(args, "--seed=").LastOrDefault(), out var seed)) options.Seed = seed;
             if (double.TryParse(Flags(args, "--budget=").LastOrDefault(), out var budget)) options.BudgetSeconds = budget;
@@ -41,7 +46,7 @@ namespace Ara3D.Geometry.CLI
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             if (folders.Count == 0 || (!laws && calls.Count == 0))
             {
-                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|gpu32] [--filter=<text>] [--trials=N] [--seed=N]");
+                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|gpu32] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--trials=N] [--seed=N] [--budget=<seconds>]");
                 return 1;
             }
 
@@ -127,6 +132,8 @@ namespace Ara3D.Geometry.CLI
         private static int Laws(Interpreter.Interpreter interp, LawRunOptions options, Stopwatch timer, TimeSpan compiled)
         {
             var runner = new LawRunner(interp, options);
+            foreach (var f in runner.UnmatchedFilters)
+                Console.Error.WriteLine($"filter '{f}' matches no law");
             var counts = new Dictionary<LawStatus, int>();
             var total = 0;
             var results = new List<LawResult>();
@@ -145,6 +152,26 @@ namespace Ara3D.Geometry.CLI
             Console.WriteLine($"{total} laws: " + string.Join(", ", counts.OrderBy(kv => kv.Key).Select(kv => $"{kv.Value} {kv.Key.ToString().ToLowerInvariant()}"))
                               + $"; {interp.ElaboratedCount} bodies elaborated in {interp.ElaborationTime.TotalSeconds:F1}s; {interp.ResolutionCount} run-time resolutions; laws {(timer.Elapsed - compiled).TotalSeconds:F1}s, total {timer.Elapsed.TotalSeconds:F1}s");
             return counts.GetValueOrDefault(LawStatus.Fail) + counts.GetValueOrDefault(LawStatus.Error) > 0 ? 1 : 0;
+        }
+
+        /// <summary>Every --filter (a comma list) and every --laws-from file (one name per line),
+        /// as one list; null when neither names anything, so every law runs. An empty list file
+        /// selects no law. False, with the error printed, for a list file that cannot be read.</summary>
+        private static bool TryFilters(string[] args, out IReadOnlyList<string> filters)
+        {
+            var list = Flags(args, "--filter=").SelectMany(LawSelection.SplitList).ToList();
+            var files = Flags(args, "--laws-from=").ToList();
+            filters = list.Count == 0 && files.Count == 0 ? null : list;
+            foreach (var file in files)
+            {
+                if (!File.Exists(file))
+                {
+                    Console.Error.WriteLine($"--laws-from file not found: {file}");
+                    return false;
+                }
+                list.AddRange(LawSelection.ParseListFile(File.ReadAllText(file)));
+            }
+            return true;
         }
 
         private static IEnumerable<string> Flags(string[] args, string prefix)
