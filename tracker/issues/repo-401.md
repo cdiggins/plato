@@ -2,14 +2,14 @@
 id: repo-401
 title: record-gates.py --full passes the retired --scalar=float flag
 type: bug
-status: ready
+status: done
 priority: p3
 effort: S
 risk: low
 area: repo
 sprint: 
 created: 2026-08-02
-closed:
+closed: 2026-10-18
 links: [tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md]
 ---
 
@@ -41,5 +41,5 @@ executed (docs that quote historical recipes are fine as history). Then run
 
 ## Done means
 
-- [ ] `RECIPE` in `tools/record-gates.py` contains no retired flag
-- [ ] `record-gates.py --full` reaches the law runner instead of failing at argument parsing
+- [x] `RECIPE` in `tools/record-gates.py` contains no retired flag
+- [x] `record-gates.py --full` reaches the law runner instead of failing at argument parsing

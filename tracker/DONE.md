@@ -3,6 +3,8 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-18 — [plato-372](issues/plato-372.md) — Studio gate scripts are stale: check-stdlib-fast lints stdlib top-only and finds no files — done (studio 97709b28 forwarder; studio check-stdlib-fast -PlatoRoot plato: STDLIB FAST GATE PASS 2026-10-18)
+- 2026-10-18 — [repo-401](issues/repo-401.md) — record-gates.py --full passes the retired --scalar=float flag — done (25502274)
 - 2026-10-18 — [plato-462](issues/plato-462.md) — Interpreter: 'a conditional's condition is not a Boolean: null' in Map < ReferencedVertexCount < Oracle_AngleDefectSum on the hollow-box witness — done (8cbf8894): new Buffer<T>(n) slots hold the element default; verified on RestrictedToShell of Witness_HollowBox(5.785732621227266, 0.5), 8 of 16 positions unreferenced per shell
 - 2026-08-04 — [plato-442](issues/plato-442.md) — Builders for the spatial structures, hulls and Delaunay — done (decision f9948e96, sort d52bda7b+b68442d2, builders 63868232, TS backend f23d6519); SortedIndices/Sort + ConvexHull/BuildBvh/BuildOctree/BuildLooseOctree; executed via foundation tests (37/37) and geometry-samples Node suite (26/26); Delaunay + kd builders deferred per decision
 - 2026-08-04 — [plato-439](issues/plato-439.md) — geometry-samples: rebuild the TS samples on stdlib types, port missing builders back to stdlib — done (b7f6a682 + follow-up); samples rebuilt on stdlib types, four gaps filled in stdlib/geometry, six writer defects fixed, six filed

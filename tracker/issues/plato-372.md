@@ -2,14 +2,14 @@
 id: plato-372
 title: Studio gate scripts are stale: check-stdlib-fast lints stdlib top-only and finds no files
 type: bug
-status: ready
+status: done
 priority: p2
 effort: S
 risk: low
 area: plato
 sprint: 
 created: 2026-07-31
-closed:
+closed: 2026-10-18
 links: []
 ---
 
@@ -48,5 +48,5 @@ through), and re-point every Plato path in `studio\tools\*.ps1` at the post-rest
 
 ## Done means
 
-- [ ] `studio\tools\check-stdlib-fast.ps1` passes both gates against a current Plato checkout.
-- [ ] Every path in `studio\tools\*.ps1` that names a Plato project resolves after the restructure.
+- [x] `studio\tools\check-stdlib-fast.ps1` passes both gates against a current Plato checkout.
+- [x] Every path in `studio\tools\*.ps1` that names a Plato project resolves after the restructure.

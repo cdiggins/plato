@@ -33,7 +33,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-277](issues/plato-277.md) | stdlib interface-gap burn-down: the 17 markers that need a language or interface decision | debt | p2 | M | low | plato | ready |  |
 | [plato-323](issues/plato-323.md) | Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile | bug | p2 | L | med | plato | ready |  |
 | [plato-326](issues/plato-326.md) | Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns | bug | p2 | S | low | plato | ready |  |
-| [plato-372](issues/plato-372.md) | Studio gate scripts are stale: check-stdlib-fast lints stdlib top-only and finds no files | bug | p2 | S | low | plato | ready |  |
 | [plato-373](issues/plato-373.md) | Ellipse.Perimeter (Ramanujan II) is 4e-4 off for flattened ellipses | bug | p2 | S | low | plato | ready |  |
 | [plato-374](issues/plato-374.md) | Interface-generic law bodies mix the interface default with the type's override | bug | p2 | M | low | plato | ready |  |
 | [plato-389](issues/plato-389.md) | plato_check has no tier awareness: future and stdlib-tests count toward its verdict | bug | p2 | S | low | plato | ready |  |
@@ -50,7 +49,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-428](issues/plato-428.md) | Rigid dynamics: GJK/EPA, orientation joints, and a broad phase | feature | p3 | M | low | plato | ready |  |
 | [plato-433](issues/plato-433.md) | TpmsSheet3D thickness is not portable between families and silently yields an empty solid | bug | p3 | S | low | plato | ready |  |
 | [plato-438](issues/plato-438.md) | PlatoTests: TypeScript UseTir byte-identity test fails on number/Number casing | bug | p3 | S | low | plato | ready |  |
-| [repo-401](issues/repo-401.md) | record-gates.py --full passes the retired --scalar=float flag | bug | p3 | S | low | repo | ready |  |
 | [compiler-461](issues/compiler-461.md) | A body whose lambdas capture only lambda-bound names is emitted as => /*?*/ | bug | ? | ? | ? | compiler | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
 | [plato-454](issues/plato-454.md) | C# writer drops the parentheses of a conditional used as a condition | bug | ? | ? | ? | plato | ready |  |
