@@ -56,12 +56,12 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Boolean IsMad() => Kind == Kind_Mad;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
-        [MethodImpl(AggressiveInlining)] public Boolean Equals(OutlierDetection other) => Kind == other.Kind && ZScore_Threshold.Equals(other.ZScore_Threshold) && Iqr_Threshold.Equals(other.Iqr_Threshold) && Mad_Threshold.Equals(other.Mad_Threshold);
-        [MethodImpl(AggressiveInlining)] public Boolean NotEquals(OutlierDetection other) => !(Kind == other.Kind && ZScore_Threshold.Equals(other.ZScore_Threshold) && Iqr_Threshold.Equals(other.Iqr_Threshold) && Mad_Threshold.Equals(other.Mad_Threshold));
+        [MethodImpl(AggressiveInlining)] public Boolean Equals(OutlierDetection other) => Kind == other.Kind && (Kind != Kind_ZScore || (ZScore_Threshold.Equals(other.ZScore_Threshold))) && (Kind != Kind_Iqr || (Iqr_Threshold.Equals(other.Iqr_Threshold))) && (Kind != Kind_Mad || (Mad_Threshold.Equals(other.Mad_Threshold)));
+        [MethodImpl(AggressiveInlining)] public Boolean NotEquals(OutlierDetection other) => !(Kind == other.Kind && (Kind != Kind_ZScore || (ZScore_Threshold.Equals(other.ZScore_Threshold))) && (Kind != Kind_Iqr || (Iqr_Threshold.Equals(other.Iqr_Threshold))) && (Kind != Kind_Mad || (Mad_Threshold.Equals(other.Mad_Threshold))));
         [MethodImpl(AggressiveInlining)] public override bool Equals(object obj) => obj is OutlierDetection other ? Equals(other) : false;
         [MethodImpl(AggressiveInlining)] public static Boolean operator==(OutlierDetection a, OutlierDetection b) => a.Equals(b);
         [MethodImpl(AggressiveInlining)] public static Boolean operator!=(OutlierDetection a, OutlierDetection b) => !a.Equals(b);
-        [MethodImpl(AggressiveInlining)] public override int GetHashCode() => Intrinsics.CombineHashCodes(Kind, ZScore_Threshold, Iqr_Threshold, Mad_Threshold);
+        [MethodImpl(AggressiveInlining)] public override int GetHashCode() => Kind == Kind_ZScore ? Intrinsics.CombineHashCodes(Kind, ZScore_Threshold) : Kind == Kind_Iqr ? Intrinsics.CombineHashCodes(Kind, Iqr_Threshold) : Kind == Kind_Mad ? Intrinsics.CombineHashCodes(Kind, Mad_Threshold) : Intrinsics.CombineHashCodes(Kind);
 
         // JSON, formatting and parsing. Invariant unless a provider is passed.
         [MethodImpl(AggressiveInlining)] public override string ToString() => ToString(null, null);

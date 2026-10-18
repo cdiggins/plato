@@ -17,15 +17,18 @@ namespace Ara3D.Geometry
 {
     public static partial class Extensions
     {
+        [MethodImpl(AggressiveInlining)] public static Integer LastIndex<_T0>(this IReadOnlyList<_T0> self) => self.Count.Subtract(((Integer)1));
+        [MethodImpl(AggressiveInlining)] public static Boolean IsValidIndex<_T0>(this IReadOnlyList<_T0> self, Integer index) => index.GreaterThanOrEquals(((Integer)0)).And(index.LessThan(self.Count));
+        [MethodImpl(AggressiveInlining)] public static Boolean IsValidIndex<_T0, _TI1>(this IReadOnlyList<_T0> self, _TI1 index) where _TI1 : IIndex => index.Value().GreaterThanOrEquals(((Integer)0)).And(index.Value().LessThan(self.Count));
+        [MethodImpl(AggressiveInlining)] public static _T0 First<_T0>(this IReadOnlyList<_T0> self) => self[((Integer)0)];
+        [MethodImpl(AggressiveInlining)] public static _T0 Last<_T0>(this IReadOnlyList<_T0> self) => self[self.Count.Subtract(((Integer)1))];
+        [MethodImpl(AggressiveInlining)] public static _T0 Middle<_T0>(this IReadOnlyList<_T0> self) => self[self.Count.Divide(((Integer)2))];
         [MethodImpl(AggressiveInlining)] public static JaggedArray<_T0> FromRows<_T0>(this IReadOnlyList<IReadOnlyList<_T0>> rows){
             var _var1 = rows;
             {
                 var _var0 = rows;
                 {
-                    var offsets = ((Integer)rows.Count).Add(((Integer)1)).MapRange((i) => {
-                        return i.MapRange((j)  => ((Integer)_var0[j].Count)).Reduce(((Integer)0), (acc, n)  => acc.Add(n));
-                    }
-                    );
+                    var offsets = ((Integer)rows.Count).Add(((Integer)1)).MapRange((i)  => i.MapRange((j)  => ((Integer)_var0[j].Count)).Reduce(((Integer)0), (acc, n)  => acc.Add(n)));
                     return (offsets, rows.FlatMap((r)  => r));
                 }
             }

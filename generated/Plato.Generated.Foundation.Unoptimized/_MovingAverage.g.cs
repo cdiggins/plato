@@ -57,12 +57,12 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Boolean IsGaussian() => Kind == Kind_Gaussian;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
-        [MethodImpl(AggressiveInlining)] public Boolean Equals(MovingAverage other) => Kind == other.Kind && Simple_WindowSize.Equals(other.Simple_WindowSize) && Exponential_Alpha.Equals(other.Exponential_Alpha) && Gaussian_WindowSize.Equals(other.Gaussian_WindowSize) && Gaussian_StandardDeviation.Equals(other.Gaussian_StandardDeviation);
-        [MethodImpl(AggressiveInlining)] public Boolean NotEquals(MovingAverage other) => !(Kind == other.Kind && Simple_WindowSize.Equals(other.Simple_WindowSize) && Exponential_Alpha.Equals(other.Exponential_Alpha) && Gaussian_WindowSize.Equals(other.Gaussian_WindowSize) && Gaussian_StandardDeviation.Equals(other.Gaussian_StandardDeviation));
+        [MethodImpl(AggressiveInlining)] public Boolean Equals(MovingAverage other) => Kind == other.Kind && (Kind != Kind_Simple || (Simple_WindowSize.Equals(other.Simple_WindowSize))) && (Kind != Kind_Exponential || (Exponential_Alpha.Equals(other.Exponential_Alpha))) && (Kind != Kind_Gaussian || (Gaussian_WindowSize.Equals(other.Gaussian_WindowSize) && Gaussian_StandardDeviation.Equals(other.Gaussian_StandardDeviation)));
+        [MethodImpl(AggressiveInlining)] public Boolean NotEquals(MovingAverage other) => !(Kind == other.Kind && (Kind != Kind_Simple || (Simple_WindowSize.Equals(other.Simple_WindowSize))) && (Kind != Kind_Exponential || (Exponential_Alpha.Equals(other.Exponential_Alpha))) && (Kind != Kind_Gaussian || (Gaussian_WindowSize.Equals(other.Gaussian_WindowSize) && Gaussian_StandardDeviation.Equals(other.Gaussian_StandardDeviation))));
         [MethodImpl(AggressiveInlining)] public override bool Equals(object obj) => obj is MovingAverage other ? Equals(other) : false;
         [MethodImpl(AggressiveInlining)] public static Boolean operator==(MovingAverage a, MovingAverage b) => a.Equals(b);
         [MethodImpl(AggressiveInlining)] public static Boolean operator!=(MovingAverage a, MovingAverage b) => !a.Equals(b);
-        [MethodImpl(AggressiveInlining)] public override int GetHashCode() => Intrinsics.CombineHashCodes(Kind, Simple_WindowSize, Exponential_Alpha, Gaussian_WindowSize, Gaussian_StandardDeviation);
+        [MethodImpl(AggressiveInlining)] public override int GetHashCode() => Kind == Kind_Simple ? Intrinsics.CombineHashCodes(Kind, Simple_WindowSize) : Kind == Kind_Exponential ? Intrinsics.CombineHashCodes(Kind, Exponential_Alpha) : Kind == Kind_Gaussian ? Intrinsics.CombineHashCodes(Kind, Gaussian_WindowSize, Gaussian_StandardDeviation) : Intrinsics.CombineHashCodes(Kind);
 
         // JSON, formatting and parsing. Invariant unless a provider is passed.
         [MethodImpl(AggressiveInlining)] public override string ToString() => ToString(null, null);
