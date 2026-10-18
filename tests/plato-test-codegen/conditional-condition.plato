@@ -1,0 +1,9 @@
+// Fixture for ConditionalCodegenTests: a conditional used as the condition of another
+// conditional, the library's short-circuit "and" (`&&` evaluates both sides).
+
+type Boolean { }
+
+library Conditionals {
+    Pick(a: Boolean, b: Boolean, x: Boolean, y: Boolean): Boolean
+        => (a ? b : false) ? x : y;
+}

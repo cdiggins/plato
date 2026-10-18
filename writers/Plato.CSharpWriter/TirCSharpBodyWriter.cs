@@ -340,12 +340,21 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirConditional cond:
+            {
+                // A conditional (or assignment) used as the condition must keep its parentheses:
+                // `?:` is right-associative, so `(a ? b : false) ? x : y` written bare parses as
+                // `a ? b : (false ? x : y)` and compiles with a different meaning (plato-454).
+                var condNode = TirRewrite.StripCoerce(cond.Condition);
+                var wrap = condNode is TirConditional || condNode is TirAssign;
+                if (wrap) Write("(");
                 WriteNode(cond.Condition);
+                if (wrap) Write(")");
                 Write(" ? ");
                 WriteNode(cond.IfTrue);
                 Write(" : ");
                 WriteNode(cond.IfFalse);
                 return;
+            }
 
             case TirNew nw:
                 Write($"new {_tw.ToCSharpType(nw.NewType)}(");
