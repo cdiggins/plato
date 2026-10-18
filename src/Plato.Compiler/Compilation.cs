@@ -106,17 +106,11 @@ namespace Ara3D.Geometry.Compiler
                 ReifiedFunctionsByName = ReifiedTypes.Values.SelectMany(rt => rt.Functions)
                     .ToDictionaryOfLists(rf => rf.Name);
 
-                // ??
-                Libraries = new LibraryFunctions(this);
-                // Unique (affine) builder types (roadmap Phase 6) are intrinsic-backed and
-                // never emitted as generated structs, so no ConcreteType analysis is built
-                // for them (their library functions are body-less signatures whose single
-                // generic parameter would otherwise trip the FunctionInstance type-variable
-                // machinery, which no generated code needs).
-                ConcreteTypes = GetConcreteTypes()
-                    .Where(td => !td.IsUnique)
-                    .Select(c => new ConcreteType(c, Libraries))
-                    .ToList();
+                // Libraries and ConcreteTypes are the code writers' and the linter's tables, built
+                // on first use (see their properties): the interpreter and the type checker never
+                // read them.
+                _libraries = new Lazy<LibraryFunctions>(() => new LibraryFunctions(this));
+                _concreteTypes = new Lazy<IReadOnlyList<ConcreteType>>(ComputeConcreteTypes);
 
                 Log("Computing the type relations");
                 TypeRelations = new TypeRelations(this);                    
@@ -231,8 +225,28 @@ namespace Ara3D.Geometry.Compiler
             .Concat(SemanticErrors.Select(e => $"[ERROR] {e}"))
             .Concat(InternalErrors.Select(i => $"[INTERNAL ERROR] {i}"));
 
-        public LibraryFunctions Libraries { get; }
-        public IReadOnlyList<ConcreteType> ConcreteTypes { get; }
+        // The per-type tables of the code writers and the linter. They cost about half of a large
+        // compilation (about 5 s of 10 on the STEP library), and the interpreter, the type checker
+        // and the law runner never read them, so they are built on first use instead of in the
+        // constructor (TKT-331: a warm law run recompiles after every edit). A fault while building
+        // them now surfaces from the writer or linter that asks, instead of marking the
+        // compilation incomplete. Null when the
+        // compilation stopped before reaching them.
+        private Lazy<LibraryFunctions> _libraries;
+        private Lazy<IReadOnlyList<ConcreteType>> _concreteTypes;
+
+        public LibraryFunctions Libraries => _libraries?.Value;
+        public IReadOnlyList<ConcreteType> ConcreteTypes => _concreteTypes?.Value;
+
+        // Unique (affine) builder types (roadmap Phase 6) are intrinsic-backed and never emitted
+        // as generated structs, so no ConcreteType analysis is built for them (their library
+        // functions are body-less signatures whose single generic parameter would otherwise trip
+        // the FunctionInstance type-variable machinery, which no generated code needs).
+        private IReadOnlyList<ConcreteType> ComputeConcreteTypes()
+            => GetConcreteTypes()
+                .Where(td => !td.IsUnique)
+                .Select(c => new ConcreteType(c, Libraries))
+                .ToList();
 
         public FunctionAnalysis GetOrComputeFunctionAnalysis(FunctionDef fd)
         {
