@@ -128,16 +128,21 @@ namespace Ara3D.Geometry.CLI
             var runner = new LawRunner(interp, options);
             var counts = new Dictionary<LawStatus, int>();
             var total = 0;
+            var results = new List<LawResult>();
             foreach (var law in runner.Laws)
             {
                 var r = runner.Run(law);
                 total++;
                 counts[r.Status] = counts.GetValueOrDefault(r.Status) + 1;
+                results.Add(r);
                 Console.WriteLine(r);
             }
             Console.WriteLine();
+            // The slowest laws, so a long sweep names what it spent its time on.
+            foreach (var r in results.Where(r => r.Elapsed.TotalSeconds >= 1).OrderByDescending(r => r.Elapsed).Take(15))
+                Console.WriteLine($"slow       {r.Name}  {r.Elapsed.TotalSeconds:F1}s over {r.Trials} cases");
             Console.WriteLine($"{total} laws: " + string.Join(", ", counts.OrderBy(kv => kv.Key).Select(kv => $"{kv.Value} {kv.Key.ToString().ToLowerInvariant()}"))
-                              + $"; {interp.ElaboratedCount} bodies elaborated; laws {(timer.Elapsed - compiled).TotalSeconds:F1}s, total {timer.Elapsed.TotalSeconds:F1}s");
+                              + $"; {interp.ElaboratedCount} bodies elaborated in {interp.ElaborationTime.TotalSeconds:F1}s; {interp.ResolutionCount} run-time resolutions; laws {(timer.Elapsed - compiled).TotalSeconds:F1}s, total {timer.Elapsed.TotalSeconds:F1}s");
             return counts.GetValueOrDefault(LawStatus.Fail) + counts.GetValueOrDefault(LawStatus.Error) > 0 ? 1 : 0;
         }
 

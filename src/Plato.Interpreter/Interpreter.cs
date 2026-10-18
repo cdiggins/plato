@@ -56,6 +56,12 @@ public sealed partial class Interpreter
     /// <summary>Every function of the compilation.</summary>
     public IEnumerable<FunctionDef> Functions => Compilation.FunctionDefinitions;
 
+    /// <summary>Time spent checking and elaborating bodies on first use (a cost figure for reports).</summary>
+    public TimeSpan ElaborationTime { get; private set; }
+
+    /// <summary>How many run-time overload resolutions were performed (a cost figure for reports).</summary>
+    public long ResolutionCount { get; internal set; }
+
     /// <summary>How many bodies have been elaborated so far (a cost figure for reports).</summary>
     public int ElaboratedCount => _tir.Count;
 
@@ -67,8 +73,10 @@ public sealed partial class Interpreter
             return null;
         if (_tir.TryGetValue(f, out var tir))
             return tir;
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         var result = _checker.Check(f);
         tir = _elaborator.Elaborate(result);
+        ElaborationTime += sw.Elapsed;
         _tir[f] = tir;
         return tir;
     }

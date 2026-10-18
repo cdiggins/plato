@@ -141,17 +141,65 @@ public sealed partial class Interpreter
         bool allowInterfaceDeclarations = true)
         => ResolveByValues(name, args, out converted, out _, allowInterfaceDeclarations);
 
+    /// <summary>A resolution outcome, memoized per (name, argument types): the winner, its summed
+    /// cost, and the per-argument tier costs that say which arguments need converting.</summary>
+    private sealed class Resolution
+    {
+        public FunctionDef Best;
+        public int BestCost;
+        public int[] Costs;
+    }
+
+    private readonly Dictionary<string, Resolution> _resolutions = new Dictionary<string, Resolution>(StringComparer.Ordinal);
+    private readonly Dictionary<TypeExpression, string> _typeKeys = new Dictionary<TypeExpression, string>(ReferenceEqualityComparer.Instance);
+
+    /// <summary>The memo key of a resolution: the name, the interface flag, and each argument's
+    /// run-time type. Resolution depends on nothing else, so one outcome serves every call with
+    /// the same shape; without this memo a law over a small model spends most of its time
+    /// resolving the same few hundred call shapes tens of thousands of times.</summary>
+    private string ResolutionKey(string head, IReadOnlyList<TypeExpression> argTypes, bool allowInterfaceDeclarations)
+    {
+        var sb = new System.Text.StringBuilder(head, 64);
+        sb.Append(allowInterfaceDeclarations ? '+' : '-');
+        foreach (var t in argTypes)
+        {
+            if (!_typeKeys.TryGetValue(t, out var key))
+                _typeKeys[t] = key = t.ToString();
+            sb.Append('|').Append(key);
+        }
+        return sb.ToString();
+    }
+
     private FunctionDef ResolveByValues(string name, IReadOnlyList<object> args, out object[] converted,
         out int bestCost, bool allowInterfaceDeclarations)
     {
         converted = args.ToArray();
         var argTypes = args.Select(TypeOf).ToList();
+        var key = ResolutionKey(name, argTypes, allowInterfaceDeclarations);
+        if (!_resolutions.TryGetValue(key, out var r))
+        {
+            r = Resolve(name, argTypes, allowInterfaceDeclarations);
+            _resolutions[key] = r;
+        }
+        bestCost = r.BestCost;
+        if (r.Best == null)
+            return null;
+        for (var i = 0; i < args.Count; i++)
+            if (r.Costs[i] == 3)
+                converted[i] = CoerceTo(args[i], r.Best.Parameters[i].Type);
+        return r.Best;
+    }
+
+    private Resolution Resolve(string name, IReadOnlyList<TypeExpression> argTypes, bool allowInterfaceDeclarations)
+    {
+        ResolutionCount++;
+        var argCount = argTypes.Count;
         FunctionDef best = null;
-        bestCost = int.MaxValue;
+        var bestCost = int.MaxValue;
         var bestRank = int.MaxValue;
         foreach (var f in FunctionsNamed(name))
         {
-            if (f.Parameters.Count != args.Count)
+            if (f.Parameters.Count != argCount)
                 continue;
             if (!allowInterfaceDeclarations && f.FunctionType == FunctionType.Interface)
                 continue;
@@ -167,13 +215,7 @@ public sealed partial class Interpreter
                 bestRank = rank;
             }
         }
-        if (best == null)
-            return null;
-        var bestCosts = CostsOf(best, argTypes);
-        for (var i = 0; i < args.Count; i++)
-            if (bestCosts[i] == 3)
-                converted[i] = CoerceTo(args[i], best.Parameters[i].Type);
-        return best;
+        return new Resolution { Best = best, BestCost = bestCost, Costs = best == null ? null : CostsOf(best, argTypes) };
     }
 
     /// <summary>The tier cost of each argument against its parameter, with the type variables
@@ -204,16 +246,33 @@ public sealed partial class Interpreter
     /// decision the monomorphizer makes after substitution; a callee the values do not fit at
     /// all is replaced by whichever one they do fit. Arguments needing a conversion come back
     /// converted.</summary>
+    private readonly Dictionary<FunctionDef, bool> _hasAbstractParameter = new Dictionary<FunctionDef, bool>();
+
     private FunctionDef Redispatch(FunctionDef f, ref IReadOnlyList<object> args)
     {
-        if (!f.Parameters.Any(p => IsAbstract(p.Type)))
+        if (!_hasAbstractParameter.TryGetValue(f, out var abstractParams))
+            _hasAbstractParameter[f] = abstractParams = f.Parameters.Any(p => IsAbstract(p.Type));
+        if (!abstractParams)
             return f;
-        var own = CostOf(f, args.Select(TypeOf).ToList());
-        var best = ResolveByValues(f.Name, args, out var converted, out var bestCost, allowInterfaceDeclarations: false);
-        if (best == null || ReferenceEquals(best, f) || (own != null && bestCost >= own.Value))
+        var argTypes = args.Select(TypeOf).ToList();
+        var key = ResolutionKey("#" + f.Id, argTypes, false);
+        if (!_resolutions.TryGetValue(key, out var r))
+        {
+            var own = CostOf(f, argTypes);
+            var candidate = Resolve(f.Name, argTypes, allowInterfaceDeclarations: false);
+            r = candidate.Best == null || ReferenceEquals(candidate.Best, f) || (own != null && candidate.BestCost >= own.Value)
+                ? new Resolution { Best = f, BestCost = own ?? 0, Costs = null }
+                : candidate;
+            _resolutions[key] = r;
+        }
+        if (ReferenceEquals(r.Best, f))
             return f;
+        var converted = args.ToArray();
+        for (var i = 0; i < converted.Length; i++)
+            if (r.Costs[i] == 3)
+                converted[i] = CoerceTo(converted[i], r.Best.Parameters[i].Type);
         args = converted;
-        return best;
+        return r.Best;
     }
 
     /// <summary>A call written type-level on a named-receiver function (<c>Point2D.Origin</c>,
