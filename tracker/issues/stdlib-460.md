@@ -24,4 +24,4 @@ Every consumer that builds the geometry tier hand-patches the generated files.
 
 ## Done means
 
-- [ ] The three call sites are fixed in the stdlib source, and the three tiers generate C# with no errors from them.
+- [x] The three call sites are fixed in the stdlib source, and the three tiers generate C# with no errors from them.

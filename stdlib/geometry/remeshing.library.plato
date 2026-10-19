@@ -1255,7 +1255,7 @@ library Remeshing
     // Taubin smoothing at the usual settings: uniform weights, lambda 0.5 and mu
     // -0.53, the pair Taubin's own examples use.
     TaubinSmoothed(self: TriangleMesh3D, iterations: Integer): TriangleMesh3D
-        => self.TaubinSmoothed(UniformWeights, 0.5, -0.53, iterations);
+        => self.TaubinSmoothed(LaplacianWeighting.UniformWeights, 0.5, -0.53, iterations);
 
     // A vector normalized, or zero where there is nothing to normalize: an
     // isolated vertex touches no face and therefore has no normal.

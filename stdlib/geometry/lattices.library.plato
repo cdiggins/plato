@@ -518,14 +518,17 @@ library Lattices
         => struts.FlatMap(s => KeepSegment(region.Contains(s.Centroid), s));
 
     // The struts whose midpoint lies inside a solid described by a signed
-    // distance field. Whole struts, as above.
+    // distance field (distance <= 0, as Contains). Whole struts, as above.
+    // Written through the interface member Eval, not Contains: the C# backend
+    // emits Contains only for concrete implementers, so a call on this
+    // interface-typed parameter would not compile (stdlib-460).
     Trimmed(struts: Array<Line3D>, solid: ISignedDistanceField3D): Array<Line3D>
-        => struts.FlatMap(s => KeepSegment(solid.Contains(s.Centroid), s));
+        => struts.FlatMap(s => KeepSegment(solid.Eval(s.Centroid) <= 0.0, s));
 
     // The struts whose midpoint lies inside a solid described by a membership
-    // predicate. Whole struts, as above.
+    // predicate. Whole struts, as above; through Eval for the same reason.
     Trimmed(struts: Array<Line3D>, volume: IImplicitVolume3D): Array<Line3D>
-        => struts.FlatMap(s => KeepSegment(volume.Contains(s.Centroid), s));
+        => struts.FlatMap(s => KeepSegment(volume.Eval(s.Centroid), s));
 
     // The struts with both endpoints carried through a point map. This is how a
     // lattice is conformed to something other than its box, and how a graded
