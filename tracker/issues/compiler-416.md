@@ -62,9 +62,9 @@ twelve call sites at once, all of them functions with a buffer receiver.
 
 ## Done means
 
-- [ ] A library function whose first parameter is `Buffer<T>` either emits and compiles, or is
+- [x] A library function whose first parameter is `Buffer<T>` either emits and compiles, or is
       refused with a diagnostic naming the function.
-- [ ] A regression test covers the case — a small library with a builder-receiver function,
+- [x] A regression test covers the case — a small library with a builder-receiver function,
       generated and compiled.
 - [ ] `stdlib/geometry/triangulation.library.plato` drops its parameter-order workaround comment
       if (1) lands.
@@ -79,3 +79,7 @@ pointing at this issue and suggesting the buffer move to a later parameter.
 - **What you give up** — the ergonomic form stays unavailable, so affine algorithms keep paying
   the awkward parameter order; and it enshrines the restriction, which someone must later
   remember to lift.
+
+## Notes
+
+2026-10-19 (TKT-347 in bim-open-toolkit): approach (1) landed. `CSharpWriter.WriteInterfaceLibraryMethods` writes a library function whose first parameter is `List<T>` or `Buffer<T>` (a unique type) as an extension method on `PlatoList` / `PlatoBuffer`; `BuilderReceiverEmissionTests` generates, compiles and runs one of each. The third box, dropping the parameter-order workaround comment in `stdlib/geometry/triangulation.library.plato`, is a stdlib edit outside that ticket's fence and is left for the stdlib's owner.

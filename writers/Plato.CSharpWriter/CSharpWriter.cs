@@ -853,6 +853,13 @@ namespace Ara3D.Geometry.CSharpWriter
                    ? pt.Def.Name.StartsWith("IArray") && !pt.Def.Name.StartsWith("IArrayLike")
                    : ConcreteArrayTypeNames.Contains(pt.Def.Name));
 
+        // A builder receiver (List<T>, Buffer<T>): a unique type, which gets no generated struct
+        // and so no plan of its own. A library function over one is written here as an extension
+        // method on the runtime builder (PlatoList, PlatoBuffer), like an array receiver; before
+        // this it was dropped without a word (TKT-347, compiler-416).
+        private static bool IsBuilderExtensionReceiver(TypeExpression pt)
+            => pt?.Def != null && pt.Def.IsUnique && (pt.Def.Name == "List" || pt.Def.Name == "Buffer");
+
         public CSharpWriter WriteInterfaceLibraryMethods()
         {
             WriteLine($"public static partial class Extensions");
@@ -886,11 +893,12 @@ namespace Ara3D.Geometry.CSharpWriter
                 var indexable = IsIndexableReceiver(f.Parameters[0].Type);
                 if (indexable && arrayFunctionNames.Contains(f.Name))
                     continue;
-                if (!indexable && !IsListExtensionReceiver(f.Parameters[0].Type))
+                if (!indexable && !IsListExtensionReceiver(f.Parameters[0].Type)
+                    && !IsBuilderExtensionReceiver(f.Parameters[0].Type))
                     continue;
 
-                // The array INTRINSICS (Count/At/Reduce/FlatMap/...) are provided by the
-                // handwritten runtime; emitting a stub would shadow it. Any other bodiless
+                // The array and builder INTRINSICS (Count/At/Reduce/FlatMap/..., Add/Set/Freeze/...)
+                // are provided by the handwritten runtime; emitting a stub would shadow it. Any other bodiless
                 // function on an array receiver gets the common throwing stub (plato-459).
                 if (f.Body == null && IsHostIntrinsic(f))
                     continue;

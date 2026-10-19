@@ -1,0 +1,26 @@
+// Fixture for BuilderReceiverEmissionTests (TKT-347, compiler-416): library functions whose
+// first parameter is a builder, List<T> or Buffer<T>, concrete and generic. The writer must
+// emit each as an extension method on the runtime builder (PlatoList, PlatoBuffer).
+
+type Integer { }
+type Boolean { }
+type Array<T> { }
+
+unique primitive List<T> { }
+unique primitive Buffer<T> { }
+
+library Intrinsics {
+    Add(xs: List<$T>, x: $T): List<$T>;
+    Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>;
+}
+
+library BuilderHelpers {
+    AddTwice(xs: List<Integer>, x: Integer): List<Integer>
+        => xs.Add(x).Add(x);
+    AddOnce(xs: List<$T>, x: $T): List<$T>
+        => xs.Add(x);
+    SetBoth(xs: Buffer<Integer>, i: Integer, j: Integer, x: Integer): Buffer<Integer>
+        => xs.Set(i, x).Set(j, x);
+    SetOne(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>
+        => xs.Set(i, x);
+}
