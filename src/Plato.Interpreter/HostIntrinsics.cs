@@ -67,8 +67,8 @@ public sealed class HostIntrinsics
         Add("Divide(Number, Number)", (_, a) => n.Divide(D(a[0]), D(a[1])));
         Add("Modulo(Number, Number)", (_, a) => n.Modulo(D(a[0]), D(a[1])));
         Add("Negative(Number)", (_, a) => n.Negative(D(a[0])));
-        Add("LessThanOrEquals(Number, Number)", (_, a) => D(a[0]) <= D(a[1]));
-        Add("Equals(Number, Number)", (_, a) => D(a[0]).Equals(D(a[1])));
+        Add("LessThanOrEquals(Number, Number)", (_, a) => Boxes.Of(D(a[0]) <= D(a[1])));
+        Add("Equals(Number, Number)", (_, a) => Boxes.Of(D(a[0]).Equals(D(a[1]))));
         Add("Hash(Number)", (_, a) => n.HashNumber(D(a[0])));
         Add("Floor(Number)", (_, a) => n.Floor(D(a[0])));
         Add("Round(Number, Integer)", (_, a) => n.Round(D(a[0]), L(a[1])));
@@ -84,46 +84,46 @@ public sealed class HostIntrinsics
         Add("MaxValue(Number)", (_, a) => n.MaxValue);
         Add("Epsilon(Number)", (_, a) => n.Epsilon);
         Add("Pi(Number)", (_, a) => n.Pi);
-        Add("IsNaN(Number)", (_, a) => double.IsNaN(D(a[0])));
-        Add("IsInfinite(Number)", (_, a) => double.IsInfinity(D(a[0])));
-        Add("ToInteger(Number)", (_, a) => n.ToInteger(D(a[0])));
+        Add("IsNaN(Number)", (_, a) => Boxes.Of(double.IsNaN(D(a[0]))));
+        Add("IsInfinite(Number)", (_, a) => Boxes.Of(double.IsInfinity(D(a[0]))));
+        Add("ToInteger(Number)", (_, a) => Boxes.Of(n.ToInteger(D(a[0]))));
 
         // Integer
-        Add("Add(Integer, Integer)", (_, a) => n.I(L(a[0]) + L(a[1])));
-        Add("Subtract(Integer, Integer)", (_, a) => n.I(L(a[0]) - L(a[1])));
-        Add("Multiply(Integer, Integer)", (_, a) => n.I(L(a[0]) * L(a[1])));
-        Add("Divide(Integer, Integer)", (_, a) => n.I(L(a[0]) / L(a[1])));
-        Add("Modulo(Integer, Integer)", (_, a) => n.I(L(a[0]) % L(a[1])));
-        Add("Negative(Integer)", (_, a) => n.I(-L(a[0])));
-        Add("LessThanOrEquals(Integer, Integer)", (_, a) => L(a[0]) <= L(a[1]));
-        Add("Equals(Integer, Integer)", (_, a) => L(a[0]) == L(a[1]));
-        Add("Hash(Integer)", (_, a) => n.HashInteger(L(a[0])));
-        Add("BitwiseAnd(Integer, Integer)", (_, a) => n.I(L(a[0]) & L(a[1])));
-        Add("BitwiseOr(Integer, Integer)", (_, a) => n.I(L(a[0]) | L(a[1])));
-        Add("BitwiseXor(Integer, Integer)", (_, a) => n.I(L(a[0]) ^ L(a[1])));
-        Add("BitwiseNot(Integer)", (_, a) => n.I(~L(a[0])));
-        Add("ShiftLeft(Integer, Integer)", (_, a) => n.I(L(a[0]) << (int)L(a[1])));
-        Add("ShiftRight(Integer, Integer)", (_, a) => n.I(L(a[0]) >> (int)L(a[1])));
-        Add("MinValue(Integer)", (_, a) => n.IntegerMinValue);
-        Add("MaxValue(Integer)", (_, a) => n.IntegerMaxValue);
+        Add("Add(Integer, Integer)", (_, a) => Boxes.Of(n.I(L(a[0]) + L(a[1]))));
+        Add("Subtract(Integer, Integer)", (_, a) => Boxes.Of(n.I(L(a[0]) - L(a[1]))));
+        Add("Multiply(Integer, Integer)", (_, a) => Boxes.Of(n.I(L(a[0]) * L(a[1]))));
+        Add("Divide(Integer, Integer)", (_, a) => Boxes.Of(n.I(L(a[0]) / L(a[1]))));
+        Add("Modulo(Integer, Integer)", (_, a) => Boxes.Of(n.I(L(a[0]) % L(a[1]))));
+        Add("Negative(Integer)", (_, a) => Boxes.Of(n.I(-L(a[0]))));
+        Add("LessThanOrEquals(Integer, Integer)", (_, a) => Boxes.Of(L(a[0]) <= L(a[1])));
+        Add("Equals(Integer, Integer)", (_, a) => Boxes.Of(L(a[0]) == L(a[1])));
+        Add("Hash(Integer)", (_, a) => Boxes.Of(n.HashInteger(L(a[0]))));
+        Add("BitwiseAnd(Integer, Integer)", (_, a) => Boxes.Of(n.I(L(a[0]) & L(a[1]))));
+        Add("BitwiseOr(Integer, Integer)", (_, a) => Boxes.Of(n.I(L(a[0]) | L(a[1]))));
+        Add("BitwiseXor(Integer, Integer)", (_, a) => Boxes.Of(n.I(L(a[0]) ^ L(a[1]))));
+        Add("BitwiseNot(Integer)", (_, a) => Boxes.Of(n.I(~L(a[0]))));
+        Add("ShiftLeft(Integer, Integer)", (_, a) => Boxes.Of(n.I(L(a[0]) << (int)L(a[1]))));
+        Add("ShiftRight(Integer, Integer)", (_, a) => Boxes.Of(n.I(L(a[0]) >> (int)L(a[1]))));
+        Add("MinValue(Integer)", (_, a) => Boxes.Of(n.IntegerMinValue));
+        Add("MaxValue(Integer)", (_, a) => Boxes.Of(n.IntegerMaxValue));
         Add("ToNumber(Integer)", (_, a) => n.ToNumber(L(a[0])));
 
         // Boolean
-        Add("And(Boolean, Boolean)", (_, a) => B(a[0]) && B(a[1]));
-        Add("Or(Boolean, Boolean)", (_, a) => B(a[0]) || B(a[1]));
-        Add("Not(Boolean)", (_, a) => !B(a[0]));
+        Add("And(Boolean, Boolean)", (_, a) => Boxes.Of(B(a[0]) && B(a[1])));
+        Add("Or(Boolean, Boolean)", (_, a) => Boxes.Of(B(a[0]) || B(a[1])));
+        Add("Not(Boolean)", (_, a) => Boxes.Of(!B(a[0])));
 
         // Character and String: the C# runtime orders strings with string.CompareTo (the current
         // culture) and characters by code point.
-        Add("LessThanOrEquals(Character, Character)", (_, a) => (char)a[0] <= (char)a[1]);
-        Add("LessThanOrEquals(String, String)", (_, a) => string.Compare((string)a[0], (string)a[1]) <= 0);
-        Add("Equals(String, String)", (_, a) => string.Equals((string)a[0], (string)a[1], StringComparison.Ordinal));
-        Add("Equals(Character, Character)", (_, a) => (char)a[0] == (char)a[1]);
-        Add("Count(String)", (_, a) => (long)((string)a[0]).Length);
+        Add("LessThanOrEquals(Character, Character)", (_, a) => Boxes.Of((char)a[0] <= (char)a[1]));
+        Add("LessThanOrEquals(String, String)", (_, a) => Boxes.Of(string.Compare((string)a[0], (string)a[1]) <= 0));
+        Add("Equals(String, String)", (_, a) => Boxes.Of(string.Equals((string)a[0], (string)a[1], StringComparison.Ordinal)));
+        Add("Equals(Character, Character)", (_, a) => Boxes.Of((char)a[0] == (char)a[1]));
+        Add("Count(String)", (_, a) => Boxes.Of((long)((string)a[0]).Length));
         Add("At(String, Integer)", (_, a) => ((string)a[0])[(int)L(a[1])]);
 
         // Array: the five-function kernel.
-        Add("Count(Array)", (_, a) => (long)((PlatoArray)a[0]).Count);
+        Add("Count(Array)", (_, a) => Boxes.Of((long)((PlatoArray)a[0]).Count));
         Add("At(Array, Integer)", (_, a) => ((PlatoArray)a[0]).Items[(int)L(a[1])]);
         Add("MapRange(Integer, Function1)", (interp, a) =>
         {
@@ -131,7 +131,7 @@ public sealed class HostIntrinsics
             var f = (PlatoFunction)a[1];
             var items = new object[Math.Max(count, 0)];
             for (var i = 0; i < count; i++)
-                items[i] = f.Invoke(new object[] { (long)i });
+                items[i] = f.Invoke(new object[] { Boxes.Of((long)i) });
             return new PlatoArray(ElementTypeOf(f.Type, 1), items);
         });
         Add("Reduce(Array, $U, Function2)", (interp, a) =>
@@ -159,7 +159,7 @@ public sealed class HostIntrinsics
         });
 
         // List<T>, the growable builder.
-        Add("Count(List)", (_, a) => (long)((PlatoBuilder)a[0]).Count);
+        Add("Count(List)", (_, a) => Boxes.Of((long)((PlatoBuilder)a[0]).Count));
         Add("At(List, Integer)", (_, a) => ((PlatoBuilder)a[0]).At((int)L(a[1])));
         Add("Add(List, $T)", (_, a) => ((PlatoBuilder)a[0]).Add(a[1]));
         Add("AddRange(List, Array)", (_, a) => ((PlatoBuilder)a[0]).AddRange((PlatoArray)a[1]));
@@ -168,7 +168,7 @@ public sealed class HostIntrinsics
         Add("EmptyList(Array)", (_, a) => new PlatoBuilder(((PlatoArray)a[0]).ElementType, false, 0));
 
         // Buffer<T>, the fixed-size builder.
-        Add("Count(Buffer)", (_, a) => (long)((PlatoBuilder)a[0]).Count);
+        Add("Count(Buffer)", (_, a) => Boxes.Of((long)((PlatoBuilder)a[0]).Count));
         Add("At(Buffer, Integer)", (_, a) => ((PlatoBuilder)a[0]).At((int)L(a[1])));
         Add("Set(Buffer, Integer, $T)", (_, a) => ((PlatoBuilder)a[0]).Set((int)L(a[1]), a[2]));
         Add("Freeze(Buffer)", (_, a) => ((PlatoBuilder)a[0]).Freeze());

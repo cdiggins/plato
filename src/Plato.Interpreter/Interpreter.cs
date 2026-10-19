@@ -322,9 +322,9 @@ public sealed partial class Interpreter
             }
 
             case FunctionType.SumEquality:
-                return f.Name == "Equals"
+                return Boxes.Of(f.Name == "Equals"
                     ? ValueEquality.Equals(args[0], args[1])
-                    : !ValueEquality.Equals(args[0], args[1]);
+                    : !ValueEquality.Equals(args[0], args[1]));
 
             case FunctionType.Intrinsic:
                 return ApplyHost(f, args);
@@ -504,7 +504,7 @@ public sealed partial class Interpreter
             Keys = keys.ToArray(),
             ArgOf = argOf.ToArray(),
             BindsArgumentsInPlace = keys.Count == tir.Parameters.Count
-                && !(tir.Body?.Descendants().Any(n => n is TirAssign { LValue: TirParameter }) ?? false),
+                && !AssignsParameter(tir.Body),
         };
         return layout;
     }
@@ -533,26 +533,44 @@ public sealed partial class Interpreter
         throw new EvaluationException($"invoking a non-function value {ValueFormat.Format(target, 60)}");
     }
 
-    private readonly Dictionary<TirLambda, DefSymbol[]> _lambdaKeys = new Dictionary<TirLambda, DefSymbol[]>(ReferenceEqualityComparer.Instance);
+    private readonly Dictionary<TirLambda, ParameterLayout> _lambdaLayouts = new Dictionary<TirLambda, ParameterLayout>(ReferenceEqualityComparer.Instance);
 
-    private DefSymbol[] LambdaKeys(TirLambda lam)
+    /// <summary>A lambda's parameter symbols, shared by its calls; its argument arrays are fresh
+    /// per call (the host builds one per element), so they bind in place unless the body assigns
+    /// a parameter.</summary>
+    private ParameterLayout LambdaLayout(TirLambda lam)
     {
-        if (!_lambdaKeys.TryGetValue(lam, out var keys))
-            _lambdaKeys[lam] = keys = lam.Parameters.Cast<DefSymbol>().ToArray();
-        return keys;
+        if (!_lambdaLayouts.TryGetValue(lam, out var layout))
+            _lambdaLayouts[lam] = layout = new ParameterLayout
+            {
+                Keys = lam.Parameters.Cast<DefSymbol>().ToArray(),
+                ArgOf = Enumerable.Range(0, lam.Parameters.Count).ToArray(),
+                BindsArgumentsInPlace = !AssignsParameter(lam.Body),
+            };
+        return layout;
     }
+
+    private static bool AssignsParameter(TirNode body)
+        => body?.Descendants().Any(n => n is TirAssign { LValue: TirParameter }) ?? false;
 
     private PlatoFunction MakeClosure(TirLambda lam, Environment env)
     {
         var captured = env.Snapshot();
-        var ps = LambdaKeys(lam);
+        var layout = LambdaLayout(lam);
+        var ps = layout.Keys;
         return new PlatoFunction(lam.Type, ps.Length, args =>
         {
             if (args.Count != ps.Length)
                 throw new EvaluationException($"a lambda of {ps.Length} parameters was given {args.Count} arguments");
-            var values = new object[ps.Length];
-            for (var i = 0; i < values.Length; i++)
-                values[i] = args[i];
+            object[] values;
+            if (layout.BindsArgumentsInPlace && args is object[] own)
+                values = own;
+            else
+            {
+                values = new object[ps.Length];
+                for (var i = 0; i < values.Length; i++)
+                    values[i] = args[i];
+            }
             return EvalBody(lam.Body, new Environment(captured, null, ps, values));
         });
     }
@@ -564,7 +582,7 @@ public sealed partial class Interpreter
             case LiteralTypesEnum.Integer:
             {
                 var l = Convert.ToInt64(lit.Value);
-                return lit.Type?.Def?.Name == "Number" ? (object)Numbers.ToNumber(l) : Numbers.I(l);
+                return lit.Type?.Def?.Name == "Number" ? (object)Numbers.ToNumber(l) : Boxes.Of(Numbers.I(l));
             }
             case LiteralTypesEnum.Number:
                 return Numbers.N(Convert.ToDouble(lit.Value));

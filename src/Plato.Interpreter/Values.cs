@@ -296,3 +296,15 @@ public static class ValueFormat
         }
     }
 }
+
+/// <summary>Boxed Booleans and small Integers, allocated once: comparisons, counts and loop
+/// indices are the most frequent results the interpreter boxes.</summary>
+public static class Boxes
+{
+    private const long Low = -128, High = 1023;
+    private static readonly object True = true, False = false;
+    private static readonly object[] Small = Enumerable.Range((int)Low, (int)(High - Low + 1)).Select(i => (object)(long)i).ToArray();
+
+    public static object Of(bool b) => b ? True : False;
+    public static object Of(long x) => x >= Low && x <= High ? Small[x - Low] : x;
+}
