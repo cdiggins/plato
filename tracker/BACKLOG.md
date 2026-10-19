@@ -56,7 +56,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-456](issues/plato-456.md) | C# writer does not generate IIndexable functions for Array receivers | bug | ? | ? | ? | plato | ready |  |
 | [plato-457](issues/plato-457.md) | C# writer does not escape C# keywords used as Plato names | bug | ? | ? | ? | plato | ready |  |
 | [plato-458](issues/plato-458.md) | C# writer's sum-type Equals compares inactive cases' fields | bug | ? | ? | ? | plato | ready |  |
-| [plato-459](issues/plato-459.md) | C# writer stubs bodiless functions three different ways | bug | ? | ? | ? | plato | ready |  |
 | [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | p1 | L | med | plato | idea |  |
 | [compiler-416](issues/compiler-416.md) | Library functions taking Buffer<T> as first parameter are silently dropped from emitted C# | problem | p2 | M | med | compiler | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |

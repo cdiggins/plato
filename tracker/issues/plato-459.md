@@ -2,14 +2,14 @@
 id: plato-459
 title: C# writer stubs bodiless functions three different ways
 type: bug
-status: ready
+status: done
 priority: "?"
 effort: "?"
 risk: "?"
 area: plato
 sprint: 
 created: 2026-10-17
-closed:
+closed: 2026-10-18
 links: []
 ---
 
