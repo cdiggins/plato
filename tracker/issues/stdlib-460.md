@@ -2,14 +2,14 @@
 id: stdlib-460
 title: Three geometry-tier functions emit C# that does not compile (Contains on an existential, Constants.UniformWeights)
 type: bug
-status: ready
+status: done
 priority: "?"
 effort: "?"
 risk: "?"
 area: stdlib
 sprint: 
 created: 2026-10-17
-closed:
+closed: 2026-10-18
 links: []
 ---
 
