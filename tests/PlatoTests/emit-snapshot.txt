@@ -57,6 +57,6 @@
 @ Transforms.g.cs :: Vector3 TransformNormal(this Transform3D x, Vector3 v)
   [MethodImpl(AggressiveInlining)] public static Vector3 TransformNormal(this Transform3D x, Vector3 v) => v.TransformNormal(x.Matrix);
 @ _IdentityTransform3D.g.cs :: public Quaternion Quaternion() =>
-  [MethodImpl(AggressiveInlining)] public Quaternion Quaternion() => throw new NotImplementedException();
+  [MethodImpl(AggressiveInlining)] public Quaternion Quaternion() => throw new System.NotImplementedException("plato: Quaternion is declared without a body");
 @ _Identity2D.g.cs :: public Matrix3x2 Matrix() =>
-  [MethodImpl(AggressiveInlining)] public Matrix3x2 Matrix() => throw new NotImplementedException();
+  [MethodImpl(AggressiveInlining)] public Matrix3x2 Matrix() => throw new System.NotImplementedException("plato: Matrix is declared without a body");

@@ -141,7 +141,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     {
         if (_tir?.Body == null)
         {
-            WriteLine(" => throw new NotImplementedException();");
+            WriteLine(CSharpWriter.BodilessStub(_tir?.Original?.Name ?? "?"));
             return;
         }
 

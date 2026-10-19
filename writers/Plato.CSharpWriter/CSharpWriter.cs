@@ -764,6 +764,22 @@ namespace Ara3D.Geometry.CSharpWriter
             }
         }
 
+        // The host contract: what the handwritten Plato.Intrinsics runtime implements for a
+        // bodiless declaration. That is every declaration of `library Intrinsics`
+        // (stdlib/foundation/intrinsics.library.plato), and every interface member, which a
+        // primitive's runtime struct implements as an instance member (`Boolean.And`). Every
+        // other bodiless function, a library function declared without a body, is a stub
+        // (BodilessStub, plato-459).
+        public static bool IsHostIntrinsic(FunctionDef f)
+            => f?.OwnerType?.Name == "Intrinsics"
+               || f?.FunctionType == FunctionType.Interface
+               || f?.OwnerType?.IsInterface() == true;
+
+        // The one body every bodiless non-intrinsic function gets, whatever its receiver
+        // (plato-459): it throws and names the function, so a call fails where it is made.
+        public static string BodilessStub(string functionName)
+            => $" => throw new System.NotImplementedException(\"plato: {functionName} is declared without a body\");";
+
         // Stops the C# build when it is not under the profile this code was written for: the
         // runtime binds NumberValue from the MSBuild property PlatoNumberProfile, and literals here
         // are spelled for this writer's profile.
@@ -873,9 +889,10 @@ namespace Ara3D.Geometry.CSharpWriter
                 if (!indexable && !IsListExtensionReceiver(f.Parameters[0].Type))
                     continue;
 
-                // Declared-only functions (the array INTRINSICS: Map/Reduce/Zip/...) are provided
-                // by the handwritten Ara3D.Collections runtime; emitting a stub would shadow it.
-                if (f.Body == null)
+                // The array INTRINSICS (Count/At/Reduce/FlatMap/...) are provided by the
+                // handwritten runtime; emitting a stub would shadow it. Any other bodiless
+                // function on an array receiver gets the common throwing stub (plato-459).
+                if (f.Body == null && IsHostIntrinsic(f))
                     continue;
 
                 if (IgnoredFunctions.Contains(f.Name))

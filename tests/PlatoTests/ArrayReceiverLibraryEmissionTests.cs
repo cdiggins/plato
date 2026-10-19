@@ -62,7 +62,8 @@ library ArrayKernels
     // Bodied, GENERIC element type: emits as a generic extension method.
     Head(xs: Array<$T>): $T => xs.At(0);
 
-    // Declared-only: an array INTRINSIC, provided by the handwritten runtime.
+    // Declared-only outside `library Intrinsics`: not part of the host contract, so it gets the
+    // common throwing stub (plato-459), like a bodiless function on any other receiver.
     Last(xs: Array<$T>): $T;
 }
 ";
@@ -98,8 +99,8 @@ library ArrayKernels
                 "a bodied Array<$T>-receiver library function must emit as a generic extension method");
 
         [Test]
-        public static void DeclaredOnlyArrayReceiverIsNotEmitted()
-            => Assert.That(EmitExtensions(), Does.Not.Contain("Last"),
-                "a body-less Array<$T>-receiver function is an intrinsic: the handwritten runtime owns it");
+        public static void DeclaredOnlyArrayReceiverEmitsTheCommonStub()
+            => Assert.That(EmitExtensions(), Does.Contain("Last").And.Contain("plato: Last is declared without a body"),
+                "a body-less Array<$T>-receiver function outside library Intrinsics throws where it is called (plato-459)");
     }
 }

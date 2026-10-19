@@ -326,14 +326,11 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     // a one-liner with no body-writer heuristics. Reproduces CSharpFunctionBodyWriter's Body==null
     // early return byte-for-byte (WriteLine appends Environment.NewLine) so the legacy writer is no
     // longer on the body-less path (consolidation plan C4 step 1).
-    private static readonly string BodilessBodyText =
-        " => throw new NotImplementedException();" + Environment.NewLine;
-
     public CSharpTypeWriter WriteBody(CSharpFunctionInfo f, bool isStatic)
     {
-        // Body-less function: emit the fixed stub directly (consolidation plan C4 step 1).
+        // Body-less function: the common throwing stub (plato-459).
         if (f.Body == null)
-            return WriteBodyText(BodilessBodyText);
+            return WriteBodyText(CSharpWriter.BodilessStub(f.Name) + Environment.NewLine);
 
         // Bodied member/static: emitted from the monomorphized TIR (Elaborate → Monomorphize →
         // Emit) — the SOLE C# body writer since the legacy CSharpFunctionBodyWriter was retired

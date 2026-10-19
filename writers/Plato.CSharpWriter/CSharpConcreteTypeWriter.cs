@@ -769,7 +769,13 @@ namespace Ara3D.Geometry.CSharpWriter
                 // extension, so there is no CS0121.)
                 var intrinsicBackedNonScalar = CSharpWriter.IsIntrinsicBacked(Name)
                     && !CSharpWriter.ScalarPrimitives.ContainsKey(Name);
-                if (!intrinsicBackedNonScalar)
+                // A scalar has no generated member for a bodiless function outside the host
+                // contract, so the forwarder `x.Foo()` would bind to itself and recurse forever
+                // (ParseStep on String). It gets the common throwing stub instead (plato-459).
+                if (CSharpWriter.ScalarPrimitives.ContainsKey(Name)
+                    && !CSharpWriter.IsHostIntrinsic(f.Implementation))
+                    tw.WriteLine(fi.ExtensionSignature + CSharpWriter.BodilessStub(fi.Name));
+                else if (!intrinsicBackedNonScalar)
                     tw.WriteLine(GetExtensionMethod(fi));
             }
 
