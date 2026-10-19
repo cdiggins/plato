@@ -81,9 +81,10 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Integer ShiftLeft(Integer bits) => Value << (int)bits.Value;
         [MethodImpl(AggressiveInlining)] public Integer ShiftRight(Integer bits) => Value >> (int)bits.Value;
 
-        /// <summary>The array kernel's only constructor (intrinsics.library.plato).</summary>
+        /// <summary>The array kernel's only constructor (intrinsics.library.plato); see
+        /// <see cref="ArrayIntrinsics.MapRange{T}"/>, which computes each element once.</summary>
         [MethodImpl(AggressiveInlining)]
-        public IReadOnlyList<T> MapRange<T>(Func<Integer, T> f) => new ReadOnlyList<T>(checked((int)Value), i => f(i));
+        public IReadOnlyList<T> MapRange<T>(Func<Integer, T> f) => checked((int)Value).MapRange(f);
 
 #if PLATO_FORWARD_CONCEPTS
         // See the note on Number: explicit because the two names are already statics, methods

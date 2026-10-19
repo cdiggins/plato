@@ -19,9 +19,21 @@ namespace Ara3D.Geometry
     /// </summary>
     public static class ArrayIntrinsics
     {
-        [MethodImpl(AggressiveInlining)]
+        /// <summary>The <c>count</c> values <c>f(0)</c> to <c>f(count - 1)</c>, each computed once,
+        /// here, in index order; a count of zero or less gives the empty array. Materialised, not
+        /// lazy: a lazy list called <c>f</c> on every read, so a value read from several places
+        /// was computed again at each (TKT-350: MeshModel meshed every face once per read of its
+        /// outcomes). The interpreter's MapRange is eager the same way, so both backends run
+        /// <c>f</c> on the same indices and fault at the same element.</summary>
         public static IReadOnlyList<T> MapRange<T>(this int count, Func<Integer, T> f)
-            => new ReadOnlyList<T>(count, i => f(i));
+        {
+            if (count <= 0)
+                return Array.Empty<T>();
+            var items = new T[count];
+            for (var i = 0; i < count; i++)
+                items[i] = f(i);
+            return items;
+        }
 
         [MethodImpl(AggressiveInlining)]
         public static TAcc Reduce<T, TAcc>(this IReadOnlyList<T> xs, TAcc acc, Func<TAcc, T, TAcc> f)

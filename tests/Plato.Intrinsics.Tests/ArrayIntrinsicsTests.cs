@@ -42,6 +42,34 @@ public static class ArrayIntrinsicsTests
         Assert.That(xs.Count, Is.EqualTo(4));
     }
 
+    // TKT-350 (bim-open-toolkit): a mapped range computes each element once, however often it is
+    // read. The lazy list it used to be called its function on every read, so a pipeline that
+    // read its face outcomes from three places meshed every face three times and more.
+    [Test]
+    public static void MapRangeCallsItsFunctionOncePerElement()
+    {
+        var calls = 0;
+        var xs = 4.MapRange(i => { calls++; return i.Value * 3; });
+        for (var read = 0; read < 3; read++)
+            Assert.That(xs.Select(x => x).ToArray(), Is.EqualTo(new[] { 0, 3, 6, 9 }));
+        Assert.That(xs[2], Is.EqualTo(6));
+        Assert.That(calls, Is.EqualTo(4), "one call per element, not one per read");
+    }
+
+    [Test]
+    public static void IntegerMapRangeCallsItsFunctionOncePerElement()
+    {
+        var calls = 0;
+        var xs = ((Integer)3).MapRange(i => { calls++; return i; });
+        _ = xs[0]; _ = xs[0]; _ = xs.Count; _ = xs.ToArray();
+        Assert.That(calls, Is.EqualTo(3));
+    }
+
+    [Test]
+    public static void MapRangeOfANegativeCountIsEmpty()
+        => Assert.That((-2).MapRange(i => i.Value).Count, Is.EqualTo(0),
+            "as the interpreter's MapRange, which builds Math.Max(count, 0) elements");
+
     [Test]
     public static void ReduceFoldsLeftToRight()
     {
