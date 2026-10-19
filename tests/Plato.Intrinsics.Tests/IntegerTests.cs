@@ -74,7 +74,8 @@ public static class IntegerTests
 
     [Test]
     public static void AdditionWrapsAroundUnchecked()
-        => Assert.That((Integer.MaxValue + I(1)).Value, Is.EqualTo(int.MinValue));
+        => Assert.That((Integer.MaxValue + I(1)).Value, Is.EqualTo(IntegerValue.MinValue),
+            "wraps at the profile's width: 64 bits under cpu64, 32 under gpu32");
 
     [Test]
     public static void ComparisonOperators()
@@ -103,9 +104,31 @@ public static class IntegerTests
     [Test]
     public static void Limits()
     {
-        Assert.That(Integer.MinValue.Value, Is.EqualTo(int.MinValue));
-        Assert.That(Integer.MaxValue.Value, Is.EqualTo(int.MaxValue));
+        Assert.That(Integer.MinValue.Value, Is.EqualTo(IntegerValue.MinValue));
+        Assert.That(Integer.MaxValue.Value, Is.EqualTo(IntegerValue.MaxValue));
+        Assert.That(PlatoNumberProfile.IntegerBits, Is.EqualTo(PlatoNumberProfile.Name == "cpu64" ? 64 : 32));
     }
+
+#if !PLATO_NUMBER_GPU32
+    // TARGET-LANGUAGE.md section 5.6 (TKT-315): under cpu64 an Integer is exact within
+    // ±(2^53 - 1), so it converts to Number and back without loss, and products past 2^31 do
+    // not wrap. gpu32 keeps a 32-bit Integer, so these two tests exist only under cpu64.
+    [Test]
+    public static void Cpu64IntegerIsExactWithinTwoToTheFiftyThree()
+    {
+        var max = new Integer((IntegerValue)((1L << 53) - 1));
+        Assert.That(((Number)max).ToInteger.Value, Is.EqualTo(max.Value));
+        Assert.That((-max).ToNumber.ToInteger.Value, Is.EqualTo(-max.Value));
+        Assert.That((I(65536) * I(65536)).Value, Is.EqualTo(1L << 32));
+    }
+
+    [Test]
+    public static void Cpu64IndexOutsideIntRangeThrows()
+    {
+        var big = new Integer((IntegerValue)(1L << 40));
+        Assert.Throws<OverflowException>(() => { int i = big; });
+    }
+#endif
 
     // ---------------------------------------------------------------------------------------
     // The Bitwise interface: a property for the no-arg member, methods for the rest, operators
@@ -149,9 +172,9 @@ public static class IntegerTests
     }
 
     [Test]
-    public static void ShiftCountsAreTakenModuloThirtyTwo()
-        => Assert.That(I(1).ShiftLeft(32).Value, Is.EqualTo(1),
-            "C# masks the shift count to its low five bits");
+    public static void ShiftCountsAreTakenModuloTheWidth()
+        => Assert.That(I(1).ShiftLeft(PlatoNumberProfile.IntegerBits).Value, Is.EqualTo(1),
+            "C# masks the shift count to the width's low bits: five for int, six for long");
 
     // ---------------------------------------------------------------------------------------
     // Conversions to Number, and the array kernel's only constructor.

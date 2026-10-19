@@ -78,7 +78,7 @@ public static class ArrayIntrinsicsTests
     public static void TheKernelComposes()
     {
         // count -> map -> flat-map -> fold, the whole array contract in one expression.
-        var total = 4.MapRange(i => i.Value)
+        var total = 4.MapRange(i => (int)i)
             .FlatMap(x => (IReadOnlyList<int>)new[] { x, x })
             .Reduce(0, (a, x) => a + x);
         Assert.That(total, Is.EqualTo(12));

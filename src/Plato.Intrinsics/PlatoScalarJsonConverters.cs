@@ -47,7 +47,7 @@ namespace Ara3D.Geometry
     public sealed class IntegerJsonConverter : JsonConverter<Integer>
     {
         public override Integer Read(ref Utf8JsonReader reader, System.Type type, JsonSerializerOptions options)
-            => reader.GetInt32();
+            => PlatoNumberProfile.ReadJsonInteger(ref reader);
 
         public override void Write(Utf8JsonWriter writer, Integer value, JsonSerializerOptions options)
             => writer.WriteNumberValue(value.Value);

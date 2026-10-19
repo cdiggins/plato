@@ -126,9 +126,9 @@ namespace Ara3D.Geometry
         public Number Cos { [MethodImpl(AggressiveInlining)] get => NumberMath.Cos(Value); }
         public Boolean IsNaN { [MethodImpl(AggressiveInlining)] get => NumberValue.IsNaN(Value); }
         public Boolean IsInfinite { [MethodImpl(AggressiveInlining)] get => NumberValue.IsInfinity(Value); }
-        public Integer ToInteger { [MethodImpl(AggressiveInlining)] get => (int)Value; }
+        public Integer ToInteger { [MethodImpl(AggressiveInlining)] get => (IntegerValue)Value; }
 
-        [MethodImpl(AggressiveInlining)] public Number Round(Integer digits) => NumberMath.Round(Value, digits.Value);
+        [MethodImpl(AggressiveInlining)] public Number Round(Integer digits) => NumberMath.Round(Value, (int)digits.Value);
         [MethodImpl(AggressiveInlining)] public Number Pow(Number power) => NumberMath.Pow(Value, power.Value);
         [MethodImpl(AggressiveInlining)] public Number FusedMultiplyAdd(Number y, Number z) => NumberMath.FusedMultiplyAdd(Value, y.Value, z.Value);
         [MethodImpl(AggressiveInlining)] public Number Atan2Radians(Number x) => NumberMath.Atan2(Value, x.Value);

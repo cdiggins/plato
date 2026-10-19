@@ -46,12 +46,15 @@ profile. There is no second floating type and no per-declaration width.
 
 | Profile | `Number` | `Integer` | Selected by |
 |---|---|---|---|
-| `cpu64` (default) | IEEE 754 binary64 | 32-bit two's complement today; 64-bit storage, exact within ±(2^53 − 1), is the stated target | nothing, or `Plato.CLI --profile=cpu64` |
+| `cpu64` (default) | IEEE 754 binary64 | 64-bit two's complement; every value within ±(2^53 − 1) converts to `Number` exactly | nothing, or `Plato.CLI --profile=cpu64` |
 | `gpu32` | IEEE 754 binary32 | 32-bit two's complement | `Plato.CLI --profile=gpu32` |
 
-Where each backend stands (2026-10-17): the C# writer implements both profiles. Its output names
-the machine number `NumberValue`, an alias `src/Plato.Intrinsics/NumberProfile.cs` binds from the
-MSBuild property `PlatoNumberProfile` (`dotnet build -p:PlatoNumberProfile=gpu32`); the emitted
+Where each backend stands (2026-10-18): the C# writer and the interpreter implement both
+profiles. The C# output names the machine number `NumberValue`, an alias
+`src/Plato.Intrinsics/NumberProfile.cs` binds from the MSBuild property `PlatoNumberProfile`
+(`dotnet build -p:PlatoNumberProfile=gpu32`), which binds the machine integer `IntegerValue`
+inside the `Integer` wrapper the same way; an `Integer` converts implicitly to `int` for .NET
+indexers and counts, checked under `cpu64`, so an index past the `int` range throws; the emitted
 `NumberProfile.g.cs` stops a build whose property disagrees with the profile the code was
 generated under, and every emitted file names its profile in the header. The other writers ignore
 the profile and keep fixed types: TypeScript and Rust binary64, C++, CUDA and GLSL binary32.
