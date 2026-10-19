@@ -21,14 +21,7 @@ namespace PlatoTests
     public static class SumTypeCodegenTests
     {
         private static string SumDir()
-        {
-            for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
-            {
-                var c = Path.Combine(dir.FullName, "plato-test-sum");
-                if (Directory.Exists(c)) return c;
-            }
-            throw new DirectoryNotFoundException("plato-test-sum not found above " + AppContext.BaseDirectory);
-        }
+            => CheckerTestSupport.FindFolder("plato-test-sum");
 
         private static CSharpWriter Emit(string file)
         {

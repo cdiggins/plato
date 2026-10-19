@@ -19,16 +19,7 @@ namespace PlatoTests
     public static class ExistentialConceptCheckerTests
     {
         private static string FixtureDir()
-        {
-            for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
-            {
-                var c = Path.Combine(dir.FullName, "tests", "plato-test-existential");
-                if (Directory.Exists(c)) return c;
-                c = Path.Combine(dir.FullName, "plato-test-existential");
-                if (Directory.Exists(c)) return c;
-            }
-            throw new DirectoryNotFoundException("plato-test-existential not found above " + AppContext.BaseDirectory);
-        }
+            => CheckerTestSupport.FindFolder("plato-test-existential");
 
         private static (Compilation Comp, System.Collections.Generic.IReadOnlyList<CheckDiagnostic> Diags)
             CheckFixture(string relativePath)

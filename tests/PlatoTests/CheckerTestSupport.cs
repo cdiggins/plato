@@ -17,24 +17,29 @@ namespace PlatoTests
     /// </summary>
     public static class CheckerTestSupport
     {
-        /// <summary>Walk up from the test output directory to find a repo folder by name.
-        /// Source folders do not all sit at the repo root, so each name is probed at the
+        /// <summary>Walk up to find a repo folder by name: from the test output directory, and
+        /// from this source file when the build went to a private --artifacts-path outside the
+        /// checkout. Source folders do not all sit at the repo root, so each name is probed at the
         /// root and under the subfolders the restructure moved them into.</summary>
         public static string FindFolder(string name)
+            => FindFolderAbove(AppContext.BaseDirectory, name)
+               ?? FindFolderAbove(Path.GetDirectoryName(SourceFile()), name)
+               ?? throw new DirectoryNotFoundException($"Could not locate '{name}' above " + AppContext.BaseDirectory);
+
+        private static string FindFolderAbove(string start, string name)
         {
             var relatives = new[] { name, Path.Combine("legacy", name), Path.Combine("tests", name) };
-            for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
-            {
+            for (var dir = new DirectoryInfo(start); dir != null; dir = dir.Parent)
                 foreach (var relative in relatives)
                 {
                     var candidate = Path.Combine(dir.FullName, relative);
                     if (Directory.Exists(candidate))
                         return candidate;
                 }
-            }
-            throw new DirectoryNotFoundException(
-                $"Could not locate '{name}' above " + AppContext.BaseDirectory);
+            return null;
         }
+
+        private static string SourceFile([System.Runtime.CompilerServices.CallerFilePath] string path = "") => path;
 
         /// <summary>The shipping stdlib (stdlib-legacy) — what every existing checker fixture uses.</summary>
         public static string FindPlatoSrc()

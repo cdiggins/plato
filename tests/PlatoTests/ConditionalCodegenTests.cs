@@ -20,14 +20,7 @@ namespace PlatoTests
     public static class ConditionalCodegenTests
     {
         private static string Fixture()
-        {
-            for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
-            {
-                var c = Path.Combine(dir.FullName, "tests", "plato-test-codegen", "conditional-condition.plato");
-                if (File.Exists(c)) return c;
-            }
-            throw new FileNotFoundException("tests/plato-test-codegen/conditional-condition.plato not found above " + AppContext.BaseDirectory);
-        }
+            => Path.Combine(CheckerTestSupport.FindFolder("plato-test-codegen"), "conditional-condition.plato");
 
         private static string EmitLibrary()
         {
