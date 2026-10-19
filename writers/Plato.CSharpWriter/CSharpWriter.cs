@@ -853,12 +853,16 @@ namespace Ara3D.Geometry.CSharpWriter
                    ? pt.Def.Name.StartsWith("IArray") && !pt.Def.Name.StartsWith("IArrayLike")
                    : ConcreteArrayTypeNames.Contains(pt.Def.Name));
 
-        // A builder receiver (List<T>, Buffer<T>): a unique type, which gets no generated struct
-        // and so no plan of its own. A library function over one is written here as an extension
-        // method on the runtime builder (PlatoList, PlatoBuffer), like an array receiver; before
-        // this it was dropped without a word (TKT-347, compiler-416).
-        private static bool IsBuilderExtensionReceiver(TypeExpression pt)
-            => pt?.Def != null && pt.Def.IsUnique && (pt.Def.Name == "List" || pt.Def.Name == "Buffer");
+        // A receiver whose C# type is a runtime class with no generated struct and so no plan of
+        // its own: a builder (List<T>, Buffer<T>, a unique type: PlatoList, PlatoBuffer) or a
+        // function (Function0..Function9: System.Func). A library function over one is written
+        // here as an extension method on that class, like an array receiver; before this it was
+        // dropped without a word (builders TKT-347 and compiler-416; functions TKT-353,
+        // MinimizeOverDomain in the STEP mesher's B-spline inverse).
+        private static bool IsRuntimeClassExtensionReceiver(TypeExpression pt)
+            => pt?.Def != null
+               && ((pt.Def.IsUnique && (pt.Def.Name == "List" || pt.Def.Name == "Buffer"))
+                   || Compiler.Analysis.Linter.IsFunctionTypeName(pt.Def.Name));
 
         public CSharpWriter WriteInterfaceLibraryMethods()
         {
@@ -894,7 +898,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 if (indexable && arrayFunctionNames.Contains(f.Name))
                     continue;
                 if (!indexable && !IsListExtensionReceiver(f.Parameters[0].Type)
-                    && !IsBuilderExtensionReceiver(f.Parameters[0].Type))
+                    && !IsRuntimeClassExtensionReceiver(f.Parameters[0].Type))
                     continue;
 
                 // The array and builder INTRINSICS (Count/At/Reduce/FlatMap/..., Add/Set/Freeze/...)

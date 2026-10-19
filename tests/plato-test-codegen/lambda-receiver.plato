@@ -1,0 +1,16 @@
+// Fixture for LambdaReceiverEmissionTests (TKT-353): a call whose first argument is a lambda,
+// written in method form. C# gives a lambda no type until it is converted to a delegate, so the
+// writer must convert it before the member access.
+
+type Integer { }
+type Boolean { }
+type Function1<T0, TR> { }
+
+library LambdaReceivers {
+    ApplyTwice(f: Function1<Integer, Integer>, x: Integer): Integer
+        => f(f(x));
+    Second(a: Integer, b: Integer): Integer
+        => b;
+    SecondTwice(x: Integer, k: Integer): Integer
+        => ApplyTwice(y => Second(y, k), x);
+}

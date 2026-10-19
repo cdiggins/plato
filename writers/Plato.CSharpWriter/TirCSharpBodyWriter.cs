@@ -281,6 +281,39 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         return args.Any(a => a == null) ? qualified : $"{qualified}<{string.Join(", ", args)}>";
     }
 
+    /// <summary>The C# delegate type a lambda of this Plato function type converts to, with
+    /// every type variable spelled as this function's signature declares it; null when the type is
+    /// not a function type or a variable has no such parameter.</summary>
+    private string DelegateTypeName(TypeExpression type)
+    {
+        if (type?.Def == null || !Compiler.Analysis.Linter.IsFunctionTypeName(type.Def.Name))
+            return null;
+        var args = type.TypeArgs.Select(CSharpTypeName).ToList();
+        return args.Count == 0 || args.Any(a => a == null) ? null : $"System.Func<{string.Join(", ", args)}>";
+    }
+
+    /// <summary>A type as C#, or null when it mentions a type variable this function's signature
+    /// does not declare.</summary>
+    private string CSharpTypeName(TypeExpression type)
+    {
+        if (type?.Def == null)
+            return null;
+        if (type.IsTypeVariable)
+            return TypeArgumentName(type);
+        if (type.TypeArgs.Count == 0 || !HasTypeVariable(type))
+            return _tw.ToCSharpType(type);
+        if (Compiler.Analysis.Linter.IsFunctionTypeName(type.Def.Name))
+            return DelegateTypeName(type);
+        var full = _tw.ToCSharpType(new TypeExpression(type.Def));
+        var open = full.IndexOf('<');
+        var head = open < 0 ? full : full.Substring(0, open);
+        var args = type.TypeArgs.Select(CSharpTypeName).ToList();
+        return args.Any(a => a == null) ? null : $"{head}<{string.Join(", ", args)}>";
+    }
+
+    private static bool HasTypeVariable(TypeExpression type)
+        => type?.Def != null && (type.IsTypeVariable || type.TypeArgs.Any(HasTypeVariable));
+
     /// <summary>A type argument as this function's signature spells it: a type variable by the
     /// generic parameter the signature declares for it (<c>$T</c> is <c>_T0</c>), anything else by
     /// its C# type; null when a type variable has no such parameter.</summary>
@@ -786,7 +819,15 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // last operand; such receivers only arise from the inliner (the flag differentials pin
         // that no non-inline output has them).
         var recvNode = TirRewrite.StripCoerce(args[0]);
-        if (recvNode is TirConditional || recvNode is TirLambda || recvNode is TirAssign
+        if (recvNode is TirLambda recvLambda && DelegateTypeName(recvLambda.Type) is { } delegateType)
+        {
+            // A lambda has no type in C# until it is converted to a delegate, so `(x => ...).F()`
+            // is CS0023; convert it to the delegate its TIR type names first (TKT-353).
+            Write($"(({delegateType})(");
+            WriteNode(args[0]);
+            Write("))");
+        }
+        else if (recvNode is TirConditional || recvNode is TirLambda || recvNode is TirAssign
             || recvNode is TirBooleanChain)
         {
             Write("(");
