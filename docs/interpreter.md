@@ -263,13 +263,24 @@ server is that host. Its arguments are the CLI's flags (`folders`, `recursive`, 
 `filter`, `lawsFrom`, `profile`, `trials`, `seed`, `budget`, `report`, `baseline`), and it
 chooses files through the same `LawProgram.SourceFiles`, so the two reach the same verdicts.
 
-Each run reads the files and compares their contents with the last run's:
+The runner keeps one program (`WarmProgram`) per choice of folders, recursive flag and excluded
+names, up to a bound (`DefaultMaxPrograms`, the server's `--law-programs=<n>`), dropping the least
+recently used. Callers on different folder sets, such as tracks each adding its own staging
+folder to the library, therefore stay warm instead of recompiling each other's program. A
+program's compilation serves every Number profile; each profile has its own interpreter. Runs of
+one program are serialized and runs of different programs proceed together. One `ParseCache`
+serves all programs, so the library files they share are parsed once.
+
+Each run reads its program's files and compares their contents with that program's last run:
 
 - **Nothing changed**: the compilation and the interpreter are reused, with every body already
   elaborated, so the run costs the laws alone.
-- **A file changed**: only that file is parsed again (the runner keeps its own `ParseCache`), and
-  the program is compiled once more, because the compiler has no incremental mode. The
-  interpreter is rebuilt on the new compilation.
+- **A file changed**: only that file is parsed again, and the program is compiled once more,
+  because the compiler has no incremental mode. The interpreter is rebuilt on the new
+  compilation. Other programs are untouched.
+- **A file does not parse**: the run returns one "Parsing failed: <file>: <parser message>" error
+  per parse error and runs no law, as `plato run` does. The parser places some errors, a missing
+  semicolon among them, at the start of the file, so the message names the file but not the line.
 
 A run can also type-check (`TypeCheckScope`, the tool's `types` argument). `ChangedFiles`, the
 tool's default, checks only the functions declared in files whose text changed since the last
@@ -303,10 +314,22 @@ was taken during such a spike and is left out of the range above. The compiler's
 about 0.7 s, reifying library functions about 3.5 s, and building the code writers'
 `LibraryFunctions` and `ConcreteTypes` tables about 5.3 s. The interpreter reads neither table,
 so `Compilation` builds them on first use; the generated C# of the foundation tier is
-byte-identical either way. A check of every function took 6 to 21 s on this program in these runs, which
-is why `ChangedFiles` is the default. What remains of an edit is whole-program resolution and
-reification, so getting reliably under 5 s needs an incremental compiler, not more from this
-runner.
+byte-identical either way. A check of every function took 6 to 21 s on this program in these
+runs, which is why `ChangedFiles` is the default. What remains of an edit is whole-program
+resolution and reification, so getting reliably under 5 s needs an incremental compiler, not more
+from this runner.
+
+Two callers alternating between two staging folders (TKT-344), measured at 23:26 on 2026-10-18
+through `plato_laws` on a scratch server: the library above plus a copy of
+`sandbox/step-mesh-staging/genus` as one program and plus `poles` as the other, `gpu32`, one law,
+the changed-file type check. The first call of each program compiled (21.7 s, then 6.9 s, the
+second reusing the parsed library). Afterwards each program answered 0.0 to 0.2 s without
+recompiling while the other was being edited, and 4.0 to 4.6 s after a one-body edit to its own
+staging folder (fourteen edits, alternating; 3.7 to 4.3 s of it compiling, 0.2 s type-checking).
+Memory, as managed heap after a full collection: 510 MB with one program kept (the shared parse
+trees included), about 80 MB more for each further program over the same library, so the default
+bound of eight costs about 1.1 GB. The server's private bytes rose and fell between 1.0 and 1.7 GB
+over the fourteen recompiles without growing.
 
 The STEP design folder compiles with the three stdlib tiers plus the sandbox under `--recursive`,
 excluding the three `brep.*.plato` stdlib files the sandbox redeclares; the exact invocation is in

@@ -34,8 +34,13 @@ public sealed class ParseCache
     /// <summary>Drops every entry the snapshot no longer uses. Without it an editing session that
     /// rewrites one file repeatedly keeps every intermediate version alive.</summary>
     public void Retain(SourceSnapshot snapshot)
+        => Retain(snapshot.Files);
+
+    /// <summary>Drops every entry none of these files uses; the files may come from several
+    /// programs, and the same path may appear with different texts.</summary>
+    public void Retain(IEnumerable<SourceFile> files)
     {
-        var live = snapshot.Files.Select(KeyOf).ToHashSet();
+        var live = files.Select(KeyOf).ToHashSet();
         foreach (var key in _entries.Keys.Where(k => !live.Contains(k)).ToList())
             _entries.Remove(key);
     }

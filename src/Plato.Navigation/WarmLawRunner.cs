@@ -1,10 +1,7 @@
-using System.Diagnostics;
 using System.Runtime.ExceptionServices;
-using System.Text;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
-using Ara3D.Utils;
 
 namespace Ara3D.Geometry.Navigation;
 
@@ -62,7 +59,7 @@ public sealed class LawRunRequest
 
 /// <summary>What a law run did: the results, or the errors that stopped it before any law ran,
 /// and where the time went.</summary>
-public sealed class LawRunOutcome
+public sealed record LawRunOutcome
 {
     /// <summary>Parse and compile errors; when any exist no law ran.</summary>
     public IReadOnlyList<string> Errors { get; init; } = Array.Empty<string>();
@@ -86,161 +83,111 @@ public sealed class LawRunOutcome
     /// <summary>Zero when no file needed checking.</summary>
     public TimeSpan TypeCheckTime { get; init; }
     public TimeSpan LawTime { get; init; }
+    /// <summary>Programs the runner keeps after this run, this one included.</summary>
+    public int ProgramsKept { get; init; }
     public bool Compiled => Errors.Count == 0;
 }
 
 /// <summary>
-/// Runs laws over a compilation it keeps between runs, for a long-lived host such as the
-/// navigation MCP server. Each run reads the files again and compares their contents: a file
-/// whose text is unchanged keeps its parsed tree (a <see cref="ParseCache"/> of its own, so a
-/// run never holds the index's lock), and when no file changed at all the compilation and the
-/// interpreter are reused, elaborated bodies included. A changed file costs one parse plus one
-/// whole-program compilation, because the compiler has no incremental mode, and, when asked, a
-/// type check of the functions it declares (<see cref="TypeCheckScope"/>). Runs are serialized;
-/// each evaluates on a thread with the large stack deep Plato recursion needs.
+/// Runs laws over compilations it keeps between runs, for a long-lived host such as the
+/// navigation MCP server. It keeps one program (<see cref="WarmProgram"/>) for each choice of
+/// folders, recursive flag and excluded names it is asked for, up to <see cref="MaxPrograms"/>,
+/// dropping the least recently used, so callers working on different folder sets (one staging
+/// folder per track) do not force each other to recompile. A program's compilation is shared by
+/// every Number profile; each profile gets its own interpreter.
+///
+/// Each run reads its program's files again and compares their contents: a file whose text is
+/// unchanged keeps its parsed tree (one <see cref="ParseCache"/> shared by all programs, so the
+/// library files common to every track are parsed once, and a run never holds the index's lock),
+/// and when no file changed at all the compilation and the interpreter are reused, elaborated
+/// bodies included. A changed file costs one parse plus one whole-program compilation, because
+/// the compiler has no incremental mode, and, when asked, a type check of the functions it
+/// declares (<see cref="TypeCheckScope"/>). Runs of one program are serialized; runs of different
+/// programs proceed at the same time. Each evaluates on a thread with the large stack deep Plato
+/// recursion needs.
 /// </summary>
 public sealed class WarmLawRunner
 {
     /// <summary>The stack <c>plato run</c> gives its evaluation thread.</summary>
     public const int StackBytes = 512 * 1024 * 1024;
 
+    /// <summary>Programs kept by default; each costs several hundred megabytes (docs/interpreter.md).</summary>
+    public const int DefaultMaxPrograms = 8;
+
     private readonly ParseCache _cache = new();
+    /// <summary>Guards <see cref="_cache"/> and <see cref="_programs"/>.</summary>
     private readonly object _lock = new();
-    private string? _generation;
-    private Compilation? _compilation;
-    private Dictionary<string, string> _fileHashes = new();
-    private readonly HashSet<string> _uncheckedFiles = new();
-    private readonly Dictionary<string, IReadOnlyList<TypeFinding>> _typeErrorsByFile = new();
-    private string? _allCheckedGeneration;
-    private readonly Dictionary<string, Interpreter.Interpreter> _interpreters = new();
+    /// <summary>Most recently used first.</summary>
+    private readonly LinkedList<WarmProgram> _programs = new();
+
+    public WarmLawRunner(int maxPrograms = DefaultMaxPrograms)
+    {
+        if (maxPrograms < 1)
+            throw new ArgumentOutOfRangeException(nameof(maxPrograms), "at least one program must be kept");
+        MaxPrograms = maxPrograms;
+    }
+
+    public int MaxPrograms { get; }
+
+    public int ProgramCount
+    {
+        get { lock (_lock) return _programs.Count; }
+    }
 
     /// <summary>Receives the compiler's phase messages, to see where a compilation spends its time.</summary>
     public Ara3D.Logging.ILogger? CompileLogger { get; set; }
 
     public LawRunOutcome Run(LawRunRequest request)
     {
+        var program = Acquire(WarmProgram.KeyOf(request));
+        lock (program.Lock)
+            return OnLargeStack(() => program.Run(request, Parse, CompileLogger)) with { ProgramsKept = ProgramCount };
+    }
+
+    /// <summary>The program for a key, made the most recently used; a new one evicts the least
+    /// recently used beyond the bound. An evicted program still finishes a run in progress.</summary>
+    private WarmProgram Acquire(string key)
+    {
         lock (_lock)
         {
-            LawRunOutcome? outcome = null;
-            Exception? fault = null;
-            var thread = new Thread(() =>
-            {
-                try { outcome = RunOnThisThread(request); }
-                catch (Exception e) { fault = e; }
-            }, StackBytes);
-            thread.Start();
-            thread.Join();
-            if (fault != null)
-                ExceptionDispatchInfo.Capture(fault).Throw();
-            return outcome!;
+            var node = _programs.First;
+            while (node != null && node.Value.Key != key)
+                node = node.Next;
+            if (node != null)
+                _programs.Remove(node);
+            _programs.AddFirst(node?.Value ?? new WarmProgram(key));
+            while (_programs.Count > MaxPrograms)
+                _programs.RemoveLast();
+            return _programs.First!.Value;
         }
     }
 
-    private LawRunOutcome RunOnThisThread(LawRunRequest request)
+    /// <summary>Parses through the shared cache and drops cached trees no kept program uses.</summary>
+    private (IReadOnlyList<ParsedFile> Trees, int Parsed) Parse(IReadOnlyList<SourceFile> files)
     {
-        var timer = Stopwatch.StartNew();
-        var paths = LawProgram.SourceFiles(request.Folders, request.Recursive, request.Exclude);
-        var files = paths.Select((p, i) => new SourceFile(i, new FilePath(p), File.ReadAllText(p))).ToList();
-        var read = timer.Elapsed;
-
-        var generation = Generation(files);
-        var recompiled = generation != _generation || _compilation == null;
-        var parsed = 0;
-        var parseTime = TimeSpan.Zero;
-        var compileTime = TimeSpan.Zero;
-        if (recompiled)
+        lock (_lock)
         {
-            _generation = null;
-            _compilation = null;
-            _interpreters.Clear();
-
             var misses = _cache.Misses;
-            var parseTimer = Stopwatch.StartNew();
             var trees = files.Select(_cache.Parse).ToList();
-            _cache.Retain(new SourceSnapshot(files));
-            parsed = _cache.Misses - misses;
-            parseTime = parseTimer.Elapsed;
-            var parseErrors = trees.Where(t => !t.Parsed)
-                .Select(t => $"Parsing failed: {t.File.Path}: {t.ParseErrors.FirstOrDefault()}").ToList();
-            if (parseErrors.Count > 0)
-                return new LawRunOutcome { Errors = parseErrors, Files = files.Count, FilesParsed = parsed, Recompiled = true, ReadTime = read, ParseTime = parseTime };
-
-            var compileTimer = Stopwatch.StartNew();
-            var compilation = CheckSupport.Compile(trees, CompileLogger);
-            compileTime = compileTimer.Elapsed;
-            var compileErrors = CompileErrors(compilation);
-            if (compileErrors.Count > 0)
-                return new LawRunOutcome { Errors = compileErrors, Files = files.Count, FilesParsed = parsed, Recompiled = true, ReadTime = read, ParseTime = parseTime, CompileTime = compileTime };
-            _compilation = compilation;
-            _generation = generation;
-            NoteChangedFiles(files);
+            _cache.Retain(_programs.SelectMany(p => p.Files).Concat(files));
+            return (trees, _cache.Misses - misses);
         }
-
-        var typeTimer = Stopwatch.StartNew();
-        var typeChecked = CheckTypes(request.TypeCheck);
-        var typeTime = typeChecked > 0 ? typeTimer.Elapsed : TimeSpan.Zero;
-
-        if (!_interpreters.TryGetValue(request.Profile.Name, out var interp))
-            _interpreters[request.Profile.Name] = interp = new Interpreter.Interpreter(_compilation!, request.Profile);
-        var runner = new LawRunner(interp, request.Options);
-        var lawTimer = Stopwatch.StartNew();
-        var results = runner.Laws.Select(runner.Run).ToList();
-        return new LawRunOutcome
-        {
-            Results = results,
-            UnmatchedFilters = runner.UnmatchedFilters,
-            TypeErrors = request.TypeCheck == TypeCheckScope.None
-                ? null
-                : _typeErrorsByFile.OrderBy(kv => kv.Key, StringComparer.Ordinal).SelectMany(kv => kv.Value.OrderBy(t => t.Line)).ToList(),
-            FilesTypeChecked = typeChecked,
-            TypeCheckTime = typeTime,
-            Files = files.Count,
-            Functions = _compilation!.FunctionDefinitions.Count,
-            FilesParsed = parsed,
-            Recompiled = recompiled,
-            ReadTime = read,
-            ParseTime = parseTime,
-            CompileTime = compileTime,
-            LawTime = lawTimer.Elapsed,
-        };
     }
 
-    /// <summary>Marks every file whose text differs from the last compilation's as needing a type
-    /// check, and forgets the errors of files no longer in the program.</summary>
-    private void NoteChangedFiles(IReadOnlyList<SourceFile> files)
+    private static T OnLargeStack<T>(Func<T> work)
     {
-        var hashes = files.ToDictionary(f => SourceSnapshot.PathKey(f.Path), f => f.ContentHash);
-        foreach (var (key, hash) in hashes)
-            if (_fileHashes.GetValueOrDefault(key) != hash)
-                _uncheckedFiles.Add(key);
-        _uncheckedFiles.IntersectWith(hashes.Keys);
-        foreach (var gone in _typeErrorsByFile.Keys.Where(k => !hashes.ContainsKey(k)).ToList())
-            _typeErrorsByFile.Remove(gone);
-        _fileHashes = hashes;
-    }
-
-    /// <summary>Type-checks what the scope asks for and is not yet checked; returns how many files
-    /// were checked.</summary>
-    private int CheckTypes(TypeCheckScope scope)
-    {
-        var all = scope == TypeCheckScope.All;
-        if (scope == TypeCheckScope.None || (all ? _allCheckedGeneration == _generation : _uncheckedFiles.Count == 0))
-            return 0;
-        var files = all ? _fileHashes.Keys.ToHashSet() : new HashSet<string>(_uncheckedFiles);
-        var found = TypeFindings.Check(_compilation!, all ? null : f => files.Contains(SourceSnapshot.PathKey(new FilePath(f))))
-            .ToLookup(t => SourceSnapshot.PathKey(new FilePath(t.File)));
-        foreach (var key in files)
+        T result = default!;
+        Exception? fault = null;
+        var thread = new Thread(() =>
         {
-            var list = found[key].ToList();
-            if (list.Count > 0)
-                _typeErrorsByFile[key] = list;
-            else
-                _typeErrorsByFile.Remove(key);
-        }
-        _uncheckedFiles.Clear();
-        if (all)
-            _allCheckedGeneration = _generation;
-        return files.Count;
+            try { result = work(); }
+            catch (Exception e) { fault = e; }
+        }, StackBytes);
+        thread.Start();
+        thread.Join();
+        if (fault != null)
+            ExceptionDispatchInfo.Capture(fault).Throw();
+        return result;
     }
 
     /// <summary>The errors that stop a run, in the words <c>plato run</c> prints them.</summary>
@@ -251,13 +198,4 @@ public sealed class WarmLawRunner
                 .Concat((compilation.SymbolFactory?.Errors ?? new()).Select(e => $"RESOLVE {e.Message}"))
                 .Append("Compilation was not completed")
                 .ToList();
-
-    /// <summary>One hash over the ordered paths and contents; equal hashes mean the same program.</summary>
-    private static string Generation(IReadOnlyList<SourceFile> files)
-    {
-        var sb = new StringBuilder();
-        foreach (var f in files)
-            sb.Append(SourceSnapshot.PathKey(f.Path)).Append('\0').Append(f.ContentHash).Append('\n');
-        return SourceFile.Hash(sb.ToString());
-    }
 }
