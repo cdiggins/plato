@@ -268,6 +268,32 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (typedIndex) Write(")");
     }
 
+    /// <summary>The C# name a constructor call writes after <c>new</c>. In extension-style library
+    /// classes a type name can be shadowed by a member of the enclosing static class, so it is
+    /// qualified with the namespace (legacy rule). A generic type takes its type arguments from the
+    /// call's type: <c>new LocatedDifference&lt;_T0&gt;(...)</c>, where the bare name is CS0305.</summary>
+    private string ConstructedTypeName(string name, TypeExpression type)
+    {
+        var qualified = _tw.ExtensionReceiverName != null ? $"{_tw.Writer.Namespace}.{name}" : name;
+        if (type?.Def == null || type.TypeArgs.Count == 0 || type.Def.Name != name)
+            return qualified;
+        var args = type.TypeArgs.Select(TypeArgumentName).ToList();
+        return args.Any(a => a == null) ? qualified : $"{qualified}<{string.Join(", ", args)}>";
+    }
+
+    /// <summary>A type argument as this function's signature spells it: a type variable by the
+    /// generic parameter the signature declares for it (<c>$T</c> is <c>_T0</c>), anything else by
+    /// its C# type; null when a type variable has no such parameter.</summary>
+    private string TypeArgumentName(TypeExpression arg)
+    {
+        if (arg?.Def == null)
+            return null;
+        if (!arg.IsTypeVariable)
+            return _tw.ToCSharpType(arg);
+        var analysis = _fi?.Function?.TypeVariableAnalysis;
+        return analysis != null && analysis.TryGetTypeVariable(TypeInstance.Create(arg), out var tv) ? tv.ToString() : null;
+    }
+
     private void WriteArgs(IEnumerable<TirNode> args)
     {
         var first = true;
@@ -468,7 +494,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // In extension-style library classes type names can be shadowed by members of
                 // the enclosing static class, so qualify with the namespace (legacy rule).
                 Write("new ");
-                Write(_tw.ExtensionReceiverName != null ? $"{_tw.Writer.Namespace}.{cc.TypeName}" : cc.TypeName);
+                Write(ConstructedTypeName(cc.TypeName, cc.Type));
                 Write("(");
                 WriteArgs(cc.Args);
                 Write(")");
@@ -677,7 +703,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (call.EmissionKind == EmissionKind.Constructor && name != null)
         {
             Write("new ");
-            Write(_tw.ExtensionReceiverName != null ? $"{_tw.Writer.Namespace}.{name}" : name);
+            Write(ConstructedTypeName(name, call.Type));
             Write("(");
             WriteArgs(args);
             Write(")");
