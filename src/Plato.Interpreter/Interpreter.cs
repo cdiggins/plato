@@ -318,8 +318,7 @@ public sealed partial class Interpreter
 
             case FunctionType.SumFactory:
             {
-                var sumCase = f.OwnerType.Cases.First(c => c.Name == f.Name);
-                return new PlatoSum(f.OwnerType.ToTypeExpression(), sumCase, args.ToArray());
+                return new PlatoSum(f.OwnerType.ToTypeExpression(), CaseNamed(f.OwnerType, f.Name), args.ToArray());
             }
 
             case FunctionType.SumEquality:
@@ -345,6 +344,16 @@ public sealed partial class Interpreter
             default:
                 throw new EvaluationException($"cannot apply a {f.FunctionType} function '{f.Name}'");
         }
+    }
+
+    // Apply and ApplyField run on every call; a lambda over their parameters would allocate its
+    // closure on every entry, reached or not, so the searches are written as loops.
+    private static SumCaseDef CaseNamed(TypeDef sum, string name)
+    {
+        foreach (var c in sum.Cases)
+            if (c.Name == name)
+                return c;
+        throw new EvaluationException($"no case '{name}' on {sum.Name}");
     }
 
     private object ApplyHost(FunctionDef f, IReadOnlyList<object> args)
@@ -379,9 +388,9 @@ public sealed partial class Interpreter
         }
         if (receiver is PlatoSum s)
         {
-            var idx = Array.FindIndex(s.Case.Fields.ToArray(), cf => cf.Name == f.Name);
-            if (idx >= 0)
-                return s.Fields[idx];
+            for (var i = 0; i < s.Case.Fields.Count; i++)
+                if (s.Case.Fields[i].Name == f.Name)
+                    return s.Fields[i];
         }
         throw new EvaluationException($"no field '{f.Name}' on {TypeOf(receiver)}");
     }
@@ -414,13 +423,17 @@ public sealed partial class Interpreter
     private object Activate(FunctionDef f, TirFunction tir, IReadOnlyList<object> args)
     {
         var self = args.Count > 0 ? ReceiverType(f, args[0]) : null;
-        var env = new Environment(null, self);
-        for (var i = 0; i < args.Count; i++)
+        var layout = LayoutOf(f, tir);
+        object[] values;
+        if (layout.BindsArgumentsInPlace && args is object[] own && own.Length == layout.Keys.Length)
+            values = own;
+        else
         {
-            env.Define(tir.Parameters[i], args[i]);
-            if (!ReferenceEquals(tir.Parameters[i], f.Parameters[i]))
-                env.Define(f.Parameters[i], args[i]);
+            values = new object[layout.Keys.Length];
+            for (var i = 0; i < values.Length; i++)
+                values[i] = args[layout.ArgOf[i]];
         }
+        var env = new Environment(null, self, layout.Keys, values);
 
         if (Deadline != null && DateTime.UtcNow > Deadline.Value)
             throw new EvaluationException("time budget exceeded");
@@ -454,6 +467,48 @@ public sealed partial class Interpreter
         }
     }
 
+    /// <summary>The symbols an activation binds, in order, and the argument each one takes: the
+    /// elaborated parameters, then each declared parameter the elaborator replaced (the TIR of a
+    /// normalized body may still name either).</summary>
+    private sealed class ParameterLayout
+    {
+        public DefSymbol[] Keys;
+        public int[] ArgOf;
+
+        /// <summary>The body never assigns a parameter and binds nothing beyond them, so the
+        /// argument array (never written once evaluated) serves as the scope's values.</summary>
+        public bool BindsArgumentsInPlace;
+    }
+
+    private readonly Dictionary<TirFunction, ParameterLayout> _layouts = new Dictionary<TirFunction, ParameterLayout>(ReferenceEqualityComparer.Instance);
+
+    private ParameterLayout LayoutOf(FunctionDef f, TirFunction tir)
+    {
+        if (_layouts.TryGetValue(tir, out var layout))
+            return layout;
+        var keys = new List<DefSymbol>();
+        var argOf = new List<int>();
+        for (var i = 0; i < tir.Parameters.Count; i++)
+        {
+            keys.Add(tir.Parameters[i]);
+            argOf.Add(i);
+        }
+        for (var i = 0; i < tir.Parameters.Count; i++)
+            if (!ReferenceEquals(tir.Parameters[i], f.Parameters[i]))
+            {
+                keys.Add(f.Parameters[i]);
+                argOf.Add(i);
+            }
+        _layouts[tir] = layout = new ParameterLayout
+        {
+            Keys = keys.ToArray(),
+            ArgOf = argOf.ToArray(),
+            BindsArgumentsInPlace = keys.Count == tir.Parameters.Count
+                && !(tir.Body?.Descendants().Any(n => n is TirAssign { LValue: TirParameter }) ?? false),
+        };
+        return layout;
+    }
+
     private static bool IsRuntimeFault(Exception e)
         => e is DivideByZeroException || e is IndexOutOfRangeException || e is ArgumentOutOfRangeException
            || e is InvalidCastException || e is NullReferenceException || e is OverflowException
@@ -478,18 +533,27 @@ public sealed partial class Interpreter
         throw new EvaluationException($"invoking a non-function value {ValueFormat.Format(target, 60)}");
     }
 
+    private readonly Dictionary<TirLambda, DefSymbol[]> _lambdaKeys = new Dictionary<TirLambda, DefSymbol[]>(ReferenceEqualityComparer.Instance);
+
+    private DefSymbol[] LambdaKeys(TirLambda lam)
+    {
+        if (!_lambdaKeys.TryGetValue(lam, out var keys))
+            _lambdaKeys[lam] = keys = lam.Parameters.Cast<DefSymbol>().ToArray();
+        return keys;
+    }
+
     private PlatoFunction MakeClosure(TirLambda lam, Environment env)
     {
         var captured = env.Snapshot();
-        var ps = lam.Parameters;
-        return new PlatoFunction(lam.Type, ps.Count, args =>
+        var ps = LambdaKeys(lam);
+        return new PlatoFunction(lam.Type, ps.Length, args =>
         {
-            if (args.Count != ps.Count)
-                throw new EvaluationException($"a lambda of {ps.Count} parameters was given {args.Count} arguments");
-            var e = new Environment(captured);
-            for (var i = 0; i < ps.Count; i++)
-                e.Define(ps[i], args[i]);
-            return EvalBody(lam.Body, e);
+            if (args.Count != ps.Length)
+                throw new EvaluationException($"a lambda of {ps.Length} parameters was given {args.Count} arguments");
+            var values = new object[ps.Length];
+            for (var i = 0; i < values.Length; i++)
+                values[i] = args[i];
+            return EvalBody(lam.Body, new Environment(captured, null, ps, values));
         });
     }
 
@@ -505,7 +569,7 @@ public sealed partial class Interpreter
             case LiteralTypesEnum.Number:
                 return Numbers.N(Convert.ToDouble(lit.Value));
             case LiteralTypesEnum.Boolean:
-                return (bool)lit.Value;
+                return lit.Value is bool ? lit.Value : (bool)lit.Value;
             case LiteralTypesEnum.String:
                 return lit.Value?.ToString() ?? "";
             default:

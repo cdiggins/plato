@@ -228,38 +228,47 @@ public sealed partial class Interpreter
         public override int GetHashCode() => _hash;
     }
 
-    /// <summary>The memoized resolution for this head and these argument values; <paramref name="compute"/>
-    /// runs on the first call of each shape.</summary>
-    private Resolution Memoized(object head, bool flag, IReadOnlyList<object> args, Func<List<TypeExpression>, Resolution> compute)
+    /// <summary>The memoized resolution for this head and these argument values, when there is
+    /// one; otherwise the probe key stays set for <see cref="Remember"/>. No delegate is made,
+    /// since this runs on every dispatched call.</summary>
+    private bool TryMemoized(object head, bool flag, IReadOnlyList<object> args, out Resolution r)
     {
         _probe.Set(head, flag, args, this);
-        if (_resolutions.TryGetValue(_probe, out var r))
-            return r;
-        var key = _probe.Copy();
-        r = compute(args.Select(TypeOf).ToList());
-        _resolutions[key] = r;
+        return _resolutions.TryGetValue(_probe, out r);
+    }
+
+    /// <summary>Stores the resolution of the shape <see cref="TryMemoized"/> last missed; call it
+    /// before anything else can dispatch.</summary>
+    private Resolution Remember(Resolution r)
+    {
+        _resolutions[_probe.Copy()] = r;
         return r;
     }
 
     private FunctionDef ResolveByValues(string name, IReadOnlyList<object> args, out object[] converted,
         out int bestCost, bool allowInterfaceDeclarations)
     {
-        var r = Memoized(name, allowInterfaceDeclarations, args, ts => Resolve(name, ts, allowInterfaceDeclarations));
+        if (!TryMemoized(name, allowInterfaceDeclarations, args, out var r))
+            r = Remember(Resolve(name, args.Select(TypeOf).ToList(), allowInterfaceDeclarations));
         bestCost = r.BestCost;
         converted = Converted(r, args);
         return r.Best;
     }
 
-    /// <summary>The arguments with each one the resolution marks as needing a conversion converted;
-    /// a copy, since callers own the array they get.</summary>
+    /// <summary>The arguments with each one the resolution marks as needing a conversion converted,
+    /// in a copy; the same array when none does (argument arrays are never written once
+    /// evaluated: an activation binds a copy).</summary>
     private object[] Converted(Resolution r, IReadOnlyList<object> args)
     {
-        var converted = args.ToArray();
+        object[] converted = null;
         if (r.Best != null && r.Costs != null)
-            for (var i = 0; i < converted.Length; i++)
+            for (var i = 0; i < args.Count; i++)
                 if (r.Costs[i] == 3)
+                {
+                    converted ??= args.ToArray();
                     converted[i] = CoerceTo(converted[i], r.Best.Parameters[i].Type);
-        return converted;
+                }
+        return converted ?? args as object[] ?? args.ToArray();
     }
 
     private Resolution Resolve(string name, IReadOnlyList<TypeExpression> argTypes, bool allowInterfaceDeclarations)
@@ -326,14 +335,15 @@ public sealed partial class Interpreter
             _hasAbstractParameter[f] = abstractParams = f.Parameters.Any(p => IsAbstract(p.Type));
         if (!abstractParams)
             return f;
-        var r = Memoized(f, false, args, argTypes =>
+        if (!TryMemoized(f, false, args, out var r))
         {
+            var argTypes = args.Select(TypeOf).ToList();
             var own = CostOf(f, argTypes);
             var candidate = Resolve(f.Name, argTypes, allowInterfaceDeclarations: false);
-            return candidate.Best == null || ReferenceEquals(candidate.Best, f) || (own != null && candidate.BestCost >= own.Value)
+            r = Remember(candidate.Best == null || ReferenceEquals(candidate.Best, f) || (own != null && candidate.BestCost >= own.Value)
                 ? new Resolution { Best = f, BestCost = own ?? 0, Costs = null }
-                : candidate;
-        });
+                : candidate);
+        }
         if (ReferenceEquals(r.Best, f))
             return f;
         args = Converted(r, args);

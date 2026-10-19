@@ -11,20 +11,66 @@ namespace Ara3D.Geometry.Interpreter;
 /// </summary>
 public sealed class Environment
 {
-    private readonly Dictionary<DefSymbol, object> _bindings = new Dictionary<DefSymbol, object>();
+    // A scope holds a handful of bindings, so two parallel arrays searched by reference from the
+    // newest binding back cost less than a dictionary per activation and per captured lambda.
+    private static readonly DefSymbol[] NoKeys = Array.Empty<DefSymbol>();
+    private static readonly object[] NoValues = Array.Empty<object>();
+    private DefSymbol[] _keys = NoKeys;
+    private object[] _values = NoValues;
+    private int _count;
     public Environment Parent { get; }
     public TypeExpression Self { get; }
 
     public Environment(Environment parent, TypeExpression self = null)
         => (Parent, Self) = (parent, self ?? parent?.Self);
 
-    public void Define(DefSymbol def, object value) => _bindings[def] = value;
+    /// <summary>An activation's or a lambda call's scope: <paramref name="keys"/> is shared by
+    /// every activation of one function or lambda and never written (the first new binding copies it), and
+    /// <paramref name="values"/> is this activation's own.</summary>
+    public Environment(Environment parent, TypeExpression self, DefSymbol[] keys, object[] values)
+        => (Parent, Self, _keys, _values, _count) = (parent, self ?? parent?.Self, keys, values, keys.Length);
+
+    private int IndexOf(DefSymbol def)
+    {
+        for (var i = _count - 1; i >= 0; i--)
+            if (ReferenceEquals(_keys[i], def))
+                return i;
+        return -1;
+    }
+
+    private void Append(DefSymbol def, object value)
+    {
+        if (_count == _keys.Length)
+        {
+            // Array.Resize allocates and copies, so a shared key array is never written.
+            var n = Math.Max(4, _count * 2);
+            Array.Resize(ref _keys, n);
+            Array.Resize(ref _values, n);
+        }
+        _keys[_count] = def;
+        _values[_count++] = value;
+    }
+
+    public void Define(DefSymbol def, object value)
+    {
+        var i = IndexOf(def);
+        if (i >= 0)
+            _values[i] = value;
+        else
+            Append(def, value);
+    }
 
     public bool TryGet(DefSymbol def, out object value)
     {
         for (var e = this; e != null; e = e.Parent)
-            if (e._bindings.TryGetValue(def, out value))
+        {
+            var i = e.IndexOf(def);
+            if (i >= 0)
+            {
+                value = e._values[i];
                 return true;
+            }
+        }
         value = null;
         return false;
     }
@@ -37,9 +83,9 @@ public sealed class Environment
         // its original definition; the two share a name and a position, so fall back to the
         // name within the nearest scope that has one.
         for (var e = this; e != null; e = e.Parent)
-            foreach (var kv in e._bindings)
-                if (kv.Key.Name == def?.Name && kv.Key.GetType() == def.GetType())
-                    return kv.Value;
+            for (var i = 0; i < e._count; i++)
+                if (e._keys[i].Name == def?.Name && e._keys[i].GetType() == def.GetType())
+                    return e._values[i];
         throw new EvaluationException($"unbound {def?.GetType().Name} '{def?.Name}'");
     }
 
@@ -47,24 +93,32 @@ public sealed class Environment
     public void Set(DefSymbol def, object value)
     {
         for (var e = this; e != null; e = e.Parent)
-            if (e._bindings.ContainsKey(def))
+        {
+            var i = e.IndexOf(def);
+            if (i >= 0)
             {
-                e._bindings[def] = value;
+                e._values[i] = value;
                 return;
             }
-        _bindings[def] = value;
+        }
+        Append(def, value);
     }
 
-    /// <summary>A flat copy of every binding visible here, as a lambda captures it.</summary>
+    /// <summary>A flat copy of every binding visible here, as a lambda captures it: the outermost
+    /// scope's bindings first, so a search from the newest finds the innermost of a shadowed name.</summary>
     public Environment Snapshot()
     {
-        var copy = new Environment(null, Self);
-        var chain = new List<Environment>();
+        var n = 0;
         for (var e = this; e != null; e = e.Parent)
-            chain.Add(e);
-        for (var i = chain.Count - 1; i >= 0; i--)
-            foreach (var kv in chain[i]._bindings)
-                copy._bindings[kv.Key] = kv.Value;
+            n += e._count;
+        var copy = new Environment(null, Self) { _keys = new DefSymbol[n], _values = new object[n], _count = n };
+        var at = n;
+        for (var e = this; e != null; e = e.Parent)
+        {
+            at -= e._count;
+            Array.Copy(e._keys, 0, copy._keys, at, e._count);
+            Array.Copy(e._values, 0, copy._values, at, e._count);
+        }
         return copy;
     }
 }
