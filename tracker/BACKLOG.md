@@ -43,12 +43,15 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-440](issues/plato-440.md) | Sum-typed parameters have no TypeScript surface: LaplacianSmoothed, TaubinSmoothed and the Decimated family are uncallable | bug | p2 | M | low | plato | ready |  |
 | [plato-446](issues/plato-446.md) | CornerTwinTable is quadratic in corner count: TopologyOf costs ~1s for a 1280-face mesh | debt | p2 | M | low | plato | ready |  |
 | [plato-463](issues/plato-463.md) | Interpreter: whole-model laws still cost about 1 microsecond per call; EdgeReversalPreservesMesh 15 s, a no-memo case minutes | debt | p2 | M | med | plato | ready |  |
+| [plato-465](issues/plato-465.md) | Warm server: a renamed or deleted declaration stays alive at a compiled path; plato_check reports a phantom CHK203 | bug | p2 | M | med | plato | ready |  |
+| [plato-466](issues/plato-466.md) | plato_laws: a parse or compile failure answers ok=false with errors that a client reading typeErrors and results never sees (0 laws, 0 type errors) | bug | p2 | S | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-427](issues/plato-427.md) | Finite elements: nodal stress smoothing, hexahedral and higher-order elements | feature | p3 | M | low | plato | ready |  |
 | [plato-428](issues/plato-428.md) | Rigid dynamics: GJK/EPA, orientation joints, and a broad phase | feature | p3 | M | low | plato | ready |  |
 | [plato-433](issues/plato-433.md) | TpmsSheet3D thickness is not portable between families and silently yields an empty solid | bug | p3 | S | low | plato | ready |  |
 | [plato-438](issues/plato-438.md) | PlatoTests: TypeScript UseTir byte-identity test fails on number/Number casing | bug | p3 | S | low | plato | ready |  |
+| [plato-467](issues/plato-467.md) | plato_laws does not run the Linter, so a missing interface function (LINT001) passes the warm server and fails the CLI lint | bug | p3 | S | low | plato | ready |  |
 | [compiler-461](issues/compiler-461.md) | A body whose lambdas capture only lambda-bound names is emitted as => /*?*/ | bug | ? | ? | ? | compiler | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
 | [plato-454](issues/plato-454.md) | C# writer drops the parentheses of a conditional used as a condition | bug | ? | ? | ? | plato | ready |  |

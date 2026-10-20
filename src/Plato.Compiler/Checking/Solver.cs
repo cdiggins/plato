@@ -252,7 +252,12 @@ namespace Ara3D.Geometry.Compiler.Checking
             // Defer until the argument types are ground — EXCEPT function-shaped arguments
             // (Function{N}), whose holes are lambda parameter/result types that the chosen
             // candidate's signature is supposed to determine (checking-mode inference for HOFs).
-            if (!force && args.Any(a => HasVar(a) && !IsFunctionShaped(a)))
+            // A signature variable of the function under check ($T) is a constant here, not a
+            // hole: an argument typed `Array<LocatedDifference<$T>>` is as ground as the body will
+            // ever see it. Treating it as unsolved sent every call over it to the forced phase,
+            // where the lambda body's member accesses, generated first, decided the lambda's
+            // parameter type before the HOF call could (GenericSignatureVariableTests).
+            if (!force && args.Any(a => HasFlexibleVar(a) && !IsFunctionShaped(a)))
                 return false; // not ground yet — defer
 
             // Trial each candidate on a scratch substitution; keep the viable ones with their cost.
@@ -949,6 +954,13 @@ namespace Ara3D.Geometry.Compiler.Checking
             // interface overload instead and monomorphization grounds $T to the concrete type.
             // Rigidity is lifted for record == true (Phase-1 equalities and the committed
             // result-unify), and flexible variables still bind toward a rigid one.
+            // Two variables, one of them the signature's own: the flexible one binds toward the
+            // signature variable, whichever side it is on, so the body's view of `$T` stays `$T`.
+            // Recorded the other way round (`$T := $Ret3`), every type mentioning `$T` zonked to
+            // a hole, the diagnostics printed the hole, and the calls over it never grounded.
+            if (IsVar(a) && IsVar(b) && IsRigid(a) && !IsRigid(b))
+                return Bind(b, a, sub, origin, record);
+
             var aRigid = !record && IsRigid(a);
             var bRigid = !record && IsRigid(b);
             if (IsVar(a) && !aRigid)
@@ -1035,6 +1047,10 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         private static bool HasVar(TypeExpression t)
             => t != null && (IsVar(t) || t.TypeArgs.Any(HasVar));
+
+        /// <summary>Like <see cref="HasVar"/>, but a rigid signature variable counts as ground.</summary>
+        private bool HasFlexibleVar(TypeExpression t)
+            => t != null && ((IsVar(t) && !IsRigid(t)) || t.TypeArgs.Any(HasFlexibleVar));
 
         private void Report(DiagnosticSeverity severity, string code, string message, Symbol origin)
             => Diagnostics.Add(new CheckDiagnostic(severity, code, message, origin));
