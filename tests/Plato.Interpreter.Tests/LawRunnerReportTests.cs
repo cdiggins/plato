@@ -51,8 +51,18 @@ public class LawRunnerReportTests
     {
         var text = LawReport.Format(Verdicts);
         Assert.That(text.Split('\n', StringSplitOptions.RemoveEmptyEntries), Has.Length.EqualTo(Verdicts.Count));
-        Assert.That(text, Does.Contain("LawReportFixture.Law_FailsOnFalse\tfail\tb = false\n"));
+        Assert.That(text, Does.Match(@"LawReportFixture\.Law_FailsOnFalse\tfail\t\d+\tb = false\n"));
         Assert.That(LawReport.Parse(text.Replace("\n", "\r\n") + "# comment\n\n"), Is.EqualTo(Verdicts));
+    }
+
+    [Test]
+    public void A_file_without_the_time_column_parses_and_compares()
+    {
+        var old = LawReport.Parse("A.Law_X\tpass\t\nA.Law_Y\tfail\tb = false\n");
+        Assert.That(old, Is.EqualTo(new[] { V("A.Law_X", "pass"), new LawVerdict("A.Law_Y", "fail", "b = false") }));
+        Assert.That(LawReport.Format(old), Is.EqualTo("A.Law_X\tpass\t\nA.Law_Y\tfail\tb = false\n"), "a verdict without a time keeps the three-column layout");
+        var changes = LawReport.Compare(old, new[] { new LawVerdict("A.Law_X", "pass", "", 12), new LawVerdict("A.Law_Y", "pass", "", 3) }, wholeRun: true);
+        Assert.That(changes.Select(c => c.Name), Is.EqualTo(new[] { "A.Law_Y" }));
     }
 
     [Test]

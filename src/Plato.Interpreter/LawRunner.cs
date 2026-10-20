@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
@@ -34,7 +35,8 @@ public sealed class LawResult
                 return $"{head}  ({Trials} {(Exhaustive ? "cases, exhaustive" : "cases")})";
             case LawStatus.Fail:
             case LawStatus.Error:
-                return $"{head}  case {Trials}: {FormatWitness()}"
+                return head
+                       + (Witness != null ? $"  case {Trials}: {FormatWitness()}" : "")
                        + (Measure != null ? $"  measure {ValueFormat.Format(Measure)}" : "")
                        + (Message != null ? $"  {Message}" : "");
             default:
@@ -57,9 +59,16 @@ public sealed class LawRunOptions
     public int IntegerMin { get; set; } = -1;
     public int IntegerMax { get; set; } = 12;
     public int Seed { get; set; } = 0;
-    /// <summary>Seconds one law may take over all its cases before it is reported as an error;
-    /// null for no limit.</summary>
-    public double? BudgetSeconds { get; set; }
+    /// <summary>Seconds one law may take over all its cases before it is reported as an error,
+    /// with its elapsed time; null for no limit. The interpreter stops the law at the budget; a
+    /// compiled backend lets it finish and judges the time it took.</summary>
+    public double? BudgetSeconds { get; set; } = DefaultBudgetSeconds;
+    public const double DefaultBudgetSeconds = 2;
+    /// <summary>Seconds after which a law a backend cannot interrupt is given up on: its thread
+    /// is left to finish in the background and the law is reported as an error. Null waits.</summary>
+    public double? AbandonSeconds { get; set; } = 120;
+    /// <summary>Laws evaluated at once when the backend allows it (<see cref="ILawBackend.SupportsParallel"/>).</summary>
+    public int MaxParallel { get; set; } = System.Environment.ProcessorCount;
     /// <summary>Only laws matching one of these run (see <see cref="LawSelection.Matches"/>); null
     /// runs every law, an empty list runs none.</summary>
     public IReadOnlyList<string> Filters { get; set; }
@@ -67,6 +76,10 @@ public sealed class LawRunOptions
     public string WitnessPrefix { get; set; } = "Witness_";
     public string MeasurePrefix { get; set; } = "Measure_";
 }
+
+/// <summary>What evaluating one <c>Witness_*</c> function cost: its time, and the fault when it
+/// had one (a faulting witness is dropped; the laws over its type run on the others).</summary>
+public sealed record WitnessResult(string Name, TimeSpan Elapsed, string Fault);
 
 /// <summary>Which laws a run covers. A filter matches a law when its text occurs, ignoring case, in
 /// the law's full name <c>Owner.Law_Name</c>, so one entry can name a law, its class, or both
@@ -128,14 +141,32 @@ public static class LawSelection
 /// </summary>
 public sealed class LawRunner
 {
+    /// <summary>Supplies the compilation's metadata and generated values; evaluates nothing when
+    /// another backend is in use.</summary>
     public Interpreter Interpreter { get; }
+    public ILawBackend Backend { get; }
     public LawRunOptions Options { get; }
     private readonly ValueGenerator _gen;
-    private readonly Dictionary<string, List<object>> _witnessCache = new Dictionary<string, List<object>>();
+    /// <summary>One entry per type, built on first use; laws of a parallel run that need the same
+    /// type wait for the one building it, and different types build at once.</summary>
+    private readonly ConcurrentDictionary<string, Lazy<List<object>>> _witnessCache = new ConcurrentDictionary<string, Lazy<List<object>>>();
+    private readonly ConcurrentQueue<WitnessResult> _witnessResults = new ConcurrentQueue<WitnessResult>();
+
+    /// <summary>Every witness evaluated so far, with its time: the shared values a sweep built
+    /// once, so a slow witness is named beside the slow laws.</summary>
+    public IReadOnlyList<WitnessResult> Witnesses => _witnessResults.ToList();
+
+    /// <summary>The stack a law's evaluation thread gets: deep Plato recursion needs more than the
+    /// default thread has.</summary>
+    public const int StackBytes = 256 * 1024 * 1024;
 
     public LawRunner(Interpreter interpreter, LawRunOptions options = null)
+        : this(new InterpreterBackend(interpreter), interpreter, options) { }
+
+    public LawRunner(ILawBackend backend, Interpreter interpreter, LawRunOptions options = null)
     {
         Interpreter = interpreter;
+        Backend = backend;
         Options = options ?? new LawRunOptions();
         _gen = new ValueGenerator(interpreter);
     }
@@ -154,10 +185,76 @@ public sealed class LawRunner
     public IReadOnlyList<string> UnmatchedFilters
         => Options.Filters == null ? Array.Empty<string>() : LawSelection.Unmatched(AllLaws, Options.Filters);
 
-    public IReadOnlyList<LawResult> RunAll()
-        => Laws.Select(Run).ToList();
+    public IReadOnlyList<LawResult> RunAll() => RunAll(null);
 
+    /// <summary>Runs the selected laws, reporting each result as it is known (from any thread
+    /// when the run is parallel), and returns them in law order. Laws run at once, up to
+    /// <see cref="LawRunOptions.MaxParallel"/>, when the backend allows it; otherwise one after
+    /// another on the calling thread.</summary>
+    public IReadOnlyList<LawResult> RunAll(Action<LawResult> onResult)
+    {
+        var laws = Laws.ToList();
+        var results = new LawResult[laws.Count];
+        if (!Backend.SupportsParallel || Options.MaxParallel <= 1)
+        {
+            for (var i = 0; i < laws.Count; i++)
+            {
+                results[i] = Run(laws[i]);
+                onResult?.Invoke(results[i]);
+            }
+            return results;
+        }
+        var parallel = new ParallelOptions { MaxDegreeOfParallelism = Options.MaxParallel };
+        // Witnesses first, so a law's time is its own and a witness two laws share is built once.
+        Parallel.ForEach(laws, parallel, law =>
+        {
+            foreach (var p in law.Parameters)
+                DomainOf(p, law);
+        });
+        Parallel.For(0, laws.Count, parallel, i =>
+        {
+            results[i] = Run(laws[i]);
+            onResult?.Invoke(results[i]);
+        });
+        return results;
+    }
+
+    /// <summary>Runs one law: on the calling thread when the backend can stop it at the budget,
+    /// else on a thread of its own that is abandoned past <see cref="LawRunOptions.AbandonSeconds"/>.</summary>
     public LawResult Run(FunctionDef law)
+    {
+        if (!Backend.SupportsParallel)
+            return Evaluate(law);
+        var sw = Stopwatch.StartNew();
+        LawResult result = null;
+        Exception fault = null;
+        var thread = new Thread(() =>
+        {
+            try { result = Evaluate(law); }
+            catch (Exception e) { fault = e; }
+        }, StackBytes) { IsBackground = true, Name = LawSelection.FullName(law) };
+        thread.Start();
+        var finished = Options.AbandonSeconds is double abandon
+            ? thread.Join(TimeSpan.FromSeconds(abandon))
+            : JoinForever(thread);
+        if (!finished)
+            return new LawResult
+            {
+                Law = law, Status = LawStatus.Error, Elapsed = sw.Elapsed,
+                Message = $"still running after {sw.Elapsed.TotalSeconds:F0}s (budget {Options.BudgetSeconds ?? 0:0.#}s); abandoned",
+            };
+        if (fault != null)
+            return new LawResult { Law = law, Status = LawStatus.Error, Elapsed = sw.Elapsed, Message = $"the {Backend.Name} backend faulted: {fault.GetType().Name}: {fault.Message}" };
+        return result;
+    }
+
+    private static bool JoinForever(Thread thread)
+    {
+        thread.Join();
+        return true;
+    }
+
+    private LawResult Evaluate(FunctionDef law)
     {
         var sw = Stopwatch.StartNew();
         var domains = new List<Domain>();
@@ -174,16 +271,17 @@ public sealed class LawRunner
         var cases = exhaustive ? Product(domains) : Sample(law, domains);
 
         var trials = 0;
-        Interpreter.Deadline = Options.BudgetSeconds is double budget ? DateTime.UtcNow.AddSeconds(budget) : null;
+        var budget = Options.BudgetSeconds;
+        Backend.SetDeadline(budget is double b ? DateTime.UtcNow.AddSeconds(b) : null);
         foreach (var args in cases)
         {
             trials++;
             try
             {
-                var r = Interpreter.Invoke(law, args);
-                if (r is bool b)
+                var r = Backend.ToInterpreterValue(Backend.Invoke(law, args));
+                if (r is bool ok)
                 {
-                    if (!b)
+                    if (!ok)
                         return Failure(law, LawStatus.Fail, trials, exhaustive, args, null, sw);
                 }
                 else
@@ -191,20 +289,35 @@ public sealed class LawRunner
             }
             catch (HostObligationException e)
             {
-                return new LawResult { Law = law, Status = LawStatus.Obligation, Trials = trials, Witness = args, Message = e.Describe(), Elapsed = sw.Elapsed };
+                return new LawResult { Law = law, Status = LawStatus.Obligation, Trials = trials, Witness = Report(args), Message = e.Describe(), Elapsed = sw.Elapsed };
             }
             catch (EvaluationException e)
             {
-                return Failure(law, LawStatus.Error, trials, exhaustive, args, e.Describe(), sw);
+                var message = e.Message.StartsWith(TimeBudgetMessage, StringComparison.Ordinal)
+                    ? $"{OverBudget(sw, budget)} (stopped in case {trials})"
+                    : e.Describe();
+                return Failure(law, LawStatus.Error, trials, exhaustive, args, message, sw);
             }
         }
+        if (budget is double limit && sw.Elapsed.TotalSeconds > limit)
+            return new LawResult { Law = law, Status = LawStatus.Error, Trials = trials, Exhaustive = exhaustive, Message = $"{OverBudget(sw, budget)} over {trials} cases", Elapsed = sw.Elapsed };
         return new LawResult { Law = law, Status = LawStatus.Pass, Trials = trials, Exhaustive = exhaustive, Elapsed = sw.Elapsed };
     }
+
+    /// <summary>The message the interpreter faults with at its deadline (Interpreter.Activate).</summary>
+    public const string TimeBudgetMessage = "time budget exceeded";
+
+    private static string OverBudget(Stopwatch sw, double? budget)
+        => $"took {sw.Elapsed.TotalSeconds:F2}s, over the {budget ?? 0:0.#}s budget";
+
+    /// <summary>The arguments as interpreter values, so a report formats them.</summary>
+    private object[] Report(object[] args)
+        => args.Select(Backend.ToInterpreterValue).ToArray();
 
     private LawResult Failure(FunctionDef law, LawStatus status, int trials, bool exhaustive, object[] args, string message, Stopwatch sw)
         => new LawResult
         {
-            Law = law, Status = status, Trials = trials, Exhaustive = exhaustive, Witness = args,
+            Law = law, Status = status, Trials = trials, Exhaustive = exhaustive, Witness = Report(args),
             Message = message, Measure = TryMeasure(law, args), Elapsed = sw.Elapsed,
         };
 
@@ -216,7 +329,7 @@ public sealed class LawRunner
         var m = Interpreter.FunctionsNamed(name).FirstOrDefault(f => f.Parameters.Count == args.Length && f.Body != null);
         if (m == null)
             return null;
-        try { return Interpreter.Invoke(m, args); }
+        try { return Backend.ToInterpreterValue(Backend.Invoke(m, args)); }
         catch (EvaluationException) { return null; }
     }
 
@@ -249,7 +362,7 @@ public sealed class LawRunner
 
         if (t.Def.Name == "Integer")
         {
-            d.Finite = Enumerable.Range(Options.IntegerMin, Options.IntegerMax - Options.IntegerMin + 1).Select(i => (object)(long)i).ToList();
+            d.Finite = Enumerable.Range(Options.IntegerMin, Options.IntegerMax - Options.IntegerMin + 1).Select(i => Backend.FromInterpreterValue((long)i)).ToList();
             d.Preferred.AddRange(d.Finite);
             d.Generate.Add(t);
             return d;
@@ -258,7 +371,7 @@ public sealed class LawRunner
         var finite = _gen.FiniteDomain(t);
         if (finite != null)
         {
-            d.Finite = finite.ToList();
+            d.Finite = finite.Select(Backend.FromInterpreterValue).ToList();
             return d;
         }
 
@@ -293,16 +406,19 @@ public sealed class LawRunner
                          && ConceptClosure.FindInstance(td.ToTypeExpression(), iface.Def.Name) != null)
             .Select(td => td.ToTypeExpression());
 
-    /// <summary>The values of every nullary witness of a type, evaluated once.</summary>
+    /// <summary>The values of every nullary witness of a type, evaluated once by the backend.</summary>
     public IReadOnlyList<object> WitnessesOf(TypeExpression t)
     {
         // Keyed by the whole type, arguments included: an Array<Diagnostic> witness must not
         // serve an Array<Integer> parameter.
         var key = t.ToString();
-        if (_witnessCache.TryGetValue(key, out var cached))
-            return cached;
+        return _witnessCache.GetOrAdd(key, k => new Lazy<List<object>>(() => EvaluateWitnesses(k), LazyThreadSafetyMode.ExecutionAndPublication)).Value;
+    }
+
+    private List<object> EvaluateWitnesses(string key)
+    {
         var list = new List<object>();
-        _witnessCache[key] = list;
+        Backend.SetDeadline(null);
         foreach (var f in Interpreter.Functions)
         {
             if (!f.Name.StartsWith(Options.WitnessPrefix, StringComparison.Ordinal) || f.Body == null)
@@ -316,8 +432,11 @@ public sealed class LawRunner
                 args = new object[] { new TypeToken(f.Parameters[0].Type) };
             else
                 continue;
-            try { list.Add(Interpreter.Invoke(f, args)); }
-            catch (EvaluationException) { /* a faulting witness is reported by the laws over it */ }
+            var sw = Stopwatch.StartNew();
+            string fault = null;
+            try { list.Add(Backend.Invoke(f, args)); }
+            catch (EvaluationException e) { fault = e.Describe(); /* the laws over the type run on the other witnesses */ }
+            _witnessResults.Enqueue(new WitnessResult(LawSelection.FullName(f), sw.Elapsed, fault));
         }
         return list;
     }
@@ -352,14 +471,15 @@ public sealed class LawRunner
         var usePreferred = d.Preferred.Count > 0 && (d.Generate.Count == 0 || rng.NextDouble() < 0.5);
         if (usePreferred)
             return d.Preferred[rng.Next(d.Preferred.Count)];
-        return _gen.Generate(d.Generate[rng.Next(d.Generate.Count)], rng);
+        return Backend.FromInterpreterValue(_gen.Generate(d.Generate[rng.Next(d.Generate.Count)], rng));
     }
 }
 
 /// <summary>One line of a verdict file: the law's name, its verdict (<c>pass</c>, <c>fail</c>,
-/// <c>error</c>, <c>obligation</c>, <c>skipped</c>), and the first failing witness, the fault, or
-/// the reason, on one line.</summary>
-public sealed record LawVerdict(string Name, string Verdict, string Detail);
+/// <c>error</c>, <c>obligation</c>, <c>skipped</c>), the milliseconds it took (null in a file
+/// written before the column existed), and the first failing witness, the fault, or the reason,
+/// on one line.</summary>
+public sealed record LawVerdict(string Name, string Verdict, string Detail, long? ElapsedMs = null);
 
 /// <summary>A verdict that differs between a baseline and a run. <c>Before</c> is null for a law
 /// the baseline lacks, <c>After</c> for a law the run no longer has.</summary>
@@ -394,7 +514,8 @@ public static class LawReport
             .Select(r => new LawVerdict(
                 shared.Contains(r.Name) ? $"{r.Name}({string.Join(", ", r.Law.Parameters.Select(p => p.Type))})" : r.Name,
                 r.Status.ToString().ToLowerInvariant(),
-                OneLine(Detail(r))))
+                OneLine(Detail(r)),
+                (long)r.Elapsed.TotalMilliseconds))
             .OrderBy(v => v.Name, StringComparer.Ordinal)
             .ToList();
     }
@@ -414,17 +535,24 @@ public static class LawReport
         return flat.Length <= MaxDetail ? flat : flat.Substring(0, MaxDetail) + "...";
     }
 
+    /// <summary>Name, verdict, elapsed milliseconds, detail, tab-separated; a verdict without a
+    /// time is written in the older three-column layout (name, verdict, detail).</summary>
     public static string Format(IEnumerable<LawVerdict> verdicts)
-        => string.Concat(verdicts.Select(v => $"{v.Name}\t{v.Verdict}\t{v.Detail}\n"));
+        => string.Concat(verdicts.Select(v => v.ElapsedMs is long ms
+            ? $"{v.Name}\t{v.Verdict}\t{ms}\t{v.Detail}\n"
+            : $"{v.Name}\t{v.Verdict}\t{v.Detail}\n"));
 
-    /// <summary>The verdicts of a file written by <see cref="Format"/>; blank lines and <c>#</c>
-    /// lines are skipped.</summary>
+    /// <summary>The verdicts of a file written by <see cref="Format"/>, in either layout (a
+    /// detail never holds a tab, so four fields mean the layout with a time); blank lines and
+    /// <c>#</c> lines are skipped.</summary>
     public static IReadOnlyList<LawVerdict> Parse(string text)
         => text.Split('\n')
             .Select(l => l.TrimEnd('\r'))
             .Where(l => l.Trim().Length > 0 && !l.StartsWith('#'))
-            .Select(l => l.Split('\t', 3))
-            .Select(f => new LawVerdict(f[0].Trim(), f.Length > 1 ? f[1].Trim() : "", f.Length > 2 ? f[2] : ""))
+            .Select(l => l.Split('\t', 4))
+            .Select(f => f.Length == 4 && long.TryParse(f[2].Trim(), out var ms)
+                ? new LawVerdict(f[0].Trim(), f[1].Trim(), f[3], ms)
+                : new LawVerdict(f[0].Trim(), f.Length > 1 ? f[1].Trim() : "", f.Length > 2 ? string.Join("\t", f.Skip(2)) : ""))
             .ToList();
 
     /// <summary>Every law whose verdict differs, sorted by name. A law the baseline lacks is

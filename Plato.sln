@@ -75,6 +75,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Generated.Unoptimized
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Laws", "src\Plato.Laws\Plato.Laws.csproj", "{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Interpreter", "src\Plato.Interpreter\Plato.Interpreter.csproj", "{CC9D1D17-692E-4728-86EE-4480AE7C3A3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Interpreter.Tests", "tests\Plato.Interpreter.Tests\Plato.Interpreter.Tests.csproj", "{E2020DEE-333E-483D-91A1-2B5EEFECB6A2}"
@@ -427,6 +429,18 @@ Global
 		{CC9D1D17-692E-4728-86EE-4480AE7C3A3E}.Release|x64.Build.0 = Release|x64
 		{CC9D1D17-692E-4728-86EE-4480AE7C3A3E}.Release|x86.ActiveCfg = Release|Any CPU
 		{CC9D1D17-692E-4728-86EE-4480AE7C3A3E}.Release|x86.Build.0 = Release|Any CPU
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Debug|x64.ActiveCfg = Debug|x64
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Debug|x64.Build.0 = Debug|x64
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Debug|x86.Build.0 = Debug|Any CPU
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Release|x64.ActiveCfg = Release|x64
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Release|x64.Build.0 = Release|x64
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Release|x86.ActiveCfg = Release|Any CPU
+		{7A1C3D54-2B8E-4F6A-9C0D-5E1F2A3B4C5D}.Release|x86.Build.0 = Release|Any CPU
 		{E2020DEE-333E-483D-91A1-2B5EEFECB6A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E2020DEE-333E-483D-91A1-2B5EEFECB6A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2020DEE-333E-483D-91A1-2B5EEFECB6A2}.Debug|x64.ActiveCfg = Debug|x64

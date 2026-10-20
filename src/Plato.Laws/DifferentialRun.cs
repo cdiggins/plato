@@ -3,8 +3,12 @@ using System.Reflection;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
+using PlatoCompilation = Ara3D.Geometry.Compiler.Compilation;
 
-namespace Plato.Interpreter.Tests;
+namespace Ara3D.Geometry.Laws;
+
+// Moved from tests/Plato.Interpreter.Tests for TKT-354 so the CLI and the warm server share the
+// compiled arm; the differential test (DifferentialTests.cs there) still drives it.
 
 /// <summary>One case of one law: the witness and what each arm said (a Boolean, or the exception).</summary>
 public sealed record DifferentialCase(int Index, string Witness, string Interpreter, string CSharp, bool Match);
@@ -31,10 +35,10 @@ public sealed class DifferentialLaw
 public sealed class DifferentialRun
 {
     public const int Trials = 25;
-    private const string GeneratedNamespace = "Ara3D.Geometry";
+    private const string GeneratedNamespace = CSharpProgram.Namespace;
 
     public NumberProfile Profile { get; }
-    public DifferentialBackend Backend { get; }
+    public CSharpProgram Backend { get; }
     public IReadOnlyList<DifferentialLaw> Laws { get; }
     public int GenericSkipped { get; }
     public TimeSpan Elapsed { get; }
@@ -43,15 +47,15 @@ public sealed class DifferentialRun
     public IEnumerable<(DifferentialLaw Law, DifferentialCase Case)> Mismatches
         => Compared.SelectMany(l => l.Mismatches.Select(c => (l, c)));
 
-    private DifferentialRun(NumberProfile profile, DifferentialBackend backend, IReadOnlyList<DifferentialLaw> laws, int genericSkipped, TimeSpan elapsed)
+    private DifferentialRun(NumberProfile profile, CSharpProgram backend, IReadOnlyList<DifferentialLaw> laws, int genericSkipped, TimeSpan elapsed)
         => (Profile, Backend, Laws, GenericSkipped, Elapsed) = (profile, backend, laws, genericSkipped, elapsed);
 
-    public static DifferentialRun Execute(DifferentialProgram program, NumberProfile profile)
+    public static DifferentialRun Execute(PlatoCompilation compilation, NumberProfile profile)
     {
         var sw = Stopwatch.StartNew();
-        var backend = DifferentialBackend.Build(program.Compilation, profile);
-        var interp = new Ara3D.Geometry.Interpreter.Interpreter(program.Compilation, profile);
-        var values = new DifferentialValues(interp);
+        var backend = CSharpProgram.Build(compilation, profile);
+        var interp = new Ara3D.Geometry.Interpreter.Interpreter(compilation, profile);
+        var values = new HostValues(interp, backend.Assembly);
         var laws = new List<DifferentialLaw>();
         var generic = 0;
         foreach (var (key, method) in Discover(backend.Assembly, ref generic).OrderBy(l => l.Key, StringComparer.Ordinal))
@@ -70,7 +74,7 @@ public sealed class DifferentialRun
             var flags = BindingFlags.Public | (isStaticClass ? BindingFlags.Static : BindingFlags.Instance);
             foreach (var m in t.GetMethods(flags).Where(m => m.Name.StartsWith("Law_", StringComparison.Ordinal) && !m.IsSpecialName))
             {
-                if (!DifferentialValues.IsBooleanLike(m.ReturnType))
+                if (!HostValues.IsBooleanLike(m.ReturnType))
                     continue;
                 if (m.IsGenericMethodDefinition || t.IsGenericTypeDefinition)
                 {
@@ -83,7 +87,7 @@ public sealed class DifferentialRun
         return found;
     }
 
-    private static DifferentialLaw RunLaw(string key, MethodInfo method, Ara3D.Geometry.Interpreter.Interpreter interp, DifferentialValues values)
+    private static DifferentialLaw RunLaw(string key, MethodInfo method, Ara3D.Geometry.Interpreter.Interpreter interp, HostValues values)
     {
         var law = new DifferentialLaw { Key = key, Method = method };
         var hostTypes = (method.IsStatic ? Array.Empty<Type>() : new[] { method.DeclaringType })
@@ -156,7 +160,7 @@ public sealed class DifferentialRun
     {
         try
         {
-            return DifferentialValues.ToBool(arm()) ? "true" : "false";
+            return HostValues.ToBool(arm()) ? "true" : "false";
         }
         catch (Exception e)
         {

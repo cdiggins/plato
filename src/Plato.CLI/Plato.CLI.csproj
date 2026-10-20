@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
     <ProjectReference Include="..\Plato.Interpreter\Plato.Interpreter.csproj" />
     <ProjectReference Include="..\Plato.Navigation\Plato.Navigation.csproj" />
+    <ProjectReference Include="..\Plato.Laws\Plato.Laws.csproj" />
     <ProjectReference Include="..\..\writers\Plato.CppWriter\Plato.CppWriter.csproj" />
   </ItemGroup>
 

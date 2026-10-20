@@ -1,5 +1,6 @@
 using System.Text;
 using Ara3D.Geometry.Compiler.Types;
+using Ara3D.Geometry.Laws;
 
 namespace Plato.Interpreter.Tests;
 
@@ -23,7 +24,7 @@ public class DifferentialTests
     {
         var profile = NumberProfile.TryParse(profileName);
         var program = DifferentialProgram.Instance;
-        var run = OnLargeStack(() => DifferentialRun.Execute(program, profile));
+        var run = OnLargeStack(() => DifferentialRun.Execute(program.Compilation, profile));
         TestContext.Out.Write(Report(program, run));
 
         var unexplained = run.Mismatches.Where(m => !Allowed.ContainsKey(m.Law.Key)).ToList();

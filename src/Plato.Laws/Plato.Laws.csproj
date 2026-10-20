@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Law runs over compiled C# (TKT-354 in the bim-open-toolkit repository): the program is
+       emitted with the C# writer, compiled in process with Roslyn together with the handwritten
+       runtime (src/Plato.Intrinsics, embedded here so a pinned CLI needs no source tree), and
+       its Law_* methods are reached by reflection as a backend of the interpreter's LawRunner.
+       Also the differential run that compares the two backends case by case. Referenced by
+       Plato.CLI (plato run with the csharp backend) and Plato.Navigation (the warm server). -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+    <RootNamespace>Ara3D.Geometry.Laws</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Plato.Interpreter\Plato.Interpreter.csproj" />
+    <ProjectReference Include="..\..\writers\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The runtime sources the generated program compiles against, one resource per file. -->
+    <EmbeddedResource Include="..\Plato.Intrinsics\*.cs" LogicalName="Intrinsics/%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>
