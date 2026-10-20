@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <!--
     Plato.Navigation — a queryable navigation index (go-to-def, find-refs, outline, search)
@@ -24,6 +24,8 @@
     <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
     <!-- WarmLawRunner: law runs over a compilation kept between calls (TKT-331). -->
     <ProjectReference Include="..\Plato.Interpreter\Plato.Interpreter.csproj" />
+    <!-- The compiled backend (plato_laws backend=csharp, TKT-354). -->
+    <ProjectReference Include="..\Plato.Laws\Plato.Laws.csproj" />
   </ItemGroup>
 
 </Project>

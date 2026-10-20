@@ -2,6 +2,7 @@ using System.Runtime.ExceptionServices;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
+using Ara3D.Geometry.Laws;
 
 namespace Ara3D.Geometry.Navigation;
 
@@ -51,6 +52,9 @@ public sealed class LawRunRequest
     public bool Recursive { get; init; }
     public IReadOnlyList<string> Exclude { get; init; } = Array.Empty<string>();
     public NumberProfile Profile { get; init; } = NumberProfile.Default;
+    /// <summary>Where the laws evaluate: the interpreter, or the program compiled to C# and kept
+    /// warm per source generation and profile.</summary>
+    public LawBackendKind Backend { get; init; } = LawBackendKind.Interpreter;
     /// <summary>Filters, trials, seed and budget.</summary>
     public LawRunOptions Options { get; init; } = new();
     /// <summary>Which functions to type-check before the laws run (<see cref="TypeFindings"/>).</summary>
@@ -83,6 +87,15 @@ public sealed record LawRunOutcome
     /// <summary>Zero when no file needed checking.</summary>
     public TimeSpan TypeCheckTime { get; init; }
     public TimeSpan LawTime { get; init; }
+    /// <summary>The backend the laws ran on.</summary>
+    public string Backend { get; init; } = LawBackends.InterpreterName;
+    /// <summary>C# backend: true when the compiled program of the last run served again; false
+    /// when this run emitted and compiled (a source changed, or the first run for the profile).</summary>
+    public bool BackendReused { get; init; }
+    /// <summary>C# backend, when not reused: time writing the C#.</summary>
+    public TimeSpan EmitTime { get; init; }
+    /// <summary>C# backend, when not reused: time Roslyn took to compile it.</summary>
+    public TimeSpan CSharpCompileTime { get; init; }
     /// <summary>Programs the runner keeps after this run, this one included.</summary>
     public int ProgramsKept { get; init; }
     public bool Compiled => Errors.Count == 0;
@@ -100,7 +113,7 @@ public sealed record LawRunOutcome
 /// unchanged keeps its parsed tree (one <see cref="ParseCache"/> shared by all programs, so the
 /// library files common to every track are parsed once, and a run never holds the index's lock),
 /// and when no file changed at all the compilation and the interpreter are reused, elaborated
-/// bodies included. A changed file costs one parse plus one whole-program compilation, because
+/// bodies included, as is the compiled C# program of each profile the csharp backend has run under. A changed file costs one parse plus one whole-program compilation, because
 /// the compiler has no incremental mode, and, when asked, a type check of the functions it
 /// declares (<see cref="TypeCheckScope"/>). Runs of one program are serialized; runs of different
 /// programs proceed at the same time. Each evaluates on a thread with the large stack deep Plato

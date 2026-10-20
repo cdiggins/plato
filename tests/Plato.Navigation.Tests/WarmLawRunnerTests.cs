@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
+using Ara3D.Geometry.Laws;
 using Ara3D.Geometry.Navigation;
 using NUnit.Framework;
 
@@ -56,8 +57,8 @@ public class WarmLawRunnerTests
         return folder;
     }
 
-    private static LawRunRequest Request(string folder, NumberProfile? profile = null)
-        => new() { Folders = new[] { Foundation(), folder }, Profile = profile ?? NumberProfile.Cpu64 };
+    private static LawRunRequest Request(string folder, NumberProfile? profile = null, LawBackendKind backend = LawBackendKind.Interpreter)
+        => new() { Folders = new[] { Foundation(), folder }, Profile = profile ?? NumberProfile.Cpu64, Backend = backend };
 
     private static void AssertRan(LawRunOutcome outcome, string law)
     {
@@ -156,5 +157,28 @@ public class WarmLawRunnerTests
         Assert.That(editedA.Recompiled, Is.True);
         Assert.That(editedA.FilesParsed, Is.EqualTo(1));
         AssertRan(editedA, "WarmFixtureA.Law_AHolds");
+    }
+
+    [Test]
+    public void The_csharp_backend_compiles_once_per_source_generation()
+    {
+        var a = Folder(LawsA);
+        var runner = new WarmLawRunner();
+
+        var first = runner.Run(Request(a, backend: LawBackendKind.CSharp));
+        var again = runner.Run(Request(a, backend: LawBackendKind.CSharp));
+        File.WriteAllText(Path.Combine(a, "laws.plato"), LawsA.Replace("=> true;", "=> b || true;"));
+        var edited = runner.Run(Request(a, backend: LawBackendKind.CSharp));
+
+        AssertRan(first, "WarmFixtureA.Law_AHolds");
+        Assert.That(first.Backend, Is.EqualTo(LawBackends.CSharpName));
+        Assert.That(first.BackendReused, Is.False);
+        Assert.That(first.CSharpCompileTime, Is.GreaterThan(TimeSpan.Zero));
+        Assert.That(again.BackendReused, Is.True);
+        Assert.That(again.CSharpCompileTime, Is.EqualTo(TimeSpan.Zero));
+        AssertRan(again, "WarmFixtureA.Law_AHolds");
+        Assert.That(edited.Recompiled, Is.True);
+        Assert.That(edited.BackendReused, Is.False);
+        AssertRan(edited, "WarmFixtureA.Law_AHolds");
     }
 }

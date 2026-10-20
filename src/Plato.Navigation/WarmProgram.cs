@@ -2,14 +2,15 @@ using System.Diagnostics;
 using System.Text;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Interpreter;
+using Ara3D.Geometry.Laws;
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.Navigation;
 
 /// <summary>
 /// One program a <see cref="WarmLawRunner"/> keeps: the files of one (folders, recursive,
-/// exclude) choice, their compilation, an interpreter per Number profile, and what the type check
-/// knows about each file. Not thread-safe: the runner holds <see cref="Lock"/> around a run.
+/// exclude) choice, their compilation, an interpreter and (once asked for) a compiled C# program
+/// per Number profile, and what the type check knows about each file. Not thread-safe: the runner holds <see cref="Lock"/> around a run.
 /// </summary>
 internal sealed class WarmProgram
 {
@@ -29,6 +30,8 @@ internal sealed class WarmProgram
     private readonly Dictionary<string, IReadOnlyList<TypeFinding>> _typeErrorsByFile = new();
     private string? _allCheckedGeneration;
     private readonly Dictionary<string, Interpreter.Interpreter> _interpreters = new();
+    /// <summary>The C# program per profile name, emitted and compiled from the current generation.</summary>
+    private readonly Dictionary<string, CSharpProgram> _compiled = new();
 
     public static string KeyOf(LawRunRequest request)
         => string.Join("\n", request.Folders.Select(f => SourceSnapshot.PathKey(new FilePath(Path.GetFullPath(f)))))
@@ -56,6 +59,7 @@ internal sealed class WarmProgram
             _generation = null;
             _compilation = null;
             _interpreters.Clear();
+            _compiled.Clear();
 
             var parseTimer = Stopwatch.StartNew();
             (var trees, parsed) = parse(files);
@@ -81,12 +85,39 @@ internal sealed class WarmProgram
 
         if (!_interpreters.TryGetValue(request.Profile.Name, out var interp))
             _interpreters[request.Profile.Name] = interp = new Interpreter.Interpreter(_compilation!, request.Profile);
-        var runner = new LawRunner(interp, request.Options);
+        ILawBackend backend;
+        var backendReused = false;
+        var emitTime = TimeSpan.Zero;
+        var csharpTime = TimeSpan.Zero;
+        if (request.Backend == LawBackendKind.CSharp)
+        {
+            if (_compiled.TryGetValue(request.Profile.Name, out var program))
+                backendReused = true;
+            else
+            {
+                try { program = CSharpProgram.Build(_compilation!, request.Profile); }
+                catch (InvalidOperationException e)
+                {
+                    return new LawRunOutcome { Errors = e.Message.Split('\n'), Files = files.Count, Functions = _compilation!.FunctionDefinitions.Count, FilesParsed = parsed, Recompiled = recompiled, ReadTime = read, ParseTime = parseTime, CompileTime = compileTime, Backend = LawBackends.CSharpName };
+                }
+                _compiled[request.Profile.Name] = program;
+                emitTime = program.EmitElapsed;
+                csharpTime = program.CompileElapsed;
+            }
+            backend = CSharpBackend.Over(program, interp);
+        }
+        else
+            backend = new InterpreterBackend(interp);
+        var runner = new LawRunner(backend, interp, request.Options);
         var lawTimer = Stopwatch.StartNew();
-        var results = runner.Laws.Select(runner.Run).ToList();
+        var results = runner.RunAll();
         return new LawRunOutcome
         {
             Results = results,
+            Backend = backend.Name,
+            BackendReused = backendReused,
+            EmitTime = emitTime,
+            CSharpCompileTime = csharpTime,
             UnmatchedFilters = runner.UnmatchedFilters,
             TypeErrors = request.TypeCheck == TypeCheckScope.None
                 ? null
