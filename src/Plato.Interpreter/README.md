@@ -217,7 +217,7 @@ from the program itself.
 | `Numbers.cs` | The arithmetic a `NumberProfile` gives Number and Integer |
 | `HostIntrinsics.cs` | The host half of `intrinsics.library.plato`, keyed by declared signature |
 | `Environment.cs` | Bindings in scope during evaluation; the snapshot a lambda captures |
-| `LawRunner.cs` | `Law_*` discovery, value supply, exhaustion or sampling, results |
+| `LawRunner.cs` | `Law_*` discovery, value supply, exhaustion or sampling, results; `ILawBackend`, the seam `src/Plato.Laws` plugs the compiled program into |
 | `ValueGenerator.cs` | Seeded pseudorandom values and finite domains |
 | `Exceptions.cs` | Evaluation faults with the Plato call chain; host obligations |
 | `../Plato.CLI/RunCommand.cs` | The `plato run` command |

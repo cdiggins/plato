@@ -223,9 +223,10 @@ that a law that fails on generated input in one engine fails in the other.
 
 ```
 Plato.CLI run <folder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>]
-                          [--profile=cpu64|gpu32] [--filter=<text>[,<text>...]] [--laws-from=<file>]
+                          [--profile=cpu64|gpu32] [--backend=interpreter|csharp]
+                          [--filter=<text>[,<text>...]] [--laws-from=<file>]
                           [--report=<file>] [--baseline=<file>]
-                          [--trials=N] [--seed=N] [--budget=<seconds>]
+                          [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--parallel=N]
 ```
 
 `RunCommand.cs` compiles the roots as one program (top-level files, or every subfolder with
@@ -238,13 +239,34 @@ value. `--filter` takes a comma-separated list and keeps the laws whose full nam
 `--laws-from=<file>` adds the entries of a file, one per line, blank lines and `#` comments
 skipped. Both may repeat, and the run covers the union. An entry that selects no law is reported
 on stderr, so a misspelt name in a list does not pass silently. `--trials` and `--seed` set the
-sampling, and `--budget` stops one law after that many seconds and reports it as an error. The exit code is 1 on a parse or compile failure and when any law fails or errors;
-skipped laws and host obligations are listed but do not fail the run.
+sampling. `--budget` is the seconds one law may take over all its cases
+(`LawRunOptions.DefaultBudgetSeconds`); a law over it is an error whose message gives the time it
+took, and `--budget=0` lifts the limit. The exit code is 1 on a parse or compile failure and when
+any law fails or errors; skipped laws and host obligations are listed but do not fail the run.
+The summary line gives the wall time and the law times summed, and the fifteen slowest laws and
+witnesses are listed before it.
+
+`--backend` chooses where the laws evaluate (`LawBackends` in `src/Plato.Laws`). `interpreter`,
+the default, is this document's evaluator: one law at a time, stopped at its budget by the
+interpreter's deadline. `csharp` emits the program with the C# writer in extension style,
+compiles it in process with Roslyn together with the embedded copy of `src/Plato.Intrinsics`
+(`CSharpProgram`), and calls each law as the method the writer made of it (`CSharpBackend`): a
+library law is a static method of its library's class, a law whose first parameter is an
+interface is an instance method on each implementing struct, a `_` receiver is dropped. Laws
+then run on every core at once, one thread per law (`--parallel=N` bounds it), and witnesses are
+built first, once per type, so a law's time is its own. A compiled law cannot be interrupted, so
+it runs to the end and its time is judged against the budget; past `--abandon` seconds its thread
+is left behind and the law is an error. Both backends build their cases from the same domains
+and the same seeded draws (`ILawBackend` in `LawRunner.cs`: the runner supplies the values, the
+backend evaluates), so the verdict of a law is the same on either unless the writer, the runtime
+or the interpreter disagree, which the differential test (`DifferentialRun`, run by
+`tests/Plato.Interpreter.Tests/DifferentialTests.cs`) exists to catch.
 
 `--report=<file>` writes a verdict file: one tab-separated line per law, sorted by name, holding
-the full name, the verdict (`pass`, `fail`, `error`, `obligation`, `skipped`) and the first
-failing witness, the fault or the reason, flattened to one line. Two overloads with one name
-carry their parameter types. A committed verdict file records which laws held at a commit, and
+the full name, the verdict (`pass`, `fail`, `error`, `obligation`, `skipped`), the milliseconds
+the law took, and the first failing witness, the fault or the reason, flattened to one line. A
+file written before the time column existed has three columns and still parses and compares.
+Two overloads with one name carry their parameter types. A committed verdict file records which laws held at a commit, and
 two of them diff line by line. `--baseline=<file>` compares the run with a verdict file and
 prints every law whose verdict changed (`regressed`, `changed`, `new`, or, in a run without
 filters, `removed`); only verdicts are compared, never the witness text. With `--baseline` the
@@ -259,7 +281,9 @@ already failed in the baseline do not fail the check. The baseline is read befor
 `plato run` compiles the whole program before its first law, every time; on a large program
 that compilation is nearly all of a filtered run. `WarmLawRunner` (`src/Plato.Navigation`)
 keeps it between runs for a long-lived host, and the `plato_laws` tool of the navigation MCP
-server is that host. Its arguments are the CLI's flags (`folders`, `recursive`, `exclude`,
+server is that host. With `backend=csharp` it also keeps the compiled C# program, one per source
+generation and Number profile, recompiling only when a file changes; the emit and Roslyn times
+are reported beside the others. Its arguments are the CLI's flags (`folders`, `recursive`, `exclude`,
 `filter`, `lawsFrom`, `profile`, `trials`, `seed`, `budget`, `report`, `baseline`), and it
 chooses files through the same `LawProgram.SourceFiles`, so the two reach the same verdicts.
 
