@@ -124,10 +124,11 @@ library Meshes
     Count(self: TriangleFace): Integer
         => 3;
 
-    // The index-th corner's vertex index. Precondition: index in [0, 3);
-    // corners do not wrap.
+    // The index-th corner's vertex index. Corners do not wrap: an index
+    // outside [0, 3) reads the corner array, which refuses it, so an
+    // off-by-one is an error instead of a silent read of C.
     At(self: TriangleFace, index: Integer): VertexIndex
-        => index == 0 ? self.A : (index == 1 ? self.B : self.C);
+        => index == 0 ? self.A : (index == 1 ? self.B : (index == 2 ? self.C : self.Vertices[index]));
 
     // The three corner vertex indices in winding order.
     Vertices(self: TriangleFace): Array<VertexIndex>
@@ -140,10 +141,11 @@ library Meshes
     Count(self: QuadFace): Integer
         => 4;
 
-    // The index-th corner's vertex index. Precondition: index in [0, 4);
-    // corners do not wrap.
+    // The index-th corner's vertex index. Corners do not wrap: an index
+    // outside [0, 4) reads the corner array, which refuses it, so an
+    // off-by-one is an error instead of a silent read of D.
     At(self: QuadFace, index: Integer): VertexIndex
-        => index == 0 ? self.A : (index == 1 ? self.B : (index == 2 ? self.C : self.D));
+        => index == 0 ? self.A : (index == 1 ? self.B : (index == 2 ? self.C : (index == 3 ? self.D : self.Vertices[index])));
 
     // The four corner vertex indices in winding order.
     Vertices(self: QuadFace): Array<VertexIndex>

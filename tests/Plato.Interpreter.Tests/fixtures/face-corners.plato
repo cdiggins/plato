@@ -1,0 +1,28 @@
+// TKT-447: TriangleFace and QuadFace corners read by index. In range, the
+// corner; out of range, an error on both backends, never the last corner.
+library FaceCornerFixture
+{
+    Triangle(_: Integer): TriangleFace
+        => TriangleFace(VertexIndex(4), VertexIndex(5), VertexIndex(6));
+
+    Quad(_: Integer): QuadFace
+        => QuadFace(VertexIndex(4), VertexIndex(5), VertexIndex(6), VertexIndex(7));
+
+    Law_TriangleCornersInRange(_: Integer): Boolean
+        => Triangle(0)[0] == VertexIndex(4) && Triangle(0)[1] == VertexIndex(5) && Triangle(0)[2] == VertexIndex(6);
+
+    Law_QuadCornersInRange(_: Integer): Boolean
+        => Quad(0)[0] == VertexIndex(4) && Quad(0)[1] == VertexIndex(5) && Quad(0)[2] == VertexIndex(6) && Quad(0)[3] == VertexIndex(7);
+
+    Law_TriangleCornerThreeIsRefused(_: Integer): Boolean
+        => Triangle(0)[3] == VertexIndex(6);
+
+    Law_TriangleCornerMinusOneIsRefused(_: Integer): Boolean
+        => Triangle(0)[-1] == VertexIndex(6);
+
+    Law_QuadCornerFourIsRefused(_: Integer): Boolean
+        => Quad(0)[4] == VertexIndex(7);
+
+    Law_QuadCornerMinusOneIsRefused(_: Integer): Boolean
+        => Quad(0)[-1] == VertexIndex(7);
+}
