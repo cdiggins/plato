@@ -173,3 +173,116 @@ public sealed class DifferentialRun
     private static string Truncate(string s, int n)
         => s.Length <= n ? s : s.Substring(0, n) + "~";
 }
+
+/// <summary>A value of the <see cref="DifferentialBackend"/>: the same Plato value in each engine.</summary>
+public sealed record DifferentialValue(object Interpreter, object Host);
+
+/// <summary>
+/// The law runner's backend that evaluates every call twice, in the interpreter and on the
+/// compiled C#, and compares the answers with Plato's structural equality
+/// (<see cref="ValueEquality"/>, which the generated <c>Equals</c> matches since TKT-355; two
+/// function values always agree, since neither engine can compare them). Every
+/// call the runner makes goes through it: each <c>Witness_*</c> is built in both engines, and each
+/// law and its <c>Measure_</c> and <c>Premise_</c> companions run on the same witnesses in both.
+/// A disagreement (different values, or one engine faulting where the other answers) is thrown
+/// as a <see cref="BackendsDifferException"/> naming both answers and kept in
+/// <see cref="Mismatches"/>; the runner reports the law as <c>differs</c> and drops a differing
+/// witness. When both engines fault the interpreter's fault is thrown; when the interpreter stops
+/// at the time budget the compiled arm is not run, so a slow law is a budget error, never a
+/// mismatch. Calls run one at a time, because the interpreter's state is shared (TKT-438).
+/// </summary>
+public sealed class DifferentialBackend : ILawBackend
+{
+    public InterpreterBackend Interpreted { get; }
+    /// <summary>The compiled arm: a <see cref="CSharpBackend"/> in every real run.</summary>
+    public ILawBackend Compiled { get; }
+    private readonly System.Collections.Concurrent.ConcurrentQueue<string> _mismatches = new();
+
+    public DifferentialBackend(InterpreterBackend interpreted, ILawBackend compiled)
+        => (Interpreted, Compiled) = (interpreted, compiled);
+
+    /// <summary>One line per disagreement, in the order found: the function, its arguments and
+    /// both answers.</summary>
+    public IReadOnlyList<string> Mismatches => _mismatches.ToList();
+
+    public string Name => LawBackends.DifferentialName;
+    public bool SupportsParallel => false;
+    public void SetDeadline(DateTime? deadline) => Interpreted.SetDeadline(deadline);
+
+    public object FromInterpreterValue(object v)
+        => v is TypeToken ? new DifferentialValue(v, v) : new DifferentialValue(v, Compiled.FromInterpreterValue(v));
+
+    public object ToInterpreterValue(object v)
+        => v is DifferentialValue d ? d.Interpreter : v;
+
+    public object Invoke(FunctionDef f, object[] args)
+    {
+        var interpArgs = args.Select(a => a is DifferentialValue d ? d.Interpreter : a).ToArray();
+        var hostArgs = args.Select(a => a is DifferentialValue d ? d.Host : a).ToArray();
+
+        object mine = null, theirs = null;
+        EvaluationException mineFault = null, theirsFault = null;
+        try { mine = Interpreted.Invoke(f, interpArgs); }
+        catch (EvaluationException e) when (e.Message.StartsWith(LawRunner.TimeBudgetMessage, StringComparison.Ordinal)) { throw; }
+        catch (EvaluationException e) { mineFault = e; }
+        try { theirs = Compiled.Invoke(f, hostArgs); }
+        catch (EvaluationException e) { theirsFault = e; }
+
+        if (mineFault != null && theirsFault != null)
+        {
+            if ((mineFault is HostObligationException) == (theirsFault is HostObligationException))
+                throw mineFault;
+            throw Differ(f, interpArgs, Describe(mineFault), Describe(theirsFault));
+        }
+        if (mineFault != null)
+            throw Differ(f, interpArgs, Describe(mineFault), Format(Compiled.ToInterpreterValue(theirs)));
+        if (theirsFault != null)
+            throw Differ(f, interpArgs, Format(mine), Describe(theirsFault));
+
+        object theirsAsPlato;
+        try { theirsAsPlato = Compiled.ToInterpreterValue(theirs); }
+        catch (ValueConversionException) { return new DifferentialValue(mine, theirs); }
+        if (!Agree(mine, theirsAsPlato))
+            throw Differ(f, interpArgs, Format(mine), Format(theirsAsPlato));
+        return new DifferentialValue(mine, theirs);
+    }
+
+    /// <summary>Plato's structural equality (<see cref="ValueEquality"/>), except that two
+    /// function values agree: a closure and a delegate cannot be compared, and a function field
+    /// is checked through the laws that call it.</summary>
+    private static bool Agree(object a, object b)
+    {
+        if (IsFunction(a) || IsFunction(b))
+            return IsFunction(a) && IsFunction(b);
+        switch (a)
+        {
+            case PlatoRecord r when b is PlatoRecord s:
+                return r.Def.Name == s.Def.Name && AllAgree(r.Fields, s.Fields);
+            case PlatoSum u when b is PlatoSum v:
+                return u.Def.Name == v.Def.Name && u.Case.Tag == v.Case.Tag && AllAgree(u.Fields, v.Fields);
+            case PlatoArray xs when b is PlatoArray ys:
+                return AllAgree(xs.Items, ys.Items);
+            default:
+                return ValueEquality.Equals(a, b);
+        }
+    }
+
+    private static bool IsFunction(object v) => v is PlatoFunction || v is Delegate;
+
+    private static bool AllAgree(IReadOnlyList<object> a, IReadOnlyList<object> b)
+        => a.Count == b.Count && a.Zip(b, Agree).All(x => x);
+
+    private BackendsDifferException Differ(FunctionDef f, object[] interpArgs, string interpreted, string compiled)
+    {
+        var call = $"{LawSelection.FullName(f)}({string.Join(", ", interpArgs.Select(a => ValueFormat.Format(a, 80)))})";
+        var message = $"interpreter: {interpreted}; csharp: {compiled}";
+        _mismatches.Enqueue($"{call}  {message}");
+        return new BackendsDifferException(message);
+    }
+
+    private static string Describe(EvaluationException e) => "threw " + Truncate(e.Describe(), 200);
+
+    private static string Format(object v) => ValueFormat.Format(v, 200);
+
+    private static string Truncate(string s, int n) => s.Length <= n ? s : s.Substring(0, n) + "~";
+}

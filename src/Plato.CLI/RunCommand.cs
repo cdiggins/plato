@@ -10,7 +10,7 @@ using Ara3D.Utils;
 namespace Ara3D.Geometry.CLI
 {
     // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|gpu32]
-    //                [--backend=interpreter|csharp] [--filter=<text>[,<text>...]] [--laws-from=<file>]
+    //                [--backend=interpreter|csharp|differential] [--differential] [--filter=<text>[,<text>...]] [--laws-from=<file>]
     //                [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N]
     //                [--budget=<seconds per law>] [--abandon=<seconds>] [--parallel=N] [--call=<Name>]
     //
@@ -19,6 +19,14 @@ namespace Ara3D.Geometry.CLI
     // evaluates in the interpreter, no C# emitted or built; --backend=csharp emits the program with
     // the C# writer, compiles it in process with Roslyn and calls the laws by reflection, on every
     // core at once (--parallel=N bounds it). Both see the same witnesses in the same order.
+    // --backend=differential (or --differential) runs every call in both, one at a time: each
+    // Witness_* is built in both engines and each law and companion runs on the same witnesses in
+    // both, the answers compared with Plato's structural equality. A disagreement makes the law
+    // "differs" (case, both answers) and a differing witness is dropped; every disagreement is
+    // printed as a "differs" line and written as a # comment at the head of --report's file. The
+    // exit code is 1 when there is a disagreement and 0 otherwise, whatever the laws' verdicts.
+    // The interpreter's --budget applies, and a law stopped by it is a budget error, not a
+    // mismatch: the budget keeps the slow interpreter arm to the laws that are quick (TKT-438).
     // --laws evaluates every Law_* over the Witness_* values and generated
     // values and prints one line per law: pass, fail with the first failing witness (and the law's
     // Measure_ companion when one exists), error with the fault, obligation with the bodiless
@@ -58,7 +66,9 @@ namespace Ara3D.Geometry.CLI
                 Console.Error.WriteLine(e.Message);
                 return 1;
             }
-            var backendName = Flags(args, "--backend=").LastOrDefault() ?? LawBackends.InterpreterName;
+            var backendName = args.Contains("--differential")
+                ? LawBackends.DifferentialName
+                : Flags(args, "--backend=").LastOrDefault() ?? LawBackends.InterpreterName;
             var backendKind = LawBackends.TryParse(backendName);
             if (backendKind == null)
             {
@@ -84,7 +94,7 @@ namespace Ara3D.Geometry.CLI
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             if (folders.Count == 0 || (!laws && calls.Count == 0))
             {
-                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|gpu32] [--backend=interpreter|csharp] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--parallel=N]");
+                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--parallel=N]");
                 return 1;
             }
 
@@ -196,16 +206,35 @@ namespace Ara3D.Geometry.CLI
                               + (kind == LawBackendKind.Interpreter ? $"; {interp.ElaboratedCount} bodies elaborated in {interp.ElaborationTime.TotalSeconds:F1}s; {interp.ResolutionCount} run-time resolutions" : "")
                               + $"; {runner.Witnesses.Count} witnesses {witnessTime.TotalSeconds:F1}s; laws {lawTime.TotalSeconds:F1}s summed, {(timer.Elapsed - ready).TotalSeconds:F1}s wall; total {timer.Elapsed.TotalSeconds:F1}s");
 
+            // Every disagreement, witnesses included (a differing witness is dropped, so no law line
+            // names it), and the same lines as # comments in the report, which Parse skips.
+            var mismatches = backend is DifferentialBackend differential ? differential.Mismatches : Array.Empty<string>();
+            foreach (var m in mismatches)
+                Console.WriteLine($"differs    {m}");
+            if (backend is DifferentialBackend)
+                Console.WriteLine($"differential: {mismatches.Count} mismatch(es) between the interpreter and compiled C#");
+
             var verdicts = LawReport.Verdicts(results);
             if (reportPath != null)
             {
-                File.WriteAllText(reportPath, LawReport.Format(verdicts));
+                var header = backend is DifferentialBackend
+                    ? $"# differential: {mismatches.Count} mismatch(es)\n" + string.Concat(mismatches.Select(m => $"# differs {OneLine(m)}\n"))
+                    : "";
+                File.WriteAllText(reportPath, header + LawReport.Format(verdicts));
                 Console.WriteLine($"report: {verdicts.Count} verdicts written to {reportPath}");
             }
             if (baseline != null)
                 return Compare(baseline, verdicts, options.Filters == null);
+            // A differential run answers one question, whether the engines agree: a law that fails
+            // in both is the ordinary sweep's finding, not this run's.
+            if (backend is DifferentialBackend)
+                return mismatches.Count > 0 ? 1 : 0;
             return counts.GetValueOrDefault(LawStatus.Fail) + counts.GetValueOrDefault(LawStatus.Error) + counts.GetValueOrDefault(LawStatus.Vacuous) > 0 ? 1 : 0;
         }
+
+        /// <summary>A mismatch line with its line breaks turned into spaces, so it stays one comment.</summary>
+        private static string OneLine(string text)
+            => text.Replace('\r', ' ').Replace('\n', ' ');
 
         private static int Compare(IReadOnlyList<LawVerdict> baseline, IReadOnlyList<LawVerdict> verdicts, bool wholeRun)
         {

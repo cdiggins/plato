@@ -194,8 +194,15 @@ public sealed class HostValues
         var t = host.GetType();
         if (t.Namespace == Namespace && WrapperScalars.Contains(t.Name))
         {
-            var value = t.GetField("Value");
-            return value == null ? host : ToPlato(value.GetValue(host), depth + 1);
+            // String's payload is a property over a private field (Plato.Intrinsics/String.cs);
+            // the other wrappers keep a public field.
+            var value = (object)t.GetField("Value") ?? t.GetProperty("Value");
+            return value switch
+            {
+                FieldInfo f => ToPlato(f.GetValue(host), depth + 1),
+                PropertyInfo p => ToPlato(p.GetValue(host), depth + 1),
+                _ => host,
+            };
         }
         if (host is IEnumerable items && host is not string && ElementTypeOf(t) is Type elem)
         {

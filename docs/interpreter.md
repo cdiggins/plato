@@ -383,7 +383,15 @@ engine is needed for any of them.
 
 These are known and deliberate. The differential test the ticket asks for (the stdlib's laws run
 both ways, compared law by law under both profiles) is the check that no other divergence has
-crept in.
+crept in. For a library of your own, `plato run --laws --differential` (the warm server's
+`backend=differential`) is the same check over its laws and witnesses: every `Witness_*` is
+built in both engines and compared with Plato's structural equality, and every law and its
+`Measure_` and `Premise_` companions run on the same witnesses in both. A law whose answers
+differ is reported `differs` with the case and both answers, a witness built differently is
+listed and dropped, and the exit code is 1 on any disagreement. Calls run one at a time, and
+the interpreter's `--budget` keeps the slow interpreter arm to the laws that are quick: a law it
+stops is a budget error, never a mismatch (TKT-438). Only the calls the runner makes are
+compared, not the calls inside them, so a wrong helper shows up through the laws that use it.
 
 - **Arrays are eager** here and lazy in the C# runtime. The observable difference is cost, and
   the point at which a faulting element function faults.

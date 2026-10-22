@@ -8,8 +8,17 @@ namespace Ara3D.Geometry.Interpreter;
 
 /// <summary>What happened to one law. <see cref="Vacuous"/>: every case returned true, but the
 /// law's <c>Premise_&lt;law&gt;</c> companion held on none of them, so nothing was tested (TKT-437);
-/// a failing verdict.</summary>
-public enum LawStatus { Pass, Fail, Error, Obligation, Skipped, Vacuous }
+/// a failing verdict. <see cref="Differs"/>: run on two backends at once (the differential
+/// backend, TKT-438), they gave different answers on a case.</summary>
+public enum LawStatus { Pass, Fail, Error, Obligation, Skipped, Vacuous, Differs }
+
+/// <summary>Thrown by a backend that evaluates on two engines when their answers differ: the
+/// message names both. The law runner reports the law as <see cref="LawStatus.Differs"/> on the
+/// case, and a witness that differs is dropped like one that faults.</summary>
+public sealed class BackendsDifferException : EvaluationException
+{
+    public BackendsDifferException(string message) : base(message) { }
+}
 
 public sealed class LawResult
 {
@@ -40,6 +49,7 @@ public sealed class LawResult
                 return $"{head}  ({Trials} {(Exhaustive ? "cases, exhaustive" : "cases")}{(PremiseHeld is int held ? $", premise held on {held}" : "")})";
             case LawStatus.Fail:
             case LawStatus.Error:
+            case LawStatus.Differs:
                 return head
                        + (Witness != null ? $"  case {Trials}: {FormatWitness()}" : "")
                        + (Measure != null ? $"  measure {ValueFormat.Format(Measure)}" : "")
@@ -307,6 +317,10 @@ public sealed class LawRunner
             {
                 return new LawResult { Law = law, Status = LawStatus.Obligation, Trials = trials, Witness = Report(args), Message = e.Describe(), Elapsed = sw.Elapsed };
             }
+            catch (BackendsDifferException e)
+            {
+                return new LawResult { Law = law, Status = LawStatus.Differs, Trials = trials, Exhaustive = exhaustive, Witness = Report(args), Message = e.Message, Elapsed = sw.Elapsed };
+            }
             catch (EvaluationException e)
             {
                 var message = e.Message.StartsWith(TimeBudgetMessage, StringComparison.Ordinal)
@@ -511,7 +525,7 @@ public sealed class LawRunner
 }
 
 /// <summary>One line of a verdict file: the law's name, its verdict (<c>pass</c>, <c>fail</c>,
-/// <c>error</c>, <c>obligation</c>, <c>skipped</c>, <c>vacuous</c>), the milliseconds it took (null in a file
+/// <c>error</c>, <c>obligation</c>, <c>skipped</c>, <c>vacuous</c>, <c>differs</c>), the milliseconds it took (null in a file
 /// written before the column existed), and the first failing witness, the fault, or the reason,
 /// on one line.</summary>
 public sealed record LawVerdict(string Name, string Verdict, string Detail, long? ElapsedMs = null);
@@ -560,7 +574,7 @@ public static class LawReport
         {
             LawStatus.Pass => "",
             LawStatus.Fail => r.FormatWitness(),
-            LawStatus.Error => $"{r.FormatWitness()}  {r.Message}",
+            LawStatus.Error or LawStatus.Differs => $"{r.FormatWitness()}  {r.Message}",
             _ => r.Message ?? "",
         };
 

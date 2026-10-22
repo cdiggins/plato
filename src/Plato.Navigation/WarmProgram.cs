@@ -89,7 +89,7 @@ internal sealed class WarmProgram
         var backendReused = false;
         var emitTime = TimeSpan.Zero;
         var csharpTime = TimeSpan.Zero;
-        if (request.Backend == LawBackendKind.CSharp)
+        if (request.Backend != LawBackendKind.Interpreter)
         {
             if (_compiled.TryGetValue(request.Profile.Name, out var program))
                 backendReused = true;
@@ -98,13 +98,16 @@ internal sealed class WarmProgram
                 try { program = CSharpProgram.Build(_compilation!, request.Profile); }
                 catch (InvalidOperationException e)
                 {
-                    return new LawRunOutcome { Errors = e.Message.Split('\n'), Files = files.Count, Functions = _compilation!.FunctionDefinitions.Count, FilesParsed = parsed, Recompiled = recompiled, ReadTime = read, ParseTime = parseTime, CompileTime = compileTime, Backend = LawBackends.CSharpName };
+                    return new LawRunOutcome { Errors = e.Message.Split('\n'), Files = files.Count, Functions = _compilation!.FunctionDefinitions.Count, FilesParsed = parsed, Recompiled = recompiled, ReadTime = read, ParseTime = parseTime, CompileTime = compileTime, Backend = LawBackends.NameOf(request.Backend) };
                 }
                 _compiled[request.Profile.Name] = program;
                 emitTime = program.EmitElapsed;
                 csharpTime = program.CompileElapsed;
             }
-            backend = CSharpBackend.Over(program, interp);
+            var compiled = CSharpBackend.Over(program, interp);
+            backend = request.Backend == LawBackendKind.Differential
+                ? new DifferentialBackend(new InterpreterBackend(interp), compiled)
+                : compiled;
         }
         else
             backend = new InterpreterBackend(interp);

@@ -2,9 +2,9 @@ using Ara3D.Geometry.Interpreter;
 
 namespace Ara3D.Geometry.Laws;
 
-/// <summary>The two ways a law run evaluates: in the interpreter, or on the C# the writer emits,
-/// compiled in process.</summary>
-public enum LawBackendKind { Interpreter, CSharp }
+/// <summary>The ways a law run evaluates: in the interpreter, on the C# the writer emits compiled
+/// in process, or on both at once with every answer compared (<see cref="DifferentialBackend"/>).</summary>
+public enum LawBackendKind { Interpreter, CSharp, Differential }
 
 /// <summary>Names and construction of the backends, shared by <c>plato run --backend=</c> and the
 /// warm server's <c>backend</c> argument.</summary>
@@ -12,10 +12,16 @@ public static class LawBackends
 {
     public const string InterpreterName = "interpreter";
     public const string CSharpName = "csharp";
-    public const string Names = InterpreterName + ", " + CSharpName;
+    public const string DifferentialName = "differential";
+    public const string Names = InterpreterName + ", " + CSharpName + ", " + DifferentialName;
 
     public static string NameOf(LawBackendKind kind)
-        => kind == LawBackendKind.CSharp ? CSharpName : InterpreterName;
+        => kind switch
+        {
+            LawBackendKind.CSharp => CSharpName,
+            LawBackendKind.Differential => DifferentialName,
+            _ => InterpreterName,
+        };
 
     /// <summary>Null for a name that is neither.</summary>
     public static LawBackendKind? TryParse(string name)
@@ -23,11 +29,17 @@ public static class LawBackends
         {
             InterpreterName => LawBackendKind.Interpreter,
             CSharpName or "cs" or "c#" => LawBackendKind.CSharp,
+            DifferentialName => LawBackendKind.Differential,
             _ => null,
         };
 
     /// <summary>A backend over the interpreter's compilation and profile; the C# one emits and
     /// compiles here, which takes seconds for a large program.</summary>
     public static ILawBackend Create(LawBackendKind kind, Interpreter.Interpreter interp)
-        => kind == LawBackendKind.CSharp ? CSharpBackend.Build(interp) : new InterpreterBackend(interp);
+        => kind switch
+        {
+            LawBackendKind.CSharp => CSharpBackend.Build(interp),
+            LawBackendKind.Differential => new DifferentialBackend(new InterpreterBackend(interp), CSharpBackend.Build(interp)),
+            _ => new InterpreterBackend(interp),
+        };
 }
