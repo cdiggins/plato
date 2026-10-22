@@ -170,9 +170,8 @@ public sealed class TypeToken
 
 /// <summary>Structural equality and hashing over interpreter values, mirroring what the C# backend
 /// generates for a struct: field-wise <c>Equals</c>, so a Number compares with
-/// <c>double.Equals</c> (NaN equals NaN, 0.0 equals -0.0). Arrays compare element-wise here, where
-/// the generated C# compares them by reference: the one deliberate divergence
-/// (docs/interpreter.md, "Where the interpreter and the C# backend differ").</summary>
+/// <c>double.Equals</c> (NaN equals NaN, 0.0 equals -0.0). Arrays compare element-wise, as the
+/// generated C# does through Intrinsics.ArrayEquals (TKT-355).</summary>
 public static class ValueEquality
 {
     public static bool Equals(object a, object b)

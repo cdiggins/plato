@@ -36,7 +36,7 @@ namespace PlatoTests
         }
 
         // A minimal runtime prelude so the emitted files compile in isolation: the Ara3D.Collections
-        // namespace the header `using` needs, an Intrinsics.CombineHashCodes, and trivial stand-ins
+        // namespace the header `using` needs, Intrinsics.CombineHashCodes, ArrayEquals and ArrayHash, and trivial stand-ins
         // for the payload structs the pathsegment fixture references (a real Point2D so projections
         // are observable; empty Vector2/Angle, which the match never reads).
         private const string Prelude = @"
@@ -51,6 +51,10 @@ namespace Ara3D.Geometry
             foreach (var x in xs) h = h * 31 + (x?.GetHashCode() ?? 0);
             return h;
         }
+        public static bool ArrayEquals<T>(System.Collections.Generic.IReadOnlyList<T> a, System.Collections.Generic.IReadOnlyList<T> b)
+            => System.Linq.Enumerable.SequenceEqual(a, b);
+        public static int ArrayHash<T>(System.Collections.Generic.IReadOnlyList<T> a)
+            => CombineHashCodes(System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Cast<object>(a)));
     }
     public struct Point2D
     {
@@ -242,6 +246,9 @@ namespace Ara3D.Geometry
             Assert.AreEqual(Dot(3).GetHashCode(), Dot(3).GetHashCode());
             var corners = new Ara3D.Geometry.Integer[] { 1, 2, 3 };
             Assert.AreEqual(true, Poly(corners).Equals(Poly(corners)));
+            // A copy built separately is equal too: arrays compare element-wise (TKT-355).
+            Assert.AreEqual(true, Poly(corners).Equals(Poly(new Ara3D.Geometry.Integer[] { 1, 2, 3 })));
+            Assert.AreEqual(Poly(corners).GetHashCode(), Poly(new Ara3D.Geometry.Integer[] { 1, 2, 3 }).GetHashCode());
             Assert.AreEqual(false, Poly(corners).Equals(Dot(3)));
             Assert.AreEqual(false, Dot(3).Equals(Poly(corners)));
         }

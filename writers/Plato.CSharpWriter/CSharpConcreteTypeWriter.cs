@@ -52,6 +52,18 @@ namespace Ara3D.Geometry.CSharpWriter
         // functions move out of the struct into library extension blocks (roadmap P2.2).
         public ExtensionStylePlan ExtensionPlan { get; }
 
+        // A field's term in a generated Equals and GetHashCode. An array field (IReadOnlyList<T>)
+        // compares element-wise, as Plato's value semantics and the interpreter do (TKT-355);
+        // IReadOnlyList's own Equals is reference equality.
+        private static bool IsArrayType(string csharpType)
+            => csharpType.StartsWith("IReadOnlyList<");
+
+        private static string FieldEquals(string field, string csharpType)
+            => IsArrayType(csharpType) ? $"Intrinsics.ArrayEquals({field}, other.{field})" : $"{field}.Equals(other.{field})";
+
+        private static string FieldHash(string field, string csharpType)
+            => IsArrayType(csharpType) ? $"Intrinsics.ArrayHash({field})" : field;
+
         public CSharpConcreteTypeWriter(CSharpTypeWriter typeWriter, ConcreteType t)
         {
             ConcreteType = t;
@@ -86,7 +98,6 @@ namespace Ara3D.Geometry.CSharpWriter
             var parametersStr = parameters.JoinStringsWithComma();
             var deconstructorParametersStr = FieldTypes.Zip(parameterNames, (pt, pn) => $"out {pt} {pn}").JoinStringsWithComma();
             var fieldTypesStr = string.Join(", ", FieldTypes);
-            var fieldNamesStr = FieldNames.JoinStringsWithComma();
             var assignments = FieldNames.Zip(parameterNames, (fn, pn) => $"{fn} = {pn}; ").JoinStrings("");
 
             WriteTypeHeader(implements);
@@ -198,7 +209,7 @@ namespace Ara3D.Geometry.CSharpWriter
             {
                 if (FieldNames.Count > 0)
                 {
-                    var eqBody = FieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && ");
+                    var eqBody = FieldNames.Zip(FieldTypes, FieldEquals).JoinStrings(" && ");
                     TypeWriter.WriteLine($"{Attr} public {boolT} Equals({Name} other) => {eqBody};");
                     // Parenthesized: a bare `!a && b` would negate only the first field's comparison.
                     TypeWriter.WriteLine($"{Attr} public {boolT} NotEquals({Name} other) => !({eqBody});");
@@ -212,7 +223,7 @@ namespace Ara3D.Geometry.CSharpWriter
                     TypeWriter.WriteLine($"{Attr} public static {boolT} operator==({Name} a, {Name} b) => true;");
                     TypeWriter.WriteLine($"{Attr} public static {boolT} operator!=({Name} a, {Name} b) => false;");
                 }
-                TypeWriter.WriteLine($"{Attr} public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
+                TypeWriter.WriteLine($"{Attr} public override int GetHashCode() => Intrinsics.CombineHashCodes({FieldNames.Zip(FieldTypes, FieldHash).JoinStringsWithComma()});");
             }
             // A primitive whose handwritten counterpart is a WRAPPER (the five scalars) carries a
             // `Value` payload the scaffolding reads. `Type` and the Function arities do not: they
@@ -506,7 +517,7 @@ namespace Ara3D.Geometry.CSharpWriter
             var eqTerms = new List<string> { "Kind == other.Kind" };
             foreach (var c in cases.Where(c => c.Fields.Count > 0))
             {
-                var caseEq = c.Fields.Select(f => $"{f.FlatName}.Equals(other.{f.FlatName})").JoinStrings(" && ");
+                var caseEq = c.Fields.Select(f => FieldEquals(f.FlatName, tw.ToCSharpType(f.Type))).JoinStrings(" && ");
                 eqTerms.Add($"(Kind != {c.TagConstName} || ({caseEq}))");
             }
             var eqBody = string.Join(" && ", eqTerms);
@@ -518,7 +529,7 @@ namespace Ara3D.Geometry.CSharpWriter
             var hashBody = "Intrinsics.CombineHashCodes(Kind)";
             foreach (var c in cases.Where(c => c.Fields.Count > 0).Reverse())
             {
-                var args = c.Fields.Select(f => f.FlatName).Prepend("Kind").JoinStringsWithComma();
+                var args = c.Fields.Select(f => FieldHash(f.FlatName, tw.ToCSharpType(f.Type))).Prepend("Kind").JoinStringsWithComma();
                 hashBody = $"Kind == {c.TagConstName} ? Intrinsics.CombineHashCodes({args}) : {hashBody}";
             }
             tw.WriteLine($"{Attr} public override int GetHashCode() => {hashBody};");

@@ -380,10 +380,6 @@ These are known and deliberate. The differential test the ticket asks for (the s
 both ways, compared law by law under both profiles) is the check that no other divergence has
 crept in.
 
-- **Array equality** is structural here and by reference in the generated C#, where a record's
-  `Equals` compares an array field with `==` on `IReadOnlyList<T>`. A law that compares two
-  separately built arrays passes here and fails there; the sandbox's primer records this as the
-  backend's defect, not the interpreter's.
 - **Arrays are eager** here and lazy in the C# runtime. The observable difference is cost, and
   the point at which a faulting element function faults.
 - **Hash seeds.** The C# backend combines field hashes with `HashCode.Combine`, whose seed is per

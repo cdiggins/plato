@@ -13,6 +13,60 @@ namespace Ara3D.Geometry
         // a nested ReadOnlyList in generic inference (`caps.Concatenate(walls)`).
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<T> MakeArray<T>(params T[] args) => args;
 
+        // Plato arrays are values: two arrays are equal when their elements are, as the
+        // interpreter compares them (ValueEquality). A generated Equals compares an array field
+        // through this, not IReadOnlyList's Equals, which is reference equality (TKT-355: a
+        // B-spline model built twice differed from itself compiled). Nested arrays compare
+        // element-wise too; other elements use their own Equals.
+        public static bool ArrayEquals<T>(IReadOnlyList<T> a, IReadOnlyList<T> b)
+        {
+            if (ReferenceEquals(a, b)) return true;
+            if (a == null || b == null || a.Count != b.Count) return false;
+            for (var i = 0; i < a.Count; i++)
+                if (!ElementEquals(a[i], b[i]))
+                    return false;
+            return true;
+        }
+
+        // The hash that agrees with ArrayEquals: the count and every element's hash.
+        public static int ArrayHash<T>(IReadOnlyList<T> a)
+        {
+            if (a == null) return 0;
+            var h = new HashCode();
+            h.Add(a.Count);
+            for (var i = 0; i < a.Count; i++)
+                h.Add(ElementHash(a[i]));
+            return h.ToHashCode();
+        }
+
+        private static bool ElementEquals<T>(T x, T y)
+            => x is System.Collections.IEnumerable xs && !(x is string) && y is System.Collections.IEnumerable ys
+                ? SequenceEquals(xs, ys)
+                : EqualityComparer<T>.Default.Equals(x, y);
+
+        private static int ElementHash<T>(T x)
+        {
+            if (!(x is System.Collections.IEnumerable xs) || x is string)
+                return EqualityComparer<T>.Default.GetHashCode(x);
+            var h = new HashCode();
+            foreach (var e in xs)
+                h.Add(ElementHash(e));
+            return h.ToHashCode();
+        }
+
+        private static bool SequenceEquals(System.Collections.IEnumerable xs, System.Collections.IEnumerable ys)
+        {
+            var a = xs.GetEnumerator();
+            var b = ys.GetEnumerator();
+            while (true)
+            {
+                var more = a.MoveNext();
+                if (more != b.MoveNext()) return false;
+                if (!more) return true;
+                if (!ElementEquals(a.Current, b.Current)) return false;
+            }
+        }
+
         // MakeArray2D left this file 2026-08-01: Array2D is an ordinary Plato type with an
         // honest layout since plato-378, so `primitives.library.plato` carries the
         // reference body and a duplicate here made every call site ambiguous (CS0121).
