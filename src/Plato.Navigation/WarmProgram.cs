@@ -117,6 +117,7 @@ internal sealed class WarmProgram
         return new LawRunOutcome
         {
             Results = results,
+            Mismatches = backend is DifferentialBackend differential ? differential.Mismatches : Array.Empty<string>(),
             Backend = backend.Name,
             BackendReused = backendReused,
             EmitTime = emitTime,

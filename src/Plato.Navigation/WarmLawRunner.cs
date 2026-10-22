@@ -68,6 +68,9 @@ public sealed record LawRunOutcome
     /// <summary>Parse and compile errors; when any exist no law ran.</summary>
     public IReadOnlyList<string> Errors { get; init; } = Array.Empty<string>();
     public IReadOnlyList<LawResult> Results { get; init; } = Array.Empty<LawResult>();
+    /// <summary>Differential backend: every disagreement between the interpreter and compiled C#,
+    /// witnesses included (a differing witness is dropped, so no result names it). Empty otherwise.</summary>
+    public IReadOnlyList<string> Mismatches { get; init; } = Array.Empty<string>();
     public IReadOnlyList<string> UnmatchedFilters { get; init; } = Array.Empty<string>();
     /// <summary>The known type errors, sorted by file and line, when the request asked for a
     /// type check; null otherwise. See <see cref="TypeCheckScope"/> for how current each file's are.</summary>
