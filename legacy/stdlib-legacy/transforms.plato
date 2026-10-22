@@ -276,7 +276,7 @@ library Transforms
 
     // Every Transform class provides a Matrix
     Transform3D(x: ITransform3D): Transform3D
-        => x.Matrix;
+        => new Transform3D(x.Matrix);
 
     // Transforms a point 
     TransformPoint(x: ITransform3D, v: Point3D): Point3D
@@ -292,11 +292,11 @@ library Transforms
 
     // Any 3D transform can be trivially inverted 
     Invert(t: ITransform3D): Transform3D
-        => t.Matrix.Invert;
+        => new Transform3D(t.Matrix.Invert);
 
     // Two 3D transforms can be combined (composed) into one via matrix multiplication
     Compose(t: ITransform3D, m: Matrix4x4): Transform3D
-        => t.Matrix * m;
+        => new Transform3D(t.Matrix * m);
   
     //==
     // General IRotation3D helpers
@@ -323,23 +323,23 @@ library Transforms
         
     // An identity translation is a zero vector
     Identity(_: Translation3D): Translation3D
-        => Zero3;
+        => new Translation3D(Zero3);
 
     TranslationX(x: Number): Translation3D
-        => x.XVector3;
+        => new Translation3D(x.XVector3);
 
     TranslationY(x: Number): Translation3D
-        => x.YVector3;
+        => new Translation3D(x.YVector3);
 
     TranslationZ(x: Number): Translation3D
-        => x.ZVector3;
+        => new Translation3D(x.ZVector3);
     
     //==
     // Transform3D
     
     // The identity matrix 
     Identity(_: Transform3D): Transform3D
-        => Matrix4x4.Identity;
+        => new Transform3D(Matrix4x4.Identity);
 
     //==
     // Rotation3D
@@ -350,7 +350,7 @@ library Transforms
 
     // Creates the identity rotation
     Identity(_: Rotation3D): Rotation3D
-        => Quaternion.Identity;
+        => new Rotation3D(Quaternion.Identity);
 
     //==
     // LookDirection3D
@@ -359,7 +359,7 @@ library Transforms
         => Matrix4x4.CreateWorld(0.0, r.Direction, ZAxis3D);
 
     Identity(_: LookDirection3D): LookDirection3D
-        => Vector3.UnitY;        
+        => new LookDirection3D(Vector3.UnitY);        
         
     //==
     // LookAt3D
@@ -383,10 +383,10 @@ library Transforms
         => Matrix4x4.CreateScale(s.Amount.X, s.Amount.Y, s.Amount.Z);           
 
     UniformScaling3D(x: Number): Scaling3D
-        => new Vector3(x);
+        => new Scaling3D(new Vector3(x));
 
     Identity(_: Scaling3D): Scaling3D
-        => Vector3.One;
+        => new Scaling3D(Vector3.One);
 
     //==
     // TRSTransform3D
