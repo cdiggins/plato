@@ -68,6 +68,38 @@ public class WarmLawRunnerTests
     }
 
     [Test]
+    public void A_run_past_the_run_limit_stops_and_frees_its_program()
+    {
+        // A law that takes far longer than the limit in the interpreter, run with no per-law budget.
+        var folder = Folder("""
+            library WarmFixtureSlow
+            {
+                // Millions of small calls, each an interpreter step where the limit is checked; one
+                // huge intrinsic step (a 100-million-element Range) would not be interrupted.
+                Plus(i: Integer, j: Integer): Integer => i + j;
+                Row(i: Integer): Integer => 4000.Range.Map(j => Plus(i, j)).Count;
+                Law_Slow(b: Boolean): Boolean => 4000.Range.Map(i => Row(i)).Count > 0;
+                Law_Quick(b: Boolean): Boolean => true;
+            }
+            """);
+        var runner = new WarmLawRunner { RunLimit = TimeSpan.FromSeconds(3) };
+        LawRunRequest With(LawRunOptions options) => new() { Folders = new[] { Foundation(), folder }, Profile = NumberProfile.Cpu64, Options = options };
+        var request = With(new LawRunOptions { BudgetSeconds = null, Filters = new[] { "WarmFixtureSlow" } });
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        var outcome = runner.Run(request);
+        var first = clock.Elapsed;
+
+        Assert.That(first.TotalSeconds, Is.LessThan(60), "the run should stop soon after the 3 s limit");
+        var slow = outcome.Results.Single(r => r.Law.Name == "Law_Slow");
+        Assert.That(slow.Status, Is.EqualTo(LawStatus.Error));
+        Assert.That(slow.Message, Does.Contain(Ara3D.Geometry.Interpreter.Interpreter.RunLimitMessage));
+
+        // The program is free again, and the next run on it gets a fresh limit.
+        var again = runner.Run(With(new LawRunOptions { Filters = new[] { "Law_Quick" } }));
+        Assert.That(again.Results.Single().Status, Is.EqualTo(LawStatus.Pass));
+    }
+
+    [Test]
     public void A_resolution_error_names_its_file_and_line()
     {
         // Line 4 names a function nothing declares.

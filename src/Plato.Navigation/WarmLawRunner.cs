@@ -145,6 +145,14 @@ public sealed class WarmLawRunner
 
     public int MaxPrograms { get; }
 
+    /// <summary>The longest one run may evaluate in the interpreter before every remaining law and
+    /// witness faults with "run limit reached" (TKT-479); null for no limit. A request's
+    /// <c>budget</c> bounds one law; this bounds the request, so no run holds its program's lock,
+    /// and every other call on that program, for hours.</summary>
+    public TimeSpan? RunLimit { get; init; } = DefaultRunLimit;
+
+    public static readonly TimeSpan DefaultRunLimit = TimeSpan.FromMinutes(30);
+
     public int ProgramCount
     {
         get { lock (_lock) return _programs.Count; }
@@ -157,12 +165,28 @@ public sealed class WarmLawRunner
     {
         var program = Acquire(WarmProgram.KeyOf(request));
         lock (program.Lock)
-            return OnLargeStack(() => program.Run(request, Parse, CompileLogger)) with { ProgramsKept = ProgramCount };
+            return OnLargeStack(() => program.Run(request, Parse, CompileLogger, RunLimit)) with { ProgramsKept = ProgramCount };
     }
 
     /// <summary>The program for a key, made the most recently used; a new one evicts the least
-    /// recently used beyond the bound. An evicted program still finishes a run in progress.</summary>
+    /// recently used beyond the bound. An evicted program still finishes a run in progress, and
+    /// is then released, its compiled assemblies unloaded (TKT-479).</summary>
     private WarmProgram Acquire(string key)
+    {
+        var evicted = new List<WarmProgram>();
+        try
+        {
+            return AcquireLocked(key, evicted);
+        }
+        finally
+        {
+            // Off this thread: an evicted program may still be running under its own lock.
+            foreach (var program in evicted)
+                Task.Run(() => { lock (program.Lock) program.Release(); });
+        }
+    }
+
+    private WarmProgram AcquireLocked(string key, List<WarmProgram> evicted)
     {
         lock (_lock)
         {
@@ -173,7 +197,10 @@ public sealed class WarmLawRunner
                 _programs.Remove(node);
             _programs.AddFirst(node?.Value ?? new WarmProgram(key));
             while (_programs.Count > MaxPrograms)
+            {
+                evicted.Add(_programs.Last!.Value);
                 _programs.RemoveLast();
+            }
             return _programs.First!.Value;
         }
     }

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.Loader;
 using PlatoCompilation = Ara3D.Geometry.Compiler.Compilation;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.CSharpWriter;
@@ -12,8 +13,10 @@ namespace Ara3D.Geometry.Laws;
 /// A Plato program as a loaded .NET assembly: emitted in extension style for one Number profile
 /// and compiled in process with Roslyn, together with the handwritten runtime
 /// (src/Plato.Intrinsics/*.cs, embedded in this assembly) under the preprocessor symbols the
-/// generated project would set. The assembly is loaded from memory; its types are reached by
-/// reflection only (<see cref="CSharpBackend"/>, <see cref="HostValues"/>).
+/// generated project would set. The assembly is loaded from memory into a collectible load
+/// context of its own, so a long-lived host (the warm law server) can <see cref="Unload"/> a
+/// program it no longer needs; its types are reached by reflection only
+/// (<see cref="CSharpBackend"/>, <see cref="HostValues"/>).
 /// </summary>
 public sealed class CSharpProgram
 {
@@ -26,9 +29,18 @@ public sealed class CSharpProgram
     public IReadOnlyList<string> DegradedBodies { get; }
     public TimeSpan EmitElapsed { get; }
     public TimeSpan CompileElapsed { get; }
+    private readonly AssemblyLoadContext _context;
 
-    private CSharpProgram(NumberProfile profile, Assembly assembly, int fileCount, IReadOnlyList<string> degraded, TimeSpan emit, TimeSpan compile)
-        => (Profile, Assembly, FileCount, DegradedBodies, EmitElapsed, CompileElapsed) = (profile, assembly, fileCount, degraded, emit, compile);
+    private CSharpProgram(NumberProfile profile, AssemblyLoadContext context, Assembly assembly, int fileCount, IReadOnlyList<string> degraded, TimeSpan emit, TimeSpan compile)
+        => (Profile, _context, Assembly, FileCount, DegradedBodies, EmitElapsed, CompileElapsed) = (profile, context, assembly, fileCount, degraded, emit, compile);
+
+    /// <summary>Starts unloading the program's assembly (TKT-479). The memory comes back once no
+    /// object, delegate or running thread refers to its code: a law still running on an abandoned
+    /// thread keeps it until that law returns. The program must not be used afterwards.</summary>
+    public void Unload() => _context.Unload();
+
+    /// <summary>A weak reference to the load context, for a test that checks it was collected.</summary>
+    public WeakReference ContextReference() => new(_context);
 
     // What <ImplicitUsings>enable</ImplicitUsings> gives the generated project.
     private const string ImplicitUsings = "global using System; global using System.Collections.Generic; global using System.IO; global using System.Linq; global using System.Net.Http; global using System.Threading; global using System.Threading.Tasks;";
@@ -64,8 +76,12 @@ public sealed class CSharpProgram
             throw new InvalidOperationException($"the generated C# did not compile under {profile} ({errors.Count} errors):\n"
                 + string.Join("\n", errors.Take(40).Select(d => d.ToString())));
         }
-        var assembly = Assembly.Load(ms.ToArray());
-        return new CSharpProgram(profile, assembly, writer.Files.Count, writer.DegradedBodies.ToList(), emit, sw.Elapsed);
+        // A collectible context per program: Assembly.Load(bytes) put every program in the default
+        // context, which never unloads, so a warm server kept each recompiled program forever.
+        var context = new AssemblyLoadContext(compilation.AssemblyName, isCollectible: true);
+        ms.Position = 0;
+        var assembly = context.LoadFromStream(ms);
+        return new CSharpProgram(profile, context, assembly, writer.Files.Count, writer.DegradedBodies.ToList(), emit, sw.Elapsed);
     }
 
     /// <summary>The handwritten runtime, from this assembly's embedded copy of src/Plato.Intrinsics.</summary>

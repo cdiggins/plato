@@ -33,6 +33,25 @@ internal sealed class WarmProgram
     /// <summary>The C# program per profile name, emitted and compiled from the current generation.</summary>
     private readonly Dictionary<string, CSharpProgram> _compiled = new();
 
+    /// <summary>Unloads the compiled C# programs (TKT-479): each is a collectible assembly, and
+    /// one left loaded after a recompile or an eviction stayed in memory for the server's life.</summary>
+    private void UnloadCompiled()
+    {
+        foreach (var program in _compiled.Values)
+            program.Unload();
+        _compiled.Clear();
+    }
+
+    /// <summary>Drops everything this program holds, for a runner evicting it. Called under the
+    /// program's lock, so no run is using it.</summary>
+    public void Release()
+    {
+        UnloadCompiled();
+        _interpreters.Clear();
+        _compilation = null;
+        _generation = null;
+    }
+
     public static string KeyOf(LawRunRequest request)
         => string.Join("\n", request.Folders.Select(f => SourceSnapshot.PathKey(new FilePath(Path.GetFullPath(f)))))
            + $"\nrecursive={request.Recursive}\nexclude="
@@ -41,7 +60,7 @@ internal sealed class WarmProgram
     /// <param name="parse">Parses files through the runner's shared cache; returns the trees and
     /// how many files missed the cache.</param>
     public LawRunOutcome Run(LawRunRequest request, Func<IReadOnlyList<SourceFile>, (IReadOnlyList<ParsedFile> Trees, int Parsed)> parse,
-        Ara3D.Logging.ILogger? compileLogger)
+        Ara3D.Logging.ILogger? compileLogger, TimeSpan? runLimit = null)
     {
         var timer = Stopwatch.StartNew();
         var paths = LawProgram.SourceFiles(request.Folders, request.Recursive, request.Exclude);
@@ -59,7 +78,7 @@ internal sealed class WarmProgram
             _generation = null;
             _compilation = null;
             _interpreters.Clear();
-            _compiled.Clear();
+            UnloadCompiled();
 
             var parseTimer = Stopwatch.StartNew();
             (var trees, parsed) = parse(files);
@@ -113,7 +132,13 @@ internal sealed class WarmProgram
             backend = new InterpreterBackend(interp);
         var runner = new LawRunner(backend, interp, request.Options);
         var lawTimer = Stopwatch.StartNew();
-        var results = runner.RunAll();
+        // The run limit bounds the whole run in the interpreter, laws and witnesses alike, even
+        // with budget=0, so one request cannot hold this program's lock without limit. Compiled
+        // laws cannot be interrupted: the runner abandons one past AbandonSeconds (TKT-479).
+        interp.RunLimit = runLimit is TimeSpan limit ? DateTime.UtcNow + limit : null;
+        IReadOnlyList<LawResult> results;
+        try { results = runner.RunAll(); }
+        finally { interp.RunLimit = null; }
         return new LawRunOutcome
         {
             Results = results,

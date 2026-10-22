@@ -31,6 +31,14 @@ public sealed partial class Interpreter
     /// exceeded", so a caller can bound one evaluation (the law runner sets it per law).</summary>
     public DateTime? Deadline { get; set; }
 
+    /// <summary>When set, an activation that starts after this instant faults with
+    /// <see cref="RunLimitMessage"/>. Unlike <see cref="Deadline"/>, which the law runner resets per
+    /// law and witness, it bounds a whole run: the warm law server sets it so one request cannot
+    /// hold its program without limit (TKT-479).</summary>
+    public DateTime? RunLimit { get; set; }
+
+    public const string RunLimitMessage = "run limit reached";
+
     /// <summary>When set, every bodied activation is timed into it (see <see cref="CallProfile"/>).</summary>
     public CallProfile Profiler { get; set; }
 
@@ -437,6 +445,8 @@ public sealed partial class Interpreter
 
         if (Deadline != null && DateTime.UtcNow > Deadline.Value)
             throw new EvaluationException("time budget exceeded");
+        if (RunLimit != null && DateTime.UtcNow > RunLimit.Value)
+            throw new EvaluationException(RunLimitMessage);
         if (++_depth > MaxDepth)
         {
             _depth = 0;
