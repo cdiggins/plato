@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;
@@ -13,17 +14,83 @@ namespace Ara3D.Geometry.Interpreter;
 /// array, a sum, a zero-field type), this one goes on: an array of up to four elements, a sum
 /// case chosen at random, a zero-field type as its only value. Every draw comes from the one
 /// Random the caller seeds, so a run is reproducible from its seed.
+/// A declared type the library gives a generator (<see cref="GeneratorsOf"/>) is never built
+/// field by field: its values, as a law argument or as a field of another value, come from a
+/// generator called with a seed in [0, <see cref="GeneratorSeeds"/>), so a type whose
+/// constructors keep an invariant (a positive tolerance) only receives values that hold it.
 /// </summary>
 public sealed class ValueGenerator
 {
     public const int MaxDepth = 6;
     public const int MaxArrayLength = 4;
 
+    /// <summary>A generator is a bodied function named with this prefix (TKT-446).</summary>
+    public const string GeneratorPrefix = "Generate_";
+    /// <summary>The seeds a generator is called with: 0 to this count less one.</summary>
+    public const int GeneratorSeeds = 16;
+
     private static readonly double[] SpecialNumbers = { 0, 1, -1, 0.5, -0.5, 2, -2, 0.25, 3, -3 };
 
     private readonly Interpreter _interp;
+    private readonly ConcurrentDictionary<string, IReadOnlyList<FunctionDef>> _generators = new ConcurrentDictionary<string, IReadOnlyList<FunctionDef>>();
+    /// <summary>Each generator's value per seed, evaluated once; guarded by a lock on the interpreter.</summary>
+    private readonly Dictionary<(FunctionDef, int), object> _generated = new Dictionary<(FunctionDef, int), object>();
 
     public ValueGenerator(Interpreter interp) => _interp = interp;
+
+    /// <summary>The generators of a declared type: every bodied <c>Generate_X(seed: Integer): T</c>,
+    /// or <c>Generate_X(_: T, seed: Integer): T</c> in the static-receiver form, whose return type
+    /// is the whole type, arguments included. A primitive (Number, Integer, Array, ...) has none.</summary>
+    public IReadOnlyList<FunctionDef> GeneratorsOf(TypeExpression t)
+        => t?.Def == null || t.Def.IsPrimitiveDeclaration || t.Def.Name == "Array"
+            ? Array.Empty<FunctionDef>()
+            : _generators.GetOrAdd(t.ToString(), FindGenerators);
+
+    private IReadOnlyList<FunctionDef> FindGenerators(string returnType)
+        => _interp.Functions
+            .Where(f => f.Name.StartsWith(GeneratorPrefix, StringComparison.Ordinal)
+                        && f.Body != null
+                        && f.ReturnType?.ToString() == returnType
+                        && IsGeneratorShape(f))
+            .ToList();
+
+    private static bool IsGeneratorShape(FunctionDef f)
+        => f.Parameters.Count switch
+        {
+            1 => IsSeed(f.Parameters[0]),
+            2 => f.Parameters[0].Name == "_" && IsSeed(f.Parameters[1]),
+            _ => false,
+        };
+
+    private static bool IsSeed(ParameterDef p)
+        => p.Name != "_" && p.Type?.Def?.Name == "Integer";
+
+    /// <summary>A value from one of the generators, chosen at random, with a seed chosen at random.
+    /// The interpreter evaluates it (so every backend receives the same value, converted), once
+    /// per generator and seed, under a lock: a compiled backend draws from several threads, and
+    /// the interpreter's state is shared. A fault names the generator and the seed.</summary>
+    private object FromGenerator(IReadOnlyList<FunctionDef> generators, Random rng)
+    {
+        var f = generators[rng.Next(generators.Count)];
+        var seed = rng.Next(GeneratorSeeds);
+        lock (_interp)
+        {
+            if (_generated.TryGetValue((f, seed), out var cached))
+                return cached;
+            var args = f.Parameters.Count == 1
+                ? new object[] { (long)seed }
+                : new object[] { new TypeToken(f.Parameters[0].Type), (long)seed };
+            object v;
+            try { v = _interp.Invoke(f, args); }
+            catch (EvaluationException e) when (!e.Message.StartsWith(LawRunner.TimeBudgetMessage, StringComparison.Ordinal)
+                                                && e is not HostObligationException)
+            {
+                throw new EvaluationException($"generator {f.OwnerType?.Name}.{f.Name} faulted on seed {seed}: {e.Describe()}", e);
+            }
+            _generated[(f, seed)] = v;
+            return v;
+        }
+    }
 
     /// <summary>Whether values of this type can be generated at all; the reason when not.</summary>
     public bool CanGenerate(TypeExpression t, out string reason)
@@ -43,6 +110,8 @@ public sealed class ValueGenerator
             case "List": case "Buffer":
                 reason = "an affine builder cannot be a law input"; return false;
         }
+        if (GeneratorsOf(t).Count > 0)
+            return true;
         if (t.IsTypeVariable || t.IsTypeParameter || t.Name == "Self")
         {
             reason = $"type variable {t}"; return false;
@@ -104,6 +173,9 @@ public sealed class ValueGenerator
                 return new PlatoArray(elem, items);
             }
         }
+        var generators = GeneratorsOf(t);
+        if (generators.Count > 0)
+            return FromGenerator(generators, rng);
         if (t.Def.IsSum)
         {
             var c = t.Def.Cases[rng.Next(t.Def.Cases.Count)];
@@ -131,13 +203,16 @@ public sealed class ValueGenerator
             : rng.NextDouble() * 20.0 - 10.0;
 
     /// <summary>The whole value set of a type when it is small and finite (Boolean, a sum of
-    /// payload-free cases), so a law over it can be exhausted rather than sampled; null otherwise.</summary>
+    /// payload-free cases), so a law over it can be exhausted rather than sampled; null otherwise,
+    /// and null for a type with a generator, whose values come only from it.</summary>
     public IReadOnlyList<object> FiniteDomain(TypeExpression t)
     {
         if (t?.Def == null)
             return null;
         if (t.Def.Name == "Boolean")
             return new object[] { false, true };
+        if (GeneratorsOf(t).Count > 0)
+            return null;
         // A `primitive` declaration (Number, Array, ...) has no fields but is not an empty record.
         if (t.Def.IsPrimitiveDeclaration)
             return null;

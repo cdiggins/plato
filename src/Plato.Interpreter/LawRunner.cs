@@ -291,8 +291,24 @@ public sealed class LawRunner
         var trials = 0;
         var budget = Options.BudgetSeconds;
         Backend.SetDeadline(budget is double b ? DateTime.UtcNow.AddSeconds(b) : null);
-        foreach (var args in cases)
+        using var drawn = cases.GetEnumerator();
+        while (true)
         {
+            // Drawing a case can call a library generator (ValueGenerator.GeneratorsOf), which can fault.
+            object[] args;
+            try
+            {
+                if (!drawn.MoveNext())
+                    break;
+                args = drawn.Current;
+            }
+            catch (EvaluationException e)
+            {
+                var message = e.Message.StartsWith(TimeBudgetMessage, StringComparison.Ordinal)
+                    ? $"{OverBudget(sw, budget)} (stopped drawing case {trials + 1})"
+                    : $"drawing case {trials + 1}: {e.Describe()}";
+                return new LawResult { Law = law, Status = LawStatus.Error, Trials = trials + 1, Exhaustive = exhaustive, Message = message, Elapsed = sw.Elapsed };
+            }
             trials++;
             try
             {

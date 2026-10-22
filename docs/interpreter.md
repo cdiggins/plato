@@ -189,6 +189,19 @@ not in the evaluator, so a different convention is a different driver over the s
 - A **witness** is `Witness_X(_: T): T`, the sandbox's static-receiver form, or a nullary
   `Witness_X(): T`. Every witness returning a type is evaluated once and cached; a witness that
   faults is left out, and the laws over it report the fault.
+- A **generator** is a bodied `Generate_X(seed: Integer): T`, or `Generate_X(_: T, seed: Integer): T`
+  in the static-receiver form, where `T` is a declared type (not a primitive such as `Number`,
+  `Integer` or `Array<T>`); the return type is matched whole, arguments included. A type with a
+  generator is **never built field by field**: wherever the runner needs a `T`, as a law
+  argument, as a field of another generated value, or as an implementer of an interface, it calls
+  one of the type's generators, chosen at random, with a seed drawn uniformly from 0 to
+  `ValueGenerator.GeneratorSeeds` less one, and its witnesses still join the draw as preferred
+  values. Such a type has no finite domain, so it is sampled, not exhausted. This is how a library
+  says a type's constructors keep an invariant the fields alone do not, for example a
+  `LengthTolerance` whose `Value` is positive: without a generator the runner draws 0 or -0.5. The
+  interpreter evaluates each generator once per seed, under a lock (a compiled backend draws from
+  several threads), so every backend and the differential run receive the same values, converted.
+  A generator that faults makes the law an error naming the generator and the seed (TKT-446).
 - A **measure** is a companion `Measure_<law>` with the law's parameter list. When a law fails or
   faults, the runner evaluates the measure on the failing witness and prints it beside the
   witness, so a report names how far off the result was, not only that it was.
@@ -212,7 +225,7 @@ not in the evaluator, so a different convention is a different driver over the s
   limit) and goes further where that runner stops: an array of a few elements, a sum case chosen
   at random, a zero-field type as its only value. Every draw comes from one `Random` seeded from
   a stable hash of the law's name, so a run is reproducible and a failing case can be found
-  again.
+  again. A type with a generator is drawn from it instead (above).
 - A parameter typed by an **interface** ranges over every concrete type implementing it, as the
   C# runner's monomorphization does: the witnesses of each implementer plus generated values of
   the implementers that can be generated.

@@ -114,15 +114,22 @@ public sealed class DifferentialRun
         var hostClock = new Stopwatch();
         for (var i = 0; i < Trials; i++)
         {
-            var platoArgs = hostTypes.Select(t => values.Generate(t, rng)).ToArray();
-            object[] hostArgs;
+            object[] platoArgs, hostArgs;
             try
             {
+                platoArgs = hostTypes.Select(t => values.Generate(t, rng)).ToArray();
                 hostArgs = platoArgs.Select((a, k) => values.ToHost(a, hostTypes[k])).ToArray();
             }
             catch (ValueConversionException e)
             {
                 law.Skipped = e.Message;
+                law.Cases.Clear();
+                return law;
+            }
+            catch (EvaluationException e)
+            {
+                // A library generator (ValueGenerator.GeneratorsOf) faulted.
+                law.Skipped = $"drawing case {i}: {e.Describe()}";
                 law.Cases.Clear();
                 return law;
             }
