@@ -721,15 +721,16 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <paramref name="sub"/> only on full success):
         ///   * identity / unification;
         ///   * a declared cast relation (<c>Vector3</c> → <c>Point3D</c>);
-        ///   * a value into a single-field struct wrapping a type it coerces to (<c>Vector3</c> →
-        ///     <c>Translation3D { Vector: Vector3 }</c>) — the generated single-field implicit operator;
         ///   * a same-shape <c>Tuple{N}</c> into an N-field struct, each element coercing to its field
         ///     (the generated tuple-constructor implicit operator applies per-argument conversions,
         ///     so <c>(Vector3, Number)</c> → <c>AxisAngle { Axis: Vector3, Angle: Angle }</c> works via
         ///     <c>Number</c> → <c>Angle</c>);
         ///   * a value into an interface it implements.
         /// Mirrors <see cref="CSharpConcreteTypeWriter"/>'s emitted implicit operators, so a coercion
-        /// accepted here is one the runtime actually performs.
+        /// accepted here is one the runtime actually performs. A bare payload never wraps into a
+        /// one-field type (<c>Number</c> → <c>ModelLength { Value: Number }</c>): the writer emits only
+        /// the unwrap, so wrapping is a constructor call
+        /// (<c>tracker/decisions/2026-08-02-single-field-mirror-unwraps-only.md</c>, TKT-445).
         /// </summary>
         private bool TryCoerce(TypeExpression from, TypeExpression to, Dictionary<string, TypeExpression> sub, int depth = 0)
         {
@@ -740,8 +741,6 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (HasConversion(from, to))
                 return true;
             if (TupleConvertsToStruct(from, to, sub, depth))
-                return true;
-            if (ValueConvertsToSingleFieldStruct(from, to, sub, depth))
                 return true;
             if (to.Def != null && to.Def.IsInterface() && SatisfiesConcept(from, to, sub))
                 return true;
@@ -765,26 +764,6 @@ namespace Ara3D.Geometry.Compiler.Checking
                 if (!TryCoerce(Zonk(from.TypeArgs[i], scratch), Zonk(fieldType, scratch), scratch, depth + 1))
                     return false;
             }
-            foreach (var kv in scratch)
-                sub[kv.Key] = kv.Value;
-            return true;
-        }
-
-        /// <summary>A value converts to a single-field concrete struct whose (non-interface) field
-        /// type it coerces to — the generated <c>implicit operator {Struct}({FieldType})</c> (emitted
-        /// by <see cref="CSharpConcreteTypeWriter"/> only when the field is not an interface).
-        /// <c>Matrix4x4</c> → <c>Transform3D { Matrix: Matrix4x4 }</c>.</summary>
-        private bool ValueConvertsToSingleFieldStruct(TypeExpression from, TypeExpression to, Dictionary<string, TypeExpression> sub, int depth)
-        {
-            if (to?.Def == null || !to.Def.IsConcrete() || to.Def.Fields.Count != 1)
-                return false;
-            var fieldType = to.Def.Fields[0].Type;
-            if (fieldType?.Def == null || fieldType.Def.IsInterface())
-                return false;
-            fieldType = Substitute(fieldType, BuildParamSubstitution(to));
-            var scratch = new Dictionary<string, TypeExpression>(sub);
-            if (!TryCoerce(Zonk(from, scratch), Zonk(fieldType, scratch), scratch, depth + 1))
-                return false;
             foreach (var kv in scratch)
                 sub[kv.Key] = kv.Value;
             return true;
