@@ -47,6 +47,7 @@ namespace PlatoTests
         [TestCase("nested-match.plato")]
         [TestCase("qualified-nullary-case.plato")]
         [TestCase("qualified-payload-case.plato")]
+        [TestCase("match-on-later-library-call.plato")]
         public static void Positive_CompilesWithoutDiagnostics(string file)
         {
             var (comp, diags) = CheckFixture(file);

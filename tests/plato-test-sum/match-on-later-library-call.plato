@@ -1,0 +1,31 @@
+// Positive fixture (TKT-410): a `match` whose subject is a call to a function declared in a
+// library that comes LATER in resolution order. The resolver reads the subject's sum type before
+// type checking, when the later library's functions have not joined their group yet; it must
+// answer from the declared return type, or the match is CHK304 and its body has no TIR. The
+// receiver is itself a call (`h.Arena.CurveAt(i)`), as in the STEP mesher's
+// `m.Geometry.CurveAt(m.Edges[e].Curve)`.
+
+type Number { }
+type Integer { }
+
+type Curve
+    = Line(Length: Number)
+    | Arc(Radius: Number);
+
+type Arena { Radius: Number; }
+type Holder { Arena: Arena; }
+
+library Users {
+    Kind(h: Holder, i: Integer): Integer =>
+        match (h.Arena.CurveAt(i)) {
+            Line(n) => Zero();
+            Arc(r) => One();
+        };
+
+    Zero(): Integer => 0;
+    One(): Integer => 1;
+}
+
+library Arenas {
+    CurveAt(a: Arena, i: Integer): Curve => Arc(a.Radius);
+}

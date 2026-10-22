@@ -356,7 +356,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
             // throwing stub that names the reason, count it as a burn-down number, and keep
             // writing every other member/file rather than aborting all output.
             var member = $"{(TypeDef != null ? TypeDef.Name + "." : "")}{f.Name}";
-            Writer.DegradedBodies.Add(member);
+            Writer.DegradedBodies.Add(isMember ? $"{member}: {Writer.ExplainMissingTir(f.Function.Implementation, TypeDef)}" : member);
             return WriteBodyText(
                 $" => throw new System.NotImplementedException(" +
                 $"\"plato: no ground TIR for bodied {member} (not monomorphized)\");" +

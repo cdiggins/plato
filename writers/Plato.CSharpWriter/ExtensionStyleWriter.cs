@@ -303,7 +303,7 @@ public static class ExtensionStyleWriter
                 // with no ground TIR emits a throwing stub + burn-down count rather than
                 // aborting all output. Empty under the shipping stdlib-legacy recipes.
                 var member = $"{m.LibraryName}.{fi.Name} [recv {m.ConcreteType.TypeDef.Name}]";
-                writer.DegradedBodies.Add(member);
+                writer.DegradedBodies.Add($"{member}: {writer.ExplainMissingTir(m.Function.Implementation, m.ConcreteType.TypeDef)}");
                 tw.Write(
                     $" => throw new System.NotImplementedException(" +
                     $"\"plato: no ground TIR for moved member {member} (not monomorphized)\");" +

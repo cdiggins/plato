@@ -21,12 +21,18 @@ namespace Ara3D.Geometry.Compiler.Checking
             = new Dictionary<(FunctionDef, string), TirFunction>();
         private readonly Dictionary<FunctionDef, TirFunction> _staticTirByFn
             = new Dictionary<FunctionDef, TirFunction>();
+        // Bodies that are neither ground nor open-generic emittable, kept so a degraded stub can
+        // name the node that stopped it (ExplainMissing).
+        private readonly Dictionary<(FunctionDef, string), TirFunction> _partialTirByKey
+            = new Dictionary<(FunctionDef, string), TirFunction>();
+        private readonly Dictionary<FunctionDef, TirFunction> _elaborated;
 
         public TirEmitSource(Compilation compilation)
         {
             // One checker+elaborator run feeds both maps; MonomorphizeAll is total (never throws).
             var mono = new Monomorphizer(compilation);
             var elaborated = mono.ElaborateAll();
+            _elaborated = elaborated;
 
             // Static bodies are emitted from name + shape, so residual generic types are fine;
             // an unresolved CALL is not (its emission would be a guess).
@@ -49,6 +55,10 @@ namespace Ara3D.Geometry.Compiler.Checking
                 else if (IsOpenGenericEmittable(m.Tir, m.Original) && !_openGenericTirByKey.ContainsKey(key))
                 {
                     _openGenericTirByKey[key] = m.Tir;
+                }
+                else if (!_partialTirByKey.ContainsKey(key))
+                {
+                    _partialTirByKey[key] = m.Tir;
                 }
             }
         }
@@ -174,6 +184,33 @@ namespace Ara3D.Geometry.Compiler.Checking
                 && _openGenericTirByKey.TryGetValue((original, concreteTypeName), out var tir)
                     ? tir
                     : null;
+
+        /// <summary>Why a (source function, concrete type) has neither a ground nor an open-generic
+        /// body: not elaborated, never monomorphized at that type, or the first node of its
+        /// specialized body that is not ground. For the message of a degraded stub.</summary>
+        public string ExplainMissing(FunctionDef original, string concreteTypeName)
+        {
+            if (original == null || concreteTypeName == null)
+                return "no function or receiver type";
+            if (!_elaborated.TryGetValue(original, out var elaborated) || elaborated?.Body == null)
+                return "not elaborated (the checker produced no result for it)";
+            if (!_partialTirByKey.TryGetValue((original, concreteTypeName), out var tir))
+                return $"no monomorphized instance at {concreteTypeName}";
+            var node = tir.AllNodes.FirstOrDefault(n => !Monomorphizer.NodeIsGround(n));
+            return node == null
+                ? "open-generic body dispatches on an unbounded type variable"
+                : $"first non-ground node: {node.GetType().Name} {Describe(node)}";
+        }
+
+        private static string Describe(TirNode n)
+        {
+            switch (n)
+            {
+                case TirUnresolved u: return $"'{u}'";
+                case TirCall c: return $"{c.Name ?? c.Callee?.Name}({string.Join(", ", c.ParameterTypes)}) : {c.ReturnType}";
+                default: return $"{n} : {n.Type}";
+            }
+        }
 
         /// <summary>The generic (unspecialized) TIR for a STATIC body, or null when the
         /// function's elaboration has unresolved nodes.</summary>

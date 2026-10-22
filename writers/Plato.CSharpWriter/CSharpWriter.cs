@@ -252,6 +252,10 @@ namespace Ara3D.Geometry.CSharpWriter
         public TirFunction TryGetOpenGenericTir(FunctionDef original, TypeDef concreteType)
             => TirSource.TryGetOpenGenericTir(original, concreteType);
 
+        /// <summary>Why a bodied member has no TIR to emit (see <see cref="TirEmitSource.ExplainMissing"/>).</summary>
+        public string ExplainMissingTir(FunctionDef original, TypeDef concreteType)
+            => TirSource.ExplainMissing(original, concreteType?.Name);
+
         /// <summary>The generic (unspecialized) TIR for a STATIC body — a constant or an IArray
         /// library function — or null when the function's elaboration has unresolved nodes.</summary>
         public TirFunction TryGetStaticTir(FunctionDef original)

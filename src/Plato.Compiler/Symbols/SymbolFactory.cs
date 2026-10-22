@@ -302,14 +302,29 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
             if (!(call.Function is FunctionGroupRefSymbol fg) || fg.Def?.Functions == null)
                 return null;
+            // The group holds only the functions of types resolved so far: a body in a file that
+            // sorts before the callee's file sees an empty group (TKT-410: `match
+            // (m.Geometry.CurveAt(c))` in discretization-*.plato before geometry.library.plato
+            // emitted a throwing stub). Declared methods' return types are resolved before any
+            // body, so they answer for the rest.
+            var declared = _declaredReturnTypes.TryGetValue((fg.Def.Name, call.Args.Count), out var returns)
+                ? returns
+                : Enumerable.Empty<TypeExpression>();
             var sums = fg.Def.Functions
                 .Where(f => f.NumParameters == call.Args.Count)
-                .Select(f => f.ReturnType?.Def)
+                .Select(f => f.ReturnType)
+                .Concat(declared)
+                .Select(t => t?.Def)
                 .Where(d => d != null && d.IsSum)
                 .Distinct()
                 .ToList();
             return sums.Count == 1 ? sums[0] : null;
         }
+
+        // Declared return types of every library and type method, by (name, parameter count),
+        // filled in the declaration pass before any body is resolved; SumTypeOfCall reads it.
+        private readonly Dictionary<(string, int), List<TypeExpression>> _declaredReturnTypes
+            = new Dictionary<(string, int), List<TypeExpression>>();
 
         public Symbol NewExpression(AstNew astNew)
         {
@@ -583,6 +598,9 @@ namespace Ara3D.Geometry.Compiler.Symbols
                         typeDef.Methods.Add(mDef);
                         SymbolsToNodes.Add(mDef, md);
                         CreateOrLookupGroupDefinition(mDef);
+                        if (!_declaredReturnTypes.TryGetValue((mDef.Name, md.Parameters.Count), out var returns))
+                            _declaredReturnTypes[(mDef.Name, md.Parameters.Count)] = returns = new List<TypeExpression>();
+                        returns.Add(mDef.Type);
                     }
                     else
                     {
