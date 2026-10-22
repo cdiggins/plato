@@ -42,7 +42,9 @@ public static class TirInliner
 
     // Deterministic fresh-name counter for collision renames; reset per generation
     // (CSharpWriter.WriteAll) so repeated runs produce identical output.
-    public static int NextRenameId;
+    // Per thread: the C# writer resets it per generation so output is deterministic, and two
+    // programs emitted at once (the warm law server) must not reset each other's names.
+    [System.ThreadStatic] public static int NextRenameId;
 
     public static TirFunction Inline(TirFunction tir, ITirInlineHost host, string ownerTypeName, out int inlinedCalls)
     {

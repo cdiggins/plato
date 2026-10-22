@@ -13,8 +13,10 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
         protected Expression(params Expression[] children)
         {
-            if (children.Contains(this))
-                throw new Exception("Circular expression");
+            // By reference: Symbol.Equals compares Ids, and the question is whether this very
+            // object is among its children.
+            if (children.Any(c => ReferenceEquals(c, this)))
+                throw new Exception($"Circular expression: a {GetType().Name} lists itself among its children");
             Children = children;
         }
 

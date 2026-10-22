@@ -68,6 +68,25 @@ public class WarmLawRunnerTests
     }
 
     [Test]
+    public void A_resolution_error_names_its_file_and_line()
+    {
+        // Line 4 names a function nothing declares.
+        var folder = Folder("""
+            library WarmFixtureUnresolved
+            {
+                Law_Unresolved(b: Boolean): Boolean
+                    => NoSuchFunctionAnywhere(b);
+            }
+            """);
+        var outcome = new WarmLawRunner().Run(Request(folder));
+
+        Assert.That(outcome.Compiled, Is.False);
+        var resolve = outcome.Errors.Where(e => e.StartsWith("RESOLVE ")).ToList();
+        Assert.That(resolve, Is.Not.Empty, string.Join(" | ", outcome.Errors));
+        Assert.That(resolve, Has.Some.Contains("laws.plato:4: "), string.Join(" | ", resolve));
+    }
+
+    [Test]
     public void A_file_that_does_not_parse_is_reported_with_its_file_and_no_law_runs()
     {
         var folder = Folder(LawsA.Replace("=> true;", "=> true"));

@@ -7,7 +7,9 @@ namespace Ara3D.Geometry.Compiler.Symbols
 {
     public static class SymbolRewriter
     {
-        public static int NextId = 0;
+        // Per thread: the C# writer resets it per generation so output is deterministic, and two
+        // programs emitted at once (the warm law server) must not reset each other's names.
+        [System.ThreadStatic] public static int NextId;
 
         public static Symbol RewriteLambdasCapturingVars(this Symbol body)
         {

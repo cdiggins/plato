@@ -465,7 +465,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
                             var body = astLambda.Body is AstBlock
                                 ? Resolve(astLambda.Body)
                                 : (Symbol)ResolveExpr(astLambda.Body);
-                            var r = new Lambda(new FunctionDef(outerScope, $"_lambda_{NextLambdaId++}", null, 
+                            var r = new Lambda(new FunctionDef(outerScope, $"_lambda_{System.Threading.Interlocked.Increment(ref NextLambdaId) - 1}", null, 
                                 CreateLambdaType(ps.Length), body, ps));
                             ValueBindingsScope = ValueBindingsScope.Pop();
                             return r;
@@ -498,6 +498,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
             }
         }
 
+        // Unique also when several compilations resolve at once (the warm law server).
         public static int NextLambdaId = 0;
 
         public IEnumerable<TypeDef> CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)

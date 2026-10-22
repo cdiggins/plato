@@ -78,7 +78,9 @@ public class TirTempRef : TirNode
 public static class TirLoopLowerer
 {
     // Deterministic temp counter; reset per generation (CSharpWriter.WriteAll).
-    public static int NextId;
+    // Per thread: the C# writer resets it per generation so output is deterministic, and two
+    // programs emitted at once (the warm law server) must not reset each other's names.
+    [System.ThreadStatic] public static int NextId;
 
     public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
     {

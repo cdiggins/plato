@@ -206,12 +206,20 @@ public sealed class WarmLawRunner
         return result;
     }
 
+    /// <summary>"file:line: " for the node a resolution error names, so the error says where it
+    /// is; empty when the node has no source range.</summary>
+    private static string Where(Ara3D.Geometry.AST.AstNode? node)
+    {
+        var range = node?.GetRange();
+        return range == null ? "" : $"{range.FilePath}:{range.BeginLineIndex + 1}: ";
+    }
+
     /// <summary>The errors that stop a run, in the words <c>plato run</c> prints them.</summary>
     public static IReadOnlyList<string> CompileErrors(Compilation compilation)
         => compilation.CompletedCompilation
             ? Array.Empty<string>()
             : compilation.InternalErrors.Select(e => e.ToString())
-                .Concat((compilation.SymbolFactory?.Errors ?? new()).Select(e => $"RESOLVE {e.Message}"))
+                .Concat((compilation.SymbolFactory?.Errors ?? new()).Select(e => $"RESOLVE {Where(e.Node)}{e.Message}"))
                 .Append("Compilation was not completed")
                 .ToList();
 }

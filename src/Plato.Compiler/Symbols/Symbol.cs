@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Ara3D.Geometry.Compiler.Symbols
 {
@@ -9,8 +10,12 @@ namespace Ara3D.Geometry.Compiler.Symbols
     /// </summary>
     public abstract class Symbol
     {
-        public int Id { get; } = NextId++;
-        public static int NextId = 0;
+        // Unique per process, also when several compilations run at once (the warm law server
+        // compiles one program per folder set, concurrently): a plain NextId++ handed two symbols
+        // the same Id, and since equality is by Id, an expression took another symbol for itself
+        // ("Circular expression"). A long, so a server that compiles for days never wraps.
+        public long Id { get; } = Interlocked.Increment(ref _nextId);
+        private static long _nextId;
 
         public override bool Equals(object obj) 
             => ReferenceEquals(this, obj) || (obj is Symbol sym && sym.Id == Id);
