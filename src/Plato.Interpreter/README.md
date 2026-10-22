@@ -51,6 +51,8 @@ pass       FoundationLaws.Law_AtHalfIsCenter  (25 cases)
 
 A failing law prints its first failing witness, one value per parameter, and the value of a
 `Measure_<law>` function when the library declares one with the same parameters.
+A law with a `Premise_<law>` companion (same parameters, returning `Boolean`) counts the cases
+its premise held on, and is reported `vacuous`, a failure, when it held on none.
 
 ## How to use it
 

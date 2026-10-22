@@ -6,8 +6,10 @@ using Ara3D.Geometry.Compiler.Types;
 
 namespace Ara3D.Geometry.Interpreter;
 
-/// <summary>What happened to one law.</summary>
-public enum LawStatus { Pass, Fail, Error, Obligation, Skipped }
+/// <summary>What happened to one law. <see cref="Vacuous"/>: every case returned true, but the
+/// law's <c>Premise_&lt;law&gt;</c> companion held on none of them, so nothing was tested (TKT-437);
+/// a failing verdict.</summary>
+public enum LawStatus { Pass, Fail, Error, Obligation, Skipped, Vacuous }
 
 public sealed class LawResult
 {
@@ -22,6 +24,9 @@ public sealed class LawResult
     public string Message { get; init; }
     /// <summary>The value of <c>Measure_&lt;law&gt;</c> on the failing witness, when such a function exists.</summary>
     public object Measure { get; init; }
+    /// <summary>Cases on which the law's <c>Premise_&lt;law&gt;</c> companion held; null when the law
+    /// has none.</summary>
+    public int? PremiseHeld { get; init; }
     public TimeSpan Elapsed { get; init; }
 
     public string Name => LawSelection.FullName(Law);
@@ -32,7 +37,7 @@ public sealed class LawResult
         switch (Status)
         {
             case LawStatus.Pass:
-                return $"{head}  ({Trials} {(Exhaustive ? "cases, exhaustive" : "cases")})";
+                return $"{head}  ({Trials} {(Exhaustive ? "cases, exhaustive" : "cases")}{(PremiseHeld is int held ? $", premise held on {held}" : "")})";
             case LawStatus.Fail:
             case LawStatus.Error:
                 return head
@@ -75,6 +80,7 @@ public sealed class LawRunOptions
     public string LawPrefix { get; set; } = "Law_";
     public string WitnessPrefix { get; set; } = "Witness_";
     public string MeasurePrefix { get; set; } = "Measure_";
+    public string PremisePrefix { get; set; } = "Premise_";
 }
 
 /// <summary>What evaluating one <c>Witness_*</c> function cost: its time, and the fault when it
@@ -270,6 +276,8 @@ public sealed class LawRunner
                          && domains.Aggregate(1L, (n, d) => n * d.Finite.Count) <= Options.MaxExhaustive;
         var cases = exhaustive ? Product(domains) : Sample(law, domains);
 
+        var premise = Companion(law, Options.PremisePrefix, "Boolean");
+        var held = 0;
         var trials = 0;
         var budget = Options.BudgetSeconds;
         Backend.SetDeadline(budget is double b ? DateTime.UtcNow.AddSeconds(b) : null);
@@ -286,6 +294,14 @@ public sealed class LawRunner
                 }
                 else
                     return Failure(law, LawStatus.Error, trials, exhaustive, args, $"returned {ValueFormat.Format(r, 60)}, not a Boolean", sw);
+                if (premise != null)
+                {
+                    var p = Backend.ToInterpreterValue(Backend.Invoke(premise, args));
+                    if (!(p is bool pv))
+                        return Failure(law, LawStatus.Error, trials, exhaustive, args, $"{premise.Name} returned {ValueFormat.Format(p, 60)}, not a Boolean", sw);
+                    if (pv)
+                        held++;
+                }
             }
             catch (HostObligationException e)
             {
@@ -301,7 +317,14 @@ public sealed class LawRunner
         }
         if (budget is double limit && sw.Elapsed.TotalSeconds > limit)
             return new LawResult { Law = law, Status = LawStatus.Error, Trials = trials, Exhaustive = exhaustive, Message = $"{OverBudget(sw, budget)} over {trials} cases", Elapsed = sw.Elapsed };
-        return new LawResult { Law = law, Status = LawStatus.Pass, Trials = trials, Exhaustive = exhaustive, Elapsed = sw.Elapsed };
+        int? premiseHeld = premise != null ? held : null;
+        if (premiseHeld == 0)
+            return new LawResult
+            {
+                Law = law, Status = LawStatus.Vacuous, Trials = trials, Exhaustive = exhaustive, PremiseHeld = 0, Elapsed = sw.Elapsed,
+                Message = $"{premise.Name} held on none of {trials} {(exhaustive ? "cases, exhaustive" : "cases")}: the law tested nothing",
+            };
+        return new LawResult { Law = law, Status = LawStatus.Pass, Trials = trials, Exhaustive = exhaustive, PremiseHeld = premiseHeld, Elapsed = sw.Elapsed };
     }
 
     /// <summary>The message the interpreter faults with at its deadline (Interpreter.Activate).</summary>
@@ -325,12 +348,24 @@ public sealed class LawRunner
     /// one is declared; null otherwise or if it faults.</summary>
     private object TryMeasure(FunctionDef law, object[] args)
     {
-        var name = Options.MeasurePrefix + law.Name.Substring(Options.LawPrefix.Length);
-        var m = Interpreter.FunctionsNamed(name).FirstOrDefault(f => f.Parameters.Count == args.Length && f.Body != null);
+        var m = Companion(law, Options.MeasurePrefix);
         if (m == null)
             return null;
         try { return Backend.ToInterpreterValue(Backend.Invoke(m, args)); }
         catch (EvaluationException) { return null; }
+    }
+
+    /// <summary>The bodied function named <paramref name="prefix"/> plus the law's name without its
+    /// prefix, with the law's parameter types (and the given return type, when one is named);
+    /// null when the library declares none.</summary>
+    private FunctionDef Companion(FunctionDef law, string prefix, string returnType = null)
+    {
+        var name = prefix + law.Name.Substring(Options.LawPrefix.Length);
+        return Interpreter.FunctionsNamed(name).FirstOrDefault(f =>
+            f.Body != null
+            && f.Parameters.Count == law.Parameters.Count
+            && f.Parameters.Zip(law.Parameters, (a, b) => a.Type?.ToString() == b.Type?.ToString()).All(x => x)
+            && (returnType == null || f.ReturnType?.Def?.Name == returnType));
     }
 
     // --- domains -------------------------------------------------------------
@@ -476,7 +511,7 @@ public sealed class LawRunner
 }
 
 /// <summary>One line of a verdict file: the law's name, its verdict (<c>pass</c>, <c>fail</c>,
-/// <c>error</c>, <c>obligation</c>, <c>skipped</c>), the milliseconds it took (null in a file
+/// <c>error</c>, <c>obligation</c>, <c>skipped</c>, <c>vacuous</c>), the milliseconds it took (null in a file
 /// written before the column existed), and the first failing witness, the fault, or the reason,
 /// on one line.</summary>
 public sealed record LawVerdict(string Name, string Verdict, string Detail, long? ElapsedMs = null);

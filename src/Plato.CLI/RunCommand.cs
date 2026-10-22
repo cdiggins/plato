@@ -22,7 +22,9 @@ namespace Ara3D.Geometry.CLI
     // --laws evaluates every Law_* over the Witness_* values and generated
     // values and prints one line per law: pass, fail with the first failing witness (and the law's
     // Measure_ companion when one exists), error with the fault, obligation with the bodiless
-    // function reached, or skipped with the reason. A law over --budget seconds (default 2) is an
+    // function reached, skipped with the reason, or vacuous when the law's Premise_ companion (a
+    // Boolean function with the law's parameters) held on no case; a pass line counts the cases
+    // the premise held on. Fail, error and vacuous make the exit code 1. A law over --budget seconds (default 2) is an
     // error naming its elapsed time: the interpreter stops it at the budget; the C# backend lets it
     // finish, and gives up on it after --abandon seconds (default 120). --budget=0 lifts the limit. --filter keeps the laws whose full name
     // (Owner.Law_Name) contains any of its comma-separated texts, ignoring case; --laws-from adds
@@ -202,7 +204,7 @@ namespace Ara3D.Geometry.CLI
             }
             if (baseline != null)
                 return Compare(baseline, verdicts, options.Filters == null);
-            return counts.GetValueOrDefault(LawStatus.Fail) + counts.GetValueOrDefault(LawStatus.Error) > 0 ? 1 : 0;
+            return counts.GetValueOrDefault(LawStatus.Fail) + counts.GetValueOrDefault(LawStatus.Error) + counts.GetValueOrDefault(LawStatus.Vacuous) > 0 ? 1 : 0;
         }
 
         private static int Compare(IReadOnlyList<LawVerdict> baseline, IReadOnlyList<LawVerdict> verdicts, bool wholeRun)

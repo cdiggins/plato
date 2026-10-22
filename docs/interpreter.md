@@ -192,6 +192,11 @@ not in the evaluator, so a different convention is a different driver over the s
 - A **measure** is a companion `Measure_<law>` with the law's parameter list. When a law fails or
   faults, the runner evaluates the measure on the failing witness and prints it beside the
   witness, so a report names how far off the result was, not only that it was.
+- A **premise** is a companion `Premise_<law>` with the law's parameter list, returning
+  `Boolean`: the condition under which the law says something, for a guarded law such as
+  `p ? q : true`. The runner evaluates it on every case the law passes; the pass line reads
+  `(25 cases, premise held on 7)`, and a law whose premise held on no case is **vacuous**, a
+  failing verdict (`vacuous` in a verdict file, exit code 1), because it tested nothing.
 - A `_` parameter ranges over the type token of its declared type.
 - **Finite domains are exhausted**: `Boolean`, a sum of payload-free cases, a zero-field type
   (a `primitive` declaration such as `Number`, `String`, `Character`, `Array<T>` or
