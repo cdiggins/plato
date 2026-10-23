@@ -985,8 +985,11 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 });
                 break;
             case "MapRange":
-                WriteLine($"var {a} = new {elem}[{srcNames[0]}];");
-                For($"{srcNames[0]}", () =>
+                // A count of zero or less is the empty array, as the eager intrinsic and the
+                // interpreter have it; `new T[n]` would throw on a negative n (TKT-505).
+                WriteLine($"var {n} = System.Math.Max(0, (int){srcNames[0]});");
+                WriteLine($"var {a} = new {elem}[{n}];");
+                For(n, () =>
                 {
                     DeclareParams(index);
                     Write($"{a}[{i}] = ");
