@@ -68,7 +68,8 @@ public class TirTempRef : TirNode
 ///   * the function argument must be a NON-eta lambda literal of the right arity (its body is
 ///     emitted inline in the loop with the lambda parameters as loop locals — legal wherever the
 ///     lambda itself was legal) or a delegate-typed parameter/variable reference (invoked);
-///   * the receiver and result must be one-dimensional (IArray) with a renderable element type
+///   * the receiver and result must be one-dimensional (Array&lt;T&gt;, or IArray&lt;T&gt; in
+///     stdlib-legacy: <see cref="TirRewrite.IsListType"/>) with a renderable element type
 ///     (2D/3D maps carry their dimensions through and are left to the eager intrinsics);
 ///   * statement bodies lower per top-level statement; if/while statements are left intact.
 ///
@@ -179,7 +180,7 @@ public static class TirLoopLowerer
         TirNode fn = null, seed = null, includeFirst = null;
 
         bool IsListTyped(TirNode node)
-            => TirRewrite.StripCoerce(node)?.Type?.Name == "IArray";
+            => TirRewrite.IsListType(TirRewrite.StripCoerce(node)?.Type);
         bool FnOk(TirNode f, int arity)
         {
             f = TirRewrite.StripCoerce(f);
@@ -253,9 +254,8 @@ public static class TirLoopLowerer
             var candidates = new[]
             {
                 fn == null ? null : FnReturnType(fn),
-                c.Type?.Name == "IArray" && c.Type.TypeArgs.Count == 1 ? c.Type.TypeArgs[0] : null,
-                kind == "Reverse" && TirRewrite.StripCoerce(sources[0])?.Type is TypeExpression st
-                    && st.Name == "IArray" && st.TypeArgs.Count == 1 ? st.TypeArgs[0] : null,
+                TirRewrite.ListElementType(c.Type),
+                kind == "Reverse" ? TirRewrite.ListElementType(TirRewrite.StripCoerce(sources[0])?.Type) : null,
             };
             elem = candidates.FirstOrDefault(IsRenderableConcrete);
             if (elem == null)
@@ -302,6 +302,6 @@ public static class TirLoopLowerer
     /// <summary>Whether the call produces a ONE-dimensional list with a resolvable element type
     /// (a concrete type or a type variable that renders as a C# generic parameter).</summary>
     private static bool ResultIsList(TirCall c)
-        => c.Type?.Name == "IArray" && c.Type.TypeArgs.Count == 1 && c.Type.TypeArgs[0]?.Name != null;
+        => TirRewrite.ListElementType(c.Type)?.Name != null;
 
 }

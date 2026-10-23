@@ -32,9 +32,10 @@ public sealed class CSharpBackend : ILawBackend
         _methodsByName = Discover(program.Assembly);
     }
 
-    /// <summary>Emits and compiles the interpreter's compilation under its Number profile.</summary>
-    public static CSharpBackend Build(Interpreter.Interpreter interp)
-        => new(CSharpProgram.Build(interp.Compilation, interp.Profile), interp);
+    /// <summary>Emits and compiles the interpreter's compilation under its Number profile;
+    /// <paramref name="lowerLoops"/> is the writer's <c>--loops</c>.</summary>
+    public static CSharpBackend Build(Interpreter.Interpreter interp, bool lowerLoops = false)
+        => new(CSharpProgram.Build(interp.Compilation, interp.Profile, lowerLoops), interp);
 
     /// <summary>Wraps an already compiled program, so a warm host compiles once per source generation.</summary>
     public static CSharpBackend Over(CSharpProgram program, Interpreter.Interpreter interp)

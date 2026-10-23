@@ -10,7 +10,7 @@ using Ara3D.Utils;
 namespace Ara3D.Geometry.CLI
 {
     // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|gpu32]
-    //                [--backend=interpreter|csharp|differential] [--differential] [--filter=<text>[,<text>...]] [--laws-from=<file>]
+    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--filter=<text>[,<text>...]] [--laws-from=<file>]
     //                [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N]
     //                [--budget=<seconds per law>] [--abandon=<seconds>] [--witness-budget=<seconds per witness>]
     //                [--parallel=N] [--call=<Name>]
@@ -67,6 +67,9 @@ namespace Ara3D.Geometry.CLI
                 Console.Error.WriteLine(e.Message);
                 return 1;
             }
+            // --loops: the compiled arm is written with the loop lowerer on (TKT-505), as the
+            // regeneration's --loops does.
+            var lowerLoops = args.Contains("--loops");
             var backendName = args.Contains("--differential")
                 ? LawBackends.DifferentialName
                 : Flags(args, "--backend=").LastOrDefault() ?? LawBackends.InterpreterName;
@@ -98,7 +101,7 @@ namespace Ara3D.Geometry.CLI
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             if (folders.Count == 0 || (!laws && calls.Count == 0))
             {
-                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
+                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--loops] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
                 return 1;
             }
 
@@ -138,7 +141,7 @@ namespace Ara3D.Geometry.CLI
                 foreach (var name in calls)
                     exit |= Call(interp, name);
                 if (laws)
-                    exit |= Laws(interp, backendKind.Value, options, timer, compiled, reportPath, baseline);
+                    exit |= Laws(interp, backendKind.Value, lowerLoops, options, timer, compiled, reportPath, baseline);
             }, 512 * 1024 * 1024);
             thread.Start();
             thread.Join();
@@ -172,11 +175,11 @@ namespace Ara3D.Geometry.CLI
         /// <summary>Runs the selected laws on the backend and prints them as they finish. Exit 1
         /// when one fails or errors, or, with a baseline, only when a law the baseline records as
         /// passing no longer passes.</summary>
-        private static int Laws(Interpreter.Interpreter interp, LawBackendKind kind, LawRunOptions options, Stopwatch timer, TimeSpan compiled,
+        private static int Laws(Interpreter.Interpreter interp, LawBackendKind kind, bool lowerLoops, LawRunOptions options, Stopwatch timer, TimeSpan compiled,
             string reportPath, IReadOnlyList<LawVerdict> baseline)
         {
             ILawBackend backend;
-            try { backend = LawBackends.Create(kind, interp); }
+            try { backend = LawBackends.Create(kind, interp, lowerLoops); }
             catch (InvalidOperationException e)
             {
                 Console.Error.WriteLine(e.Message);

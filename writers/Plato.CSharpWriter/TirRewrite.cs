@@ -144,6 +144,18 @@ public static class TirRewrite
     public static TirNode StripCoerce(TirNode n)
         => n is TirCoerce c ? StripCoerce(c.Inner) : n;
 
+    /// <summary>Whether a type is the ONE-dimensional list type with one element argument: the
+    /// current stdlib's <c>Array&lt;T&gt;</c> or stdlib-legacy's <c>IArray&lt;T&gt;</c>. Both render
+    /// as <c>IReadOnlyList&lt;T&gt;</c>. The one home for the pair of names: the loop lowerer and
+    /// the array materializer used to test for <c>IArray</c> alone, so they lowered nothing on a
+    /// modern-stdlib program (TKT-505).</summary>
+    public static bool IsListType(TypeExpression t)
+        => t != null && (t.Name == "Array" || t.Name == "IArray") && t.TypeArgs.Count == 1;
+
+    /// <summary>The element type of a list type (see <see cref="IsListType"/>), or null.</summary>
+    public static TypeExpression ListElementType(TypeExpression t)
+        => IsListType(t) ? t.TypeArgs[0] : null;
+
     /// <summary>Whether a node is a STATEMENT tree rather than an expression: a block, return, if,
     /// loop, or a lowered-loop marker. The one home for the check the inliner, unroller and body
     /// writer each used to keep a private copy of (the pre-lowering passes never see a
