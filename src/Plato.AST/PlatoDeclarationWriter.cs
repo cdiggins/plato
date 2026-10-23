@@ -32,6 +32,7 @@ namespace Ara3D.Geometry.AST
                 WriteInheritsOrImplements("inherits", declaration.Inherits);
             else
                 WriteInheritsOrImplements("implements", declaration.Implements);
+            WriteSealedBy(declaration.SealedBy);
 
             return WriteLine().Brace(w => w.WriteMembers(declaration.Members));
         }
@@ -80,6 +81,11 @@ namespace Ara3D.Geometry.AST
                 .Write(" ")
                 .WriteCommaList(types, WriteTypeNode);
         }
+
+        PlatoDeclarationWriter WriteSealedBy(IReadOnlyList<AstIdentifier> functions)
+            => functions.Count == 0
+                ? this
+                : WriteLine().Write("    sealed by ").WriteCommaList(functions, (w, f) => w.Write(f.Text));
 
         PlatoDeclarationWriter WriteConstraints(IReadOnlyList<AstConstraint> constraints)
         {

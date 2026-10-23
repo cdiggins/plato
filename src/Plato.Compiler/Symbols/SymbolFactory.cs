@@ -532,6 +532,10 @@ namespace Ara3D.Geometry.Compiler.Symbols
                     // Primitive-type keyword (plato-367): recorded, nothing else changes.
                     typeDef.IsPrimitiveDeclaration = astTypeDeclaration.IsPrimitiveDeclaration;
 
+                    // "sealed by F, G" (TKT-444); the names are checked in CheckSealedBy, once every
+                    // function exists.
+                    typeDef.SealedBy.AddRange(astTypeDeclaration.SealedBy.Select(f => f.Text));
+
                     if (typeDef.IsUnique && !UniqueTypes.IsUniqueTypeName(typeDef.Name))
                         LogResolutionError(
                             $"The 'unique' modifier is not allowed on type '{typeDef.Name}': only the intrinsic " +
@@ -795,7 +799,21 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 TypeBindingsScope = TypeBindingsScope.Pop();
             }
 
+            CheckSealedBy();
             return TypeDefs;
+        }
+
+        /// <summary>Every name in a "sealed by" clause must be a function that returns the sealed type
+        /// (TKT-444): a name that is not would leave the type with fewer constructors than its
+        /// declaration says, silently. Halts compilation like any resolution error.</summary>
+        private void CheckSealedBy()
+        {
+            var functions = TypeDefs.SelectMany(td => td.Functions).ToList();
+            foreach (var typeDef in TypeDefs.Where(td => td.IsSealed))
+                foreach (var name in typeDef.SealedBy.Where(n => !functions.Any(f => f.Name == n && f.ReturnType?.Def == typeDef)))
+                    LogResolutionError(
+                        $"Type '{typeDef.Name}' is sealed by '{name}', but no function named '{name}' returns '{typeDef.Name}'",
+                        SymbolsToNodes[typeDef]);
         }
 
         public void AddCompilerGeneratedFunction(TypeDef typeDef, FunctionDef f)

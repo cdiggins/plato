@@ -240,6 +240,12 @@ namespace Ara3D.Geometry.Compiler.Symbols
         public List<SumCaseDef> Cases { get; } = new List<SumCaseDef>();
         public bool IsSum => Cases.Count > 0;
 
+        // "sealed by F, G" (TKT-444): the names of the only functions whose bodies may construct this
+        // type. Every overload of a named function that returns the type counts. Empty when the type
+        // is constructed freely. Enforced by Checking/SealedConstruction (CHK311).
+        public List<string> SealedBy { get; } = new List<string>();
+        public bool IsSealed => SealedBy.Count > 0;
+
         public TypeDef(Scope scope, TypeKind kind, string name)
             : base(scope, null, name)
         {

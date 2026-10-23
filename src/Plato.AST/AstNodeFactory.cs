@@ -489,6 +489,8 @@ namespace Ara3D.Geometry.AST
                     IsPrimitiveDeclaration = type.PrimitiveKeyword.Present,
                     // Sum-type cases (empty unless declared with the "=" body).
                     Cases = cases,
+                    // "sealed by F, G" (TKT-444).
+                    SealedBy = type.SealedList.Node?.Identifier.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstIdentifier>(),
                 };
             }
 

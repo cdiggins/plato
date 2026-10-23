@@ -381,6 +381,10 @@ namespace Ara3D.Geometry.AST
         // as a settable property (like IsUnique) so the constructor signature and all existing callers
         // stay unchanged. Members is empty when Cases is non-empty.
         public IReadOnlyList<AstCaseDeclaration> Cases { get; set; } = Array.Empty<AstCaseDeclaration>();
+
+        // The functions named by "sealed by F, G" (TKT-444): the only ones whose bodies may construct
+        // the type. Empty when the type is not sealed.
+        public IReadOnlyList<AstIdentifier> SealedBy { get; set; } = Array.Empty<AstIdentifier>();
         public IReadOnlyList<AstTypeParameter> TypeParameters { get; }
         public IReadOnlyList<AstTypeNode> Inherits { get; }
         public IReadOnlyList<AstTypeNode> Implements { get; }

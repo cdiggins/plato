@@ -8,7 +8,7 @@ namespace Ara3D.Geometry.Compiler.Checking
     /// <summary>
     /// Orchestrates the checker passes for a single function:
     ///   normalize (Compilation.GetNormalizedFunction) -> constrain (ConstraintGenerator)
-    ///   -> solve (Solver).
+    ///   -> solve (Solver) -> the sealed-construction pass (SealedConstruction, CHK311).
     /// Produces a <see cref="TypeCheckResult"/>. The generator and solver share one
     /// <see cref="TypeVarFactory"/> so every unification variable in the run is uniquely named.
     ///
@@ -19,8 +19,15 @@ namespace Ara3D.Geometry.Compiler.Checking
     {
         public Compilation Compilation { get; }
 
+        /// <summary>Whether any type is "sealed by" its constructors, so the sealed-construction pass
+        /// has anything to look for (TKT-444).</summary>
+        private readonly bool _anySealed;
+
         public TypeChecker(Compilation compilation)
-            => Compilation = compilation;
+        {
+            Compilation = compilation;
+            _anySealed = compilation.TypeDefinitions?.Any(t => t.IsSealed) == true;
+        }
 
         public TypeCheckResult Check(FunctionDef f)
         {
@@ -37,6 +44,8 @@ namespace Ara3D.Geometry.Compiler.Checking
                 VarBounds = TypeConstraints.InheritedBounds(f),
             };
             solver.Solve(system);
+            if (_anySealed)
+                solver.Diagnostics.AddRange(SealedConstruction.Check(f, system, solver));
             return new TypeCheckResult(f, normalized, system, solver);
         }
 
