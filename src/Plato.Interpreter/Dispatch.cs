@@ -385,6 +385,13 @@ public sealed partial class Interpreter
         throw new HostObligationException($"{decl.OwnerType?.Name}.{decl.Name} on {TypeOf(args.Count > 0 ? args[0] : null)}");
     }
 
+    /// <summary>The instance a sum factory builds: the call site's type when it is ground
+    /// (<c>Maybe&lt;Integer&gt;</c>), else the declared one (<c>Maybe&lt;T&gt;</c>), which a generic body
+    /// run unspecialized leaves open. A value the compiled backend receives needs the instance
+    /// (TKT-443).</summary>
+    private static TypeExpression SumInstance(TypeExpression declared, TirCall site)
+        => site?.Type?.Def == declared.Def && TypeSubstitution.IsGround(site.Type) ? site.Type : declared;
+
     /// <summary>A call the elaborator left syntactic (no callee): the sum-type predicates, projections
     /// and factories the match lowering and the qualified case syntax produce, a field read, or a
     /// name resolved against the argument values.</summary>
@@ -414,7 +421,7 @@ public sealed partial class Interpreter
                 {
                     var sumCase = tk.Type.Def.Cases.FirstOrDefault(c => c.Name == name);
                     if (sumCase != null && sumCase.Fields.Count == args.Length - 1)
-                        return new PlatoSum(tk.Type, sumCase, args.Skip(1).ToArray());
+                        return new PlatoSum(SumInstance(tk.Type, call), sumCase, args.Skip(1).ToArray());
                     break;
                 }
                 case PlatoRecord r when args.Length == 1:

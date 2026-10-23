@@ -326,7 +326,7 @@ public sealed partial class Interpreter
 
             case FunctionType.SumFactory:
             {
-                return new PlatoSum(f.OwnerType.ToTypeExpression(), CaseNamed(f.OwnerType, f.Name), args.ToArray());
+                return new PlatoSum(SumInstance(f.OwnerType.ToTypeExpression(), site), CaseNamed(f.OwnerType, f.Name), args.ToArray());
             }
 
             case FunctionType.SumEquality:
