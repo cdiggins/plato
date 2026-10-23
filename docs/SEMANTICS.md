@@ -101,11 +101,27 @@ type PathSegment2D
 ```
 
 Rules (v1, per [`design/plato-sum-types-design-2026-07-27.md`](design/plato-sum-types-design-2026-07-27.md)):
-case names must be unique within the sum (CHK305); sums are **monomorphic** — a generic sum type
-is rejected (CHK306). A payload-free case omits the parentheses; an all-payload-free sum is the
-enum idiom (`type WindingOrder = CounterClockwise | Clockwise;`). Values are built with the
-qualified per-case constructor: `PathSegment2D.Move(p)`. The only way to consume a sum is `match`
-(§7).
+case names must be unique within the sum (CHK305). A payload-free case omits the parentheses; an
+all-payload-free sum is the enum idiom (`type WindingOrder = CounterClockwise | Clockwise;`).
+Values are built with the qualified per-case constructor: `PathSegment2D.Move(p)`. The only way to
+consume a sum is `match` (§7).
+
+A sum may be generic, as a product may (TKT-443):
+
+```plato
+type Maybe<T> = Just(Value: T) | Nothing;
+
+ValueOr(m: Maybe<$T>, fallback: $T): $T =>
+    match (m) { Just(v) => v; Nothing => fallback; };
+```
+
+The declaration's parameter `T` is in scope only in the declaration; a library signature over the
+sum spells its free type variable `$T`, as every generic signature does, and a bare `T` there is a
+resolution error that names the `$T` spelling. Each case reference is instantiated afresh at its
+use, so `Maybe.Nothing` takes its type argument from the context and `Maybe.Just(n)` from its
+payload. The type argument may be any type: a number, an index record, a record, an array, or
+another sum. The restriction that rejected a generic sum (CHK306) is off by default; it stays in
+`SumTypeChecker` for a host that asks for the monomorphic-only stance.
 
 ### Sealed types
 
@@ -387,6 +403,9 @@ bound to the case's fields in declaration order, and the binder count must equal
 Lowering: `match` is rewritten during elaboration into a chain of conditionals over the sum's
 tag — no dedicated TIR node — and a sum type emits to C# as a tagged `readonly partial struct`
 (an `int Kind` in declaration order, flattened `Case_Field` fields, one static factory per case).
+A generic sum emits as one generic struct (`Maybe<T>`), and a case built at a use names the instance
+(`Maybe<Integer>.Just(n)`); a library function over a closed instance (`F(m: Maybe<Number>)`) is an
+extension method in its library's class, since it cannot be a member of the generic struct.
 Emission is **C#-only** in v1: the TypeScript and Rust writers reject a sum declaration with a
 CHK320 comment instead of emitting garbage.
 
@@ -401,9 +420,8 @@ Explicitly absent, so nobody infers them from the C#-flavored syntax:
   them, so they never reach TIR. Use the conditional expression, `match`, and the array
   combinators. (`if`, `while` and their desugarings are in the language — see §3.)
 - **Exceptions and null** — no `throw`/`try`/`catch`, no null values, no `?.`. Partiality is
-  handled by convention today (`CanInvert: Boolean` alongside `Invert`); `Option`-style sums are
-  now expressible but blocked on generic sums.
-- **Generic sum types** — rejected in v1 (CHK306); monomorphic sums only.
+  handled by convention (`CanInvert: Boolean` alongside `Invert`) or by a generic sum such as
+  `Maybe<T>` (§2, "Sum types").
 - **`unique` on your own types** — the modifier is hard-rejected on any type other than the two
   intrinsic builders `List<T>` and `Buffer<T>` (`Plato.Compiler/Symbols/UniqueTypes.cs`). Those
   two do have semantics; the affine discipline over them is runtime-checked and lint-checked

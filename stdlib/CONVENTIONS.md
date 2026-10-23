@@ -16,18 +16,26 @@ multiply / layout understanding matches **`System.Numerics.Matrix4x4`**.
 
 ---
 
-## Partial operations — no generic `Optional<T>` (A1)
+## Partial operations — four sanctioned styles (A1)
 
-There is **no** generic `Optional<T>` / `Maybe<T>` in this vocabulary, and there
-cannot be: Plato sum types are non-generic (generic sums are rejected, CHK306).
-An operation that may fail must land on exactly **one** of three sanctioned
-concrete styles — any fourth style is rejected in review:
+An operation that may fail must land on exactly **one** of four sanctioned
+styles — any fifth style is rejected in review:
 
 1. **Fallback parameter** for total-ish value ops: `NormalizeOr(v, fallback)`.
 2. **Concrete result record with a validity field** for queries:
    `PlaneHit3D { Hit: Boolean; Point; Parameter }` — the reader checks the flag.
 3. **Concrete (non-generic) sum where the classification IS the payload**:
    `SphereSphereIntersection = Separate | ExternalTouch | OverlapCircle(...) | ...`.
+4. **Generic sum where the only classification is present or absent**:
+   `type Maybe<T> = Just(Value: T) | Nothing;`, read with `match`, never a
+   sentinel value (an index of -1, a NaN) standing for "none". Generic sums
+   type-check, run and compile since TKT-443
+   (`tracker/decisions/2026-10-23-generic-sums-monomorphize-per-use.md`). The
+   shipping tiers declare no `Maybe<T>` yet; a library that needs one declares it
+   until a tier does.
+
+Style 2 is not a substitute for style 4: a validity flag beside a payload that
+is meaningless when the flag is false is the sentinel problem in another form.
 
 ## Conversions — type-named is implicit, `ToX` is explicit
 

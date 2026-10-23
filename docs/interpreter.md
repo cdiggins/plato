@@ -231,7 +231,10 @@ not in the evaluator, so a different convention is a different driver over the s
   policy (a `Number` is one of ten special values three times in ten and otherwise uniform in
   [-10, 10]; an `Integer` is uniform in [-8, 8]; a struct is built field by field to a depth
   limit) and goes further where that runner stops: an array of a few elements, a sum case chosen
-  at random, a zero-field type as its only value. Every draw comes from one `Random` seeded from
+  at random, a zero-field type as its only value. An instance of a generic type (`Maybe<EdgeIndex>`,
+  `Tuple2<Number, Integer>`) is drawn with its type arguments substituted into its field and case
+  types, and each type argument by its own rule (its generator, or its sealed constructors).
+  Every draw comes from one `Random` seeded from
   a stable hash of the law's name, so a run is reproducible and a failing case can be found
   again. A type with a generator is drawn from it instead (above).
 - A parameter typed by an **interface** ranges over every concrete type implementing it, as the

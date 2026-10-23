@@ -209,6 +209,11 @@ interfaces are all rejected as subjects.
 
 ### 3.5 Generics stance
 
+> **Status, 2026-10-23 (TKT-443):** generic sums are supported and CHK306 is off by default. A
+> library consumer spells the free variable `$T`; see
+> `tracker/decisions/2026-10-23-generic-sums-monomorphize-per-use.md` for what changed and what is
+> not covered. The C# emission is one generic struct, not one struct per instantiation.
+
 Generic sum types (`Option<T>`) are **allowed if low-risk**, and the fixed decision is:
 **support them iff the monomorphizer already specializes the sum's cases per type
 argument with no new unification machinery.** It does — a sum lowers to a struct
