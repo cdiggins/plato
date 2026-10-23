@@ -556,6 +556,23 @@ namespace Ara3D.Geometry.Compiler.Checking
             // An interface parameter: the argument must implement the interface (or convert to it).
             if (IsVar(param) && cand.ConceptOf.TryGetValue(param.Name, out var iface))
             {
+                // Already bound by an earlier argument (Self in Equals(a: Self, b: Self)): this
+                // argument must be that type or convert to it. Implementing the interface is not
+                // enough: `SampleIx(k) == k` bound Self to SampleIx and then took the bare Integer
+                // too, a call no backend can perform (TKT-489).
+                // Only a concrete binding constrains the next argument: Self bound to an interface
+                // (an intermediate typed INumerical in `x * x * (3.0 - 2.0 * x)`) is still satisfied
+                // by any implementer, as before.
+                var bound = ResolveTop(param, sub);
+                if (!IsVar(bound) && bound?.Def != null && bound.Def.IsConcrete() && !bound.Def.IsInterface()
+                    && bound.Def.Kind != TypeKind.TypeParameter && bound.Def.Kind != TypeKind.SelfType)
+                {
+                    if (Unify(bound, argType, sub, null, record: false))
+                        return (true, ConceptCost, ArgMatchKind.Interface);
+                    if (HasConversion(argType, bound))
+                        return (true, ConversionCost, ArgMatchKind.Conversion);
+                    return (false, 0, ArgMatchKind.Exact);
+                }
                 if (SatisfiesConcept(argType, Zonk(iface, sub), sub))
                 {
                     // Viability + Self here; SatisfiesConcept also binds the interface's element
