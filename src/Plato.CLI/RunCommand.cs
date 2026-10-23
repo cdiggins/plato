@@ -12,7 +12,8 @@ namespace Ara3D.Geometry.CLI
     // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|gpu32]
     //                [--backend=interpreter|csharp|differential] [--differential] [--filter=<text>[,<text>...]] [--laws-from=<file>]
     //                [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N]
-    //                [--budget=<seconds per law>] [--abandon=<seconds>] [--parallel=N] [--call=<Name>]
+    //                [--budget=<seconds per law>] [--abandon=<seconds>] [--witness-budget=<seconds per witness>]
+    //                [--parallel=N] [--call=<Name>]
     //
     // Compiles the input roots as one program (top-level files, or every subfolder with --recursive,
     // *.spec.plato always skipped) and runs it in this process. --backend=interpreter (the default)
@@ -80,6 +81,9 @@ namespace Ara3D.Geometry.CLI
             if (int.TryParse(Flags(args, "--seed=").LastOrDefault(), out var seed)) options.Seed = seed;
             if (double.TryParse(Flags(args, "--budget=").LastOrDefault(), out var budget)) options.BudgetSeconds = budget > 0 ? budget : null;
             if (double.TryParse(Flags(args, "--abandon=").LastOrDefault(), out var abandon)) options.AbandonSeconds = abandon > 0 ? abandon : null;
+            // Each Witness_* is capped too (default the --abandon cap); a capped witness is dropped
+            // as faulted, and a law left with no values for a parameter is an error naming it (TKT-485).
+            if (double.TryParse(Flags(args, "--witness-budget=").LastOrDefault(), out var witnessBudget)) options.WitnessBudgetSeconds = witnessBudget > 0 ? witnessBudget : null;
             if (int.TryParse(Flags(args, "--parallel=").LastOrDefault(), out var parallel) && parallel > 0) options.MaxParallel = parallel;
             var reportPath = Flags(args, "--report=").LastOrDefault();
             var baselinePath = Flags(args, "--baseline=").LastOrDefault();
@@ -94,7 +98,7 @@ namespace Ara3D.Geometry.CLI
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             if (folders.Count == 0 || (!laws && calls.Count == 0))
             {
-                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--parallel=N]");
+                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
                 return 1;
             }
 

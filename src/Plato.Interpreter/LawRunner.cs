@@ -82,6 +82,11 @@ public sealed class LawRunOptions
     /// <summary>Seconds after which a law a backend cannot interrupt is given up on: its thread
     /// is left to finish in the background and the law is reported as an error. Null waits.</summary>
     public double? AbandonSeconds { get; set; } = 120;
+    /// <summary>Seconds one <c>Witness_*</c> may take before it is dropped as faulted, naming the
+    /// cap; null takes <see cref="AbandonSeconds"/>. The interpreter stops the witness at the cap; a
+    /// compiled witness is abandoned on its thread. Without it one slow witness held a whole sweep
+    /// before any law ran (TKT-485).</summary>
+    public double? WitnessBudgetSeconds { get; set; }
     /// <summary>Laws evaluated at once when the backend allows it (<see cref="ILawBackend.SupportsParallel"/>).</summary>
     public int MaxParallel { get; set; } = System.Environment.ProcessorCount;
     /// <summary>Only laws matching one of these run (see <see cref="LawSelection.Matches"/>); null
@@ -277,8 +282,10 @@ public sealed class LawRunner
         foreach (var p in law.Parameters)
         {
             var d = DomainOf(p, law);
+            // No values because the witnesses that would supply them faulted (or hit their cap) is
+            // an error naming them; no values for want of any witness is a skip.
             if (d.Reason != null)
-                return new LawResult { Law = law, Status = LawStatus.Skipped, Message = $"no values for {p.Name}: {p.Type}: {d.Reason}", Elapsed = sw.Elapsed };
+                return new LawResult { Law = law, Status = d.WitnessesFaulted ? LawStatus.Error : LawStatus.Skipped, Message = $"no values for {p.Name}: {p.Type}: {d.Reason}", Elapsed = sw.Elapsed };
             domains.Add(d);
         }
 
@@ -410,6 +417,8 @@ public sealed class LawRunner
         public List<object> Preferred = new List<object>();
         /// <summary>Concrete types to generate from when sampling (several for an interface).</summary>
         public List<TypeExpression> Generate = new List<TypeExpression>();
+        /// <summary>True when <see cref="Reason"/> is that every witness of the type faulted.</summary>
+        public bool WitnessesFaulted;
     }
 
     private Domain DomainOf(ParameterDef p, FunctionDef law)
@@ -458,6 +467,11 @@ public sealed class LawRunner
 
         if (_gen.CanGenerate(t, out var reason))
             d.Generate.Add(t);
+        else if (witnesses.Count == 0 && _witnessFaults.TryGetValue(t.ToString(), out var faults) && faults.Count > 0)
+        {
+            d.Reason = $"every {Options.WitnessPrefix}* of {t.Name} faulted: " + string.Join("; ", faults);
+            d.WitnessesFaulted = true;
+        }
         else if (witnesses.Count == 0)
             d.Reason = reason + $", and no {Options.WitnessPrefix}* returns {t.Name}";
         else
@@ -483,7 +497,7 @@ public sealed class LawRunner
     private List<object> EvaluateWitnesses(string key)
     {
         var list = new List<object>();
-        Backend.SetDeadline(null);
+        var faults = new List<string>();
         foreach (var f in Interpreter.Functions)
         {
             if (!f.Name.StartsWith(Options.WitnessPrefix, StringComparison.Ordinal) || f.Body == null)
@@ -498,12 +512,56 @@ public sealed class LawRunner
             else
                 continue;
             var sw = Stopwatch.StartNew();
-            string fault = null;
-            try { list.Add(Backend.Invoke(f, args)); }
-            catch (EvaluationException e) { fault = e.Describe(); /* the laws over the type run on the other witnesses */ }
+            var (value, fault) = InvokeWitness(f, args);
+            if (fault == null)
+                list.Add(value);
+            else
+                faults.Add($"{LawSelection.FullName(f)}: {fault}"); // the laws over the type run on the other witnesses
             _witnessResults.Enqueue(new WitnessResult(LawSelection.FullName(f), sw.Elapsed, fault));
         }
+        _witnessFaults[key] = faults;
         return list;
+    }
+
+    /// <summary>The witnesses that faulted, by type key, for the reason a law has no values.</summary>
+    private readonly ConcurrentDictionary<string, List<string>> _witnessFaults = new ConcurrentDictionary<string, List<string>>();
+
+    /// <summary>One witness under the witness cap (TKT-485). A backend that can be stopped (the
+    /// interpreter) gets the cap as its deadline and stops itself: abandoning it would leave the
+    /// shared interpreter running beside the next call. A backend that cannot (compiled C#) runs the
+    /// witness on a thread of its own, abandoned past the cap.</summary>
+    private (object Value, string Fault) InvokeWitness(FunctionDef f, object[] args)
+    {
+        var cap = Options.WitnessBudgetSeconds ?? Options.AbandonSeconds;
+        if (!Backend.SupportsParallel)
+        {
+            Backend.SetDeadline(cap is double c ? DateTime.UtcNow.AddSeconds(c) : null);
+            try { return (Backend.Invoke(f, args), null); }
+            catch (EvaluationException e)
+            {
+                return (null, e.Message.StartsWith(TimeBudgetMessage, StringComparison.Ordinal)
+                    ? $"over the {cap ?? 0:0.#} s witness cap"
+                    : e.Describe());
+            }
+            finally { Backend.SetDeadline(null); }
+        }
+        object value = null;
+        Exception fault = null;
+        var thread = new Thread(() =>
+        {
+            try { value = Backend.Invoke(f, args); }
+            catch (Exception e) { fault = e; }
+        }, StackBytes) { IsBackground = true, Name = LawSelection.FullName(f) };
+        thread.Start();
+        var finished = cap is double limit ? thread.Join(TimeSpan.FromSeconds(limit)) : JoinForever(thread);
+        if (!finished)
+            return (null, $"still running after the {cap ?? 0:0.#} s witness cap; abandoned");
+        return fault switch
+        {
+            null => (value, null),
+            EvaluationException e => (null, e.Describe()),
+            _ => (null, $"the {Backend.Name} backend faulted: {fault.GetType().Name}: {fault.Message}"),
+        };
     }
 
     private static IEnumerable<object[]> Product(List<Domain> domains)
