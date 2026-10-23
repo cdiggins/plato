@@ -107,6 +107,29 @@ enum idiom (`type WindingOrder = CounterClockwise | Clockwise;`). Values are bui
 qualified per-case constructor: `PathSegment2D.Move(p)`. The only way to consume a sum is `match`
 (§7).
 
+### Sealed types
+
+A product or sum may name, after its `implements` list, the only functions that construct it:
+
+```plato
+type CheckedMesh
+    sealed by CheckMesh
+{
+    Mesh: Mesh;
+    Tolerance: Number;
+}
+```
+
+A function may construct the type when its name is in the list and it returns the type; every
+overload of that name returning the type counts, and each name needs at least one (a resolution
+error otherwise). Anywhere else a constructor call, `new`, a tuple converted to the type, a sum
+case, or `default` of the type is CHK311 (`Checking/SealedConstruction.cs`). Field reads, `match`,
+and calls to the named functions are allowed everywhere. This is how a proof type, a value whose
+existence says a check passed, keeps that meaning without visibility (§8). The generated code is
+unchanged: its constructor stays public to the host. The law runner draws a sealed type only from
+its generators, its named functions, or its witnesses (`docs/interpreter.md`). Decision:
+`tracker/decisions/2026-10-22-sealed-by-names-a-types-constructors.md`.
+
 ## 3. `library` — functions
 
 A `library` is a named collection of pure free functions:
@@ -385,7 +408,8 @@ Explicitly absent, so nobody infers them from the C#-flavored syntax:
   intrinsic builders `List<T>` and `Buffer<T>` (`Plato.Compiler/Symbols/UniqueTypes.cs`). Those
   two do have semantics; the affine discipline over them is runtime-checked and lint-checked
   today, not statically enforced. `stdlib/foundation/primitives.plato` is the authority.
-- **OO** — no inheritance between types, no virtual dispatch, no visibility modifiers, no
+- **OO** — no inheritance between types, no virtual dispatch, no visibility modifiers (a sealed
+  type, §2, names its constructors instead), no
   heterogeneous collections through interfaces, no runtime type tests (`is`/`as` are not language).
 - **A second floating type** — there is no `Double` or `Float32` beside `Number`; the width is
   the compilation's Number profile (§1), not a type.
