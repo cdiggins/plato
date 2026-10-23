@@ -48,6 +48,18 @@ namespace Ara3D.Geometry.Compiler.Analysis
             return r;
         }
 
+        /// <summary>The functions whose first parameter is a CLOSED instance of a generic type
+        /// (<c>F(m: Maybe&lt;Number&gt;)</c> for <c>Maybe&lt;T&gt;</c>): a type argument names a type,
+        /// not a <c>$</c> variable, so <see cref="MatchesType"/> pairs them with no declaration and
+        /// they cannot be members of the generic struct (TKT-443).</summary>
+        public IEnumerable<FunctionDef> GetFunctionsForClosedInstancesOf(TypeExpression genericType)
+            => genericType.TypeArgs.Count == 0
+                ? Enumerable.Empty<FunctionDef>()
+                : AllFunctions().Where(f => f.Parameters.Count > 0
+                    && f.Parameters[0].Type.Name == genericType.Name
+                    && f.Parameters[0].Type.TypeArgs.Count == genericType.TypeArgs.Count
+                    && !MatchesType(f.Parameters[0].Type, genericType));
+
         public IEnumerable<FunctionDef> AllConstants()
             => AllFunctions().Where(f => f.Parameters.Count == 0);
 

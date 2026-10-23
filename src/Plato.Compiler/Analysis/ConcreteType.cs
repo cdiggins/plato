@@ -21,6 +21,10 @@ namespace Ara3D.Geometry.Compiler.Analysis
         public IReadOnlyList<InterfaceImplementation> Interfaces { get; }
         public IReadOnlyList<InterfaceImplementation> AllInterfaces { get; }
         public IReadOnlyList<FunctionInstance> ConcreteFunctions { get; }
+        /// <summary>For a generic type, the library functions over one of its closed instances
+        /// (<c>F(m: Maybe&lt;Number&gt;)</c>); part of <see cref="ConcreteFunctions"/>, and never a
+        /// member of the generic struct (see <see cref="LibraryFunctions.GetFunctionsForClosedInstancesOf"/>).</summary>
+        public IReadOnlyList<FunctionInstance> ClosedInstanceFunctions { get; }
         public IReadOnlyList<FunctionInstance> FieldFunctions { get; }
         public IReadOnlyList<FunctionInstance> DeclaredFunctions { get; }
         public IReadOnlyList<FunctionInstance> ImplementedFunctions { get; }
@@ -37,8 +41,11 @@ namespace Ara3D.Geometry.Compiler.Analysis
             Substitutions = new TypeSubstitutions("Self", TypeDef.ToTypeExpression());
             Interfaces = typeDef.Implements.Select(CreateConceptImplementation).ToList();
             AllInterfaces = Interfaces.AllDescendants().Distinct(i => i.ToString()).OrderBy(i => i.ToString()).ToList();
-            ConcreteFunctions = libraries.GetFunctionsForType(TypeDef.ToTypeExpression())
+            ClosedInstanceFunctions = libraries.GetFunctionsForClosedInstancesOf(TypeDef.ToTypeExpression())
                 .Select(f => CreateFunctionInstance(f, FunctionInstanceKind.ConcreteType)).ToList();
+            ConcreteFunctions = libraries.GetFunctionsForType(TypeDef.ToTypeExpression())
+                .Select(f => CreateFunctionInstance(f, FunctionInstanceKind.ConcreteType))
+                .Concat(ClosedInstanceFunctions).ToList();
             FieldFunctions = TypeDef.Fields
                 .Select(f => CreateFunctionInstance(f.Function, FunctionInstanceKind.FieldType)).ToList();
 

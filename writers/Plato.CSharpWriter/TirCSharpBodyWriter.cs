@@ -827,6 +827,13 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             WriteNode(args[0]);
             Write("))");
         }
+        else if (recvNode is TirTypeRef { TypeDef: { IsSum: true } sum } && sum.TypeParameters.Count > 0)
+        {
+            // A generic sum's case factory is a static on the instantiated struct, and C# has no
+            // `Maybe.Just(n)` without the type arguments: the call's result type carries them
+            // (`Maybe<Integer>.Just(n)`, TKT-443).
+            Write(ConstructedTypeName(sum.Name, call.Type));
+        }
         else if (recvNode is TirConditional || recvNode is TirLambda || recvNode is TirAssign
             || recvNode is TirBooleanChain)
         {

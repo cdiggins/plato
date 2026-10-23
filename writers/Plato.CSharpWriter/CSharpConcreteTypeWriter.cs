@@ -496,7 +496,7 @@ namespace Ara3D.Geometry.CSharpWriter
                     var idx = c.Fields.ToList().FindIndex(cf => ReferenceEquals(cf, f));
                     ctorArgs.Add(idx >= 0 ? caseParamNames[idx] : "default");
                 }
-                tw.WriteLine($"{Attr} public static {Name} {c.Name}({caseParams.JoinStringsWithComma()}) => new {SimpleName}({ctorArgs.JoinStringsWithComma()});");
+                tw.WriteLine($"{Attr} public static {Name} {c.Name}({caseParams.JoinStringsWithComma()}) => new {Name}({ctorArgs.JoinStringsWithComma()});");
             }
             tw.WriteLine();
 

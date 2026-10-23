@@ -150,6 +150,25 @@ namespace Ara3D.Geometry
             Assert.That(lib, Does.Contain("Pen(this Point2D start) => PathSegment2D.Move(start)"));
         }
 
+        [Test]
+        public static void GenericSum_EmitsAGenericStructAndInstantiatedFactoryCalls()
+        {
+            // TKT-443: Option<T> is one generic struct; a case built at a use names the instance
+            // (`Option<Number>.Some(x)`), a helper over a closed instance is an extension method
+            // in the library class, and a helper over Option<$T> is a member of the struct.
+            var w = Emit("option.plato");
+            var src = w.Files["_Option.g.cs"].ToString();
+            Assert.That(src, Does.Contain("public readonly partial struct Option<T>"));
+            Assert.That(src, Does.Contain("public readonly T Some_Value"));
+            Assert.That(src, Does.Contain("public static Option<T> Some(T value) => new Option<T>(Kind_Some, value)"));
+            Assert.That(src, Does.Contain("public static Option<T> None() => new Option<T>(Kind_None, default)"));
+            Assert.That(src, Does.Contain("public T GetOrElse(T fallback) => this.IsNone() ? fallback : this.Some_Value"));
+            var lib = w.Files["Options.g.cs"].ToString();
+            Assert.That(lib, Does.Contain("Option<Number> Wrap(this Number x) => Ara3D.Geometry.Option<Number>.Some(x)"));
+            Assert.That(lib, Does.Contain("Option<Number> Empty(this Number x) => Ara3D.Geometry.Option<Number>.None()"));
+            Assert.That(lib, Does.Contain("Option<Number> KeepSome(this Option<Number> o) =>"));
+        }
+
         // --- strong gate: compile and execute ------------------------------------
 
         [Test]

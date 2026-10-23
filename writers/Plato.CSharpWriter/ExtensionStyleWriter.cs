@@ -176,9 +176,18 @@ public class ExtensionStylePlan
         foreach (var (f, fi) in candidates)
             (fi.IsStatic ? StaticNames : InstanceNames).Add(f.Name);
 
+        var closedInstance = new HashSet<FunctionInstance>(ct.ClosedInstanceFunctions);
         var movable = new List<FunctionInstance>();
         foreach (var (f, fi) in candidates)
         {
+            // A function over a closed instance (`F(m: Maybe<Number>)`) cannot be a member of the
+            // generic struct `Maybe<T>`, so it always moves when it has a body (TKT-443).
+            if (closedInstance.Contains(f) && f.Implementation.Body != null)
+            {
+                _closedInstanceMoved.Add(f);
+                _moved.Add(f);
+                continue;
+            }
             var keep =
                 isGeneric                                           // generic types keep everything
                 || declaredSigs.Contains(f.SignatureId)             // C# interface obligation
@@ -215,6 +224,13 @@ public class ExtensionStylePlan
         }
     }
 
+    private readonly HashSet<FunctionInstance> _closedInstanceMoved = new HashSet<FunctionInstance>();
+
+    /// <summary>Whether a moved function is over a closed instance of this generic type, so its
+    /// extension method declares none of the type's parameters (`this Maybe<Number> m`).</summary>
+    public bool IsClosedInstanceMove(FunctionInstance f)
+        => _closedInstanceMoved.Contains(f);
+
     public bool ShouldMove(FunctionInstance f)
         => _moved.Contains(f);
 
@@ -227,7 +243,7 @@ public class ExtensionStylePlan
     /// </summary>
     public void DemoteMovedNames(ICollection<string> names)
     {
-        var demoted = _moved.Where(f => names.Contains(f.Name)).ToList();
+        var demoted = _moved.Where(f => names.Contains(f.Name) && !_closedInstanceMoved.Contains(f)).ToList();
         foreach (var f in demoted)
         {
             _moved.Remove(f);
@@ -278,7 +294,7 @@ public static class ExtensionStyleWriter
         foreach (var m in members)
         {
             var tw = NewMemberWriter(writer, m);
-            var fi = tw.ToFunctionInfo(m.Function, m.ConcreteType.TypeDef);
+            var fi = tw.ToFunctionInfo(m.Function, m.Plan.IsClosedInstanceMove(m.Function) ? null : m.ConcreteType.TypeDef);
 
             // Defensive: never emit two extension methods with the same C# signature.
             var sigKey = $"{fi.Name}{fi.GenericsString}({fi.ParameterTypes.JoinStringsWithComma()})";
