@@ -202,6 +202,14 @@ not in the evaluator, so a different convention is a different driver over the s
   interpreter evaluates each generator once per seed, under a lock (a compiled backend draws from
   several threads), so every backend and the differential run receive the same values, converted.
   A generator that faults makes the law an error naming the generator and the seed (TKT-446).
+- A **sealed type** (`sealed by F, G`, docs/SEMANTICS.md section 2) is never built field by field
+  either. With a generator it is drawn from the generator; otherwise from one of the named
+  functions that has a body, chosen at random and called on drawn arguments, so a constructor that
+  takes the type itself (`WorseOf(a: Check, b: Check)`) composes drawn values until
+  `ValueGenerator.MaxDepth`. Its witnesses join the draw. A sealed type none of whose named
+  functions has a body, or can have its arguments drawn, is not generated, and a law over it runs
+  on its witnesses or reports why it cannot. A named function that faults on drawn arguments makes
+  the law an error naming it (TKT-444).
 - A **measure** is a companion `Measure_<law>` with the law's parameter list. When a law fails or
   faults, the runner evaluates the measure on the failing witness and prints it beside the
   witness, so a report names how far off the result was, not only that it was.

@@ -18,6 +18,9 @@ namespace Ara3D.Geometry.Interpreter;
 /// field by field: its values, as a law argument or as a field of another value, come from a
 /// generator called with a seed in [0, <see cref="GeneratorSeeds"/>), so a type whose
 /// constructors keep an invariant (a positive tolerance) only receives values that hold it.
+/// A sealed type (<c>sealed by F, G</c>, TKT-444) without a generator is drawn from the functions
+/// its declaration names instead, each called on drawn arguments: the runner builds only values
+/// the library could build.
 /// </summary>
 public sealed class ValueGenerator
 {
@@ -33,6 +36,7 @@ public sealed class ValueGenerator
 
     private readonly Interpreter _interp;
     private readonly ConcurrentDictionary<string, IReadOnlyList<FunctionDef>> _generators = new ConcurrentDictionary<string, IReadOnlyList<FunctionDef>>();
+    private readonly ConcurrentDictionary<TypeDef, IReadOnlyList<FunctionDef>> _sealedConstructors = new ConcurrentDictionary<TypeDef, IReadOnlyList<FunctionDef>>();
     /// <summary>Each generator's value per seed, evaluated once; guarded by a lock on the interpreter.</summary>
     private readonly Dictionary<(FunctionDef, int), object> _generated = new Dictionary<(FunctionDef, int), object>();
 
@@ -65,6 +69,24 @@ public sealed class ValueGenerator
     private static bool IsSeed(ParameterDef p)
         => p.Name != "_" && p.Type?.Def?.Name == "Integer";
 
+    /// <summary>The bodied functions a sealed type's declaration names that return it
+    /// (<see cref="SealedConstruction.Permits"/>); empty for a type that is not sealed. A named
+    /// function without a body contributes nothing until it has one.</summary>
+    public IReadOnlyList<FunctionDef> SealedConstructorsOf(TypeExpression t)
+        => t?.Def == null || !t.Def.IsSealed
+            ? Array.Empty<FunctionDef>()
+            : _sealedConstructors.GetOrAdd(t.Def, def => _interp.Functions
+                .Where(f => f.Body != null && SealedConstruction.Permits(def, f))
+                .ToList());
+
+    /// <summary>The sealed constructors whose arguments can be drawn one level down. A constructor
+    /// that takes the type itself (<c>WorseOf(a: Check, b: Check)</c>) is drawable until the depth
+    /// limit, so compositions stay finite. A <c>_</c> parameter is the static receiver.</summary>
+    private List<FunctionDef> DrawableConstructors(TypeExpression t, int depth, HashSet<string> inProgress)
+        => SealedConstructorsOf(t)
+            .Where(f => f.Parameters.All(p => p.Name == "_" || CanGenerate(p.Type, depth + 1, inProgress, out _)))
+            .ToList();
+
     /// <summary>A value from one of the generators, chosen at random, with a seed chosen at random.
     /// The interpreter evaluates it (so every backend receives the same value, converted), once
     /// per generator and seed, under a lock: a compiled backend draws from several threads, and
@@ -80,15 +102,37 @@ public sealed class ValueGenerator
             var args = f.Parameters.Count == 1
                 ? new object[] { (long)seed }
                 : new object[] { new TypeToken(f.Parameters[0].Type), (long)seed };
-            object v;
-            try { v = _interp.Invoke(f, args); }
-            catch (EvaluationException e) when (!e.Message.StartsWith(LawRunner.TimeBudgetMessage, StringComparison.Ordinal)
-                                                && e is not HostObligationException)
-            {
-                throw new EvaluationException($"generator {f.OwnerType?.Name}.{f.Name} faulted on seed {seed}: {e.Describe()}", e);
-            }
+            var v = InvokeSource("generator", f, args, $"seed {seed}");
             _generated[(f, seed)] = v;
             return v;
+        }
+    }
+
+    /// <summary>A value of a sealed type from one of its drawable constructors, chosen at random,
+    /// called on arguments drawn one level down. Evaluated as a generator is, but not cached: the
+    /// arguments differ on every draw.</summary>
+    private object FromSealedConstructor(TypeExpression t, Random rng, int depth)
+    {
+        var constructors = DrawableConstructors(t, depth, new HashSet<string>());
+        if (constructors.Count == 0)
+            throw new EvaluationException($"{t} is sealed by {string.Join(", ", t.Def.SealedBy)}, and none of them can be drawn at depth {depth}");
+        var f = constructors[rng.Next(constructors.Count)];
+        var args = f.Parameters
+            .Select(p => p.Name == "_" ? (object)new TypeToken(p.Type) : Generate(p.Type, rng, depth + 1))
+            .ToArray();
+        lock (_interp)
+            return InvokeSource("sealed constructor", f, args, "drawn arguments");
+    }
+
+    /// <summary>Evaluates a function the runner draws values from; a fault names it and its input.
+    /// The caller holds the lock on the interpreter.</summary>
+    private object InvokeSource(string kind, FunctionDef f, object[] args, string input)
+    {
+        try { return _interp.Invoke(f, args); }
+        catch (EvaluationException e) when (!e.Message.StartsWith(LawRunner.TimeBudgetMessage, StringComparison.Ordinal)
+                                            && e is not HostObligationException)
+        {
+            throw new EvaluationException($"{kind} {f.OwnerType?.Name}.{f.Name} faulted on {input}: {e.Describe()}", e);
         }
     }
 
@@ -112,6 +156,8 @@ public sealed class ValueGenerator
         }
         if (GeneratorsOf(t).Count > 0)
             return true;
+        if (t.Def.IsSealed)
+            return CanGenerateSealed(t, depth, inProgress, out reason);
         if (t.IsTypeVariable || t.IsTypeParameter || t.Name == "Self")
         {
             reason = $"type variable {t}"; return false;
@@ -149,6 +195,30 @@ public sealed class ValueGenerator
         }
     }
 
+    /// <summary>A sealed type can be drawn when one of its constructors can (TKT-444); it is never
+    /// built field by field.</summary>
+    private bool CanGenerateSealed(TypeExpression t, int depth, HashSet<string> inProgress, out string reason)
+    {
+        reason = null;
+        if (!inProgress.Add(t.Def.Name))
+        {
+            reason = $"{t.Def.Name} contains itself"; return false;
+        }
+        try
+        {
+            if (DrawableConstructors(t, depth, inProgress).Count > 0)
+                return true;
+            reason = SealedConstructorsOf(t).Count == 0
+                ? $"{t.Def.Name} is sealed by {string.Join(", ", t.Def.SealedBy)}, and none of them has a body"
+                : $"{t.Def.Name} is sealed by {string.Join(", ", t.Def.SealedBy)}, and none of their arguments can be drawn";
+            return false;
+        }
+        finally
+        {
+            inProgress.Remove(t.Def.Name);
+        }
+    }
+
     public object Generate(TypeExpression t, Random rng, int depth = 0)
     {
         switch (t.Def.Name)
@@ -176,6 +246,8 @@ public sealed class ValueGenerator
         var generators = GeneratorsOf(t);
         if (generators.Count > 0)
             return FromGenerator(generators, rng);
+        if (t.Def.IsSealed)
+            return FromSealedConstructor(t, rng, depth);
         if (t.Def.IsSum)
         {
             var c = t.Def.Cases[rng.Next(t.Def.Cases.Count)];
@@ -204,14 +276,14 @@ public sealed class ValueGenerator
 
     /// <summary>The whole value set of a type when it is small and finite (Boolean, a sum of
     /// payload-free cases), so a law over it can be exhausted rather than sampled; null otherwise,
-    /// and null for a type with a generator, whose values come only from it.</summary>
+    /// and null for a type with a generator or a sealed type, whose values come only from those.</summary>
     public IReadOnlyList<object> FiniteDomain(TypeExpression t)
     {
         if (t?.Def == null)
             return null;
         if (t.Def.Name == "Boolean")
             return new object[] { false, true };
-        if (GeneratorsOf(t).Count > 0)
+        if (GeneratorsOf(t).Count > 0 || t.Def.IsSealed)
             return null;
         // A `primitive` declaration (Number, Array, ...) has no fields but is not an empty record.
         if (t.Def.IsPrimitiveDeclaration)
