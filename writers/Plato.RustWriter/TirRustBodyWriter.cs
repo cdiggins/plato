@@ -223,6 +223,15 @@ public class TirRustBodyWriter : CodeBuilder<TirRustBodyWriter>
                 Write(")");
                 return;
 
+            case TirConditional sc when TirShortCircuit.TryMatch(sc, out var scLeft, out var scRight) is string scOp:
+                // Rust's && and || on bool short-circuit natively (docs/SEMANTICS.md section 6).
+                Write("(");
+                WriteShortCircuitOperand(scLeft);
+                Write($" {scOp} ");
+                WriteShortCircuitOperand(scRight);
+                Write(")");
+                return;
+
             case TirConditional cond:
                 Write("if ");
                 WriteNode(cond.Condition);
@@ -378,5 +387,15 @@ public class TirRustBodyWriter : CodeBuilder<TirRustBodyWriter>
         Write("(");
         WriteArgs(args.Skip(1));
         Write(")");
+    }
+
+    // An operand of && or || that is an ordinary conditional binds looser than the operator, so it
+    // keeps its own parentheses; a short-circuit operand already writes them.
+    private void WriteShortCircuitOperand(TirNode operand)
+    {
+        var wrap = operand is TirConditional c && TirShortCircuit.TryMatch(c, out _, out _) == null;
+        if (wrap) Write("(");
+        WriteNode(operand);
+        if (wrap) Write(")");
     }
 }

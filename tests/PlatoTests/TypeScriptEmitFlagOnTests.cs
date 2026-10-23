@@ -10,7 +10,8 @@ namespace PlatoTests
     /// <summary>
     /// TypeScript counterpart of <see cref="EmitFlagOnTests"/>: generates the whole TS library
     /// twice — UseTir off (legacy symbol-graph body writer) and on (TirTypeScriptBodyWriter) —
-    /// and asserts byte-identical output. The flip criterion for the TS writer.
+    /// and asserts byte-identical output except for the short-circuit spelling of Boolean And and
+    /// Or (<see cref="ShortCircuitEmitDifference"/>). The flip criterion for the TS writer.
     /// </summary>
     [TestFixture]
     public static class TypeScriptEmitFlagOnTests
@@ -42,7 +43,7 @@ namespace PlatoTests
             foreach (var kv in flagOff.Files)
             {
                 Assert.IsTrue(flagOn.Files.ContainsKey(kv.Key), $"flag-on output is missing file {kv.Key}");
-                if (Canonical(kv.Value.ToString()) != Canonical(flagOn.Files[kv.Key].ToString()))
+                if (!ShortCircuitEmitDifference.Matches(Canonical(kv.Value.ToString()), Canonical(flagOn.Files[kv.Key].ToString())))
                     differing.Add(kv.Key);
             }
 
@@ -54,7 +55,7 @@ namespace PlatoTests
                 var b = Canonical(flagOn.Files[d].ToString()).Split('\n');
                 var shown = 0;
                 for (var i = 0; i < a.Length && i < b.Length && shown < 10; i++)
-                    if (a[i] != b[i])
+                    if (!ShortCircuitEmitDifference.LinesMatch(a[i], b[i]))
                     {
                         TestContext.WriteLine($"    line {i + 1}:");
                         TestContext.WriteLine($"      off: {a[i]}");

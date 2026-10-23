@@ -266,6 +266,16 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
                 Write(")");
                 return;
 
+            case TirConditional sc when TirShortCircuit.TryMatch(sc, out var scLeft, out var scRight) is string scOp:
+                // TypeScript's && and || on boolean short-circuit natively (docs/SEMANTICS.md
+                // section 6).
+                Write("(");
+                WriteShortCircuitOperand(scLeft);
+                Write($" {scOp} ");
+                WriteShortCircuitOperand(scRight);
+                Write(")");
+                return;
+
             case TirConditional cond:
                 // Both branches are still in return position: a body that returns a
                 // tuple literal from either arm needs the same TupleN -> declared-type
@@ -456,5 +466,15 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
         Write("(");
         WriteArgs(args.Skip(1));
         Write(")");
+    }
+
+    // An operand of && or || that is an ordinary conditional binds looser than the operator, so it
+    // keeps its own parentheses; a short-circuit operand already writes them.
+    private void WriteShortCircuitOperand(TirNode operand)
+    {
+        var wrap = operand is TirConditional c && TirShortCircuit.TryMatch(c, out _, out _) == null;
+        if (wrap) Write("(");
+        WriteNode(operand);
+        if (wrap) Write(")");
     }
 }

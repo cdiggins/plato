@@ -290,7 +290,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                     }
                     args.Add(inner);
                 }
-                return new TirCall(rc.Callee, kind, paramTypes, returnType ?? type, args, type ?? returnType, fc);
+                return ShortCircuit(new TirCall(rc.Callee, kind, paramTypes, returnType ?? type, args, type ?? returnType, fc));
             }
 
             // Unresolved named call: emit a SYNTACTIC TirCall (null callee). Emission needs only
@@ -301,9 +301,26 @@ namespace Ara3D.Geometry.Compiler.Checking
             Diagnostics.Add(new CheckDiagnostic(DiagnosticSeverity.Info, "ELB001",
                 $"Call to '{fc.Function?.Name}' was not resolved by the solver; emitting a syntactic TIR call", fc));
             var syntacticArgs = fc.Args.Select(ElaborateExpr).ToList();
-            return new TirCall(null, DeriveSyntacticEmissionKind(fc), null, null,
-                syntacticArgs, type, fc, fc.Function?.Name);
+            return ShortCircuit(new TirCall(null, DeriveSyntacticEmissionKind(fc), null, null,
+                syntacticArgs, type, fc, fc.Function?.Name));
         }
+
+        /// <summary>Boolean <c>a &amp;&amp; b</c> and <c>a || b</c> become the conditionals of
+        /// <see cref="TirShortCircuit"/>. Only the Boolean overloads short-circuit: an <c>And</c>
+        /// or <c>Or</c> a library defines for its own type stays an ordinary call that evaluates
+        /// both arguments.</summary>
+        private TirNode ShortCircuit(TirCall call)
+        {
+            var isAnd = call.Name == "And";
+            if (!isAnd && call.Name != "Or")
+                return call;
+            if (call.Args.Count != 2 || !call.Args.All(a => IsBoolean(a?.Type)) || !IsBoolean(call.Type))
+                return call;
+            return TirShortCircuit.Build(isAnd, call.Args[0], call.Args[1], call.Type, call.Origin);
+        }
+
+        private static bool IsBoolean(TypeExpression t)
+            => (t?.Def?.Name ?? t?.Name) == "Boolean";
 
         /// <summary>Shape-only <see cref="EmissionKind"/> for a syntactic (unresolved) call —
         /// the same rules as <see cref="DeriveEmissionKind"/> minus the callee-driven cases.</summary>

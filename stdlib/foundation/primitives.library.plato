@@ -215,10 +215,11 @@ library Primitives
     //==
     // # Array — predicates
     //
-    // Folds rather than short-circuiting loops: a Plato body has no early exit,
-    // so All and Any visit every element. Semantically identical for the pure
-    // callbacks this vocabulary allows; a backend that wants the short circuit
-    // supplies it through the override table.
+    // Folds rather than loops with an early exit, which a Plato body cannot
+    // write: All and Any visit every element. Boolean && and || short-circuit
+    // (docs/SEMANTICS.md section 6), so once the answer is decided the
+    // predicate is not called again; a backend that wants the loop itself to
+    // stop early supplies it through the override table.
 
     // True when every element satisfies the predicate (vacuously true when empty).
     All(xs: Array<$T>, f: Function1<$T, Boolean>): Boolean
