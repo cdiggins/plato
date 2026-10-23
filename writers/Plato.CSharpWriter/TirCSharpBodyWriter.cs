@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Checking;
@@ -34,6 +34,9 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // >0 while rendering a lambda body: parameter #0 is emitted by name, not `this`
     // (the reference lambda body writer runs in "static" mode, isStatic:true).
     private int _lambdaDepth;
+    // The names a lowered loop's inlined lambda parameters are declared under (TKT-505): a
+    // lambda parameter may shadow an enclosing local, a loop local of the same name may not.
+    private readonly Dictionary<ParameterDef, string> _loopParamNames = new();
 
     public TirCSharpBodyWriter(CSharpTypeWriter tw, TirFunction tir, bool isStatic = false,
         CSharpFunctionInfo fi = null)
@@ -356,7 +359,9 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 var isThis = idx == 0 && !_isStatic && _lambdaDepth == 0;
                 // Under scalar erasure the parameter's declared C# type is already the primitive, so
                 // the reference is bare; any boundary cast is an explicit TirCoerce node.
-                Write(isThis ? "this" : CSharpTypeWriter.Identifier(p.Def?.Name) ?? "?");
+                Write(isThis ? "this"
+                    : p.Def != null && _loopParamNames.TryGetValue(p.Def, out var loopName) ? loopName
+                    : CSharpTypeWriter.Identifier(p.Def?.Name) ?? "?");
                 return;
             }
 
@@ -907,8 +912,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         {
             var name = ll.Sources.Count == 1 ? $"_s{k}" : $"_s{k}{(char)('a' + s)}";
             srcNames.Add(name);
-            // A source that is itself a lowered-loop result is a C# ARRAY: Length, not Count.
-            srcCounts.Add(TirRewrite.StripCoerce(ll.Sources[s]) is TirTempRef ? $"{name}.Length" : $"{name}.Count");
+            srcCounts.Add($"{name}.Count");
             Write($"var {name} = ");
             WriteNode(ll.Sources[s]);
             WriteLine(";");
@@ -916,6 +920,14 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         var n = $"_n{k}";
         var i = $"_i{k}";
         var t = ll.TempName;
+        // The array an array-producing kind fills; the temp the rest of the body reads is bound to
+        // it as IReadOnlyList<T> below, the type every Array<T> value has in the emitted C#, so a
+        // Reduce seeded with it, a FlatMap over it, or a conditional joining it with another list
+        // types as before lowering (TKT-505: a T[] temp gave CS0266 and CS8917 on the STEP mesher).
+        var a = $"_a{k}";
+        // The loop index as the Plato Integer wrapper: a lambda parameter bound to the bare int
+        // loses the wrapper's members (`i.ToNumber` is then a method group on int, TKT-505).
+        var index = $"((Integer){i})";
 
         void For(string count, System.Action body)
         {
@@ -929,12 +941,15 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // declared as loop locals; a delegate-typed reference is invoked.
         var fn = ll.Fn == null ? null : TirRewrite.StripCoerce(ll.Fn);
         var lam = fn as TirLambda;
+        if (lam != null)
+            foreach (var p in lam.Parameters)
+                _loopParamNames[p] = $"{CSharpTypeWriter.Identifier(p.Name)}_{k}";
         void DeclareParams(params string[] elems)
         {
             if (lam == null)
                 return;
             for (var p = 0; p < lam.Parameters.Count && p < elems.Length; p++)
-                WriteLine($"var {lam.Parameters[p].Name} = {elems[p]};");
+                WriteLine($"var {_loopParamNames[lam.Parameters[p]]} = {elems[p]};");
         }
         void WriteFnValue(params string[] elems)
         {
@@ -957,25 +972,25 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         {
             case "Map" or "MapIdx":
                 WriteLine($"var {n} = {srcCounts[0]};");
-                WriteLine($"var {t} = new {elem}[{n}];");
+                WriteLine($"var {a} = new {elem}[{n}];");
                 For(n, () =>
                 {
                     var elems = ll.Kind == "MapIdx"
-                        ? new[] { $"{srcNames[0]}[{i}]", i }
+                        ? new[] { $"{srcNames[0]}[{i}]", index }
                         : new[] { $"{srcNames[0]}[{i}]" };
                     DeclareParams(elems);
-                    Write($"{t}[{i}] = ");
+                    Write($"{a}[{i}] = ");
                     WriteFnValue(elems);
                     WriteLine(";");
                 });
                 break;
             case "MapRange":
-                WriteLine($"var {t} = new {elem}[{srcNames[0]}];");
+                WriteLine($"var {a} = new {elem}[{srcNames[0]}];");
                 For($"{srcNames[0]}", () =>
                 {
-                    DeclareParams(i);
-                    Write($"{t}[{i}] = ");
-                    WriteFnValue(i);
+                    DeclareParams(index);
+                    Write($"{a}[{i}] = ");
+                    WriteFnValue(index);
                     WriteLine(";");
                 });
                 break;
@@ -983,18 +998,21 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             case "Zip3":
                 Write($"var {n} = System.Math.Min({srcCounts[0]}, {srcCounts[1]});");
                 WriteLine(ll.Kind == "Zip3" ? $" {n} = System.Math.Min({n}, {srcCounts[2]});" : "");
-                WriteLine($"var {t} = new {elem}[{n}];");
+                WriteLine($"var {a} = new {elem}[{n}];");
                 For(n, () =>
                 {
                     var elems = srcNames.Select(sn => $"{sn}[{i}]").ToArray();
                     DeclareParams(elems);
-                    Write($"{t}[{i}] = ");
+                    Write($"{a}[{i}] = ");
                     WriteFnValue(elems);
                     WriteLine(";");
                 });
                 break;
             case "Reduce":
-                Write($"var {t} = ");
+                // The accumulator carries the call's type, not the seed's: a seed that is a lowered
+                // list and a step that returns IReadOnlyList<T> must agree.
+                var acc = TirLoopLowerer.IsRenderableConcrete(ll.Type) ? _tw.ToCSharpType(ll.Type) : "var";
+                Write($"{acc} {t} = ");
                 WriteNode(ll.Seed);
                 WriteLine(";");
                 WriteLine($"var {n} = {srcCounts[0]};");
@@ -1025,8 +1043,8 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 break;
             case "Reverse":
                 WriteLine($"var {n} = {srcCounts[0]};");
-                WriteLine($"var {t} = new {elem}[{n}];");
-                For(n, () => WriteLine($"{t}[{i}] = {srcNames[0]}[{n} - 1 - {i}];"));
+                WriteLine($"var {a} = new {elem}[{n}];");
+                For(n, () => WriteLine($"{a}[{i}] = {srcNames[0]}[{n} - 1 - {i}];"));
                 break;
             case "WithNext":
             {
@@ -1034,11 +1052,11 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write($"var _m{k} = (bool)(");
                 WriteNode(ll.IncludeFirst);
                 WriteLine($") ? {n} : ({n} > 1 ? {n} - 1 : 0);");
-                WriteLine($"var {t} = new {elem}[_m{k}];");
+                WriteLine($"var {a} = new {elem}[_m{k}];");
                 For($"_m{k}", () =>
                 {
                     DeclareParams($"{srcNames[0]}[{i}]", $"{srcNames[0]}[({i} + 1) % {n}]");
-                    Write($"{t}[{i}] = ");
+                    Write($"{a}[{i}] = ");
                     WriteFnValue($"{srcNames[0]}[{i}]", $"{srcNames[0]}[({i} + 1) % {n}]");
                     WriteLine(";");
                 });
@@ -1050,14 +1068,14 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             {
                 var stride = ll.Kind == "MapPairs" ? 2 : ll.Kind == "MapTriplets" ? 3 : 4;
                 WriteLine($"var {n} = {srcCounts[0]} / {stride};");
-                WriteLine($"var {t} = new {elem}[{n}];");
+                WriteLine($"var {a} = new {elem}[{n}];");
                 For(n, () =>
                 {
                     var elems = Enumerable.Range(0, stride)
                         .Select(o => o == 0 ? $"{srcNames[0]}[{i} * {stride}]" : $"{srcNames[0]}[{i} * {stride} + {o}]")
                         .ToArray();
                     DeclareParams(elems);
-                    Write($"{t}[{i}] = ");
+                    Write($"{a}[{i}] = ");
                     WriteFnValue(elems);
                     WriteLine(";");
                 });
@@ -1067,5 +1085,11 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 WriteLine($"/*unknown lowered loop kind: {ll.Kind}*/");
                 break;
         }
+        if (TirLoopLowerer.ProducesArray(ll.Kind))
+            WriteLine($"IReadOnlyList<{elem}> {t} = {a};");
+        if (lam != null)
+            foreach (var p in lam.Parameters)
+                _loopParamNames.Remove(p);
+
     }
 }

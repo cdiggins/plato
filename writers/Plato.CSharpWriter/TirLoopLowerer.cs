@@ -184,8 +184,11 @@ public static class TirLoopLowerer
         bool FnOk(TirNode f, int arity)
         {
             f = TirRewrite.StripCoerce(f);
+            // A lambda whose body is a statement tree (a block or return the inliner or capture
+            // hoist left) has no expression to place in the loop; it stays a delegate (TKT-505).
             if (f is TirLambda lam)
                 return lam.Parameters.Count == arity
+                       && !TirRewrite.IsStatementNode(lam.Body)
                        && !(lam.Parameters.Count > 0 && lam.Parameters.All(p => p.Name != null && p.Name.StartsWith("_eta")));
             // A delegate-typed reference is INVOKED with `arity` arguments, so its declared
             // Function{N} arity must match exactly.
@@ -269,6 +272,9 @@ public static class TirLoopLowerer
         return new TirTempRef(temp, c.Type, c.Origin);
     }
 
+    /// <summary>Whether a lowered kind fills an array (as against a fold, All or Any).</summary>
+    public static bool ProducesArray(string kind) => ArrayResultKinds.Contains(kind);
+
     private static readonly HashSet<string> ArrayResultKinds = new HashSet<string>
     {
         "Map", "MapIdx", "MapRange", "Zip2", "Zip3", "Reverse", "WithNext",
@@ -278,7 +284,7 @@ public static class TirLoopLowerer
     /// <summary>Whether a type expression names a concrete, renderable C# type — not a solver
     /// type variable (name-mangled with '$', or flagged <see cref="TypeExpression.IsTypeVariable"/>).
     /// A `new {elem}[n]` allocation needs a real type.</summary>
-    private static bool IsRenderableConcrete(TypeExpression t)
+    public static bool IsRenderableConcrete(TypeExpression t)
     {
         var name = t?.Name;
         if (string.IsNullOrEmpty(name) || t.IsTypeVariable)
