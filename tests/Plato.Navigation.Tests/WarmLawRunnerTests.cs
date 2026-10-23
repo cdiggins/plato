@@ -100,6 +100,40 @@ public class WarmLawRunnerTests
     }
 
     [Test]
+    public void A_request_on_a_busy_program_answers_busy_and_names_the_run_holding_it()
+    {
+        var folder = Folder("""
+            library WarmFixtureBusy
+            {
+                Plus(i: Integer, j: Integer): Integer => i + j;
+                Row(i: Integer): Integer => 4000.Range.Map(j => Plus(i, j)).Count;
+                Law_Slow(b: Boolean): Boolean => 4000.Range.Map(i => Row(i)).Count > 0;
+                Law_Quick(b: Boolean): Boolean => true;
+            }
+            """);
+        var runner = new WarmLawRunner { RunLimit = TimeSpan.FromSeconds(20), BusyWait = TimeSpan.FromSeconds(1) };
+        LawRunRequest With(string filter) => new() { Folders = new[] { Foundation(), folder }, Profile = NumberProfile.Cpu64, Options = new LawRunOptions { BudgetSeconds = null, Filters = new[] { filter } } };
+
+        var slow = Task.Run(() => runner.Run(With("Law_Slow")));
+        // Wait until the slow run holds the program and is evaluating.
+        var deadline = DateTime.UtcNow.AddSeconds(120);
+        while (runner.Status().All(p => p.Phase != "laws") && DateTime.UtcNow < deadline)
+            Thread.Sleep(100);
+        Assert.That(runner.Status().Single().Activity, Does.Contain("Law_Slow"));
+
+        var busy = runner.Run(With("Law_Quick"));
+        Assert.That(busy.Busy, Is.True);
+        Assert.That(busy.Results, Is.Empty);
+        Assert.That(busy.Errors.Single(), Does.StartWith("busy: ").And.Contains("Law_Slow").And.Contains("step laws"));
+
+        slow.Wait();
+        Assert.That(runner.Status().Single().Activity, Is.Null, "the program is idle once the run ends");
+        var after = runner.Run(With("Law_Quick"));
+        Assert.That(after.Busy, Is.False);
+        Assert.That(after.Results.Single().Status, Is.EqualTo(LawStatus.Pass));
+    }
+
+    [Test]
     public void A_resolution_error_names_its_file_and_line()
     {
         // Line 4 names a function nothing declares.

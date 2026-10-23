@@ -59,7 +59,17 @@ public sealed class LawRunRequest
     public LawRunOptions Options { get; init; } = new();
     /// <summary>Which functions to type-check before the laws run (<see cref="TypeFindings"/>).</summary>
     public TypeCheckScope TypeCheck { get; init; }
+    /// <summary>How long to wait for the program when another request is running on it; null
+    /// takes the runner's <see cref="WarmLawRunner.BusyWait"/>.</summary>
+    public TimeSpan? BusyWait { get; init; }
+
+    /// <summary>One line naming the request, for the status and the busy answer.</summary>
+    public string Describe()
+        => $"filter {(Options.Filters == null ? "(all laws)" : string.Join(",", Options.Filters))}, backend {LawBackends.NameOf(Backend)}, profile {Profile.Name}, types {TypeCheck}";
 }
+
+/// <summary>One kept program: its folders, and the request running on it, if any.</summary>
+public sealed record WarmProgramStatus(string Program, string? Activity, string? Phase, double? RunningSeconds);
 
 /// <summary>What a law run did: the results, or the errors that stopped it before any law ran,
 /// and where the time went.</summary>
@@ -101,6 +111,11 @@ public sealed record LawRunOutcome
     public TimeSpan CSharpCompileTime { get; init; }
     /// <summary>Programs the runner keeps after this run, this one included.</summary>
     public int ProgramsKept { get; init; }
+    /// <summary>True when the program stayed busy with another request past the wait, so this
+    /// one did not run; <see cref="Errors"/> names the request holding it.</summary>
+    public bool Busy { get; init; }
+    /// <summary>How long this request waited for its program before it ran.</summary>
+    public TimeSpan WaitTime { get; init; }
     public bool Compiled => Errors.Count == 0;
 }
 
@@ -151,7 +166,15 @@ public sealed class WarmLawRunner
     /// and every other call on that program, for hours.</summary>
     public TimeSpan? RunLimit { get; init; } = DefaultRunLimit;
 
-    public static readonly TimeSpan DefaultRunLimit = TimeSpan.FromMinutes(30);
+    // Below plato_laws.py's 30-minute client timeout, so a run ends before its client gives up.
+    public static readonly TimeSpan DefaultRunLimit = TimeSpan.FromMinutes(20);
+
+    /// <summary>How long a request waits for a program another request is running on before it
+    /// answers busy (TKT-479). Without it, requests queued behind a long run without limit, each
+    /// still queued after its client had given up, and nothing said who held the program.</summary>
+    public TimeSpan BusyWait { get; init; } = DefaultBusyWait;
+
+    public static readonly TimeSpan DefaultBusyWait = TimeSpan.FromSeconds(60);
 
     public int ProgramCount
     {
@@ -164,8 +187,47 @@ public sealed class WarmLawRunner
     public LawRunOutcome Run(LawRunRequest request)
     {
         var program = Acquire(WarmProgram.KeyOf(request));
-        lock (program.Lock)
-            return OnLargeStack(() => program.Run(request, Parse, CompileLogger, RunLimit)) with { ProgramsKept = ProgramCount };
+        var waited = System.Diagnostics.Stopwatch.StartNew();
+        if (!Monitor.TryEnter(program.Lock, request.BusyWait ?? BusyWait))
+            return new LawRunOutcome
+            {
+                Busy = true,
+                WaitTime = waited.Elapsed,
+                ProgramsKept = ProgramCount,
+                Errors = new[]
+                {
+                    $"busy: after {waited.Elapsed.TotalSeconds:F0} s this program is still running another request"
+                    + $" ({program.Activity ?? "unknown"}; step {program.Phase ?? "unknown"}"
+                    + $"{(program.ActivitySince is DateTime since ? $", for {(DateTime.UtcNow - since).TotalSeconds:F0} s" : "")}); try again, or use plato run",
+                },
+            };
+        try
+        {
+            var wait = waited.Elapsed;
+            program.Activity = request.Describe();
+            program.ActivitySince = DateTime.UtcNow;
+            program.Phase = "read";
+            return OnLargeStack(() => program.Run(request, Parse, CompileLogger, RunLimit)) with { ProgramsKept = ProgramCount, WaitTime = wait };
+        }
+        finally
+        {
+            program.Activity = null;
+            program.Phase = null;
+            program.ActivitySince = null;
+            Monitor.Exit(program.Lock);
+        }
+    }
+
+    /// <summary>Every kept program, most recently used first, with the request running on it.</summary>
+    public IReadOnlyList<WarmProgramStatus> Status()
+    {
+        List<WarmProgram> programs;
+        lock (_lock)
+            programs = _programs.ToList();
+        return programs.Select(p => new WarmProgramStatus(
+                p.Key.Replace("\r", "").Replace("\n", " "), p.Activity, p.Phase,
+                p.ActivitySince is DateTime since ? (DateTime.UtcNow - since).TotalSeconds : null))
+            .ToList();
     }
 
     /// <summary>The program for a key, made the most recently used; a new one evicts the least

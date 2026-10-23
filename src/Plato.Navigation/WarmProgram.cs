@@ -20,6 +20,13 @@ internal sealed class WarmProgram
     /// compilation does not depend on the Number profile, so profiles share it.</summary>
     public string Key { get; }
     public object Lock { get; } = new();
+
+    /// <summary>The request holding <see cref="Lock"/>, when it started, and the step it is in
+    /// (read, parse, compile, types, emit C#, laws); null when idle. Written by the run that holds
+    /// the lock, read by anyone (WarmLawRunner.Status and the busy answer, TKT-479).</summary>
+    public volatile string? Activity;
+    public volatile string? Phase;
+    public DateTime? ActivitySince;
     /// <summary>The files read by the last run, kept alive in the shared parse cache.</summary>
     public IReadOnlyList<SourceFile> Files { get; private set; } = Array.Empty<SourceFile>();
 
@@ -80,6 +87,7 @@ internal sealed class WarmProgram
             _interpreters.Clear();
             UnloadCompiled();
 
+            Phase = "parse";
             var parseTimer = Stopwatch.StartNew();
             (var trees, parsed) = parse(files);
             parseTime = parseTimer.Elapsed;
@@ -98,6 +106,7 @@ internal sealed class WarmProgram
             NoteChangedFiles(files);
         }
 
+        Phase = "types";
         var typeTimer = Stopwatch.StartNew();
         var typeChecked = CheckTypes(request.TypeCheck);
         var typeTime = typeChecked > 0 ? typeTimer.Elapsed : TimeSpan.Zero;
@@ -114,6 +123,7 @@ internal sealed class WarmProgram
                 backendReused = true;
             else
             {
+                Phase = "emit and compile C#";
                 try { program = CSharpProgram.Build(_compilation!, request.Profile); }
                 catch (InvalidOperationException e)
                 {
@@ -131,6 +141,7 @@ internal sealed class WarmProgram
         else
             backend = new InterpreterBackend(interp);
         var runner = new LawRunner(backend, interp, request.Options);
+        Phase = "laws";
         var lawTimer = Stopwatch.StartNew();
         // The run limit bounds the whole run in the interpreter, laws and witnesses alike, even
         // with budget=0, so one request cannot hold this program's lock without limit. Compiled
