@@ -1,0 +1,16 @@
+// EXPECT: RESOLVE Could not find type T; a type variable in a signature is spelled $T
+//
+// A generic sum's parameter name means nothing outside its declaration: a library signature
+// spells the free type variable $T. This fixture is a resolution error, not a CHK diagnostic.
+
+type Number { }
+
+type Option<T> = None | Some(Value: T);
+
+library M {
+    GetOrElse(o: Option<T>, fallback: T): T =>
+        match (o) {
+            None => fallback;
+            Some(v) => v;
+        };
+}

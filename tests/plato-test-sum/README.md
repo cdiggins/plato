@@ -12,7 +12,7 @@ the wave-2 parser/AST implementer wires them into the test suite as the feature 
 plato-test-sum/
   pathsegment.plato        flagship sum (SVG path verbs) + match functions
   fillrule.plato           degenerate sum (enum, payload-free cases)
-  option.plato             generic sum (Option<T>) — also the generics-stance fixture
+  option.plato             generic sum (Option<T>, consumers write $T), TKT-443
   match-expression.plato   match used in expression position (call arg, nested)
   nested-match.plato       match inside a match arm (non-recursive)
   negatives/               one file per diagnostic, each with an EXPECT line
@@ -22,6 +22,8 @@ plato-test-sum/
     wrong-binder-arity.plato
     match-non-sum.plato
     duplicate-case-names.plato
+    generic-missing-case.plato          CHK300 over a generic sum
+    generic-bare-type-parameter.plato   resolution error: a signature spells $T, not T
 ```
 
 ## Conventions
@@ -58,7 +60,7 @@ plato-test-sum/
 | CHK303 | negatives/wrong-binder-arity   | binder count ≠ case field count                    |
 | CHK304 | negatives/match-non-sum        | match subject is not a sum type                    |
 | CHK305 | negatives/duplicate-case-names | sum declares the same case name twice              |
-| CHK306 | option.plato (if v1 restricts) | generic sum type unsupported in v1 (stance-gated)  |
+| CHK306 | option.plato (restricted stance only) | generic sum type rejected when a host restricts generics |
 
 Codes are proposed; final numbers are the implementer's call (the checker's CHK2xx
 block is the family). See the design doc's diagnostics catalog for exact texts.

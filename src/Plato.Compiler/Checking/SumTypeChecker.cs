@@ -18,23 +18,22 @@ namespace Ara3D.Geometry.Compiler.Checking
     ///   CHK303 binder count != case field count
     ///   CHK304 match subject is not a sum type
     ///   CHK305 sum declaration repeats a case name
-    ///   CHK306 generic sum type (only when generics are restricted — see GenericsRestricted)
+    ///   CHK306 generic sum type (only when generics are restricted, which is off by default)
     /// </summary>
     public class SumTypeChecker
     {
         public Compilation Compilation { get; }
 
-        /// <summary>When true (the v1 default), a generic sum type is rejected with CHK306. The
-        /// generic sum DECLARATION resolves, but a generic library CONSUMER cannot: a free type
-        /// variable in a library signature must be spelled <c>$T</c> (the stdlib convention), and
-        /// bare <c>T</c> — as option.plato writes it — does not resolve. Auto-generalizing bare
-        /// library type parameters is a separate front-end change, so v1 ships monomorphic sums
-        /// only (design doc §3.5 fallback). Set false once that front-end gap is closed.</summary>
+        /// <summary>When true, a generic sum type is rejected with CHK306. Off by default since
+        /// TKT-443: a generic sum is monomorphized per instantiation like a generic product, and
+        /// its library consumers spell the free type variable <c>$T</c> as every generic signature
+        /// does (a bare <c>T</c> is a resolution error that names the <c>$T</c> spelling). Kept for
+        /// a host that wants the v1 monomorphic-only stance.</summary>
         public bool GenericsRestricted { get; }
 
         public List<CheckDiagnostic> Diagnostics { get; } = new List<CheckDiagnostic>();
 
-        public SumTypeChecker(Compilation compilation, bool genericsRestricted = true)
+        public SumTypeChecker(Compilation compilation, bool genericsRestricted = false)
         {
             Compilation = compilation;
             GenericsRestricted = genericsRestricted;

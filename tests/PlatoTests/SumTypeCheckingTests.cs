@@ -12,7 +12,8 @@ namespace PlatoTests
     /// Wave-2 semantic checks for sum types + match (plato-232). Drives the plato-test-sum corpus:
     /// each negative fixture must raise its <c>// EXPECT: CHKnnn</c> diagnostic (asserting on the
     /// code AND that the message names the offending/missing cases), and each positive fixture must
-    /// compile clean. option.plato is a generics-stance negative (CHK306) per the v1 restriction.
+    /// compile clean. option.plato is a generic sum (TKT-443): clean by default, CHK306 only under
+    /// the restricted stance.
     /// </summary>
     [TestFixture]
     public static class SumTypeCheckingTests
@@ -48,6 +49,7 @@ namespace PlatoTests
         [TestCase("qualified-nullary-case.plato")]
         [TestCase("qualified-payload-case.plato")]
         [TestCase("match-on-later-library-call.plato")]
+        [TestCase("option.plato")]
         public static void Positive_CompilesWithoutDiagnostics(string file)
         {
             var (comp, diags) = CheckFixture(file);
@@ -65,6 +67,7 @@ namespace PlatoTests
         [TestCase("negatives/wrong-binder-arity.plato")]
         [TestCase("negatives/match-non-sum.plato")]
         [TestCase("negatives/duplicate-case-names.plato")]
+        [TestCase("negatives/generic-missing-case.plato")]
         public static void Negative_RaisesExpectedDiagnostic(string file)
         {
             var expected = ExpectedCode(file);
@@ -140,14 +143,33 @@ namespace PlatoTests
                 "qualified payload sum-case constructor calls must type-check clean");
         }
 
-        // --- generics stance: option.plato is restricted (CHK306) ----------------
+        // --- generics stance (TKT-443): generic sums are supported by default --------
 
         [Test]
-        public static void GenericSum_IsRestricted_CHK306()
+        public static void GenericSum_TypeChecksClean()
         {
-            var (_, diags) = CheckFixture("option.plato");
+            var (comp, _) = CheckFixture("option.plato");
+            var errors = new TypeChecker(comp).CheckAll().SelectMany(r => r.Errors).ToList();
+            Assert.IsEmpty(errors, string.Join("\n", errors.Select(e => e.ToString())));
+        }
+
+        [Test]
+        public static void GenericSum_IsRejected_OnlyUnderTheRestrictedStance()
+        {
+            var path = Path.Combine(SumDir(), "option.plato");
+            var comp = new Compilation(Ara3D.Logging.Logger.Null, new[] { CheckerTestSupport.ParseFile(path) });
+            var diags = new SumTypeChecker(comp, genericsRestricted: true).Check();
             Assert.IsTrue(diags.Any(d => d.Code == "CHK306" && d.Message.Contains("Option")),
-                $"option.plato expected CHK306; got: {string.Join(" | ", diags.Select(d => d.Code + ": " + d.Message))}");
+                $"option.plato expected CHK306 when restricted; got: {string.Join(" | ", diags.Select(d => d.Code + ": " + d.Message))}");
+        }
+
+        [Test]
+        public static void GenericSum_BareTypeParameterInASignature_NamesTheDollarSpelling()
+        {
+            var (comp, _) = CheckFixture("negatives/generic-bare-type-parameter.plato");
+            var messages = comp.SymbolFactory.Errors.Select(e => e.Message).ToList();
+            Assert.That(messages, Has.Some.EqualTo("Could not find type T; a type variable in a signature is spelled $T"),
+                string.Join("\n", messages));
         }
     }
 }

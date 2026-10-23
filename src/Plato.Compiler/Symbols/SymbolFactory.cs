@@ -163,7 +163,12 @@ namespace Ara3D.Geometry.Compiler.Symbols
             var sym = TypeBindingsScope.GetValue(name);
             if (sym == null)
             {
-                LogResolutionError($"Could not find type {name}", astTypeNode);
+                // A generic type's parameter name outside its declaration is the common slip
+                // (`o: Maybe<T>` in a library): name the `$T` spelling a signature needs.
+                var hint = TypeDefs.Any(td => td.TypeParameters.Any(tp => tp.Name == name))
+                    ? $"; a type variable in a signature is spelled ${name}"
+                    : "";
+                LogResolutionError($"Could not find type {name}{hint}", astTypeNode);
                 return null;
             }
             var tds = sym as TypeDef;

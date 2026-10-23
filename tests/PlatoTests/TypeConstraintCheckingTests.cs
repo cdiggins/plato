@@ -230,8 +230,8 @@ type BadHolder  { M: Maybe<String>; }
             Assert.AreEqual("CHK309", diagnostics[0].Code);
             StringAssert.Contains("Maybe", diagnostics[0].Message);
 
-            // And the pre-existing generic-sum rejection is untouched by any of this.
-            CollectionAssert.Contains(new SumTypeChecker(c).Check().Select(d => d.Code).ToArray(), "CHK306");
+            // And the restricted stance's generic-sum rejection is untouched by any of this.
+            CollectionAssert.Contains(new SumTypeChecker(c, genericsRestricted: true).Check().Select(d => d.Code).ToArray(), "CHK306");
         }
 
         [Test]

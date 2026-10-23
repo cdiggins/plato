@@ -289,8 +289,12 @@ namespace Ara3D.Geometry.Compiler.Checking
                     // member resolution because a case name may collide with a real member of the
                     // same name; see SumCaseAccess for why the type-reference gating makes that safe.
                     var sumCase = SumCaseAccess.Resolve(fc, g.Name);
+                    // A generic sum's case is instantiated afresh at each use (`Maybe.Nothing` is
+                    // a `Maybe<$G>` the context grounds), as a payload case is through its factory
+                    // (TKT-443); the declaration's own `Maybe<T>` would leave T free.
                     if (sumCase != null)
-                        return sumCase.ToTypeExpression();
+                        return new TypeExpression(sumCase,
+                            sumCase.TypeParameters.Select(_ => Vars.Fresh("G")).ToArray());
 
                     // `BrepCurve.Line(seg)` — a qualified PAYLOAD case constructor (plato-332).
                     // Desugared receiver-first to `Line(BrepCurve, seg)`, the ordinary path would

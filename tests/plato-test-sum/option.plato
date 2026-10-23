@@ -1,23 +1,28 @@
-// Positive fixture: a generic sum type. Exercises the generics stance (see the
-// design doc "static semantics / generics"): if v1 supports generic sum types this
-// fixture parses, checks, and monomorphizes; if v1 restricts them, the front end
-// must reject the declaration with the generics diagnostic (CHK306), NOT crash.
+// Positive fixture: a generic sum type (TKT-443). The declaration names its parameter T; a
+// library consumer spells the free type variable $T, as every generic signature does, and each
+// use instantiates the sum afresh (Option<Number> in Wrap and Empty).
 //
-// Option<T> is also the motivating case for plato-079 (partiality cleanup): it
-// replaces the `Tuple2<T, Boolean>` / sentinel-value conventions in the stdlib.
+// Option<T> is also the motivating case for plato-079 (partiality cleanup): it replaces the
+// `Tuple2<T, Boolean>` / sentinel-value conventions in the stdlib.
 
 type Number { }
 
 type Option<T> = None | Some(Value: T);
 
 library Options {
-    // T is introduced by the receiver's type argument; each concrete instantiation
-    // monomorphizes to its own struct (Option_Number, ...), the standard model.
-    GetOrElse(o: Option<T>, fallback: T): T =>
+    GetOrElse(o: Option<$T>, fallback: $T): $T =>
         match (o) {
             None => fallback;
             Some(v) => v;
         };
 
-    Wrap(x: T): Option<T> => Option.Some(x);
+    Wrap(x: Number): Option<Number> => Option.Some(x);
+
+    Empty(x: Number): Option<Number> => Option.None;
+
+    KeepSome(o: Option<Number>): Option<Number> =>
+        match (o) {
+            None => Option.None;
+            Some(v) => o;
+        };
 }

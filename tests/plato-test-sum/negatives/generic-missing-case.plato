@@ -1,0 +1,14 @@
+// EXPECT: CHK300 non-exhaustive match on sum type 'Option': missing case(s) 'None'
+//
+// A match over a generic sum is exhaustive in the same way as over a monomorphic one.
+
+type Number { }
+
+type Option<T> = None | Some(Value: T);
+
+library M {
+    Get(o: Option<$T>): $T =>
+        match (o) {
+            Some(v) => v;
+        };
+}
