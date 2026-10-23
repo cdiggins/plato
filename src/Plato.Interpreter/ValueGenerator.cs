@@ -170,9 +170,12 @@ public sealed class ValueGenerator
         {
             reason = "a function-typed parameter"; return false;
         }
-        if (!inProgress.Add(t.Def.Name))
+        // Keyed by the instance, arguments included: Maybe<Maybe<Number>> holds a Maybe<Number>,
+        // not itself (TKT-443).
+        var key = t.ToString();
+        if (!inProgress.Add(key))
         {
-            reason = $"{t.Def.Name} contains itself"; return false;
+            reason = $"{key} contains itself"; return false;
         }
         try
         {
@@ -180,18 +183,18 @@ public sealed class ValueGenerator
             {
                 foreach (var c in t.Def.Cases)
                     foreach (var f in c.Fields)
-                        if (!CanGenerate(f.Type, depth + 1, inProgress, out reason))
+                        if (!CanGenerate(Substitute(f.Type, t), depth + 1, inProgress, out reason))
                             return false;
                 return true;
             }
             foreach (var f in t.Def.Fields)
-                if (!CanGenerate(f.Type, depth + 1, inProgress, out reason))
+                if (!CanGenerate(Substitute(f.Type, t), depth + 1, inProgress, out reason))
                     return false;
             return true;
         }
         finally
         {
-            inProgress.Remove(t.Def.Name);
+            inProgress.Remove(key);
         }
     }
 
@@ -245,19 +248,31 @@ public sealed class ValueGenerator
         }
         var generators = GeneratorsOf(t);
         if (generators.Count > 0)
-            return FromGenerator(generators, rng);
+            return AsInstance(FromGenerator(generators, rng), t);
         if (t.Def.IsSealed)
-            return FromSealedConstructor(t, rng, depth);
+            return AsInstance(FromSealedConstructor(t, rng, depth), t);
         if (t.Def.IsSum)
         {
             var c = t.Def.Cases[rng.Next(t.Def.Cases.Count)];
-            return new PlatoSum(t, c, c.Fields.Select(f => Generate(f.Type, rng, depth + 1)).ToArray());
+            return new PlatoSum(t, c, c.Fields.Select(f => Generate(Substitute(f.Type, t), rng, depth + 1)).ToArray());
         }
         return new PlatoRecord(t, t.Def.Fields.Select(f => Generate(Substitute(f.Type, t), rng, depth + 1)).ToArray());
     }
 
+    /// <summary>A drawn value stamped with the instance it was drawn for, when the function that
+    /// built it ran a generic body unspecialized and left its type open (<c>Maybe&lt;T&gt;</c> for a
+    /// <c>Maybe&lt;Number&gt;</c>): the compiled backend converts a value by its type (TKT-443).</summary>
+    private static object AsInstance(object v, TypeExpression t)
+        => v switch
+        {
+            PlatoSum s when s.Def == t.Def && !TypeSubstitution.IsGround(s.Type) => new PlatoSum(t, s.Case, s.Fields),
+            PlatoRecord r when r.Def == t.Def && !TypeSubstitution.IsGround(r.Type) => new PlatoRecord(t, r.Fields),
+            _ => v,
+        };
+
     /// <summary>A field type of a generic type instance with the instance's arguments substituted
-    /// (<c>Tuple2&lt;Number, Integer&gt;.X1</c> is an Integer).</summary>
+    /// (<c>Tuple2&lt;Number, Integer&gt;.X1</c> is an Integer), inside type arguments too
+    /// (<c>Maybe&lt;Number&gt;</c>'s <c>Array&lt;T&gt;</c> field is an <c>Array&lt;Number&gt;</c>).</summary>
     private static TypeExpression Substitute(TypeExpression fieldType, TypeExpression owner)
     {
         if (fieldType?.Def == null || owner.TypeArgs.Count == 0)
@@ -266,7 +281,9 @@ public sealed class ValueGenerator
         for (var i = 0; i < tps.Count && i < owner.TypeArgs.Count; i++)
             if (fieldType.Def == tps[i] || fieldType.Name == tps[i].Name)
                 return owner.TypeArgs[i];
-        return fieldType;
+        return fieldType.TypeArgs.Count == 0
+            ? fieldType
+            : new TypeExpression(fieldType.Def, fieldType.TypeArgs.Select(a => Substitute(a, owner)).ToArray());
     }
 
     private static double NextNumber(Random rng)
