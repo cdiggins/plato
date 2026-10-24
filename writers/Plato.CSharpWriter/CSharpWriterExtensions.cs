@@ -36,9 +36,9 @@ namespace Ara3D.Geometry.CSharpWriter
         //                (--optimize-arrays, optimizer stage 2 increment 1; see TirArrayMaterializer).
         // The emitted C# is always property-free: a no-arg member emits as a METHOD unless the
         // handwritten runtime spells it as a struct field/property (see the 2026-08-01 ADR).
-        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool optimizeArrays = false, bool inlineCalls = false, bool lowerLoops = false, string tirDumpDir = null, bool inlineReport = false, bool staticAbstract = false, Compiler.Types.NumberProfile profile = null)
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool optimizeArrays = false, bool inlineCalls = false, bool lowerLoops = false, string tirDumpDir = null, bool inlineReport = false, bool staticAbstract = false, Compiler.Types.NumberProfile profile = null, bool fuseCombinators = false)
         {
-            var writer = new CSharpWriter(compilation, outputFolder) { Profile = profile ?? Compiler.Types.NumberProfile.Default, ExtensionStyle = extensionStyle, Optimize = optimize, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, LowerLoops = lowerLoops, StaticAbstract = staticAbstract, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
+            var writer = new CSharpWriter(compilation, outputFolder) { Profile = profile ?? Compiler.Types.NumberProfile.Default, ExtensionStyle = extensionStyle, Optimize = optimize, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, LowerLoops = lowerLoops, FuseCombinators = fuseCombinators, StaticAbstract = staticAbstract, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
             if (inlineReport)
                 writer.InlineReport = new InlineReport();
             writer.WriteAll();

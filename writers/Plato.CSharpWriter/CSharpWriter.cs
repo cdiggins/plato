@@ -188,6 +188,7 @@ namespace Ara3D.Geometry.CSharpWriter
             if (TirDumpDir == null)
             {
                 tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
+                tir = TirFusion.Rewrite(tir, this);
                 tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
                 tir = TirArrayMaterializer.Rewrite(tir, this);
                 tir = TirLoopLowerer.Rewrite(tir, this);
@@ -208,6 +209,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 if (s != prev) { sb.AppendLine($"-- after {name} --"); sb.AppendLine(s); prev = s; }
             }
             tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _); Phase("inline (layer 7)", tir);
+            tir = TirFusion.Rewrite(tir, this);                       Phase("fuse / combinator fusion (layer 7b)", tir);
             tir = TirComponentUnroller.UnrollFunction(tir, fi, this);  Phase("optimize / component-unroll (layer 8)", tir);
             tir = TirArrayMaterializer.Rewrite(tir, this);            Phase("optimize-arrays / materialize (layer 9)", tir);
             tir = TirLoopLowerer.Rewrite(tir, this);                  Phase("loops / lower (layer 10)", tir);
@@ -389,6 +391,13 @@ namespace Ara3D.Geometry.CSharpWriter
         // for-loop statements filling materialized arrays (see TirLoopLowerer). Runs after the
         // other optimizer passes. Default (false) output is unchanged.
         public bool LowerLoops;
+
+        // When true (--fuse), array-combinator chains are fused before lowering (n.Range.Map(f)
+        // to n.MapRange(f), xs.Map(g).Map(f) to one Map, xs.Take(k).Map(f) to k.MapRange) and
+        // literal-count ranges of at most TirFusion.UnrollLimit are unrolled to straight-line
+        // code (see TirFusion, TirLiteralUnroller). Pure rewrites: the output computes the same
+        // values with fewer arrays. Usually combined with --loops.
+        public bool FuseCombinators;
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at
@@ -709,6 +718,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // always started at 0, so file output is unchanged).
             SymbolRewriter.NextId = 0;
             TirInliner.NextRenameId = 0;
+            TirFusion.NextId = 0;
             TirLoopLowerer.NextId = 0;
 
             WriteFile("NumberProfile.g.cs", WriteNumberProfileCheck);

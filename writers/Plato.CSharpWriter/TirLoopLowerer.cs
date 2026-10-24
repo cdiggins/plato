@@ -10,11 +10,18 @@ namespace Ara3D.Geometry.CSharpWriter;
 /// <see cref="TirTempRef"/> to it. Printed by TirCSharpBodyWriter.WriteLoweredLoop.</summary>
 public class TirLoweredLoop : TirNode
 {
-    public string Kind { get; }                    // Map, MapIdx, MapRange, Zip2, Zip3, Reduce, All, Any, Reverse, WithNext, MapPairs, MapTriplets, MapQuartets
+    public string Kind { get; }                    // Map, MapIdx, MapRange, Zip2, Zip3, Reduce, All, Any, FlatMap, Reverse, WithNext, MapPairs, MapTriplets, MapQuartets
     public IReadOnlyList<TirNode> Sources { get; } // list expressions (the count expression for MapRange)
     public TirNode Fn { get; }                     // lambda literal or delegate-typed parameter/variable (null for Reverse)
     public TirNode Seed { get; }                   // Reduce only
     public TirNode IncludeFirst { get; }           // WithNext only
+    // Fused producer chain (TKT-506): the stages (arity-1 lambdas or delegates) applied in order
+    // to the base element to get the element the loop body sees, each bound to a local inside the
+    // loop; no intermediate array exists. With IndexSource, Sources[0] is a COUNT and the base
+    // element is the index itself (the receiver was a MapRange, the form TirFusion leaves for
+    // n.Range and xs.Take(k)); otherwise it is Sources[0][i] (the receiver was a Map chain).
+    public IReadOnlyList<TirNode> SourceStages { get; set; } = System.Array.Empty<TirNode>();
+    public bool IndexSource { get; set; }
     public string TempName { get; }
     public int Id { get; }
     // The RESULT element type, taken from the producing function's own type (the call's zonked
@@ -35,14 +42,17 @@ public class TirLoweredLoop : TirNode
     }
 
     public override IEnumerable<TirNode> Children
-        => Sources.Concat(new[] { Fn, Seed, IncludeFirst }.Where(n => n != null));
+        => Sources.Concat(new[] { Fn, Seed, IncludeFirst }.Where(n => n != null)).Concat(SourceStages);
 
     public override TirNode WithChildren(IReadOnlyList<TirNode> children)
     {
         var i = Sources.Count;
         TirNode Next(TirNode original) => original == null ? null : children[i++];
-        return new TirLoweredLoop(Kind, children.Take(Sources.Count).ToList(),
-            Next(Fn), Next(Seed), Next(IncludeFirst), TempName, Id, Type, Origin) { ElemType = ElemType };
+        var rebuilt = new TirLoweredLoop(Kind, children.Take(Sources.Count).ToList(),
+            Next(Fn), Next(Seed), Next(IncludeFirst), TempName, Id, Type, Origin)
+            { ElemType = ElemType, IndexSource = IndexSource };
+        rebuilt.SourceStages = children.Skip(i).ToList();
+        return rebuilt;
     }
 
     public override string ToString() => $"loop:{Kind} -> {TempName}";
@@ -147,10 +157,25 @@ public static class TirLoopLowerer
                 return n; // evaluation-count boundaries: not descended
             case TirCall c:
             {
-                var args = c.Args.Select(a => Lower(a, hoists, writer)).ToList();
+                // A chain consumer's receiver (TKT-506) is lowered through LowerChainReceiver, which
+                // leaves the Map and MapRange producers in place for TryLower to walk inside this
+                // loop; everything beneath them is lowered as usual.
+                var chain = IsChainConsumer(c);
+                var args = c.Args.Select((a, idx) => chain && idx == 0
+                    ? LowerChainReceiver(a, hoists, writer)
+                    : Lower(a, hoists, writer)).ToList();
                 var call = new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, c.ReturnType,
                     args, c.Type, c.Origin, c.Name);
-                return TryLower(call, hoists) ?? call;
+                var lowered = TryLower(call, hoists);
+                if (lowered == null && chain)
+                {
+                    // Not lowerable as a whole: lower the producers on their own, as before.
+                    args[0] = Lower(args[0], hoists, writer);
+                    call = new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, c.ReturnType,
+                        args, c.Type, c.Origin, c.Name);
+                    lowered = TryLower(call, hoists);
+                }
+                return lowered ?? call;
             }
             case TirCoerce co:
                 return new TirCoerce(Lower(co.Inner, hoists, writer), co.FromType, co.ToType, co.ConversionFn, co.Origin);
@@ -172,6 +197,49 @@ public static class TirLoopLowerer
         }
     }
 
+    /// <summary>Whether a call is a single-source consumer whose receiver chain the lowerer walks
+    /// inside its own loop (see <see cref="TirLoweredLoop.SourceStages"/>).</summary>
+    private static bool IsChainConsumer(TirCall c)
+        => c.Name != null && c.Args.Count >= 2 && IndexSourceKinds.Contains(c.Name == "MapEager" ? "Map" : c.Name)
+           && IsListTyped(c.Args[0]) && IsProducer(c.Args[0]);
+
+    /// <summary>Whether a node is a Map over a list or a MapRange, with an inlinable function.</summary>
+    private static bool IsProducer(TirNode n)
+        => TirRewrite.StripCoerce(n) is TirCall p && p.Args.Count == 2 && FnOk(p.Args[1], 1)
+           && ((p.Name == "Map" && IsListTyped(p.Args[0])) || p.Name == "MapRange" || p.Name == "MapRangeEager");
+
+    /// <summary>Lower a chain consumer's receiver: the producer calls stay, their counts and base
+    /// lists are lowered. Functions are lambdas, which Lower never descends.</summary>
+    private static TirNode LowerChainReceiver(TirNode a, List<TirNode> hoists, CSharpWriter writer)
+    {
+        if (!IsProducer(a) || !(TirRewrite.StripCoerce(a) is TirCall p))
+            return Lower(a, hoists, writer);
+        var baseArg = p.Name == "Map" ? LowerChainReceiver(p.Args[0], hoists, writer) : Lower(p.Args[0], hoists, writer);
+        var rebuilt = new TirCall(p.Callee, p.EmissionKind, p.ParameterTypes, p.ReturnType,
+            new List<TirNode> { baseArg, p.Args[1] }, p.Type, p.Origin, p.Name);
+        return a is TirCoerce co ? new TirCoerce(rebuilt, co.FromType, co.ToType, co.ConversionFn, co.Origin) : rebuilt;
+    }
+
+    private static bool IsListTyped(TirNode node)
+        => TirRewrite.IsListType(TirRewrite.StripCoerce(node)?.Type);
+
+    /// <summary>Whether a function argument can be placed in a loop: a non-eta lambda literal of
+    /// the arity with an expression body, or a delegate-typed reference of that arity.</summary>
+    private static bool FnOk(TirNode f, int arity)
+    {
+        f = TirRewrite.StripCoerce(f);
+        // A lambda whose body is a statement tree (a block or return the inliner or capture
+        // hoist left) has no expression to place in the loop; it stays a delegate (TKT-505).
+        if (f is TirLambda lam)
+            return lam.Parameters.Count == arity
+                   && !TirRewrite.IsStatementNode(lam.Body)
+                   && !(lam.Parameters.Count > 0 && lam.Parameters.All(p => p.Name != null && p.Name.StartsWith("_eta")));
+        // A delegate-typed reference is INVOKED with `arity` arguments, so its declared
+        // Function{N} arity must match exactly.
+        var declared = (f as TirParameter)?.Def?.Type?.Name ?? (f as TirVariable)?.Def?.Type?.Name;
+        return (f is TirParameter || f is TirVariable) && declared == $"Function{arity}";
+    }
+
     /// <summary>The lowered marker + temp reference for a recognized combinator call, or null.</summary>
     private static TirNode TryLower(TirCall c, List<TirNode> hoists)
     {
@@ -181,23 +249,6 @@ public static class TirLoopLowerer
         string kind = null;
         List<TirNode> sources = null;
         TirNode fn = null, seed = null, includeFirst = null;
-
-        bool IsListTyped(TirNode node)
-            => TirRewrite.IsListType(TirRewrite.StripCoerce(node)?.Type);
-        bool FnOk(TirNode f, int arity)
-        {
-            f = TirRewrite.StripCoerce(f);
-            // A lambda whose body is a statement tree (a block or return the inliner or capture
-            // hoist left) has no expression to place in the loop; it stays a delegate (TKT-505).
-            if (f is TirLambda lam)
-                return lam.Parameters.Count == arity
-                       && !TirRewrite.IsStatementNode(lam.Body)
-                       && !(lam.Parameters.Count > 0 && lam.Parameters.All(p => p.Name != null && p.Name.StartsWith("_eta")));
-            // A delegate-typed reference is INVOKED with `arity` arguments, so its declared
-            // Function{N} arity must match exactly.
-            var declared = (f as TirParameter)?.Def?.Type?.Name ?? (f as TirVariable)?.Def?.Type?.Name;
-            return (f is TirParameter || f is TirVariable) && declared == $"Function{arity}";
-        }
 
         switch (c.Name)
         {
@@ -223,6 +274,9 @@ public static class TirLoopLowerer
             case "All" or "Any" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && FnOk(c.Args[1], 1):
                 kind = c.Name; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
+            case "FlatMap" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 1):
+                kind = "FlatMap"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
+                break;
             case "Reverse" when c.Args.Count == 1 && IsListTyped(c.Args[0]) && ResultIsList(c):
                 kind = "Reverse"; sources = new List<TirNode> { c.Args[0] };
                 break;
@@ -247,7 +301,15 @@ public static class TirLoopLowerer
         // source's element type are fallbacks. Disagreement between known sources means the
         // solver unified loosely — skip rather than allocate the wrong array type.
         TypeExpression elem = null;
-        if (ArrayResultKinds.Contains(kind))
+        if (kind == "FlatMap")
+        {
+            // The function yields a list per element; the result element type is its element type.
+            elem = new[] { TirRewrite.ListElementType(FnReturnType(fn)), TirRewrite.ListElementType(c.Type) }
+                .FirstOrDefault(IsRenderableConcrete);
+            if (elem == null)
+                return null;
+        }
+        else if (ArrayResultKinds.Contains(kind))
         {
             // Candidate element types in order of reliability: the producing function's own
             // return type, the call's zonked IArray<T> argument, and (Reverse) the source's
@@ -268,12 +330,44 @@ public static class TirLoopLowerer
                 return null;
         }
 
+        // A receiver that is a chain of Map calls over a list or a MapRange (TKT-506: what
+        // TirFusion makes of n.Range and xs.Take(k), and the Map pairs it could not compose by
+        // substitution) is walked inside this loop: each Map's function is a stage applied to the
+        // element, and a MapRange base makes the index itself the element. No intermediate array.
+        var stages = new List<TirNode>();
+        var indexSource = false;
+        if (IndexSourceKinds.Contains(kind) && sources.Count == 1)
+        {
+            var src = TirRewrite.StripCoerce(sources[0]);
+            while (src is TirCall sc && sc.Name == "Map" && sc.Args.Count == 2 && IsListTyped(sc.Args[0]) && FnOk(sc.Args[1], 1))
+            {
+                stages.Insert(0, sc.Args[1]);
+                src = TirRewrite.StripCoerce(sc.Args[0]);
+            }
+            if (TirFusion.IsMapRange(src, out var range) && FnOk(range.Args[1], 1))
+            {
+                stages.Insert(0, range.Args[1]);
+                src = range.Args[0];
+                indexSource = true;
+            }
+            if (stages.Count > 0)
+                sources = new List<TirNode> { src };
+        }
+
         var id = NextId++;
         var temp = $"_lp{id}";
         hoists.Add(new TirLoweredLoop(kind, sources, fn, seed, includeFirst, temp, id, c.Type, c.Origin)
-            { ElemType = elem });
+            { ElemType = elem, SourceStages = stages, IndexSource = indexSource });
         return new TirTempRef(temp, c.Type, c.Origin);
     }
+
+    /// <summary>The single-source kinds whose receiver may be a fused producer chain (see
+    /// <see cref="TirLoweredLoop.SourceStages"/>). MapIdx needs the source element AND its index,
+    /// which the chain also has, so it is included.</summary>
+    private static readonly HashSet<string> IndexSourceKinds = new HashSet<string>
+    {
+        "Map", "MapIdx", "Reduce", "All", "Any", "FlatMap",
+    };
 
     /// <summary>Whether a lowered kind fills an array (as against a fold, All or Any).</summary>
     public static bool ProducesArray(string kind) => ArrayResultKinds.Contains(kind);

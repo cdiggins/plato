@@ -14,7 +14,7 @@ namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--loops] [--static-abstract] [--dump-tir=<dir>] [--inline-report] [--profile=cpu64|gpu32]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--loops] [--fuse] [--static-abstract] [--dump-tir=<dir>] [--inline-report] [--profile=cpu64|gpu32]
         //        Plato.CLI <inputFolder>... --out=<outputFolder> [same flags]
         //        Plato.CLI lint <inputFolder>... [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
@@ -65,6 +65,10 @@ namespace Ara3D.Geometry.CLI
             // one-dimensional list receivers become for-loop statements filling materialized
             // arrays (see TirLoopLowerer).
             var loops = args.Contains("--loops");
+
+            // Combinator fusion and literal-count unrolling (TKT-506): Range/Map/Take/Reduce chains
+            // fuse into one producer the lowerer turns into one loop (see TirFusion).
+            var fuse = args.Contains("--fuse");
 
             // --dump-tir=<dir>: write the per-phase TIR of every emitted body to <dir> (one file
             // per owner type) for optimizer-pass development. No effect on the emitted C#.
@@ -213,7 +217,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract, profile);
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract, profile, fuse);
                 logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
                 if (output.DegradedBodies.Count > 0)
                 {

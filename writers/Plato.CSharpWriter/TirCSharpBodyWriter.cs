@@ -769,14 +769,6 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (TryWriteTypeRefInstanceCall(call))
             return;
 
-        // A lowered-loop result temp is a C# ARRAY: Count reads become Length.
-        if (name == "Count" && args.Count == 1 && TirRewrite.StripCoerce(args[0]) is TirTempRef)
-        {
-            WriteNode(args[0]);
-            Write(".Length");
-            return;
-        }
-
         // Plato's `Count(xs: Array<$T>): Integer` maps onto the runtime list interface, whose
         // Count is a BCL `int`. Under the WRAPPER-scalar recipe Integer and int are different
         // types, so any no-arg Plato member chained off the count (`xs.Count.Range`,
@@ -970,16 +962,51 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             }
         }
 
+        // A fused producer chain (TKT-506): the element the body sees is the base element (the
+        // index itself for an IndexSource, else the source list's _i-th item) passed through each
+        // stage, every step bound to a local at the top of the loop body.
+        var stages = ll.SourceStages.Select(TirRewrite.StripCoerce).ToList();
+        var stageLams = stages.OfType<TirLambda>().ToList();
+        for (var st = 0; st < stages.Count; st++)
+            if (stages[st] is TirLambda sl)
+                foreach (var p in sl.Parameters)
+                    _loopParamNames[p] = $"{CSharpTypeWriter.Identifier(p.Name)}_{k}s{st}";
+        var count0 = ll.IndexSource ? $"System.Math.Max(0, (int){srcNames[0]})" : srcCounts[0];
+        string Elem()
+        {
+            var prev = ll.IndexSource ? index : $"{srcNames[0]}[{i}]";
+            for (var st = 0; st < stages.Count; st++)
+            {
+                var e = $"_e{k}_{st}";
+                if (stages[st] is TirLambda sl)
+                {
+                    WriteLine($"var {_loopParamNames[sl.Parameters[0]]} = {prev};");
+                    Write($"var {e} = ");
+                    _lambdaDepth++;
+                    WriteNode(sl.Body);
+                    _lambdaDepth--;
+                    WriteLine(";");
+                }
+                else
+                {
+                    Write($"var {e} = ");
+                    WriteNode(stages[st]);
+                    WriteLine($"({prev});");
+                }
+                prev = e;
+            }
+            return prev;
+        }
+
         switch (ll.Kind)
         {
             case "Map" or "MapIdx":
-                WriteLine($"var {n} = {srcCounts[0]};");
+                WriteLine($"var {n} = {count0};");
                 WriteLine($"var {a} = new {elem}[{n}];");
                 For(n, () =>
                 {
-                    var elems = ll.Kind == "MapIdx"
-                        ? new[] { $"{srcNames[0]}[{i}]", index }
-                        : new[] { $"{srcNames[0]}[{i}]" };
+                    var e = Elem();
+                    var elems = ll.Kind == "MapIdx" ? new[] { e, index } : new[] { e };
                     DeclareParams(elems);
                     Write($"{a}[{i}] = ");
                     WriteFnValue(elems);
@@ -1020,12 +1047,13 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write($"{acc} {t} = ");
                 WriteNode(ll.Seed);
                 WriteLine(";");
-                WriteLine($"var {n} = {srcCounts[0]};");
+                WriteLine($"var {n} = {count0};");
                 For(n, () =>
                 {
-                    DeclareParams(t, $"{srcNames[0]}[{i}]");
+                    var e = Elem();
+                    DeclareParams(t, e);
                     Write($"{t} = ");
-                    WriteFnValue(t, $"{srcNames[0]}[{i}]");
+                    WriteFnValue(t, e);
                     WriteLine(";");
                 });
                 break;
@@ -1033,12 +1061,13 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             case "Any":
                 var isAll = ll.Kind == "All";
                 WriteLine($"var {t} = {(isAll ? "true" : "false")};");
-                WriteLine($"var {n} = {srcCounts[0]};");
+                WriteLine($"var {n} = {count0};");
                 For(n, () =>
                 {
-                    DeclareParams($"{srcNames[0]}[{i}]");
+                    var e = Elem();
+                    DeclareParams(e);
                     Write(isAll ? "if (!(bool)(" : "if ((bool)(");
-                    WriteFnValue($"{srcNames[0]}[{i}]");
+                    WriteFnValue(e);
                     WriteLine("))");
                     WriteStartBlock();
                     WriteLine($"{t} = {(isAll ? "false" : "true")};");
@@ -1046,6 +1075,30 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     WriteEndBlock();
                 });
                 break;
+            case "FlatMap":
+            {
+                // One growable list for the whole chain; each element's list is appended in place
+                // (the intrinsic FlatMap does the same over a materialized receiver).
+                var list = $"_l{k}";
+                var part = $"_p{k}";
+                var j = $"_j{k}";
+                WriteLine($"var {list} = new System.Collections.Generic.List<{elem}>();");
+                WriteLine($"var {n} = {count0};");
+                For(n, () =>
+                {
+                    var e = Elem();
+                    DeclareParams(e);
+                    Write($"var {part} = ");
+                    WriteFnValue(e);
+                    WriteLine(";");
+                    WriteLine($"for (var {j} = 0; {j} < {part}.Count; {j}++)");
+                    WriteStartBlock();
+                    WriteLine($"{list}.Add({part}[{j}]);");
+                    WriteEndBlock();
+                });
+                WriteLine($"IReadOnlyList<{elem}> {t} = {list};");
+                break;
+            }
             case "Reverse":
                 WriteLine($"var {n} = {srcCounts[0]};");
                 WriteLine($"var {a} = new {elem}[{n}];");
@@ -1094,6 +1147,9 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             WriteLine($"IReadOnlyList<{elem}> {t} = {a};");
         if (lam != null)
             foreach (var p in lam.Parameters)
+                _loopParamNames.Remove(p);
+        foreach (var sl in stageLams)
+            foreach (var p in sl.Parameters)
                 _loopParamNames.Remove(p);
 
     }

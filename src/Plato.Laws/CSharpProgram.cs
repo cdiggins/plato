@@ -49,10 +49,10 @@ public sealed class CSharpProgram
     /// first C# errors when the generated program does not compile. <paramref name="lowerLoops"/>
     /// is the CLI's <c>--loops</c> (TKT-505): a differential run then checks the lowered loops
     /// against the interpreter.</summary>
-    public static CSharpProgram Build(PlatoCompilation comp, NumberProfile profile, bool lowerLoops = false)
+    public static CSharpProgram Build(PlatoCompilation comp, NumberProfile profile, bool lowerLoops = false, bool fuse = false)
     {
         var sw = Stopwatch.StartNew();
-        var writer = new CSharpWriter.CSharpWriter(comp, "unused-in-memory") { ExtensionStyle = true, Profile = profile, LowerLoops = lowerLoops };
+        var writer = new CSharpWriter.CSharpWriter(comp, "unused-in-memory") { ExtensionStyle = true, Profile = profile, LowerLoops = lowerLoops, FuseCombinators = fuse };
         writer.WriteAll();
         var emit = sw.Elapsed;
 
