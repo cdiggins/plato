@@ -17,4 +17,4 @@ links: []
 
 ## Done means
 
-- [ ] Remove the tracked cache and verify the source still parses without writing bytecode.
+- [x] Remove the tracked cache and verify the source still parses without writing bytecode.
