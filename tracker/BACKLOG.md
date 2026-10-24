@@ -18,6 +18,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-412](issues/plato-412.md) | ToSdf: concrete geometry shapes as signed distance fields | feature | p2 | M | low | plato | in-progress |  |
 | [plato-413](issues/plato-413.md) | Marching cubes: isosurface extraction from dense scalar grids and sampled SDFs | idea | p2 | M | low | plato | in-progress |  |
 | [plato-448](issues/plato-448.md) | Extend stdlib comparison with geometry3Sharp and production environments | debt | p2 | S | low | plato | in-progress |  |
+| [repo-468](issues/repo-468.md) | Organize source by responsibility and document repository navigation | debt | p2 | L | med | repo | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
