@@ -2,14 +2,14 @@
 id: stdlib-476
 title: Intrinsic-location guard mistakes conditional bodies for declarations
 type: bug
-status: in-progress
+status: done
 priority: p2
 effort: S
 risk: med
 area: stdlib
 sprint: 
 created: 2026-10-23
-closed:
+closed: 2026-10-24
 links: []
 ---
 
