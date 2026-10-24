@@ -41,10 +41,17 @@ namespace PlatoTests
             var tests = Path.Combine(RepoRoot, "tests", "PlatoTests");
             return Directory.GetFiles(tools, "*.ps1")
                 .Concat(Directory.GetFiles(tools, "*.py"))
-                .Concat(Directory.GetFiles(tests, "*.cs"))
+                .Concat(TestSources(tests))
                 .Where(f => !Path.GetFileName(f).Equals("CheckerTestSupport.cs", StringComparison.Ordinal)
                          && !Path.GetFileName(f).Equals("VerificationPolicyTests.cs", StringComparison.Ordinal));
         }
+
+        private static IEnumerable<string> TestSources(string folder)
+            => Directory.EnumerateFiles(folder, "*.cs")
+                .Concat(Directory.EnumerateDirectories(folder)
+                    .Where(path => !Path.GetFileName(path).Equals("bin", StringComparison.OrdinalIgnoreCase)
+                                && !Path.GetFileName(path).Equals("obj", StringComparison.OrdinalIgnoreCase))
+                    .SelectMany(TestSources));
 
         /// <summary>Lines of <paramref name="text"/> matching <paramref name="pattern"/>, comments excluded.</summary>
         public static IEnumerable<string> Offences(string text, Regex pattern)
@@ -60,6 +67,15 @@ namespace PlatoTests
                 .SelectMany(f => Offences(File.ReadAllText(f), pattern)
                     .Select(o => $"{Path.GetRelativePath(RepoRoot, f)} {o}"))
                 .ToList();
+
+        [Test]
+        public static void ScannedFilesIncludeNestedContractTests()
+        {
+            var files = ScannedFiles().Select(Path.GetFileName).ToArray();
+            Assert.That(files, Does.Contain("ForwardStdLibCheckerTests.cs"));
+            Assert.That(files, Does.Contain("ForwardStdLibLintTests.cs"));
+            Assert.That(files, Does.Contain("CheckerCompletenessTests.cs"));
+        }
 
         [Test]
         public static void NoTierListLiteralOutsideTheManifest()
