@@ -295,9 +295,19 @@ generation.
 
 The result array is bound as `IReadOnlyList<T> _lp<id> = _a<id>;` because every Plato array is an
 `IReadOnlyList<T>` in the emitted C# (a `T[]` temp gave compile errors in TKT-505).
-`FlatMap` exposes its result list through the same interface; it still evaluates the callback's
-collection and copies its elements. It does not yet turn the singleton-or-empty filter idiom into a
-conditional append.
+`FlatMap` exposes its result list through the same interface. Normally it evaluates the callback's
+collection and copies its elements. For a raw expression-bodied lambda whose body is a conditional,
+the emitter can append a raw singleton-array arm directly with `List<T>.Add`, avoiding that temporary
+array. Either or both arms may be singletons. The callback result, conditional, arms and lowered result
+must agree exactly on a concrete one-dimensional array type, and the singleton element must have the
+exact result element type. Element expressions retain the original implicit conversion context.
+
+Wrapped callbacks, wrapped conditional results or arms, and uncertain or mismatched types retain
+ordinary copying. An unmatched opposite arm still evaluates in its selected branch, binds to
+`IReadOnlyList<T>` and copies its elements. In particular, `[Fault()].Take(0)` still evaluates `Fault()`
+when selected. This is emission within an already lowered `FlatMap`; it does not expand the lowerer's
+scope traversal or recognise empty calls. The helper is `TirCSharpBodyWriter.FlatMap.cs`;
+`FlatMapFilterTests` compiles and executes the supported and refused shapes.
 
 **Producer-chain lowering is already implemented.** For `Map` (including indexed map), `Reduce`,
 `All`, `Any` and `FlatMap`, a supported receiver chain of unary `Map` calls over an array or
@@ -381,9 +391,10 @@ elaborated tree, so a call written as a library method (`Scale`) appears as itse
 
 - **Fusion across local bindings.** A producer stored in a local and consumed later is not joined by
   these expression-chain rules. Extending them requires preserving shared results and evaluation scope.
-- **Filter-idiom lowering.** `FlatMap(x => condition ? [value] : empty)` still constructs the callback's
-  collection before copying its elements. Recognising this as conditional append is TKT-507 in the
-  sibling `plato-brep/tickets/TKT-507-plato-filter-idiom-lowering.md`; that ticket is not a struct-functor task.
+- **Broader filter-idiom lowering.** Eligible singleton arms append directly (section 7), but empty-call
+  recognition, recursive conditional expansion and named Filter vocabulary remain outside that slice.
+  TKT-507 in the sibling `plato-brep/tickets/TKT-507-plato-filter-idiom-lowering.md` includes vocabulary
+  and consumer adoption; the compiler's singleton optimization does not complete that ticket.
 - **Struct functors.** Surviving callbacks use `Func<...>` delegates. The writer has no pass replacing
   them with value-type callable representations; allocation depends on captures and C# delegate caching.
 - **Loop lowering inside lambdas and conditionals.** The lowerer refuses these scopes because its

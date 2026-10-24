@@ -1,0 +1,36 @@
+type ProbeUv { U: Number; V: Number; }
+
+library FlatMapProbe
+{
+    Candidates(ds: Array<Number>, keep: Function1<Integer, Boolean>): Array<ProbeUv>
+        => ds.Count.Range.FlatMap(k => keep(k)
+            ? [ProbeUv(ds[k], ds[k])]
+            : [ProbeUv(0.0, 0.0)].Take(0));
+
+    F1Select(xs: Array<Number>, keep: Function1<Number, Boolean>, value: Function1<Number, Number>, fallback: Function1<Number, Array<Number>>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [value(x)] : fallback(x));
+
+    F1Reversed(xs: Array<Number>, keep: Function1<Number, Boolean>, value: Function1<Number, Number>, fallback: Function1<Number, Array<Number>>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? fallback(x) : [value(x)]);
+
+    F1Nested(xs: Array<Number>, keep: Function1<Number, Boolean>, value: Function1<Number, Number>, fallback: Function1<Number, Array<Number>>, enabled: Boolean): Array<Number>
+    {
+        var flag = enabled;
+        return xs.FlatMap(x => (flag ? keep(x) : false) ? [value(x)] : fallback(x));
+    }
+
+    F1FaultTake(xs: Array<Number>, keep: Function1<Number, Boolean>, accept: Function1<Number, Number>, reject: Function1<Number, Number>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [accept(x)] : [reject(x)].Take(0));
+
+    F1Both(xs: Array<Number>, keep: Function1<Number, Boolean>, accept: Function1<Number, Number>, reject: Function1<Number, Number>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [accept(x)] : [reject(x)]);
+
+    F1Multi(xs: Array<Number>, keep: Function1<Number, Boolean>, value: Function1<Number, Number>, fallback: Function1<Number, Array<Number>>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [value(x), value(x)] : fallback(x));
+
+    F1NestedArray(xs: Array<Number>, keep: Function1<Number, Boolean>, value: Function1<Number, Number>, fallback: Function1<Number, Array<Number>>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? (keep(x) ? [value(x)] : fallback(x)) : fallback(x));
+
+    F1Delegate(xs: Array<Number>, callback: Function1<Number, Array<Number>>): Array<Number>
+        => xs.FlatMap(callback);
+}

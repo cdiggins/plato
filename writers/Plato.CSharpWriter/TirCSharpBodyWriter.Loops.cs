@@ -205,6 +205,8 @@ public partial class TirCSharpBodyWriter
                 {
                     var e = Elem();
                     DeclareParams(e);
+                    if (TryWriteFlatMapConditional(ll, list, part, j, elem))
+                        return;
                     Write($"var {part} = ");
                     WriteFnValue(e);
                     WriteLine(";");
