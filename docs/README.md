@@ -22,6 +22,8 @@ an observation. Everything in `kebab-case.md` is descriptive, historical, or exp
 
 Maintained, descriptive, superseded by editing rather than by writing a successor.
 
+- [`repository-organization.md`](repository-organization.md) — responsibility groups, file and folder documentation, and safe relocation checks.
+
 - [`plato-for-agents.md`](plato-for-agents.md) — operations and codegen; the orientation doc.
 - [`plato-overview.md`](plato-overview.md) — what Plato is and why.
 - [`plato-library-map.md`](plato-library-map.md) — which `Plato.*` artifact is which, and what is frozen.

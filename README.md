@@ -1,5 +1,7 @@
 # Plato
 
+For source navigation, begin with the [repository organization guide](docs/repository-organization.md), which maps functional groups and their folder documentation.
+
 **Write geometry once. Run it everywhere.**
 
 **Plato** is a small, pure, statically-typed language for writing geometric and numeric libraries once, and compiling them into fast, idiomatic code for other platforms. The C# backend is in daily production use — it generates the geometry library consumed by the [Ara 3D SDK](https://github.com/ara3d/ara3d-sdk) — and the **TypeScript, Rust, GLSL, and C++/CUDA backends are working proofs of interface** (TS/Rust have browser demos; GLSL has WebGL2 demos; C++/CUDA is compile-verified).

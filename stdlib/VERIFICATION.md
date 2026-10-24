@@ -178,7 +178,7 @@ green in this repo to produce.
 
 ### Rung 0–1 · Parse and resolve
 
-`ForwardStdLibParsesAndCompiles` (`tests/PlatoTests/ForwardStdLibCheckerTests.cs`) parses every
+`ForwardStdLibParsesAndCompiles` (`tests/PlatoTests/Contracts/ForwardStdLibCheckerTests.cs`) parses every
 `.plato` file under all four tiers and builds a `Compilation`, asserting four empty collections:
 parse failures, `SymbolFactory.Errors` (name resolution), `SemanticErrors`, `InternalErrors`, plus
 `CompletedCompilation`. It also asserts a **corpus floor** — a minimum file count, set far below
@@ -227,7 +227,7 @@ Nothing enforced the printed number until `ForwardStdLibLintTests`.
 
 ### Rung 3 · Style
 
-`StyleChecker` (`src/Plato.Navigation/StyleChecker.cs`) enforces the authoring rules no compiler
+`StyleChecker` (`src/Plato.Navigation/Analysis/StyleChecker.cs`) enforces the authoring rules no compiler
 pass owns. It runs on a single parsed file — no whole-program `Compilation` needed — and is
 effectively free.
 
@@ -467,7 +467,7 @@ applies, and add a `Plato.Intrinsics.Tests` case for it.
 
 **A new rule.** Rules that need a whole-program `Compilation` go in
 `src/Plato.Compiler/Analysis/Linter.cs` as the next `LINT0nn`; text-and-shape rules that need
-only a single parsed file go in `src/Plato.Navigation/StyleChecker.cs` as the next `STY0nn` — the
+only a single parsed file go in `src/Plato.Navigation/Analysis/StyleChecker.cs` as the next `STY0nn` — the
 latter is essentially free to run and therefore the right home for authoring conventions. Either
 way, a new rule that fires on existing content lands with its ceiling raised and a comment saying
 what the findings are, or it lands with the content fixed. It does not land silent.

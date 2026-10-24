@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-10-18
 closed:
-links: [src/Plato.Interpreter/Interpreter.cs, src/Plato.Interpreter/Dispatch.cs, src/Plato.Interpreter/CallMemo.cs, tests/Plato.Interpreter.Tests/SandboxProbe.cs]
+links: [src/Plato.Interpreter/Evaluation/Interpreter.cs, src/Plato.Interpreter/Evaluation/Dispatch.cs, src/Plato.Interpreter/Evaluation/CallMemo.cs, tests/Plato.Interpreter.Tests/SandboxProbe.cs]
 ---
 
 ## Issue

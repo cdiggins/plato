@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-10-18
 closed: 2026-10-18
-links: [src/Plato.Interpreter/Interpreter.cs, docs/reports/interpreter-turnaround-2026-10-17.md]
+links: [src/Plato.Interpreter/Evaluation/Interpreter.cs, docs/reports/interpreter-turnaround-2026-10-17.md]
 ---
 
 ## Issue

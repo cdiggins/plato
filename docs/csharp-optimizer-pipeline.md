@@ -76,7 +76,7 @@ folder. See pass 3 for what this means.
 | Code | `src/Plato.Compiler/Checking/TirShortCircuit.cs`, called from `Elaborator.ShortCircuit` |
 | Flag | none |
 | Consumes / produces | TIR calls `And(a, b)` / `Or(a, b)` on `Boolean` / the conditionals `a ? b : false` and `a ? true : b` |
-| Pinned by | `tests/Plato.Interpreter.Tests/ShortCircuitTests.cs` (guarded index laws; interpreter and compiled C# agree), `tests/PlatoTests/ShortCircuitEmitDifference.cs` (the Rust and TypeScript flag-on tests allow exactly this difference) |
+| Pinned by | `tests/Plato.Interpreter.Tests/ShortCircuitTests.cs` (guarded index laws; interpreter and compiled C# agree), `tests/PlatoTests/Emission/ShortCircuitEmitDifference.cs` (the Rust and TypeScript flag-on tests allow exactly this difference) |
 
 Recognised: `And` and `Or` whose overload is the `Boolean` one. Refused: an `And` or `Or` that a library
 defines for its own type (`type Flag`); it stays an ordinary call that evaluates both arguments. The C# body
@@ -86,8 +86,8 @@ conditional like any other: the loop lowerer does not descend into it (section 7
 
 ## 4. Pass 1: `TirInliner` (`--inline`)
 
-File `writers/Plato.CSharpWriter/TirInliner.cs`; refusal reasons in `InlineReport.cs`; host interface
-`ITirInlineHost.cs`. Pinned by `tests/PlatoTests/InlinerTests.cs` (`PointTransformFullyBetaReduces`,
+File `writers/Plato.CSharpWriter/Optimization/TirInliner.cs`; refusal reasons in `InlineReport.cs`; host interface
+`ITirInlineHost.cs`. Pinned by `tests/PlatoTests/Optimization/InlinerTests.cs` (`PointTransformFullyBetaReduces`,
 `BoundsTransformDropsDelegate`, `TriangleTransformRewritesToConstructor`,
 `MeshTransformRewritesToConstructor`).
 
@@ -150,10 +150,10 @@ lambda-free callees with cheap arguments. A callee that calls itself is detected
 
 ## 5. Pass 2: `TirComponentUnroller` (`--optimize`)
 
-File `writers/Plato.CSharpWriter/TirComponentUnroller.cs`. It uses `ComponentUnroller.cs`, the older
+File `writers/Plato.CSharpWriter/Optimization/TirComponentUnroller.cs`. It uses `ComponentUnroller.cs`, the older
 emission-time design, for the table of fixed-arity types and their field names
 (`ComponentUnroller.BuildComponentFieldTable`) and for the decision rules; the file header of
-`ComponentUnroller.cs` explains the design. Pinned by `tests/PlatoTests/ComponentUnrollerTests.cs`
+`ComponentUnroller.cs` explains the design. Pinned by `tests/PlatoTests/Optimization/ComponentUnrollerTests.cs`
 (`FixedArityBodiesUnrollToFieldExpressions`, `ThreeComponentBodiesFanOutAllFields`,
 `GenuinelyDynamicArraysStillLoopLower`, `OptimizeOffLeavesBodiesToTheLoopLowerer`).
 
@@ -189,7 +189,7 @@ The scratch program in section 8 has no fixed-arity type, so this pass is a no-o
 
 ## 6. Pass 3: `TirArrayMaterializer` (`--optimize-arrays`)
 
-File `writers/Plato.CSharpWriter/TirArrayMaterializer.cs`. Pinned by `tests/PlatoTests/ArrayMaterializerTests.cs`
+File `writers/Plato.CSharpWriter/Optimization/TirArrayMaterializer.cs`. Pinned by `tests/PlatoTests/Optimization/ArrayMaterializerTests.cs`
 (`FlagOnlyRenamesMapCallSitesInMaterializationPositions`: with the flag on, the standard library's emitted
 text differs from flag-off only by `Map` to `MapEager` and `MapRange` to `MapRangeEager` renames, and at
 least one occurs).
@@ -231,8 +231,8 @@ The file header formerly said that `Map` and `MapRange` return lazy views. That 
 
 ## 7. Pass 4: `TirLoopLowerer` (`--loops`)
 
-File `writers/Plato.CSharpWriter/TirLoopLowerer.cs`; the loop text is printed by
-`TirCSharpBodyWriter.WriteLoweredLoop`. Pinned by `tests/PlatoTests/LoopLowererArrayTypeTests.cs`
+File `writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs`; the loop text is printed by
+`TirCSharpBodyWriter.WriteLoweredLoop`. Pinned by `tests/PlatoTests/Optimization/LoopLowererArrayTypeTests.cs`
 (`CombinatorOverArrayLowersToForLoop`: `Map`, `MapRange`, `Reduce` and `Any` over `Array<T>`) and, for
 the unroller's interplay, `ComponentUnrollerTests.GenuinelyDynamicArraysStillLoopLower`.
 
@@ -321,7 +321,7 @@ elaborated tree, so a call written as a library method (`Scale`) appears as itse
 
 | File | Old statement | Now |
 |---|---|---|
-| `writers/Plato.CSharpWriter/TirArrayMaterializer.cs` header | `Map`/`MapRange` return lazy views; the eager rename avoids re-evaluation | dated 2026-10-23: `MapRange` is eager (TKT-350); the rename is a no-op for behaviour, and the eager names live in `bonepile/` |
+| `writers/Plato.CSharpWriter/Optimization/TirArrayMaterializer.cs` header | `Map`/`MapRange` return lazy views; the eager rename avoids re-evaluation | dated 2026-10-23: `MapRange` is eager (TKT-350); the rename is a no-op for behaviour, and the eager names live in `bonepile/` |
 | `docs/design/optimizer-stage2-plan.md` | "LAZY views" in the problem statement; fusion, struct functors and consumer-side lowering as plain future work | a dated note at the top of the file points here; the problem statement is history |
 | `stdlib/foundation/primitives.library.plato` sub-range section | "None copies" | each sub-range function is a `MapRange` and so copies its window; the note says so and is dated |
 
@@ -346,7 +346,7 @@ elaborated tree, so a call written as a library method (`Scale`) appears as itse
 |---|---|
 | Order of the passes | `writers/Plato.CSharpWriter/CSharpWriter.cs`, `RunOptimizerPasses` (the only place) |
 | Which flag enables which pass | `src/Plato.CLI/Program.cs` and the fields on `CSharpWriter` |
-| Refusal reasons for the inliner | `writers/Plato.CSharpWriter/InlineReport.cs` |
+| Refusal reasons for the inliner | `writers/Plato.CSharpWriter/Optimization/InlineReport.cs` |
 | What a pass consumes and produces | the header of its own file; each refers here for the order |
 | The array runtime | `src/Plato.Intrinsics/ArrayIntrinsics.cs`, `stdlib/foundation/intrinsics.library.plato` |
 | Language semantics of `&&` and `||` | `docs/SEMANTICS.md` section 6 |

@@ -24,7 +24,7 @@ and checking the copy gives the right answer, so the stale state is per path.
 
 Where to look: `CheckMcpTools.Prepare` memoizes a `CheckState` per `_context.Index.Generation`
 and `_context.EnsureFresh()` decides when that generation moves; `WarmProgram` (this repository,
-`src/Plato.Navigation/WarmProgram.cs`) hashes every file's content into its generation and
+`src/Plato.Navigation/Execution/WarmProgram.cs`) hashes every file's content into its generation and
 recompiles from nothing, so the law runner is not the suspect. Either the index generation does
 not change for a file under a `--law-folder` root, or the shared `ParseCache` returns a tree for
 the old text (its key is path plus content hash, so only if the hash is reused).

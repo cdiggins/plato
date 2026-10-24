@@ -20,7 +20,7 @@ Make the repository easier to navigate and divide among agents, following the Pl
 - [x] Compiler sources have responsibility-based groups, useful file headers and folder guides.
 - [x] Writer sources have responsibility-based groups, useful file headers and folder guides.
 - [x] Runtime and navigation sources have responsibility-based groups, useful file headers and folder guides.
-- [ ] The repository documentation audit is addressed, with format and ownership exceptions explained and remaining improvements tracked.
+- [x] The repository documentation audit is addressed, with format and ownership exceptions explained and remaining improvements tracked.
 - [ ] Integrated checks are recorded and each independent chunk has a reversible commit.
 - [ ] Repeated original-versus-reorganized compiler measurements show no significant regression on the same input, with equivalent generated output.
 

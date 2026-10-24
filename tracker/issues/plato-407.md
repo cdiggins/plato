@@ -43,7 +43,7 @@ rule must only propose collapses where the shared body needs no re-resolution.
 ## Resolution
 
 Landed as `SIM003` (rule 1, applicable) and `SIM004` (rule 2, report only) in
-`src/Plato.Navigation/Simplifier.cs`.
+`src/Plato.Navigation/Analysis/Simplifier.cs`.
 
 SIM003 matches a concrete library function against every library function whose
 receiver is an interface in the concrete receiver's transitive `implements` /

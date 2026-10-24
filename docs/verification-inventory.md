@@ -180,7 +180,7 @@ include plato-388.
 Everything above is a runner. These fixtures are what actually fails a build. Each names the
 authority for its own ceiling; none is restated here.
 
-### `tests/PlatoTests/ForwardStdLibCheckerTests.cs`
+### `tests/PlatoTests/Contracts/ForwardStdLibCheckerTests.cs`
 
 - `ForwardStdLibParsesAndCompiles` — parses every file under all four tiers and builds a
   `Compilation`, asserting empty parse failures, symbol resolution errors, semantic errors and
@@ -197,7 +197,7 @@ authority for its own ceiling; none is restated here.
   assertions. The sum-type one reports the sum population alongside the diagnostics, because zero
   diagnostics only means something if sum types were actually seen.
 
-### `tests/PlatoTests/ForwardStdLibLintTests.cs`
+### `tests/PlatoTests/Contracts/ForwardStdLibLintTests.cs`
 
 - The **lint ratchet**, scoped to the shipping tiers, counting errors and warnings and excluding
   Info. Ceiling is the constant in this file; the comment above it is the historical record of what

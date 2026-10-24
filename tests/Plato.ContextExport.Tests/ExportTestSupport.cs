@@ -1,4 +1,4 @@
-// Locates fixtures and invokes context export for tests.
+// Locates fixtures, parses Plato files and formats declarations for export tests.
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.ContextExport;
 using Ara3D.Parakeet;
