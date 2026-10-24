@@ -11,7 +11,9 @@ namespace Ara3D.Geometry.CSharpWriter;
 /// The SOLE C# function-body writer (the legacy symbol-graph <c>CSharpFunctionBodyWriter</c> was
 /// retired at consolidation-plan C4). Renders a C# function <em>body</em> from a monomorphized
 /// <see cref="TirFunction"/> (the Typed IR produced by <see cref="Elaborator"/> +
-/// <see cref="Monomorphizer"/>, then the writer-side optimizer passes): it maps the recorded
+/// <see cref="Monomorphizer"/>, then the writer-side optimizer passes; the last stage of the pipeline in
+/// docs/csharp-optimizer-pipeline.md, consuming any TirLoweredLoop/TirTempRef/TirComponentAccess markers
+/// the passes left and producing C# text): it maps the recorded
 /// <see cref="EmissionKind"/> of every <see cref="TirCall"/> directly to syntax and renders every
 /// conversion from an explicit <see cref="TirCoerce"/> node â€” no emit-time semantic re-derivation.
 ///

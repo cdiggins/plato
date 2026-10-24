@@ -57,6 +57,10 @@ public class TirTempRef : TirNode
 }
 
 /// <summary>
+/// Pass 4 of the C# optimizer. Consumes a TIR body; produces a block body in which each recognised
+/// combinator call is a hoisted <see cref="TirLoweredLoop"/> statement and the call's position holds a
+/// <see cref="TirTempRef"/>. Pass order and flags: docs/csharp-optimizer-pipeline.md.
+///
 /// Loop lowering (--loops): rewrites recognized array-combinator call sites — the lazy
 /// Ara3D.Collections adapters Map/MapEager/MapRange(Eager)/Zip/Reduce/All/Any/Reverse/WithNext/
 /// MapPairs/MapTriplets/MapQuartets on ONE-dimensional list receivers — into for-loop statements
@@ -73,8 +77,7 @@ public class TirTempRef : TirNode
 ///     (2D/3D maps carry their dimensions through and are left to the eager intrinsics);
 ///   * statement bodies lower per top-level statement; if/while statements are left intact.
 ///
-/// Runs LAST (after the inliner, unroller and materializer), so it also lowers the MapEager
-/// sites the materializer produced. TIR-path only.
+/// It also lowers the MapEager sites the materializer produces. TIR-path only.
 /// </summary>
 public static class TirLoopLowerer
 {

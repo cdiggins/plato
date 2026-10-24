@@ -137,9 +137,11 @@ library Primitives
     //==
     // # Array — sub-ranges
     //
-    // Every one is a window onto the source: a MapRange whose callback shifts or
-    // scales the index. None copies, and none validates — the preconditions are
-    // the caller's, as everywhere in this vocabulary.
+    // Every one is a MapRange whose callback shifts or scales the index.
+    // Since TKT-350 (2026-10) MapRange is EAGER, so each one ALLOCATES AND FILLS
+    // a new array of its window; none is a view. (Before that, "none copies" was
+    // true: the array was lazy.) None validates — the preconditions are the
+    // caller's, as everywhere in this vocabulary.
 
     // The first n elements. Precondition: 0 <= n <= Count.
     Take(xs: Array<$T>, n: Integer): Array<$T>

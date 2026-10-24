@@ -5,6 +5,7 @@ This is the canonical guide for agents and developers working in `submodules/Pla
 
 **Start here for the language and multi-target codegen:** [`docs/plato-for-agents.md`](docs/plato-for-agents.md).
 **Confused by the Plato.Generated / Intrinsics artifacts?** [`docs/plato-library-map.md`](docs/plato-library-map.md) maps every artifact and who consumes it.
+**C# optimizer flags and passes** (`--inline`, `--optimize`, `--optimize-arrays`, `--loops`): [`docs/csharp-optimizer-pipeline.md`](docs/csharp-optimizer-pipeline.md) — pass order, what each recognises and refuses, the array runtime contract.
 **Process / monorepo coupling:** studio's [`docs/working-on-plato.md`](https://github.com/ara3d/studio/blob/main/docs/working-on-plato.md)
 (only the whole-monorepo gates still run from the studio checkout — the stdlib inner loop is
 repo-local; see **Commands**). **Docs and work tracking live in this repo.**

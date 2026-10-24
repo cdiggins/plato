@@ -6,6 +6,10 @@ using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
+// Pass 2 of the C# optimizer. Consumes a TIR body; produces the body with component and array-literal
+// combinators replaced by field expressions (TirComponentAccess, TirConstructorCall, TirBooleanChain).
+// Pass order and flags: docs/csharp-optimizer-pipeline.md.
+//
 // The TIR component unroller (--optimize, roadmap P3.1): rewrites component-HOF calls in a TIR
 // body to direct field expressions. Two families:
 //

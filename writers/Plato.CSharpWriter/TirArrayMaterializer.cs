@@ -6,24 +6,21 @@ using Ara3D.Geometry.Compiler.Symbols;
 namespace Ara3D.Geometry.CSharpWriter;
 
 /// <summary>
-/// Optimizer stage 2, increment 1 (--optimize-arrays; docs/design/optimizer-stage2-plan.md):
-/// loop-into-buffer lowering for MULTI-consumed array pipelines. <c>Map</c>/<c>MapRange</c> return
-/// lazy functional views (<c>ReadOnlyList&lt;T&gt;</c> wraps a <c>Func&lt;int,T&gt;</c>), so every
-/// element access re-evaluates the upstream pipeline; a result that is consumed more than once
-/// pays that cost per access. This rewrite renames such call sites to the eager
-/// <c>MapEager</c>/<c>MapRangeEager</c> intrinsics (materialized array fill, identical semantics
-/// for the pure language) when the result is in a MATERIALIZATION position:
+/// Pass 3 of the C# optimizer (--optimize-arrays). Consumes a TIR body; produces the same body with
+/// the NAME of two-argument <c>Map</c>/<c>MapRange</c> calls in a materialization position changed to
+/// <c>MapEager</c>/<c>MapRangeEager</c>. Nothing else changes. Order and flags of all passes:
+/// docs/csharp-optimizer-pipeline.md (written once, in CSharpWriter.RunOptimizerPasses).
 ///
-///   1. a direct argument of a constructor (<see cref="TirNew"/>) or of a tuple that builds a
-///      struct value (a <c>TupleN</c> call) — the result is STORED (e.g. QuadGrid3D.PointGrid)
-///      and consumed repeatedly downstream (face generation indexes the grid per face);
-///   2. the value of a local binding (<see cref="TirLet"/>) whose variable is referenced more
-///      than once, or referenced under a lambda or loop (re-evaluation contexts).
+/// Positions: a direct argument of a constructor (<see cref="TirNew"/>) or of a <c>TupleN</c> call
+/// (a tuple building a struct), looking through <see cref="TirCoerce"/>; the value of a local binding
+/// (<see cref="TirLet"/>) referenced more than once or under a lambda or loop.
 ///
-/// Results consumed once in a single pass (a Map flowing straight into Reduce/Sum) are left lazy —
-/// there the view is allocation-free and materialization would only cost memory. The rewrite is a
-/// NAME substitution only (emission is name + shape); the eager overload set mirrors Map's exactly,
-/// so C# overload resolution binds the same receiver shapes. TIR-path only.
+/// STALE AS OF 2026-10-23 (TKT-508): this pass was written (2026-07-10) when <c>Map</c>/<c>MapRange</c>
+/// returned lazy views that re-ran the function on every read. Since TKT-350 <c>MapRange</c> is eager
+/// (ArrayIntrinsics.MapRange) and <c>Map</c> is a Plato body over it, so the rename no longer changes
+/// behaviour. <c>MapEager</c>/<c>MapRangeEager</c> exist only under src/Plato.Intrinsics/bonepile, which
+/// the compiled runtime does not include; <see cref="TirLoopLowerer"/> accepts the names and lowers them
+/// to loops, so the pass is consistent only together with --loops. TIR path only.
 /// </summary>
 public static class TirArrayMaterializer
 {

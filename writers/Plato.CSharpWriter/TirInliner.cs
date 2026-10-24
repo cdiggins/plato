@@ -7,6 +7,9 @@ using Ara3D.Geometry.Compiler.Types;
 namespace Ara3D.Geometry.CSharpWriter;
 
 /// <summary>
+/// Pass 1 of the C# optimizer. Consumes a TIR body; produces the same body with each inlinable call
+/// replaced by the callee's body. Pass order and flags: docs/csharp-optimizer-pipeline.md.
+///
 /// Source-level function inlining (--inline; roadmap P3.2 "beta reduction"). A resolved
 /// <see cref="TirCall"/> whose callee has a fully-ground TIR body for the receiver's concrete
 /// type is replaced by that body with parameters substituted by the argument nodes. Purity makes
@@ -30,10 +33,8 @@ namespace Ara3D.Geometry.CSharpWriter;
 ///   * a size budget per callee body and iteration to a fixpoint under a pass cap (inlining
 ///     exposes further calls — MULTI-LEVEL; the cap bounds growth and terminates recursion).
 ///
-/// Runs BEFORE the component unroller and array materializer, so MapComponents/Map call sites
-/// hidden inside small library functions become visible to those transforms — the point of the
-/// exercise: after inlining, functional map/fold plumbing is exposed where loop-level rewrites
-/// can see it.
+/// Exposing Map/MapComponents calls hidden inside small library functions to the later passes is
+/// the point of the exercise. Refusal reasons: InlineReport.cs.
 /// </summary>
 public static class TirInliner
 {
