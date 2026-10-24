@@ -2,14 +2,14 @@
 id: compiler-475
 title: Review drift in implicit and emitted conversion inventories
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: S
 risk: med
 area: compiler
 sprint: 
 created: 2026-10-23
-closed:
+closed: 2026-10-24
 links: []
 ---
 
