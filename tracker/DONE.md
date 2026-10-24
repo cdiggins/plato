@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-24 — [compiler-481](issues/compiler-481.md) — Plan and critically review BREP compiler optimizations — done (642626995b78def34c76c8f55f50284b5175e5b1); five proposals reviewed and F1 implementation agent started
 - 2026-10-24 — [docs-480](issues/docs-480.md) — Correct optimizer documentation for implemented fusion — done (697f25d6)
 - 2026-10-24 — [repo-479](issues/repo-479.md) — Resolve compiler and navigation baseline failures with performance validation — done (f866bfb4); compiler/navigation fixes verified, performance evidence retained, external SDK freeze remains under repo-473
 - 2026-10-24 — [stdlib-476](issues/stdlib-476.md) — Intrinsic-location guard mistakes conditional bodies for declarations — done (316bbca2); guard fixed in cfe55871, full compiler and forward-library gates pass
