@@ -2,14 +2,14 @@
 id: repo-474
 title: Preserve gate command output for failure diagnosis
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: S
 risk: low
 area: repo
 sprint: 
 created: 2026-10-23
-closed:
+closed: 2026-10-23
 links: []
 ---
 
