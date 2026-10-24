@@ -1,3 +1,4 @@
+// Determines TypeScript function signatures and receiver placement.
 using System;
 using System.Collections.Generic;
 using System.Linq;

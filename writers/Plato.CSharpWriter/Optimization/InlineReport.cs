@@ -1,3 +1,4 @@
+// Records and formats reasons why resolved calls could not be inlined.
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

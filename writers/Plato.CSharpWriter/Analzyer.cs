@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Exports type and function analysis reports for inspecting C# generation decisions.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

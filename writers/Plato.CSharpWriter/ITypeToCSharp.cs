@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Shares C# type-name conversion and receiver context between signature writers.
+using System;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Symbols;

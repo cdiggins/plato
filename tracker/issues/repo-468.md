@@ -18,7 +18,7 @@ Make the repository easier to navigate and divide among agents, following the Pl
 ## Done means
 
 - [ ] Compiler sources have responsibility-based groups, useful file headers and folder guides.
-- [ ] Writer sources have responsibility-based groups, useful file headers and folder guides.
+- [x] Writer sources have responsibility-based groups, useful file headers and folder guides.
 - [ ] Runtime and navigation sources have responsibility-based groups, useful file headers and folder guides.
 - [ ] The repository documentation audit is addressed, with format and ownership exceptions explained and remaining improvements tracked.
 - [ ] Integrated checks are recorded and each independent chunk has a reversible commit.

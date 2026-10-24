@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Collects a compiled type and the function analyses used in C# analysis reports.
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

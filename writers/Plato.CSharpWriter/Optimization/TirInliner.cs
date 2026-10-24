@@ -1,3 +1,4 @@
+// Specializes resolved typed-IR calls by substituting arguments into callee bodies.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;

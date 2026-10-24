@@ -1,3 +1,4 @@
+// Rewrites fixed-component combinators into direct field operations in typed IR.
 using System;
 using System.Collections.Generic;
 using System.Linq;

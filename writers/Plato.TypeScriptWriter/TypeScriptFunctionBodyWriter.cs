@@ -1,3 +1,4 @@
+// Renders symbol-based function bodies for the alternative TypeScript emission path.
 using System;
 using System.Collections.Generic;
 using System.Linq;

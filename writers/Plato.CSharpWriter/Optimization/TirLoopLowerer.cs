@@ -1,3 +1,4 @@
+// Replaces supported array combinators with loop markers and temporary references.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;

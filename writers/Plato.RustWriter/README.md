@@ -125,3 +125,8 @@ comparisons, trig on `Angle`); anything unknown becomes `unimplemented!()`.
 - `std::ops` operator impls (`a + b` on vectors) are not generated.
 - String/Character support is minimal (the geometry library does not use them).
 - `Arr` is eager (Vec-backed), unlike the lazy TypeScript `Arr`.
+
+## Source navigation
+
+`RustWriter.cs` coordinates declarations and output. `TirRustBodyWriter.cs` renders typed intermediate representation (typed IR) function bodies, and `PlatoAnalyzer.cs` selects function implementations. `RustWriterExtensions.cs` provides the compilation entry point.
+`RustTypeWriter.cs`, `RustConcreteTypeWriter.cs`, and `RustFunctionInfo.cs` determine type declarations and signatures. `RustFunctionBodyWriter.cs` retains the symbol-based body path.

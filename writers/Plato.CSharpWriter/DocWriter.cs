@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Builds HTML reference documentation from the compiled Plato type and function model.
+using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler;

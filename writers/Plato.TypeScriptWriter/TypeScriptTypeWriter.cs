@@ -1,3 +1,4 @@
+// Renders TypeScript type names and members in a concrete receiver context.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

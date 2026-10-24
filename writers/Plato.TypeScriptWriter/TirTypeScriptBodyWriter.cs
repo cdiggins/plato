@@ -1,3 +1,4 @@
+// Renders monomorphized typed-IR function bodies as TypeScript code.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;

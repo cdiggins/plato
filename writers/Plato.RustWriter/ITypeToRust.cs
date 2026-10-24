@@ -1,3 +1,4 @@
+// Shares Rust type-name conversion between signature and member writers.
 using System.Linq;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Symbols;

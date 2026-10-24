@@ -1,3 +1,4 @@
+// Defines fixed-component operation patterns used to replace collection operations with field expressions.
 using System;
 using System.Collections.Generic;
 using System.Linq;

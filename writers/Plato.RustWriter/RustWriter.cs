@@ -1,3 +1,4 @@
+// Coordinates Rust declarations, function bodies, and output files.
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,3 +1,4 @@
+// Combines compatible array-combinator chains before loop emission.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

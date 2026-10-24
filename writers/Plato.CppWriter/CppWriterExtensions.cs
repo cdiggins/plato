@@ -1,3 +1,4 @@
+// Exposes compilation-to-Cpp emission with backend options and output setup.
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.CppWriter

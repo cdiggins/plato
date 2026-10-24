@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Substitutes typed symbol expressions for function parameters during symbol-based inlining.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

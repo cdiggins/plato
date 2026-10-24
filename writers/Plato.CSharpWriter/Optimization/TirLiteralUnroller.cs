@@ -1,3 +1,4 @@
+// Expands bounded literal arrays and ranges into straight-line typed-IR expressions.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;

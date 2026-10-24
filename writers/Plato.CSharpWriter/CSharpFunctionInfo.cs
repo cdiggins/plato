@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Determines C# function signatures, receiver placement, and generic parameter spelling.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

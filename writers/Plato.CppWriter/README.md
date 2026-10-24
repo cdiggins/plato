@@ -107,3 +107,8 @@ Skip delta vs post M3/M4: **+78 emitted / −3 skipped** (stdlib). Demos: **147 
 struct members that still prune on `WithNext` / tuples / oversized builders.)
 
 Verification lives in `../Plato.CppWriter.Tests` (gates run with `inlineCalls: true`).
+
+## Source navigation
+
+`CppWriter.cs` coordinates declarations and output. `TirCppBodyWriter.cs` renders typed intermediate representation (typed IR) function bodies, and `PlatoAnalyzer.cs` selects function implementations. `CppWriterExtensions.cs` provides the compilation entry point.
+`CppPrelude.cs` supplies target math and vector helpers; `CppDialect.cs` selects portable C++ or CUDA.

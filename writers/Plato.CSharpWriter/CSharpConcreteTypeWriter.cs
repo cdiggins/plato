@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Emits concrete C# structs and their generated member surfaces.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

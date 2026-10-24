@@ -1,3 +1,4 @@
+// Selects applicable function implementations for the TypeScript backend.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

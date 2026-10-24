@@ -117,3 +117,8 @@ functions. Bodiless intrinsics get native implementations from
 - Static functions on primitives (first parameter `_`) are skipped.
 - Library functions on `IArray` are only callable on values that are actually
   `Arr` instances (or otherwise expose the methods).
+
+## Source navigation
+
+`TypeScriptWriter.cs` coordinates declarations and output. `TirTypeScriptBodyWriter.cs` renders typed intermediate representation (typed IR) function bodies, and `PlatoAnalyzer.cs` selects function implementations. `TypeScriptWriterExtensions.cs` provides the compilation entry point.
+`TypeScriptTypeWriter.cs`, `TypeScriptConcreteTypeWriter.cs`, and `TypeScriptFunctionInfo.cs` determine type declarations and signatures. `TypeScriptFunctionBodyWriter.cs` retains the symbol-based body path.

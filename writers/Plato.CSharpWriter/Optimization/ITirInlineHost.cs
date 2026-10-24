@@ -1,3 +1,4 @@
+// Defines the compilation services shared typed-IR inlining needs from each backend.
 using System.Collections.Generic;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;

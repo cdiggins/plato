@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Connects compilation to C# emission and preserves indentation when composing generated fragments.
+using System;
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.CSharpWriter

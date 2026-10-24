@@ -1,3 +1,4 @@
+// Emits concrete Plato types and their member surfaces as TypeScript declarations.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

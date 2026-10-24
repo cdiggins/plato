@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Carries symbol expressions together with inferred types and call analysis.
+using System;
 using System.Collections.Generic;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;

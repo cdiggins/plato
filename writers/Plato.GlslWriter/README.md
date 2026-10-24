@@ -140,3 +140,7 @@ skips. Full stdlib (`stdlib-legacy`): 1433 emitted / 960 skipped (see below).
   `// Skipped` block in any full-stdlib output). Closing most of the lambda gap
   needs the `--inline` beta reducer to specialize function values away before
   emission — the single biggest lever for shader-targeting the whole library.
+
+## Source navigation
+
+`GlslWriter.cs` coordinates declarations and output. `TirGlslBodyWriter.cs` renders typed intermediate representation (typed IR) function bodies, and `PlatoAnalyzer.cs` selects function implementations. `GlslWriterExtensions.cs` provides the compilation entry point.

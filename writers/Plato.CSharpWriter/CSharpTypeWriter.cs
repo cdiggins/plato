@@ -1,3 +1,4 @@
+// Renders C# types and members in the context of a concrete receiver or standalone function.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -1,3 +1,4 @@
+// Provides structural typed-IR traversal, rebuilding, and parameter substitution for optimizer passes.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;

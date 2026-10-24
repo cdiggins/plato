@@ -1,3 +1,4 @@
+// Supplies vector types and math helpers required by generated C++ and CUDA bodies.
 namespace Ara3D.Geometry.CppWriter
 {
     /// <summary>

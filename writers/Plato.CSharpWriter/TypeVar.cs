@@ -1,4 +1,5 @@
-﻿using Ara3D.Geometry.Compiler.Symbols;
+﻿// Names a generic type variable and retains its defining constraint.
+using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.CSharpWriter
 {

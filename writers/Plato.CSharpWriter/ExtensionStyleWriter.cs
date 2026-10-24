@@ -1,3 +1,4 @@
+// Plans and emits classic C# extension methods while retaining required struct members.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Analysis;

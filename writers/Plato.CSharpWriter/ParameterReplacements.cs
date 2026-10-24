@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Chains parameter substitutions for symbol-based expression rewriting.
+using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
 

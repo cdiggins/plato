@@ -1,3 +1,4 @@
+// Selects portable C++ or CUDA output and its dialect-specific file conventions.
 namespace Ara3D.Geometry.CppWriter
 {
     /// <summary>

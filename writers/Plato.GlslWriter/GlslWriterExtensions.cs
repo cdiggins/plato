@@ -1,3 +1,4 @@
+// Exposes compilation-to-Glsl emission with backend options and output setup.
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.GlslWriter

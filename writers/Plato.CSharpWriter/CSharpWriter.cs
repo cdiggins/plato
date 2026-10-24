@@ -1,3 +1,4 @@
+// Coordinates C# output files, extension plans, runtime profiles, and optimizer passes.
 using System;
 using System.Collections.Generic;
 using System.Text;
