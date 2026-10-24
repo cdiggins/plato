@@ -73,24 +73,17 @@ and an `Operator` token.
 
 ## Correctness
 
-`Plato.Navigation.Tests` gates the library against the forward `stdlib` (which includes its
-law/witness packet under `stdlib/tests/`; see `tests/Plato.Navigation.Tests/Corpus.cs`):
+[Plato.Navigation.Tests](../../tests/Plato.Navigation.Tests/README.md) gates the library against the forward `stdlib`, including its law/witness packet under `stdlib/tests/`. [Corpus.cs](../../tests/Plato.Navigation.Tests/Corpus.cs) selects the input roots.
 
-- an **exhaustive identifier sweep** — every one of the ~7.5k identifiers the parser produces must
-  be a definition site, a reference site, or a name the binder reported it could not resolve;
-- **round-trip invariants** — every definition is found at its own span, every reference resolves
-  back to its targets, `FindReferences` is the exact inverse of the target lists, and the source
-  text under every span reads as the record says;
-- **degraded mode** — an injected parse error and an unresolvable name leave the rest navigable;
-- **JSON round-trip** — reload is query-identical and re-export is byte-identical;
-- **a build budget** — a warm full rebuild of the corpus (34 files, ~5k lines) runs in well under
-  a second.
+- The identifier sweep accounts for each parsed identifier as a definition, reference or reported resolution error. Its explicit match-arm exclusions track [plato-364](../../tracker/issues/plato-364.md); they do not excuse other missing occurrences.
+- Round-trip invariants check definition and reference spans, target lists, inverse reference queries and JSON persistence.
+- Degraded-mode tests check that parse errors and unresolved names leave other declarations navigable.
+- [AssignmentReferenceTests.cs](../../tests/Plato.Navigation.Tests/AssignmentReferenceTests.cs) checks assignment targets across nested loops and shadowed locals.
+- [DegradedModeTests.cs](../../tests/Plato.Navigation.Tests/DegradedModeTests.cs) enforces a per-file budget for a fresh full index build and, separately, an unchanged update through `IncrementalIndexer`. The cached-update check also requires every parsed file to be reused.
 
-`stdlib` (70 files) is a scale smoke test, not a gate.
+The enforced budgets live in those tests. Timing samples and corpus counts are deliberately omitted here because they change with the source and host load. For controlled investigation, explicitly select `CheckTimingTests.MeasureNavigationRebuildPhases`; it reports parsing, binding and index construction separately for fresh and cached builds. Run timing checks without competing timed workloads. A passing cached-update check does not establish fresh-build latency, so both gates remain required.
 
-The two compiler hooks this library depends on (recording type-name occurrences and parameter
-spans, decision D5) are additive and guarded by `tools\regen-generated.ps1` byte-identity and the
-conformance suite.
+The compiler's source-occurrence hooks support navigation without changing program semantics. Their behavior is checked through the navigation tests and the compiler's existing regression suite; generated-output comparison is a separate validation step, not a byte-identity golden gate.
 
 ## Version 2: continuously updated sources
 

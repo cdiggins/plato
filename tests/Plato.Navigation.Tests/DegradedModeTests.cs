@@ -96,4 +96,30 @@ public class DegradedModeTests
         Assert.That(timer.ElapsedMilliseconds, Is.LessThan(budget),
             $"rebuild-the-world is the v2 incremental strategy: {snapshot.Files.Count} files, budget {budget} ms");
     }
+
+    [Test]
+    public void WarmCorpusUpdateStaysInsideItsBudget()
+    {
+        var snapshot = Corpus.Index.Snapshot;
+        var indexer = new IncrementalIndexer();
+        var initial = indexer.Update(snapshot);
+        var timer = Stopwatch.StartNew();
+        var updated = indexer.Update(snapshot);
+        timer.Stop();
+
+        var stats = indexer.LastUpdate;
+        TestContext.WriteLine($"cached update of {snapshot.Files.Count} files: {timer.ElapsedMilliseconds} ms; " +
+            $"parse {stats.ParseTime.TotalMilliseconds:F1} ms, bind {stats.BindTime.TotalMilliseconds:F1} ms, " +
+            $"{stats.FilesParsed} parsed, {stats.FilesReused} reused");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(stats.FilesParsed, Is.Zero, "an unchanged editor snapshot must reuse its parsed syntax");
+            Assert.That(stats.FilesReused, Is.EqualTo(snapshot.Files.Count));
+            Assert.That(updated.Defs.Count, Is.EqualTo(initial.Defs.Count));
+            Assert.That(updated.Refs.Count, Is.EqualTo(initial.Refs.Count));
+            Assert.That(timer.ElapsedMilliseconds, Is.LessThan(40 * snapshot.Files.Count),
+                "cached editor updates must meet the same per-file budget as a full rebuild");
+        });
+    }
 }

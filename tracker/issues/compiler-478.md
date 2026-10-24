@@ -21,5 +21,13 @@ Reproduce: `dotnet test tests/Plato.Navigation.Tests/Plato.Navigation.Tests.cspr
 
 ## Done means
 
-- [ ] Reproduce with host/load details and identify the dominant cost or measurement instability.
-- [ ] Restore a meaningful, repeatable navigation latency check, with any performance change compared against the original behavior.
+- [x] Reproduce with host/load details and identify the dominant cost or measurement instability.
+- [x] Restore a meaningful, repeatable navigation latency check, with any performance change compared against the original behavior.
+
+## Resolution and limits
+
+With other owned timed workloads stopped, fresh rebuilds satisfy the unchanged 40 ms/file ceiling. An explicit phase probe separates parsing, binding and indexing. The reorganized/fixed path measured fresh rebuilds at 4.83–7.39 s and cached updates after priming at 0.77–1.30 s; the preserved original assemblies measured 3.93–6.91 s and 0.58–0.66 s respectively. These sequential phase runs diagnose cost and host variability; they are not an interleaved speedup experiment. Parsing dominates the fresh path.
+
+The existing full-rebuild test and its ceiling remain intact. A separate warm-update test primes the real `IncrementalIndexer`, requires every parse to be reused, checks stable definition/reference totals, and applies the same budget. During the complete navigation suite, fresh rebuild was 4.242 s and cached update 0.841 s against a 7.760 s ceiling. All 73 executed navigation tests passed. The README now names both checks and the explicit phase probe instead of stale measurements and retired gates.
+
+No production performance optimization was needed or claimed. This resolves the investigation through reproducible diagnosis and independent coverage of both paths; it does not promise wall-clock stability under competing workloads or eliminate environmental variation. Original and fixed assemblies differ intentionally by the 161 assignment references restored under compiler-472.

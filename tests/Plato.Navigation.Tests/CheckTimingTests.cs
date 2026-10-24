@@ -16,6 +16,33 @@ namespace Plato.Navigation.Tests;
 [TestFixture]
 public static class CheckTimingTests
 {
+    [Test, Explicit("Reports parse, bind and index costs for controlled navigation profiling.")]
+    public static void MeasureNavigationRebuildPhases()
+    {
+        var snapshot = Corpus.Index.Snapshot;
+        var cache = new ParseCache();
+        for (var round = 0; round < 4; round++)
+        {
+            var timer = Stopwatch.StartNew();
+            var bound = BoundSnapshot.Create(snapshot);
+            var bindTotal = timer.Elapsed;
+            var index = NavigationIndex.Build(bound);
+            var total = timer.Elapsed;
+            TestContext.WriteLine($"fresh {round}: parse {bound.ParseTime.TotalMilliseconds:F1} ms, " +
+                $"bind {bound.BindTime.TotalMilliseconds:F1} ms, index {(total - bindTotal).TotalMilliseconds:F1} ms, " +
+                $"total {total.TotalMilliseconds:F1} ms; {index.Defs.Count} definitions, {index.Refs.Count} references");
+
+            timer.Restart();
+            bound = BoundSnapshot.Create(snapshot, cache);
+            bindTotal = timer.Elapsed;
+            index = NavigationIndex.Build(bound);
+            total = timer.Elapsed;
+            TestContext.WriteLine($"cached {round}: parse {bound.ParseTime.TotalMilliseconds:F1} ms, " +
+                $"bind {bound.BindTime.TotalMilliseconds:F1} ms, index {(total - bindTotal).TotalMilliseconds:F1} ms, " +
+                $"total {total.TotalMilliseconds:F1} ms; {index.Defs.Count} definitions, {index.Refs.Count} references");
+        }
+    }
+
     [Test, Explicit("Benchmark, not a gate. Run by name to (re)measure warm-check latency.")]
     public static void MeasureWarmCheckOnForwardStdLib()
     {
