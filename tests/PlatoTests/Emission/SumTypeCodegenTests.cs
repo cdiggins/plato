@@ -2,10 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Ara3D.Geometry.CSharpWriter;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using NUnit.Framework;
 using PlatoCompilation = Ara3D.Geometry.Compiler.Compilation;
 
@@ -14,7 +11,7 @@ namespace PlatoTests
     /// <summary>
     /// Wave-2 (plato-232) codegen gate: run each sum-type fixture through the full pipeline
     /// (parse → check → elaborate → monomorphize → emit) under the shipping recipe
-    /// (--csharp-style=extensions --scalar=float), assert the emitted C# has the
+    /// (extension-style with wrapper scalars), assert the emitted C# has the
     /// expected tagged-struct shape, and — the strong gate — compile the emitted struct + its match
     /// function in-proc with Roslyn and execute it, verifying the runtime match semantics.
     /// </summary>
@@ -75,38 +72,6 @@ namespace Ara3D.Geometry
         {
             var f = v?.GetType().GetField("Value");
             return f == null ? v : f.GetValue(v);
-        }
-
-        private static Assembly CompileAndLoad(params string[] sources)
-        {
-            var trees = sources.Select(s => CSharpSyntaxTree.ParseText(s)).ToArray();
-            var tpa = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))
-                .Split(Path.PathSeparator)
-                .Where(p => !string.IsNullOrEmpty(p) && System.IO.File.Exists(p))
-                // The stale Ara3D.Geometry PACKAGE also declares Ara3D.Geometry.Number/Boolean/...,
-                // and so does this test assembly (it compiles src/Plato.Intrinsics in as a shared
-                // project). Referencing both is CS0433 for every wrapper scalar the emitted code
-                // names. Drop the package: the current runtime is the one the generated projects
-                // actually compile against. (Invisible before 2026-08-01, when erasure meant the
-                // emitted code said float/bool and never named a wrapper.)
-                .Where(p => !string.Equals(System.IO.Path.GetFileName(p), "Ara3D.Geometry.dll", System.StringComparison.OrdinalIgnoreCase))
-                .Select(p => (MetadataReference)MetadataReference.CreateFromFile(p))
-                .ToList();
-            var comp = CSharpCompilation.Create(
-                "SumCodegen_" + Guid.NewGuid().ToString("N"),
-                trees, tpa,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-            using var ms = new MemoryStream();
-            var result = comp.Emit(ms);
-            if (!result.Success)
-            {
-                var errs = string.Join("\n", result.Diagnostics
-                    .Where(d => d.Severity == DiagnosticSeverity.Error)
-                    .Select(d => d.ToString()));
-                Assert.Fail("Emitted C# did not compile:\n" + errs);
-            }
-            ms.Position = 0;
-            return Assembly.Load(ms.ToArray());
         }
 
         // --- struct-shape assertions ---------------------------------------------
@@ -176,7 +141,7 @@ namespace Ara3D.Geometry
         public static void FillRule_CompilesAndRuns()
         {
             var w = Emit("fillrule.plato");
-            var asm = CompileAndLoad(Prelude,
+            var asm = CSharpTestCompilation.CompileAndLoad(Prelude,
                 w.Files["_FillRule.g.cs"].ToString(),
                 w.Files["FillRules.g.cs"].ToString());
 
@@ -204,7 +169,7 @@ namespace Ara3D.Geometry
         public static void PathSegment_CompilesAndRunsMatch()
         {
             var w = Emit("pathsegment.plato");
-            var asm = CompileAndLoad(Prelude,
+            var asm = CSharpTestCompilation.CompileAndLoad(Prelude,
                 w.Files["_PathSegment2D.g.cs"].ToString(),
                 w.Files["PathSegments.g.cs"].ToString());
 
@@ -255,7 +220,7 @@ namespace Ara3D.Geometry
             var w = Emit("sum-with-array.plato");
             // The generated projects compile with ImplicitUsings; the array field needs the one
             // for System.Collections.Generic.
-            var asm = CompileAndLoad(Prelude, "global using System; global using System.Collections.Generic;",
+            var asm = CSharpTestCompilation.CompileAndLoad(Prelude, "global using System; global using System.Collections.Generic;",
                 w.Files["_Shape.g.cs"].ToString());
             var shape = asm.GetType("Ara3D.Geometry.Shape", true);
             object Dot(int n) => shape.GetMethod("Dot").Invoke(null, new object[] { (Ara3D.Geometry.Integer)n });
@@ -288,7 +253,7 @@ namespace Ara3D.Geometry
             Assert.That(lib, Does.Contain("FillRule.EvenOdd()"));
             Assert.That(lib, Does.Contain("FillRule.NonZero()"));
 
-            var asm = CompileAndLoad(Prelude,
+            var asm = CSharpTestCompilation.CompileAndLoad(Prelude,
                 w.Files["_FillRule.g.cs"].ToString(), lib);
             var fillRule = asm.GetType("Ara3D.Geometry.FillRule", true);
             var fillRules = asm.GetType("Ara3D.Geometry.FillRules", true);

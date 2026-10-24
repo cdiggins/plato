@@ -2,10 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Ara3D.Geometry.CSharpWriter;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using NUnit.Framework;
 using PlatoCompilation = Ara3D.Geometry.Compiler.Compilation;
 
@@ -40,23 +37,8 @@ namespace PlatoTests
         [Test]
         public static void LambdaReceiverCompilesAndRuns()
         {
-            var tpa = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))
-                .Split(Path.PathSeparator)
-                .Where(p => !string.IsNullOrEmpty(p) && File.Exists(p))
-                // The stale Ara3D.Geometry package declares the wrapper scalars too (CS0433).
-                .Where(p => !string.Equals(Path.GetFileName(p), "Ara3D.Geometry.dll", StringComparison.OrdinalIgnoreCase))
-                .Select(p => (MetadataReference)MetadataReference.CreateFromFile(p));
-            var files = EmitFiles();
-            var source = string.Join(System.Environment.NewLine, files);
-            var comp = CSharpCompilation.Create("LambdaReceiver_" + Guid.NewGuid().ToString("N"),
-                files.Prepend("namespace Ara3D.Collections { }").Select(f => CSharpSyntaxTree.ParseText(f)), tpa,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-            using var ms = new MemoryStream();
-            var result = comp.Emit(ms);
-            Assert.That(result.Success, () => string.Join("\n", result.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error))
-                + "\n--- source ---\n" + source);
-
-            var secondTwice = Assembly.Load(ms.ToArray()).GetType("Ara3D.Geometry.LambdaReceivers", true).GetMethod("SecondTwice");
+            var assembly = CSharpTestCompilation.CompileAndLoad(EmitFiles().Prepend("namespace Ara3D.Collections { }").ToArray());
+            var secondTwice = assembly.GetType("Ara3D.Geometry.LambdaReceivers", true).GetMethod("SecondTwice");
             var got = (Ara3D.Geometry.Integer)secondTwice.Invoke(null, new object[] { (Ara3D.Geometry.Integer)1, (Ara3D.Geometry.Integer)7 });
             Assert.That((int)got, Is.EqualTo(7), "the lambda, applied twice through the delegate it was converted to, returns its captured k");
         }

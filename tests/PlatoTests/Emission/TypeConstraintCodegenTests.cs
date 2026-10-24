@@ -2,10 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Ara3D.Geometry.CSharpWriter;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using NUnit.Framework;
 using PlatoCompilation = Ara3D.Geometry.Compiler.Compilation;
 
@@ -249,40 +246,12 @@ namespace Ara3D.Geometry
             var f = v?.GetType().GetField("Value");
             return f == null ? v : f.GetValue(v);
         }
-        private static Assembly CompileAndLoad(params string[] sources)
-        {
-            var trees = sources.Select(s => CSharpSyntaxTree.ParseText(s)).ToArray();
-            var refs = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))
-                .Split(Path.PathSeparator)
-                .Where(p => !string.IsNullOrEmpty(p) && System.IO.File.Exists(p))
-                // The stale Ara3D.Geometry PACKAGE also declares Ara3D.Geometry.Number/Boolean/...,
-                // and so does this test assembly (it compiles src/Plato.Intrinsics in as a shared
-                // project). Referencing both is CS0433 for every wrapper scalar the emitted code
-                // names. Drop the package: the current runtime is the one the generated projects
-                // actually compile against. (Invisible before 2026-08-01, when erasure meant the
-                // emitted code said float/bool and never named a wrapper.)
-                .Where(p => !string.Equals(System.IO.Path.GetFileName(p), "Ara3D.Geometry.dll", System.StringComparison.OrdinalIgnoreCase))
-                .Select(p => (MetadataReference)MetadataReference.CreateFromFile(p))
-                .ToList();
-            var comp = CSharpCompilation.Create(
-                "BoundsCodegen_" + Guid.NewGuid().ToString("N"),
-                trees, refs,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-            using var ms = new MemoryStream();
-            var result = comp.Emit(ms);
-            if (!result.Success)
-                Assert.Fail("Emitted C# did not compile:\n" + string.Join("\n", result.Diagnostics
-                    .Where(d => d.Severity == DiagnosticSeverity.Error)
-                    .Select(d => d.ToString())));
-            ms.Position = 0;
-            return Assembly.Load(ms.ToArray());
-        }
 
         [Test]
         public static void TheEmittedBoundedTypeCompilesAndRuns()
         {
             var w = Emit();
-            var asm = CompileAndLoad(Prelude,
+            var asm = CSharpTestCompilation.CompileAndLoad(Prelude,
                 File_(w, "_Tween.g.cs"),
                 File_(w, "_Point2D.g.cs"),
                 File_(w, "_Timeline.g.cs"),

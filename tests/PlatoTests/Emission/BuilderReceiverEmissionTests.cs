@@ -5,8 +5,6 @@ using System.Linq;
 using System.Reflection;
 using Ara3D.Geometry;
 using Ara3D.Geometry.CSharpWriter;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using NUnit.Framework;
 using PlatoCompilation = Ara3D.Geometry.Compiler.Compilation;
 
@@ -32,23 +30,7 @@ namespace PlatoTests
         });
 
         private static readonly Lazy<Assembly> _assembly = new(() =>
-        {
-            var tpa = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))
-                .Split(Path.PathSeparator)
-                .Where(p => !string.IsNullOrEmpty(p) && File.Exists(p))
-                // The stale Ara3D.Geometry package declares the wrapper scalars too (CS0433).
-                .Where(p => !string.Equals(Path.GetFileName(p), "Ara3D.Geometry.dll", StringComparison.OrdinalIgnoreCase))
-                .Select(p => (MetadataReference)MetadataReference.CreateFromFile(p));
-            var source = BuilderMethodsOnly(_extensions.Value);
-            var comp = CSharpCompilation.Create("BuilderReceivers_" + Guid.NewGuid().ToString("N"),
-                new[] { CSharpSyntaxTree.ParseText(source) }, tpa,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-            using var ms = new MemoryStream();
-            var result = comp.Emit(ms);
-            Assert.That(result.Success, () => string.Join("\n", result.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error))
-                + "\n--- source ---\n" + source);
-            return Assembly.Load(ms.ToArray());
-        });
+            CSharpTestCompilation.CompileAndLoad(BuilderMethodsOnly(_extensions.Value)));
 
         /// <summary>The generated extension methods on PlatoList and PlatoBuffer, in one class of
         /// their own: the rest of the fixture's output redeclares the runtime's scalars.</summary>

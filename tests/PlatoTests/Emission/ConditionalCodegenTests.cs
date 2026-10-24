@@ -2,10 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Ara3D.Geometry.CSharpWriter;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using NUnit.Framework;
 using PlatoCompilation = Ara3D.Geometry.Compiler.Compilation;
 
@@ -39,21 +36,8 @@ namespace PlatoTests
         [Test]
         public static void ConditionAsConditionRunsWithItsPlatoMeaning()
         {
-            var tpa = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))
-                .Split(Path.PathSeparator)
-                .Where(p => !string.IsNullOrEmpty(p) && File.Exists(p))
-                // The stale Ara3D.Geometry package declares the wrapper scalars too (CS0433).
-                .Where(p => !string.Equals(Path.GetFileName(p), "Ara3D.Geometry.dll", StringComparison.OrdinalIgnoreCase))
-                .Select(p => (MetadataReference)MetadataReference.CreateFromFile(p));
-            var trees = new[] { "namespace Ara3D.Collections { }", EmitLibrary() }
-                .Select(s => CSharpSyntaxTree.ParseText(s));
-            var comp = CSharpCompilation.Create("ConditionalCodegen_" + Guid.NewGuid().ToString("N"),
-                trees, tpa, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-            using var ms = new MemoryStream();
-            var result = comp.Emit(ms);
-            Assert.That(result.Success, () => string.Join("\n", result.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error)));
-
-            var pick = Assembly.Load(ms.ToArray()).GetType("Ara3D.Geometry.Conditionals", true).GetMethod("Pick");
+            var assembly = CSharpTestCompilation.CompileAndLoad("namespace Ara3D.Collections { }", EmitLibrary());
+            var pick = assembly.GetType("Ara3D.Geometry.Conditionals", true).GetMethod("Pick");
             object B(bool v) => (Ara3D.Geometry.Boolean)v;
             foreach (var bits in Enumerable.Range(0, 16))
             {

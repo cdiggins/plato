@@ -33,21 +33,10 @@ public static class FlatMapFilterTests
     private static string Evidence
         => Path.Combine(Path.GetDirectoryName(CheckerTestSupport.FindForwardStdLib())!, ".temp", "compiler-482");
 
-    private static Assembly Compile(IEnumerable<string> sources, string name)
-    {
-        var references = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
-            .Split(Path.PathSeparator).Where(File.Exists)
-            .Where(p => !string.Equals(Path.GetFileName(p), "Ara3D.Geometry.dll", StringComparison.OrdinalIgnoreCase))
-            .Select(p => MetadataReference.CreateFromFile(p));
-        var trees = sources.Prepend("global using System; global using System.Collections.Generic;")
-            .Select(s => CSharpSyntaxTree.ParseText(s, new CSharpParseOptions(LanguageVersion.CSharp12)));
-        var compilation = CSharpCompilation.Create(name + Guid.NewGuid().ToString("N"), trees, references,
-            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
-        using var stream = new MemoryStream();
-        var result = compilation.Emit(stream);
-        Assert.That(result.Success, Is.True, string.Join("\n", result.Diagnostics));
-        return Assembly.Load(stream.ToArray());
-    }
+    private static Assembly Compile(IReadOnlyList<string> sources)
+        => CSharpTestCompilation.CompileAndLoad(
+            sources.Prepend("global using System; global using System.Collections.Generic;").ToArray(),
+            LanguageVersion.CSharp12, OptimizationLevel.Release);
 
     private static string KeepMethods(string source, Func<string, bool> keep)
     {
@@ -81,7 +70,7 @@ public static class FlatMapFilterTests
         var text = string.Join("\n", sources);
         Directory.CreateDirectory(Evidence);
         File.WriteAllText(Path.Combine(Evidence, $"generated-loops-{loops}-fuse-{fuse}.cs"), text);
-        program = new Program(writer, Compile(sources, "FlatMapFilter_"), text);
+        program = new Program(writer, Compile(sources), text);
         Programs[(loops, fuse)] = program;
         return program;
     }
@@ -238,7 +227,7 @@ public static class FlatMapFilterTests
             + "public static IReadOnlyList<Number> Run(IReadOnlyList<Number> xs, Func<Number, Boolean> keep, "
             + "Func<Number, Number> value, Func<Number, IReadOnlyList<Number>> fallback) " + body + " } }";
         File.WriteAllText(Path.Combine(Evidence, name + ".cs"), source);
-        return (Method(Compile(new[] { source }, name), "Run").CreateDelegate<Filter>(), body);
+        return (Method(Compile(new[] { source }), "Run").CreateDelegate<Filter>(), body);
     }
 
     private static TirLoweredLoop WithCallback(TirLoweredLoop loop, TirNode callback)
