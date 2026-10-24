@@ -21,5 +21,9 @@ A focused fix should register the target reference against its identifier node w
 
 ## Done means
 
-- [ ] Assignment targets navigate to their bound declaration, including nested loops and shadowed variables.
-- [ ] Focused navigation regressions and the corpus identifier sweep pass without adding exclusions.
+- [x] Assignment targets navigate to their bound declaration, including nested loops and shadowed variables.
+- [x] Focused navigation regressions and the corpus identifier sweep pass without adding exclusions.
+
+## Resolution
+
+Assignment targets now pass through the ordinary identifier resolver, preserving lexical binding while recording the identifier occurrence in `SymbolsToNodes`. A focused regression covers nested loops, a shadowing declaration, restored outer scope, exact spans, go-to-definition and find-references. That regression and the unchanged full-corpus identifier sweep passed together (two tests, 21.2 seconds wall time); all 50,857 identifiers were classified. No exclusion or binding fallback was added.

@@ -397,7 +397,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
                         // loop-nesting depths broke. Shadowing (a nested `var d`) still goes through
                         // the AstVarDef case, which binds a fresh VariableDef, so it is unaffected.
                         return new Assignment(
-                            GetValue(astAssign.Var, astAssign),
+                            ResolveExpr(astAssign.Var),
                             ResolveExpr(astAssign.Value));
 
                     case AstBlock astBlock:
