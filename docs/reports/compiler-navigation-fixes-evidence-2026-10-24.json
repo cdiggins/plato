@@ -1,0 +1,1126 @@
+{
+  "purpose": "Dated validation evidence for compiler/navigation fixes under repo-479.",
+  "date": "2026-10-24",
+  "baseline_commit": "a1c37ede",
+  "tested_source_commit": "3b4b059e",
+  "recorded_at_commit": "ab638603c03e80f86479d68cba7e22f5394a2b48",
+  "gates": [
+    {
+      "name": "Plato.CLI build (Release)",
+      "result": "PASS",
+      "seconds": "12s",
+      "detail": "0 errors"
+    },
+    {
+      "name": "lint --strict (3 stdlib tiers, shipping only)",
+      "result": "PASS",
+      "seconds": "42s",
+      "detail": "0 error / 29 warning / 1509 info; ratchet 29"
+    },
+    {
+      "name": "PlatoTests (incl. both ratchets)",
+      "result": "PASS",
+      "seconds": "233s",
+      "detail": "330 passed / 0 failed"
+    }
+  ],
+  "lint": {
+    "strict_exit": 0,
+    "parse_errors": 0,
+    "resolution_errors": 0,
+    "errors": 0,
+    "warnings": 29,
+    "infos": 1509,
+    "ratchet": 29,
+    "counts": {
+      "LINT003": 1163,
+      "LINT008": 1,
+      "LINT009": 10,
+      "LINT010": 39,
+      "LINT011": 36,
+      "LINT013": 29,
+      "LINT014": 253,
+      "LINT016": 7
+    }
+  },
+  "builds": {
+    "failure-fixes-navigation": {
+      "built_at": "2026-10-24T00:19:43-04:00",
+      "project": "C:\\Users\\cdigg\\git\\plato\\tests\\Plato.Navigation.Tests\\Plato.Navigation.Tests.csproj",
+      "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\failure-fixes-navigation.log",
+      "configuration": "Release",
+      "exit_code": 0,
+      "total_errors": 0,
+      "total_warnings": 3,
+      "summary_errors": 0,
+      "summary_warnings": 3,
+      "by_code": {},
+      "by_category": {},
+      "warning_by_code": {
+        "CS0108": 2,
+        "CS0162": 1
+      }
+    },
+    "failure-fixes-compiler": {
+      "built_at": "2026-10-24T00:20:00-04:00",
+      "project": "C:\\Users\\cdigg\\git\\plato\\tests\\PlatoTests\\PlatoTests.csproj",
+      "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\failure-fixes-compiler.log",
+      "configuration": "Release",
+      "exit_code": 0,
+      "total_errors": 0,
+      "total_warnings": 265,
+      "summary_errors": 0,
+      "summary_warnings": 272,
+      "by_code": {},
+      "by_category": {},
+      "warning_by_code": {
+        "NUNIT2005": 123,
+        "CS8602": 47,
+        "CS8604": 33,
+        "CS8625": 22,
+        "NUNIT2015": 13,
+        "CS8600": 8,
+        "CS8603": 8,
+        "CS8605": 4,
+        "CS8601": 2,
+        "CS8618": 2,
+        "CS8620": 2,
+        "CS8607": 1
+      }
+    },
+    "failure-fixes-Plato.Navigation.Tests-final": {
+      "built_at": "2026-10-24T00:23:56-04:00",
+      "project": "C:\\Users\\cdigg\\git\\plato\\tests\\Plato.Navigation.Tests\\Plato.Navigation.Tests.csproj",
+      "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\failure-fixes-Plato.Navigation.Tests-final.log",
+      "configuration": "Release",
+      "exit_code": 0,
+      "total_errors": 0,
+      "total_warnings": 3,
+      "summary_errors": 0,
+      "summary_warnings": 3,
+      "by_code": {},
+      "by_category": {},
+      "warning_by_code": {
+        "CS0108": 2,
+        "CS0162": 1
+      }
+    },
+    "failure-fixes-PlatoTests-final": {
+      "built_at": "2026-10-24T00:24:11-04:00",
+      "project": "C:\\Users\\cdigg\\git\\plato\\tests\\PlatoTests\\PlatoTests.csproj",
+      "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\failure-fixes-PlatoTests-final.log",
+      "configuration": "Release",
+      "exit_code": 0,
+      "total_errors": 0,
+      "total_warnings": 265,
+      "summary_errors": 0,
+      "summary_warnings": 272,
+      "by_code": {},
+      "by_category": {},
+      "warning_by_code": {
+        "NUNIT2005": 123,
+        "CS8602": 47,
+        "CS8604": 33,
+        "CS8625": 22,
+        "NUNIT2015": 13,
+        "CS8600": 8,
+        "CS8603": 8,
+        "CS8605": 4,
+        "CS8601": 2,
+        "CS8618": 2,
+        "CS8620": 2,
+        "CS8607": 1
+      }
+    },
+    "failure-fixes-interpreter": {
+      "built_at": "2026-10-24T00:34:34-04:00",
+      "project": "C:\\Users\\cdigg\\git\\plato\\tests\\Plato.Interpreter.Tests\\Plato.Interpreter.Tests.csproj",
+      "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\failure-fixes-interpreter.log",
+      "configuration": "Release",
+      "exit_code": 0,
+      "total_errors": 0,
+      "total_warnings": 3,
+      "summary_errors": 0,
+      "summary_warnings": 3,
+      "by_code": {},
+      "by_category": {},
+      "warning_by_code": {
+        "CS0108": 2,
+        "CS0162": 1
+      }
+    }
+  },
+  "test_runs": {
+    "baseline-regressions": {
+      "counters": {
+        "total": "4",
+        "executed": "4",
+        "passed": "1",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-24T00:28:03.9059271-04:00",
+        "queuing": "2026-10-24T00:28:03.9059274-04:00",
+        "start": "2026-10-24T00:27:45.3167840-04:00",
+        "finish": "2026-10-24T00:28:04.1226254-04:00"
+      },
+      "failures": [
+        {
+          "name": "ConstructorRemovalRequiresTheMatchingTupleVocabulary(13,False)",
+          "message": "  Expected: 0\r\n  But was:  1\r\n"
+        },
+        {
+          "name": "ConstructorRemovalRequiresTheMatchingTupleVocabulary(2,False)",
+          "message": "  Expected: 0\r\n  But was:  1\r\n"
+        },
+        {
+          "name": "AssignmentsInNestedLoopsKeepTheirDeclarationAndRespectShadowing",
+          "message": "  assignment at offset 183\r\n  Expected: not null\r\n  But was:  null\r\n"
+        }
+      ]
+    },
+    "compiler-focused": {
+      "counters": {
+        "total": "17",
+        "executed": "17",
+        "passed": "16",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-24T00:20:50.2993634-04:00",
+        "queuing": "2026-10-24T00:20:50.2993640-04:00",
+        "start": "2026-10-24T00:20:25.6087303-04:00",
+        "finish": "2026-10-24T00:21:14.5284423-04:00"
+      },
+      "failures": [
+        {
+          "name": "UseTirOnReproducesTheFullTypeScriptLibraryByteForByte",
+          "message": "  UseTir=true changed TypeScript output vs UseTir=false\r\n  Expected: <empty>\r\n  But was:  < \"plato.g.ts\" >\r\n"
+        }
+      ]
+    },
+    "interpreter-unit": {
+      "counters": {
+        "total": "35",
+        "executed": "35",
+        "passed": "35",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-24T00:34:50.7566257-04:00",
+        "queuing": "2026-10-24T00:34:50.7566263-04:00",
+        "start": "2026-10-24T00:34:42.2001183-04:00",
+        "finish": "2026-10-24T00:34:50.9973718-04:00"
+      },
+      "failures": []
+    },
+    "navigation-focused": {
+      "counters": {
+        "total": "2",
+        "executed": "2",
+        "passed": "2",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-24T00:20:16.4795660-04:00",
+        "queuing": "2026-10-24T00:20:16.4795664-04:00",
+        "start": "2026-10-24T00:20:06.2028455-04:00",
+        "finish": "2026-10-24T00:20:24.0114508-04:00"
+      },
+      "failures": []
+    },
+    "navigation-full": {
+      "counters": {
+        "total": "76",
+        "executed": "73",
+        "passed": "73",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-24T00:24:30.8990616-04:00",
+        "queuing": "2026-10-24T00:24:30.8990623-04:00",
+        "start": "2026-10-24T00:24:22.5751449-04:00",
+        "finish": "2026-10-24T00:26:54.3674277-04:00"
+      },
+      "failures": []
+    },
+    "navigation-phases-baseline": {
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "1",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-24T00:29:22.4549956-04:00",
+        "queuing": "2026-10-24T00:29:22.4549960-04:00",
+        "start": "2026-10-24T00:28:06.2716602-04:00",
+        "finish": "2026-10-24T00:29:22.4599754-04:00"
+      },
+      "failures": []
+    },
+    "navigation-phases-before": {
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "1",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-24T00:22:33.0693181-04:00",
+        "queuing": "2026-10-24T00:22:33.0693185-04:00",
+        "start": "2026-10-24T00:21:54.0809601-04:00",
+        "finish": "2026-10-24T00:22:33.0738309-04:00"
+      },
+      "failures": []
+    },
+    "simplifier-diagnostic": {
+      "counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "1",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-24T00:21:20.0193540-04:00",
+        "queuing": "2026-10-24T00:21:20.0193545-04:00",
+        "start": "2026-10-24T00:20:47.4054936-04:00",
+        "finish": "2026-10-24T00:21:20.0243247-04:00"
+      },
+      "failures": []
+    },
+    "typescript-final": {
+      "counters": {
+        "total": "3",
+        "executed": "3",
+        "passed": "3",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "times": {
+        "creation": "2026-10-24T00:27:03.6799971-04:00",
+        "queuing": "2026-10-24T00:27:03.6799978-04:00",
+        "start": "2026-10-24T00:26:56.9631300-04:00",
+        "finish": "2026-10-24T00:27:16.4571531-04:00"
+      },
+      "failures": []
+    }
+  },
+  "remaining_validation": {
+    "interpreter-build": {
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "tools/dotnet-build-record.ps1",
+        "-Project",
+        "tests/Plato.Interpreter.Tests/Plato.Interpreter.Tests.csproj",
+        "-TargetName",
+        "failure-fixes-interpreter"
+      ],
+      "exit": 0,
+      "seconds": 14.7971422000046
+    },
+    "interpreter-unit": {
+      "command": [
+        "dotnet",
+        "test",
+        "tests/Plato.Interpreter.Tests/Plato.Interpreter.Tests.csproj",
+        "-c",
+        "Release",
+        "--no-build",
+        "--no-restore",
+        "--filter",
+        "FullyQualifiedName~Plato.Interpreter.Tests.UnitTests",
+        "--logger",
+        "trx;LogFileName=interpreter-unit.trx",
+        "--results-directory",
+        "C:\\Users\\cdigg\\git\\plato\\.temp\\failure-fixes\\test-results"
+      ],
+      "exit": 0,
+      "seconds": 13.525881099994876
+    },
+    "check-all": {
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:/Users/cdigg/git/studio/tools/check-all.ps1",
+        "-PlatoRoot",
+        "C:\\Users\\cdigg\\git\\plato"
+      ],
+      "exit": 1,
+      "seconds": 96.80390619999525
+    },
+    "compiler-performance": {
+      "command": [
+        "python",
+        "C:\\Users\\cdigg\\git\\plato\\.temp\\failure-fixes\\compare_compilers.py"
+      ],
+      "exit": 0,
+      "seconds": 346.3115235000005
+    }
+  },
+  "original_regression_replay": {
+    "baseline-regressions": {
+      "exit": 1,
+      "seconds": 20.653196899998875
+    },
+    "navigation-phases-baseline": {
+      "exit": 0,
+      "seconds": 78.11863490000542
+    }
+  },
+  "navigation_phase_samples": {
+    "original": [
+      {
+        "mode": "fresh",
+        "round": 0,
+        "parse_ms": 3597.2,
+        "bind_ms": 309.2,
+        "index_ms": 364.6,
+        "total_ms": 4271.1,
+        "definitions": 22358,
+        "references": 81181
+      },
+      {
+        "mode": "cached",
+        "round": 0,
+        "parse_ms": 3744.6,
+        "bind_ms": 257.7,
+        "index_ms": 359.8,
+        "total_ms": 4362.3,
+        "definitions": 22358,
+        "references": 81181
+      },
+      {
+        "mode": "fresh",
+        "round": 1,
+        "parse_ms": 4784.4,
+        "bind_ms": 241.1,
+        "index_ms": 1884.8,
+        "total_ms": 6910.4,
+        "definitions": 22358,
+        "references": 81181
+      },
+      {
+        "mode": "cached",
+        "round": 1,
+        "parse_ms": 0.1,
+        "bind_ms": 293.6,
+        "index_ms": 368.5,
+        "total_ms": 662.2,
+        "definitions": 22358,
+        "references": 81181
+      },
+      {
+        "mode": "fresh",
+        "round": 2,
+        "parse_ms": 3296.9,
+        "bind_ms": 265.8,
+        "index_ms": 371.4,
+        "total_ms": 3934.1,
+        "definitions": 22358,
+        "references": 81181
+      },
+      {
+        "mode": "cached",
+        "round": 2,
+        "parse_ms": 0.1,
+        "bind_ms": 238.0,
+        "index_ms": 344.2,
+        "total_ms": 582.3,
+        "definitions": 22358,
+        "references": 81181
+      },
+      {
+        "mode": "fresh",
+        "round": 3,
+        "parse_ms": 3493.5,
+        "bind_ms": 504.0,
+        "index_ms": 790.1,
+        "total_ms": 4787.7,
+        "definitions": 22358,
+        "references": 81181
+      },
+      {
+        "mode": "cached",
+        "round": 3,
+        "parse_ms": 0.1,
+        "bind_ms": 244.2,
+        "index_ms": 357.7,
+        "total_ms": 602.0,
+        "definitions": 22358,
+        "references": 81181
+      }
+    ],
+    "corrected": [
+      {
+        "mode": "fresh",
+        "round": 0,
+        "parse_ms": 4937.5,
+        "bind_ms": 257.3,
+        "index_ms": 537.6,
+        "total_ms": 5732.5,
+        "definitions": 22358,
+        "references": 81342
+      },
+      {
+        "mode": "cached",
+        "round": 0,
+        "parse_ms": 5117.8,
+        "bind_ms": 221.5,
+        "index_ms": 424.9,
+        "total_ms": 5764.3,
+        "definitions": 22358,
+        "references": 81342
+      },
+      {
+        "mode": "fresh",
+        "round": 1,
+        "parse_ms": 4381.1,
+        "bind_ms": 306.5,
+        "index_ms": 407.7,
+        "total_ms": 5095.4,
+        "definitions": 22358,
+        "references": 81342
+      },
+      {
+        "mode": "cached",
+        "round": 1,
+        "parse_ms": 0.2,
+        "bind_ms": 1005.0,
+        "index_ms": 294.5,
+        "total_ms": 1299.8,
+        "definitions": 22358,
+        "references": 81342
+      },
+      {
+        "mode": "fresh",
+        "round": 2,
+        "parse_ms": 4308.3,
+        "bind_ms": 211.3,
+        "index_ms": 309.2,
+        "total_ms": 4828.9,
+        "definitions": 22358,
+        "references": 81342
+      },
+      {
+        "mode": "cached",
+        "round": 2,
+        "parse_ms": 0.1,
+        "bind_ms": 381.7,
+        "index_ms": 387.3,
+        "total_ms": 769.2,
+        "definitions": 22358,
+        "references": 81342
+      },
+      {
+        "mode": "fresh",
+        "round": 3,
+        "parse_ms": 6323.2,
+        "bind_ms": 336.2,
+        "index_ms": 730.5,
+        "total_ms": 7390.0,
+        "definitions": 22358,
+        "references": 81342
+      },
+      {
+        "mode": "cached",
+        "round": 3,
+        "parse_ms": 0.1,
+        "bind_ms": 510.8,
+        "index_ms": 315.5,
+        "total_ms": 826.5,
+        "definitions": 22358,
+        "references": 81342
+      }
+    ]
+  },
+  "compiler_performance": {
+    "baseline": "a1c37ede",
+    "current": "ab638603c03e80f86479d68cba7e22f5394a2b48",
+    "input": "stdlib/foundation",
+    "recipes": {
+      "default": [
+        "--csharp-style=extensions"
+      ],
+      "optimized": [
+        "--csharp-style=extensions",
+        "--inline",
+        "--optimize",
+        "--optimize-arrays",
+        "--loops",
+        "--fuse"
+      ]
+    },
+    "external_runtime_sha256": {
+      "Ara3D.Collections.dll": "3a0cb78cae072dd1742a63f75a2a063b4aa83bc27173a10bd002921f262c030b",
+      "Ara3D.DataTable.dll": "30c880dbf8aad2d473231ace391891a655a35c645f83361436e4fc635c4bea34",
+      "Ara3D.Events.dll": "e2217fc47c33d5363d2d252728ab5000d4380d7177a2d00d173b34663bb51834",
+      "Ara3D.F8.dll": "fb8c8f95948f86bedcd855f439689993802db0bee6ee2272feb911efd55ab2f1",
+      "Ara3D.Geometry.dll": "5182d23be1ed45b9a4f4da7ee583a87d95e6f593450592dd29f70726bc0d10ad",
+      "Ara3D.Logging.dll": "2dd16138be32fa556fb657ebd0e7139af668f3ff7289f3aa63db2d5331a706c1",
+      "Ara3D.Memory.dll": "d18bcb2a9e262656c9eca48b57c06265f58756362a6d9a31be217be3db6b7bde",
+      "Ara3D.Parakeet.Cst.dll": "31eafe04cffe86a93f056cb63378b498a97b6c4c343fcacdb5f81eb3eea7668e",
+      "Ara3D.Parakeet.dll": "d767e92956c5f5abf7e177aa72b0117fce2ddf1458eca1fa17a1e340f650c538",
+      "Ara3D.Parakeet.Grammars.dll": "76503cedc8907a68cf901d9f8e77b6209412ac7c343b81b453938aeccda6df61",
+      "Ara3D.Parakeet.Parsers.dll": "59df468dfed9953188e750b03f7b5d447b89b526d6e45692458cf529632fed43",
+      "Ara3D.PropKit.dll": "d2d71bffd472ece93d65cf86202f8c5d9e3e9d669de5ba671c32ab73f744c2cb",
+      "Ara3D.Utils.dll": "3ac869d100e014e3df7ffe6c10e387d6fb361c8e61a14858e648d42aed5f6779",
+      "Ara3D.Utils.Roslyn.dll": "61855bc9f2ca78f49119d51e5cf9e8043a7bfd7b63f69346321bb1f76eff1da1",
+      "Ara3D.WorkItems.dll": "1c80a0e4e561ab29b93d8f40207fea9b7d375bc4566787c2b07f8cce60483f09",
+      "Microsoft.CodeAnalysis.CSharp.dll": "2a3b34ce70db9896a3e34b8a5620c3c437b2b246e90645ded5ca09f4fb597d60",
+      "Microsoft.CodeAnalysis.dll": "57994f7fa7abcc571a31c4e98b02c3eb573dae8f581f0c264cdec97f38cf1560"
+    },
+    "runs": [
+      {
+        "recipe": "default",
+        "round": 0,
+        "warmup": true,
+        "version": "before",
+        "wall_seconds": 4.844084700001986,
+        "cpu_seconds": 4.75,
+        "files": 283
+      },
+      {
+        "recipe": "default",
+        "round": 0,
+        "warmup": true,
+        "version": "after",
+        "wall_seconds": 5.544419999998354,
+        "cpu_seconds": 5.203125,
+        "files": 283
+      },
+      {
+        "recipe": "default",
+        "round": 1,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 4.504429400003573,
+        "cpu_seconds": 4.703125,
+        "files": 283
+      },
+      {
+        "recipe": "default",
+        "round": 1,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 6.260308400000213,
+        "cpu_seconds": 4.8125,
+        "files": 283
+      },
+      {
+        "recipe": "default",
+        "round": 2,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 4.486744399997406,
+        "cpu_seconds": 4.9375,
+        "files": 283
+      },
+      {
+        "recipe": "default",
+        "round": 2,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 4.776481799999601,
+        "cpu_seconds": 5.03125,
+        "files": 283
+      },
+      {
+        "recipe": "default",
+        "round": 3,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 4.949557300002198,
+        "cpu_seconds": 5.0,
+        "files": 283
+      },
+      {
+        "recipe": "default",
+        "round": 3,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 4.850793600002362,
+        "cpu_seconds": 5.109375,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 0,
+        "warmup": true,
+        "version": "before",
+        "wall_seconds": 5.920482000001357,
+        "cpu_seconds": 4.734375,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 0,
+        "warmup": true,
+        "version": "after",
+        "wall_seconds": 4.984594699999434,
+        "cpu_seconds": 4.953125,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 1,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 5.555052000003343,
+        "cpu_seconds": 5.546875,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 1,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 5.31963689999975,
+        "cpu_seconds": 5.15625,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 2,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 5.025698299999931,
+        "cpu_seconds": 5.234375,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 2,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 7.728776399999333,
+        "cpu_seconds": 6.484375,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 3,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 6.0779973000026075,
+        "cpu_seconds": 5.546875,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 3,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 5.177383700000064,
+        "cpu_seconds": 5.28125,
+        "files": 283
+      }
+    ],
+    "summary": {
+      "default": {
+        "output_equivalent": true,
+        "wall_seconds": {
+          "samples": {
+            "before": [
+              6.260308400000213,
+              4.486744399997406,
+              4.850793600002362
+            ],
+            "after": [
+              4.504429400003573,
+              4.776481799999601,
+              4.949557300002198
+            ]
+          },
+          "before_median": 4.850793600002362,
+          "after_median": 4.776481799999601,
+          "percent_change": -1.531951390443087
+        },
+        "cpu_seconds": {
+          "samples": {
+            "before": [
+              4.8125,
+              4.9375,
+              5.109375
+            ],
+            "after": [
+              4.703125,
+              5.03125,
+              5.0
+            ]
+          },
+          "before_median": 4.9375,
+          "after_median": 5.0,
+          "percent_change": 1.2658227848101333
+        }
+      },
+      "optimized": {
+        "output_equivalent": true,
+        "wall_seconds": {
+          "samples": {
+            "before": [
+              5.31963689999975,
+              5.025698299999931,
+              5.177383700000064
+            ],
+            "after": [
+              5.555052000003343,
+              7.728776399999333,
+              6.0779973000026075
+            ]
+          },
+          "before_median": 5.177383700000064,
+          "after_median": 6.0779973000026075,
+          "percent_change": 17.395148827824602
+        },
+        "cpu_seconds": {
+          "samples": {
+            "before": [
+              5.15625,
+              5.234375,
+              5.28125
+            ],
+            "after": [
+              5.546875,
+              6.484375,
+              5.546875
+            ]
+          },
+          "before_median": 5.234375,
+          "after_median": 5.546875,
+          "percent_change": 5.970149253731338
+        }
+      }
+    }
+  },
+  "optimized_repeat": {
+    "method": "Five measured alternating pairs after one warmup; reuse per-version output paths; compare final paired output after all timing runs.",
+    "baseline": "a1c37ede",
+    "current": "ab638603c03e80f86479d68cba7e22f5394a2b48",
+    "input": "stdlib/foundation",
+    "recipes": {
+      "optimized": [
+        "--csharp-style=extensions",
+        "--inline",
+        "--optimize",
+        "--optimize-arrays",
+        "--loops",
+        "--fuse"
+      ]
+    },
+    "external_runtime_sha256": {
+      "Ara3D.Collections.dll": "3a0cb78cae072dd1742a63f75a2a063b4aa83bc27173a10bd002921f262c030b",
+      "Ara3D.DataTable.dll": "30c880dbf8aad2d473231ace391891a655a35c645f83361436e4fc635c4bea34",
+      "Ara3D.Events.dll": "e2217fc47c33d5363d2d252728ab5000d4380d7177a2d00d173b34663bb51834",
+      "Ara3D.F8.dll": "fb8c8f95948f86bedcd855f439689993802db0bee6ee2272feb911efd55ab2f1",
+      "Ara3D.Geometry.dll": "5182d23be1ed45b9a4f4da7ee583a87d95e6f593450592dd29f70726bc0d10ad",
+      "Ara3D.Logging.dll": "2dd16138be32fa556fb657ebd0e7139af668f3ff7289f3aa63db2d5331a706c1",
+      "Ara3D.Memory.dll": "d18bcb2a9e262656c9eca48b57c06265f58756362a6d9a31be217be3db6b7bde",
+      "Ara3D.Parakeet.Cst.dll": "31eafe04cffe86a93f056cb63378b498a97b6c4c343fcacdb5f81eb3eea7668e",
+      "Ara3D.Parakeet.dll": "d767e92956c5f5abf7e177aa72b0117fce2ddf1458eca1fa17a1e340f650c538",
+      "Ara3D.Parakeet.Grammars.dll": "76503cedc8907a68cf901d9f8e77b6209412ac7c343b81b453938aeccda6df61",
+      "Ara3D.Parakeet.Parsers.dll": "59df468dfed9953188e750b03f7b5d447b89b526d6e45692458cf529632fed43",
+      "Ara3D.PropKit.dll": "d2d71bffd472ece93d65cf86202f8c5d9e3e9d669de5ba671c32ab73f744c2cb",
+      "Ara3D.Utils.dll": "3ac869d100e014e3df7ffe6c10e387d6fb361c8e61a14858e648d42aed5f6779",
+      "Ara3D.Utils.Roslyn.dll": "61855bc9f2ca78f49119d51e5cf9e8043a7bfd7b63f69346321bb1f76eff1da1",
+      "Ara3D.WorkItems.dll": "1c80a0e4e561ab29b93d8f40207fea9b7d375bc4566787c2b07f8cce60483f09",
+      "Microsoft.CodeAnalysis.CSharp.dll": "2a3b34ce70db9896a3e34b8a5620c3c437b2b246e90645ded5ca09f4fb597d60",
+      "Microsoft.CodeAnalysis.dll": "57994f7fa7abcc571a31c4e98b02c3eb573dae8f581f0c264cdec97f38cf1560"
+    },
+    "runs": [
+      {
+        "recipe": "optimized",
+        "round": 0,
+        "warmup": true,
+        "version": "before",
+        "wall_seconds": 6.1686799000017345,
+        "cpu_seconds": 5.84375,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 0,
+        "warmup": true,
+        "version": "after",
+        "wall_seconds": 5.474646000002394,
+        "cpu_seconds": 5.390625,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 1,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 5.028910799999721,
+        "cpu_seconds": 5.0,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 1,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 4.580954100005329,
+        "cpu_seconds": 4.921875,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 2,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 5.98854879999999,
+        "cpu_seconds": 5.25,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 2,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 4.798340699999244,
+        "cpu_seconds": 4.875,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 3,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 5.629578000000038,
+        "cpu_seconds": 5.21875,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 3,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 6.003584999998566,
+        "cpu_seconds": 5.40625,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 4,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 5.794652500000666,
+        "cpu_seconds": 5.359375,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 4,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 4.811138099998061,
+        "cpu_seconds": 4.875,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 5,
+        "warmup": false,
+        "version": "after",
+        "wall_seconds": 5.07232820000354,
+        "cpu_seconds": 4.921875,
+        "files": 283
+      },
+      {
+        "recipe": "optimized",
+        "round": 5,
+        "warmup": false,
+        "version": "before",
+        "wall_seconds": 4.6957970000003115,
+        "cpu_seconds": 4.75,
+        "files": 283
+      }
+    ],
+    "summary": {
+      "optimized": {
+        "output_equivalent": true,
+        "wall_seconds": {
+          "samples": {
+            "before": [
+              4.580954100005329,
+              5.98854879999999,
+              6.003584999998566,
+              5.794652500000666,
+              4.6957970000003115
+            ],
+            "after": [
+              5.028910799999721,
+              4.798340699999244,
+              5.629578000000038,
+              4.811138099998061,
+              5.07232820000354
+            ]
+          },
+          "before_median": 5.794652500000666,
+          "after_median": 5.028910799999721,
+          "percent_change": -13.21462676149875
+        },
+        "cpu_seconds": {
+          "samples": {
+            "before": [
+              4.921875,
+              5.25,
+              5.40625,
+              5.359375,
+              4.75
+            ],
+            "after": [
+              5.0,
+              4.875,
+              5.21875,
+              4.875,
+              4.921875
+            ]
+          },
+          "before_median": 5.25,
+          "after_median": 4.921875,
+          "percent_change": -6.25
+        }
+      }
+    }
+  },
+  "log_sha256": {
+    ".temp/failure-fixes/baseline-regressions.log": "863f3d7d561052b9ff1ce1fc1fbd592d00396c042258ce55df8c4bf38e334c1b",
+    ".temp/failure-fixes/check-all.log": "b1883cdb7b4b4af855a58ac3bb51bbf80ad7d91bfac2cd64eec1e80e6721ebb4",
+    ".temp/failure-fixes/compiler-focused.log": "86b2ce75a13e5e5b20aa364e8d133dd8b16284c28a24af6a2034e0e97e07e7da",
+    ".temp/failure-fixes/compiler-performance-repeat.log": "f052e3bf2b1098ac01c988eb094bd0d2256b03a474021cfa8d7e5a275d02de69",
+    ".temp/failure-fixes/compiler-performance.log": "e0f3f218120eb634c0bb8c2cc9b3ea203126ddeeba6687025f88877329978ddd",
+    ".temp/failure-fixes/frozen-sdk-detail.log": "21e69f467ce92bdf1732c5dd62c37961a83a08259780a3f4221eb2f097b8b725",
+    ".temp/failure-fixes/interpreter-build.log": "850822217aefc376a490f8794c479d22bf89d7ca7b544918ae3414b0cb85640e",
+    ".temp/failure-fixes/interpreter-unit.log": "a17c55125d26179f1b39fa1ec9de713cee8f0f309cea7787cf1447e09b693456",
+    ".temp/failure-fixes/navigation-focused.log": "232b19ae802b6d6d6550c435c9c1c3957f9dbff728cb90e351a6ca9e1ac04f34",
+    ".temp/failure-fixes/navigation-full.log": "967330c82aa684e908fa3e90263ebee7617f0d54f21762874f07c209ecf111b4",
+    ".temp/failure-fixes/navigation-phases-baseline.log": "f78d1ee52ad02fd88cd031e6ce2445de483cc3b85566e45ddcd89aca39658237",
+    ".temp/failure-fixes/navigation-phases-before.log": "b91aee8ccf1202372f49b935eb87245a8b001ace54af8feed3611a07ddfcfbab",
+    ".temp/failure-fixes/record-gates.log": "7e266bb47a18884915ce4082c98a4eb996d0752b32d21cc68937079f382eb221",
+    ".temp/failure-fixes/simplifier-diagnostic.log": "4b9541fcb0d8b2a0a046b7e1213f9e1f8273b02c0738b7ca1cf5544578d5babb",
+    ".temp/failure-fixes/typescript-final.log": "ead4287ee2462ba55e750c89cfdc0e4f94492aada3d9e2731215a01cbdab1023",
+    ".temp/gate-logs/20261024-002924-374993/cli-build.log": "2a983879924f3592f3cf77b1981719b590240b93f592639674c67364cfb061b1",
+    ".temp/gate-logs/20261024-002924-374993/compiler-tests.log": "ef2b7681d199f5a5b8cd0250836c6da94b9158c5b4b43b05e0eb40f7a0a45dae",
+    ".temp/gate-logs/20261024-002924-374993/stdlib-lint.log": "0e895021e8fb052a29320104fd403605d731e58ac58b79c19fed07cbc6541d29"
+  },
+  "independent_review": "Two Sol reviewers found no actionable defects in the production changes, tests, or benchmark methodology.",
+  "limits": [
+    "Navigation phase probes were sequential rather than alternating; host-load effects prevent a relative speed claim.",
+    "Compiler comparison covers identical foundation inputs in default and optimized C# recipes, not all workloads.",
+    "Generated C# comparison normalizes BOM/line endings and removes creation-date comments only.",
+    "Whole forward C# conformance regeneration was not run; no stdlib declarations or bodies changed.",
+    "The external frozen SDK gate is evaluated separately; no external artifacts or manifests are changed."
+  ]
+}
