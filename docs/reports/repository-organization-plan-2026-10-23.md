@@ -30,4 +30,6 @@ Initial unrelated changes: `docs/status-report-snapshot.json`, `docs/status-repo
 
 ## Checkpoints
 
-Plan recorded; implementation pending. Root `PROGRESS.md` belongs to another mission and is preserved.
+Implementation commits: writers `aa59ac51`, compiler `402dec10`, runtime/navigation `2210ac29`, tests `c47c0e00`. Independent review found the policy scanner needed recursive enumeration after the test moves; corrected separately in `c2c0d4d9` with a regression check. Initial recorded CLI and compiler-test builds pass. Root `PROGRESS.md` belongs to another mission and is preserved.
+
+The user's validation checkpoint adds repeated compile-time comparison against the original revision `876fe36b`, with the same inputs and flags and generated-output comparison. Build the original source as an isolated validation fixture under `.temp/organization/baseline` (no branch, Git worktree or shared-checkout switching). Alternate measured runs after executable gates finish; report timing spread and environmental limits rather than treating one run as a benchmark.
