@@ -26,7 +26,7 @@ namespace Ara3D.Geometry.CLI
     // both, the answers compared with Plato's structural equality. A disagreement makes the law
     // "differs" (case, both answers) and a differing witness is dropped; every disagreement is
     // printed as a "differs" line and written as a # comment at the head of --report's file. The
-    // exit code is 1 when there is a disagreement and 0 otherwise, whatever the laws' verdicts.
+    // exit code is 1 when there is a disagreement or a failing, erroring, or vacuous law.
     // The interpreter's --budget applies, and a law stopped by it is a budget error, not a
     // mismatch: the budget keeps the slow interpreter arm to the laws that are quick (TKT-438).
     // --laws evaluates every Law_* over the Witness_* values and generated
@@ -235,11 +235,7 @@ namespace Ara3D.Geometry.CLI
             }
             if (baseline != null)
                 return Compare(baseline, verdicts, options.Filters == null);
-            // A differential run answers one question, whether the engines agree: a law that fails
-            // in both is the ordinary sweep's finding, not this run's.
-            if (backend is DifferentialBackend)
-                return mismatches.Count > 0 ? 1 : 0;
-            return counts.GetValueOrDefault(LawStatus.Fail) + counts.GetValueOrDefault(LawStatus.Error) + counts.GetValueOrDefault(LawStatus.Vacuous) > 0 ? 1 : 0;
+            return LawRunStatus.HasFailures(results, mismatches.Count) ? 1 : 0;
         }
 
         /// <summary>A mismatch line with its line breaks turned into spaces, so it stays one comment.</summary>

@@ -412,7 +412,10 @@ crept in. For a library of your own, `plato run --laws --differential` (the warm
 built in both engines and compared with Plato's structural equality, and every law and its
 `Measure_` and `Premise_` companions run on the same witnesses in both. A law whose answers
 differ is reported `differs` with the case and both answers, a witness built differently is
-listed and dropped, and the exit code is 1 on any disagreement. Calls run one at a time, and
+listed and dropped. Without an explicit baseline, the exit code is 1 on any disagreement or
+failing, erroring, or vacuous law, including when both engines agree on that verdict. Skipped
+laws and host obligations retain the ordinary run's non-failing treatment. The explicit
+`--baseline` mode still reports regressions alone. Calls run one at a time, and
 the interpreter's `--budget` keeps the slow interpreter arm to the laws that are quick: a law it
 stops is a budget error, never a mismatch (TKT-438). Only the calls the runner makes are
 compared, not the calls inside them, so a wrong helper shows up through the laws that use it.
