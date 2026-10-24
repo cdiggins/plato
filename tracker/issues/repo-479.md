@@ -2,14 +2,14 @@
 id: repo-479
 title: Resolve compiler and navigation baseline failures with performance validation
 type: bug
-status: in-progress
+status: done
 priority: p2
 effort: L
 risk: med
 area: repo
 sprint: 
 created: 2026-10-24
-closed:
+closed: 2026-10-24
 links: []
 ---
 
@@ -24,7 +24,7 @@ Resolve the seven compiler/navigation failures reproduced during repo-468. Use p
 
 ## Plan
 
-See [the failure-fix plan](../../docs/reports/compiler-navigation-fixes-plan-2026-10-24.md). Individual work is tracked in compiler-472, compiler-475, compiler-477, compiler-478, plato-438 and stdlib-476.
+See [the executed failure-fix plan](../../docs/archive/compiler-navigation-fixes-plan-2026-10-24.md). Individual work is tracked in compiler-472, compiler-475, compiler-477, compiler-478, plato-438 and stdlib-476.
 
 ## Verified outcome
 

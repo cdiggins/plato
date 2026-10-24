@@ -1,6 +1,8 @@
 # Compiler and navigation failure fixes — 2026-10-24
 
-Issue: [repo-479](../../tracker/issues/repo-479.md), in progress. Contract: failures-v1. Baseline: `a1c37ede`, current branch `main`, shared checkout `C:\Users\cdigg\git\plato`.
+**EXECUTED — 2026-10-24.** [Results and limitations](../reports/compiler-navigation-fixes-results-2026-10-24.md) record the completed compiler/navigation work; the external Studio frozen-artifact gate remains under repo-473.
+
+Issue: [repo-479](../../tracker/issues/repo-479.md), closed. Contract: failures-v1. Baseline: `a1c37ede`, current branch `main`, shared checkout `C:\Users\cdigg\git\plato`.
 
 ## Ownership and acceptance
 
