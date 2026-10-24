@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-24 — [compiler-491](issues/compiler-491.md) — Differential law runs report success when both engines fail — done (da752053ade7317afc73a7e5ad801e48e6d1fcc6); 13 policy/transport tests, 13 law CLI cases, 27 generation CLI cases passed
 - 2026-10-24 — [repo-489](issues/repo-489.md) — Consolidate codegen verification and isolate CLI responsibilities — done (5de6ad8f); external SDK frozen-artifact drift remains tracked in repo-473
 - 2026-10-24 — [compiler-490](issues/compiler-490.md) — Reject ignored generation flags before compiling — done (0067ad05)
 - 2026-10-24 — [compiler-482](issues/compiler-482.md) — Eliminate singleton arrays in lowered FlatMap branches — done (491e8be435a4a73ae94ca0366e42b3d6a2007474); local compiler acceptance passed; external frozen gate remains repo-473

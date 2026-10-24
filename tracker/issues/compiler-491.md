@@ -2,14 +2,14 @@
 id: compiler-491
 title: Differential law runs report success when both engines fail
 type: bug
-status: in-progress
+status: done
 priority: p1
 effort: S
 risk: low
 area: compiler
 sprint:
 created: 2026-10-24
-closed:
+closed: 2026-10-24
 links: [plato-brep:TKT-1015]
 ---
 
