@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-24 — [plato-438](issues/plato-438.md) — PlatoTests: TypeScript UseTir byte-identity test fails on number/Number casing — done (15a81f3f): runtime constructor spelling and nested conditional result types agree; full legacy/TIR TypeScript comparison passes
 - 2026-10-24 — [compiler-477](issues/compiler-477.md) — Simplifier corpus rewrite introduces unresolved references — done (3e4582a0): constructor simplification requires available TupleN vocabulary; focused and full navigation regressions pass
 - 2026-10-24 — [compiler-475](issues/compiler-475.md) — Review drift in implicit and emitted conversion inventories — done (fba53605): reviewed vocabulary-preserving conversion inventory updates; both inventory tests pass, no compiler behavior changed
 - 2026-10-24 — [compiler-472](issues/compiler-472.md) — Navigation omits assignment-target references — done (c613197e): assignment targets retain lexical binding and appear in definition/reference navigation; focused and corpus sweep passed
