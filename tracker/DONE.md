@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-23 — [repo-468](issues/repo-468.md) — Organize source by responsibility and document repository navigation — done (5abcc61f): organization, documentation, reversible commits and original-versus-current validation recorded; existing failing gates remain separately tracked
 - 2026-10-23 — [repo-474](issues/repo-474.md) — Preserve gate command output for failure diagnosis — done (29cbf2a85b60c65e16ee5fa8150b4e52ec9602cf); failure output and dry-run logging verified
 - 2026-10-23 — [repo-470](issues/repo-470.md) — Remove tracked Python bytecode cache — done (743d44c1b737157b50190cce2d93a0d4129c576f); source parse verified
 - 2026-10-18 — [plato-459](issues/plato-459.md) — C# writer stubs bodiless functions three different ways — done (8848409c)

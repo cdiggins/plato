@@ -1,5 +1,7 @@
 # Repository organization plan
 
+**EXECUTED — 2026-10-23.** Implementation and validation recorded in `5abcc61f`; remaining baseline failures have separate issues. This plan is historical.
+
 Issue: [repo-468](../../tracker/issues/repo-468.md), source organization and navigation documentation.
 Contract: organization-v1. Checkout: `C:\Users\cdigg\git\plato`, current branch `main`.
 
@@ -34,4 +36,4 @@ Implementation commits: writers `aa59ac51`, compiler `402dec10`, runtime/navigat
 
 The user's validation checkpoint adds repeated compile-time comparison against the original revision `876fe36b`, with the same inputs and flags and generated-output comparison. Build the original source as an isolated validation fixture under `.temp/organization/baseline` (no branch, Git worktree or shared-checkout switching). Alternate measured runs and report timing spread and environmental limits rather than treating one run as a benchmark. In execution, the comparison overlapped read-only corpus tests on stable inputs; the results report discloses shared-machine load and does not claim a measured algorithmic speedup.
 
-Final implementation and validation are recorded in [the dated results](repository-organization-results-2026-10-23.md), including original-assembly failure attribution, generation equivalence and reversible commit markers.
+Final implementation and validation are recorded in [the dated results](../reports/repository-organization-results-2026-10-23.md), including original-assembly failure attribution, generation equivalence and reversible commit markers.

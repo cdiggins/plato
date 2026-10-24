@@ -2,14 +2,14 @@
 id: repo-468
 title: Organize source by responsibility and document repository navigation
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: L
 risk: med
 area: repo
 sprint: 
 created: 2026-10-23
-closed:
+closed: 2026-10-23
 links: []
 ---
 
@@ -26,7 +26,7 @@ Make the repository easier to navigate and divide among agents, following the Pl
 
 ## Plan
 
-See [the organization plan](../../docs/reports/repository-organization-plan-2026-10-23.md).
+See [the organization plan](../../docs/archive/repository-organization-plan-2026-10-23.md).
 
 ## Validation outcome
 
