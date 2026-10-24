@@ -20,6 +20,7 @@ Usage (from the repo root):
 
 Every gate runs even if an earlier one fails: a red gate is a result to record, not a reason
 to stop. Exit code is 0 when every gate that ran passed, 1 otherwise.
+Recorded runs retain command output under .temp/gate-logs/; --dry-run writes no logs.
 """
 from __future__ import annotations
 
@@ -64,13 +65,21 @@ LAW_PACKET = POLICY["lawPacket"]
 RECIPE = POLICY["codegenRecipe"]
 
 
-def run(args: list[str]) -> tuple[str, int, float]:
-    """Run a command from the repo root; return (combined output, exit code, seconds)."""
+def run(args: list[str], log_path: pathlib.Path | None = None) -> tuple[str, int, float]:
+    """Run a command, optionally preserve its output, and return output, exit code and seconds."""
     t0 = time.monotonic()
     r = subprocess.run(
         args, cwd=PLATO, capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
-    return ((r.stdout or "") + (r.stderr or ""), r.returncode, time.monotonic() - t0)
+    elapsed = time.monotonic() - t0
+    output = (r.stdout or "") + (r.stderr or "")
+    if log_path is not None:
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        log_path.write_text(
+            f"Command: {subprocess.list2cmdline(args)}\nExit: {r.returncode}\n\n{output}",
+            encoding="utf-8",
+        )
+    return output, r.returncode, elapsed
 
 
 def parse_test_counts(out: str) -> dict | None:
@@ -105,19 +114,23 @@ def gate(name: str, result: str, seconds: float, detail: str) -> dict:
     return {"name": name, "result": result, "seconds": f"{seconds:.0f}s", "detail": detail}
 
 
-def measure(full: bool, include_future: bool = False) -> tuple[list[dict], dict, dict]:
+def measure(full: bool, include_future: bool = False,
+            log_dir: pathlib.Path | None = None) -> tuple[list[dict], dict, dict]:
     """Run the gates. Returns (gate rows, lint block, extras for the log row)."""
+    def invoke(name: str, args: list[str]) -> tuple[str, int, float]:
+        return run(args, log_dir / f"{name}.log" if log_dir is not None else None)
+
     gates: list[dict] = []
     extras: dict = {}
     tiers = tier_folders("lint", include_future)
     codegen_tiers = tier_folders("codegen", include_future)
     scope = f"{len(tiers)} stdlib tiers" + ("" if include_future else ", shipping only")
 
-    out, code, secs = run(["dotnet", "build", CLI, "-c", "Release", "--nologo", "-v", "q"])
+    out, code, secs = invoke("cli-build", ["dotnet", "build", CLI, "-c", "Release", "--nologo", "-v", "q"])
     gates.append(gate("Plato.CLI build (Release)", "PASS" if code == 0 else "FAIL", secs,
                       "0 errors" if code == 0 else "build failed — later gates are unreliable"))
 
-    out, code, secs = run(["dotnet", "run", "--project", CLI, "-c", "Release", "--no-build",
+    out, code, secs = invoke("stdlib-lint", ["dotnet", "run", "--project", CLI, "-c", "Release", "--no-build",
                            "--", "lint", *tiers, "--strict"])
     lint = parse_lint(out)
     extras["lint"] = lint
@@ -126,7 +139,7 @@ def measure(full: bool, include_future: bool = False) -> tuple[list[dict], dict,
         f"{lint['errors']} error / {lint['warnings']} warning / {lint['infos']} info; "
         f"ratchet {lint['ratchet']}"))
 
-    out, code, secs = run(["dotnet", "test", PLATO_TESTS, "-c", "Release", "--nologo", "-v", "q"])
+    out, code, secs = invoke("compiler-tests", ["dotnet", "test", PLATO_TESTS, "-c", "Release", "--nologo", "-v", "q"])
     t = parse_test_counts(out)
     extras["platotests"] = t
     gates.append(gate("PlatoTests (incl. both ratchets)", "PASS" if code == 0 else "FAIL", secs,
@@ -143,7 +156,7 @@ def measure(full: bool, include_future: bool = False) -> tuple[list[dict], dict,
     if (PLATO / GENERATED).is_dir():
         shutil.rmtree(PLATO / GENERATED)
     (PLATO / GENERATED).mkdir(parents=True, exist_ok=True)
-    out, code, secs = run(["dotnet", "run", "--project", CLI, "-c", "Release", "--no-build", "--",
+    out, code, secs = invoke("forward-codegen", ["dotnet", "run", "--project", CLI, "-c", "Release", "--no-build", "--",
                            *codegen_tiers, LAW_PACKET, f"--out={GENERATED}", *RECIPE])
     files = len(list((PLATO / GENERATED).glob("*.g.cs"))) if (PLATO / GENERATED).is_dir() else 0
     degraded = int(m.group(1)) if (m := re.search(r"DEGRADED bodies[^:]*: (\d+)", out)) else None
@@ -151,7 +164,7 @@ def measure(full: bool, include_future: bool = False) -> tuple[list[dict], dict,
     gates.append(gate("forward-stdlib codegen (full recipe)", "PASS" if code == 0 else "FAIL", secs,
                       f"{files} .g.cs, {degraded} degraded bodies"))
 
-    out, code, secs = run(["dotnet", "test", CONFORMANCE, "-c", "Release", "--nologo", "-v", "q"])
+    out, code, secs = invoke("conformance-tests", ["dotnet", "test", CONFORMANCE, "-c", "Release", "--nologo", "-v", "q"])
     t = parse_test_counts(out)
     extras["conformance"] = t
     gates.append(gate("forward conformance (build + law runner)", "PASS" if code == 0 else "FAIL",
@@ -220,7 +233,8 @@ def main() -> int:
                          "aspirational vocabulary that only has to parse and type-check)")
     args = ap.parse_args()
 
-    gates, lint, extras = measure(args.full, args.include_future)
+    log_dir = None if args.dry_run else PLATO / ".temp" / "gate-logs" / datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+    gates, lint, extras = measure(args.full, args.include_future, log_dir)
     width = max(len(g["name"]) for g in gates)
     for g in gates:
         print(f"{g['result']:5} {g['name']:{width}}  {g['seconds']:>5}  {g['detail']}")
@@ -232,6 +246,7 @@ def main() -> int:
         append_log(extras)
         print(f"\nwrote {SNAPSHOT.relative_to(PLATO)}")
         print(f"appended {LOG.relative_to(PLATO)}")
+        print(f"command logs: {log_dir.relative_to(PLATO)}")
 
     return 0 if all(g["result"] == "PASS" for g in gates) else 1
 

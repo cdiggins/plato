@@ -17,4 +17,6 @@ links: []
 
 ## Done means
 
-- [ ] Recorded runs retain each command's stdout/stderr without changing parsed results or exit status; dry-run logging remains disabled.
+- [x] Recorded runs retain each command's stdout/stderr without changing parsed results or exit status; dry-run logging remains disabled.
+
+Verified with an actual child command that writes both output streams and exits 7, plus isolated command-dispatch checks for disabled dry-run logging and distinct gate log paths. No compiler or law execution behavior changes.
