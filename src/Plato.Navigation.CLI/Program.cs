@@ -1,3 +1,4 @@
+// Routes navigation commands and formats queries over selected source roots.
 using System.Diagnostics;
 using Ara3D.Utils;
 

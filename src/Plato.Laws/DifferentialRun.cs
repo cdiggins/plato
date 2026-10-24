@@ -1,3 +1,4 @@
+// Compares interpreter and compiled C# results for identical law cases.
 using System.Diagnostics;
 using System.Reflection;
 using Ara3D.Geometry.Compiler.Symbols;

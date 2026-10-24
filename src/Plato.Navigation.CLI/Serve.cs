@@ -1,3 +1,4 @@
+// Hosts navigation requests over a persistent newline-delimited JSON standard-input protocol.
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Ara3D.Utils;

@@ -1,3 +1,4 @@
+// Centralizes JSON formatting and parsing for generated Plato values.
 using System;
 using System.Collections;
 using System.Globalization;

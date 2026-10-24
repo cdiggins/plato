@@ -1,3 +1,4 @@
+// Parses law-run options and reports execution results for the selected backend.
 using System.Diagnostics;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Types;

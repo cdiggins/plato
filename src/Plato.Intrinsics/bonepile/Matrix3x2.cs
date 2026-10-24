@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿// Preserves excluded runtime code for two-dimensional affine matrix operations; see README.md before reuse.
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using SNMatrix3x2 = System.Numerics.Matrix3x2;
 using static System.Runtime.CompilerServices.MethodImplOptions;

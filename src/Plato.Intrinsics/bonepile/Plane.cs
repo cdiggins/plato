@@ -1,3 +1,4 @@
+// Preserves excluded runtime code for plane equations; see README.md before reuse.
 using System.Runtime.CompilerServices;
 using SNPlane = System.Numerics.Plane;
 using static System.Runtime.CompilerServices.MethodImplOptions;

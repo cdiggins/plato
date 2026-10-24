@@ -1,3 +1,4 @@
+// Exports parsed type and interface declarations from selected source folders.
 using Ara3D.Geometry.AST;
 using Ara3D.Logging;
 using Ara3D.Parakeet;

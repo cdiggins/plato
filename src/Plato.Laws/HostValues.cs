@@ -1,3 +1,4 @@
+// Converts values between interpreter representations and generated C# runtime types.
 using System.Collections;
 using System.Globalization;
 using System.Reflection;

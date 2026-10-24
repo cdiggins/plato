@@ -1,3 +1,4 @@
+// Adapts collection grid extents to the names used by generated Plato interfaces.
 using System.Runtime.CompilerServices;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 using Ara3D.Collections;

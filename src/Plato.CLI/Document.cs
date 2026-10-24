@@ -1,4 +1,5 @@
-﻿using Ara3D.Geometry.AST;
+﻿// Parses a compiler input document and retains its text, parser state and diagnostics.
+using Ara3D.Geometry.AST;
 using Ara3D.Logging;
 using Ara3D.Parakeet;
 using Ara3D.Parsing;

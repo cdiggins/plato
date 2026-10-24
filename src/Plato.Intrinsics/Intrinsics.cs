@@ -1,3 +1,4 @@
+// Supplies shared runtime helpers used by generated constructors and generic operations.
 using System.Runtime.CompilerServices;
 using Ara3D.Collections;
 using static System.Runtime.CompilerServices.MethodImplOptions;

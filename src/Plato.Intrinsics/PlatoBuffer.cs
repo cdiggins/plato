@@ -1,3 +1,4 @@
+// Implements the fixed-size affine builder that transfers storage when frozen.
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;

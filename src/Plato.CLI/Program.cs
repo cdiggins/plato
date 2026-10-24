@@ -1,3 +1,4 @@
+// Routes compiler commands, validates generation options and selects the target writer.
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Types;

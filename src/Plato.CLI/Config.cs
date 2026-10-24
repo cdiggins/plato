@@ -1,3 +1,4 @@
+// Supplies standalone compiler input and output defaults and locates its configuration file.
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.CLI

@@ -1,3 +1,4 @@
+// Provides the profile-selected Number wrapper and host mathematical operations.
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;

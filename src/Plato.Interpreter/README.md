@@ -5,8 +5,8 @@ to run a function or a law without generating C# and building it. It evaluates t
 compiler's own resolved, typed intermediate representation (the Typed IR, or TIR, that the
 C# writer renders), in the compiler's process, on values it builds itself.
 
-Written 2026-10-17 for ticket TKT-317 of the bim-open-toolkit repository. Experimental:
-one day old, with a unit test suite and a run over the forward standard library behind it.
+Written 2026-10-17 for ticket TKT-317 of the bim-open-toolkit repository. Experimental;
+the unit tests and dated forward-standard-library reports document its verification.
 `docs/interpreter.md` is the reference document; `docs/reports/` holds the dated
 measurements.
 
@@ -118,7 +118,7 @@ for which no value can be built is skipped with the reason.
   language intends; the differential test allows this divergence explicitly.
 - **Arrays are eager.** The C# runtime's `MapRange` is lazy. Eagerness is simpler and costs
   memory only at sizes the law runner does not reach.
-- **Expensive calls are remembered.** Plato is pure, so `CallMemo.cs` answers a repeated call
+- **Expensive calls are remembered.** Plato is pure, so `Evaluation/CallMemo.cs` answers a repeated call
   of an expensive bodied function from a table instead of evaluating it again: a law that
   meshes its model three times in one expression, a constant written as a loop, a depth
   recursion over the same references. A function joins the table once its mean cost, without
@@ -169,7 +169,7 @@ exists yet; each is listed with what it would reuse and what it would add.
 - **Abstract interpretation.** Replace the value domain. Intervals give range analysis
   (an index proven inside `[0, Count)`, a divisor proven nonzero); a sign or parity domain
   gives cheaper facts; a units domain checks that a tolerance in metres never meets one in
-  radians. The dispatch and the walk stay; only `Values.cs` and the intrinsic table change.
+  radians. The dispatch and the walk stay; only `Evaluation/Values.cs` and the intrinsic table change.
 - **Symbolic execution.** Let a Number be a term rather than a double, and a `match` or a
   conditional fork a path with a constraint. The paths of a law, with their constraints,
   are the input an SMT solver needs, and a path whose constraint is unsatisfiable is dead
@@ -211,17 +211,17 @@ from the program itself.
 
 | Path | Purpose |
 |---|---|
-| `Interpreter.cs` | Evaluation of each TIR node kind; running a body; the public `Call`, `Invoke`, `Evaluate` |
-| `Dispatch.cs` | Run-time overload resolution, interface re-dispatch, syntactic calls, conversions, `default`, construction |
-| `Values.cs` | The value model: records, sums, arrays, builders, functions, type tokens; structural equality; formatting |
-| `CallMemo.cs` | The memo of expensive calls and the stricter equality its keys use |
-| `CallProfile.cs` | Calls, inclusive and self time per bodied function, collected when `Interpreter.Profiler` is set |
-| `Numbers.cs` | The arithmetic a `NumberProfile` gives Number and Integer |
-| `HostIntrinsics.cs` | The host half of `intrinsics.library.plato`, keyed by declared signature |
-| `Environment.cs` | Bindings in scope during evaluation; the snapshot a lambda captures |
-| `LawRunner.cs` | `Law_*` discovery, value supply, exhaustion or sampling, results; `ILawBackend`, the seam `src/Plato.Laws` plugs the compiled program into |
-| `ValueGenerator.cs` | Seeded pseudorandom values and finite domains |
-| `Exceptions.cs` | Evaluation faults with the Plato call chain; host obligations |
+| `Evaluation/Interpreter.cs` | Evaluation of each TIR node kind; running a body; the public `Call`, `Invoke`, `Evaluate` |
+| `Evaluation/Dispatch.cs` | Run-time overload resolution, interface re-dispatch, syntactic calls, conversions, `default`, construction |
+| `Evaluation/Values.cs` | The value model: records, sums, arrays, builders, functions, type tokens; structural equality; formatting |
+| `Evaluation/CallMemo.cs` | The memo of expensive calls and the stricter equality its keys use |
+| `Evaluation/CallProfile.cs` | Calls, inclusive and self time per bodied function, collected when `Interpreter.Profiler` is set |
+| `Evaluation/Numbers.cs` | The arithmetic a `NumberProfile` gives Number and Integer |
+| `Evaluation/HostIntrinsics.cs` | The host half of `intrinsics.library.plato`, keyed by declared signature |
+| `Evaluation/Environment.cs` | Bindings in scope during evaluation; the snapshot a lambda captures |
+| `Verification/LawRunner.cs` | `Law_*` discovery, value supply, exhaustion or sampling, results; `ILawBackend`, the seam `src/Plato.Laws` plugs the compiled program into |
+| `Verification/ValueGenerator.cs` | Seeded pseudorandom values and finite domains |
+| `Evaluation/Exceptions.cs` | Evaluation faults with the Plato call chain; host obligations |
 | `../Plato.CLI/RunCommand.cs` | The `plato run` command |
 | `../../tests/Plato.Interpreter.Tests/` | Unit tests, the stdlib law run, the C# differential |
 
@@ -234,3 +234,8 @@ notebook, or the contract syntax the design folder's `.spec.plato` files use.
 
 Report problems in this repository's tracker (`tracker/`, `python tools/track.py new`).
 License: see `LICENSE.txt` at the repository root.
+
+## Source responsibilities
+
+- [Evaluation](Evaluation/README.md) documents its responsibility and entry files.
+- [Verification](Verification/README.md) documents its responsibility and entry files.

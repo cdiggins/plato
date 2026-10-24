@@ -1,4 +1,5 @@
-﻿namespace Ara3D.Geometry
+﻿// Preserves excluded runtime code for mapped read-only list adapters; see README.md before reuse.
+namespace Ara3D.Geometry
 {
     public static class ReadOnlyListMapExtensions
     {

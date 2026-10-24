@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿// Preserves excluded runtime code for array enumeration; see README.md before reuse.
+using System.Collections;
 using System.Runtime.CompilerServices;
 
 namespace Ara3D.Geometry

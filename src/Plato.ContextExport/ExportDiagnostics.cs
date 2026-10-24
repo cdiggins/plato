@@ -1,3 +1,4 @@
+// Measures an exported declaration document for optional context-budget diagnostics.
 namespace Ara3D.Geometry.ContextExport;
 
 public sealed record ExportDiagnostics(

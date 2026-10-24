@@ -1,3 +1,4 @@
+// Provides the profile-selected Integer wrapper and its host arithmetic operations.
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;

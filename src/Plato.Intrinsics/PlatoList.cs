@@ -1,3 +1,4 @@
+// Implements the growable affine builder that transfers storage when frozen.
 using System;
 using System.Collections;
 using System.Collections.Generic;

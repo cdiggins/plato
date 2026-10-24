@@ -1,3 +1,4 @@
+// Emits and compiles a Plato program with embedded runtime sources into a loaded assembly.
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;

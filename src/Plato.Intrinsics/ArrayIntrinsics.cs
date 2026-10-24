@@ -1,3 +1,4 @@
+// Implements the irreducible array operations used by generated Plato programs.
 using System.Runtime.CompilerServices;
 using Ara3D.Collections;
 using static System.Runtime.CompilerServices.MethodImplOptions;

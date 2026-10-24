@@ -1,3 +1,4 @@
+// Preserves excluded runtime code for angle units and trigonometric helpers; see README.md before reuse.
 using System.Runtime.CompilerServices;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 

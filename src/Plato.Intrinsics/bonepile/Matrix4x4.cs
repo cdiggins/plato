@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿// Preserves excluded runtime code for three-dimensional matrix operations; see README.md before reuse.
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using SNMatrix4x4 = System.Numerics.Matrix4x4;
 using static System.Runtime.CompilerServices.MethodImplOptions;

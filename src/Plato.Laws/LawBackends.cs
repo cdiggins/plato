@@ -1,3 +1,4 @@
+// Names and constructs the execution backends shared by command and warm law runners.
 using Ara3D.Geometry.Interpreter;
 
 namespace Ara3D.Geometry.Laws;

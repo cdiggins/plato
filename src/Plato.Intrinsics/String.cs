@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿// Provides the String scalar wrapper and its host string operations.
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using static System.Runtime.CompilerServices.MethodImplOptions;

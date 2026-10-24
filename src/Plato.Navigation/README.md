@@ -137,3 +137,9 @@ Measured with `Plato.Navigation.CLI bench` (best of two runs, snapshots built fr
 An update produces a new `NavigationIndex` and consumers swap their reference; `PlatoNavigationMcp`
 is the worked example. A file watcher belongs in the consumer or the CLI, not in this library
 (decision D10).
+
+## Source responsibilities
+
+- [Indexing](Indexing/README.md) documents its responsibility and entry files.
+- [Analysis](Analysis/README.md) documents its responsibility and entry files.
+- [Execution](Execution/README.md) documents its responsibility and entry files.

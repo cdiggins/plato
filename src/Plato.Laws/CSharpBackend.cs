@@ -1,3 +1,4 @@
+// Invokes generated C# law methods through reflection using converted interpreter values.
 using System.Collections.Concurrent;
 using System.Reflection;
 using Ara3D.Geometry.Compiler.Symbols;

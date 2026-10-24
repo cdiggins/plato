@@ -1,3 +1,4 @@
+// Serializes scalar wrappers as JSON scalars instead of traversing wrapper members.
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;

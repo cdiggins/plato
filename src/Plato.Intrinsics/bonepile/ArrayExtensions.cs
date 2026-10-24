@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿// Preserves excluded runtime code for array operations; see README.md before reuse.
+using System.Runtime.CompilerServices;
 using Ara3D.Collections;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 

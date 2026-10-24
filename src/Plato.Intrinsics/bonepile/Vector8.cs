@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿// Preserves excluded runtime code for eight-component vector operations; see README.md before reuse.
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.Serialization;
