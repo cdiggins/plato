@@ -2,14 +2,14 @@
 id: docs-480
 title: Correct optimizer documentation for implemented fusion
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: S
 risk: low
 area: docs
 sprint: 
 created: 2026-10-24
-closed:
+closed: 2026-10-24
 links: [docs/csharp-optimizer-pipeline.md]
 ---
 
