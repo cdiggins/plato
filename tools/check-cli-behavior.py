@@ -28,7 +28,7 @@ def cases(folder: Path) -> dict[str, tuple[list[str], int]]:
             (path / "fixture.plato").write_text(source, encoding="utf-8")
     output = folder / "output"
     result = {}
-    for backend in (*BACKENDS, "duplicate"):
+    for backend in (*BACKENDS, "duplicate", "options", "rejected"):
         (output / backend).mkdir(parents=True)
     for backend in BACKENDS:
         flags = [] if backend == "csharp" else ["--" + backend]
@@ -48,6 +48,12 @@ def cases(folder: Path) -> dict[str, tuple[list[str], int]]:
         "lint-usage": ["lint"],
     }.items():
         result[name] = (args, 1)
+    result["generation-options"] = ([str(folder / "a"), str(folder / "b"), f"--out={output / 'options'}",
+        "--optimize", "--optimize-arrays", "--inline", "--static-abstract", "--loops", "--fuse",
+        "--inline-report", f"--dump-tir={folder / 'tir'}", "--profile=cpu64", "--csharp-style=extensions"], 0)
+    for option in ("--methods", "--no-properties", "--no-tir", "--opitmize", "--profile", "--inline=true"):
+        result[f"rejected:{option}"] = ([str(folder / "a"), str(folder / "b"),
+                                        f"--out={output / 'rejected'}", option], 1)
     return result
 
 
@@ -63,6 +69,12 @@ def check(cli: Path, folder: Path, commands: dict) -> dict:
                              text=True, encoding="utf-8", errors="replace", timeout=90)
         if run.returncode != expected:
             raise AssertionError(f"{name}: expected exit {expected}, got {run.returncode}\n{run.stdout}\n{run.stderr}")
+        if name.startswith("rejected:"):
+            option = name.split(":", 1)[1]
+            if run.stderr.strip() != f"Unrecognized generation option '{option}'.":
+                raise AssertionError(f"{name}: wrong diagnostic: {run.stderr}")
+            if any((output / "rejected").iterdir()) or "Opening files" in run.stdout:
+                raise AssertionError(f"{name}: rejected options must stop before input/output")
         results[name] = {"exit": run.returncode, "stderr": run.stderr.strip()}
     for backend in BACKENDS:
         if not any((output / backend).iterdir()):

@@ -19,7 +19,9 @@ Generation ignores any unrecognized double-dash argument. The documented retired
 
 ## Done means
 
-- [ ] Generation rejects unknown and retired flags before parsing input or writing output, preserving existing specific scalar/style diagnostics.
-- [ ] The executable CLI behavior check covers misspelled flags, retired flags and accepted generation options.
+- [x] Generation rejects unknown and retired flags before parsing input or writing output, preserving existing specific scalar/style diagnostics.
+- [x] The executable CLI behavior check covers misspelled flags, retired flags and accepted generation options.
 
 The fix is a small command-boundary validation change; language semantics and run/lint option policies are separate.
+
+Verified by the recorded CLI build and tools/check-cli-behavior.py: generation succeeds with the supported options, rejects misspellings and retired switches before opening inputs, and retains the existing scalar/style error paths.

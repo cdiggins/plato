@@ -53,6 +53,13 @@ internal static class GenerateCommand
             return 1;
         }
 
+        var unknownOption = GenerationArguments.UnknownOption(args);
+        if (unknownOption != null)
+        {
+            Console.Error.WriteLine($"Unrecognized generation option '{unknownOption}'.");
+            return 1;
+        }
+
         // Generated code must be built with the same PlatoNumberProfile.
         var profileName = args.Where(a => a.StartsWith("--profile="))
             .Select(a => a.Substring("--profile=".Length)).LastOrDefault();
