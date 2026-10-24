@@ -2,14 +2,14 @@
 id: repo-470
 title: Remove tracked Python bytecode cache
 type: debt
-status: in-progress
+status: done
 priority: p3
 effort: S
 risk: low
 area: repo
 sprint: 
 created: 2026-10-23
-closed:
+closed: 2026-10-23
 links: []
 ---
 

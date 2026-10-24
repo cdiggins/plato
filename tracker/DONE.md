@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-23 — [repo-470](issues/repo-470.md) — Remove tracked Python bytecode cache — done (743d44c1b737157b50190cce2d93a0d4129c576f); source parse verified
 - 2026-10-18 — [plato-459](issues/plato-459.md) — C# writer stubs bodiless functions three different ways — done (8848409c)
 - 2026-10-18 — [stdlib-460](issues/stdlib-460.md) — Three geometry-tier functions emit C# that does not compile (Contains on an existential, Constants.UniformWeights) — done (1614e017)
 - 2026-10-18 — [plato-388](issues/plato-388.md) — Single verification policy manifest: one data file the gates, tests and plato_check all read — done (7a4ec6bb)
