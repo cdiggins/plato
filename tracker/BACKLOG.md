@@ -66,6 +66,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-416](issues/compiler-416.md) | Library functions taking Buffer<T> as first parameter are silently dropped from emitted C# | problem | p2 | M | med | compiler | idea |  |
 | [compiler-471](issues/compiler-471.md) | Parser dependency requires a machine-relative SDK checkout | debt | p2 | S | med | compiler | idea |  |
 | [compiler-484](issues/compiler-484.md) | Plan private storage for recursive numeric kernels | feature | p2 | L | high | compiler | idea |  |
+| [compiler-485](issues/compiler-485.md) | Lower combinators within preserved statement scopes | feature | p2 | M | high | compiler | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
 | [plato-028](issues/plato-028.md) | Consumer-driven refactoring direction (Earcut gaps, query vocabulary, topology) | feature | p2 | L | med | plato | idea |  |
 | [plato-029](issues/plato-029.md) | Port Geometry3Sharp pure query kernels to Plato | feature | p2 | L | med | plato | idea |  |
