@@ -64,6 +64,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | p1 | L | med | plato | idea |  |
 | [compiler-416](issues/compiler-416.md) | Library functions taking Buffer<T> as first parameter are silently dropped from emitted C# | problem | p2 | M | med | compiler | idea |  |
 | [compiler-471](issues/compiler-471.md) | Parser dependency requires a machine-relative SDK checkout | debt | p2 | S | med | compiler | idea |  |
+| [compiler-472](issues/compiler-472.md) | Navigation omits assignment-target references | bug | p2 | S | med | compiler | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
 | [plato-028](issues/plato-028.md) | Consumer-driven refactoring direction (Earcut gaps, query vocabulary, topology) | feature | p2 | L | med | plato | idea |  |
 | [plato-029](issues/plato-029.md) | Port Geometry3Sharp pure query kernels to Plato | feature | p2 | L | med | plato | idea |  |
@@ -75,6 +76,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-390](issues/plato-390.md) | Extract Plato.Verify: one policy engine behind the gates, the tests and plato_check | feature | p2 | L | med | plato | idea |  |
 | [plato-418](issues/plato-418.md) | TypeScript writer: MakeArray2D/Array2D never emitted, generated mesh code crashes | bug | p2 | M | low | plato | idea |  |
 | [plato-420](issues/plato-420.md) | Declared-but-unimplemented stdlib tiers: colour conversion, differential geometry, sampling patterns, voxelization | problem | p2 | L | low | plato | idea |  |
+| [repo-473](issues/repo-473.md) | Resolve external SDK frozen-artifact gate drift | problem | p2 | S | med | repo | idea |  |
 | [compiler-469](issues/compiler-469.md) | Retire inactive parser and symbol XML writer sketches | debt | p3 | S | low | compiler | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
