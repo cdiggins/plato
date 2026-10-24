@@ -2,7 +2,7 @@
 id: compiler-490
 title: Reject ignored generation flags before compiling
 type: bug
-status: ready
+status: in-progress
 priority: p2
 effort: S
 risk: low
