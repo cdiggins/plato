@@ -72,10 +72,10 @@ public class TirTempRef : TirNode
 /// combinator call is a hoisted <see cref="TirLoweredLoop"/> statement and the call's position holds a
 /// <see cref="TirTempRef"/>. Pass order and flags: docs/csharp-optimizer-pipeline.md.
 ///
-/// Loop lowering (--loops): rewrites recognized array-combinator call sites — the lazy
-/// Ara3D.Collections adapters Map/MapEager/MapRange(Eager)/Zip/Reduce/All/Any/Reverse/WithNext/
+/// Loop lowering (--loops): rewrites recognized array-combinator call sites —
+/// Map/MapEager/MapRange(Eager)/Zip/Reduce/All/Any/FlatMap/Reverse/WithNext/
 /// MapPairs/MapTriplets/MapQuartets on ONE-dimensional list receivers — into for-loop statements
-/// that fill a materialized array (or fold/short-circuit for Reduce/All/Any). Identical value
+/// that fill a materialized array, append to a list, or fold/short-circuit for Reduce/All/Any. Identical value
 /// semantics for the pure language; the results are eager. Rules that keep it sound:
 ///
 ///   * only call sites OUTSIDE lambdas and conditionals are lowered (hoisting an expression out

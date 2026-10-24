@@ -102,8 +102,9 @@ dotnet run --project src\Plato.CLI -c Release -- ^
 - **Flags.** `--csharp-style=extensions` is the only accepted value (the default style went at C4).
   `--scalar=…` is a **hard error**: scalars are always wrapper structs
   ([decision](../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md)).
-  Optional: `--optimize` (component unrolling), `--optimize-arrays`, `--inline`, `--loops`,
+  Optional: `--optimize` (component unrolling), `--optimize-arrays`, `--inline`, `--fuse`, `--loops`,
   `--static-abstract`, and the diagnostics-only `--dump-tir=<dir>` / `--inline-report`.
+  See the [optimizer pipeline](csharp-optimizer-pipeline.md) for pass order and flag interactions.
   `--out=<folder>` frees every positional argument to be an input root, which is how several tiers
   are compiled as one program.
 - **`ara3d-sdk/src/Plato.Generated/` is not generated from here any more.** It is a checked-in copy

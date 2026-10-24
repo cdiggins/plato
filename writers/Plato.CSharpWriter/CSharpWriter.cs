@@ -180,8 +180,8 @@ namespace Ara3D.Geometry.CSharpWriter
         // totals, printed after WriteAll. A diagnostic; no effect on emitted C#. See InlineReport.
         public InlineReport InlineReport { get; set; }
 
-        /// <summary>The ONE place the pass order is written. Applies the four optimizer TIR passes in order (inline → component-unroll →
-        /// array-materialize → loop-lower; see docs/csharp-optimizer-pipeline.md) and returns the transformed function. Shared by every
+        /// <summary>The ONE place the pass order is written. Applies the optimizer TIR passes in order (inline → fusion/literal-unroll →
+        /// component-unroll → array-materialize → loop-lower; see docs/csharp-optimizer-pipeline.md) and returns the transformed function. Shared by every
         /// body-emit site so the pass pipeline is defined once. With <see cref="TirDumpDir"/> set,
         /// records each phase that changed the tree (see the field comment).</summary>
         public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi)

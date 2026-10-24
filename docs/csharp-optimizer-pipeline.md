@@ -1,9 +1,10 @@
 # The C# writer's optimizer pipeline
 
-Written 2026-10-23 from the code at Plato commit 0786f567 and later (TKT-508 in the BIM Open Toolkit's
-`tickets/`). Where this document and a plan under `docs/design/` or `docs/archive/` disagree, this document
-is right about what runs today; the plans are history. Every example below was produced by building
-`src/Plato.CLI` and running it with the flags named.
+This reference describes the implemented C# optimizer. Where it and a historical plan under
+`docs/design/` or `docs/archive/` disagree, use this reference; implementation and tests take precedence
+if either document drifts. Examples below illustrate the transformations, not byte-for-byte output
+snapshots. Generated names and capture temporaries may differ. Performance measurements belong in
+benchmark results, not this reference.
 
 An agent reading only this file should be able to take a Plato expression and say which pass rewrites it
 under which flags, what C# comes out, and why a pass left it alone.
@@ -21,17 +22,20 @@ Plato source
   -> elaborate to TIR; Boolean && and || become
      conditionals (TirShortCircuit)                      always on, in the compiler
   -> 1. TirInliner.Inline                                --inline
+  -> 1b. TirFusion.Rewrite (uses TirLiteralUnroller)      --fuse
   -> 2. TirComponentUnroller.UnrollFunction              --optimize
   -> 3. TirArrayMaterializer.Rewrite                     --optimize-arrays
   -> 4. TirLoopLowerer.Rewrite                           --loops
   -> TirCSharpBodyWriter                                 always on; prints the final tree as C#
 ```
 
-Each pass returns its input unchanged when its flag is off or nothing matched, so any subset of the four
+Each pass returns its input unchanged when its flag is off or nothing matched, so any subset of these
 flags is valid and with no flag the output is the unoptimized C#. The flags are parsed in
-`src/Plato.CLI/Program.cs` and stored on `CSharpWriter` as `InlineCalls`, `Optimize`, `OptimizeArrays` and
-`LowerLoops`. The test harness `src/Plato.Laws/CSharpProgram.cs` sets only `LowerLoops`; `plato run --loops`
-selects it.
+`src/Plato.CLI/Program.cs` and stored on `CSharpWriter` as `InlineCalls`, `FuseCombinators`, `Optimize`,
+`OptimizeArrays` and `LowerLoops`. The compiled law backend in `src/Plato.Laws/CSharpProgram.cs` accepts
+both `LowerLoops` and `FuseCombinators`; `plato run --backend=csharp --loops --fuse` enables them.
+`--fuse` can rewrite expressions without `--loops`. Conversely, `--loops` consumes supported
+`Map`/`MapRange` producer chains even without `--fuse` (section 7).
 
 Two diagnostics help while working on a pass. `--dump-tir=<dir>` writes one file per owner type, listing for
 every body its input and the tree after each pass that changed it. `--inline-report` prints, to standard
@@ -56,8 +60,9 @@ implemented for C# in `src/Plato.Intrinsics/ArrayIntrinsics.cs`:
 
 Everything else (`Map`, `Zip`, `MapPairs`, `Take`, `Skip`, `TakeLast`, `Slice`, `SubArray`, `Reverse`,
 `EveryNth`, `Repeat`, `All`, `Any`, ...) is a Plato body in `stdlib/foundation/primitives.library.plato`,
-written over those five. Since the body calls `MapRange`, each of them **allocates and fills a new array**.
-Nothing in the C# runtime is a lazy view.
+written over those five. Derived producers implemented with `MapRange` allocate and fill a new array
+unless optimized away. Consumers such as `All` and `Any` return a scalar, not an array.
+The live array intrinsics do not provide lazy views.
 
 This has been the case since TKT-350 (the `MapRange` summary in `ArrayIntrinsics.cs` gives the reason: a lazy
 list re-ran `f` on every read, so the STEP mesher meshed each face once per read of its outcomes). Older text
@@ -81,8 +86,8 @@ folder. See pass 3 for what this means.
 Recognised: `And` and `Or` whose overload is the `Boolean` one. Refused: an `And` or `Or` that a library
 defines for its own type (`type Flag`); it stays an ordinary call that evaluates both arguments. The C# body
 writer prints the conditional as C# `a ? b : false`, which already short-circuits; the Rust and TypeScript
-writers call `TirShortCircuit.TryMatch` to print `&&` and `||`. The four optimizer passes treat the
-conditional like any other: the loop lowerer does not descend into it (section 7).
+writers call `TirShortCircuit.TryMatch` to print `&&` and `||`. Fusion can rewrite expressions inside
+the conditional without hoisting them; the loop lowerer does not descend into it (sections 4a and 7).
 
 ## 4. Pass 1: `TirInliner` (`--inline`)
 
@@ -107,18 +112,18 @@ Example(n: Integer, k: Number, zero: Number): Number => Total(Scale(MapRange(n, 
 Without `--inline`, `Example` emits
 
 ```csharp
-n.MapRange((i) => i.ToNumber).Scale(k).Total(zero)
+n.MapRange((i) => i.ToNumber()).Scale(k).Total(zero)
 ```
 
 and with `--inline` it emits
 
 ```csharp
 var _var1 = k;
-return n.MapRange((i_0) => i_0.ToNumber).Map((x) => x.Mul(_var1)).Reduce(zero, (a, b) => a.Add(b));
+return n.MapRange((i_0) => i_0.ToNumber()).Map((x) => x.Mul(_var1)).Reduce(zero, (a, b) => a.Add(b));
 ```
 
 The two library calls became their bodies, so the `Map` and `Reduce` that were hidden inside `Scale` and
-`Total` are now visible to passes 2 to 4. That is the purpose of the pass. Lambda parameters that collide with
+`Total` are now visible to fusion and the later passes. That is the purpose of the pass. Lambda parameters that collide with
 names in the caller are renamed (`i` to `i_0`), using a counter (`TirInliner.NextRenameId`) reset per
 generation so output is deterministic.
 
@@ -147,6 +152,39 @@ lambda-free callees with cheap arguments. A callee that calls itself is detected
 (callee, receiver type) pairs inlined in earlier passes.
 
 **Runtime intrinsic:** none. The pass only moves Plato bodies.
+
+## 4a. Pass 1b: `TirFusion` and `TirLiteralUnroller` (`--fuse`)
+
+Files `writers/Plato.CSharpWriter/Optimization/TirFusion.cs` and `TirLiteralUnroller.cs`.
+Pinned by `tests/PlatoTests/Optimization/CombinatorFusionTests.cs` and `LiteralUnrollingTests.cs`.
+The fusion pass runs immediately after inlining, before component unrolling or materialization.
+
+**Consumes / produces:** expressions rewritten in place. It traverses lambda bodies and conditionals
+without moving expressions out of their scope; this is distinct from emitting loops there.
+
+| Recognised expression | Rewrite |
+|---|---|
+| `n.Range` | `n.MapRange(i => i)` |
+| `xs.Take(k)` with a cheap source, or `n.MapRange(g).Take(k)` | `k.MapRange(i => xs.At(i))` or `k.MapRange(g)`, within `Take`'s valid input domain |
+| `xs.Map(g).Map(f)` / `n.MapRange(g).Map(f)` | compose the functions into one producer |
+| `xs.Map(g).Reduce(seed, f)`, or `All`, `Any`, `FlatMap` over `Map` | substitute the mapped value into the consumer function |
+| `MapRange` with a nonnegative integer literal count no greater than `TirFusion.UnrollLimit` | an array literal of the function's values at each index |
+| `Map`, `Reduce`, `All`, `Any` over a small array literal | element expressions, a nested fold, or a Boolean chain; empty `All` is true and empty `Any` is false |
+
+Composition requires expression-bodied, non-eta lambda literals. `TirFusion.CanSubstitute` refuses
+to duplicate a non-cheap expression or substitute it under a nested lambda. A refused composition can
+still become one loop through the lowerer's per-stage locals (section 7). Literal expansion uses the
+same substitution guard; unary `Function1` parameters and variables can also be invoked during
+expansion. `Reduce` expansion requires a binary lambda. `TirFusion.UnrollLimit` is the authority for
+the expansion bound; a dynamic count or a larger literal remains a producer for later lowering.
+
+For example, `3.Range.Any(j => j.Less(k))` becomes a short-circuit disjunction of the predicate at
+indices 0, 1 and 2, including when nested inside another lambda. A literal producer whose array is
+still needed continues to allocate that result; unrolling alone does not remove every allocation.
+
+**Boundary:** fusion matches expression chains, not producer definitions reached through local
+variables. `Range` and `Take` normalization make additional chains visible to loop lowering;
+`WithoutFuseTheRangeCallRemains` pins the distinction when `Range` is a bodiless call.
 
 ## 5. Pass 2: `TirComponentUnroller` (`--optimize`)
 
@@ -211,7 +249,7 @@ MakeGrid(n: Integer): Grid => new Grid(MapRange(n, i => i.ToNumber));
 emits, with `--optimize-arrays`:
 
 ```csharp
-public static Grid MakeGrid(this Integer n) => new Grid(n.MapRangeEager((i) => i.ToNumber));
+public static Grid MakeGrid(this Integer n) => new Grid(n.MapRangeEager((i) => i.ToNumber()));
 ```
 
 **Refused:** a `Map` that is the argument of an ordinary call. `Scale(MapRange(n, ...), k)` inside
@@ -223,8 +261,9 @@ public static Grid MakeGrid(this Integer n) => new Grid(n.MapRangeEager((i) => i
 behaviour, and the names it writes are not defined by the compiled runtime, so output generated with the
 flag on and not later lowered by pass 4 refers to methods `Plato.Intrinsics` does not define (not built
 here; read from the project file). Pass 4 accepts the
-eager names and lowers them to loops, so the combination `--optimize-arrays --loops` is consistent. Do not
-use `--optimize-arrays` alone on a program you intend to build. The flag is kept because
+eager names at supported lowering sites. Adding `--loops` removes those calls only where its guards
+allow lowering; it does not guarantee every renamed call disappears. Do not use `--optimize-arrays`
+alone on a program you intend to build. The flag is kept because
 `ArrayMaterializerTests` still runs it; whether to retire the pass is a decision for its own ticket.
 
 The file header formerly said that `Map` and `MapRange` return lazy views. That is corrected in section 9.
@@ -232,9 +271,10 @@ The file header formerly said that `Map` and `MapRange` return lazy views. That 
 ## 7. Pass 4: `TirLoopLowerer` (`--loops`)
 
 File `writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs`; the loop text is printed by
-`TirCSharpBodyWriter.WriteLoweredLoop`. Pinned by `tests/PlatoTests/Optimization/LoopLowererArrayTypeTests.cs`
+`TirCSharpBodyWriter.WriteLoweredLoop` in `TirCSharpBodyWriter.Loops.cs`. Pinned by `tests/PlatoTests/Optimization/LoopLowererArrayTypeTests.cs`
 (`CombinatorOverArrayLowersToForLoop`: `Map`, `MapRange`, `Reduce` and `Any` over `Array<T>`) and, for
 the unroller's interplay, `ComponentUnrollerTests.GenuinelyDynamicArraysStillLoopLower`.
+`CombinatorFusionTests` covers producer chains, including `RangeFlatMap`.
 
 **Consumes** a TIR body. **Produces** a block body: for each recognised call, a `TirLoweredLoop` marker
 statement is *hoisted* before the statement that held the call, and the call's position is replaced by a
@@ -250,10 +290,23 @@ generation.
 | `Zip` with 2 or 3 sources | `Zip2` / `Zip3` | fill, length of the shortest |
 | `Reduce(xs, seed, f)` | `Reduce` | fold into a local |
 | `All`, `Any` | `All` / `Any` | loop that stops early |
+| `FlatMap` | `FlatMap` | append each returned collection to one result `List<T>` |
 | `Reverse`, `WithNext`, `MapPairs`, `MapTriplets`, `MapQuartets` | same name | fill |
 
 The result array is bound as `IReadOnlyList<T> _lp<id> = _a<id>;` because every Plato array is an
 `IReadOnlyList<T>` in the emitted C# (a `T[]` temp gave compile errors in TKT-505).
+`FlatMap` exposes its result list through the same interface; it still evaluates the callback's
+collection and copies its elements. It does not yet turn the singleton-or-empty filter idiom into a
+conditional append.
+
+**Producer-chain lowering is already implemented.** For `Map` (including indexed map), `Reduce`,
+`All`, `Any` and `FlatMap`, a supported receiver chain of unary `Map` calls over an array or
+`MapRange` is walked inside the consumer's loop. `TirLoweredLoop.SourceStages` records the functions;
+`IndexSource` selects direct index iteration for a `MapRange` base. The emitter binds each stage's
+result to a local, so a consumer that uses it twice does not recompute it. This removes intermediate
+producer arrays; a producing consumer still needs its result storage. It requires `--loops`, not
+`--fuse`. Fusion additionally exposes `Range` and supported `Take` expressions as `MapRange`.
+These rules follow the receiver expression only, not a local variable's earlier definition.
 
 **Refused** (the call stays a normal method call):
 
@@ -268,74 +321,74 @@ The result array is bound as `IReadOnlyList<T> _lp<id> = _a<id>;` because every 
 - the element type is not a concrete C# type (a solver type variable such as `$T`): `IsRenderableConcrete`;
 - the statement is itself control flow (`TirBlock`, `TirIf`, `TirLoop`): left intact, version 1.
 
-**Runtime intrinsic:** none for the lowered form. A loop reads `.Count` and the indexer and writes a `T[]`.
-It does **not** call `MapRange` or `Reduce`; the intrinsics remain the fallback for every refused site.
+**Runtime intrinsic:** none for the lowered combinator itself. Depending on its kind, a loop reads
+`.Count` and the indexer or walks indices directly, then writes a `T[]`, accumulates a scalar, or
+appends to a `List<T>`. Calls inside callback expressions can remain; refused sites use their ordinary
+library or intrinsic implementation.
 
 ## 8. Worked example
 
-`Example` from section 4, with `Map` declared as a bodiless intrinsic in the scratch corpus (the full
-corpus, `n`, `k`, `zero` and all, is the one in section 4 plus `type Number`, `Integer`, the `Function`
-types, and bodiless `ToNumber`, `Mul`, `Add`). The expression is
-`Total(Scale(MapRange(n, i => i.ToNumber), k), zero)`, that is `n.Range.Map(f).Reduce(0, g)` with a named
-helper for each step.
+Consider `Example` from section 4, with `Map` a bodiless signature in a self-contained test corpus,
+alongside `Number`, `Integer`, the `Function` types, and the other operation signatures. Its expression
+is `Total(Scale(MapRange(n, i => i.ToNumber), k), zero)`. The table describes the expected transformation
+from the implementation, not a captured CLI transcript. `MapRange` is already explicit here;
+`Range` normalization is unnecessary.
 
-| Flags | Pass that fires | Emitted body of `Example` |
+| Flags | Pass that fires | Resulting shape of `Example` |
 |---|---|---|
-| none | none | `n.MapRange((i) => i.ToNumber).Scale(k).Total(zero)` |
+| none | none | `n.MapRange((i) => i.ToNumber()).Scale(k).Total(zero)` |
 | `--inline` | 1 | `var _var1 = k; return n.MapRange(...).Map((x) => x.Mul(_var1)).Reduce(zero, (a, b) => a.Add(b));` |
 | `--inline --optimize-arrays` | 1 (3 finds no materialization position) | same as `--inline` |
-| `--loops` | 4, on the one visible call | `MapRange` becomes a `for` loop filling `_a2`; `_lp2.Scale(k).Total(zero)` remains, because `Scale` and `Total` are calls pass 4 does not recognise |
-| `--inline --loops` | 1, then 4 on all three | three loops: fill `_a2` (`MapRange`), fill `_a3` (`Map`), fold into `_lp4` (`Reduce`); `return _lp4;` |
-| `--inline --optimize --optimize-arrays --loops` | 1, then 4 (pass 2 finds no fixed-arity type, pass 3 no position) | identical to `--inline --loops` |
+| `--loops` | 4, on the one visible call | fill a `MapRange` result array, then call `Scale` and `Total`, which the lowerer does not recognise |
+| `--inline --loops` | 1, then 4 | one index loop applies each producer stage into a local and folds into the accumulator; no intermediate array |
+| `--inline --fuse` | 1, then 1b | compose `MapRange` and `Map`; the resulting `MapRange(...).Reduce(...)` still uses runtime calls and a producer array |
+| `--inline --fuse --loops` | 1, then 1b, then 4 | one index loop with a composed producer stage feeding the fold; no intermediate array |
+| `--inline --optimize --optimize-arrays --loops` | 1, then 4 (pass 2 finds no fixed-arity type, pass 3 no position) | the same loop shape as `--inline --loops` |
 
-The last two rows allocate two arrays (`_a2`, `_a3`) that no one else reads. The passes do not fuse
-`MapRange` into `Map` into `Reduce`; that is the first item in section 10. TIR after pass 4, from
-`--dump-tir`:
-
-```
-{ loop:MapRange -> _lp2; loop:Map -> _lp3; loop:Reduce -> _lp4; return _lp4; }
-```
-
-The loop for the middle step, from the real output:
+The `--inline --loops` row is conceptually the following C#, with descriptive local names rather
+than the emitter's generated identifiers:
 
 ```csharp
-var _s3 = _lp2;
-var _n3 = _s3.Count;
-var _a3 = new Number[_n3];
-for (var _i3 = 0; _i3 < _n3; _i3++)
+Number total = zero;
+var count = Math.Max(0, (int)n);
+for (var index = 0; index < count; index++)
 {
-    var x_3 = _s3[_i3];
-    _a3[_i3] = x_3.Mul(_var1);
+    var converted = ((Integer)index).ToNumber();
+    var scaled = converted.Mul(k);
+    total = total.Add(scaled);
 }
-IReadOnlyList<Number> _lp3 = _a3;
+return total;
 ```
 
-With `Map` given a Plato body (`MapRange(xs.Count, i => f(xs.At(i)))`) the result is the same text; the
-inliner leaves `Map` as a call, and the lowerer recognises it by name.
+`CombinatorFusionTests.MapChainIsOneLoopWithNoIntermediateArray` checks the emitted shape for direct
+chains, including a mapped value used twice. `WithoutFuseTheRangeCallRemains` shows why
+`n.Range.Reduce(...)` needs normalization when `Range` remains a call. The lowerer's chain recognition
+is in `IsChainConsumer`, `LowerChainReceiver` and `TryLower`; none checks `FuseCombinators`.
 
 To answer "which pass changes this expression under flags F" for another expression, run the CLI with
 `--dump-tir=<dir>`. Each pass that changed the body is a heading in the dump. The input stage shows the
 elaborated tree, so a call written as a library method (`Scale`) appears as itself until pass 1 replaces it.
 
-## 9. Statements corrected in the same change
+## 9. Historical documentation
 
 | File | Old statement | Now |
 |---|---|---|
 | `writers/Plato.CSharpWriter/Optimization/TirArrayMaterializer.cs` header | `Map`/`MapRange` return lazy views; the eager rename avoids re-evaluation | dated 2026-10-23: `MapRange` is eager (TKT-350); the rename is a no-op for behaviour, and the eager names live in `bonepile/` |
-| `docs/design/optimizer-stage2-plan.md` | "LAZY views" in the problem statement; fusion, struct functors and consumer-side lowering as plain future work | a dated note at the top of the file points here; the problem statement is history |
+| `docs/design/optimizer-stage2-plan.md` | "LAZY views" in the problem statement; fusion, struct functors and consumer-side lowering as plain future work | a dated note points here; fusion and consumer-chain lowering shipped, while the plan's original problem statement remains historical |
 | `stdlib/foundation/primitives.library.plato` sub-range section | "None copies" | each sub-range function is a `MapRange` and so copies its window; the note says so and is dated |
 
-## 10. What is not implemented (2026-10-23)
+## 10. Remaining boundaries
 
-- **Map-into-Map and MapRange-into-Map fusion.** Adjacent combinators each allocate. In section 8 the `MapRange`
-  and `Map` arrays could be one loop. Tracked as TKT-506 in the BIM Open Toolkit's `tickets/`.
-- **Consumer-side lowering.** A `Reduce`, `All` or `Any` over a producing pipeline does not read the producer's
-  elements straight into the fold; it reads an intermediate array. The same ticket covers it.
-- **Struct functors.** Lambdas that survive the passes are `Func<...>` delegates, with a delegate allocation
-  per call site. Tracked as TKT-507.
-- **Lowering inside lambdas and conditionals.** Refused by design, because hoisting changes evaluation count.
-  A pass that hoists safely (for instance when the loop and its inputs do not depend on the lambda's
-  parameters) is not designed.
+- **Fusion across local bindings.** A producer stored in a local and consumed later is not joined by
+  these expression-chain rules. Extending them requires preserving shared results and evaluation scope.
+- **Filter-idiom lowering.** `FlatMap(x => condition ? [value] : empty)` still constructs the callback's
+  collection before copying its elements. Recognising this as conditional append is TKT-507 in the
+  sibling `plato-brep/tickets/TKT-507-plato-filter-idiom-lowering.md`; that ticket is not a struct-functor task.
+- **Struct functors.** Surviving callbacks use `Func<...>` delegates. The writer has no pass replacing
+  them with value-type callable representations; allocation depends on captures and C# delegate caching.
+- **Loop lowering inside lambdas and conditionals.** The lowerer refuses these scopes because its
+  statement hoisting would change evaluation frequency or guards. Fusion and bounded literal unrolling
+  can still rewrite expressions there; they do not provide general nested-loop emission.
 - **Statement-shaped bodies in the unroller and the inliner.** Both refuse them; the loop lowerer lowers per
   top-level statement and leaves `if` and `while` intact.
 - **`--optimize-arrays` against the live runtime** (section 6).

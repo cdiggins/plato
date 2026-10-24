@@ -29,7 +29,7 @@ Maintained, descriptive, superseded by editing rather than by writing a successo
 - [`plato-library-map.md`](plato-library-map.md) — which `Plato.*` artifact is which, and what is frozen.
 - [`compiler-pipeline.md`](compiler-pipeline.md), [`type-checker-handoff.md`](type-checker-handoff.md),
   [`plato-emitter-phases.md`](plato-emitter-phases.md) — source to generated code.
-  [`csharp-optimizer-pipeline.md`](csharp-optimizer-pipeline.md) — the C# writer's four optimizer passes, flags, and runtime contract.
+  [`csharp-optimizer-pipeline.md`](csharp-optimizer-pipeline.md) — the C# writer's optimizer passes, flags, and runtime contract.
 - [`plato-intrinsics-surface.md`](plato-intrinsics-surface.md), [`plato-struct-surface.md`](plato-struct-surface.md) — the backend contracts.
 - [`interpreter.md`](interpreter.md) — the TIR evaluator, its law runner, and `plato run`; no code generation.
 - [`affine-types.md`](affine-types.md), [`affine-types-overview.md`](affine-types-overview.md) — the `unique` feature.

@@ -1,6 +1,6 @@
 # Optimizer stage 2 — loop-into-buffer lowering (starting plan, 2026-07-10)
 
-> **Dated 2026-10-23 (TKT-508).** History: this plan was written when `Map`/`MapRange` returned lazy views. Since TKT-350 `MapRange` is eager and every derived array function copies, so "The problem" below no longer describes the runtime, and the `MapEager` rename in increment 1 is a no-op for behaviour. Increments 2 to 4 (fusion, struct functors, consumer-side lowering) are not implemented. What runs today: [`../csharp-optimizer-pipeline.md`](../csharp-optimizer-pipeline.md).
+> **Historical plan; clarification updated 2026-10-24.** This plan predates the eager `MapRange` runtime (TKT-350), so its lazy-view problem statement and materialization rationale are historical. Fusion, bounded literal unrolling and consumer-chain lowering are implemented; struct functors remain a proposal. See the [current optimizer pipeline](../csharp-optimizer-pipeline.md) for supported forms, flags and remaining boundaries. The original plan below is preserved as history.
 
 Stage 2 per the roadmap: "loop-into-buffer lowering, functional-in-place — needs P6."
 P6's runtime slice is DONE (`unique type List<T>` / `Buffer<T>` intrinsics, `stdlib-legacy/unique.plato`),
