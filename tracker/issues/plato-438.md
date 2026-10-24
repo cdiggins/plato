@@ -2,7 +2,7 @@
 id: plato-438
 title: PlatoTests: TypeScript UseTir byte-identity test fails on number/Number casing
 type: bug
-status: ready
+status: in-progress
 priority: p3
 effort: S
 risk: low

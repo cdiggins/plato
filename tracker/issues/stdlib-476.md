@@ -2,7 +2,7 @@
 id: stdlib-476
 title: Future collision library violates the intrinsic declaration contract
 type: bug
-status: idea
+status: in-progress
 priority: p2
 effort: S
 risk: med

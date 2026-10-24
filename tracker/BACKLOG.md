@@ -11,6 +11,10 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-229](issues/plato-229.md) | Complete the Plato v2 interface lattice | feature | p1 | L | high | plato | in-progress |  |
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | in-progress |  |
 | [plato-378](issues/plato-378.md) | Shrink the host intrinsic contract to an irreducible kernel | debt | p1 | L | med | plato | in-progress |  |
+| [compiler-472](issues/compiler-472.md) | Navigation omits assignment-target references | bug | p2 | S | med | compiler | in-progress |  |
+| [compiler-475](issues/compiler-475.md) | Review drift in implicit and emitted conversion inventories | debt | p2 | S | med | compiler | in-progress |  |
+| [compiler-477](issues/compiler-477.md) | Simplifier corpus rewrite introduces unresolved references | bug | p2 | M | med | compiler | in-progress |  |
+| [compiler-478](issues/compiler-478.md) | Navigation corpus rebuild exceeds its timing budget on this host | problem | p2 | M | med | compiler | in-progress |  |
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion interface | idea | p2 | M | low | plato | in-progress |  |
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
@@ -18,6 +22,9 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-412](issues/plato-412.md) | ToSdf: concrete geometry shapes as signed distance fields | feature | p2 | M | low | plato | in-progress |  |
 | [plato-413](issues/plato-413.md) | Marching cubes: isosurface extraction from dense scalar grids and sampled SDFs | idea | p2 | M | low | plato | in-progress |  |
 | [plato-448](issues/plato-448.md) | Extend stdlib comparison with geometry3Sharp and production environments | debt | p2 | S | low | plato | in-progress |  |
+| [repo-479](issues/repo-479.md) | Resolve compiler and navigation baseline failures with performance validation | bug | p2 | L | med | repo | in-progress |  |
+| [stdlib-476](issues/stdlib-476.md) | Future collision library violates the intrinsic declaration contract | bug | p2 | S | med | stdlib | in-progress |  |
+| [plato-438](issues/plato-438.md) | PlatoTests: TypeScript UseTir byte-identity test fails on number/Number casing | bug | p3 | S | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
@@ -50,7 +57,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-427](issues/plato-427.md) | Finite elements: nodal stress smoothing, hexahedral and higher-order elements | feature | p3 | M | low | plato | ready |  |
 | [plato-428](issues/plato-428.md) | Rigid dynamics: GJK/EPA, orientation joints, and a broad phase | feature | p3 | M | low | plato | ready |  |
 | [plato-433](issues/plato-433.md) | TpmsSheet3D thickness is not portable between families and silently yields an empty solid | bug | p3 | S | low | plato | ready |  |
-| [plato-438](issues/plato-438.md) | PlatoTests: TypeScript UseTir byte-identity test fails on number/Number casing | bug | p3 | S | low | plato | ready |  |
 | [plato-467](issues/plato-467.md) | plato_laws does not run the Linter, so a missing interface function (LINT001) passes the warm server and fails the CLI lint | bug | p3 | S | low | plato | ready |  |
 | [compiler-461](issues/compiler-461.md) | A body whose lambdas capture only lambda-bound names is emitted as => /*?*/ | bug | ? | ? | ? | compiler | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
@@ -63,10 +69,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | p1 | L | med | plato | idea |  |
 | [compiler-416](issues/compiler-416.md) | Library functions taking Buffer<T> as first parameter are silently dropped from emitted C# | problem | p2 | M | med | compiler | idea |  |
 | [compiler-471](issues/compiler-471.md) | Parser dependency requires a machine-relative SDK checkout | debt | p2 | S | med | compiler | idea |  |
-| [compiler-472](issues/compiler-472.md) | Navigation omits assignment-target references | bug | p2 | S | med | compiler | idea |  |
-| [compiler-475](issues/compiler-475.md) | Review drift in implicit and emitted conversion inventories | debt | p2 | S | med | compiler | idea |  |
-| [compiler-477](issues/compiler-477.md) | Simplifier corpus rewrite introduces unresolved references | bug | p2 | M | med | compiler | idea |  |
-| [compiler-478](issues/compiler-478.md) | Navigation corpus rebuild exceeds its timing budget on this host | problem | p2 | M | med | compiler | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
 | [plato-028](issues/plato-028.md) | Consumer-driven refactoring direction (Earcut gaps, query vocabulary, topology) | feature | p2 | L | med | plato | idea |  |
 | [plato-029](issues/plato-029.md) | Port Geometry3Sharp pure query kernels to Plato | feature | p2 | L | med | plato | idea |  |
@@ -79,7 +81,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-418](issues/plato-418.md) | TypeScript writer: MakeArray2D/Array2D never emitted, generated mesh code crashes | bug | p2 | M | low | plato | idea |  |
 | [plato-420](issues/plato-420.md) | Declared-but-unimplemented stdlib tiers: colour conversion, differential geometry, sampling patterns, voxelization | problem | p2 | L | low | plato | idea |  |
 | [repo-473](issues/repo-473.md) | Resolve external SDK frozen-artifact gate drift | problem | p2 | S | med | repo | idea |  |
-| [stdlib-476](issues/stdlib-476.md) | Future collision library violates the intrinsic declaration contract | bug | p2 | S | med | stdlib | idea |  |
 | [compiler-469](issues/compiler-469.md) | Retire inactive parser and symbol XML writer sketches | debt | p3 | S | low | compiler | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |

@@ -2,7 +2,7 @@
 id: compiler-477
 title: Simplifier corpus rewrite introduces unresolved references
 type: bug
-status: idea
+status: in-progress
 priority: p2
 effort: M
 risk: med

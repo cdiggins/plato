@@ -2,7 +2,7 @@
 id: compiler-478
 title: Navigation corpus rebuild exceeds its timing budget on this host
 type: problem
-status: idea
+status: in-progress
 priority: p2
 effort: M
 risk: med

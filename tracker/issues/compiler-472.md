@@ -2,7 +2,7 @@
 id: compiler-472
 title: Navigation omits assignment-target references
 type: bug
-status: idea
+status: in-progress
 priority: p2
 effort: S
 risk: med
