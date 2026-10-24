@@ -81,6 +81,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-418](issues/plato-418.md) | TypeScript writer: MakeArray2D/Array2D never emitted, generated mesh code crashes | bug | p2 | M | low | plato | idea |  |
 | [plato-420](issues/plato-420.md) | Declared-but-unimplemented stdlib tiers: colour conversion, differential geometry, sampling patterns, voxelization | problem | p2 | L | low | plato | idea |  |
 | [repo-473](issues/repo-473.md) | Resolve external SDK frozen-artifact gate drift | problem | p2 | S | med | repo | idea |  |
+| [repo-494](issues/repo-494.md) | Give Greenhouse audits explicit source scope and useful ranking | idea | p2 | M | low | repo | idea |  |
 | [compiler-469](issues/compiler-469.md) | Retire inactive parser and symbol XML writer sketches | debt | p3 | S | low | compiler | idea |  |
 | [compiler-487](issues/compiler-487.md) | Evaluate concrete storage and callback specialization | feature | p3 | L | med | compiler | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
