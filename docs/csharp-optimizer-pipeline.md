@@ -1,5 +1,8 @@
 # The C# writer's optimizer pipeline
 
+For component rationale, related research, source links and evaluation guidance, see the
+[optimizer handbook](optimizer/README.md). This page remains the detailed pipeline contract.
+
 This reference describes the implemented C# optimizer. Where it and a historical plan under
 `docs/design/` or `docs/archive/` disagree, use this reference; implementation and tests take precedence
 if either document drifts. Examples below illustrate the transformations, not byte-for-byte output

@@ -1,0 +1,26 @@
+name: Optimizer documentation
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test documentation maintenance tools
+        run: python -m unittest discover -s tools/optimizer-docs -p 'test_*.py'
+      - name: Check source evidence, review and links
+        run: python tools/optimizer-docs/update.py check
+      - name: Regenerate source map from Greenhouse evidence
+        run: |
+          python tools/optimizer-docs/update.py render
+          git diff --exit-code -- docs/optimizer/source-map.md

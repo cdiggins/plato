@@ -1,0 +1,41 @@
+# Rewrite infrastructure: preserve the tree contract
+
+[Overview](README.md) · [Inlining](inlining.md) · [Source map](source-map.md)
+
+## Idea and motivation
+
+Optimization rules need a consistent way to visit children, rebuild nodes and substitute resolved
+parameters. Centralizing these operations prevents each pass from implementing its own incomplete
+tree traversal. [TirRewrite](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs) is the
+shared implementation. [MLIR's pattern rewriter](references.md#rewriting-infrastructure) addresses
+the same separation between traversal and rules, with a much broader infrastructure.
+
+## Contracts
+
+`Rewrite` rebuilds children before applying a supplied rewrite to their parent. Enter/exit hooks
+let a caller track scope such as lambda depth. Marker nodes introduced by earlier optimizations
+must remain traversable by later passes. `Substitute` replaces references keyed by resolved
+`ParameterDef` objects, rather than performing text replacement. `TryBetaReduce` applies a lambda
+when its argument-use checks allow substitution.
+
+Substitution itself does not alpha-rename every binding. The caller owns capture and naming
+constraints; the inliner supplies its own lambda-parameter renaming. `IsCheap`, coercion handling,
+list recognition and type helpers encode assumptions used by several passes. Changes to these
+helpers can affect more than the pass that motivated them.
+
+[ITirInlineHost](../../writers/Plato.CSharpWriter/Optimization/ITirInlineHost.cs) is the body lookup
+and policy contract for the shared inliner. [InlineReport](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs)
+turns its refusals into diagnostics. [CSharpWriter](../../writers/Plato.CSharpWriter/CSharpWriter.cs)
+owns scheduling, dump output and per-generation counter resets. These are supporting components,
+not additional independently enabled optimization passes.
+
+## Usage, tests and effectiveness
+
+There is no user-facing rewrite flag. [TirRewriteTests](../../tests/PlatoTests/Optimization/TirRewriteTests.cs)
+checks tree rebuilding and substitution, while pass tests exercise the resulting interactions.
+Use the [evaluation commands](evaluation.md) with that class filter after changes to traversal.
+
+The benefit is consistency and composability rather than a direct runtime speedup. A traversal
+that loses type/origin information or misses a marker can silently disable a later optimization
+or generate incorrect code. Scope, conversions and callback identity need explicit scrutiny;
+the [sequencing investigation](../../tracker/issues/compiler-483.md) records unresolved hypotheses.

@@ -219,6 +219,10 @@ The ones agents most often rediscover the hard way:
 
 ## Mission protocol
 
+- Changes to optimizer algorithms, their emitter/runtime dependencies or tests must follow
+  [Optimizer Documentation Stewardship](tools/optimizer-docs/MAINTENANCE.md): refresh Greenhouse
+  source evidence, review the affected guides, and pass the documentation freshness check.
+
 - Maintain `PROGRESS.md` in your workspace (10 lines max, updated as you go) so a crashed session resumes cheaply.
 - On completion: close your tracker issue (`python tools/track.py close <id> --outcome "..."`)
   and record any lasting decision in the relevant `docs/` plan, and keep the final report

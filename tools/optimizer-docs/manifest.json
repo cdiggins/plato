@@ -1,0 +1,20 @@
+{
+  "source_globs": [
+    "writers/Plato.CSharpWriter/Optimization/*.cs",
+    "writers/Plato.CSharpWriter/CSharpWriter.cs",
+    "writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs",
+    "writers/Plato.CSharpWriter/TirCSharpBodyWriter*.cs",
+    "src/Plato.Compiler/Checking/Tir*.cs",
+    "src/Plato.Intrinsics/ArrayIntrinsics.cs",
+    "stdlib/foundation/intrinsics.library.plato",
+    "stdlib/foundation/primitives.library.plato",
+    "src/Plato.CLI/Program.cs",
+    "src/Plato.Laws/CSharpProgram.cs",
+    "tests/PlatoTests/Optimization/**/*.cs",
+    "tests/PlatoTests/Optimization/**/*.plato"
+  ],
+  "project": "writers/Plato.CSharpWriter/Plato.CSharpWriter.csproj",
+  "symbol_directory": "writers/Plato.CSharpWriter/Optimization/",
+  "required_types": ["TirInliner", "TirFusion", "TirLiteralUnroller", "TirComponentUnroller", "TirArrayMaterializer", "TirLoopLowerer", "TirRewrite", "ITirInlineHost", "InlineReport", "ComponentUnroller"],
+  "pages": ["README.md", "inlining.md", "fusion.md", "literal-expansion.md", "component-expansion.md", "materialization.md", "loops.md", "rewrite-infrastructure.md", "evaluation.md", "references.md"]
+}

@@ -20,6 +20,10 @@ an observation. Everything in `kebab-case.md` is descriptive, historical, or exp
 
 ## Reference — how things currently work
 
+The [optimizer handbook](optimizer/README.md) explains the C# optimization components, their
+motivation, source and test evidence, and related compiler ideas. Its [pipeline reference](csharp-optimizer-pipeline.md)
+defines scheduling and runtime contracts.
+
 Maintained, descriptive, superseded by editing rather than by writing a successor.
 
 - [`repository-organization.md`](repository-organization.md) — responsibility groups, file and folder documentation, and safe relocation checks.
