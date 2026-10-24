@@ -82,11 +82,11 @@ library Kernels
             }
         }
 
-        /// <summary>The emitted body of one Kernels function: from its signature line to the next
-        /// method's signature or the end of the class.</summary>
+        /// <summary>The emitted body of one Kernels function: its signature line and every line
+        /// after it up to the next method's signature.</summary>
         public static string BodyOf(string text, string name)
         {
-            var m = Regex.Match(text, $@"\b{name}\(.*?\n(.*?)(?=\n\s*(\[MethodImpl\(AggressiveInlining\)\] )?public |\n\s*\}}\s*$)", RegexOptions.Singleline);
+            var m = Regex.Match(text, $@"\b{name}\([^\n]*(\n(?!\s*(\[MethodImpl\(AggressiveInlining\)\] )?public )[^\n]*)*");
             Assert.IsTrue(m.Success, $"no emitted body for {name}");
             return m.Value;
         }

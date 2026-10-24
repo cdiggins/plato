@@ -79,10 +79,14 @@ public static class TirFusion
             case "Take":
                 return TakeToMapRange(c, ctx);
             case "Map":
-                return ComposeMaps(c, ctx);
+                return ComposeMaps(c, ctx) ?? TirLiteralUnroller.UnrollMapOverArray(c);
+            case "MapRange" or "MapRangeEager":
+                return TirLiteralUnroller.UnrollMapRange(c, ctx);
             case "Reduce":
-                return FuseMapIntoConsumer(c, ctx, paramIndex: 1);
-            case "All" or "Any" or "FlatMap":
+                return FuseMapIntoConsumer(c, ctx, paramIndex: 1) ?? TirLiteralUnroller.UnrollReduceOverArray(c);
+            case "All" or "Any":
+                return FuseMapIntoConsumer(c, ctx, paramIndex: 0) ?? TirLiteralUnroller.UnrollAllAnyOverArray(c, ctx);
+            case "FlatMap":
                 return FuseMapIntoConsumer(c, ctx, paramIndex: 0);
             default:
                 return null;

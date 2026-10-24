@@ -549,7 +549,15 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 {
                     if (i > 0)
                         Write($" {bc.Op} ");
+                    // A term that binds looser than && or || (a conditional, from the short-circuit
+                    // rewrite of a predicate's own && and ||; an assignment; a nested chain) keeps its
+                    // parentheses: `a ? b : false || c` would parse as `a ? b : (false || c)` (TKT-506).
+                    var term = TirRewrite.StripCoerce(bc.Terms[i]);
+                    var wrap = term is TirConditional || term is TirAssign || term is TirLambda
+                        || (term is TirBooleanChain inner && inner.Op != bc.Op);
+                    if (wrap) Write("(");
                     WriteNode(bc.Terms[i]);
+                    if (wrap) Write(")");
                 }
                 return;
 
