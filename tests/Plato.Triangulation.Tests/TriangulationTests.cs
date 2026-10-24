@@ -1,3 +1,4 @@
+// Checks triangulation operations from generated Plato code.
 using NUnit.Framework;
 
 namespace Ara3D.Geometry.Tests;

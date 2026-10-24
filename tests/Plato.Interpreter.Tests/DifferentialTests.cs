@@ -1,3 +1,4 @@
+// Compares interpreter execution with generated C# results.
 using System.Text;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Laws;

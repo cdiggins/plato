@@ -1,3 +1,4 @@
+// Checks interpretation and compilation of generic sum values.
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;

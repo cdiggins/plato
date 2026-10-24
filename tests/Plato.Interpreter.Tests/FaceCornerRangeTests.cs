@@ -1,3 +1,4 @@
+// Checks face-corner iteration over mesh topology.
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
 using Ara3D.Geometry.Laws;

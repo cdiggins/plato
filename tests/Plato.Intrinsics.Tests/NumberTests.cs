@@ -1,3 +1,4 @@
+// Checks numeric wrapper arithmetic and conversions.
 using Ara3D.Geometry;
 using NUnit.Framework;
 

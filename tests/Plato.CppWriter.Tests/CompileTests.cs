@@ -1,3 +1,4 @@
+// Compiles emitted C++ and CUDA programs with available native toolchains.
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.CppWriter;
 using Ara3D.Utils;

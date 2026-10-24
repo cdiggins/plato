@@ -1,3 +1,4 @@
+// Locates fixtures and invokes context export for tests.
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.ContextExport;
 using Ara3D.Parakeet;

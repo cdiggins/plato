@@ -1,3 +1,4 @@
+// Provides source programs shared by differential backend tests.
 using System.Diagnostics;
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler;

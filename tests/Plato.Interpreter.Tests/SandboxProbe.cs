@@ -1,3 +1,4 @@
+// Provides explicitly selected probes against an external STEP sandbox.
 using System.Diagnostics;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Types;

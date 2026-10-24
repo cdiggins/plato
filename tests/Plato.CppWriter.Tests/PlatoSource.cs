@@ -1,3 +1,4 @@
+// Provides Plato source programs for native writer compilation tests.
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Parakeet;

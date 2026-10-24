@@ -1,3 +1,4 @@
+// Checks numeric behavior under supported precision profiles.
 using Ara3D.Geometry;
 using NUnit.Framework;
 

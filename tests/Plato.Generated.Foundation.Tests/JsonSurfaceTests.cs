@@ -1,3 +1,4 @@
+// Checks JSON serialization of generated foundation types.
 using System.Globalization;
 using System.Text.Json;
 using Ara3D.Geometry;

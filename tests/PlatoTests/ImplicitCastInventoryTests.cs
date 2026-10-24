@@ -1,3 +1,4 @@
+// Compares available implicit casts with the adjacent inventory.
 using System;
 using System.IO;
 using System.Linq;

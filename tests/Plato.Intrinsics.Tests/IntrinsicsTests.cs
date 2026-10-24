@@ -1,3 +1,4 @@
+// Checks shared handwritten intrinsic operations.
 using Ara3D.Geometry;
 using NUnit.Framework;
 

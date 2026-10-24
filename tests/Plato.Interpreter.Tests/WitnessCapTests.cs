@@ -1,3 +1,4 @@
+// Checks limits on witness enumeration during law runs.
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
 using Ara3D.Geometry.Laws;

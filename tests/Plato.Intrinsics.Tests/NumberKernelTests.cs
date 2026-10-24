@@ -1,3 +1,4 @@
+// Checks the irreducible numeric runtime kernel.
 using Ara3D.Geometry;
 using NUnit.Framework;
 

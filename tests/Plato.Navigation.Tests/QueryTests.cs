@@ -1,3 +1,4 @@
+// Checks definition, reference and name-search queries.
 using Ara3D.Geometry.Navigation;
 using Ara3D.Utils;
 using NUnit.Framework;

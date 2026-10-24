@@ -1,3 +1,4 @@
+// Checks the public handwritten runtime API.
 using System.Reflection;
 using Ara3D.Geometry;
 using NUnit.Framework;

@@ -1,4 +1,5 @@
-﻿namespace PlatoTests
+﻿// Contains exploratory C# models of numeric and vector interface relationships.
+namespace PlatoTests
 {
     public interface INumerical<TSelf>
     {

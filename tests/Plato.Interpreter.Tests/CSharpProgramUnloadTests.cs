@@ -1,3 +1,4 @@
+// Checks unloading of dynamically compiled law assemblies.
 using System.Runtime.CompilerServices;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Laws;

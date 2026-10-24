@@ -1,3 +1,4 @@
+// Checks individual source simplifications and their applicability.
 using Ara3D.Geometry.Navigation;
 using Ara3D.Utils;
 using NUnit.Framework;

@@ -1,3 +1,4 @@
+// Checks law filtering and selection for execution.
 using System.Runtime.CompilerServices;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Types;

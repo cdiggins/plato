@@ -1,3 +1,4 @@
+// Checks navigation behavior when source contains compilation errors.
 using Ara3D.Geometry.Navigation;
 using System.Diagnostics;
 using Ara3D.Utils;

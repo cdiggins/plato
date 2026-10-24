@@ -1,3 +1,4 @@
+// Checks law result reporting and failure details.
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;

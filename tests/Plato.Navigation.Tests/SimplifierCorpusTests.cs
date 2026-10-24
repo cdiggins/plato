@@ -1,3 +1,4 @@
+// Checks simplification over representative source programs.
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Navigation;
 using Ara3D.Utils;

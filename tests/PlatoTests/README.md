@@ -1,0 +1,3 @@
+# Compiler and writer checks
+
+Tests are grouped by responsibility: [Checking](Checking/README.md), [Parsing](Parsing/README.md), [Emission](Emission/README.md), [Optimization](Optimization/README.md), and [Contracts](Contracts/README.md). `CheckerTestSupport.cs` locates source fixtures and constructs compilations. Snapshot and inventory tests remain at this level beside their text baselines because they use source-relative paths. `input/` and `output/` preserve historical parser fixtures. Run `dotnet test tests/PlatoTests/PlatoTests.csproj -c Release` from the repository root; use `--filter` for a focused test class.

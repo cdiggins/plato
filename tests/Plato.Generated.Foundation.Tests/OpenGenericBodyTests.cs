@@ -1,3 +1,4 @@
+// Checks generated generic bodies in the foundation library.
 using Ara3D.Geometry;
 using NUnit.Framework;
 

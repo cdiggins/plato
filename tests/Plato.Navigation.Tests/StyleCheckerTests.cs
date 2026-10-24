@@ -1,3 +1,4 @@
+// Checks style diagnostics for Plato source.
 using Ara3D.Geometry.Navigation;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Utils;

@@ -1,3 +1,4 @@
+// Checks string wrapper operations in the handwritten runtime.
 using Ara3D.Geometry;
 using NUnit.Framework;
 using String = Ara3D.Geometry.String;

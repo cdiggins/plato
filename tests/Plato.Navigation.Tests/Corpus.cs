@@ -1,3 +1,4 @@
+// Provides source corpus fixtures for navigation tests.
 using Ara3D.Geometry.Navigation;
 using Ara3D.Utils;
 

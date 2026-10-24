@@ -1,3 +1,4 @@
+// Runs selected standard-library laws through the interpreter.
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
 

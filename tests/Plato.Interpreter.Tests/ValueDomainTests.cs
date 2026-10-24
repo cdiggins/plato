@@ -1,3 +1,4 @@
+// Checks the value domains used to generate law inputs.
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
 

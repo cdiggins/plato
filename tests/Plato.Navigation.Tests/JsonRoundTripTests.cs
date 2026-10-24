@@ -1,3 +1,4 @@
+// Checks serialization and reconstruction of navigation data.
 using Ara3D.Geometry.Navigation;
 using NUnit.Framework;
 

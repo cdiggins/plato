@@ -1,3 +1,4 @@
+// Checks consistency of navigation records and locations.
 using Ara3D.Geometry.Navigation;
 using Ara3D.Geometry.AST;
 using Ara3D.Utils;

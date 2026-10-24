@@ -1,3 +1,4 @@
+// Checks character wrapper operations in the handwritten runtime.
 using Ara3D.Geometry;
 using NUnit.Framework;
 

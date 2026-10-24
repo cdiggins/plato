@@ -1,3 +1,4 @@
+// Checks lazy evaluation of Boolean branches in the interpreter.
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
 using Ara3D.Geometry.Laws;

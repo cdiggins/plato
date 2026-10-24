@@ -1,3 +1,4 @@
+// Exercises laws through generated and compiled C#.
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
 using Ara3D.Geometry.Laws;

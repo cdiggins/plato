@@ -1,3 +1,4 @@
+// Checks comparison of interpreter and compiled law results.
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;

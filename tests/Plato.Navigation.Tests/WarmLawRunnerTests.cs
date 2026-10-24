@@ -1,3 +1,4 @@
+// Checks law execution through cached navigation compilations.
 using System.Runtime.CompilerServices;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;

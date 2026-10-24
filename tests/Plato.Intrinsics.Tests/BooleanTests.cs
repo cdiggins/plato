@@ -1,3 +1,4 @@
+// Checks Boolean wrapper operations in the handwritten runtime.
 using NUnit.Framework;
 using Boolean = Ara3D.Geometry.Boolean;
 

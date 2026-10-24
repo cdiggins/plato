@@ -1,3 +1,4 @@
+// Locates and invokes native compilers for generated-code tests.
 using System.Diagnostics;
 
 namespace PlatoCppWriterTests;

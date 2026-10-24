@@ -1,3 +1,4 @@
+// Checks index updates after source snapshots change.
 using Ara3D.Geometry.Navigation;
 using Ara3D.Utils;
 using NUnit.Framework;

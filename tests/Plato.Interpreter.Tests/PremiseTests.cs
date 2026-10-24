@@ -1,3 +1,4 @@
+// Checks how law premises select valid generated cases.
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
 using Ara3D.Geometry.Laws;

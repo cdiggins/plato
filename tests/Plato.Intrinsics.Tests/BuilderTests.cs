@@ -1,3 +1,4 @@
+// Checks affine list and buffer builders in the handwritten runtime.
 using Ara3D.Geometry;
 using NUnit.Framework;
 

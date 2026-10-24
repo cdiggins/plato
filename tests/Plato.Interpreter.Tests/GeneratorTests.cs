@@ -1,3 +1,4 @@
+// Checks generated law inputs against their requested Plato types.
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;

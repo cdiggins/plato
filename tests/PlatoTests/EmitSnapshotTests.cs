@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Compares generated C# with the emission snapshot stored beside this source file.
+using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;

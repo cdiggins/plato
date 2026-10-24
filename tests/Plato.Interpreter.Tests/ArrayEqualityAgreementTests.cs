@@ -1,3 +1,4 @@
+// Checks array equality agrees across law execution backends.
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
 using Ara3D.Geometry.Laws;

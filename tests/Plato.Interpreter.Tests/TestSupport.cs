@@ -1,3 +1,4 @@
+// Builds source programs and locates fixtures for interpreter tests.
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Types;

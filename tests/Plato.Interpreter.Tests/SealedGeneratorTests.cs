@@ -1,3 +1,4 @@
+// Checks generation of values constrained by sealed constructors.
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;

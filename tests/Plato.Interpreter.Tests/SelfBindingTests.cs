@@ -1,3 +1,4 @@
+// Checks binding of Self during interpreted member calls.
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;

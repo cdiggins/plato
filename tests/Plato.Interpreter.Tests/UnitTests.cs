@@ -1,3 +1,4 @@
+// Exercises expression evaluation and runtime values in the interpreter.
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
 

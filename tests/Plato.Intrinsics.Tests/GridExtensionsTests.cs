@@ -1,3 +1,4 @@
+// Checks grid indexing and dimensions in runtime extensions.
 using Ara3D.Collections;
 using Ara3D.Geometry;
 using NUnit.Framework;

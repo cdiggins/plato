@@ -1,3 +1,4 @@
+// Checks definition and reference coverage across identifiers.
 using Ara3D.Geometry.Navigation;
 using Ara3D.Geometry.AST;
 using NUnit.Framework;

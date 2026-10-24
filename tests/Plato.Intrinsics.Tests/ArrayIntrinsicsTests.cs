@@ -1,3 +1,4 @@
+// Checks the handwritten array intrinsic kernel.
 using Ara3D.Geometry;
 using NUnit.Framework;
 

@@ -1,3 +1,4 @@
+// Checks compilation and diagnostic support for navigation clients.
 using Ara3D.Geometry.Navigation;
 using Ara3D.Utils;
 using NUnit.Framework;

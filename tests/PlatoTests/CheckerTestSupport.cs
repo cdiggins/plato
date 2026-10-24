@@ -1,3 +1,4 @@
+// Builds real compilations and locates repository fixtures for checker and writer tests.
 using System;
 using System.IO;
 using System.Linq;

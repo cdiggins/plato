@@ -1,3 +1,4 @@
+// Supplies test-only concept declarations needed by runtime source imports.
 namespace Ara3D.Geometry
 {
     /// <summary>

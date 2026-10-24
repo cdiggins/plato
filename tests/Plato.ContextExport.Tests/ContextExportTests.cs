@@ -1,3 +1,4 @@
+// Checks declaration filtering and compact formatting in context exports.
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.ContextExport;
 using Ara3D.Parakeet;

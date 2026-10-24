@@ -1,3 +1,4 @@
+// Compares generated conversion signatures with the adjacent inventory.
 using System;
 using System.IO;
 using System.Linq;
