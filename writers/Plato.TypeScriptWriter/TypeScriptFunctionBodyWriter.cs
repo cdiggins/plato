@@ -325,9 +325,15 @@ public class TypeScriptFunctionBodyWriter : CodeBuilder<TypeScriptFunctionBodyWr
         switch (expr)
         {
             case TypeExpression typeExpression:
+            {
                 if (typeExpression.TypeArgs.Count > 0)
                     throw new NotSupportedException();
-                return Write(TypeName(typeExpression));
+                var name = TypeName(typeExpression);
+                // Static members live on the native constructor, not the primitive type keyword.
+                return Write(TypeScriptWriter.NativeInterfaces.TryGetValue(name, out var constructor)
+                    ? constructor
+                    : name);
+            }
 
             case NewExpression newExpression:
             {
@@ -363,8 +369,8 @@ public class TypeScriptFunctionBodyWriter : CodeBuilder<TypeScriptFunctionBodyWr
 
             case ConditionalExpression conditional:
                 return WriteCondition(conditional.Condition)
-                    .Write(" ? ").Write(conditional.IfTrue)
-                    .Write(" : ").Write(conditional.IfFalse);
+                    .Write(" ? ").Write(conditional.IfTrue, type)
+                    .Write(" : ").Write(conditional.IfFalse, type);
 
             case FunctionCall functionCall:
                 return WriteFunctionCall(functionCall, type);

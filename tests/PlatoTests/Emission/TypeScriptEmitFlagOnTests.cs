@@ -30,6 +30,21 @@ namespace PlatoTests
             var flagOn = new TypeScriptWriter(CheckerTestSupport.CompileStdLib(), "unused-flag-on") { UseTir = true };
             flagOn.WriteAll();
 
+            foreach (var writer in new[] { flagOff, flagOn })
+            {
+                var ts = writer.Files["plato.g.ts"].ToString();
+                Assert.That(ts, Does.Contain("Intrinsics.Install(Number, 'MinValue',"));
+                Assert.That(ts, Does.Contain("static MinValue(): Time { return Time.CreateFromComponent(Number.MinValue()); }"));
+                Assert.That(ts, Does.Contain("static MaxValue(): Time { return Time.CreateFromComponent(Number.MaxValue()); }"));
+                Assert.That(ts, Does.Not.Contain("number.MinValue()"));
+                Assert.That(ts, Does.Not.Contain("number.MaxValue()"));
+
+                // Capsule evaluation returns Point3D through nested conditional tuple branches.
+                var capsuleReturn = ts.Split('\n').Single(line => line.Contains("return (v.LessThanOrEquals(0.25)) ?"));
+                Assert.That(capsuleReturn.Split("new Point3D(").Length - 1, Is.EqualTo(3));
+                Assert.That(capsuleReturn, Does.Not.Contain("new Tuple3("));
+            }
+
             var totalEligible = flagOn.TirBodiesEmitted + flagOn.TirFallbackBodies;
             TestContext.WriteLine("=== UseTir flag-ON full-library measurement (TypeScript) ===");
             TestContext.WriteLine($"bodies emitted from the TIR   : {flagOn.TirBodiesEmitted}");
