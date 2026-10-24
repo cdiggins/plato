@@ -2,14 +2,14 @@
 id: repo-489
 title: Consolidate codegen verification and isolate CLI responsibilities
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: low
 area: repo
 sprint: 
 created: 2026-10-24
-closed:
+closed: 2026-10-24
 links: []
 ---
 
