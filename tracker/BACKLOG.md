@@ -8,6 +8,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 
 | id | title | type | pri | effort | risk | area | status | sprint |
 |----|-------|------|-----|--------|------|------|--------|--------|
+| [compiler-481](issues/compiler-481.md) | Plan and critically review BREP compiler optimizations | problem | p1 | M | med | compiler | in-progress |  |
 | [plato-229](issues/plato-229.md) | Complete the Plato v2 interface lattice | feature | p1 | L | high | plato | in-progress |  |
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | in-progress |  |
 | [plato-378](issues/plato-378.md) | Shrink the host intrinsic contract to an irreducible kernel | debt | p1 | L | med | plato | in-progress |  |
