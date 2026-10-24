@@ -11,6 +11,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-229](issues/plato-229.md) | Complete the Plato v2 interface lattice | feature | p1 | L | high | plato | in-progress |  |
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | in-progress |  |
 | [plato-378](issues/plato-378.md) | Shrink the host intrinsic contract to an irreducible kernel | debt | p1 | L | med | plato | in-progress |  |
+| [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | in-progress |  |
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion interface | idea | p2 | M | low | plato | in-progress |  |
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
@@ -28,7 +29,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-443](issues/plato-443.md) | Interface-typed fields bind Self to the containing type: TubeSurface.Path is ICurve3D<TubeSurface>, so no real curve fits | bug | p1 | M | low | plato | ready |  |
 | [plato-444](issues/plato-444.md) | TriangleMesh3D.LoopSubdivided returns NaN for every original vertex | bug | p1 | M | low | plato | ready |  |
 | [plato-447](issues/plato-447.md) | VertexNormalVectors scans every face per vertex: 152s for a 7680-vertex mesh, unusable at demo scale | bug | p1 | S | low | plato | ready |  |
-| [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | ready |  |
 | [compiler-408](issues/compiler-408.md) | Transform operator aliases cannot be derived: an interface-typed parameter does not re-resolve per implementor | problem | p2 | M | med | compiler | ready |  |
 | [plato-277](issues/plato-277.md) | stdlib interface-gap burn-down: the 17 markers that need a language or interface decision | debt | p2 | M | low | plato | ready |  |
 | [plato-323](issues/plato-323.md) | Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile | bug | p2 | L | med | plato | ready |  |

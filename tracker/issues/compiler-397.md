@@ -2,7 +2,7 @@
 id: compiler-397
 title: IArrayLike types with no generated fields emit an empty component type
 type: bug
-status: ready
+status: in-progress
 priority: p2
 effort: S
 risk: low
