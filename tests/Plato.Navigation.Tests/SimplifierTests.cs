@@ -13,6 +13,7 @@ namespace Plato.Navigation.Tests;
 public static class SimplifierTests
 {
     private const string Types = """
+        type Tuple2<T0, T1> { X0: T0; X1: T1; }
         type Vector2D { X: Number; Y: Number; }
         type Point2D { X: Number; Y: Number; }
         """;
@@ -43,6 +44,31 @@ public static class SimplifierTests
 
     private static string Simplify(string text)
         => Simplifier.Apply(text, CheckWithLibrary(text));
+
+    [TestCase(2, true)]
+    [TestCase(2, false)]
+    [TestCase(13, false)]
+    public static void ConstructorRemovalRequiresTheMatchingTupleVocabulary(int fields, bool hasTuple)
+    {
+        var tuple = hasTuple ? "type Tuple2<T0, T1> { X0: T0; X1: T1; }" : "";
+        var members = string.Join(" ", Enumerable.Range(0, fields).Select(i => $"X{i}: Number;"));
+        var arguments = string.Join(", ", Enumerable.Repeat("seed", fields));
+        var text = $"primitive Number {{ }} {tuple} type Product {{ {members} }} " +
+            $"library Products {{ Make(seed: Number): Product => Product({arguments}); }}";
+        var path = new FilePath("tuple-vocabulary.plato");
+        var before = BoundSnapshot.Create(SourceSnapshot.FromTexts(new Dictionary<FilePath, string> { [path] = text }));
+        Assert.That(before.Files.All(f => f.Parsed), Is.True);
+        Assert.That(before.ResolutionErrors, Is.Empty);
+
+        var edits = Check(text);
+        Assert.That(edits.Count(e => e.Code == Simplifier.RedundantConstructor), Is.EqualTo(hasTuple ? 1 : 0));
+        var after = BoundSnapshot.Create(SourceSnapshot.FromTexts(new Dictionary<FilePath, string>
+        {
+            [path] = Simplifier.Apply(text, edits)
+        }));
+        Assert.That(after.Files.All(f => f.Parsed), Is.True);
+        Assert.That(after.ResolutionErrors, Is.Empty, "constructor removal must not introduce an unresolved TupleN");
+    }
 
     [Test]
     public static void ConstructorNameDropsInResultPosition()

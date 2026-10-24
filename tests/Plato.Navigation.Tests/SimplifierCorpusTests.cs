@@ -24,6 +24,12 @@ public static class SimplifierCorpusTests
     {
         var parsed = CheckSupport.Parse(snapshot, new ParseCache());
         var comp = CheckSupport.Compile(parsed);
+        if (comp.SymbolFactory != null)
+            foreach (var error in comp.SymbolFactory.Errors)
+            {
+                var range = error.Node?.GetRange();
+                TestContext.WriteLine($"{range?.FilePath}:{range}: {error.Message}");
+            }
         return (parsed.Count(f => !f.Parsed), comp.SymbolFactory?.Errors.Count ?? 0);
     }
 

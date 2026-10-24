@@ -17,7 +17,8 @@ namespace Ara3D.Geometry.Navigation;
 ///            unified with its siblings instead, and a bare `TupleN` does not unify with the named
 ///            type they carry (plato-404). Also requires the argument count to equal the field count
 ///            of a concrete `T` in the corpus, so a same-named conversion overload is never mistaken
-///            for the field-wise constructor.
+///            for the field-wise constructor. The corpus must declare the matching generic TupleN;
+///            otherwise removing the constructor name would introduce an unresolved tuple call.
 ///   SIM002 - an expression that re-spells a constant the vocabulary already names. Any occurrence
 ///            of a literal constructor call that is the whole body of a `Name(_: T): T` constant
 ///            (`Vector2D.UnitX`) becomes that constant. The constants' own bodies are excluded, so
@@ -106,7 +107,8 @@ public static class Simplifier
             }
 
             var returns = method.Type?.Name.Text;
-            if (returns == null || !vocabulary.Arity.TryGetValue(returns, out var fields) || fields < 2)
+            if (returns == null || !vocabulary.Arity.TryGetValue(returns, out var fields) || fields < 2
+                || !vocabulary.TupleArities.Contains(fields))
                 continue;
 
             foreach (var result in Results(method.Body))
@@ -437,6 +439,7 @@ public static class Simplifier
     private sealed class Vocabulary
     {
         public IReadOnlyDictionary<string, int> Arity { get; private init; } = new Dictionary<string, int>();
+        public IReadOnlySet<int> TupleArities { get; private init; } = new HashSet<int>();
         public IReadOnlyDictionary<string, string> Constants { get; private init; } = new Dictionary<string, string>();
         public IReadOnlyDictionary<string, List<(int Begin, int End)>> Definitions { get; private init; }
             = new Dictionary<string, List<(int, int)>>();
@@ -458,6 +461,10 @@ public static class Simplifier
                 Arity = types.Where(t => t.Kind == TypeKind.ConcreteType)
                     .GroupBy(t => t.Name.Text)
                     .ToDictionary(g => g.Key, g => g.First().Members.OfType<AstFieldDeclaration>().Count()),
+                TupleArities = types.Where(t => t.Kind == TypeKind.ConcreteType
+                        && t.Name.Text == $"Tuple{t.TypeParameters.Count}"
+                        && t.Members.OfType<AstFieldDeclaration>().Count() == t.TypeParameters.Count)
+                    .Select(t => t.TypeParameters.Count).ToHashSet(),
                 Interfaces = Closures(types),
                 Constants = constants,
                 Definitions = definitions,

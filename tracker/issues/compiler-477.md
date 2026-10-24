@@ -21,5 +21,13 @@ Reproduce: `dotnet test tests/Plato.Navigation.Tests/Plato.Navigation.Tests.cspr
 
 ## Done means
 
-- [ ] Isolate the failing rewrites and add focused regressions for their resolution semantics.
-- [ ] The corpus simplification test passes without suppressing diagnostics or excluding files.
+- [x] Isolate the failing rewrites and add focused regressions for their resolution semantics.
+- [x] The corpus simplification test passes without suppressing diagnostics or excluding files.
+
+## Resolution
+
+The constructor-shortening rule SIM001 removed names from thirteen-field constructor results, causing the binder to look for nonexistent `Tuple13`. Isolating the rules showed all seven errors came from SIM001; SIM002 and SIM003 introduced none.
+
+SIM001 now requires a matching concrete generic `TupleN` declaration with the same parameter and field count in the supplied vocabulary. The check uses actual declarations rather than assuming a fixed maximum. Focused cases bind both before and after the proposed edit: available Tuple2 permits shortening, while missing Tuple2 and missing Tuple13 preserve the constructor. Existing positive fixtures explicitly supply their tuple declaration.
+
+The complete navigation suite passed all 73 executed tests, including the corpus simplification gate and the new focused cases. No files or diagnostics were excluded. Corpus failures now print their source range and message to make future regressions actionable.
