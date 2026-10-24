@@ -67,6 +67,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-472](issues/compiler-472.md) | Navigation omits assignment-target references | bug | p2 | S | med | compiler | idea |  |
 | [compiler-475](issues/compiler-475.md) | Review drift in implicit and emitted conversion inventories | debt | p2 | S | med | compiler | idea |  |
 | [compiler-477](issues/compiler-477.md) | Simplifier corpus rewrite introduces unresolved references | bug | p2 | M | med | compiler | idea |  |
+| [compiler-478](issues/compiler-478.md) | Navigation corpus rebuild exceeds its timing budget on this host | problem | p2 | M | med | compiler | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
 | [plato-028](issues/plato-028.md) | Consumer-driven refactoring direction (Earcut gaps, query vocabulary, topology) | feature | p2 | L | med | plato | idea |  |
 | [plato-029](issues/plato-029.md) | Port Geometry3Sharp pure query kernels to Plato | feature | p2 | L | med | plato | idea |  |
