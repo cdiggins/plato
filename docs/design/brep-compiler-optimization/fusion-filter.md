@@ -1,0 +1,104 @@
+# BREP compiler proposal: local-binding fusion and FlatMap filtering
+
+Reviewed proposal for compiler-481. The [combined plan](../brep-compiler-optimization-plan.md) governs implementation order and the released first slice. This document states design and proof obligations; measurements belong in validation logs.
+
+## Incorporated critical review
+
+F1 is the only released implementation here (compiler-482). CR-01 requires a raw expression-bodied lambda and raw conditional, at least one raw singleton array arm, a concrete one-dimensional result, and exact element-type agreement across the array arm, conditional, callback return and lowerer's authoritative result. Preserve the element expression and implicit conversion context; refuse wrapped, unknown or disagreeing result shapes. The opposite branch must already have the exact expected array type; bind its fallback explicitly as IReadOnlyList<T> to preserve the original context. No stripping of conversions or recognition of empty calls is permitted.
+
+CR-02 requires a freshly generated minimized projection-candidate fixture with actual primitives/runtime and --loops --fuse, without --inline. If the raw shape is not reached, report the barrier and revise the contract before widening eligibility. CR-11 requires compiled value/fault/conversion tests and a warmed allocation ablation against the same lowered ordinary path. Only singleton-branch arrays are promised removed; fallback allocations and the result List remain.
+
+CR-04/05 defer local-binding fusion and Take simplification to compiler-488. A use-count pass alone is insufficient: totality, termination, eager completion/seed order, defined input domains and operation provenance must be established first. Existing matching weaknesses are investigated in compiler-483; the structural F1 emitter patch neither broadens matching nor claims to fix it. Full sibling TKT-507, named Filter and an adoption sweep are not completed by F1.
+
+## Recommendation
+
+Separate the two opportunities. Start with conditional append emission inside already lowered FlatMap loops. This changes how one callback result is consumed, without moving computations between iterations, removing callbacks from empty receivers, or changing producer/consumer scheduling. Across-local fusion needs a definition-use analysis and a defensible treatment of partial expressions; it should follow independently, rather than becoming a prerequisite for removing singleton arrays.
+
+A complete filter-only implementation can avoid new TIR node kinds. An initial conservative slice removes the kept-element singleton allocation and falls back for unrecognized rejected arms. A follow-on recognizes proven empty expressions without discarding any possibly faulting computation. Do not call the initial slice full TKT-507 completion: that sibling ticket also asks for a named stdlib Filter and an adoption sweep, which this compiler-only task does not deliver.
+
+## Source evidence and actual workload
+
+- `writers/Plato.CSharpWriter/Optimization/TirFusion.cs`, `Rewrite`, `ComposeMaps`, and `FuseMapIntoConsumer`: fusion walks expression trees; producer discovery examines the consumer's receiver expression. It does not resolve a `TirVariable` to its earlier `TirLet`. Composition substitutes lambda parameters and otherwise leaves per-stage materialization to the loop lowerer.
+- `writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs`, `LowerStatement`, `Lower`, and `TryLower`: each top-level statement is lowered separately. Lambda and conditional boundaries are deliberately skipped; a direct Map/MapRange receiver chain can become `SourceStages` in one lowered loop. Thus `var ys = xs.Map(f); return ys.Reduce(seed,g);` currently retains the array between statements.
+- `writers/Plato.CSharpWriter/TirCSharpBodyWriter.Loops.cs`, FlatMap case: one List is allocated; each iteration evaluates the complete callback into `_p`, then copies `_p` through another loop. There is no conditional-append recognition.
+- `src/Plato.Compiler/Checking/Tir.cs`: `TirArray.Elements`, `TirConditional.Condition/IfTrue/IfFalse`, and `TirLet.Def`/`TirVariable.Def` expose the required structure and binding identity. `TirCoerce.ConversionFn` means a coercion cannot automatically be treated as effect-free decoration.
+- `src/Plato.Intrinsics/ArrayIntrinsics.cs`: MapRange is eager and calls the callback in index order; its comment explicitly promises the same faulting element as the interpreter. FlatMap evaluates each callback and immediately copies its result before moving to the next source element.
+- `stdlib/foundation/primitives.library.plato`, Take: implemented as `MapRange(n, i => xs[i])`. Take(0) has no element reads, but its receiver argument is still evaluated before the call. Other user functions named Take need not have this behavior.
+- `../plato-brep/library/01-geometry/projection-grid.library.plato`, ProjectWithGrid: `ds.Count.Range.FlatMap(k => ds.IsGridMinimum(...) ? [surface.PolishProjection(...)] : [UvCoordinate(0.0, 0.0)].Take(0))`. The expensive polishing call must run only for accepted candidates. Its result array is immediately copied and discarded. The later Reduce also reads `candidates[0]`, so this candidate array is not a single-use producer eligible for elimination.
+- `../plato-brep/library/01-geometry/bspline-inverse.library.plato`, ClosestCurveParameter: the candidate expression uses `ts.Take(0)` on its rejected arm, and candidates are subsequently sorted. WindowCuts and DistinctAdjacent provide further singleton/empty patterns, including the reversed conditional orientation.
+- `../plato-brep/tickets/TKT-507-plato-filter-idiom-lowering.md` is open. It requests allocation-free conditional append, named Filter vocabulary/adoption, and differential laws. Its historical site counts are not a current measurement and should not be used as a speedup estimate.
+
+## A. Conditional append without new IR
+
+Before, schematically:
+
+```csharp
+for (var i = 0; i < count; i++) {
+    var x = source[i];
+    var part = condition(x) ? MakeArray(value(x)) : emptyExpression(x);
+    for (var j = 0; j < part.Count; j++) result.Add(part[j]);
+}
+```
+
+After the first conservative slice:
+
+```csharp
+for (var i = 0; i < count; i++) {
+    var x = source[i];
+    if ((bool)condition(x)) result.Add(value(x));
+    else {
+        var part = emptyExpression(x); // unchanged unless separately proven empty
+        for (var j = 0; j < part.Count; j++) result.Add(part[j]);
+    }
+}
+```
+
+The later generalized design could use a recursive append-result writer inside FlatMap. F1 instead accepts only the exact raw conditional/singleton form in the incorporated review and retains unmatched branch copying; recursive conditional recognition is deferred. A later helper could accept the callback result expression and destination list and recursively append selected branches. For an actual zero-element TirArray emit nothing. For an actual one-element TirArray emit Add of its element. For every other expression retain today's evaluate-into-local-and-copy path. Preserve lambda-depth bookkeeping and ParameterDef-based `_loopParamNames` substitution used by WriteFnValue. Allocate unique fallback temporary names if both branches need copying. Inspect coercions conservatively: preserve conversions with a non-null ConversionFn or unclear representation; recognize only already-proven transparent array/delegate adaptation. Do not use the unrestricted StripCoerce helper as a proof of transparency.
+
+This partial fallback is useful: it removes the accepted candidate's singleton allocation even before Take recognition. The original rejected-arm expression still executes only when rejected. Nested conditional arms can be deferred from the first patch, though the recursive helper supports them naturally. Multi-element literals remain on the ordinary path in the first slice; eliminating them can interleave List.Add with later literal-element evaluations and deserves a separate proof and tests.
+
+For the follow-on, match only the semantic stdlib Take operation with literal Integer zero; no general name-based rewrite. Empty MapRange recognition must likewise prove intrinsic identity and preserve evaluation of any nontrivial callback-value expression, even though its callback body is never called. Empty by syntax is different from empty by runtime value.
+
+The safest Take(0) handling is to preserve receiver evaluation in the same branch, then append nothing. If the receiver is a local or parameter, its load can be omitted after confirming no conversion executes. If it is an actual array literal, evaluate every element left-to-right into discard temporaries without constructing the array; this preserves even `FaultingValue().Take(0)`-style element evaluation. If it is an arbitrary expression, evaluate it into a discard temporary; its allocations remain, correctly. Do not remove `n.Range.Take(0)` receiver construction unless a separate totality/evaluation proof licenses that change. For the BREP dummy `[UvCoordinate(0,0)]`, this strategy evaluates the constructor and avoids the singleton array without having to assume arbitrary constructors are harmless. Resource-exhaustion behavior is not preserved by an allocation-eliminating optimization; normal return values, defined arithmetic, selected branches, and program faults must be preserved.
+
+Outer source evaluation, source index access, predicate evaluation, selected element evaluation, and appending remain in their existing order. Empty sources run neither predicate nor element expressions. Both conditional orientations work. Result cardinality is between zero and source count only for proven 0-or-1 branches; generic fallback can produce any cardinality. Preserve stable source order and duplicates. Keep the existing growing List capacity policy initially. Preallocating source.Count can waste memory on sparse candidates and change when large allocations fail; two-pass exact allocation repeats predicates and work. Neither belongs in the initial patch. Returning List through IReadOnlyList preserves today's contract; the separate mutable-list exposure issue plato-386 must not be silently folded into this work.
+
+### Semantic identity prerequisite
+
+Current `TirFusion` and `TirLoopLowerer` match operation names plus shape. `FusionContext.Call` creates synthesized calls with null Callee. The current CombinatorFusionTests even document their bodiless-by-name fixture. This is existing behavior, not a safe model for broadening recognition. `TirCall.Callee` and `FunctionDef.FunctionType`/OwnerType provide identity information; stdlib Take has a reference body, whereas FlatMap is an intrinsic.
+
+The first emitter-only slice adds no new call-name matching: it specializes consumption of structural TirArray nodes in an already-selected FlatMap loop. It nevertheless inherits the lowerer's existing FlatMap identity weakness. For shipping with strong identity guarantees, establish a recognized-operation contract before lowering, retaining the original resolved callee for unchanged outer consumers in FuseMapIntoConsumer instead of synthesizing anonymous replacement calls. Match the exact resolved stdlib intrinsic/definition from the compilation, not just owner/name strings. Null-callee synthetic operations need explicit trusted provenance or must be declined by new recognition. This is a prerequisite for new call recognition, not for structural-only F1; its fixture impact and how monomorphized callee identity maps to the original must be verified before promising the implementation is emitter-only. Do not disguise this as a broad IR redesign. Unknown/custom calls retain existing ordinary emission. A test with a same-name user function and the right signature must demonstrate no mistaken lowering; if it currently fails, report the baseline defect separately.
+
+## B. Fusion through a local binding
+
+Target example: an immediate let-bound producer consumed once in the next statement, such as `var ys = xs.Map(f); return ys.Map(g);`, becomes the existing direct chain and then a single loop. Preserve producer parameters once using existing stage locals; never replace uses of a mapped value with repeated expensive evaluation.
+
+Build a per-block use map keyed by VariableDef identity, not spelling. Count uses throughout all later statements, nested lambdas, nested branches, assignments, and returns. A name under a callback or returned closure is an escape, even if syntactically present only once. Start with adjacent statements, exact one use in the receiver position of a supported consumer, and no assignments to the binding. Decline aliases, multi-use locals, capture, cross-branch use, intervening statements, and unknown coercions. Replace only the proven receiver use and remove its producing let, then invoke existing chain fusion/lowering. An extension through intervening statements requires dominance and execution-order analysis, not merely occurrence counting.
+
+Single use is necessary, but insufficient. Eager `xs.Map(f)` computes every f before any g. A fused loop interleaves f and g. If g faults on the first element and f faults on a later element, the first observed fault changes. If the consumer is Any/All, later f evaluations can disappear altogether. If a Reduce seed faults, moving f computation past seed evaluation also changes behavior. The language's claim of no observable evaluation order does not settle the backend's fault contract. Therefore do not enable the generic single-use rewrite just because functions are pure.
+
+A conservatively implementable first local-fusion slice must prove the moved producer and all operations crossed are total under the supported input domain, or restrict itself to expressions with that proof. Begin with cheap leaves plus a tiny explicitly documented set of total wrapper operations whose implementation has been checked. Do not classify array indexing, division, unknown calls, conversions, callback invocation, or recursive calls as total. A Map callback that is simply identity still reads source elements: use compiler-owned materialized sources where read safety is known, or account for host-provided IReadOnlyList behavior. Short-circuit consumers should remain excluded initially. Without such proof or a reviewed language/runtime decision, postpone local fusion and ship the filter slice. Do not introduce a flag that merely hides uncertain semantics.
+
+Expected benefit of successful local fusion is one fewer intermediate array and traversal at proven sites. Benefits depend on actual shape coverage; the current candidate array example has multiple uses and is not such a site. Chains crossing Sort, Reduce seeds referencing the producer, or reused geometry sample arrays should remain materialized. No speedup is claimed.
+
+## Implementation files, tests, and measurements
+
+Likely filter files: `writers/Plato.CSharpWriter/TirCSharpBodyWriter.Loops.cs`, optionally a focused partial/helper beside it; identity preservation in `Optimization/TirFusion.cs` and guards in `Optimization/TirLoopLowerer.cs` only if that prerequisite is accepted. Add `tests/PlatoTests/Optimization/FlatMapFilterTests.cs`. Reuse actual compilation setup from `CombinatorFusionTests` and the Roslyn compile/run pattern in `tests/PlatoTests/Emission/ConditionalCodegenTests.cs`; existing emission-text counts alone cannot prove semantics. Update `docs/csharp-optimizer-pipeline.md` only after implementation, coordinating with the documentation owner.
+
+Filter tests: all-kept/all-rejected/mixed/empty inputs; order and duplicates; reversed arms; capture of outer locals; selected value evaluated exactly once and rejected value not evaluated; predicate and rejected receiver faults; `[Fault()].Take(0)` still faults on selected rejected arm; unknown same-name Take/FlatMap and nontransparent coercions retain behavior; loops/fuse flag combinations; direct intrinsic FlatMap and existing fused range source; wrappers and generic element types; C# compiles on net8.0 default language version. Compare optimized and nonoptimized execution, not merely generated strings. For allocation assertions, warm both versions, consume results, use `GC.GetAllocatedBytesForCurrentThread` around repeated invocation, and compare the trend with growing input sizes. Separate unchanged result-list allocation from removed singleton allocations. Use semantic/fault tests on unfused sources to avoid mistaking existing producer-fusion behavior for the new optimization.
+
+Local-binding files: a focused `Optimization/TirLocalFusion.cs` or a bounded block-level helper in TirFusion, plus `LocalBindingFusionTests.cs`. Include positive adjacency cases and rejection tests for multi-use, alias, lambda capture, conditional use, later mutation, producer referenced by seed, empty source, early-exit consumers, and faulting producer/consumer combinations. Prove matching by VariableDef with same-name bindings in separate scopes. Test work-count preservation and compile/run behavior as well as materialization counts.
+
+Follow assigned test-resource ownership. Focused command after recorded build: `dotnet test tests/PlatoTests/PlatoTests.csproj -c Release --no-build --filter FullyQualifiedName~FlatMapFilterTests`; integrate existing CombinatorFusionTests and LoopLowererArrayTypeTests. Builds intended for reporting use `tools/dotnet-build-record.ps1` with supervisor-owned snapshot output. Supervisor runs repository-required final gates once on stable inputs. The sibling BREP regeneration and differential laws need that checkout's own rules and an explicit resource owner; at minimum compile a minimized real candidate expression here. Then compare BREP candidate outputs, mesh digests, allocated bytes, warmed projection timing, and whole mesher timing under identical inputs/flags. No timings were collected in this proposal.
+
+## Dependencies, challenges, and alternatives
+
+Filter append emission does not depend on nested scoped lowering or specialization; those later expand eligible sites. No new intrinsic or named Filter is necessary to obtain the first benefit. Named Filter may improve source readability but does not itself establish optimization correctness and entails stdlib and BREP changes outside this fence.
+
+Main uncertainties: post-inlining/coercion TIR shapes at real sites; identity retention through specialization/fusion; existing name-based rewriting in the baseline; backend fault semantics; allocation dominance versus polishing arithmetic; and whether most rejected-arm empties are safely recognizable. Inspect dumped TIR/generated output before expanding patterns. Keep unmatched branches on the existing path, with optional diagnostic counts in a measurement log rather than hard-coded claims in design docs.
+
+Alternatives: change BREP source to a dedicated filter combinator (larger cross-repo adoption, still needs correct lowering); add a new FilterMap IR marker (unnecessary for the first structural emitter slice); broad empty-expression constant folding (more powerful but much harder to preserve faults); exact-sized two-pass output (repeats work); or deferred enumerable fusion (changes eager semantics and may repeat evaluation). The conservative conditional append slice offers the smallest reviewable compiler change with a direct allocation benefit.
+
+## Review-ready first-slice boundary
+
+Choose the smallest independent implementation: within an existing lowered FlatMap, recognize a raw expression-bodied TirLambda whose body is a raw TirConditional and whose one selected arm is a raw TirArray with exactly one element. Require the conditional and array arm to be the same one-dimensional Array/IArray instantiation, and require the element's emitted type to equal the lowerer's authoritative result element type; use the repository's actual structural type comparison, not type Name alone. Decline when that equality is not established. Preserve the other arm through the original evaluate-and-copy path. Support either arm orientation. Keep all TirCoerce-wrapped conditions/array results out of this first recognition unless they can simply be emitted unchanged inside the chosen expression; do not peel conversions to reach an array. Value-element coercions remain part of the emitted Add argument and execute once, in place. The conditional's Boolean expression is emitted with the same Boolean-to-bool conversion as ordinary conditional/control emission. Retain the existing `_lambdaDepth` and parameter-name mapping around predicate, element, and fallback emission. No Take matching, named Filter, new IR, capacity change, local fusion, or broadened FlatMap name recognition is needed for this first slice. It removes one temporary array per accepted singleton at recognized sites; rejected-arm allocations are explicitly still present. Full no-array filter lowering is a later milestone.

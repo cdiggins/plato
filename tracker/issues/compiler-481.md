@@ -17,7 +17,7 @@ Investigate the compiler opportunities behind allocation-heavy BREP meshing: pri
 
 ## Done means
 
-- [ ] Preserve all five source-grounded proposals, including mechanism, implementation chunks, benefits, risks, unknowns, and verification.
-- [ ] Obtain an independent critical review and record the disposition of every actionable finding.
-- [ ] Commit the revised plan with explicit dependencies and a bounded first implementation contract.
+- [x] Preserve all five source-grounded proposals, including mechanism, implementation chunks, benefits, risks, unknowns, and verification.
+- [x] Obtain an independent critical review and record the disposition of every actionable finding.
+- [x] Commit the revised plan with explicit dependencies and a bounded first implementation contract.
 - [ ] Start an implementation agent against a ready or in-progress implementation issue and the reviewed contract.
