@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿// Registers Plato file extensions and editor content types.
+using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Utilities;
 
 namespace PlatoVSIX

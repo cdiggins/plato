@@ -1,3 +1,4 @@
+// Checks the experimental constructive-solid-geometry implementation.
 namespace Ara3D.Geometry;
 
 using Ara3D.Collections;

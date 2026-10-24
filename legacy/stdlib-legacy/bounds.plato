@@ -1,4 +1,5 @@
-﻿library IBounds
+﻿// Defines legacy geometric bounds and containment operations.
+library IBounds
 {
     Size(x: IBounds<$T, $D>): $D
         => x.Max - x.Min;

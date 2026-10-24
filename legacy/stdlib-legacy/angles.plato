@@ -1,3 +1,4 @@
+// Defines legacy angle types and their operations.
 library Angles
 {
 	Turns(x: Integer): Angle => x.Number.Turns;

@@ -1,3 +1,4 @@
+// Connects distance-field scenes and renderers to the browser controls.
 import { scenes, scenesByDim, type Dim, type Scene } from './scenes.js';
 import { Field2DViewer } from './render/field2d.js';
 import { Volume3DViewer } from './render/volume3d.js';

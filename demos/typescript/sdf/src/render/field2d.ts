@@ -1,3 +1,4 @@
+// Samples and renders two-dimensional signed-distance fields.
 import * as THREE from 'three';
 import { Point2D, type FunctionSdf2D } from '../plato/plato.g.js';
 

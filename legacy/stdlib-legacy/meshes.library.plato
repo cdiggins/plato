@@ -1,4 +1,5 @@
-﻿library Meshes
+﻿// Implements mesh operations for the legacy geometry library.
+library Meshes
 {
     Line(self: IArray<Point3D>, index: Integer2): Line3D => (self[index.A], self[index.B]);
     Triangle(self: IArray<Point3D>, index: Integer3): Triangle3D => (self[index.A], self[index.B], self[index.C]);  

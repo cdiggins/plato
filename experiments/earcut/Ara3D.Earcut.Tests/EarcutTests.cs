@@ -1,3 +1,4 @@
+// Checks the experimental ear-clipping triangulation implementation.
 namespace Ara3D.Geometry;
 
 /// <summary>

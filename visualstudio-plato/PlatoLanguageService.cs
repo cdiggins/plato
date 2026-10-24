@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio;
+﻿// Provides the Visual Studio language-service integration for Plato.
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace PlatoVSIX

@@ -1,4 +1,5 @@
-﻿library Constants
+﻿// Defines reusable constants for the legacy standard library.
+library Constants
 {
     // Common values
     Zero(): Number => 0.0;

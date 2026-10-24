@@ -1,3 +1,4 @@
+// Defines selectable distance-field scenes and their parameters.
 import {
   Angle,
   FunctionSdf2D,

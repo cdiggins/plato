@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Text.Classification;
+﻿// Declares editor classifications used to highlight Plato syntax.
+using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 

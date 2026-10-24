@@ -1,3 +1,4 @@
+// Defines the common scene, control and build contracts for gallery examples.
 import type * as THREE from 'three';
 import type { ViewerOptions } from './viewer.js';
 

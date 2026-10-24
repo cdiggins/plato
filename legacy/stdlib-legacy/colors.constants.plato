@@ -1,3 +1,4 @@
+// Defines named colors for the legacy color vocabulary.
 library ColorConstants 
 {
     AliceBlue(): ByteRGB => (240, 248, 255);

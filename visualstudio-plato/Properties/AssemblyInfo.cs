@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿// Declares assembly identity and metadata for the Visual Studio extension.
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

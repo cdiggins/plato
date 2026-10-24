@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿// Registers and initializes the Plato Visual Studio extension package.
+using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
 using System.Runtime.InteropServices;

@@ -1,3 +1,4 @@
+// Implements derived operations over legacy core interfaces.
 library Core
 {
     //==

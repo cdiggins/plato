@@ -1,3 +1,4 @@
+// Marks generated TypeScript for the distance-field application build.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';

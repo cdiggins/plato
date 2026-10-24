@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿// Connects Visual Studio text buffers to Plato syntax classification.
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text;

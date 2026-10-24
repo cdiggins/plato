@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Classifies Plato source spans for Visual Studio highlighting.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;

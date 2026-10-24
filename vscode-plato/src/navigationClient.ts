@@ -1,3 +1,4 @@
+// Manages the navigation child process and its request/response protocol.
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import * as readline from "readline";
 import type * as vscode from "vscode";

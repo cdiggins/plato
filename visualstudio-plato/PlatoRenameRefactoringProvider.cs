@@ -1,4 +1,5 @@
-﻿namespace PlatoVSIX
+﻿// Connects Plato symbol renaming to Visual Studio refactoring.
+namespace PlatoVSIX
 {
     /*
     [ExportCodeRefactoringProvider(LanguageNames.Plato, Name = nameof(PlatoRenameRefactoringProvider))]

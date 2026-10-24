@@ -1,3 +1,4 @@
+// Configures Vite to build and serve the WebGL gallery.
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 

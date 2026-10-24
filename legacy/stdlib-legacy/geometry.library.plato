@@ -1,3 +1,4 @@
+// Implements derived geometric operations for the legacy library.
 library Geometry
 {
     //==

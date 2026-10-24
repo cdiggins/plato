@@ -1,3 +1,4 @@
+// Defines legacy integer types and operations.
 library Integers
 {
     //==

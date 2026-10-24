@@ -1,3 +1,4 @@
+// Defines legacy vector representations and operations.
 library Vectors
 {
     //==

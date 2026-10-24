@@ -1,5 +1,7 @@
 # Plato for Visual Studio
 
+The C# files implement editor integration; [Properties](Properties/README.md) contains assembly metadata. `.vsix-unpack/` preserves unpacked package artifacts for inspection and is not a handwritten source directory.
+
 MEF classifier that maps `.plato` to a `plato` content type and colors keywords, comments,
 strings, numbers, and operators. This is the full Visual Studio IDE extension (VSSDK) — it is
 **not** the Cursor / VS Code package in `../vscode-plato/`.

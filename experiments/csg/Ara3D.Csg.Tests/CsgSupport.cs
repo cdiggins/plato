@@ -1,3 +1,4 @@
+// Supplies the missing array concatenation operation for the constructive-solid-geometry harness.
 namespace Ara3D.Geometry;
 
 using Ara3D.Collections;

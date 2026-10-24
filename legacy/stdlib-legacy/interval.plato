@@ -1,3 +1,4 @@
+// Defines legacy interval representations and operations.
 library IInterval
 {
     Size(x: IInterval<$T>): $T
