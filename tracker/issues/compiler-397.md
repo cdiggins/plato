@@ -62,3 +62,14 @@ Do 2 regardless; 1 is the actual fix.
 Add the null guard (approach 2) next to the existing
 `"IArrayLike types are assumed to have all of the fields of the same type"` throw, then resolve
 the element type from the `IArrayLike` interface instantiation.
+
+## Done means
+
+- [x] Fieldless IArrayLike types use their declared component, including nested and chained inherited generic arguments.
+- [x] Missing component arguments report an error naming the affected type.
+- [x] Regression and relevant emission/intrinsic checks pass; existing fieldful and primitive behavior is preserved.
+- [ ] Record the final default mission gate against the completed source.
+
+## Verified milestone — 2026-10-24
+
+The source fix and seven regression cases passed independent review. The final scoped run passed 29 tests, including related codegen and intrinsic fixtures; source/test hashes were rechecked before commit. Two review findings were corrected before this milestone. The earlier default dry-run gate was cancelled when review invalidated that version; its buffered results cannot establish a full pass. Keep this issue in-progress until the final mission gate is recorded.

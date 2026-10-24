@@ -65,6 +65,12 @@ namespace Ara3D.Geometry.CSharpWriter
         private static string FieldHash(string field, string csharpType)
             => IsArrayType(csharpType) ? $"Intrinsics.ArrayHash({field})" : field;
 
+        private static TypeExpression SubstituteComponentType(TypeExpression component, TypeSubstitutions substitutions)
+            => substitutions == null
+                ? component
+                : SubstituteComponentType(component.Replace(t => t.Name == substitutions.Name ? substitutions.Replacement : t),
+                    substitutions.Previous);
+
         public CSharpConcreteTypeWriter(CSharpTypeWriter typeWriter, ConcreteType t)
         {
             ConcreteType = t;
@@ -393,6 +399,17 @@ namespace Ara3D.Geometry.CSharpWriter
                     if (!PrimitiveFieldNames.ContainsKey(Name))
                         throw new Exception($"Unrecognized primitive IArrayLike type {Name}");
                     localFieldNames = PrimitiveFieldNames[Name].ToList();
+                }
+                else if (fieldType == null)
+                {
+                    var arrayLike = ConcreteType.AllInterfaces.First(i => i.Name == "IArrayLike");
+                    if (arrayLike.TypeExpression.TypeArgs.Count != 1)
+                        throw new InvalidOperationException($"Cannot resolve the IArrayLike component type for {Name}");
+                    var substitutions = arrayLike.InheritedFrom?.Substitutions ?? ConcreteType.Substitutions;
+                    var component = SubstituteComponentType(arrayLike.TypeExpression.TypeArgs[0], substitutions);
+                    fieldType = component == null ? null : TypeWriter.ToCSharpType(component);
+                    if (string.IsNullOrEmpty(fieldType))
+                        throw new InvalidOperationException($"Cannot resolve the IArrayLike component type for {Name}");
                 }
 
                 var nComps = localFieldNames.Count;
