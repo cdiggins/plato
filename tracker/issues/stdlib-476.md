@@ -1,6 +1,6 @@
 ---
 id: stdlib-476
-title: Future collision library violates the intrinsic declaration contract
+title: Intrinsic-location guard mistakes conditional bodies for declarations
 type: bug
 status: in-progress
 priority: p2
@@ -19,5 +19,11 @@ Decide whether these aspirational operations need reference bodies or should rem
 
 ## Done means
 
-- [ ] Express the collision placeholders in a form consistent with the library and intrinsic contracts.
+- [x] Express the collision placeholders in a form consistent with the library and intrinsic contracts.
 - [ ] The intrinsic-location test and forward-library checking gates pass without added exclusions.
+
+## Corrected diagnosis and fix
+
+The collision library contains valid implementation bodies, not placeholders. The textual guard mistook `SameContact(acc, old, tolerance) ? WithImpulsesOf(acc, old) : acc));` for a declaration because its greedy parameter match consumed the conditional and used its colon as a result-type separator. The earlier issue description recorded the failing assertion, not a proven source violation.
+
+The signature matcher now excludes body syntax from its parameter/result portions. Positive declaration cases and negative expression/conditional/lambda cases pass, as do the unchanged intrinsic count and location gates. No library files, declaration permissions, ratchets or exclusions changed. The complete forward checker gate remains an integration requirement.

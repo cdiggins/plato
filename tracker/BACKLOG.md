@@ -21,7 +21,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-413](issues/plato-413.md) | Marching cubes: isosurface extraction from dense scalar grids and sampled SDFs | idea | p2 | M | low | plato | in-progress |  |
 | [plato-448](issues/plato-448.md) | Extend stdlib comparison with geometry3Sharp and production environments | debt | p2 | S | low | plato | in-progress |  |
 | [repo-479](issues/repo-479.md) | Resolve compiler and navigation baseline failures with performance validation | bug | p2 | L | med | repo | in-progress |  |
-| [stdlib-476](issues/stdlib-476.md) | Future collision library violates the intrinsic declaration contract | bug | p2 | S | med | stdlib | in-progress |  |
+| [stdlib-476](issues/stdlib-476.md) | Intrinsic-location guard mistakes conditional bodies for declarations | bug | p2 | S | med | stdlib | in-progress |  |
 | [plato-438](issues/plato-438.md) | PlatoTests: TypeScript UseTir byte-identity test fails on number/Number casing | bug | p3 | S | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |

@@ -37,10 +37,11 @@ namespace PlatoTests
         private static readonly int MaxIntrinsics = CheckerTestSupport.RatchetCeiling("intrinsics");
 
         /// <summary>A bodiless signature: `Name(params): ReturnType;` at library-member indent,
-        /// with no `=>`. Comment lines are stripped first so a signature quoted in a doc comment
-        /// cannot inflate the count.</summary>
+        /// with no body syntax. Excluding conditionals and arrows from the parameter portion
+        /// prevents a call in a function body from consuming the colon in a ternary expression.
+        /// Comment lines are stripped first so quoted signatures cannot inflate the count.</summary>
         private static readonly Regex BodilessSignature = new Regex(
-            @"^\s+[A-Za-z_]\w*\s*\(.*\)\s*:\s*[^;=]+;\s*$", RegexOptions.Compiled);
+            @"^\s+[A-Za-z_]\w*\s*\([^;?={}]*\)\s*:\s*[^;=?{}]+;\s*$", RegexOptions.Compiled);
 
         private static string IntrinsicsFile
             => Path.Combine(CheckerTestSupport.FindForwardStdLib(), "foundation", "intrinsics.library.plato");
@@ -51,6 +52,17 @@ namespace PlatoTests
                 .Where(l => BodilessSignature.IsMatch(l))
                 .Select(l => l.Trim())
                 .ToArray();
+
+        [TestCase("    Add(a: Number, b: Number): Number;", true)]
+        [TestCase("    Empty(): Array<Number>;", true)]
+        [TestCase("    Map(xs: Array<T>, f: Function<T, U>): Array<U>;", true)]
+        [TestCase("    Value(): Number => Other();", false)]
+        [TestCase("    Value(): Number { return Other(); }", false)]
+        [TestCase("    SameContact(acc, old, tolerance) ? WithImpulsesOf(acc, old) : acc));", false)]
+        [TestCase("    Check(x) ? Wrap(Other(x)) : fallback;", false)]
+        [TestCase("    Map(xs, x => Check(x) ? Wrap(x) : x);", false)]
+        public static void BodilessSignaturesExcludeFunctionBodies(string line, bool expected)
+            => Assert.That(BodilessSignature.IsMatch(line), Is.EqualTo(expected));
 
         [Test]
         public static void IntrinsicContractDoesNotGrow()
