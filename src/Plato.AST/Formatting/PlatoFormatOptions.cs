@@ -1,3 +1,4 @@
+// Defines formatting choices shared by Plato source writers.
 using System.Linq;
 
 namespace Ara3D.Geometry.AST

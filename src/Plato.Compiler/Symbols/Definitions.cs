@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Defines bound declarations for types, functions, parameters, and libraries.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

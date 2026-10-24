@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Represents an instantiated function and its resolved receiver and argument types.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Ara3D.Utils;

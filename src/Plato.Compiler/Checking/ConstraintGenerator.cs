@@ -1,3 +1,4 @@
+// Translates normalized function bodies into type and overload constraints.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

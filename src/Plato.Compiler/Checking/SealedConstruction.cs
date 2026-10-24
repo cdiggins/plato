@@ -1,3 +1,4 @@
+// Checks which type constructions are legal under sealed declaration rules.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

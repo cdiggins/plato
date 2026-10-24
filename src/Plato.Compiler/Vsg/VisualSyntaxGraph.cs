@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Builds a visual graph representation of compiler symbols and relationships.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

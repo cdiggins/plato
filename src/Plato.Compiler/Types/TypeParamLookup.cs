@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿// Looks up generic parameter bindings for applied type expressions.
+using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.Compiler.Types

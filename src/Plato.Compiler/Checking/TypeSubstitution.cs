@@ -1,3 +1,4 @@
+// Replaces type variables throughout typed intermediate representation trees.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

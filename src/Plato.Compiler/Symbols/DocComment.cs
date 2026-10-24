@@ -1,3 +1,4 @@
+// Extracts structured documentation from source comments attached to declarations.
 using System;
 using System.Collections.Generic;
 using System.Linq;

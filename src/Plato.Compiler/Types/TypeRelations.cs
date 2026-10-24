@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Indexes conversions and related type relationships for call resolution.
+using System;
 using System.Collections.Generic;
 using Ara3D.Geometry.Compiler.Symbols;
 

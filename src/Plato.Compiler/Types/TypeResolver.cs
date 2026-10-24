@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Resolves named and constructed types in the compilation context.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

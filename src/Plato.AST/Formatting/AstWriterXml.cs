@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿// Renders abstract syntax trees as XML for inspection.
+using System.Linq;
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.AST

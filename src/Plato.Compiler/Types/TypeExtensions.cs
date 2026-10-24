@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿// Provides type classification and interface implementation queries.
+using System.Linq;
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Symbols;
 

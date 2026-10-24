@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Analyzes argument matching and result types for a function call.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

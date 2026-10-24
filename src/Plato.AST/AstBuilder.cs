@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Provides location-aware helpers for constructing and rewriting syntax nodes.
+using System;
 using Ara3D.Parakeet;
 
 namespace Ara3D.Geometry.AST

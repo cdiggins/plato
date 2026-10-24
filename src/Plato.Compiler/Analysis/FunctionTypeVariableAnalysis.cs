@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Collects and relates generic type variables in function signatures.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

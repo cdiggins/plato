@@ -1,3 +1,4 @@
+// Defines numeric precision profiles and their primitive representation choices.
 using System;
 using System.Collections.Generic;
 using System.Linq;

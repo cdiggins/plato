@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Represents a polymorphic type with quantified type variables.
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PlatoTypeInference

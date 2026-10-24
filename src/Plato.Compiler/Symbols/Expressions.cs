@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Defines bound value expressions and function-call forms used before elaboration.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

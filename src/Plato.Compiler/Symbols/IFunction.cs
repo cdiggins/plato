@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Defines the shared signature surface for declared and instantiated functions.
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Ara3D.Geometry.Compiler.Symbols

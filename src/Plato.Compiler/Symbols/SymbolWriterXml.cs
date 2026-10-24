@@ -1,4 +1,5 @@
-﻿namespace Ara3D.Geometry.Compiler.Symbols
+﻿// Retains an inactive XML symbol-writer sketch; this file defines no executable writer.
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     //    public class SymbolXmlWriter : CodeBuilder<SymbolXmlWriter>
     //    {

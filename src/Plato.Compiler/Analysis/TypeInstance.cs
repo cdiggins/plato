@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Represents a type declaration together with its applied type arguments.
+using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Converts abstract syntax nodes into scoped, resolved compiler symbols.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

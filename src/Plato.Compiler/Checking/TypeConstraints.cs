@@ -1,3 +1,4 @@
+// Defines the shared interpretation and satisfaction rules for generic bounds.
 using System;
 using System.Collections.Generic;
 using System.Linq;

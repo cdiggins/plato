@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Defines the type-term base model for the standalone inference experiment.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 

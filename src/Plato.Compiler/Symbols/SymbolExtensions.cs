@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Provides shared traversal and classification helpers for bound symbols.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 

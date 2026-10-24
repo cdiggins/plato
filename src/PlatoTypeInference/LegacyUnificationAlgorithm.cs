@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Implements the experimental legacy type-term unification algorithm.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 

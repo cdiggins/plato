@@ -1,4 +1,5 @@
-﻿namespace PlatoTypeInference
+﻿// Represents an equality constraint between inference type terms.
+namespace PlatoTypeInference
 {
     public class Constraint
     {

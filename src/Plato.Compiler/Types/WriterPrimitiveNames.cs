@@ -1,3 +1,4 @@
+// Shares primitive type-name mappings used by backend writers.
 using System.Collections.Generic;
 
 namespace Ara3D.Geometry.Compiler.Types

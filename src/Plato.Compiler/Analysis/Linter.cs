@@ -1,3 +1,4 @@
+// Reports source-level library conventions and suspicious declaration patterns.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

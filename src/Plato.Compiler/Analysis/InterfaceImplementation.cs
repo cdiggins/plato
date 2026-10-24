@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Matches concrete library functions to interface requirements.
+using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;

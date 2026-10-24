@@ -1,3 +1,4 @@
+// Selects checked typed bodies and specialization sources for backend emission.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

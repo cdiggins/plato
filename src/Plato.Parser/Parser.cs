@@ -1,3 +1,4 @@
+// Retains an inactive parser wrapper sketch; this file defines no executable parser.
 namespace Ara3D.Geometry.Parser
 {
     /*

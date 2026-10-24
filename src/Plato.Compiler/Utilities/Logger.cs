@@ -1,3 +1,4 @@
+// Collects compiler diagnostic messages with elapsed timestamps.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

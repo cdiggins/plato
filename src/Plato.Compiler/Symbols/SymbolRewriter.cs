@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Rebuilds bound symbol trees while replacing selected nodes.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Utils;

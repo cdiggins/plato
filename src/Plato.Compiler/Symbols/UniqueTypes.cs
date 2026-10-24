@@ -1,3 +1,4 @@
+// Defines unique builder types and the observation, mutation, and consumption effects of their methods.
 using System.Collections.Generic;
 
 namespace Ara3D.Geometry.Compiler.Symbols

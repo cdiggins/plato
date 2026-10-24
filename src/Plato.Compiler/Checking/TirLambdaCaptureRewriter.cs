@@ -1,3 +1,4 @@
+// Rewrites captured values when typed lambda bodies are specialized.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

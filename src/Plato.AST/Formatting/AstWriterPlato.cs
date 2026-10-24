@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Renders abstract syntax nodes back into Plato source text.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Utils;

@@ -1,3 +1,4 @@
+// Writes declaration-focused Plato source for documentation and vocabulary export.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Utils;

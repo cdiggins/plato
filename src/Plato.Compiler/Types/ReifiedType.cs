@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Represents a resolved type and its instantiated fields and function surface.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

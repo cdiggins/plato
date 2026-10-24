@@ -1,3 +1,4 @@
+// Validates sum declarations and match expressions against their case definitions.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

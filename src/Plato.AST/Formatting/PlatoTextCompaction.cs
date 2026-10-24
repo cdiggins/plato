@@ -1,3 +1,4 @@
+// Compacts whitespace and delimiter spacing according to Plato formatting options.
 using System.Text;
 
 namespace Ara3D.Geometry.AST

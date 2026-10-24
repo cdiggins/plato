@@ -1,4 +1,5 @@
-﻿namespace PlatoTypeInference
+﻿// Represents an unresolved variable in the inference term model.
+namespace PlatoTypeInference
 {
     public class TypeVariable : BaseType
     {

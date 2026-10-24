@@ -1,4 +1,5 @@
-﻿namespace PlatoTypeInference
+﻿// Represents a named constant type in the inference term model.
+namespace PlatoTypeInference
 {
     public class TypeConstant : BaseType
     {

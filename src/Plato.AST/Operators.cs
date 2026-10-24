@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Defines operator names, precedence, and syntax classification.
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Ara3D.Geometry.AST

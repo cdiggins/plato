@@ -1,3 +1,4 @@
+// Checks declared generic bounds at type construction sites.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

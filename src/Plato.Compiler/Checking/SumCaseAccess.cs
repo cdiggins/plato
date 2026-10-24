@@ -1,3 +1,4 @@
+// Resolves access to payloads and tags of discriminated sum cases.
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
 

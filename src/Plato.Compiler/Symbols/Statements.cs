@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Defines bound control-flow and statement forms for function bodies.
+using System.Collections.Generic;
 using System;
 using System.Linq;
 

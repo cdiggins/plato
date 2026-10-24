@@ -1,3 +1,4 @@
+// Builds interface inheritance relationships used by implementation analysis.
 using System;
 using System.Collections.Generic;
 using System.Linq;

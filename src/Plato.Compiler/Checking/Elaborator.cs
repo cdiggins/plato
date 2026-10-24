@@ -1,3 +1,4 @@
+// Builds typed intermediate representation nodes from solved function constraints.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

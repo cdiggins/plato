@@ -1,3 +1,4 @@
+// Instantiates checked generic functions into concrete typed function bodies.
 using System;
 using System.Collections.Generic;
 using System.Linq;

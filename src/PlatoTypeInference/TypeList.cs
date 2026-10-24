@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Represents a sequence of type terms in the inference term model.
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PlatoTypeInference

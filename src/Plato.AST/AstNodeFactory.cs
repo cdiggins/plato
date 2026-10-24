@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Translates parser production nodes into the corresponding abstract syntax nodes.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Parakeet;

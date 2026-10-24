@@ -1,4 +1,5 @@
-﻿using Ara3D.Geometry.AST;
+﻿// Carries source locations and messages for symbol resolution failures.
+using Ara3D.Geometry.AST;
 
 namespace Ara3D.Geometry.Compiler.Symbols
 {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Describes concrete type structure and its available members for compilation analysis.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

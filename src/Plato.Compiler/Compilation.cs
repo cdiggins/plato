@@ -1,3 +1,4 @@
+// Coordinates symbol binding, declaration analysis, and shared compilation state for syntax trees.
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Combines component hash codes for compiler data structures.
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Ara3D.Geometry.Compiler.Utilities

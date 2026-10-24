@@ -1,3 +1,4 @@
+// Computes the interface bounds available through inherited concept relationships.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

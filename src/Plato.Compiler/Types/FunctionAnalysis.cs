@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Collects function-level type information used during call analysis.
+using System.Collections.Generic;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
 

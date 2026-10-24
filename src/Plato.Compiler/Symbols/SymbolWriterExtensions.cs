@@ -1,3 +1,4 @@
+// Formats bound-symbol literal values for diagnostic and writer output.
 namespace Ara3D.Geometry.Compiler.Symbols
 {
     public static class SymbolWriterExtensions

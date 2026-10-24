@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Represents a function signature after generic arguments are applied.
+using System.Collections.Generic;
 using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.Compiler.Types

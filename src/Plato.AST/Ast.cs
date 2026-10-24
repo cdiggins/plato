@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Defines source syntax nodes before names and types are resolved.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Parakeet;

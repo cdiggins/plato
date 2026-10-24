@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Analyzes one argument against a candidate function parameter.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Ara3D.Geometry.Compiler.Symbols;

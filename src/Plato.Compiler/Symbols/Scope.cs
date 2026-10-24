@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Stores name bindings and enclosing-scope lookup relationships.
+using System.Collections.Generic;
 
 namespace Ara3D.Geometry.Compiler.Symbols
 {

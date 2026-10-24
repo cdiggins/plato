@@ -1,3 +1,4 @@
+// Checks typed intermediate representation nodes for internally consistent result types.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

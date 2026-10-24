@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Applies generic parameter substitutions to analyzed type instances.
+using System;
 using System.Collections.Generic;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;

@@ -1,3 +1,4 @@
+// Preserves source syntax while a referenced type is resolved.
 using Ara3D.Geometry.AST;
 
 namespace Ara3D.Geometry.Compiler.Symbols

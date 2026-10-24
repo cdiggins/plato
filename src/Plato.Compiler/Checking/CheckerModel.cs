@@ -1,3 +1,4 @@
+// Defines checker diagnostics, normalized functions, and the shared pass result model.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

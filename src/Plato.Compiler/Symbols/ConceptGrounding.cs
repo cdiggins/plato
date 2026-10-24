@@ -1,3 +1,4 @@
+// Distinguishes self-grounded interface references from existential interface references.
 using System.Linq;
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Types;

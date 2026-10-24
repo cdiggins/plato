@@ -1,4 +1,5 @@
-﻿using Ara3D.Geometry.Compiler.Symbols;
+﻿// Records a source type and the type that replaces it during substitution.
+using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.Compiler.Types
 {

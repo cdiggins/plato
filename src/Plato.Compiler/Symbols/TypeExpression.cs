@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Represents a bound type definition with its applied type arguments.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

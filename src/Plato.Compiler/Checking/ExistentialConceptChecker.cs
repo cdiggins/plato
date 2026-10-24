@@ -1,3 +1,4 @@
+// Checks restrictions on interface values used without a concrete implementation type.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;

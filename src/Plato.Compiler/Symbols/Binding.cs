@@ -1,4 +1,5 @@
-﻿namespace Ara3D.Geometry.Compiler.Symbols
+﻿// Pairs a source name with its bound symbol for scope lookup.
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     public class Binding
     {

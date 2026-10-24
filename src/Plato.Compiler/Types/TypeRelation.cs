@@ -1,4 +1,5 @@
-﻿using Ara3D.Geometry.Compiler.Symbols;
+﻿// Represents an allowed relationship between a source and destination type.
+using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.Compiler.Types
 {

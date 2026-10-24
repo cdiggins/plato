@@ -1,4 +1,5 @@
-﻿namespace PlatoTypeInference
+﻿// Pairs an inference type variable with its replacement type term.
+namespace PlatoTypeInference
 {
     public class Substitution
     {

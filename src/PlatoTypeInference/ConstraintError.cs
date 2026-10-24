@@ -1,4 +1,5 @@
-﻿namespace PlatoTypeInference
+﻿// Records a type constraint that could not be unified.
+namespace PlatoTypeInference
 {
     public class ConstraintError : Constraint
     {

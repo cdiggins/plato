@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Provides traversal and lookup queries over the visual syntax graph.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

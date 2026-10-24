@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Associates syntax-tree construction failures with their source node.
+using System;
 
 namespace Ara3D.Geometry.AST
 {

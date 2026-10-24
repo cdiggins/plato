@@ -1,3 +1,4 @@
+// Defines the typed intermediate representation shared by checking, execution, and code generation.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;

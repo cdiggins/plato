@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Provides identity, source locations, and child traversal for bound compiler symbols.
+using System;
 using System.Collections.Generic;
 using System.Threading;
 

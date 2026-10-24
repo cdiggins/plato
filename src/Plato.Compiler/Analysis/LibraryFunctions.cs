@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Indexes library functions by receiver and declaration for analysis.
+using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;

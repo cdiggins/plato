@@ -1,3 +1,4 @@
+// Recognizes conditional Boolean operations that require lazy evaluation.
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Symbols;
 

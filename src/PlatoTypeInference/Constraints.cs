@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Collects and solves equality constraints for the standalone inference experiment.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
