@@ -68,6 +68,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-484](issues/compiler-484.md) | Plan private storage for recursive numeric kernels | feature | p2 | L | high | compiler | idea |  |
 | [compiler-485](issues/compiler-485.md) | Lower combinators within preserved statement scopes | feature | p2 | M | high | compiler | idea |  |
 | [compiler-486](issues/compiler-486.md) | Specialize constant arguments without changing calls | feature | p2 | L | high | compiler | idea |  |
+| [compiler-488](issues/compiler-488.md) | Prove local-binding fusion and empty filter lowering | problem | p2 | L | high | compiler | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
 | [plato-028](issues/plato-028.md) | Consumer-driven refactoring direction (Earcut gaps, query vocabulary, topology) | feature | p2 | L | med | plato | idea |  |
 | [plato-029](issues/plato-029.md) | Port Geometry3Sharp pure query kernels to Plato | feature | p2 | L | med | plato | idea |  |
