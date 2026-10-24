@@ -11,7 +11,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-229](issues/plato-229.md) | Complete the Plato v2 interface lattice | feature | p1 | L | high | plato | in-progress |  |
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | in-progress |  |
 | [plato-378](issues/plato-378.md) | Shrink the host intrinsic contract to an irreducible kernel | debt | p1 | L | med | plato | in-progress |  |
-| [compiler-472](issues/compiler-472.md) | Navigation omits assignment-target references | bug | p2 | S | med | compiler | in-progress |  |
 | [compiler-475](issues/compiler-475.md) | Review drift in implicit and emitted conversion inventories | debt | p2 | S | med | compiler | in-progress |  |
 | [compiler-477](issues/compiler-477.md) | Simplifier corpus rewrite introduces unresolved references | bug | p2 | M | med | compiler | in-progress |  |
 | [compiler-478](issues/compiler-478.md) | Navigation corpus rebuild exceeds its timing budget on this host | problem | p2 | M | med | compiler | in-progress |  |
