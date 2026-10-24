@@ -19,7 +19,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-412](issues/plato-412.md) | ToSdf: concrete geometry shapes as signed distance fields | feature | p2 | M | low | plato | in-progress |  |
 | [plato-413](issues/plato-413.md) | Marching cubes: isosurface extraction from dense scalar grids and sampled SDFs | idea | p2 | M | low | plato | in-progress |  |
 | [plato-448](issues/plato-448.md) | Extend stdlib comparison with geometry3Sharp and production environments | debt | p2 | S | low | plato | in-progress |  |
-| [repo-492](issues/repo-492.md) | Audit duplication with dotnet-greenhouse | problem | p2 | S | low | repo | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [compiler-483](issues/compiler-483.md) | Characterize optimizer sequencing and identity hazards | problem | p1 | M | high | compiler | ready |  |

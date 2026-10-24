@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-24 — [repo-492](issues/repo-492.md) — Audit duplication with dotnet-greenhouse — done (34e468cf): Greenhouse audit ranked consolidation opportunities; implementation repo-493 and tool improvements repo-494 remain open
 - 2026-10-24 — [compiler-491](issues/compiler-491.md) — Differential law runs report success when both engines fail — done (da752053ade7317afc73a7e5ad801e48e6d1fcc6); 13 policy/transport tests, 13 law CLI cases, 27 generation CLI cases passed
 - 2026-10-24 — [repo-489](issues/repo-489.md) — Consolidate codegen verification and isolate CLI responsibilities — done (5de6ad8f); external SDK frozen-artifact drift remains tracked in repo-473
 - 2026-10-24 — [compiler-490](issues/compiler-490.md) — Reject ignored generation flags before compiling — done (0067ad05)
