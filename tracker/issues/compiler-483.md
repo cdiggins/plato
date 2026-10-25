@@ -2,7 +2,7 @@
 id: compiler-483
 title: Characterize optimizer sequencing and identity hazards
 type: problem
-status: ready
+status: in-progress
 priority: p1
 effort: M
 risk: high

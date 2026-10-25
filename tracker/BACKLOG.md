@@ -8,6 +8,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 
 | id | title | type | pri | effort | risk | area | status | sprint |
 |----|-------|------|-----|--------|------|------|--------|--------|
+| [compiler-483](issues/compiler-483.md) | Characterize optimizer sequencing and identity hazards | problem | p1 | M | high | compiler | in-progress |  |
 | [compiler-520](issues/compiler-520.md) | Report useful grammar failure locations | bug | p1 | S | med | compiler | in-progress |  |
 | [compiler-521](issues/compiler-521.md) | Plan declarative checked optimizer transformations | idea | p1 | L | high | compiler | in-progress |  |
 | [compiler-522](issues/compiler-522.md) | Prepared-corpus optimizer performance benchmark for plato-brep | feature | p1 | L | med | compiler | in-progress |  |
@@ -29,7 +30,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [stdlib-464](issues/stdlib-464.md) | Stdlib conformance failures: establish domains and repair contracts | bug | ? | ? | ? | stdlib | in-progress |  |
-| [compiler-483](issues/compiler-483.md) | Characterize optimizer sequencing and identity hazards | problem | p1 | M | high | compiler | ready |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
 | [plato-434](issues/plato-434.md) | Collision pair tests are unusable in TypeScript: sphere-box silently reports no contact, sphere-capsule throws, box corners duplicate | bug | p1 | M | med | plato | ready |  |
