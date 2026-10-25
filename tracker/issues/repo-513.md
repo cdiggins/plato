@@ -2,14 +2,14 @@
 id: repo-513
 title: Separate slow corpus tests from routine regression runs
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: low
 area: repo
 sprint: 
 created: 2026-10-25
-closed:
+closed: 2026-10-25
 links: []
 ---
 
