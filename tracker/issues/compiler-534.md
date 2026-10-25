@@ -2,7 +2,7 @@
 id: compiler-534
 title: Define outcome semantics and optimization-friendly contracts
 type: idea
-status: idea
+status: in-progress
 priority: p1
 effort: L
 risk: high
@@ -10,28 +10,27 @@ area: compiler
 sprint:
 created: 2026-10-25
 closed:
-links: [docs/design/checked-optimizer-pipeline.md]
+links: [tracker/decisions/2026-10-25-mixed-evaluation-preserves-required-results.md, docs/design/checked-optimizer-pipeline.md]
 ---
 
-User proposes that fault timing should not constrain optimization provided the result is the same answer or the same fault. Capture as a language-design proposal, not an implemented semantic change.
+The user approved recording the recommendation that Plato may mix eager, on-demand, streaming and deferred/cached evaluation for pure computation, and may skip faults confined to unnecessary work. Defined successful results and work required by the requested result or explicit validation must be preserved. The [accepted decision](../decisions/2026-10-25-mixed-evaluation-preserves-required-results.md) is the authority for this design direction. This is not a claim of implemented compiler behavior.
 
-## Design direction
+## Done means
 
-Define observational equivalence for pure Plato computation by returned value or a structured fault, separately addressing divergence. Allocation timing, callback invocation counts, intermediate traversal order and stack traces need not be observations for verified pure deterministic computations. Fault identity and competing-fault selection must be explicit: allowing either of several faults is weaker than requiring the same fault and must not be silently assumed. Removing a fault, returning a different fault, changing successful values or turning divergence into termination is not licensed merely by ignoring fault timing.
+- [x] Record the approved mixed-evaluation direction and its boundaries in an architecture decision.
+- [x] Update the semantic reference and checked-pipeline plan, distinguishing intended policy from current behavior.
+- [ ] Resolve fault identity, competing required faults, nontermination and forcing/validation boundaries with small semantic examples.
+- [ ] Specify checkable dependency/effect/ownership contracts and select the first bounded rule migration.
+- [ ] Implement and independently validate that migration against the accepted contract, preserving successful outputs and rejecting suppression of required failures.
 
-Prioritize statically enforced affine ownership and pure host boundaries; checked effects distinguishing purity, determinism, partiality and termination; refinement/shape information for bounds and exact output cardinality; total Option/Result-style APIs for expected failure; and explicit ordered versus associative reductions with profile-correct numeric laws. Inference/verification should justify contracts rather than trusting arbitrary optimization annotations. A total callable can still have non-total argument expressions.
+## Constraints and priorities
 
-Immutable completed arrays can be streamed when outcome equivalence is established. An explicit lazy sequence abstraction would allow intentionally demand-driven behavior without silently changing eager Array construction. Arbitrary host IReadOnlyList/delegate effects must stay outside the pure guarantee unless wrapped/validated against a documented boundary contract.
+Pure computation does not imply totality, determinism of arbitrary host delegates, or safe affine-builder duplication. Preserve numerical-profile semantics and conversions; no floating-point reassociation permission is granted. Omission of a nonterminating computation and arbitrary selection among competing required faults remain unresolved.
 
-## Decisions and acceptance before implementation
+Prioritize verified pure host boundaries and affine ownership, precise effects, and bounds/output-shape facts consumed by an actual rule. No new lazy type or fully lazy runtime is required by the decision. Eager materialization remains useful for repeated traversal; streaming and deferred caching are implementation choices with different cost tradeoffs.
 
-- Define fault identity, competing faults and termination requirements with small counterexamples. Decide whether ordinary calls remain strict independently of unobservable evaluation order.
-- Preserve short-circuit selection of branches and numeric-profile results. Do not infer floating-point associativity from finite values or a real-number abstraction.
-- Specify compiler-verifiable effect/ownership/shape contracts and their host trust boundary, prioritized by the existing optimization candidates.
-- Review which compiler-483 obligations become unnecessary versus still necessary under the proposed semantics; retain existing behavior until the language decision and migration are explicit.
+Compiler-483 continues to characterize old-pass assumptions; compiler-521 owns the checked transformation architecture. Unmigrated rules retain their existing conservative guards. Differential evidence must distinguish permitted unnecessary-fault suppression from an unexplained fault-to-success discrepancy.
 
-Related: compiler-483 semantic audit and compiler-521 checked transformation architecture. No fault-policy, compiler, interpreter or runtime change is made by this capture.
+## Recording milestone
 
-## User preference: mixed evaluation in geometry
-
-The user considers skipping some faults acceptable and asks whether geometry can mix eager, on-demand and lazy evaluation. Treat this as support for exploring selective evaluation, not blanket authorization to suppress required failures or alter successful geometry. Proposed boundary: implementation may choose evaluation/storage strategy and omit unnecessary pure work; defined successful results remain unchanged, and computations required by the requested result or explicit validation retain their failure behavior. Termination policy, host effects, numerical profiles and exact observation boundaries still need explicit decisions. No language/runtime behavior changed.
+The accepted recommendation, documentation links and V2 planning contract are recorded. Runtime behavior and optimizer defaults are unchanged. Remaining checkboxes are semantic resolution and implementation work, not missing documentation.

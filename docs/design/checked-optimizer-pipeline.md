@@ -1,6 +1,6 @@
 # Checked optimizer transformations
 
-Tracking: [compiler-521](../../tracker/issues/compiler-521.md). Contract revision: V1.
+Tracking: [compiler-521](../../tracker/issues/compiler-521.md). Contract revision: V2.
 This is an implementation proposal, not an implemented safety guarantee. The current request
 authorizes planning; the first implementation milestone remains pending in the tracker.
 
@@ -116,7 +116,23 @@ there is no production option to apply a rule while bypassing its safety checker
 
 ## What safety means
 
-The target contract is conditional equivalence: every accepted transformation preserves defined
+### Accepted target and migration baseline
+
+The [mixed-evaluation decision](../../tracker/decisions/2026-10-25-mixed-evaluation-preserves-required-results.md)
+accepts omission of unnecessary pure work, including faults confined to it, while retaining defined
+successful results and required validation. Use that decision as the authority for the intended
+contract. A rule must prove which requested observations do not depend on the omitted work; purity
+alone is insufficient. This is a permitted refinement of faulting behavior, not strict equivalence
+of every formerly eager execution. Fault identity, competing required faults and omission of
+nontermination remain open; do not infer permissions for them.
+
+V2 records this policy direction; it does not expand any implemented rule. The initial architecture
+migrations retain existing eligibility and the conservative baseline below. A later, separately
+reviewed semantic migration can loosen an individual rule under compiler-534. Until then, retain
+its existing guards and fault tests. Tag evidence and caches with the applicable semantic contract
+as well as the numeric profile, so incompatible qualifications cannot be silently reused.
+
+The conservative migration baseline is conditional equivalence: every accepted transformation preserves defined
 results and the observable behavior specified by the language and supported runtime contracts.
 This includes arithmetic grouping and conversions, branch selection, termination behavior,
 first program fault, and ordered/count-preserving calls where the caller can observe them.
@@ -142,6 +158,12 @@ review; it does not eliminate bugs. Tests alone cannot guarantee equivalence for
 Do not call this a formally verified compiler. A stronger mathematical guarantee would require
 a formal semantics and a proved checker/emitter or independently validated generated output.
 That is a separate scope decision, not a prerequisite for the first maintainable improvement.
+
+For future rules licensed to suppress faults, comparisons classify a permitted unnecessary-work
+omission separately from an ordinary match. Require independently checked dependency/observation
+evidence for that classification; never accept every fault-to-success difference. Add counterexamples
+where the failed computation supplies requested geometry or exhaustive validation and must not be
+omitted. The current strict comparison tests remain valid for unmigrated rules.
 
 Use complementary validation layers:
 
@@ -191,15 +213,15 @@ agents edit `CSharpWriter.cs`, compiler node definitions or the runtime concurre
 
 ### Wave A: agree on the contract, then deliver one vertical slice
 
-Freeze V1 signatures, observation contract and ownership before dispatch. First assign separate
+Freeze V2 signatures, observation contract and ownership before dispatch. First assign separate
 agents to exact-output extraction, optimized-body verification, and independent adversarial
 review. The supervisor integrates the smallest checked-plan boundary. Shared interface files
 are supervisor-owned; agents must not invent incompatible local copies.
 
 | Track | Exclusive proposed write fence | Dependency and completion evidence |
 | --- | --- | --- |
-| Exact-output | Existing `TirExactOutput.cs`, `TirCSharpBodyWriter.ExactOutput.cs`; new `Optimization/Checked/ExactOutput/`; `ExactOutputTests.cs`, `ExactOutputFixtures/` | V1 agreed. Current phase, acceptance/refusal and generated behavior preserved; forged/stale plans rejected; existing focused tests pass. |
-| Body verifier | `src/Plato.Compiler/Checking/TirTypeVerifier.cs`; new `Optimization/Checked/Validation/`; `TirTypeVerifierTests.cs`; new `tests/PlatoTests/Optimization/CheckedValidation/` | V1 agreed. Check exact-output input/marker fields and relevant forms only; reject malformed evidence. This does not validate rendered C#. Extend coverage with fusion rather than requiring every writer marker first. |
+| Exact-output | Existing `TirExactOutput.cs`, `TirCSharpBodyWriter.ExactOutput.cs`; new `Optimization/Checked/ExactOutput/`; `ExactOutputTests.cs`, `ExactOutputFixtures/` | V2 agreed. Current phase, acceptance/refusal and generated behavior preserved; forged/stale plans rejected; existing focused tests pass. |
+| Body verifier | `src/Plato.Compiler/Checking/TirTypeVerifier.cs`; new `Optimization/Checked/Validation/`; `TirTypeVerifierTests.cs`; new `tests/PlatoTests/Optimization/CheckedValidation/` | V2 agreed. Check exact-output input/marker fields and relevant forms only; reject malformed evidence. This does not validate rendered C#. Extend coverage with fusion rather than requiring every writer marker first. |
 | Independent reviewer | Read-only production sources; new `tests/PlatoTests/Optimization/CheckedAdversarial/`; private review checkpoint | Write fixture inputs while builders work; execute only against frozen integrated artifacts. Review proof, attack checker assumptions, and report correlated matcher/checker risks. |
 
 Writer paths above are relative to `writers/Plato.CSharpWriter/`; named existing test files are

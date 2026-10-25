@@ -7,6 +7,13 @@ agents writing `.plato` code. It describes the language the compiler and type ch
 [`compiler-pipeline.md`](compiler-pipeline.md) and [`type-checker-handoff.md`](type-checker-handoff.md);
 for design rationale see [`plato-overview.md`](plato-overview.md).
 
+**Accepted design direction, pending implementation:** Plato will permit mixed evaluation strategies
+and omission of unnecessary pure work, including faults confined to that work, while preserving
+defined successful results and required validation. The
+[mixed-evaluation decision](../tracker/decisions/2026-10-25-mixed-evaluation-preserves-required-results.md)
+defines the boundary and open questions. The operational rules below describe current behavior;
+the decision is not a claim that all optimizers already satisfy the intended contract.
+
 One caution up front: the grammar is deliberately more permissive than the language. The parser
 (`parakeet/Parakeet.Grammars/PlatoGrammar.cs`) accepts C#-style forms — `throw`, `try`, `switch`,
 `yield`, `break`/`continue`, `is`/`as`, string interpolation — for error recovery and familiarity.

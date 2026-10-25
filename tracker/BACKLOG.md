@@ -12,6 +12,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-520](issues/compiler-520.md) | Report useful grammar failure locations | bug | p1 | S | med | compiler | in-progress |  |
 | [compiler-521](issues/compiler-521.md) | Plan declarative checked optimizer transformations | idea | p1 | L | high | compiler | in-progress |  |
 | [compiler-522](issues/compiler-522.md) | Prepared-corpus optimizer performance benchmark for plato-brep | feature | p1 | L | med | compiler | in-progress |  |
+| [compiler-534](issues/compiler-534.md) | Define outcome semantics and optimization-friendly contracts | idea | p1 | L | high | compiler | in-progress |  |
 | [plato-229](issues/plato-229.md) | Complete the Plato v2 interface lattice | feature | p1 | L | high | plato | in-progress |  |
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | in-progress |  |
 | [plato-378](issues/plato-378.md) | Shrink the host intrinsic contract to an irreducible kernel | debt | p1 | L | med | plato | in-progress |  |
@@ -72,7 +73,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-456](issues/plato-456.md) | C# writer does not generate IIndexable functions for Array receivers | bug | ? | ? | ? | plato | ready |  |
 | [plato-457](issues/plato-457.md) | C# writer does not escape C# keywords used as Plato names | bug | ? | ? | ? | plato | ready |  |
 | [plato-458](issues/plato-458.md) | C# writer's sum-type Equals compares inactive cases' fields | bug | ? | ? | ? | plato | ready |  |
-| [compiler-534](issues/compiler-534.md) | Define outcome semantics and optimization-friendly contracts | idea | p1 | L | high | compiler | idea |  |
 | [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | p1 | L | med | plato | idea |  |
 | [stdlib-528](issues/stdlib-528.md) | Point-cloud deformation leaves normals unchanged under rotation | bug | p1 | M | med | stdlib | idea |  |
 | [compiler-416](issues/compiler-416.md) | Library functions taking Buffer<T> as first parameter are silently dropped from emitted C# | problem | p2 | M | med | compiler | idea |  |

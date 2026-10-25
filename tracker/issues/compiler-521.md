@@ -31,3 +31,7 @@ Architecture, safety and delivery subagents reviewed the existing pipeline and t
 ## Semantic prerequisites
 
 The [semantic audit](../../docs/reports/optimizer-semantics-audit-2026-10-25.md) adds explicit language/intrinsic/backend premise sources, affine effects and executable coercions to the plan. Characterize older passes under compiler-483 before claiming whole-pipeline equivalence; the exact-output pilot remains a bounded adjacent-stage migration. Implementation is still pending.
+
+## Accepted mixed-evaluation direction
+
+The user approved [compiler-534's decision](../decisions/2026-10-25-mixed-evaluation-preserves-required-results.md). Plan contract V2 distinguishes the intended omission of unnecessary pure work/faults from the conservative baseline used for initial behavior-preserving migrations. Rule-specific semantic adoption and new comparison classifications remain separate implementation work.
