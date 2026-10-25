@@ -204,6 +204,42 @@ class AnalysisTests(unittest.TestCase):
         self.assertEqual(result["status"], "unmeasured")
         self.assertNotIn("speedup", result)
 
+    def test_matching_wrong_full_and_candidate_do_not_bypass_shipping_anchor(self):
+        rows = samples()
+        for row in rows:
+            if row["variant"] in ("full", "candidate"):
+                row["digest"] = "same-wrong-output"
+        report = analyze(rows)
+        result = comparison(report)
+        self.assertEqual(report["correctness_anchor"], "shipping")
+        self.assertEqual(result["status"], "invalid")
+        self.assertNotIn("speedup", result)
+        self.assertTrue(all("time_ratio" not in c for c in report["comparisons"]))
+
+    def test_unoptimized_anchor_takes_precedence_and_must_be_measured_once(self):
+        for defect in ("wrong", "missing", "duplicate", "failed"):
+            with self.subTest(defect=defect):
+                rows = samples()
+                anchors = [{**r, "variant": "unoptimized"} for r in rows if r["variant"] == "shipping"]
+                if defect == "wrong":
+                    anchors[0]["digest"] = "independent-output"
+                elif defect == "missing":
+                    anchors.pop()
+                elif defect == "duplicate":
+                    anchors.append(anchors[0].copy())
+                else:
+                    anchors[0]["status"] = "error"
+                report = analyze(rows+anchors, ["full", "shipping", "candidate", "unoptimized"])
+                self.assertEqual(report["correctness_anchor"], "unoptimized")
+                self.assertNotIn("speedup", comparison(report))
+
+    def test_baseline_only_anchor_labels_limited_equivalence(self):
+        rows = [r for r in samples() if r["variant"] != "shipping"]
+        report = analyze(rows, ["full", "candidate"])
+        self.assertEqual(report["correctness_anchor"], "full")
+        self.assertIn("limited equivalence", report["correctness_scope"])
+        self.assertEqual(comparison(report)["status"], "faster")
+
 
 if __name__ == "__main__":
     unittest.main()

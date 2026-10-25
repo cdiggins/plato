@@ -94,6 +94,7 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
         cases.add((row["case_id"], row["workload"]))
         groups[(row["variant"], row["case_id"], row["workload"], row["block"])].append(row)
     comparisons = []
+    correctness_anchor = "unoptimized" if "unoptimized" in names else "shipping" if "shipping" in names else baseline
     primary_controls = (baseline, "shipping")
     control_names = list(dict.fromkeys((*primary_controls, *references.values())))
     for control in control_names:
@@ -102,7 +103,8 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
                 continue
             for case_id, workload in sorted(cases):
                 blocks = sorted({key[3] for key in groups if key[:3] in
-                                 ((control, case_id, workload), (variant, case_id, workload))}, key=str)
+                                 ((control, case_id, workload), (variant, case_id, workload),
+                                  (correctness_anchor, case_id, workload))}, key=str)
                 result = dict(variant=variant, control=control, case_id=case_id,
                               workload=workload, status="unmeasured", blocks=0,
                               comparison_kind="parameter_reference" if references.get(variant) == control else
@@ -110,6 +112,12 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
                               kind="model" if workload == "model" else "stage")
                 problems, ratios, allocations, controls, samples = [], [], [], [], []
                 for block in blocks:
+                    anchors = groups.get((correctness_anchor, case_id, workload, block), [])
+                    anchor_problem = ("missing correctness anchor" if not anchors else
+                                      "duplicate correctness anchor" if len(anchors) != 1 else _invalid(anchors[0]))
+                    if anchor_problem:
+                        problems.append({"block": block, "variant": correctness_anchor,
+                                         "reason": "correctness anchor: " + anchor_problem})
                     pair = []
                     for name in (control, variant):
                         found = groups.get((name, case_id, workload, block), [])
@@ -121,9 +129,14 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
                         if error:
                             problems.append({"block": block, "variant": name, "reason": error})
                         pair.append(found[0])
-                    if len(pair) != 2 or any(_invalid(r) for r in pair):
+                    if anchor_problem or len(pair) != 2 or any(_invalid(r) for r in pair):
                         continue
                     control_sample, candidate = pair
+                    anchor = anchors[0]
+                    if any(r["digest"] != anchor["digest"] or r["checks"] != anchor["checks"] for r in pair):
+                        problems.append({"block": block, "variant": correctness_anchor,
+                                         "reason": "digest or checks mismatch against correctness anchor"})
+                        continue
                     if control_sample["digest"] != candidate["digest"] or control_sample["checks"] != candidate["checks"]:
                         problems.append({"block": block, "reason": "digest or checks mismatch"})
                         continue
@@ -144,7 +157,8 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
                         result["status"] = "unmeasured"
                     result["observed_states"] = sorted({r["status"] for key, rs in groups.items()
                                                          if key[:3] in ((control, case_id, workload),
-                                                                       (variant, case_id, workload))
+                                                                       (variant, case_id, workload),
+                                                                       (correctness_anchor, case_id, workload))
                                                          for r in rs if isinstance(r.get("status"), str)})
                 elif ratios:
                     if any(not _number(r, True) for r in ratios):
@@ -202,6 +216,10 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
                 comparisons=[{k: r[k] for k in ("variant", "control", "case_id", "workload", "status")}
                              for r in affected]))
     return dict(schema=1, baseline=baseline, references=references,
+                correctness_anchor=correctness_anchor,
+                correctness_scope="limited equivalence to performance baseline" if correctness_anchor == baseline
+                                  and correctness_anchor not in ("unoptimized", "shipping") else
+                                  "equivalence to " + correctness_anchor,
                 practical_threshold=practical_threshold, min_blocks=min_blocks,
                 uncertainty="95% Student t interval on paired log time ratios; independent process blocks assumed",
                 malformed_rows=malformed, comparisons=comparisons, summaries=summaries,
@@ -215,7 +233,9 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
 
 def render_markdown(report):
     """Render all comparisons, including invalid and unmeasured results."""
-    lines = ["Time ratio is variant/control; below 1 is faster.", "", report["uncertainty"], ""]
+    lines = ["Time ratio is variant/control; below 1 is faster.", "", report["uncertainty"], "",
+             "Correctness anchor: " + report.get("correctness_anchor", "unspecified") + "; "
+             + report.get("correctness_scope", "unspecified equivalence scope") + ".", ""]
     coverage = report.get("coverage")
     if coverage:
         lines += ["Selection coverage:", "",
