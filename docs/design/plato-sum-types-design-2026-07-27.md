@@ -2,18 +2,30 @@
 
 **Date:** 2026-07-27
 **Tracker:** [plato-232](../../tracker/issues/plato-232.md) (executes the RFC idea [plato-077](../../tracker/issues/plato-077.md))
-**Status:** design / spec for a wave-2 (parser+AST) and wave-3 (stdlib migration) implementation. No compiler code is written by this doc.
+**Status:** implemented historical design, with superseded choices identified below. This is not an open implementation plan or the language specification. Refreshed under [docs-527](../../tracker/issues/docs-527.md).
 **Companion:** test corpus in [`plato-test-sum/`](../../tests/plato-test-sum/README.md); v3 migration survey in [`reports/plato-sum-types-v3-survey.md`](../reports/plato-sum-types-v3-survey.md).
 
-This doc specifies a **fixed** design (it is not a menu of options). It documents that
-design at the depth an implementer needs, flags the genuinely open points as such, and
-draws the C# emission to match the existing writer's house style.
+This document records the July design rationale. Sum types and exhaustive `match`
+are implemented, including generic sums. Read [SEMANTICS.md](../SEMANTICS.md#sum-types)
+for the language contract and the [October 23 generic-sum decision](../../tracker/decisions/2026-10-23-generic-sums-monomorphize-per-use.md)
+for the change from the original restricted implementation. Historical proposals and
+examples below do not override those authorities.
+
+Implementation evidence lives in the [sum checker](../../src/Plato.Compiler/Checking/SumTypeChecker.cs),
+[C# writer](../../writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs),
+[checking tests](../../tests/PlatoTests/Checking/SumTypeCheckingTests.cs),
+[C# emission and execution tests](../../tests/PlatoTests/Emission/SumTypeCodegenTests.cs),
+and [generic-sum interpreter and differential tests](../../tests/Plato.Interpreter.Tests/GenericSumTests.cs).
+Those tests cover supported behavior; their existence is not a claim that they were
+run during this documentation refresh. Direct recursive sums are discussed separately
+in section 7; nested generic instances are not the same thing as recursive declarations.
 
 ---
 
 ## 1. Motivation
 
-Plato today has no way to say "one of these shapes." The stdlib works around the gap
+At the time of the July proposal, Plato had no way to say "one of these shapes."
+The stdlib worked around the gap
 with a **kind-pattern hand-encoding**: an `Integer`-wrapping `XxxKind` type used as a
 discriminant field on a carrier type whose remaining fields are *conditionally
 meaningful* — valid for some tag values, junk for others. The canonical example is
@@ -68,12 +80,12 @@ type PathSegment2D implements Value
 
 Now `Control` exists only on `Quadratic`/`Cubic`, the arc fields exist only on `Arc`,
 `Close` carries nothing, and any consumer must `match` all six verbs or be rejected.
-The v3 survey (companion doc) finds **115** `XxxKind` types across **39** files; a
-minority are true sums like this one, and they are the migration targets.
+The historical v3 survey (companion doc) classifies the kind-pattern types and
+identifies the true sums that motivated migration. Inventory counts belong in that survey.
 
-Sum types are also the top language gap for the Gratify kernel port
-([plato-076](../../tracker/issues/plato-076.md)) and the precondition for the stdlib
-partiality cleanup ([plato-079](../../tracker/issues/plato-079.md), which wants
+Sum types were also a prerequisite for the Gratify kernel port
+([plato-076](../../tracker/issues/plato-076.md)) and the stdlib
+partiality cleanup ([plato-079](../../tracker/issues/plato-079.md), which proposed
 `Option`/`Result` in place of `Tuple2<T, Boolean>` and sentinel values).
 
 ---
@@ -89,7 +101,7 @@ either a product (braces) or a sum (`= ... ;`).
 ```
 type FillRule = NonZero | EvenOdd;          // enum: degenerate sum, all cases payload-free
 
-type Option<T> = None | Some(Value: T);     // generic sum (stance-gated, see §4.5)
+type Option<T> = None | Some(Value: T);     // generic sum (supported by default; see §3.5)
 
 type PathSegment2D implements Value         // implements clause allowed, precedes the body
     = Move(EndPoint: Point2D)
@@ -207,26 +219,18 @@ A `match` is checked against the subject's sum type:
 `match` on a non-sum value is CHK304. Product types (records), primitives, arrays, and
 interfaces are all rejected as subjects.
 
-### 3.5 Generics stance
+### 3.5 Generics: original choice superseded
 
-> **Status, 2026-10-23 (TKT-443):** generic sums are supported and CHK306 is off by default. A
-> library consumer spells the free variable `$T`; see
-> `tracker/decisions/2026-10-23-generic-sums-monomorphize-per-use.md` for what changed and what is
-> not covered. The C# emission is one generic struct, not one struct per instantiation.
+The July proposal made generic sums conditional on implementation risk and sketched
+separate C# types such as `Option_Number`. The first implementation restricted generic
+sums with CHK306. The [October 23 decision](../../tracker/decisions/2026-10-23-generic-sums-monomorphize-per-use.md)
+replaced that restriction: generic sums are supported by default and emit as one generic
+C# struct, such as `Option<T>`. CHK306 remains only for hosts explicitly requesting the
+monomorphic-only stance.
 
-Generic sum types (`Option<T>`) are **allowed if low-risk**, and the fixed decision is:
-**support them iff the monomorphizer already specializes the sum's cases per type
-argument with no new unification machinery.** It does — a sum lowers to a struct
-(§5), and the monomorphizer already specializes struct types per instantiation
-([plato-231](../../tracker/issues/plato-231.md) notes the same engine). So the
-default is **generics supported**, with `Option<T>` monomorphizing to `Option_Number`,
-`Option_Point2D`, … exactly as generic product types do today.
-
-The **fallback**, if the front end hits an unforeseen unification snag with case fields
-of type-parameter type: v1 restricts generic sums with a clear diagnostic (CHK306) and
-ships monomorphic sums only, deferring generics to a follow-up. `option.plato` in the
-corpus is the fixture that decides this at implementation time. Either way, **no silent
-partial support** — a generic sum either works end-to-end or is rejected at declaration.
+See [SEMANTICS.md](../SEMANTICS.md#sum-types) for declaration parameters, `$T` in library
+signatures, and per-use case instantiation. The decision also records the remaining
+limitations; the July fallback is not a statement of present language support.
 
 ---
 
@@ -237,17 +241,17 @@ partial support** — a generic sum either works end-to-end or is rejected at de
 A sum value is a tagged product: a discriminant `Kind` (the case's 0-based declaration
 index) plus the flattened per-case fields, with the inactive cases' fields holding their
 zero value. It is a **concrete value type** — no heap allocation, no boxing, copy
-semantics. Two sum values are equal iff their tags and all flattened fields are equal;
-because factories zero the inactive fields, this is exactly structural equality over the
-active case (§5.3).
+semantics. Equality and hashing use the tag and the active case's fields only (§5.3).
+The original all-fields comparison was superseded; inactive payloads carry no meaning.
 
 ### 4.2 Match lowering — no new TIR node
 
 `match` is lowered **during elaboration** into a tag-conditional chain built entirely
 from **existing** Typed-IR nodes — `Conditional`, integer `Equals`, `FieldAccess`,
 integer literals, and `Let`. No new TIR node type is introduced, so every downstream
-TIR pass (Normalize, Constrain, Solve, Monomorphize, the scalar lowerer, the C# body
-writer) is untouched. Concretely, `match (e) { C0(bs0) => a0; …; Cn(bsn) => an; }`
+TIR consumer can handle the lowered control flow. This is a representation
+choice, not a claim that implementing sums required no downstream changes.
+Concretely, `match (e) { C0(bs0) => a0; …; Cn(bsn) => an; }`
 elaborates to:
 
 ```
@@ -271,7 +275,7 @@ A per-case constructor function is synthesized for each case. `PathSegment2D.Mov
 builds the value with `Kind = 0`, `Move_EndPoint = p`, and every other flattened field
 defaulted. These map one-to-one onto the emitted static factories (§5.2).
 
-### 4.4 Open: bare vs qualified constructor names
+### 4.4 Historical question: bare vs qualified constructor names
 
 Baseline surface is the **qualified** form `TypeName.Case(args)`, which is unambiguous
 and always available. A **bare** `Case(args)` is offered **only if** the resolver's
@@ -294,8 +298,9 @@ product-type reference). Shape:
    irrelevant — this is not a tuple constructor);
 5. one **public static factory per case** that sets its own fields and defaults the
    rest;
-6. structural `Equals`/`NotEquals`/`GetHashCode`/`ToString` over `Kind` + all fields,
-   via the same `Intrinsics.CombineHashCodes` the product writer uses.
+6. equality and hashing over `Kind` plus the active case's fields; serialization
+   (including `ToString`) describes the tag and flattened fields. See the writer and
+   emission tests linked above for the generated API.
 
 ### 5.1 LangVersion constraint
 
@@ -306,16 +311,17 @@ constructors, `??`-free bodies. The emission below uses only long-stable constru
 (ternary chain, `default`, static factories). It deliberately **avoids** a `switch`
 expression: a `switch` over `int Kind` cannot be proven exhaustive by C#, so it would
 force a `_ => throw` arm (CS8509) — the ternary chain with an unconditional last arm is
-cleaner and is what the match lowering already produces. Scalar erasure applies to case
-fields exactly as to ordinary struct fields: under the shipping `--scalar=float` recipe
-`Boolean → bool`, `Integer → int`, `Number → float` (see `_Ring.g.cs` emitting `float`),
-while wrapper structs (`Point2D`, `Vector2`, `Angle`) are unchanged. The example below
-is shown in that shipping (scalar-erased) form.
+cleaner and is what the match lowering already produces. The old scalar-erased sketch
+below is historical: scalar erasure was retired by the
+[wrapper-scalar decision](../../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md).
+It must not be used as a generation recipe.
 
-### 5.2 Hand-written target emission for `PathSegment2D`
+### 5.2 Historical hand-written target sketch for `PathSegment2D`
 
-This is the exact struct the writer should produce (shipping recipe: extension-style,
-scalar-erased). It is hand-written here as the emission contract.
+The following July sketch is preserved to explain the tagged layout. It is **not the
+current emission contract**: its native scalar payloads, all-fields equality/hash and
+case-name `ToString` are superseded. For executable examples of wrapper payloads,
+active-case equality, JSON `ToString`, and generic structs, use the linked C# emission tests.
 
 ```csharp
 // Autogenerated file: DO NOT EDIT
@@ -430,16 +436,13 @@ namespace Ara3D.Geometry
 }
 ```
 
-### 5.3 Why zero-the-rest matters
+### 5.3 Inactive fields and equality
 
-Equality and `GetHashCode` range over `Kind` + **all** flattened fields. That is only a
-correct model of sum equality because every factory writes `default` into the inactive
-fields, so two values with the same active case necessarily agree on every inactive
-field (both zero). If a factory left inactive fields unspecified, two `Move(p)` values
-could hash/compare differently on stale bytes. The zeroing is load-bearing, not
-cosmetic — the writer must emit it, and the private-constructor-with-`default`-args
-pattern above is the mechanism (`readonly` fields forbid post-construction assignment
-and `with`, so a single all-fields ctor is the honest lowering).
+Factories still default inactive payload fields, but equality and hashing must not
+read them. An inactive array field has a null C# default and comparing it previously
+threw. [plato-458](../../tracker/issues/plato-458.md) records the correction; the
+`SumEquality_ComparesOnlyTheActiveCase` test in the linked C# emission suite pins it.
+The all-fields implementation in the historical sketch is not the sum equality contract.
 
 ### 5.4 Match lowering in C#
 
@@ -454,7 +457,8 @@ EndPoint(seg: PathSegment2D, start: Point2D): Point2D =>
     };
 ```
 
-emits (binders inlined as field projections; last arm unconditional):
+has the following schematic C# meaning (the writer uses generated `IsCase()`
+predicates rather than spelling these tag comparisons directly):
 
 ```csharp
 public static Point2D EndPoint(this PathSegment2D seg, Point2D start)
@@ -472,11 +476,13 @@ final case is the `else`. If a binder is used more than once, the projection is 
 
 ---
 
-## 6. Diagnostics catalog
+## 6. Historical diagnostics catalog
 
-Proposed codes in a new **CHK3xx** block (the checker's CHK2xx family is where these
-live; final numbers are the implementer's call). Every message **names the sum type**
-and the offending case(s), per the fixed design. Suggested texts:
+The July proposal allocated the following codes and suggested message text.
+[SEMANTICS.md](../SEMANTICS.md#7-match), the sum checker, and the negative fixtures
+are the authorities for implemented diagnostics; this table is not a promise that
+every proposed backend or parser diagnostic landed with this exact text. CHK306 is
+restricted-host behavior only, not the default generics policy.
 
 | Code   | When | Proposed message |
 |--------|------|------------------|
@@ -489,8 +495,8 @@ and the offending case(s), per the fixed design. Suggested texts:
 | CHK306 | generic sum, stance = restricted | `generic sum type '<Sum><…>' is not supported in v1; declare a monomorphic sum or await the generics follow-up` |
 | CHK307 | default/wildcard arm written | `default match arms are not supported in v1; list every case of '<Sum>' explicitly` |
 
-Backend writer diagnostics (emitted by the non-C# writers, which do **not** support sum
-types in v1 — a clear rejection, never silent bad output):
+The proposal also reserved a backend rejection diagnostic. See SEMANTICS.md for
+the supported targets and the TypeScript/Rust rejection behavior:
 
 | Code   | When | Proposed message |
 |--------|------|------------------|
@@ -501,20 +507,30 @@ Each negative corpus fixture pins exactly one of CHK300–CHK305 (see
 
 ---
 
-## 7. Out of scope for v1
+## 7. Original scope boundaries
 
-Explicitly deferred (each is a clean follow-up, none blocks the core):
+These were the July scope boundaries, with qualifications where source evidence
+matters. Consult SEMANTICS.md before treating a historical deferral as a language rule:
 
-- **GLSL / TypeScript / Rust emission.** C# only. Other writers reject with CHK320.
+- **GLSL / TypeScript / Rust emission.** The original target was C# only; see
+  SEMANTICS.md for backend support rather than inferring it from this proposal.
 - **Nested patterns.** `Some(Circle(r))` — only one level of case pattern; bind then
   `match` again (see `nested-match.plato`).
 - **Guards.** No `when`/`if` on arms.
 - **Default / wildcard arm.** Exhaustive by enumeration only (CHK307).
 - **Recursive sum types.** A case field of the sum's own type
-  (`type Tree = Leaf(Integer) | Branch(Left: Tree, Right: Tree)`) would make the flat
-  value struct contain itself (C# CS0523 layout cycle). Indirection through `Array<Tree>`
-  works today; direct recursion needs a boxing/reference story, deferred.
-- **Interaction with the `unique` affine modifier.** Sum + `unique` is unspecified in v1.
+  (`type Tree = Leaf(Value: Integer) | Branch(Left: Tree, Right: Tree);`) would make
+  the flat C# value struct contain itself. The writer emits payload fields directly
+  and adds no automatic reference indirection. Thus the expected C# limitation is a
+  CS0523 layout cycle; this is a representation inference, not a freshly executed
+  recursive-program test or a verified front-end diagnostic. The sum checker has no
+  dedicated recursive-layout check. `Array<Tree>` or integer IDs can break the layout
+  cycle in principle, but the existing array-payload and nested-sum fixtures do not
+  establish an end-to-end recursive-tree guarantee. Validate a concrete recursive
+  program on its intended backend before relying on it.
+- **Interaction with the `unique` affine modifier.** This was unspecified in the
+  proposal; see [SEMANTICS.md](../SEMANTICS.md#8-not-in-the-language) for the restriction
+  to intrinsic builders.
 - **Payload-sharing / common fields across cases.** No "every case also has field X";
   model it as an outer product wrapping the sum (e.g. `FillStyle { Paint: Paint; Opacity }`).
 - **Exhaustiveness across `Boolean`/enum-of-two as a sum.** `Boolean` stays a primitive;
@@ -522,7 +538,12 @@ Explicitly deferred (each is a clean follow-up, none blocks the core):
 
 ---
 
-## 8. Open questions for the implementer
+## 8. Historical implementation questions
+
+These questions record choices considered in July, not an outstanding work queue.
+Generic support and C# representation were settled by the October 23 decision;
+case predicates are emitted and used for matching; `ToString` uses serialization.
+Use the authorities linked above before acting on any recommendation here.
 
 1. **Bare vs qualified constructors (§4.4).** Ship qualified `TypeName.Case(args)` for
    certain; add bare `Case(args)` only if the resolver disambiguates it for free.
@@ -551,8 +572,8 @@ Explicitly deferred (each is a clean follow-up, none blocks the core):
 
 ## 9. Companion: v3 migration survey
 
-The stdlib survey — all 115 `XxxKind` types enumerated, classified pure-enum vs true-sum,
-the recommended flagship-5 wave-3 migrations, and the drafted "after" of
+The historical stdlib survey — kind-pattern types classified pure-enum vs true-sum,
+the recommended wave-3 migrations, and the drafted "after" of
 `40-paths.plato` — is in [`reports/plato-sum-types-v3-survey.md`](../reports/plato-sum-types-v3-survey.md).
 Headline: the large majority are degenerate enums (a `= A | B | …` collapse); a minority
 are true sums (a `Kind` discriminant plus conditionally-meaningful carrier fields) and

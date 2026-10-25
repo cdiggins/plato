@@ -19,12 +19,17 @@ changing language behavior or duplicating the normative specification.
 
 ## Done means
 
-- [ ] Mark the proposal historical and link current semantics and generic-sum decision.
-- [ ] Correct misleading generics, representation, and recursion statements using source evidence.
-- [ ] Check edited-document links and whitespace; record the limits of verification.
+- [x] Mark the proposal historical and link current semantics and generic-sum decision.
+- [x] Correct misleading generics, representation, and recursion statements using source evidence.
+- [x] Check edited-document links and whitespace; record the limits of verification.
 
 ## Verification
 
 Documentation-only change. Inspect the checker, C# sum writer and sum tests; do not
 claim executable coverage from source inspection. Existing root PROGRESS.md belongs
 to another mission and is left untouched.
+
+Local Markdown targets resolved; git diff --check passed. Source inspection confirms
+generic sums default on, generic C# structs, wrapper payloads, active-case equality
+and JSON ToString. Direct recursion remains a documented representation inference;
+no recursive program or compiler suite was executed for this documentation edit.
