@@ -17,7 +17,7 @@ links: [plato-brep TKT-398]
 
 - [x] Generic constructor payloads do not require an abstract receiver dispatch license; unresolved or unlicensed calls nested in constructor arguments remain rejected.
 - [x] The original concrete-first Integer/Boolean helper regressions pass on checker, interpreter, CSharp and differential; focused fallback safety controls pass.
-- [ ] The committed compiler and pinned plato-brep consumer are verified independently of the private candidate.
+- [x] The committed compiler and pinned plato-brep consumer are verified independently of the private candidate.
 
 ## Reproduction and scope
 
@@ -54,3 +54,17 @@ The final acceptance remains open: independently build the committed production
 compiler, verify the actual consumer helper, and move the plato-brep pin only
 after regeneration/consumer verification. Private success is not that final gate.
 The function-field half of TKT-398 remains separate and open.
+
+## Verified normal compiler and pinned consumer
+
+Plato-brep 4b332372fa3b20314ce97aadd95589e843c450a7 pins normal compiler
+69221fd3ebefb41de0cc4913243c6443639a06aa and its reviewed generated output.
+Actual CountedFlips and WorkClaim workaround removals are in plato-brep
+4b4aad1d and 24650ee1. The normal compiler passes the constructor/field-call
+regressions and full-library checking, with actual consumer laws agreeing
+across interpreter, CSharp and differential. Two regenerations are byte-identical
+without degraded bodies. Independent host tests and fresh corpus comparison
+pass against unchanged recorded inputs. The durable exact receipts are in
+plato-brep staging/function-field-current-audit/writer-fix/final-consumer/
+RESULT-SHIPPING.json and RESULT-INTEGRATION.md. The output is valid open-generic
+CSharp, not fully ground specialization; no performance claim is made.
