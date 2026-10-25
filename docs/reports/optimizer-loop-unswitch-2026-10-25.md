@@ -47,6 +47,6 @@ The review is the implementing agent's critical self-review, not an independent 
 
 `tools/experiments/optimizer-exploration/loop-unswitch/model.py` implements the bounded tree
 rewrite. `test_model.py` exercises it and unsafe counterexamples. The design document at
-`docs/design/optimizer-exploration/loop-unswitch.md` records legality, source integration points
+`docs/archive/optimizer-exploration/loop-unswitch.md` records legality, source integration points
 and the remaining ordered execution plan. Private `.temp/optimizer-exploration/loop-unswitch/`
 contains the test log and checkpoint. Supervisor integration and production work remain pending.

@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-25 — [compiler-510](issues/compiler-510.md) — Explore loop splitting on invariant conditions — done (e412eeef); geometry comparison found no consistent benefit; no production pass promoted
 - 2026-10-25 — [compiler-508](issues/compiler-508.md) — Explore array length and index range analysis — done (917131b1); private read-only producer facts qualified; no runtime rewrite
 - 2026-10-25 — [compiler-509](issues/compiler-509.md) — Explore exact allocation for fixed-output FlatMap — done (ea30ca0c); representative generated geometry allocation qualified; keep opt-in
 - 2026-10-25 — [compiler-518](issues/compiler-518.md) — Open generic constructor payload is mistaken for a dispatch receiver — done (436b5c15a9d2b4b986b1d3e27edb6759d0f32a24)

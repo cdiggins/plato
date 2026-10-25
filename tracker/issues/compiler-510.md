@@ -2,15 +2,15 @@
 id: compiler-510
 title: Explore loop splitting on invariant conditions
 type: idea
-status: in-progress
+status: done
 priority: p2
 effort: L
 risk: high
 area: compiler
 sprint: 
 created: 2026-10-25
-closed:
-links: [docs/design/optimizer-exploration/loop-unswitch.md]
+closed: 2026-10-25
+links: [docs/archive/optimizer-exploration/loop-unswitch.md]
 ---
 
 User-authorized optimizer exploration. Contract revision O1: dedicated agent, isolated experiment, critical review, execution plan, and a bounded first implementation. Shared compiler changes require supervisor ownership approval.

@@ -93,7 +93,7 @@ For each slug below those paths are:
 | [compiler-507](../../../tracker/issues/compiler-507.md) | [record-elimination](record-elimination.md) | record_elimination | Independent prototype |
 | [compiler-508](../../../tracker/issues/compiler-508.md) | [array-facts](../../archive/optimizer-exploration/array-facts.md) | array_facts | Independent prototype |
 | [compiler-509](../../../tracker/issues/compiler-509.md) | [output-sizing](../../archive/optimizer-exploration/output-sizing.md) | output_sizing | Independent prototype |
-| [compiler-510](../../../tracker/issues/compiler-510.md) | [loop-unswitch](loop-unswitch.md) | loop_unswitch | Independent prototype |
+| [compiler-510](../../../tracker/issues/compiler-510.md) | [loop-unswitch](../../archive/optimizer-exploration/loop-unswitch.md) | loop_unswitch | Independent prototype |
 | [compiler-511](../../../tracker/issues/compiler-511.md) | [grid-reuse](grid-reuse.md) | grid_reuse | Independent prototype |
 
 Agent slots determine dispatch order. Tracks may read each other's completed evidence,

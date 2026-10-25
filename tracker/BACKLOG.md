@@ -16,7 +16,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-504](issues/compiler-504.md) | Experiment with statement inlining and lambda elimination | idea | p2 | L | high | compiler | in-progress |  |
 | [compiler-506](issues/compiler-506.md) | Explore fusion of multiple array consumers | idea | p2 | L | high | compiler | in-progress |  |
 | [compiler-507](issues/compiler-507.md) | Explore elimination of temporary records | idea | p2 | L | high | compiler | in-progress |  |
-| [compiler-510](issues/compiler-510.md) | Explore loop splitting on invariant conditions | idea | p2 | L | high | compiler | in-progress |  |
 | [compiler-511](issues/compiler-511.md) | Explore reuse of neighboring grid samples | idea | p2 | L | high | compiler | in-progress |  |
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion interface | idea | p2 | M | low | plato | in-progress |  |

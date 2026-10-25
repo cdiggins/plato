@@ -1,7 +1,9 @@
+> EXECUTED: compiler-510 exploration completed with no production promotion. See the [geometry qualification](../../reports/optimizer-geometry-loop-unswitch-2026-10-25.md). Further production work requires new evidence.
+
 # Split loops on an invariant Boolean
 
 Exploration under [compiler-510](../../../tracker/issues/compiler-510.md), following
-[contract O1](wave.md). This document describes a candidate transformation, not a shipped pass.
+[contract O1](../../design/optimizer-exploration/wave.md). This document describes a candidate transformation, not a shipped pass.
 Measurements and the completed experiment are recorded in the
 [dated review](../../reports/optimizer-loop-unswitch-2026-10-25.md).
 
