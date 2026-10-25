@@ -2,7 +2,7 @@
 id: compiler-504
 title: Experiment with statement inlining and lambda elimination
 type: idea
-status: idea
+status: in-progress
 priority: p2
 effort: L
 risk: high

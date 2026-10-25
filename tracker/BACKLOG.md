@@ -12,6 +12,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | in-progress |  |
 | [plato-378](issues/plato-378.md) | Shrink the host intrinsic contract to an irreducible kernel | debt | p1 | L | med | plato | in-progress |  |
 | [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | in-progress |  |
+| [compiler-504](issues/compiler-504.md) | Experiment with statement inlining and lambda elimination | idea | p2 | L | high | compiler | in-progress |  |
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion interface | idea | p2 | M | low | plato | in-progress |  |
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
@@ -71,7 +72,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-500](issues/compiler-500.md) | Explain allocation growth from B-rep source inlining | problem | p2 | M | low | compiler | idea |  |
 | [compiler-502](issues/compiler-502.md) | Include inter-stage work in B-rep meshing timing | problem | p2 | S | low | compiler | idea |  |
 | [compiler-503](issues/compiler-503.md) | Assess component expansion for forward vector vocabulary | problem | p2 | M | med | compiler | idea |  |
-| [compiler-504](issues/compiler-504.md) | Experiment with statement inlining and lambda elimination | idea | p2 | L | high | compiler | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
 | [plato-028](issues/plato-028.md) | Consumer-driven refactoring direction (Earcut gaps, query vocabulary, topology) | feature | p2 | L | med | plato | idea |  |
 | [plato-029](issues/plato-029.md) | Port Geometry3Sharp pure query kernels to Plato | feature | p2 | L | med | plato | idea |  |
