@@ -17,8 +17,10 @@ User-authorized optimizer exploration. Contract revision O1: dedicated agent, is
 
 ## Done means
 
-- [ ] Elaborate the opportunity against current source and existing proposals.
-- [ ] Run a reproducible experiment with correctness checks and record limitations.
-- [ ] Critically review legality, benefit, and implementation risks.
-- [ ] Write an ordered execution plan and execute its first bounded step.
+- [x] Elaborate the opportunity against current source and existing proposals.
+- [x] Run a reproducible experiment with correctness checks and record limitations.
+- [x] Critically review legality, benefit, and implementation risks.
+- [x] Write an ordered execution plan and execute its first bounded step.
 - [ ] Review and commit deliverables; distinguish prototype evidence from production integration.
+
+Production candidate census, generated-code validation and integration remain outstanding; this milestone executes only the isolated prototype step.
