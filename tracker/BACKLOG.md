@@ -96,6 +96,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-524](issues/plato-524.md) | Language improvement ideas collected during reference audit | idea | p2 | L | med | plato | idea |  |
 | [repo-473](issues/repo-473.md) | Resolve external SDK frozen-artifact gate drift | problem | p2 | S | med | repo | idea |  |
 | [repo-494](issues/repo-494.md) | Give Greenhouse audits explicit source scope and useful ranking | idea | p2 | M | low | repo | idea |  |
+| [stdlib-526](issues/stdlib-526.md) | Audit source-documented standard-library algorithm limitations | debt | p2 | L | med | stdlib | idea |  |
 | [compiler-469](issues/compiler-469.md) | Retire inactive parser and symbol XML writer sketches | debt | p3 | S | low | compiler | idea |  |
 | [compiler-487](issues/compiler-487.md) | Evaluate concrete storage and callback specialization | feature | p3 | L | med | compiler | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
