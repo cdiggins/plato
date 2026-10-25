@@ -38,8 +38,12 @@ recognizer enforces those refusals.
 | Loop-splitting model | 10 tests passed | 0.016 test runner |
 | Grid-reuse model | 8 tests passed | 0.006 test runner |
 | Exact-output corrected C# experiment | Recorded build and executable passed | Timing retained in private build log |
-| Local document links | Passed before final report was added; final check pending | — |
-| Repository integration gates | In progress at this checkpoint | — |
+| Local document links | Passed | — |
+| Studio frozen-artifact checksum gate | Failed; existing repo-473 | 0.74 |
+| Strict legacy stdlib lint | Passed | 21.55 |
+| Strict forward stdlib lint | Passed | 24.34 |
+| SDK Release build | Passed | 5.34 |
+| SDK geometry tests | Passed | 35.54 |
 
 Isolated build logs and categorized errors live under `.temp/optimizer-exploration/`.
 The multi-consumer build emitted a NuGet vulnerability-feed warning but no compiler errors.
@@ -63,3 +67,20 @@ or save evidence. The working log-import path was used; the small tooling fix re
 Rerun commands are in each dated track report. No new compiler flags or runtime API changes
 were introduced. The experiment artifacts and tracker milestones were committed on the
 existing branch; publication and final broad-gate results are recorded below when known.
+
+The Studio battery ran once, taking 87.94 seconds overall. Its checksum failure matches
+[repo-473](../../tracker/issues/repo-473.md), the existing external SDK artifact drift;
+none of those SDK sources was edited here. The full log and timing rows are in
+`.temp/optimizer-exploration/integration/`. Reproduce with
+`powershell -File C:/Users/cdigg/git/studio/tools/check-all.ps1 -PlatoRoot C:/Users/cdigg/git/plato`.
+No all-green repository claim is made.
+
+The separate `record-gates.py`/PlatoTests run was not started: another session was actively
+editing that recorder and test inputs. Repeated runs against those moving inputs would not
+establish a stable integration result. Production compiler, runtime and stdlib sources were
+unchanged by this exploration. Optimizer source-evidence refresh was consequently unnecessary.
+
+Commits remain local. The branch also contains another session's unpublished tracker work;
+this exploration did not publish that work or treat the known red integration gate as green.
+All exploration agents completed their bounded assignments; no background subagent remains
+running. The open tracker milestones describe future production work, not unattended execution.
