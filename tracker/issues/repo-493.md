@@ -21,10 +21,11 @@ The Greenhouse audit (repo-492) confirmed duplicated implementation-selection po
 
 - [x] Share ScoreFunction and ChooseBestFunction across the five writers, preserving intrinsic precedence, concrete precedence, interface distance, tie counts and first-candidate ordering; retain thin compatibility wrappers if public consumers require them.
 - [x] Share source-to-CSharpWriter setup, wrapper construction/invocation and the small runtime prelude in the constraint emission fixtures, reusing CSharpTestCompilation; preserve separate type-bound and function-bound assertions and negative controls.
-- [ ] Parameterize the three array-receiver emission cases with named cases and preserve all expected signatures and stub assertions; measure before claiming a test-speed benefit.
 - [ ] Verify focused tests and representative output for affected backends, then record the required integration gates.
 
 ## Follow-on candidates requiring design review
+
+Array-receiver case parameterization moved to repo-497: the user explicitly selected only the first two audit recommendations for this implementation pass.
 
 Shared eta-forwarding recognition in the C#, Rust and TypeScript body writers; shared parsing/repository-location test support across projects. Keep these separate from the initial cleanup if dependencies or semantics widen the change. Do not merge memo-key equality with language-value equality, or Rust/TypeScript emission pipelines merely because their bodies match.
 

@@ -54,6 +54,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-428](issues/plato-428.md) | Rigid dynamics: GJK/EPA, orientation joints, and a broad phase | feature | p3 | M | low | plato | ready |  |
 | [plato-433](issues/plato-433.md) | TpmsSheet3D thickness is not portable between families and silently yields an empty solid | bug | p3 | S | low | plato | ready |  |
 | [plato-467](issues/plato-467.md) | plato_laws does not run the Linter, so a missing interface function (LINT001) passes the warm server and fails the CLI lint | bug | p3 | S | low | plato | ready |  |
+| [repo-497](issues/repo-497.md) | Parameterize array receiver emission test cases | debt | p3 | S | low | repo | ready |  |
 | [compiler-461](issues/compiler-461.md) | A body whose lambdas capture only lambda-bound names is emitted as => /*?*/ | bug | ? | ? | ? | compiler | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
 | [plato-454](issues/plato-454.md) | C# writer drops the parentheses of a conditional used as a condition | bug | ? | ? | ? | plato | ready |  |
