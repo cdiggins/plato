@@ -90,7 +90,7 @@ public class TirTempRef : TirNode
 ///
 /// It also lowers the MapEager sites the materializer produces. TIR-path only.
 /// </summary>
-public static class TirLoopLowerer
+public static partial class TirLoopLowerer
 {
     // Deterministic temp counter; reset per generation (CSharpWriter.WriteAll).
     // Per thread: the C# writer resets it per generation so output is deterministic, and two
@@ -101,6 +101,8 @@ public static class TirLoopLowerer
     {
         if (!writer.LowerLoops || tir?.Body == null)
             return tir;
+        if (writer.InlineStatements)
+            return RewriteScoped(tir);
         var body = tir.Body;
         TirNode newBody;
         if (body is TirBlock block)
@@ -226,14 +228,14 @@ public static class TirLoopLowerer
 
     /// <summary>Whether a function argument can be placed in a loop: a non-eta lambda literal of
     /// the arity with an expression body, or a delegate-typed reference of that arity.</summary>
-    private static bool FnOk(TirNode f, int arity)
+    private static bool FnOk(TirNode f, int arity, bool allowStatements = false)
     {
         f = TirRewrite.StripCoerce(f);
         // A lambda whose body is a statement tree (a block or return the inliner or capture
         // hoist left) has no expression to place in the loop; it stays a delegate (TKT-505).
         if (f is TirLambda lam)
             return lam.Parameters.Count == arity
-                   && !TirRewrite.IsStatementNode(lam.Body)
+                   && (allowStatements || !TirRewrite.IsStatementNode(lam.Body))
                    && !(lam.Parameters.Count > 0 && lam.Parameters.All(p => p.Name != null && p.Name.StartsWith("_eta")));
         // A delegate-typed reference is INVOKED with `arity` arguments, so its declared
         // Function{N} arity must match exactly.
@@ -242,7 +244,7 @@ public static class TirLoopLowerer
     }
 
     /// <summary>The lowered marker + temp reference for a recognized combinator call, or null.</summary>
-    private static TirNode TryLower(TirCall c, List<TirNode> hoists)
+    private static TirNode TryLower(TirCall c, List<TirNode> hoists, bool allowStatementMapRange = false)
     {
         if (c.Name == null || c.Args.Count == 0)
             return null;
@@ -260,7 +262,7 @@ public static class TirLoopLowerer
                 sources = new List<TirNode> { c.Args[0] };
                 fn = c.Args[1];
                 break;
-            case "MapRange" or "MapRangeEager" when c.Args.Count == 2 && ResultIsList(c) && FnOk(c.Args[1], 1):
+            case "MapRange" or "MapRangeEager" when c.Args.Count == 2 && ResultIsList(c) && FnOk(c.Args[1], 1, allowStatementMapRange):
                 kind = "MapRange"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
             case "Zip" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && ResultIsList(c) && FnOk(c.Args[2], 2):

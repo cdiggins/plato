@@ -13,6 +13,7 @@ type Boolean { }
 type Number { }
 type Object { }
 type Function1<A, R> { }
+type Array<T> { }
 type InlineBox { Value: Integer; }
 library Intrinsics {
     Add(a: Integer, b: Integer): Integer;
@@ -21,6 +22,7 @@ library Intrinsics {
     LessThan(a: Integer, b: Integer): Boolean;
     GreaterThan(a: Integer, b: Integer): Boolean;
     Equals(a: Integer, b: Integer): Boolean;
+    MapRange(n: Integer, f: Function1<Integer, $T>): Array<$T>;
     Tick(x: Integer): Integer;
     First(x: Integer): Integer;
     Second(x: Integer): Integer;
@@ -59,6 +61,9 @@ library StatementProbe {
     }
     Choose(x: Integer, order: Integer): Integer { var local = order + 0; return local == 0 ? x.Twice : x.First; }
     Simplified(x: Integer): Integer => x.Choose(0);
+    Build(n: Integer, f: Function1<Integer, Integer>): Array<Integer> { var values = n.MapRange(f); return values; }
+    ScopedRange(n: Integer): Array<Integer> => n.Build(i => i + 1);
+    StatementRange(n: Integer): Array<Integer> => n.Build(i => { var value = i + 1; return value; });
 }";
 
     [TestCase(false, false, false)]
@@ -76,7 +81,7 @@ library StatementProbe {
             Assert.That(compilation.SymbolFactory.Errors, Is.Empty,
                 string.Join("\n", compilation.SymbolFactory.Errors.Select(e => e.Message)));
             var writer = new CSharpWriter(compilation, "unused-statement")
-                { ExtensionStyle = true, InlineStatements = inline, EliminateKnownLambdas = lambdas, SimplifyInlineStatements = simplify };
+                { ExtensionStyle = true, InlineStatements = inline, EliminateKnownLambdas = lambdas, SimplifyInlineStatements = simplify, LowerLoops = true };
             writer.WriteAll();
             var source = writer.Files["StatementProbe.g.cs"].ToString();
             if (inline)
@@ -97,6 +102,11 @@ public static Boolean GreaterThan(this Integer a, Integer b) => (Boolean)((int)a
 public static Integer Tick(this Integer x) { Calls++; return x; }
 public static Integer First(this Integer x) => throw new System.InvalidOperationException(""first"");
 public static Integer Second(this Integer x) => throw new System.InvalidOperationException(""second"");
+public static IReadOnlyList<T> MapRange<T>(this Integer n, System.Func<Integer, T> f) {
+var result = new T[System.Math.Max(0, (int)n)];
+for (var i = 0; i < result.Length; i++) result[i] = f((Integer)i);
+return result;
+}
 } }" });
             var library = assembly.GetType("Ara3D.Geometry.StatementProbe", true)!;
             Assert.That((int)(Integer)library.GetMethod("Entry")!.Invoke(null, new object[] { (Integer)7 })!, Is.EqualTo(28));
@@ -125,6 +135,21 @@ public static Integer Second(this Integer x) => throw new System.InvalidOperatio
                 new object[] { (Integer)4, (Func<Integer, Integer>)(n => (Integer)((int)n + 1)) })!, Is.EqualTo(5));
             Assert.That((int)(Integer)library.GetMethod("Mutable")!.Invoke(null, new object[] { (Integer)4 })!, Is.EqualTo(8));
             Assert.That((int)(Integer)library.GetMethod("Simplified")!.Invoke(null, new object[] { (Integer)4 })!, Is.EqualTo(8));
+            foreach (var count in new[] { 0, 1, 3 })
+            {
+                Assert.That(((IReadOnlyList<Integer>)library.GetMethod("ScopedRange")!.Invoke(null, new object[] { (Integer)count })!).Select(n => (int)n),
+                    Is.EqualTo(Enumerable.Range(1, count)));
+                Assert.That(((IReadOnlyList<Integer>)library.GetMethod("StatementRange")!.Invoke(null, new object[] { (Integer)count })!).Select(n => (int)n),
+                    Is.EqualTo(Enumerable.Range(1, count)));
+            }
+            if (lambdas)
+            {
+                var original = writer.TestGetGroundTir("Integer", "StatementRange");
+                var expanded = TirInliner.InlineStatements(original, writer, "Integer", true, simplify);
+                var lowered = TirLoopLowerer.Rewrite(expanded, writer);
+                Assert.That(lowered.AllNodes.OfType<TirLoweredLoop>(), Is.Not.Empty, "Statement callback must become a loop.");
+                Assert.That(source, Does.Contain("_callback"), "Statement callback must emit a scoped result.");
+            }
             if (simplify)
             {
                 var simplified = TirInliner.InlineStatements(writer.TestGetGroundTir("Integer", "Simplified"), writer, "Integer", true, true);

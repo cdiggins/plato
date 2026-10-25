@@ -16,6 +16,19 @@ public static partial class TirInliner
         private readonly Dictionary<TirLambda, HashSet<FunctionDef>> _lambdaAncestry = new();
         private readonly Dictionary<VariableDef, InlineRefusal> _callableRefusals = new();
 
+        private TirCall ExposeCallback(TirCall call)
+        {
+            if (call.Callee?.Body != null || call.Callee?.OwnerType?.Name != "Intrinsics")
+                return call;
+            var index = call.Name switch { "MapRange" or "FlatMap" => 1, "Reduce" => 2, _ => -1 };
+            if (index < 0 || call.Args.Count <= index || Known(call.Args[index]) is not { } lambda
+                || !Equals(call.Args[index].Type, lambda.Type))
+                return call;
+            var args = call.Args.ToArray();
+            args[index] = lambda;
+            return (TirCall)call.WithChildren(args);
+        }
+
         public TirNode Finish(TirNode body)
         {
             if (!_eliminateLambdas && !_simplify)

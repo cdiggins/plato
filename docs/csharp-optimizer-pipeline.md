@@ -46,7 +46,8 @@ conversion boundaries. Its restricted scope and verification are described in th
 [inlining guide](optimizer/inlining.md). The C#-only `--inline-policy` option selects
 `statements`, `lambdas`, or `iterative`; existing recipes do not enable it.
 `TirInlineRegion` and `TirInlineExit` preserve branch-local prerequisites and isolate callee
-returns from caller returns. Later loop lowering currently leaves these regions opaque.
+returns from caller returns. Experimental scoped loop lowering enters these regions under
+the direct-intrinsic and callback rules in the [loop guide](optimizer/loops.md).
 
 Two diagnostics help while working on a pass. `--dump-tir=<dir>` writes one file per owner type, listing for
 every body its input and the tree after each pass that changed it. `--inline-report` prints, to standard

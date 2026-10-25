@@ -490,6 +490,10 @@ public static partial class TirInliner
                         names.Add(p.Name);
             if (n is TirLet let && let.Def?.Name != null)
                 names.Add(let.Def.Name);
+            if (n is TirInlineBinding binding)
+                names.Add(binding.Def.Name);
+            if (n is TirInlineRegion region)
+                names.Add(region.Result.Name);
             foreach (var c in n.Children)
                 Walk(c);
         }

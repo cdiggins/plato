@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
+using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -61,11 +62,25 @@ public partial class TirCSharpBodyWriter
                 return;
             for (var p = 0; p < lam.Parameters.Count && p < elems.Length; p++)
                 WriteLine($"var {_loopParamNames[lam.Parameters[p]]} = {elems[p]};");
+            if (TirRewrite.IsStatementNode(lam.Body))
+            {
+                var result = new VariableDef(null, $"_callback{k}", lam.Type.TypeArgs.Last(), null);
+                var body = TirRewrite.Rewrite(lam.Body, node => node is TirReturn r
+                    ? new TirInlineExit(result, r.Value) : node);
+                _lambdaDepth++;
+                WriteStatement(new TirInlineRegion(result, body));
+                _lambdaDepth--;
+            }
         }
         void WriteFnValue(params string[] elems)
         {
             if (lam != null)
             {
+                if (TirRewrite.IsStatementNode(lam.Body))
+                {
+                    Write($"_callback{k}");
+                    return;
+                }
                 _lambdaDepth++;
                 WriteNode(lam.Body);
                 _lambdaDepth--;

@@ -24,7 +24,7 @@
     "tests/PlatoTests/Optimization/InlinerTests.cs": "dcfccfd83e0fcea67bc9afbb803bba6deb8718894e0fec953e3863f93c8007eb",
     "tests/PlatoTests/Optimization/LiteralUnrollingTests.cs": "0cedbc9396d4fd0de5a4f9dbc9af77cae1e06226934f55d77be92ca8499a1015",
     "tests/PlatoTests/Optimization/LoopLowererArrayTypeTests.cs": "b16dde22d414d09b3ffb36536e2fed43b0d3332e85c6096df097ee18ee319646",
-    "tests/PlatoTests/Optimization/StatementInliningTests.cs": "655ae50c87fdc318f40ab8f30d6e91f1d5a7b98871eaab29def445e0eeaddeb2",
+    "tests/PlatoTests/Optimization/StatementInliningTests.cs": "7df35303074e3d5b4be09765e6b8b1d8f3ab8b33d47a777a04aba4664a54e5ea",
     "tests/PlatoTests/Optimization/TirRewriteTests.cs": "d260d0a269f7a24a52db1492679b398951a7a4daaff1f761b88f88957aa59bf5",
     "writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs": "21cee6e8425c98135b1c0cfe854c6ca072d450b85e39c929415282706c4ded55",
     "writers/Plato.CSharpWriter/CSharpWriter.cs": "4e9ebdb20d1c725985d58662ff3179e54b2158dd830e249202408b73db786df9",
@@ -37,17 +37,18 @@
     "writers/Plato.CSharpWriter/Optimization/TirComponentUnroller.cs": "0ab5b2a5158781d328f059675e565f56cf371af2001dedb9dee41ee5b06b43ad",
     "writers/Plato.CSharpWriter/Optimization/TirFusion.cs": "11e3806d6639af4f0896a82ea4dddd8d34a0dbedc677fc8ef0ae993e38b230d4",
     "writers/Plato.CSharpWriter/Optimization/TirInlineBinding.cs": "ea513499f26009a31f198915a292c736f5b57df505ecdb2dd216c27a417a08d3",
-    "writers/Plato.CSharpWriter/Optimization/TirInliner.Callables.cs": "6095db87345b5462058eaa55c1f43d689b571c29a6d5e7bfc7038c1a3140b3cd",
-    "writers/Plato.CSharpWriter/Optimization/TirInliner.cs": "d8f767f6dc75a0c14c37425ada077f9164d90e1e6e13af059310831bfc175ac8",
+    "writers/Plato.CSharpWriter/Optimization/TirInliner.Callables.cs": "cb0388aaeca6a9f0be58fafbadc8747789f4c9f12fea1932a477484c7d9fad85",
+    "writers/Plato.CSharpWriter/Optimization/TirInliner.cs": "9bb664c27e0c7672c2c107b29553b74e3e036754649d753951d531b6b216828e",
     "writers/Plato.CSharpWriter/Optimization/TirInliner.Simplification.cs": "e571ef0b1c0680a49a5ef09cff27747bc8b9086bae391956bc46f99b5cd9765f",
-    "writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs": "16521c27357473f8fc01173b1e84b54c2289bd63343ba11f0d8c45ef4015b423",
+    "writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs": "378750c6ce7b32159a7646ba0528e9d7cac594e969881f4f90d95ef43514050d",
     "writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs": "b199677a379894ccd2552d3602cf748bb7f60f8808e23169722ccede1ab4478a",
     "writers/Plato.CSharpWriter/Optimization/TirLiteralUnroller.cs": "d1e5460d67b203697d28cad24c014f7ae2aa71d59dbe4a4479d13fe8c9646ffb",
-    "writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs": "da1b3c0377a2671f2b1814c3a420ac98be2db1d20648476a5898953eb4ca1f48",
+    "writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs": "6ac93b86e45a2c94aa64045adc9d56dba297439cff1635af214c50caacc7f671",
+    "writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.Scopes.cs": "83838da6f4ffafeddfac0d9d9c1b02f06700a48a79ef3b8e95c2436291e85dae",
     "writers/Plato.CSharpWriter/Optimization/TirRewrite.cs": "8148e5ad366aa0d76710a546a8031fec0fa9f0b87c9e0186f2e69ed53eb64fbf",
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter.cs": "1d10fca4115e7e9cef1914f2b1675b746029cdec00683983ede485564521c14d",
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter.FlatMap.cs": "0cd93142c3e53f7b22f3e9b73de4a0077be6e9ab9b6f8151416b153697f3378c",
-    "writers/Plato.CSharpWriter/TirCSharpBodyWriter.Loops.cs": "23cd544d231eb1e312963bd90e45229aba5e255be737a17ccfca7f5e233bad12"
+    "writers/Plato.CSharpWriter/TirCSharpBodyWriter.Loops.cs": "38ae57d4aa01b41d774f28cfc085b7c4cbcba38efe8ab079a3cdb1372da26617"
   },
   "symbols": [
     {
@@ -819,7 +820,7 @@
         {
           "signature": "Ara3D.Geometry.CSharpWriter.TirLoopLowerer.IsRenderableConcrete(Ara3D.Geometry.Compiler.Symbols.TypeExpression)",
           "path": "writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs",
-          "line": 385
+          "line": 387
         },
         {
           "signature": "Ara3D.Geometry.CSharpWriter.TirLoopLowerer.NextId",
@@ -829,7 +830,7 @@
         {
           "signature": "Ara3D.Geometry.CSharpWriter.TirLoopLowerer.ProducesArray(string)",
           "path": "writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs",
-          "line": 374
+          "line": 376
         },
         {
           "signature": "Ara3D.Geometry.CSharpWriter.TirLoopLowerer.Rewrite(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.CSharpWriter)",

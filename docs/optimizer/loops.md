@@ -16,6 +16,22 @@ allocations in a callback or result.
 
 ## Implementation and boundaries
 
+With an experimental `--inline-policy`, the scope walker in
+[TirLoopLowerer.Scopes.cs](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.Scopes.cs)
+handles blocks, inline regions, branches and loop bodies. It admits only direct calls to
+the designated intrinsic library whose arguments are leaves or safe lambda literals; it does
+not run the legacy general expression hoister inside these scopes. Loop conditions stay
+opaque. Mutable captures and nested escaping lambdas are refused. Generated numeric suffixes
+avoid names already bound in the function. This stricter route can also leave calls that the
+legacy top-level hoister accepted, so compare emitted shapes as well as flags in experiments.
+
+Known callback propagation exposes lambdas at MapRange, Reduce and FlatMap intrinsic sites.
+The scoped MapRange path accepts statement bodies: each iteration declares the parameters,
+executes an inline result/exit region, then stores the result. No invoked lambda is introduced.
+Other statement-bodied callback kinds remain explicit calls. Tests in
+[StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs) compile
+and execute zero-, one- and multi-element ranges and assert that a statement callback lowers.
+
 [TirLoopLowerer](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs) replaces a
 recognized expression with `TirTempRef` and inserts a `TirLoweredLoop` statement for its result.
 The [loop emitter](../../writers/Plato.CSharpWriter/TirCSharpBodyWriter.Loops.cs) renders that

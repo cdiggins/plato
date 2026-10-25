@@ -142,7 +142,7 @@ public static partial class TirInliner
             if (node is TirCoerce coerce)
                 return coerce.WithChildren(new[] { Expand(coerce.Inner, prefix) });
             if (node is TirCall nested)
-                node = Simplify(ExpandArguments(nested, prefix));
+                node = Simplify(ExposeCallback((TirCall)ExpandArguments(nested, prefix)));
             if (node is not TirCall call || call.Callee?.Body == null || call.Args.Count == 0)
                 return node;
             var receiver = TrustedTypeName(_caller, call.Args[0], _host, _owner);

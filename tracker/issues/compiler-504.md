@@ -106,3 +106,14 @@ budgets use net growth after simplification, with separate pass and visit limits
 callers retain their original bodies. Four executable policy arms and a tight-budget check pass;
 19 focused tests pass in the latest run. Next: expose policies for reproducible production
 generation, assess remaining callback coverage, lower loops in preserved regions, then measure.
+
+Scoped-loop milestone enters inline regions, branches and loop bodies only for direct intrinsic
+calls with leaf arguments or safe lambdas. It does not broaden the legacy expression hoister.
+Known callbacks are exposed at MapRange/Reduce/FlatMap sites; statement-bodied MapRange callbacks
+emit an iteration-local result/exit region. Mutable captures and nested escaping callbacks are
+refused. Generated loop suffixes avoid existing bindings. The recorded build and 39 focused
+runtime/loop/filter/rewrite/emission tests pass. This stricter scoped route can leave calls that
+the legacy top-level hoister accepted, so the production comparison must report that difference.
+An isolated six-policy production build matrix is running under .temp/statement-brep against
+the earlier 3d279705 compiler checkpoint; rerun treatment variants on this later milestone
+before using them for performance claims. No production results have been accepted yet.
