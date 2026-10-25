@@ -72,8 +72,14 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
     if not 0 < practical_threshold < 1 or min_blocks < 3:
         raise ValueError("threshold must be between zero and one; min_blocks >= 3")
     rows = list(rows)
+    variants = list(variants or [])
     names = list(dict.fromkeys(v["name"] if isinstance(v, dict) else v
-                               for v in (variants or [])))
+                               for v in variants))
+    references = {v["name"]: v["reference"] for v in variants
+                  if isinstance(v, dict) and "reference" in v}
+    if any(not isinstance(name, str) or not name or name == variant
+           for variant, name in references.items()):
+        raise ValueError("variant reference must name a different recipe")
     groups = defaultdict(list)
     malformed = []
     cases = set()
@@ -88,16 +94,19 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
         cases.add((row["case_id"], row["workload"]))
         groups[(row["variant"], row["case_id"], row["workload"], row["block"])].append(row)
     comparisons = []
-    control_names = list(dict.fromkeys((baseline, "shipping")))
+    primary_controls = (baseline, "shipping")
+    control_names = list(dict.fromkeys((*primary_controls, *references.values())))
     for control in control_names:
         for variant in names:
-            if variant == control:
+            if variant == control or (control not in primary_controls and references.get(variant) != control):
                 continue
             for case_id, workload in sorted(cases):
                 blocks = sorted({key[3] for key in groups if key[:3] in
                                  ((control, case_id, workload), (variant, case_id, workload))}, key=str)
                 result = dict(variant=variant, control=control, case_id=case_id,
                               workload=workload, status="unmeasured", blocks=0,
+                              comparison_kind="parameter_reference" if references.get(variant) == control else
+                                              "shipping" if control == "shipping" else "baseline",
                               kind="model" if workload == "model" else "stage")
                 problems, ratios, allocations, controls, samples = [], [], [], [], []
                 for block in blocks:
@@ -192,7 +201,8 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
                 workloads=sorted({r["workload"] for r in affected}),
                 comparisons=[{k: r[k] for k in ("variant", "control", "case_id", "workload", "status")}
                              for r in affected]))
-    return dict(schema=1, baseline=baseline, practical_threshold=practical_threshold, min_blocks=min_blocks,
+    return dict(schema=1, baseline=baseline, references=references,
+                practical_threshold=practical_threshold, min_blocks=min_blocks,
                 uncertainty="95% Student t interval on paired log time ratios; independent process blocks assumed",
                 malformed_rows=malformed, comparisons=comparisons, summaries=summaries,
                 recommendations=recommendations,
@@ -224,7 +234,10 @@ def render_markdown(report):
             ratio += " (" + ", ".join(f"{v:.4f}" for v in row["time_ratio_ci95"]) + ")"
         allocation = (f'{row["allocated_bytes_per_operation"]:.2f} ({row["control_allocated_bytes_per_operation"]:.2f})'
                       if "allocated_bytes_per_operation" in row else "unavailable")
-        cells = [row['variant'] + ' / ' + row['control'], row['case_id'] + ' / ' + row['workload'],
+        comparison_label = row['variant'] + ' / ' + row['control']
+        if row.get("comparison_kind") == "parameter_reference":
+            comparison_label += " (parameter reference)"
+        cells = [comparison_label, row['case_id'] + ' / ' + row['workload'],
                  row['status'], str(row['blocks']), ratio, allocation]
         lines.append("| " + " | ".join(c.replace("|", "\\|").replace("\n", " ") for c in cells) + " |")
         if row.get("problems"):

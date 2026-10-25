@@ -56,6 +56,20 @@ class SelectionTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 select_cases(suite, discovery=costs)
 
+    def test_confirm_narrows_workloads_without_mutating_suite(self):
+        import copy
+        suite = dict(cases=[case("a", ["one"], ["projection", "mesh", "model"]),
+                            case("b", ["two"], ["projection", "surface"])])
+        original = copy.deepcopy(suite)
+        selected = select_cases(suite, mode="confirm", affected=["projection"])
+        self.assertEqual([c["workloads"] for c in selected["cases"]], [["projection"], ["projection"]])
+        self.assertNotIn("workload:mesh", selected["covered_dimensions"])
+        self.assertIn("workload:mesh", selected["uncovered_dimensions"])
+        selected = select_cases(suite, mode="confirm", affected=["a", "projection"])
+        self.assertEqual(next(c for c in selected["cases"] if c["id"] == "a")["workloads"],
+                         ["projection", "mesh", "model"])
+        self.assertEqual(suite, original)
+
 
 if __name__ == "__main__":
     unittest.main()

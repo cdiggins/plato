@@ -57,7 +57,9 @@ def select_cases(suite, *, mode="quick", max_cases=6, budget_ms=None, discovery=
                 raise ValueError("confirm requires affected case ids or workloads")
             affected = set(affected)
             # Confirmation may revisit a reserved case explicitly reported affected.
-            candidates = [c for c in cases if c["id"] in affected or affected.intersection(c["workloads"])]
+            candidates = [{**c, "workloads": list(c["workloads"]) if c["id"] in affected else
+                            [w for w in c["workloads"] if w in affected]}
+                          for c in cases if c["id"] in affected or affected.intersection(c["workloads"])]
         frequencies = {d: sum(d in _dimensions(c) for c in cases) for d in all_dimensions}
         while candidates and len(selected) < max_cases:
             affordable = [c for c in candidates if budget_ms is None or spent+costs[c["id"]] <= budget_ms]

@@ -175,6 +175,35 @@ class AnalysisTests(unittest.TestCase):
         quick["coverage"] = dict(cases=[{"id": "a"}], holdout=["a"])
         self.assertEqual(validate_prediction(quick, corpus)["status"], "insufficient_evidence")
 
+    def test_growth_reference_compares_same_policy_in_addition_to_full_and_shipping(self):
+        rows = samples()
+        for row in rows:
+            if row["variant"] == "candidate":
+                row["variant"] = "inline-statements"
+                row["elapsed_ns"] = 400
+        for row in list(rows):
+            if row["variant"] == "inline-statements":
+                rows.append({**row, "variant": "growth-48", "elapsed_ns": 360})
+        variants = ["full", "shipping", "inline-statements",
+                    {"name": "growth-48", "reference": "inline-statements"}]
+        report = analyze(rows, variants)
+        overall = comparison(report, "growth-48")
+        parameter = comparison(report, "growth-48", "inline-statements")
+        self.assertAlmostEqual(overall["time_ratio"], 1.8)
+        self.assertEqual(overall["status"], "slower")
+        self.assertAlmostEqual(parameter["time_ratio"], 0.9)
+        self.assertEqual(parameter["status"], "faster")
+        self.assertEqual(parameter["comparison_kind"], "parameter_reference")
+        self.assertIn("parameter reference", render_markdown(report))
+        self.assertFalse(any(c["control"] == "inline-statements" and c["variant"] == "full"
+                             for c in report["comparisons"]))
+
+    def test_missing_declared_reference_never_becomes_parameter_speedup(self):
+        report = analyze(samples(), [{"name": "candidate", "reference": "missing-policy"}])
+        result = comparison(report, "candidate", "missing-policy")
+        self.assertEqual(result["status"], "unmeasured")
+        self.assertNotIn("speedup", result)
+
 
 if __name__ == "__main__":
     unittest.main()
