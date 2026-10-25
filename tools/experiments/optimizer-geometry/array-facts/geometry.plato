@@ -1,0 +1,11 @@
+// Newly authored sample-row kernel; GridParameter is extracted unchanged from Meshes.
+library ArrayFactGeometry
+{
+    SampleRowLength(n: Integer, closed: Boolean): Integer
+    {
+        var coordinates = n.MapRange(i => GridParameter(i, n, closed));
+        var row = coordinates;
+        return row.Count;
+    }
+    ExternalRowLength(row: Array<Number>): Integer => row.Count;
+}
