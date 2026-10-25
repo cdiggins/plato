@@ -2,14 +2,14 @@
 id: compiler-496
 title: FunctionInstance never assigns Interface so selection ignores interface distance
 type: bug
-status: in-progress
+status: done
 priority: p2
 effort: S
 risk: med
 area: compiler
 sprint: 
 created: 2026-10-24
-closed:
+closed: 2026-10-24
 links: []
 ---
 
