@@ -4,13 +4,18 @@ This folder is a standalone React/Vite reader for the Markdown pages assembled b
 
 ## Run it from the repository root
 
+Use Node.js 20.19 or a release at least 22.12, npm, and Python 3.10 or later. The checked
+dependency versions are pinned in `package-lock.json`; `npm ci` installs that exact dependency tree.
+
 ```powershell
 python tools/reference/build.py
 npm --prefix tools/reference-reader install
 npm --prefix tools/reference-reader run dev
 ```
 
-Open `http://localhost:5178`. Build and serve the production bundle with:
+Open `http://127.0.0.1:5391`. Use the exact printed loopback address and dedicated port;
+a generic localhost URL can reach a different listener on a shared development machine.
+Build and serve the production bundle with:
 
 ```powershell
 npm --prefix tools/reference-reader run build

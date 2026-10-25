@@ -52,6 +52,9 @@ type checker, and successfully emitting C# is not successfully compiling or exec
 The reference deliberately omits handwritten inventories and gate tallies: generated catalogs
 and the [gate log](../gate-log.md) hold measurements instead.
 
+The [dated integration record](implementation/verification-2026-10-25.md) states which checks
+were actually run, the failures investigated and the remaining verification limits.
+
 ## For implementers and agents
 
 Use the language chapters as the readable contract, the formal model as a small precise

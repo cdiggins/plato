@@ -6,8 +6,14 @@
 **Source:** [stdlib/foundation/rotations.types.plato](../../../../stdlib/foundation/rotations.types.plato).
 
 Read each declaration or function below for its original comments, signature, and body.
-The slices are ordered and lossless; the first and last library slices retain the block braces.
+The slices cover normalized source text; UTF-8 BOMs are removed and CRLF becomes LF.
+Code fences omit boundary newlines; the linked source retains original bytes.
+The first and last library slices retain the block braces.
 A signature without a body is an obligation, not an implemented algorithm.
+
+## Teaching context and related work
+
+- [Standard-library guide](../../library/README.md)
 
 ## Declarations and functions
 

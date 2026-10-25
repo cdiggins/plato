@@ -64,3 +64,7 @@ Parameters before the colon are input values; the type after the parameter list 
 The first parameter also supplies the dot-call receiver. Type parameters on a declaration are
 bare names; free signature variables use `$`. Read the tier and domain guides for units, frames,
 invariants, and the difference between a required interface member and a provided body.
+
+## Teaching context and related work
+
+- [Standard-library guide](../../../library/README.md)

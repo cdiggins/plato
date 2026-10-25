@@ -1,4 +1,5 @@
 {
+  "normalization": "UTF-8 without BOM; CRLF normalized to LF; SHA-256 of UTF-8 text",
   "sha256": {
     "legacy/stdlib-legacy/algebra.plato": "4a871e9f074ad1f106485b53f41a9619cea4efe0540aebd7dfec56b7ee616b97",
     "legacy/stdlib-legacy/angles.plato": "72ee6ce6749fdf9a21cfe3bd8fc157b74f57ba5ab4e94c7b24bf21c6890dccd3",

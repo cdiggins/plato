@@ -22,6 +22,7 @@ def check(cli: Path, backend: str = 'interpreter', groups=None) -> int:
         if not law_count:
             raise ValueError(f'{group}: no reference laws; refusing an empty success')
         report = logs / f'{group}.tsv'
+        report.unlink(missing_ok=True)
         args = ['dotnet', str(cli), 'run', str(prelude), str(FIXTURES / group), '--laws',
                 '--filter=Law_Reference', '--trials=1', '--budget=10',
                 f'--backend={backend}', f'--report={report}']
@@ -37,8 +38,8 @@ def check(cli: Path, backend: str = 'interpreter', groups=None) -> int:
         # The verdict report must name every declared law. A command selecting no
         # laws, returning only obligations, or failing before a report is not green.
         names = set(re.findall(r'\bLaw_Reference\w+', '\n'.join(rows)))
-        ok = process.returncode == 0 and len(names) == law_count and not re.search(
-            r'\b(fail|error|obligation|skipped)\b', '\n'.join(rows), re.IGNORECASE)
+        ok = process.returncode == 0 and len(names) == law_count and all(
+            len(row.split('\t')) >= 2 and row.split('\t')[1] == 'pass' for row in rows)
         results.append({'group': group, 'backend': backend, 'passed': bool(ok),
                         'declaredLaws': law_count, 'reportedLaws': len(names), 'seconds': seconds,
                         'exitCode': process.returncode, 'log': str(logs / f'{group}.log')})

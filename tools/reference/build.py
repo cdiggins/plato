@@ -2,7 +2,9 @@
 """Build source-derived Markdown reference pages and the React reader's data.
 
 This is a lexical catalog, not a second Plato parser or semantic checker. Every
-source byte is retained in ordered slices. Unsupported layouts fail explicitly.
+normalized source character belongs to an ordered slice. UTF-8 BOMs are removed
+and CRLF becomes LF so fingerprints are stable across checkouts. Code fences
+omit boundary newlines; linked source files retain the original bytes.
 """
 from __future__ import annotations
 
@@ -131,6 +133,13 @@ def relative_link(from_path: Path, target: Path) -> str:
 
 def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
     outputs, inputs = {}, {}
+    teaching = {}
+    for guide in sorted((DOCS / 'library').rglob('*.md')):
+        text = read(guide)
+        title = re.search(r'^# (.+)$', text, re.MULTILINE)
+        for _, target, _ in local_links(guide, text):
+            if target.suffix == '.plato':
+                teaching.setdefault(target, {})[guide] = title[1] if title else guide.stem
     sources = [(tier, path) for tier in TIERS for path in sorted((ROOT / 'stdlib' / tier).glob('*.plato'))]
     sources += [('legacy', path) for path in sorted((ROOT / 'legacy/stdlib-legacy').glob('*.plato'))]
     if not sources or any(not any(t == tier for t, _ in sources) for tier in (*TIERS, 'legacy')):
@@ -142,6 +151,10 @@ def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
         inputs[source_name] = digest(source)
         stem = source_path.stem
         parent = DOCS / 'api' / tier / f'{stem}.md'
+        guides = teaching.get(source_path.resolve(), {DOCS / 'library/README.md': 'Standard-library guide'})
+        def context_links(page):
+            return ['## Teaching context and related work', ''] + [
+                f'- [{title}]({relative_link(page, guide)})' for guide, title in guides.items()] + ['']
         kind_label = {'future': 'Aspirational vocabulary; not shipped by default.',
                       'legacy': 'Legacy vocabulary; compile separately from the forward library.'}.get(
                           tier, 'Forward shipping tier; presence here is not proof of executable coverage.')
@@ -149,9 +162,11 @@ def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
         lines = [GENERATED, f'# {stem}', '', f'**Tier:** `{tier}`. {kind_label}', '',
                  f'**Source:** [{source_name}]({relative_link(parent, source_path)}).', '',
                  'Read each declaration or function below for its original comments, signature, and body.',
-                 'The slices are ordered and lossless; the first and last library slices retain the block braces.',
+                 'The slices cover normalized source text; UTF-8 BOMs are removed and CRLF becomes LF.',
+                 'Code fences omit boundary newlines; the linked source retains original bytes.',
+                 'The first and last library slices retain the block braces.',
                  'A signature without a body is an obligation, not an implemented algorithm.', '',
-                 '## Declarations and functions', '']
+                 *context_links(parent), '## Declarations and functions', '']
         entries = []
         # Keep pages small without generating a filesystem entry for every tiny
         # accessor. Boundaries always fall BETWEEN complete source declarations.
@@ -181,7 +196,8 @@ def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
                     'Parameters before the colon are input values; the type after the parameter list is the result.',
                     'The first parameter also supplies the dot-call receiver. Type parameters on a declaration are',
                     'bare names; free signature variables use `$`. Read the tier and domain guides for units, frames,',
-                    'invariants, and the difference between a required interface member and a provided body.', '']
+                    'invariants, and the difference between a required interface member and a provided body.', '',
+                    *context_links(child)]
             outputs[child] = '\n'.join(body)
             lines.append(f'- [{names} — source section {number}]({relative_link(parent, child)})')
             for member_name, member_start, member_end, member_kind in group:
@@ -217,14 +233,16 @@ def evidence_appendices() -> tuple[dict[Path, str], dict[str, str]]:
     }.items():
         page = DOCS / 'evidence' / f'{stem}.md'
         parts = [GENERATED, f'# {stem.replace("-", " ").title()}', '',
-                 'Exact implementation evidence. The parser accepts more forms than the checked language;',
+                 'Implementation source evidence with UTF-8 BOMs removed and CRLF normalized to LF.',
+                 'Code fences omit boundary newlines; linked sources retain original bytes.',
+                 'The parser accepts more forms than the checked language;',
                  'a grammar production alone does not promise evaluation or C# emission.', '']
         for filename in files:
             path = ROOT / filename
             content = read(path)
             inputs[filename] = digest(content)
             parts += [f'## {path.name}', '', f'[Source]({relative_link(page, path)})', '',
-                      '```csharp', content.rstrip(), '```', '']
+                      '```csharp', content.rstrip('\n'), '```', '']
         outputs[page] = '\n'.join(parts)
     # Open questions must be discoverable without trusting a manual status tally.
     page = DOCS / 'evidence/source-notes.md'
@@ -320,7 +338,9 @@ def build(check: bool = False) -> dict:
     extra, evidence_inputs = evidence_appendices()
     outputs.update(extra)
     inputs.update(evidence_inputs)
-    outputs[DOCS / 'evidence/inputs.json'] = json.dumps({'sha256': dict(sorted(inputs.items()))}, indent=2) + '\n'
+    outputs[DOCS / 'evidence/inputs.json'] = json.dumps({
+        'normalization': 'UTF-8 without BOM; CRLF normalized to LF; SHA-256 of UTF-8 text',
+        'sha256': dict(sorted(inputs.items()))}, indent=2) + '\n'
     expected = set(outputs)
     # Only the generator-owned trees may have obsolete output removed.
     actual = {p for folder in ('api', 'evidence') for p in (DOCS / folder).rglob('*') if p.is_file()}

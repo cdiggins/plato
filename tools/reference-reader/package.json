@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "predev": "python ../reference/build.py",
-    "dev": "vite --host 0.0.0.0 --port 5178 --strictPort",
+    "dev": "vite --host 127.0.0.1 --port 5391 --strictPort",
     "prebuild": "python ../reference/build.py",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0 --port 5178 --strictPort",
+    "preview": "vite preview --host 127.0.0.1 --port 5391 --strictPort",
     "test": "node --test"
   },
   "dependencies": {

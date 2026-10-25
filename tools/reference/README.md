@@ -41,7 +41,10 @@ algorithm is inferred from a symbol's name. The first/last sections preserve lib
 so a section is evidence rather than a standalone compilation unit.
 
 The JSON catalog records source fingerprints, declaration ranges and their page locations.
-Ranges partition each normalized UTF-8 source without omissions or overlap. New source files
+Ranges partition each normalized UTF-8 source without omissions or overlap. Normalization
+removes a UTF-8 byte-order mark and converts CRLF to LF; hashes deliberately ignore those
+encoding-only differences to remain stable across checkouts. Code fences omit boundary
+newlines, while linked originals retain their bytes. New source files
 join the catalog automatically; empty tiers fail. Removed/renamed sources remove obsolete output
 only inside the generator-owned folders. The evidence appendices capture grammar/operator
 source and unresolved-note markers. Fingerprints detect comment as well as code changes.

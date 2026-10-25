@@ -39,7 +39,7 @@ No server API, execution sandbox, or network-dependent runtime assets are requir
 
 ## Verification and resources
 
-Reader agent owns dependency installation, production build and preview server on port 5178.
+Reader agent owns dependency installation, production build and preview server on IPv4 port 5391.
 Supervisor owns the browser QA session and all repo-wide gates and generator outputs.
 Agents save their checkpoints inside their assigned subtree. States: working, implemented,
 verified, integrated. Report real checks and blockers; do not invent passing evidence.

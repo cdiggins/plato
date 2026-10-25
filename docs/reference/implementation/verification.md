@@ -37,7 +37,22 @@ dotnet src/Plato.CLI/bin/Release/net8.0/Plato.CLI.dll run docs/reference/impleme
 
 The first two require a built CLI. The last command uses the repository's recorded-build workflow; a nonzero code-diff report is informational when compilation succeeds. Repository-wide gate scheduling belongs to the integration supervisor, not each documentation author.
 
-## High-value regression cases
+## Build-output layout and fixture discovery
+
+The reference examples take explicit source roots, so the helper script can use an isolated CLI
+assembly through `--cli`. Some repository tests instead locate fixtures with
+[CheckerTestSupport.FindFolder](../../../tests/PlatoTests/CheckerTestSupport.cs). Its output-first
+search can mistake an isolated `bin/PlatoTests` directory for the source test folder, before
+trying the source-file fallback. Missing fixtures in that layout are not failed numerical laws.
+Use the normal layout for those gates until [repo-531](../../../tracker/issues/repo-531.md) fixes
+the lookup, and preserve the failing report if experimenting with output locations.
+
+The studio battery also checks frozen copies of the older runtime in the SDK checkout. That
+checksum contract is separate from Plato's writable forward sources and generated caches.
+A failure there requires reviewing the named SDK artifacts; it does not authorize a silent
+checksum rebaseline or editing an unrelated checkout to make this reference's gates green.
+
+## Regression coverage
 
 Keep positive and negative cases for nominal mismatch, tuple construction by field order, generic case freshness, match exhaustiveness, conversion ranking, generic rigidity, bound satisfaction through inherited interfaces, sealed construction bypass paths, lazy Boolean RHS behavior, and loop local identity. Include tests where C# would accept a program through a different implicit conversion than the solver selected.
 
