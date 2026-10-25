@@ -1,0 +1,31 @@
+// Fixed independent distances for the documented origin-to-(0,height,0) segment.
+// Original sampled ImplicitSdfLaws.Law_VerticalCapsuleIsCapsuleAlongY remains unchanged.
+library CapsuleSignedHeightRegressionLaws
+{
+    Law_NegativeHeightEndpoints(_: Boolean): Boolean
+        => DistanceToVerticalCapsule(Point3D(0.0, 0.0, 0.0), -2.0, 1.0) == -1.0
+        && DistanceToVerticalCapsule(Point3D(0.0, -2.0, 0.0), -2.0, 1.0) == -1.0;
+
+    Law_NegativeHeightInteriorRadialDistance(_: Boolean): Boolean
+        => DistanceToVerticalCapsule(Point3D(3.0, -1.0, 0.0), -2.0, 1.0) == 2.0;
+
+    Law_NegativeHeightExteriorDistance(_: Boolean): Boolean
+        => DistanceToVerticalCapsule(Point3D(0.0, -3.0, 0.0), -2.0, 1.0) == 0.0
+        && DistanceToVerticalCapsule(Point3D(0.0, 1.0, 0.0), -2.0, 1.0) == 0.0;
+
+    Law_PositiveHeightDistancesPreserved(_: Boolean): Boolean
+        => DistanceToVerticalCapsule(Point3D(0.0, 0.0, 0.0), 2.0, 1.0) == -1.0
+        && DistanceToVerticalCapsule(Point3D(0.0, 2.0, 0.0), 2.0, 1.0) == -1.0
+        && DistanceToVerticalCapsule(Point3D(3.0, 1.0, 0.0), 2.0, 1.0) == 2.0
+        && DistanceToVerticalCapsule(Point3D(0.0, 3.0, 0.0), 2.0, 1.0) == 0.0
+        && DistanceToVerticalCapsule(Point3D(0.0, -1.0, 0.0), 2.0, 1.0) == 0.0;
+
+    Law_ZeroHeightSphereDistances(_: Boolean): Boolean
+        => DistanceToVerticalCapsule(Point3D(0.0, 0.0, 0.0), 0.0, 1.0) == -1.0
+        && DistanceToVerticalCapsule(Point3D(3.0, 0.0, 0.0), 0.0, 1.0) == 2.0;
+
+    // Algebraic offset identity, not a claim that negative radii describe physical solids.
+    Law_NegativeRadiusOffsetPreserved(_: Boolean): Boolean
+        => DistanceToVerticalCapsule(Point3D(3.0, -1.0, 0.0), -2.0, -1.0) == 4.0
+        && DistanceToVerticalCapsule(Point3D(0.0, 0.0, 0.0), -2.0, -1.0) == 1.0;
+}

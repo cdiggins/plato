@@ -29,7 +29,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-448](issues/plato-448.md) | Extend stdlib comparison with geometry3Sharp and production environments | debt | p2 | S | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
-| [stdlib-464](issues/stdlib-464.md) | Stdlib laws unguarded against generated inputs fail in both backends (seven under cpu64, ten under gpu32) | bug | ? | ? | ? | stdlib | in-progress |  |
+| [stdlib-464](issues/stdlib-464.md) | Stdlib conformance failures: establish domains and repair contracts | bug | ? | ? | ? | stdlib | in-progress |  |
 | [compiler-483](issues/compiler-483.md) | Characterize optimizer sequencing and identity hazards | problem | p1 | M | high | compiler | ready |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |

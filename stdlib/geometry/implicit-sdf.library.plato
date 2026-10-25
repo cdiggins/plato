@@ -881,7 +881,7 @@ library ImplicitSdf
     // The signed distance from a point to a capsule running from the origin to
     // (0, height, 0) with the given radius. Exact. (IQ: sdVerticalCapsule.)
     DistanceToVerticalCapsule(p: Point3D, height: Number, radius: Number): Number {
-        var y = p.Y - p.Y.Clamp(0.0, height);
+        var y = p.Y - (height < 0.0 ? p.Y.Clamp(height, 0.0) : p.Y.Clamp(0.0, height));
         return Vector3D(p.X, y, p.Z).Magnitude - radius;
     }
 
