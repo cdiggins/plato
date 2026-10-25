@@ -75,7 +75,8 @@ public sealed class LawRunOptions
     public int IntegerMin { get; set; } = -1;
     public int IntegerMax { get; set; } = 12;
     public int Seed { get; set; } = 0;
-    /// <summary>Seconds one law may take over all its cases before it is reported as an error,
+    /// <summary>Seconds one law may take over all its cases, excluding domain/witness preparation,
+    /// before it is reported as an error,
     /// with its elapsed time; null for no limit. The interpreter stops the law at the budget; a
     /// compiled backend lets it finish and judges the time it took.</summary>
     public double? BudgetSeconds { get; set; } = DefaultBudgetSeconds;
@@ -245,14 +246,25 @@ public sealed class LawRunner
     /// else on a thread of its own that is abandoned past <see cref="LawRunOptions.AbandonSeconds"/>.</summary>
     public LawResult Run(FunctionDef law)
     {
+        List<Domain> domains;
+        try
+        {
+            domains = Prepare(law, out var unavailable);
+            if (unavailable != null)
+                return unavailable;
+        }
+        catch (Exception e) when (Backend.SupportsParallel)
+        {
+            return new LawResult { Law = law, Status = LawStatus.Error, Message = $"the {Backend.Name} backend faulted: {e.GetType().Name}: {e.Message}" };
+        }
         if (!Backend.SupportsParallel)
-            return Evaluate(law);
+            return Evaluate(law, domains);
         var sw = Stopwatch.StartNew();
         LawResult result = null;
         Exception fault = null;
         var thread = new Thread(() =>
         {
-            try { result = Evaluate(law); }
+            try { result = Evaluate(law, domains); }
             catch (Exception e) { fault = e; }
         }, StackBytes) { IsBackground = true, Name = LawSelection.FullName(law) };
         thread.Start();
@@ -276,20 +288,34 @@ public sealed class LawRunner
         return true;
     }
 
-    private LawResult Evaluate(FunctionDef law)
+    // Witness caps apply during preparation; neither law budget starts until it is complete.
+    private List<Domain> Prepare(FunctionDef law, out LawResult unavailable)
     {
-        var sw = Stopwatch.StartNew();
+        unavailable = null;
         var domains = new List<Domain>();
         foreach (var p in law.Parameters)
         {
             var d = DomainOf(p, law);
-            // No values because the witnesses that would supply them faulted (or hit their cap) is
-            // an error naming them; no values for want of any witness is a skip.
             if (d.Reason != null)
-                return new LawResult { Law = law, Status = d.WitnessesFaulted ? LawStatus.Error : LawStatus.Skipped, Message = $"no values for {p.Name}: {p.Type}: {d.Reason}", Elapsed = sw.Elapsed };
+            {
+                unavailable = new LawResult { Law = law, Status = d.WitnessesFaulted ? LawStatus.Error : LawStatus.Skipped, Message = $"no values for {p.Name}: {p.Type}: {d.Reason}" };
+                return domains;
+            }
             domains.Add(d);
         }
+        return domains;
+    }
 
+    private LawResult Evaluate(FunctionDef law, List<Domain> domains)
+    {
+        var sw = Stopwatch.StartNew();
+        Backend.SetDeadline(Options.BudgetSeconds is double b ? DateTime.UtcNow.AddSeconds(b) : null);
+        try { return EvaluateCases(law, domains, sw); }
+        finally { Backend.SetDeadline(null); }
+    }
+
+    private LawResult EvaluateCases(FunctionDef law, List<Domain> domains, Stopwatch sw)
+    {
         var exhaustive = domains.All(d => d.Finite != null)
                          && domains.Aggregate(1L, (n, d) => n * d.Finite.Count) <= Options.MaxExhaustive;
         var cases = exhaustive ? Product(domains) : Sample(law, domains);
@@ -298,7 +324,6 @@ public sealed class LawRunner
         var held = 0;
         var trials = 0;
         var budget = Options.BudgetSeconds;
-        Backend.SetDeadline(budget is double b ? DateTime.UtcNow.AddSeconds(b) : null);
         using var drawn = cases.GetEnumerator();
         while (true)
         {
