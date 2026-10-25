@@ -169,12 +169,14 @@ def prepare_workspace(plato_root, brep_root, cli, cache_root, *, plato_commit="H
                     cli_files=cli_files, cli_name=cli.name, cli_provenance="supplied binary; source revision unverified",
                     shipping_flags=flags, dotnet=dotnet, builder_sha256=digest(__file__))
     key = identity_hash(identity)
-    final = cache_root / "workspaces" / key
+    # Keep source paths below Windows MAX_PATH. Full hashes remain in receipts;
+    # a short-prefix collision fails identity validation rather than reusing data.
+    final = cache_root / "w" / key[:12]
     if final.exists():
         verify_cache(final, identity)
     else:
         final.parent.mkdir(parents=True, exist_ok=True)
-        stage = final.parent / (key + ".partial-" + uuid.uuid4().hex)
+        stage = final.parent / (".p-" + uuid.uuid4().hex[:8])
         stage.mkdir()
         export_tree(brep_root, brep_sha, stage / "brep")
         export_tree(plato_root, plato_sha, stage / "plato", ("stdlib", "src/Plato.Intrinsics"))
@@ -303,7 +305,7 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
             identity = dict(schema=SCHEMA, workspace=workspace["key"], variant_flags=flags,
                             worker=source_hashes, recorder=digest(recorder), builder=digest(__file__),
                             baseline=baseline["closure_hash"] if baseline else None)
-            folder = cache_root / "builds" / identity_hash(identity)
+            folder = cache_root / "b" / identity_hash(identity)[:12]
             receipt = folder / "complete.json"
             if folder.exists():
                 record = verify_cache(folder, identity)
