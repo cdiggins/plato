@@ -96,3 +96,25 @@ dotnet test tests/PlatoTests/PlatoTests.csproj -c Release --filter FullyQualifie
 ```
 
 The benchmark builds the shipping reference first to freeze host dependencies.
+
+## Runtime admission after the generation fix
+
+The newly buildable full recipe was compared with shipping on three prepared
+cases: BSplinePatchSolid, BsplineCrescentSheet and BlockWithThroughHole. A quick
+three-process run and a five-process confirmation both matched shipping outputs.
+Every confirmation timing interval included parity; this shared-machine run does
+not establish a speedup or a slowdown. The suite omits several surface families
+and large models and cannot establish the STEP corpus target.
+
+Allocation is a concrete warning against promoting all flags together. In the
+confirmation, BlockWithThroughHole edge discretization used about 365,041 bytes
+per operation against 141,360 for shipping; the quick run showed the same increase.
+Compiler-536 tracks pass-by-pass attribution. Shipping remains `--loops --fuse`.
+
+Evidence is under `.temp/ob535/runs/compiler535-recipe-confirm/` (`run.json`,
+`samples.jsonl`, `report.json`, `report.md`); the quick run is its sibling
+`compiler535-recipe-check`. The confirmation command was:
+
+```powershell
+python tools/benchmarks/optimizer/benchmark.py run --work .temp/ob535 --suite .temp/ob3/suite.json --discovery .temp/ob3/discovery.json --variants shipping,full --baseline shipping --mode confirm --seconds 300 --blocks 5 --max-cases 3 --affected BSplinePatchSolid-0-3-b322652b --affected BlockWithThroughHole-2b69da61 --affected BsplineCrescentSheet-fa3fdecd --name compiler535-recipe-confirm
+```
