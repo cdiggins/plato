@@ -21,6 +21,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-506](issues/compiler-506.md) | Explore fusion of multiple array consumers | idea | p2 | L | high | compiler | in-progress |  |
 | [compiler-507](issues/compiler-507.md) | Explore elimination of temporary records | idea | p2 | L | high | compiler | in-progress |  |
 | [compiler-511](issues/compiler-511.md) | Explore reuse of neighboring grid samples | idea | p2 | L | high | compiler | in-progress |  |
+| [docs-527](issues/docs-527.md) | Clarify implemented status of historical sum-type design | debt | p2 | S | low | docs | in-progress |  |
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion interface | idea | p2 | M | low | plato | in-progress |  |
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
@@ -73,6 +74,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-457](issues/plato-457.md) | C# writer does not escape C# keywords used as Plato names | bug | ? | ? | ? | plato | ready |  |
 | [plato-458](issues/plato-458.md) | C# writer's sum-type Equals compares inactive cases' fields | bug | ? | ? | ? | plato | ready |  |
 | [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | p1 | L | med | plato | idea |  |
+| [stdlib-528](issues/stdlib-528.md) | Point-cloud deformation leaves normals unchanged under rotation | bug | p1 | M | med | stdlib | idea |  |
 | [compiler-416](issues/compiler-416.md) | Library functions taking Buffer<T> as first parameter are silently dropped from emitted C# | problem | p2 | M | med | compiler | idea |  |
 | [compiler-471](issues/compiler-471.md) | Parser dependency requires a machine-relative SDK checkout | debt | p2 | S | med | compiler | idea |  |
 | [compiler-484](issues/compiler-484.md) | Plan private storage for recursive numeric kernels | feature | p2 | L | high | compiler | idea |  |
