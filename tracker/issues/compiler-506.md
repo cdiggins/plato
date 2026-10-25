@@ -31,3 +31,9 @@ User-authorized optimizer exploration. Contract revision O1: dedicated agent, is
 Actual TIR fixtures, canonical identity checks, marker/emitter integration and compiled off/on execution are implemented in d81e6065; f0f63d81 restores the independently reviewed traversal after a shared-file race. The default-off production slice preserves producer evaluation and per-fold arithmetic order. All 13 focused fusion tests passed; the combined non-diagnostic suite passed 393 tests. Generated fixture timing shows only a modest noisy gain, not geometry qualification.
 
 Evidence: [production report](../../docs/reports/optimizer-production-2026-10-25.md) and [secondary TIR census](../../docs/reports/optimizer-secondary-tir-2026-10-25.md). The remaining checkbox is the next execution-plan gate; this item is not closed by fixture evidence alone.
+
+## Geometry qualification — 2026-10-25
+
+A newly authored plane-residual moments kernel passes generated off/on execution, bitwise arithmetic and producer fault-order checks. Fusion removes one traversal without reducing allocation. The short timing run has lower medians but substantial outliers; the independent review did not accept this as dependable geometry performance benefit. Selected unchanged Clothoid, bounds and edge-ratio callers remain refused. Keep the remaining checkbox open and the production option default-off.
+
+Evidence: [geometry report](../../docs/reports/optimizer-geometry-consumer-fusion-2026-10-25.md). No eligibility widening or production changes were made.

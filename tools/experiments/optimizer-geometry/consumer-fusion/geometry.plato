@@ -1,0 +1,16 @@
+// Newly authored representative kernel, not an existing stdlib caller.
+// First moment measures signed plane bias; second moment is the least-squares objective.
+// The plane normal is expected to have unit length when values are interpreted as distances.
+type PlaneResidualMoments { First: Number; Second: Number; }
+
+library GeometryConsumerProbe
+{
+    PlaneMoments(xs: Array<Number>, ys: Array<Number>, zs: Array<Number>,
+        nx: Number, ny: Number, nz: Number, offset: Number): PlaneResidualMoments
+    {
+        var residuals = xs.Count.MapRange(i => xs[i] * nx + ys[i] * ny + zs[i] * nz + offset);
+        var first = residuals.Reduce(0.0, (acc, distance) => acc + distance);
+        var second = residuals.Reduce(0.0, (acc, distance) => acc + distance * distance);
+        return PlaneResidualMoments(first, second);
+    }
+}

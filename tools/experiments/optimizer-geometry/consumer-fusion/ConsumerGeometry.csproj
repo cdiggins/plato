@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>../../../../.temp/optimizer-geometry/consumer-fusion/obj/</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputPath>../../../../.temp/optimizer-geometry/consumer-fusion/bin/</OutputPath>
+    <Snapshot Condition="'$(Snapshot)' == ''">../../../../.temp/optimizer-geometry/compiler</Snapshot>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(Snapshot)/*.dll" Exclude="$(Snapshot)/Ara3D.Geometry.dll" />
+  </ItemGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>
