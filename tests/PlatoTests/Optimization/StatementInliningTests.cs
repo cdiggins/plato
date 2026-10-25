@@ -12,6 +12,7 @@ type Integer { }
 type Boolean { }
 type Number { }
 type Object { }
+type Function1<A, R> { }
 type InlineBox { Value: Integer; }
 library Operators {
     Add(a: Integer, b: Integer): Integer;
@@ -45,11 +46,22 @@ library StatementProbe {
     Sibling(x: Integer): Integer => x.First.Ignore(x.Second.Twice);
     Rec(x: Integer): Integer { var local = x; return local > 0 ? (local - 1).Rec : 0; }
     StartRec(x: Integer): Integer => x.Rec;
+    Apply(x: Integer, f: Function1<Integer, Integer>): Integer { var g = f; return g(x); }
+    LambdaEntry(x: Integer): Integer => x.Apply(y => { var z = y + x; return z; });
+    Nested(x: Integer): Integer => x.Apply(y => y.Apply(z => z + x + y));
+    Unknown(x: Integer, f: Function1<Integer, Integer>): Integer => x.Apply(f);
+    Mutable(x: Integer): Integer {
+        var captured = x;
+        var result = x.Apply(y => y + captured);
+        captured = captured + 1;
+        return result;
+    }
 }";
 
-    [TestCase(false)]
-    [TestCase(true)]
-    public static void ClonedLocalsAndUnusedActualsPreserveExecution(bool inline)
+    [TestCase(false, false)]
+    [TestCase(true, false)]
+    [TestCase(true, true)]
+    public static void ClonedLocalsAndUnusedActualsPreserveExecution(bool inline, bool lambdas)
     {
         var dir = Path.Combine(Path.GetTempPath(), "plato-statement-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(dir);
@@ -60,7 +72,7 @@ library StatementProbe {
             Assert.That(compilation.SymbolFactory.Errors, Is.Empty,
                 string.Join("\n", compilation.SymbolFactory.Errors.Select(e => e.Message)));
             var writer = new CSharpWriter(compilation, "unused-statement")
-                { ExtensionStyle = true, InlineStatements = inline };
+                { ExtensionStyle = true, InlineStatements = inline, EliminateKnownLambdas = lambdas };
             writer.WriteAll();
             var source = writer.Files["StatementProbe.g.cs"].ToString();
             if (inline)
@@ -103,6 +115,27 @@ public static Integer Second(this Integer x) => throw new System.InvalidOperatio
                 () => library.GetMethod("Sibling")!.Invoke(null, new object[] { (Integer)0 }));
             Assert.That(sibling!.InnerException!.Message, Is.EqualTo("first"));
             Assert.That((int)(Integer)library.GetMethod("StartRec")!.Invoke(null, new object[] { (Integer)4 })!, Is.Zero);
+            Assert.That((int)(Integer)library.GetMethod("LambdaEntry")!.Invoke(null, new object[] { (Integer)4 })!, Is.EqualTo(8));
+            Assert.That((int)(Integer)library.GetMethod("Nested")!.Invoke(null, new object[] { (Integer)4 })!, Is.EqualTo(12));
+            Assert.That((int)(Integer)library.GetMethod("Unknown")!.Invoke(null,
+                new object[] { (Integer)4, (Func<Integer, Integer>)(n => (Integer)((int)n + 1)) })!, Is.EqualTo(5));
+            Assert.That((int)(Integer)library.GetMethod("Mutable")!.Invoke(null, new object[] { (Integer)4 })!, Is.EqualTo(8));
+            if (lambdas)
+            {
+                var mutable = TirInliner.InlineStatements(writer.TestGetGroundTir("Integer", "Mutable"), writer, "Integer", true);
+                Assert.That(mutable.AllNodes.OfType<Ara3D.Geometry.Compiler.Checking.TirInvoke>(), Is.Not.Empty,
+                    "Mutable captures must remain explicit delegate calls.");
+            }
+            if (lambdas)
+                foreach (var name in new[] { "LambdaEntry", "Nested" })
+                {
+                    var original = writer.TestGetGroundTir("Integer", name);
+                    var expanded = TirInliner.InlineStatements(original, writer, "Integer", true);
+                    Assert.That(expanded.AllNodes.OfType<Ara3D.Geometry.Compiler.Checking.TirInvoke>(), Is.Empty,
+                        $"{name}: {expanded.Body}; " + string.Join("; ", expanded.AllNodes.OfType<Ara3D.Geometry.Compiler.Checking.TirInvoke>()
+                            .Select(i => $"target={i.Target.Type}, result={i.Type}, args={string.Join(",", i.Args.Select(a => a.Type))}")));
+                    Assert.That(expanded.AllNodes.OfType<Ara3D.Geometry.Compiler.Checking.TirLambda>(), Is.Empty, name);
+                }
         }
         finally
         {

@@ -8,17 +8,18 @@ namespace Ara3D.Geometry.CSharpWriter;
 public static partial class TirInliner
 {
     /// <summary>Experimental direct-call inlining at whole initializer and return positions.</summary>
-    public static TirFunction InlineStatements(TirFunction tir, ITirInlineHost host, string owner)
+    public static TirFunction InlineStatements(TirFunction tir, ITirInlineHost host, string owner, bool eliminateLambdas = false)
     {
         if (tir?.Body == null)
             return tir;
-        var expansion = new StatementExpansion(tir, host, owner);
+        var expansion = new StatementExpansion(tir, host, owner, eliminateLambdas);
         var body = expansion.Rewrite(tir.Body);
+        body = expansion.Finish(body);
         return ReferenceEquals(body, tir.Body) ? tir : new TirFunction(tir.Original, tir.Parameters,
             tir.ReturnType, body, tir.ZonkedParameterTypes, tir.ZonkedReturnType);
     }
 
-    private sealed class StatementExpansion
+    private sealed partial class StatementExpansion
     {
         private const int MaxExpandedNodes = 4096;
         private const int MaxDepth = 16;
@@ -30,11 +31,13 @@ public static partial class TirInliner
         private int _remaining = MaxExpandedNodes;
         private int _next;
 
-        public StatementExpansion(TirFunction caller, ITirInlineHost host, string owner)
+        public StatementExpansion(TirFunction caller, ITirInlineHost host, string owner, bool eliminateLambdas)
         {
             (_caller, _host, _owner) = (caller, host, owner);
             _names = CollectBoundNames(caller, caller.Body);
             _ancestry.Add(caller.Original);
+            _eliminateLambdas = eliminateLambdas;
+            RecordAssignments(caller.Body);
         }
 
         private VariableDef Fresh(TypeExpression type)
@@ -47,11 +50,11 @@ public static partial class TirInliner
         public TirNode Rewrite(TirNode node)
         {
             if (node is TirBlock block)
-                return new TirBlock(block.Statements.SelectMany(Statement).ToList(), block.Origin);
+                return RemoveUnusedCallables(new TirBlock(block.Statements.SelectMany(Statement).ToList(), block.Origin));
             var statements = new List<TirNode>();
             var value = Expand(node, statements);
-            return statements.Count == 0 ? node
-                : new TirBlock(statements.Append(new TirReturn(value, node.Origin)).ToList(), node.Origin);
+            return statements.Count == 0 ? value
+                : RemoveUnusedCallables(new TirBlock(statements.Append(new TirReturn(value, node.Origin)).ToList(), node.Origin));
         }
 
         private IEnumerable<TirNode> Statement(TirNode node)
@@ -69,6 +72,10 @@ public static partial class TirInliner
                 TirLoop l => new TirLoop(l.Condition, RewriteScope(l.Body), l.Origin),
                 _ => node
             };
+            if (result is TirLet let)
+                Remember(let.Def, let.Value);
+            if (result is TirInlineBinding binding)
+                Remember(binding.Def, binding.Value);
             return prefix.Append(result);
         }
 
@@ -79,11 +86,14 @@ public static partial class TirInliner
         {
             var def = Fresh(type);
             prefix.Add(new TirInlineBinding(def, value));
+            Remember(def, value);
             return new TirVariable(def, type, value.Origin);
         }
 
         private TirNode Expand(TirNode node, List<TirNode> prefix)
         {
+            if (_eliminateLambdas && node is TirInvoke invoke)
+                return ExpandInvoke(invoke, prefix);
             if (node is TirConditional conditional && Ground(node.Type))
                 return ExpandConditional(conditional, prefix);
             if (node is TirCoerce coerce)
@@ -101,21 +111,16 @@ public static partial class TirInliner
             if (size > _remaining)
                 return node;
             _remaining -= size;
-            _ancestry.Add(callee.Original);
             var parameters = new Dictionary<ParameterDef, TirNode>();
             for (var i = 0; i < call.Args.Count; i++)
                 parameters[callee.Parameters[i]] = Bind(call.Args[i], ParameterType(callee, i), prefix);
+            _ancestry.Add(callee.Original);
             var locals = block.Descendants().OfType<TirLet>().ToDictionary(l => l.Def, l => Fresh(l.Value.Type));
             var resultDef = Fresh(callee.ZonkedReturnType ?? callee.ReturnType);
-            TirNode Clone(TirNode n) => TirRewrite.Rewrite(n, x => x switch
-            {
-                TirParameter p when parameters.TryGetValue(p.Def, out var value) => value,
-                TirVariable v when locals.TryGetValue(v.Def, out var def) => new TirVariable(def, v.Type, v.Origin),
-                TirLet l => new TirInlineBinding(locals[l.Def], l.Value),
-                TirReturn r => new TirInlineExit(resultDef, r.Value),
-                _ => x
-            });
-            prefix.Add(new TirInlineRegion(resultDef, Rewrite(Clone(block))));
+            var cloned = CloneBody(block, parameters, locals, resultDef);
+            RecordAssignments(cloned);
+            prefix.Add(new TirInlineRegion(resultDef, Rewrite(cloned)));
+            if (_host.InlineReport != null) _host.InlineReport.StatementCallsInlined++;
             _ancestry.Remove(callee.Original);
             return new TirVariable(resultDef, resultDef.Type, call.Origin);
         }
@@ -169,7 +174,8 @@ public static partial class TirInliner
                     || !Equals(call.Args[i].Type, ParameterType(callee, i))
                     || call.Args[i] is TirTypeRef)
                     return false;
-            return body.Descendants().All(n => n is not (TirName or TirUnresolved or TirLambda or TirTypeRef)
+            return body.Descendants().All(n => n is not (TirName or TirUnresolved or TirTypeRef)
+                && (n is not TirLambda lam || _eliminateLambdas && !IsEtaShaped(lam))
                 && (n is not TirAssign a || a.LValue is TirVariable)
                 && (n is not TirLet l || Ground(l.Value.Type))
                 && (n is not TirCall c || c.Callee != null && IsCallableOnReceiver(_host, c))

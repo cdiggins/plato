@@ -23,6 +23,11 @@ public enum InlineRefusal
     ArityMismatch,       // parameter count != argument count
     NullaryRefused,      // a nullary (Constants.X) call that failed the static-body rules
     SelfRecursive,       // callee resolves to the function being inlined into (would never settle)
+    UnknownCallable,
+    MutableCapture,
+    CallableSignatureMismatch,
+    ExpansionBudget,
+    RewrittenCallableBody,
 }
 
 /// <summary>Per-generation aggregation of inliner activity: every refusal keyed by
@@ -37,6 +42,8 @@ public sealed class InlineReport
     public int CallsInlined;
     public int BetaReductions;
     public int TupleConstructorRewrites;
+    public int StatementCallsInlined;
+    public int KnownLambdasInlined;
 
     public void Refuse(string caller, string callee, InlineRefusal reason)
     {
@@ -54,6 +61,8 @@ public sealed class InlineReport
         sb.AppendLine($"calls inlined:            {CallsInlined}");
         sb.AppendLine($"beta reductions:          {BetaReductions}");
         sb.AppendLine($"tuple ctor rewrites:      {TupleConstructorRewrites}");
+        sb.AppendLine($"statement calls inlined:  {StatementCallsInlined}");
+        sb.AppendLine($"known lambdas inlined:    {KnownLambdasInlined}");
         sb.AppendLine();
         sb.AppendLine("refusals by reason:");
         foreach (var kv in _byReason.OrderByDescending(k => k.Value))

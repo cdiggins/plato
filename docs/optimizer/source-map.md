@@ -79,26 +79,33 @@ links refer to this checkout's reviewed snapshot.
 
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.ArgTypeMismatch`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L20)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.ArityMismatch`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L23)
+- [`Ara3D.Geometry.CSharpWriter.InlineRefusal.CallableSignatureMismatch`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L28)
+- [`Ara3D.Geometry.CSharpWriter.InlineRefusal.ExpansionBudget`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L29)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.InsideLambda`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L19)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.LambdaArgRefused`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L21)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.MultiUseCompound`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L22)
+- [`Ara3D.Geometry.CSharpWriter.InlineRefusal.MutableCapture`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L27)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.NoCalleeBody`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L14)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.NoGroundTir`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L15)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.NotSelfContained`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L18)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.NullaryRefused`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L24)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.ReturnTypeMismatch`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L17)
+- [`Ara3D.Geometry.CSharpWriter.InlineRefusal.RewrittenCallableBody`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L30)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.SelfRecursive`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L25)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.StatementBody`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L16)
+- [`Ara3D.Geometry.CSharpWriter.InlineRefusal.UnknownCallable`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L26)
 
 ## InlineReport
 
-[`Ara3D.Geometry.CSharpWriter.InlineReport`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L31)
+[`Ara3D.Geometry.CSharpWriter.InlineReport`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L36)
 
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.BetaReductions`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L38)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.CallsInlined`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L37)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.Refuse(string, string, Ara3D.Geometry.CSharpWriter.InlineRefusal)`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L41)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.ToTable()`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L50)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.TupleConstructorRewrites`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L39)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.BetaReductions`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L43)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.CallsInlined`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L42)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.KnownLambdasInlined`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L46)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.Refuse(string, string, Ara3D.Geometry.CSharpWriter.InlineRefusal)`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L48)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.StatementCallsInlined`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L45)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.ToTable()`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L57)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.TupleConstructorRewrites`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L44)
 
 ## TirArrayMaterializer
 
@@ -195,10 +202,10 @@ links refer to this checkout's reviewed snapshot.
 
 ## TirInliner
 
-[`Ara3D.Geometry.CSharpWriter.TirInliner`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.cs#L40)
+[`Ara3D.Geometry.CSharpWriter.TirInliner`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.Callables.cs#L8)
 
 - [`Ara3D.Geometry.CSharpWriter.TirInliner.Inline(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.ITirInlineHost, string, out int)`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.cs#L51)
-- [`Ara3D.Geometry.CSharpWriter.TirInliner.InlineStatements(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.ITirInlineHost, string)`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs#L11)
+- [`Ara3D.Geometry.CSharpWriter.TirInliner.InlineStatements(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.ITirInlineHost, string, bool)`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs#L11)
 - [`Ara3D.Geometry.CSharpWriter.TirInliner.NextRenameId`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.cs#L49)
 
 ## TirLiteralUnroller

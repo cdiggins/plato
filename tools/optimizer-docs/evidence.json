@@ -22,19 +22,20 @@
     "tests/PlatoTests/Optimization/InlinerTests.cs": "dcfccfd83e0fcea67bc9afbb803bba6deb8718894e0fec953e3863f93c8007eb",
     "tests/PlatoTests/Optimization/LiteralUnrollingTests.cs": "0cedbc9396d4fd0de5a4f9dbc9af77cae1e06226934f55d77be92ca8499a1015",
     "tests/PlatoTests/Optimization/LoopLowererArrayTypeTests.cs": "b16dde22d414d09b3ffb36536e2fed43b0d3332e85c6096df097ee18ee319646",
-    "tests/PlatoTests/Optimization/StatementInliningTests.cs": "81610097bb362d66abb49900d8c7a266cdad2db6982235995190f58316541470",
+    "tests/PlatoTests/Optimization/StatementInliningTests.cs": "6bb6a45d7eb3f3c4d67a451203757a5181c0f6fcf140b55f55f94e7560d9e710",
     "tests/PlatoTests/Optimization/TirRewriteTests.cs": "d260d0a269f7a24a52db1492679b398951a7a4daaff1f761b88f88957aa59bf5",
     "writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs": "21cee6e8425c98135b1c0cfe854c6ca072d450b85e39c929415282706c4ded55",
-    "writers/Plato.CSharpWriter/CSharpWriter.cs": "04cfea92c1acaa7fbf9b04f9e38fd8519c88f2fdfd0d977a1937279017e1720f",
+    "writers/Plato.CSharpWriter/CSharpWriter.cs": "98177913f5c3e28b6f741b04f88084415cbd15fcbd2077408ad02fcbf87f1f46",
     "writers/Plato.CSharpWriter/Optimization/ComponentUnroller.cs": "e89b1a33ae27e1a999735008cb8c3d5e3fba994f1db81d366407a2390d8bb103",
-    "writers/Plato.CSharpWriter/Optimization/InlineReport.cs": "0f5bcea22bdeb0c272c76cb7b66c07dc0ab2a424c1d027941f430c359fe85573",
+    "writers/Plato.CSharpWriter/Optimization/InlineReport.cs": "1822b53783336b200e78ff3dcf88f2add1282e2a46b66886ed226f49e8773eb9",
     "writers/Plato.CSharpWriter/Optimization/ITirInlineHost.cs": "997d33e73930c03a4c1455e102170d8dd36cd049abcbab20770c84991d8e434e",
     "writers/Plato.CSharpWriter/Optimization/TirArrayMaterializer.cs": "d6dfb3f409e0767cbb294a480ca98a72da405c0e0202231096fea34de36aba4c",
     "writers/Plato.CSharpWriter/Optimization/TirComponentUnroller.cs": "0ab5b2a5158781d328f059675e565f56cf371af2001dedb9dee41ee5b06b43ad",
     "writers/Plato.CSharpWriter/Optimization/TirFusion.cs": "11e3806d6639af4f0896a82ea4dddd8d34a0dbedc677fc8ef0ae993e38b230d4",
     "writers/Plato.CSharpWriter/Optimization/TirInlineBinding.cs": "ea513499f26009a31f198915a292c736f5b57df505ecdb2dd216c27a417a08d3",
+    "writers/Plato.CSharpWriter/Optimization/TirInliner.Callables.cs": "a4846e7c05430a5b3978c7135831607f256dfdb52f0b4d7b516a55ae4d4d76ec",
     "writers/Plato.CSharpWriter/Optimization/TirInliner.cs": "d8f767f6dc75a0c14c37425ada077f9164d90e1e6e13af059310831bfc175ac8",
-    "writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs": "516ab13be24ecef8f595eea90fa6684fa25b2890c51ff43263c05699a398e8b9",
+    "writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs": "8fbef76784bd04419ab258784d95c441811d9f4ace0ab06bb7755179a2f6feb3",
     "writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs": "10c836fd7f88496ebf43538156d1671498cfc5183def78e9d75dc1f9a86c403f",
     "writers/Plato.CSharpWriter/Optimization/TirLiteralUnroller.cs": "d1e5460d67b203697d28cad24c014f7ae2aa71d59dbe4a4479d13fe8c9646ffb",
     "writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs": "da1b3c0377a2671f2b1814c3a420ac98be2db1d20648476a5898953eb4ca1f48",
@@ -289,6 +290,16 @@
           "line": 23
         },
         {
+          "signature": "Ara3D.Geometry.CSharpWriter.InlineRefusal.CallableSignatureMismatch",
+          "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
+          "line": 28
+        },
+        {
+          "signature": "Ara3D.Geometry.CSharpWriter.InlineRefusal.ExpansionBudget",
+          "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
+          "line": 29
+        },
+        {
           "signature": "Ara3D.Geometry.CSharpWriter.InlineRefusal.InsideLambda",
           "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
           "line": 19
@@ -302,6 +313,11 @@
           "signature": "Ara3D.Geometry.CSharpWriter.InlineRefusal.MultiUseCompound",
           "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
           "line": 22
+        },
+        {
+          "signature": "Ara3D.Geometry.CSharpWriter.InlineRefusal.MutableCapture",
+          "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
+          "line": 27
         },
         {
           "signature": "Ara3D.Geometry.CSharpWriter.InlineRefusal.NoCalleeBody",
@@ -329,6 +345,11 @@
           "line": 17
         },
         {
+          "signature": "Ara3D.Geometry.CSharpWriter.InlineRefusal.RewrittenCallableBody",
+          "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
+          "line": 30
+        },
+        {
           "signature": "Ara3D.Geometry.CSharpWriter.InlineRefusal.SelfRecursive",
           "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
           "line": 25
@@ -337,6 +358,11 @@
           "signature": "Ara3D.Geometry.CSharpWriter.InlineRefusal.StatementBody",
           "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
           "line": 16
+        },
+        {
+          "signature": "Ara3D.Geometry.CSharpWriter.InlineRefusal.UnknownCallable",
+          "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
+          "line": 26
         }
       ]
     },
@@ -344,32 +370,42 @@
       "name": "InlineReport",
       "qualified_name": "Ara3D.Geometry.CSharpWriter.InlineReport",
       "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
-      "line": 31,
+      "line": 36,
       "members": [
         {
           "signature": "Ara3D.Geometry.CSharpWriter.InlineReport.BetaReductions",
           "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
-          "line": 38
+          "line": 43
         },
         {
           "signature": "Ara3D.Geometry.CSharpWriter.InlineReport.CallsInlined",
           "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
-          "line": 37
+          "line": 42
+        },
+        {
+          "signature": "Ara3D.Geometry.CSharpWriter.InlineReport.KnownLambdasInlined",
+          "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
+          "line": 46
         },
         {
           "signature": "Ara3D.Geometry.CSharpWriter.InlineReport.Refuse(string, string, Ara3D.Geometry.CSharpWriter.InlineRefusal)",
           "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
-          "line": 41
+          "line": 48
+        },
+        {
+          "signature": "Ara3D.Geometry.CSharpWriter.InlineReport.StatementCallsInlined",
+          "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
+          "line": 45
         },
         {
           "signature": "Ara3D.Geometry.CSharpWriter.InlineReport.ToTable()",
           "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
-          "line": 50
+          "line": 57
         },
         {
           "signature": "Ara3D.Geometry.CSharpWriter.InlineReport.TupleConstructorRewrites",
           "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
-          "line": 39
+          "line": 44
         }
       ]
     },
@@ -688,8 +724,8 @@
     {
       "name": "TirInliner",
       "qualified_name": "Ara3D.Geometry.CSharpWriter.TirInliner",
-      "path": "writers/Plato.CSharpWriter/Optimization/TirInliner.cs",
-      "line": 40,
+      "path": "writers/Plato.CSharpWriter/Optimization/TirInliner.Callables.cs",
+      "line": 8,
       "members": [
         {
           "signature": "Ara3D.Geometry.CSharpWriter.TirInliner.Inline(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.ITirInlineHost, string, out int)",
@@ -697,7 +733,7 @@
           "line": 51
         },
         {
-          "signature": "Ara3D.Geometry.CSharpWriter.TirInliner.InlineStatements(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.ITirInlineHost, string)",
+          "signature": "Ara3D.Geometry.CSharpWriter.TirInliner.InlineStatements(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.ITirInlineHost, string, bool)",
           "path": "writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs",
           "line": 11
         },

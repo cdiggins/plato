@@ -87,3 +87,14 @@ The recorded build and 17 focused tests pass. Loop conditions and other compound
 forms remain opaque; regions are not yet traversed by loop lowering.
 Next: known callables, scoped loop lowering, bounded iterative simplification, and the pinned
 BRep ablation/profile matrix. No mesh or allocation claim has been made.
+
+Third milestone implements opt-in EliminateKnownLambdas: known lambdas pass through typed
+parameters and local aliases, then expand through the same result regions. Original inferred
+locals keep var declarations; cloned references use the binding type where known. Callable
+creation ancestry permits nested uses of the same consumer without permitting ordinary
+recursion. Unused known delegate bindings disappear after their uses expand. Unknown targets,
+mutable captures, signature mismatches, expansion limits and already-rewritten callback bodies
+have report categories. Tests execute three policies and require removal of invocations and
+lambdas from statement-bodied and nested-capture fixtures; mutable captures remain explicit.
+Recorded build and 18 focused tests pass. Shared callback variants and production eligibility
+are not yet established; keep the callable acceptance box open until that coverage is assessed.

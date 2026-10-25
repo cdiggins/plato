@@ -57,6 +57,18 @@ Expansion ancestry and cumulative per-caller growth limits bound recursive expan
 This property is an implementation experiment, not a production CLI flag or a performance
 claim. [compiler-504](../../tracker/issues/compiler-504.md) tracks broader scope and measurements.
 
+`CSharpWriter.EliminateKnownLambdas` adds callable tracking to that experiment. Immutable
+parameter bindings and local aliases retain known lambda bodies. Applications bind their
+arguments eagerly and use the same result regions, including for statement bodies. Captures
+must refer to unassigned values; unknown callables and unproved mutable captures stay explicit.
+Nested consumers use ancestry from the callable's creation context, so repeated use of the
+same consumer is not mistaken for recursion. Unused known-callable bindings are removed only
+after their applications disappear. Remaining callback bodies are processed in their own
+scope. The inline report distinguishes unknown targets, mutable captures, signature mismatches,
+budget refusals and bodies already carrying generated regions that cannot yet be cloned.
+There is no shared specialization registry: callbacks whose consumers remain calls still
+allocate delegates. No storage or ABI changes are implied by callable elimination.
+
 [StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs)
 compiles emitted C# and checks cloned names, required evaluation of unused arguments, sibling
 fault order, return conversions, conditional guards, zero-trip loops, early exits and recursion.
