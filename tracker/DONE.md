@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-24 — [compiler-501](issues/compiler-501.md) — Refresh optimizer evidence for concrete type writer — done (8515ca59)
 - 2026-10-24 — [compiler-498](issues/compiler-498.md) — Measure aggressive inlining on plato-brep meshing — done (9852f3c1)
 - 2026-10-24 — [compiler-496](issues/compiler-496.md) — FunctionInstance never assigns Interface so selection ignores interface distance — done (c508809f): interface specificity fixed, reification aligned, normal-construction and executable regressions pass; 361 PlatoTests pass, output reviewed for all writers; external repo-473 remains
 - 2026-10-24 — [repo-493](issues/repo-493.md) — Consolidate writer selection and test fixture helpers — done (0951aae6): shared selector and codegen test helpers; 358 PlatoTests pass, native compilation and output equivalence verified; external repo-473 gate still fails

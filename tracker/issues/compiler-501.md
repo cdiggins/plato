@@ -2,14 +2,14 @@
 id: compiler-501
 title: Refresh optimizer evidence for concrete type writer
 type: debt
-status: idea
+status: done
 priority: p3
 effort: S
 risk: low
 area: compiler
 sprint: 
 created: 2026-10-24
-closed:
+closed: 2026-10-24
 links: []
 ---
 
