@@ -118,6 +118,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-417](issues/plato-417.md) | Ear-clipping pass is O(n^2); a sound ear cache must invalidate on the reflex/convex flip | debt | p3 | M | med | plato | idea |  |
 | [repo-514](issues/repo-514.md) | Optimizer fixtures assume the default test output directory | bug | p3 | S | low | repo | idea |  |
 | [compiler-505](issues/compiler-505.md) | Create the output directory before writing C# docs | bug | ? | ? | ? | compiler | idea |  |
+| [compiler-533](issues/compiler-533.md) | Typed tables, scoped construction, and acyclic folds | idea | ? | ? | ? | compiler | idea |  |
 | [plato-076](issues/plato-076.md) | Port Gratify to Plato (feasibility: kernel vs framework) | idea | ? | ? | ? | plato | idea |  |
 | [plato-077](issues/plato-077.md) | Sum types + pattern matching in Plato (RFC first) | idea | ? | ? | ? | plato | idea |  |
 | [plato-078](issues/plato-078.md) | Revive and productionize the Plato TypeScript writer | feature | ? | ? | ? | plato | idea |  |
