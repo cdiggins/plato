@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Plato.Laws\Plato.Laws.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Plato.Navigation.Tests" />
+  </ItemGroup>
+
 </Project>

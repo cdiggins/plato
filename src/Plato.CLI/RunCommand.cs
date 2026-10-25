@@ -122,7 +122,12 @@ namespace Ara3D.Geometry.CLI
             if (failed.Count > 0)
             {
                 foreach (var d in failed)
+                {
                     Console.Error.WriteLine($"Parsing failed: {d.File}");
+                    if (d.Doc.Parser != null)
+                        foreach (var error in d.Doc.Parser.ErrorMessages)
+                            Console.Error.WriteLine($"{d.File}: {error}");
+                }
                 return 1;
             }
             var compilation = new Compilation(Ara3D.Logging.Logger.Null, docs.Select(d => d.Doc.Ast));
