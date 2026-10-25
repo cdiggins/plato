@@ -133,6 +133,35 @@ class RunnerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "outside the recorded run plan"):
             benchmark.complete_planned_rows([dict(block=2, variant="full", case_id="box", workload="edges")], metadata)
 
+    def test_compiler_only_revisions_reuse_fixtures_but_require_original_reference(self):
+        with tempfile.TemporaryDirectory(dir=self.test_root) as folder:
+            root = Path(folder)
+            contract = dict(sources="same library/runtime", profile="cpu64", worker_source="same contract")
+            def artifact(name):
+                dest = root / name
+                dest.mkdir()
+                worker = dest / "worker.dll"
+                worker.write_text("same worker")
+                (dest / "Ara3D.StepBrep.dll").write_text(name)
+                output = benchmark.binary_identity(worker)
+                return dict(name="shipping", status="ready", workspace_key=name, worker=str(worker),
+                    output_hashes=output, host_hashes={"worker.dll": output["worker.dll"]}, fixture_compatibility=contract)
+            original, candidate = artifact("old compiler"), artifact("new compiler")
+            fixture = root / "fixture.json"
+            fixture.write_text("prepared input")
+            case = dict(id="box", fixture=str(fixture), fixture_hash=benchmark.file_hash(fixture),
+                preparation_identity=original["output_hashes"]["Ara3D.StepBrep.dll"])
+            suite = dict(cases=[case], preparation_binary_identity=original["output_hashes"],
+                preparation_build=original, fixture_compatibility=contract)
+            identities = benchmark.verify_build_artifacts([candidate])
+            benchmark.verify_suite_preparation(suite, identities, [candidate])
+            with self.assertRaisesRegex(ValueError, "prepare fixtures again"):
+                benchmark.verify_suite_preparation(suite, identities,
+                    [{**candidate, "fixture_compatibility": {**contract, "sources": "changed runtime"}}])
+            Path(original["worker"]).write_text("tampered original reference")
+            with self.assertRaisesRegex(ValueError, "Original fixture preparation artifacts changed"):
+                benchmark.verify_suite_preparation(suite, identities, [candidate])
+
     def test_actual_runtime_identity_rejects_different_gc_or_missing_metadata(self):
         good = dict(status="ok", runtime={"framework": "net8", "server_gc": True})
         self.assertIsNotNone(benchmark.actual_runtime_identity([good, good]))
@@ -190,7 +219,7 @@ class RunnerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=self.test_root) as folder, contextlib.redirect_stdout(io.StringIO()):
             root = Path(folder)
             inputs = root / "inputs.json"
-            build = dict(name="shipping", status="ready", worker="worker.dll")
+            build = dict(name="shipping", status="ready", worker="worker.dll", fixture_compatibility={"schema": 1})
             args = benchmark.parser().parse_args(["fixtures", "--work", str(root), "--input-list",
                 str(inputs), "--output", str(root / "suite.json")])
             with patch.object(benchmark, "load_builds", return_value=[build]), patch.object(

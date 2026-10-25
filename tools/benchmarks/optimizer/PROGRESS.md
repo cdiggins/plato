@@ -1,8 +1,9 @@
-Mission: compiler-522 prepared optimizer benchmark; contract R3; component sources frozen.
-Status: 65 tests passed including executable UnitBox/Crescent checks; final runner checks 15 pass.
-Snapshot: .temp/ob3/workspace.json key 2f445bbef8e4; references building session60549 (pid61244).
-Fresh shipping generation/check/build passed; full and unoptimized pending; converter committed1e4be418.
-Final battery: both lints, SDK build, GeometryTests pass; obsolete frozen-V1 gate fails (existing repo-473).
-record-gates running session77723; logs .temp/optimizer-{check-all,record-gates}.log.
-Preserve root PROGRESS.md, status edits, statement experiments and concurrent reference documentation.
-Next: finish variant builds; prepare mixed suite; discover/quick/confirm/corpus; dated report; tracker closure.
+Mission: compiler-522 prepared optimizer benchmark; contract R4; all component sources frozen.
+Verified: 77 tests pass, one symlink-privilege skip; real junction guard passes; all own processes exited.
+Workspace .temp/ob3 key2f445bbef8e4; nine fixtures prepared incl JODY-W4, no errors.
+Shipping/unoptimized/no-inline generate/check/build; full generation times out900s (compiler-535).
+Quick465, confirm15, corpus198 timed batches all pass checks and cross-recipe digests; reanalysis passes.
+Holdout validation correctly insufficient; no production tuning/prediction claim; fixture reuse verified.
+Final gates: recorded396 PlatoTests/lints/build green; studio SDK/geometry/lints green; known repo-473 checksum red.
+Evidence docs/reports/prepared-optimizer-benchmark-2026-10-25.md and data/compiler-522-2026-10-25/.
+Preserve root PROGRESS.md, status/statement/reference edits; next integration commit and tracker closure.

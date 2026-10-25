@@ -6,19 +6,25 @@ repeated operations without STEP parsing, file access or result validation insid
 the timer. It is intended for compiler developers deciding whether a recipe or
 parameter change helps representative workloads.
 
-Start from the Plato repository root in PowerShell:
+Start from the Plato repository root in PowerShell. The complete recipe is the
+intended control for ablations. Its generation on the BREP shipping program is
+currently blocked by [compiler-535](../../../tracker/issues/compiler-535.md).
+This explicit starter set exercises the workflow with available recipes:
 
 ```powershell
 python tools/benchmarks/optimizer/benchmark.py matrix
 python tools/benchmarks/optimizer/benchmark.py prepare --work .temp/ob
-python tools/benchmarks/optimizer/benchmark.py build --work .temp/ob
+python tools/benchmarks/optimizer/benchmark.py build --work .temp/ob --variants shipping,unoptimized,no-inline
 python tools/benchmarks/optimizer/benchmark.py fixtures --work .temp/ob --input-list tools/benchmarks/optimizer/corpus.json --output .temp/ob/suite.json
 python tools/benchmarks/optimizer/benchmark.py discover --work .temp/ob --suite .temp/ob/suite.json --output .temp/ob/discovery.json
-python tools/benchmarks/optimizer/benchmark.py run --work .temp/ob --suite .temp/ob/suite.json --discovery .temp/ob/discovery.json
+python tools/benchmarks/optimizer/benchmark.py run --work .temp/ob --suite .temp/ob/suite.json --discovery .temp/ob/discovery.json --variants shipping,unoptimized,no-inline --baseline no-inline
 ```
 
 The last command prints a Markdown report path. The adjacent JSON report contains
 comparison details, and `samples.jsonl` preserves every raw sample and failure.
+This starter does not establish the runtime contribution of inlining to the full
+recipe. `build` without a subset requests the complete ablation matrix; use it for
+the intended study when its configurations can generate and compile successfully.
 Use `--help` on any subcommand for its options. Prefer a short workspace path on
 Windows because the exported projects contain long generated filenames.
 
@@ -70,8 +76,23 @@ face outcomes, final refinement state and evaluation samples. Wrapper and sum
 values are reconstructed through their constructors; preparation requires an exact
 serialization round-trip. Fixtures carry their input, preparation-library and
 content identities. The same fixture is used by every recipe. A run verifies the
-entire artifact tree against its build receipt and requires the suite's preparation
-closure to match a verified build. Re-prepare fixtures after changing that closure.
+entire candidate artifact tree against its build receipt. Preparation provenance is
+verified against its original retained reference build, independently of candidates.
+Compatibility uses exported library, runtime, host and package contents, the numeric
+profile, and worker sources. Compiler binaries and compiler-only commit changes do
+not invalidate fixtures. Changes to those prepared-data dependencies require setup
+again. Keep the original reference artifacts while using the suite.
+
+Before timing, a small reflection probe deserializes and serializes the complete
+fixture through each candidate's actual types and requires identical bytes. Successful
+checks are cached by fixture, complete candidate closure and probe hashes. This cold
+validation is reported separately from the measurement budget. Ordinary runs reuse
+it. The probe is compiled automatically through the build recorder when first needed.
+
+After changing the compiler, repeat `prepare` and `build` with the new CLI, then
+pass the existing `--suite` to `run`; skip `fixtures` when compatibility holds.
+The original reference build may live in an earlier workspace. Discovery costs are
+estimates and can be refreshed without STEP parsing when runtime behavior changes.
 
 | Workload | Work inside the timer |
 |---|---|
@@ -221,3 +242,5 @@ are explicitly skipped.
 
 The implementation and verification record is tracked by
 [compiler-522](../../../tracker/issues/compiler-522.md).
+The [dated verification report](../../../docs/reports/prepared-optimizer-benchmark-2026-10-25.md)
+contains integration results, retained raw samples and reproducible commands.

@@ -74,10 +74,22 @@ def verify_build_artifacts(builds):
     return identities
 
 
-def verify_suite_preparation(suite, identities):
+def verify_suite_preparation(suite, identities, builds=None):
     expected = suite.get("preparation_binary_identity")
+    compatible = suite.get("fixture_compatibility")
+    if compatible and builds is not None:
+        if any(b.get("status") == "ready" and b.get("fixture_compatibility") != compatible for b in builds):
+            raise ValueError("Prepared-data source, runtime, profile or worker contract changed; prepare fixtures again")
     if not expected or expected not in identities.values():
-        raise ValueError("Suite preparation artifacts are not among the verified builds; prepare fixtures again")
+        original = suite.get("preparation_build")
+        if not compatible or not original or original.get("fixture_compatibility") != compatible or builds is None:
+            raise ValueError("Suite preparation artifacts are not among the verified builds; prepare fixtures again")
+        try:
+            original_identity = verify_build_artifacts([original]).get(original["name"])
+        except (OSError, ValueError) as error:
+            raise ValueError("Original fixture preparation artifacts changed; retain the reference build: " + str(error)) from error
+        if original_identity != expected:
+            raise ValueError("Original fixture preparation artifacts changed; retain the reference build while using this suite")
     for case in suite["cases"]:
         if not case.get("fixture_hash") or file_hash(case["fixture"]) != case["fixture_hash"]:
             raise ValueError(f"Fixture changed or lacks its preparation hash: {case['id']}")
@@ -117,7 +129,11 @@ def actual_runtime_identity(rows):
 
 
 def tool_identity():
-    return {name: file_hash(HERE / name) for name in ("benchmark.py", "analysis.py", "selection.py", "recipes.py", "prepare.py")}
+    names = ("benchmark.py", "analysis.py", "selection.py", "recipes.py", "prepare.py", "fixture_reuse.py")
+    result = {name: file_hash(HERE / name) for name in names}
+    result.update({"fixture-probe/" + p.name: file_hash(p) for p in (HERE / "fixture-probe").iterdir()
+                   if p.suffix in (".cs", ".csproj")})
+    return result
 
 
 def render_report(result):
@@ -317,31 +333,33 @@ def command_prepare(args):
     with operation_lock(work, "prepare"):
         workspace = prepare_workspace(ROOT, args.brep_root.resolve(), args.cli.resolve(), work / "cache",
                                       plato_commit=args.plato_ref, brep_commit=args.brep_ref)
-    write_json(work / "workspace.json", workspace)
+        write_json(work / "workspace.json", workspace)
     print(json.dumps(workspace, indent=2))
 
 
 def command_build(args):
     from prepare import build_variants
     from recipes import make_recipes
+    from fixture_reuse import stamp_builds
     if (args.work / ".measure.lock").exists():
         raise ValueError("Cannot build during measurement")
-    workspace = read_json(args.work / "workspace.json")
-    variants = make_recipes(workspace["shipping_flags"], experimental=args.experimental,
-                            inline_policies=args.inline_policy or (), growth_limits=args.inline_growth or ())
-    if args.variants:
-        names = args.variants.split(",")
-        unknown = set(names) - {v["name"] for v in variants}
-        if unknown:
-            raise ValueError(f"Unknown variants: {sorted(unknown)}")
-        variants = [v for v in variants if v["name"] in names or v["name"] == "shipping"]
     with operation_lock(args.work, "build"):
+        workspace = read_json(args.work / "workspace.json")
+        variants = make_recipes(workspace["shipping_flags"], experimental=args.experimental,
+                                inline_policies=args.inline_policy or (), growth_limits=args.inline_growth or ())
+        if args.variants:
+            names = args.variants.split(",")
+            unknown = set(names) - {v["name"] for v in variants}
+            if unknown:
+                raise ValueError(f"Unknown variants: {sorted(unknown)}")
+            variants = [v for v in variants if v["name"] in names or v["name"] == "shipping"]
         previous = read_json(args.work / "builds.json") if (args.work / "builds.json").exists() else []
         result = build_variants(workspace, variants, HERE / "worker", ROOT / "tools/dotnet-build-record.ps1", timeout=args.timeout)
         descriptions = {v["name"]: v for v in variants}
         result = [{**descriptions[b["name"]], **b} for b in result]
         failed = any(b["status"] not in ("ready", "unsupported") for b in result)
         result = merge_build_results(previous, result)
+        stamp_builds(result, workspace, HERE / "worker")
         write_json(args.work / "builds.json", result)
     print(json.dumps(result, indent=2))
     return int(failed)
@@ -372,7 +390,11 @@ def command_fixtures(args):
 
 
 def prepare_fixtures(args):
+    from fixture_reuse import stamp_builds
     builds = load_builds(args.work)
+    if any(b.get("status") == "ready" and not b.get("fixture_compatibility") for b in builds):
+        stamp_builds(builds, read_json(args.work / "workspace.json"), HERE / "worker")
+        write_json(args.work / "builds.json", builds)
     identities = verify_build_artifacts(builds)
     build = next((b for b in builds if b["name"] == args.variant and b["status"] == "ready"), None)
     if build is None:
@@ -428,7 +450,8 @@ def prepare_fixtures(args):
             result.update(fixture=str(fixture), fixture_hash=file_hash(fixture), source=source)
             cases.append(result)
     suite = {"schema": 1, "cases": cases, "errors": errors,
-             "preparation_binary_identity": identities[build["name"]], "preparation_variant": build["name"]}
+             "preparation_binary_identity": identities[build["name"]], "preparation_variant": build["name"],
+             "preparation_build": build, "fixture_compatibility": build["fixture_compatibility"]}
     if verify_build_artifacts(builds) != identities:
         raise ValueError("Build artifacts changed during fixture preparation")
     write_json(output, suite)
@@ -454,11 +477,20 @@ def command_catalog(args):
     return int(result["status"] != "ok")
 
 
+def validate_fixture_readers(work, builds, suite):
+    if not suite.get("fixture_compatibility"):
+        return {"legacy_same_build": True, "seconds": 0}
+    from fixture_reuse import ensure_probe, reader_runtime_identity, validate_roundtrips
+    probe = ensure_probe(work, HERE / "fixture-probe", ROOT / "tools/dotnet-build-record.ps1")
+    return validate_roundtrips(builds, suite["cases"], probe, Path(work) / "fixture-validation", invoke_worker,
+                              runtime_identity=reader_runtime_identity(RUNTIME))
+
+
 def command_discover(args):
     suite = suite_cases(args.suite)
     builds = load_builds(args.work)
     identities = verify_build_artifacts(builds)
-    verify_suite_preparation(suite, identities)
+    verify_suite_preparation(suite, identities, builds)
     build = next((b for b in builds if b["name"] == args.variant and b["status"] == "ready"), None)
     if build is None:
         raise ValueError(f"Discovery variant unavailable: {args.variant}")
@@ -466,11 +498,12 @@ def command_discover(args):
         raise ValueError(f"Refusing to overwrite discovery: {args.output}")
     rows_path = args.output.with_suffix(".jsonl")
     with measurement_lock(args.work):
+        validation = validate_fixture_readers(args.work, [build], suite)
         rows = run_samples([build], suite["cases"], rows_path, blocks=1, seconds=args.seconds,
             target_ms=1, warmup=1, max_iterations=1, timeout=args.timeout, seed=1729)
         if verify_build_artifacts(builds) != identities:
             raise ValueError("Build artifacts changed during discovery")
-        verify_suite_preparation(suite, identities)
+        verify_suite_preparation(suite, identities, builds)
     costs, warmup_costs, operation_costs, errors = {}, {}, {}, []
     for case in suite["cases"]:
         samples = [r for r in rows if r["case_id"] == case["id"]]
@@ -482,7 +515,7 @@ def command_discover(args):
             errors.extend(r for r in samples if r["status"] != "ok" or not r.get("checks") or not all(v is True for v in r["checks"].values()))
     write_json(args.output, {"schema": 1, "costs": costs, "errors": errors,
         "warmup_ms": warmup_costs, "operation_ms": operation_costs,
-        "suite_hash": file_hash(args.suite), "variant": args.variant,
+        "suite_hash": file_hash(args.suite), "variant": args.variant, "fixture_validation": validation,
         "cost_basis": "sum of fresh-process stage invocations including startup and fixture load"})
     print(str(args.output))
     return int(bool(errors))
@@ -494,7 +527,7 @@ def command_run(args):
     suite = suite_cases(args.suite)
     all_builds = load_builds(args.work)
     identities = verify_build_artifacts(all_builds)
-    verify_suite_preparation(suite, identities)
+    verify_suite_preparation(suite, identities, all_builds)
     builds = all_builds
     if args.mode == "quick" and not args.variants:
         builds = [b for b in builds if b["name"] in ("shipping", "full", "unoptimized")]
@@ -555,12 +588,16 @@ def command_run(args):
     with measurement_lock(args.work):
         if {b["name"]: verify_build_artifacts([b])[b["name"]] for b in builds if b["status"] == "ready"} != identities:
             raise ValueError("Build artifacts changed before measurement")
+        metadata["fixture_validation"] = validate_fixture_readers(args.work, builds, {**suite, "cases": cases})
+        metadata["fixture_compatibility"] = suite.get("fixture_compatibility")
+        metadata["preparation_reference"] = suite.get("preparation_build")
+        write_json(folder / "run.json", metadata)
         rows = run_samples(builds, cases, folder / "samples.jsonl", **parameters_without_mode(parameters))
         after = verify_build_artifacts(builds)
         if identities != after:
             write_json(folder / "integrity-error.json", {"before": identities, "after": after})
             raise ValueError("Binaries changed during measurement; run is invalid")
-        verify_suite_preparation(suite, verify_build_artifacts(all_builds))
+        verify_suite_preparation(suite, verify_build_artifacts(all_builds), all_builds)
         if file_hash(args.suite) != metadata["suite_hash"]:
             raise ValueError("Suite manifest changed during measurement; run is invalid")
         if tool_identity() != metadata["tool_identity"]:

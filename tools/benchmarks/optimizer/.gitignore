@@ -1,3 +1,5 @@
 __pycache__/
 worker/bin/
 worker/obj/
+fixture-probe/bin/
+fixture-probe/obj/

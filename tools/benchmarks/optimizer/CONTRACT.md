@@ -1,7 +1,7 @@
 # Prepared optimizer benchmark wave
 
 Issue: compiler-522. Shared checkout: C:/Users/cdigg/git/plato.
-Contract revision: R3 (run-set batching, verified provenance, declared host obligations). Supervisor owns integration, CLI, documentation, tracker and Git publication.
+Contract revision: R4 (portable fixtures across compiler-only revisions; original reference provenance and exact candidate-reader probe). Supervisor owns integration, CLI, documentation, tracker and Git publication.
 No writer changes compiler algorithms, runtime, stdlib, existing experiments, or sibling checkouts.
 Existing dirty status snapshots, statement-inlining experiments and root PROGRESS.md are unrelated.
 
@@ -50,7 +50,11 @@ The runner verifies expected build output_hashes, common host_hashes, and suite/
 and after execution. Worker sample schema and fixture identity must match the request.
 Fixtures and suite are setup artifacts, hashed before run. File paths may be absolute in local
 artifacts, never assume a particular developer checkout. Fixture caches invalidate on input and
-preparation/runtime identity changes. Deserialization must reconstruct wrapper and sum types correctly.
+prepared-data source/runtime/profile/worker changes, using exported contents rather than whole commit IDs.
+Keep the original preparation build's provenance and verify its retained artifact closure independently
+of candidate compilers. A dependency-free reflection probe requires byte-exact deserialize/serialize
+through each candidate before timing; validation receipts bind fixture, candidate and probe hashes.
+Compiler-only revisions reuse fixtures. Deserialization must reconstruct wrapper and sum types correctly.
 
 Variant description is `{name,flags:[...],kind,description,...}`. Build result is
 `{name,status,worker:<dll path>,flags:[...],...}`. `status` is ready/error/unsupported.
@@ -71,9 +75,9 @@ failed checks and disagreeing digests. Unmeasured and inconclusive remain explic
 | Track | Exclusive writable files | Checks/resources |
 |---|---|---|
 | prepare | prepare.py, recipes.py, test_prepare.py, test_recipes.py, PREPARE_PROGRESS.md | Python tests; .temp/optimizer-prepare-tests only |
-| worker | worker/**, WORKER_PROGRESS.md | C# worker; .temp/optimizer-worker-tests only; request supervisor builds |
+| worker | worker/**, fixture-probe/**, WORKER_PROGRESS.md | C# worker and independent reader probe; .temp/optimizer-worker-tests only; request supervisor builds |
 | report | analysis.py, selection.py, test_analysis.py, test_selection.py, REPORT_PROGRESS.md | Python tests; .temp/optimizer-report-tests only |
-| supervisor | benchmark.py, README.md, CONTRACT.md, PROGRESS.md, integration tests, tracker, dated report | .temp/optimizer-benchmark; all builds/gates and publication |
+| supervisor | benchmark.py, fixture_reuse.py, README.md, CONTRACT.md, PROGRESS.md, integration tests, tracker, dated report | .temp/optimizer-benchmark; all builds/gates and publication |
 
 All agents read parallel-wave and platonic-coder skills. No nested agents (slots are allocated).
 Each acknowledges R1 before writes, checkpoints state/processes/results, and requests a commit turn.

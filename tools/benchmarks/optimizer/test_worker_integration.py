@@ -83,6 +83,21 @@ class WorkerIntegrationTests(unittest.TestCase):
         self.assertEqual(result["status"], "error")
         self.assertIn("absent", result["error"])
 
+    @unittest.skipUnless(os.environ.get("PLATO_BENCHMARK_PROBE"), "Set PLATO_BENCHMARK_PROBE for candidate-reader checks")
+    def test_candidate_reader_probe_requires_exact_roundtrip(self):
+        probe = Path(os.environ["PLATO_BENCHMARK_PROBE"]).resolve(strict=True)
+        result = benchmark.invoke_worker(probe, ["--worker", self.worker, "--fixture", self.fixture], timeout=60)
+        self.assertEqual(result["status"], "ok", result)
+        self.assertEqual(result["fixture_hash"], benchmark.file_hash(self.fixture))
+        self.assertEqual(result["worker_hash"], benchmark.file_hash(self.worker))
+        extra = self.folder / "unknown-field.json"
+        extra.write_bytes(self.fixture.read_bytes()[:-1] + b',"unrecognized_prepared_field":true}')
+        result = benchmark.invoke_worker(probe, ["--worker", self.worker, "--fixture", extra], timeout=60)
+        self.assertEqual(result["status"], "error", result)
+        self.assertIn("round-trip", result["error"])
+        result = benchmark.invoke_worker(probe, ["--worker", self.worker], timeout=60)
+        self.assertEqual(result["status"], "error")
+
 
 if __name__ == "__main__":
     unittest.main()

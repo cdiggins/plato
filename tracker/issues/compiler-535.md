@@ -7,7 +7,7 @@ priority: p1
 effort: M
 risk: med
 area: compiler
-sprint: 
+sprint:
 created: 2026-10-25
 closed:
 links: [compiler-522]
@@ -36,7 +36,11 @@ library roots with `--profile=cpu64 --inline --fuse --optimize --loops
 the failure is retained in `.temp/ob3/builds.json`. No C# build ran for this recipe.
 This run predates timeout-output retention in the benchmark builder, so partial
 compiler stdout is unavailable. Do not infer a specific pass or nontermination from
-the timeout alone. Generation with inlining removed is the next bounded diagnostic.
+the timeout alone. The follow-up with only inlining removed generated checked C#
+and built successfully: generation/checking/source publication took 247.3 seconds,
+and build/host freezing took 155.1 seconds. This is a diagnostic in the complete
+context; it does not identify an isolated pass defect. The dated compiler-522
+verification report retains the artifact identities and experiment evidence.
 
 ```powershell
 python tools/benchmarks/optimizer/benchmark.py build --work .temp/ob3 --variants full --timeout 900

@@ -1,0 +1,812 @@
+{
+  "schema": 1,
+  "workspace_key": "2f445bbef8e4ce82d6d1e53763c59dd33f86a6bdb7a2cd5754155ec1f8261236",
+  "fixture_compatibility": {
+    "schema": 1,
+    "fixture_schema": 1,
+    "profile": "cpu64",
+    "sources": "eed885ed8dc829cbcda0fa073dcbd81a4196c745265dd8a2e182974be8f53e8d",
+    "packages": "c996e011d2fdd680f229247af9df73820b813337d9560dafa6d2227cfbf5e8f6",
+    "worker_source": "c3dd7ba0d624347586c5e1a305a3b86815585cce79940e9a3e82759473d8bc32"
+  },
+  "source_revisions": {
+    "plato_sources": "fd83e4a33b09fd2aa49e59e1b1bbb9f6cdb85a30",
+    "brep": "5057732c0c6858f71fac298535af203226f7f203",
+    "mesh": "047670a70232826f0f30c1112d327cff6c05a9ff",
+    "sdk_pin": "98a90590b7f3b964c2a9bdbd01dba24ffe33fab0"
+  },
+  "compiler_dll_sha256": "83a521911eab2d6b634f19012df3639d77b6241463be27a49dc4ba967edc50a9",
+  "preparation_errors": [],
+  "inputs": [
+    {
+      "id": "block-e69360b4",
+      "input_hash": "b28fd918992b03d8cb905e178633d082e6e97738bcc8ceb32c7f910d61ab6ce8",
+      "fixture_hash": "7183670ed8fcd6dd1a8aab565142759f4f431d522cbac03a3dce3334031d8e15",
+      "tags": [
+        "curve:line",
+        "curve:on-surface",
+        "edges:tiny",
+        "faces:tiny",
+        "path:grid",
+        "surface:plane"
+      ],
+      "workloads": [
+        "model",
+        "edges",
+        "faces",
+        "assembly",
+        "curve-eval",
+        "surface-eval",
+        "projection"
+      ],
+      "faces": 6,
+      "edges": 12,
+      "process_seconds": 1.2116463999846019
+    },
+    {
+      "id": "JODY-W4-7d0e094a",
+      "input_hash": "6122ce636056c9e21acb6a73c4e234fdb1c029da527415429817e768e46a777d",
+      "fixture_hash": "3b619d145974ebb3aa6bd27ba9eed8555ba2edb74a84055448674b6e01ed3982",
+      "tags": [
+        "curve:bspline",
+        "curve:circle",
+        "curve:line",
+        "edges:large",
+        "faces:large",
+        "path:cdt",
+        "path:grid",
+        "spline-curve-degree:3",
+        "spline-weights:uniform-or-absent",
+        "surface:cylinder",
+        "surface:plane"
+      ],
+      "workloads": [
+        "model",
+        "edges",
+        "faces",
+        "assembly",
+        "curve-eval",
+        "surface-eval",
+        "projection"
+      ],
+      "faces": 2621,
+      "edges": 5284,
+      "process_seconds": 29.399638700007927
+    },
+    {
+      "id": "UnitBox-60f33546",
+      "input_hash": "6de2cb95a028057e14631d99daa254ed22991af3c7ec5f1692ce8540297ebc47",
+      "fixture_hash": "a2b71b57fcddf1e35cdb0bd3aedbcaa7d474145d9d6bcb31dc3e9d6f898791e6",
+      "tags": [
+        "curve:line",
+        "edges:tiny",
+        "faces:tiny",
+        "path:grid",
+        "surface:plane"
+      ],
+      "workloads": [
+        "model",
+        "edges",
+        "faces",
+        "assembly",
+        "curve-eval",
+        "surface-eval",
+        "projection"
+      ],
+      "faces": 6,
+      "edges": 12,
+      "process_seconds": 0.6489950999966823
+    },
+    {
+      "id": "BlockWithThroughHole-2b69da61",
+      "input_hash": "80a6e7dd4cfb7e5dc4dd71784502e773c465db5eb94d1b8b69427ac22d22b934",
+      "fixture_hash": "236044749de80f8c877d401e95033fd52a5edc5fd55d2715cce6708448be1703",
+      "tags": [
+        "curve:line",
+        "edges:small",
+        "faces:tiny",
+        "path:cdt",
+        "path:grid",
+        "surface:plane"
+      ],
+      "workloads": [
+        "model",
+        "edges",
+        "faces",
+        "assembly",
+        "curve-eval",
+        "surface-eval",
+        "projection"
+      ],
+      "faces": 10,
+      "edges": 24,
+      "process_seconds": 0.7565405999775976
+    },
+    {
+      "id": "Cylinder-164ce2b6",
+      "input_hash": "0995ac6b9642365cd20b1bb6774d417c775e1aaf9d019d72efd0a969dade5b80",
+      "fixture_hash": "c413259c8a28a6a1c6da93e243980f1c8f5e8107d54c5fa946c1d73ee4279282",
+      "tags": [
+        "curve:circle",
+        "curve:line",
+        "edges:tiny",
+        "faces:tiny",
+        "path:cdt",
+        "path:grid",
+        "surface:cylinder",
+        "surface:plane"
+      ],
+      "workloads": [
+        "model",
+        "edges",
+        "faces",
+        "assembly",
+        "curve-eval",
+        "surface-eval",
+        "projection"
+      ],
+      "faces": 3,
+      "edges": 3,
+      "process_seconds": 0.8697493000072427
+    },
+    {
+      "id": "Sphere-0-3-2ecadf5f",
+      "input_hash": "5bb66289fe1dc45fff04507217f1f7072ef2f5b945271f789721b8d62d763f40",
+      "fixture_hash": "2198c8b2d86bcfd811b96ae989c45b0394558abc591df8c574ffd68c4bdc6903",
+      "tags": [
+        "curve:circle",
+        "edges:tiny",
+        "faces:tiny",
+        "path:cdt",
+        "surface:sphere"
+      ],
+      "workloads": [
+        "model",
+        "edges",
+        "faces",
+        "assembly",
+        "curve-eval",
+        "surface-eval",
+        "projection"
+      ],
+      "faces": 1,
+      "edges": 1,
+      "process_seconds": 0.7064485999871977
+    },
+    {
+      "id": "Torus-0-3-0-1-67f84a46",
+      "input_hash": "71a06de4541baa7066d0caaf65dda63b47c0c41f3c6082829562763a670b72f6",
+      "fixture_hash": "4436568573ea65e2cde94df5281f3c3827a4eacf79b064582dd8c6c228292402",
+      "tags": [
+        "curve:circle",
+        "edges:tiny",
+        "faces:tiny",
+        "path:grid",
+        "surface:torus"
+      ],
+      "workloads": [
+        "model",
+        "edges",
+        "faces",
+        "assembly",
+        "curve-eval",
+        "surface-eval",
+        "projection"
+      ],
+      "faces": 1,
+      "edges": 2,
+      "process_seconds": 1.2798837999871466
+    },
+    {
+      "id": "BSplinePatchSolid-0-3-b322652b",
+      "input_hash": "bb1d2e0f5e0bf4dc0550c57fa7e2d482702b1bb068e22089a0df1ce4ab09e70b",
+      "fixture_hash": "a16ea68b5637909280214fe37cf1a4e1c612fdd9074308a9d7503b8a5d3b20ca",
+      "tags": [
+        "curve:line",
+        "edges:tiny",
+        "faces:tiny",
+        "path:grid",
+        "spline-surface-degree-u:2",
+        "spline-surface-degree-v:2",
+        "spline-weights:uniform-or-absent",
+        "surface:bspline",
+        "surface:plane"
+      ],
+      "workloads": [
+        "model",
+        "projection-grids",
+        "edges",
+        "faces",
+        "assembly",
+        "curve-eval",
+        "surface-eval",
+        "projection"
+      ],
+      "faces": 6,
+      "edges": 12,
+      "process_seconds": 0.731785400013905
+    },
+    {
+      "id": "BsplineCrescentSheet-fa3fdecd",
+      "input_hash": "7b6764f67d3098a8a752e87e1cde5eda963f98bffacd784988084802e0158cd7",
+      "fixture_hash": "a467bc05c1738ec8a80cd2826cdceae027f6bc6d9b7b746f49ef8a60abcd86ec",
+      "tags": [
+        "curve:bspline",
+        "edges:tiny",
+        "faces:tiny",
+        "path:loop-not-simple",
+        "spline-curve-degree:2",
+        "spline-curve-degree:6",
+        "spline-surface-degree-u:1",
+        "spline-surface-degree-v:1",
+        "spline-weights:uniform-or-absent",
+        "surface:bspline"
+      ],
+      "workloads": [
+        "model",
+        "projection-grids",
+        "edges",
+        "faces",
+        "refinement",
+        "assembly",
+        "curve-eval",
+        "surface-eval",
+        "projection"
+      ],
+      "faces": 1,
+      "edges": 2,
+      "process_seconds": 0.8454551000031643
+    }
+  ],
+  "builds": [
+    {
+      "name": "shipping",
+      "flags": [
+        "--loops",
+        "--fuse"
+      ],
+      "status": "ready",
+      "generation_seconds": 181.68989650000003,
+      "build_seconds": 53.00131979997968,
+      "assembly_bytes": 7331840,
+      "closure_hash": "3c6dd8b4b00bbe8d444d762d239053144d7d866627fe27f8262c823bc05849eb",
+      "library_sha256": "44d3769a78ba43a0a5396833aa3dc3157e71e87cfb1c3a0b3b437f9362d4654f",
+      "worker_sha256": "fdeaa953ad6fa42bbf9964b35c7805ddd1fb8ba36e73b96c8f5149b1aa590a86"
+    },
+    {
+      "name": "full",
+      "flags": [
+        "--inline",
+        "--fuse",
+        "--optimize",
+        "--loops",
+        "--fuse-consumers",
+        "--exact-output"
+      ],
+      "status": "error",
+      "error": "Command '['dotnet', 'C:\\\\Users\\\\cdigg\\\\git\\\\plato\\\\.temp\\\\ob3\\\\cache\\\\w\\\\2f445bbef8e4\\\\cli\\\\Plato.CLI.dll', 'C:\\\\Users\\\\cdigg\\\\git\\\\plato\\\\.temp\\\\ob3\\\\cache\\\\b\\\\e5c0a39b1690\\\\inputs\\\\foundation', 'C:\\\\Users\\\\cdigg\\\\git\\\\plato\\\\.temp\\\\ob3\\\\cache\\\\b\\\\e5c0a39b1690\\\\inputs\\\\geometry', 'C:\\\\Users\\\\cdigg\\\\git\\\\plato\\\\.temp\\\\ob3\\\\cache\\\\b\\\\e5c0a39b1690\\\\inputs\\\\library', '--out=C:\\\\Users\\\\cdigg\\\\git\\\\plato\\\\.temp\\\\ob3\\\\cache\\\\b\\\\e5c0a39b1690\\\\emitted', '--profile=cpu64', '--inline', '--fuse', '--optimize', '--loops', '--fuse-consumers', '--exact-output']' timed out after 900.0 seconds"
+    },
+    {
+      "name": "unoptimized",
+      "flags": [],
+      "status": "ready",
+      "generation_seconds": 327.7861292999878,
+      "build_seconds": 131.5502084000036,
+      "assembly_bytes": 7718912,
+      "closure_hash": "a1560d4134226fabbcbac0739a6a288faa3e4862e81d1cdf54cfdcd0b8376d9a",
+      "library_sha256": "2424bb6e3a7a1e3264394c3a2c131856a74d4f47c8f468b1ade48a5c93c3b421",
+      "worker_sha256": "fdeaa953ad6fa42bbf9964b35c7805ddd1fb8ba36e73b96c8f5149b1aa590a86"
+    },
+    {
+      "name": "no-inline",
+      "flags": [
+        "--fuse",
+        "--optimize",
+        "--loops",
+        "--fuse-consumers",
+        "--exact-output"
+      ],
+      "status": "ready",
+      "generation_seconds": 247.31925440000487,
+      "build_seconds": 155.09786690000328,
+      "assembly_bytes": 7335936,
+      "closure_hash": "b392391bf0a0793ae19dc2e86d13981c7aa1be1f9855f91499848f1bf98d6dad",
+      "library_sha256": "1ea0f6519bb6c73390c0765b7b5234a6b0cb09a5bd908b4a93ba23cecf2a56fa",
+      "worker_sha256": "fdeaa953ad6fa42bbf9964b35c7805ddd1fb8ba36e73b96c8f5149b1aa590a86"
+    }
+  ],
+  "runs": [
+    {
+      "name": "quick-integration",
+      "parameters": {
+        "mode": "quick",
+        "seconds": 180.0,
+        "blocks": 5,
+        "target_ms": 20.0,
+        "warmup": 1,
+        "warmup_ms": 50.0,
+        "max_iterations": 100000,
+        "timeout": 120.0,
+        "seed": 1729,
+        "affinity": null
+      },
+      "tool_identity": {
+        "benchmark.py": "1c6edc946b6b143006699e1eb4ce75e99288adfcd9f51b2dedee65724031ecfb",
+        "analysis.py": "2d396bfb5db5ace633b9905a0e0a0088d5c0f8c1e6ca75acec33bd80e6c069dc",
+        "selection.py": "f32fa756e31c16c520c9be9bc49da78fc9f0b0d809ebb438fe68d65071777eb3",
+        "recipes.py": "4644f0fb7edabb6e81a81dd4dc238fc0be518af3d5e6c34786dad74c461eae6f",
+        "prepare.py": "c9311e5d32bb89d9a8f74298dece179a87f0eb2fc78199d6f111956aba79ffb8",
+        "fixture_reuse.py": "30e9044da9129dfa255d273c63273de06bb5aa33d548cdadc66a140292718ab3",
+        "fixture-probe/FixtureProbe.csproj": "3640c96c9399d9a5ae8016ce100ef656353a39de743492a103096cdd0f06ff60",
+        "fixture-probe/Program.cs": "4807550280fc70250ef3bfbb93e2a4ca9c12b8e3e774b92542e105318cf053f2"
+      },
+      "variants": [
+        {
+          "name": "shipping",
+          "flags": [
+            "--loops",
+            "--fuse"
+          ]
+        },
+        {
+          "name": "unoptimized",
+          "flags": []
+        },
+        {
+          "name": "no-inline",
+          "flags": [
+            "--fuse",
+            "--optimize",
+            "--loops",
+            "--fuse-consumers",
+            "--exact-output"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "id": "BsplineCrescentSheet-fa3fdecd",
+          "workloads": [
+            "model",
+            "projection-grids",
+            "edges",
+            "faces",
+            "refinement",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "BSplinePatchSolid-0-3-b322652b",
+          "workloads": [
+            "model",
+            "projection-grids",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "BlockWithThroughHole-2b69da61",
+          "workloads": [
+            "model",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "block-e69360b4",
+          "workloads": [
+            "model",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        }
+      ],
+      "holdout": [
+        "Sphere-0-3-2ecadf5f"
+      ],
+      "uncovered_dimensions": [
+        "tag:curve:circle",
+        "tag:edges:large",
+        "tag:faces:large",
+        "tag:spline-curve-degree:3",
+        "tag:surface:cylinder",
+        "tag:surface:sphere",
+        "tag:surface:torus"
+      ],
+      "raw_samples": "quick-integration.samples.jsonl.gz",
+      "raw_sha256": "77b03f40224bfe345c9d9980a91b58a67d3f1a158ec2e40c2e208457e33b0b54",
+      "gzip_sha256": "5d042d636ca583d5c0097166bf3d9cba29106dfbf8dfa2c6a9d0e2c11587a198",
+      "rows": 465,
+      "row_statuses": {
+        "ok": 465
+      },
+      "all_checks_pass": true,
+      "comparison_statuses": {
+        "inconclusive": 108,
+        "slower": 15,
+        "faster": 1
+      },
+      "correctness_anchor": "unoptimized",
+      "process_seconds": 151.42636019998463,
+      "fixture_validation": {
+        "checked": 12,
+        "cached": 0,
+        "seconds": 7.456319399992935,
+        "probe": {
+          "optimizer-fixture-probe.deps.json": "3609400c18ec5055f6a2e2b9288c684ca4149406c5297eaee26fa71d0f60e4f1",
+          "optimizer-fixture-probe.dll": "1fe663a76ebbb465c4915945e631b9e8ceda89023f24a0928fa1252a3185c7d9",
+          "optimizer-fixture-probe.exe": "504207071434d1c944411ec04e4b9083149796ffc5e1a78f71dce9483cdc531b",
+          "optimizer-fixture-probe.pdb": "ee9fd93de37dac6cd4512b30df06c77f5c361c537fbe821705b7fb9d8459ff1e",
+          "optimizer-fixture-probe.runtimeconfig.json": "28329cf08f6505e73806b17558b187c02f0c1c516fe47ebfb7a013d082aaa306"
+        }
+      },
+      "runtime": {
+        "framework": ".NET 8.0.30",
+        "gc_latency": "Interactive",
+        "process_architecture": "X64",
+        "processor_count": 22,
+        "server_gc": true,
+        "version": "8.0.30"
+      }
+    },
+    {
+      "name": "confirm-integration",
+      "parameters": {
+        "mode": "confirm",
+        "seconds": 180.0,
+        "blocks": 5,
+        "target_ms": 20.0,
+        "warmup": 1,
+        "warmup_ms": 50.0,
+        "max_iterations": 100000,
+        "timeout": 120.0,
+        "seed": 1729,
+        "affinity": null
+      },
+      "tool_identity": {
+        "benchmark.py": "1c6edc946b6b143006699e1eb4ce75e99288adfcd9f51b2dedee65724031ecfb",
+        "analysis.py": "2d396bfb5db5ace633b9905a0e0a0088d5c0f8c1e6ca75acec33bd80e6c069dc",
+        "selection.py": "f32fa756e31c16c520c9be9bc49da78fc9f0b0d809ebb438fe68d65071777eb3",
+        "recipes.py": "4644f0fb7edabb6e81a81dd4dc238fc0be518af3d5e6c34786dad74c461eae6f",
+        "prepare.py": "c9311e5d32bb89d9a8f74298dece179a87f0eb2fc78199d6f111956aba79ffb8",
+        "fixture_reuse.py": "30e9044da9129dfa255d273c63273de06bb5aa33d548cdadc66a140292718ab3",
+        "fixture-probe/FixtureProbe.csproj": "3640c96c9399d9a5ae8016ce100ef656353a39de743492a103096cdd0f06ff60",
+        "fixture-probe/Program.cs": "4807550280fc70250ef3bfbb93e2a4ca9c12b8e3e774b92542e105318cf053f2"
+      },
+      "variants": [
+        {
+          "name": "shipping",
+          "flags": [
+            "--loops",
+            "--fuse"
+          ]
+        },
+        {
+          "name": "unoptimized",
+          "flags": []
+        },
+        {
+          "name": "no-inline",
+          "flags": [
+            "--fuse",
+            "--optimize",
+            "--loops",
+            "--fuse-consumers",
+            "--exact-output"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "id": "BsplineCrescentSheet-fa3fdecd",
+          "workloads": [
+            "projection"
+          ]
+        }
+      ],
+      "holdout": [
+        "Sphere-0-3-2ecadf5f"
+      ],
+      "uncovered_dimensions": [
+        "tag:curve:circle",
+        "tag:curve:line",
+        "tag:curve:on-surface",
+        "tag:edges:large",
+        "tag:edges:small",
+        "tag:faces:large",
+        "tag:path:cdt",
+        "tag:path:grid",
+        "tag:spline-curve-degree:3",
+        "tag:spline-surface-degree-u:2",
+        "tag:spline-surface-degree-v:2",
+        "tag:surface:cylinder",
+        "tag:surface:plane",
+        "tag:surface:sphere",
+        "tag:surface:torus",
+        "workload:assembly",
+        "workload:curve-eval",
+        "workload:edges",
+        "workload:faces",
+        "workload:model",
+        "workload:projection-grids",
+        "workload:refinement",
+        "workload:surface-eval"
+      ],
+      "raw_samples": "confirm-integration.samples.jsonl.gz",
+      "raw_sha256": "adb4ad9d6d60da2a1322096adf2e0aaa304743bdcdcdd6931341098ed1bca72f",
+      "gzip_sha256": "27681d6f78b7b903367b29c66867b52fd07e56161ac2e92dce51f5e341d0fb13",
+      "rows": 15,
+      "row_statuses": {
+        "ok": 15
+      },
+      "all_checks_pass": true,
+      "comparison_statuses": {
+        "inconclusive": 2,
+        "slower": 2
+      },
+      "correctness_anchor": "unoptimized",
+      "process_seconds": 12.929060499969637,
+      "fixture_validation": {
+        "checked": 0,
+        "cached": 3,
+        "seconds": 0.06788690001121722,
+        "probe": {
+          "optimizer-fixture-probe.deps.json": "3609400c18ec5055f6a2e2b9288c684ca4149406c5297eaee26fa71d0f60e4f1",
+          "optimizer-fixture-probe.dll": "1fe663a76ebbb465c4915945e631b9e8ceda89023f24a0928fa1252a3185c7d9",
+          "optimizer-fixture-probe.exe": "504207071434d1c944411ec04e4b9083149796ffc5e1a78f71dce9483cdc531b",
+          "optimizer-fixture-probe.pdb": "ee9fd93de37dac6cd4512b30df06c77f5c361c537fbe821705b7fb9d8459ff1e",
+          "optimizer-fixture-probe.runtimeconfig.json": "28329cf08f6505e73806b17558b187c02f0c1c516fe47ebfb7a013d082aaa306"
+        }
+      },
+      "runtime": {
+        "framework": ".NET 8.0.30",
+        "gc_latency": "Interactive",
+        "process_architecture": "X64",
+        "processor_count": 22,
+        "server_gc": true,
+        "version": "8.0.30"
+      }
+    },
+    {
+      "name": "corpus-integration",
+      "parameters": {
+        "mode": "corpus",
+        "seconds": 600.0,
+        "blocks": 1,
+        "target_ms": 20.0,
+        "warmup": 1,
+        "warmup_ms": 50.0,
+        "max_iterations": 100000,
+        "timeout": 180.0,
+        "seed": 1729,
+        "affinity": null
+      },
+      "tool_identity": {
+        "benchmark.py": "1c6edc946b6b143006699e1eb4ce75e99288adfcd9f51b2dedee65724031ecfb",
+        "analysis.py": "2d396bfb5db5ace633b9905a0e0a0088d5c0f8c1e6ca75acec33bd80e6c069dc",
+        "selection.py": "f32fa756e31c16c520c9be9bc49da78fc9f0b0d809ebb438fe68d65071777eb3",
+        "recipes.py": "4644f0fb7edabb6e81a81dd4dc238fc0be518af3d5e6c34786dad74c461eae6f",
+        "prepare.py": "c9311e5d32bb89d9a8f74298dece179a87f0eb2fc78199d6f111956aba79ffb8",
+        "fixture_reuse.py": "30e9044da9129dfa255d273c63273de06bb5aa33d548cdadc66a140292718ab3",
+        "fixture-probe/FixtureProbe.csproj": "3640c96c9399d9a5ae8016ce100ef656353a39de743492a103096cdd0f06ff60",
+        "fixture-probe/Program.cs": "4807550280fc70250ef3bfbb93e2a4ca9c12b8e3e774b92542e105318cf053f2"
+      },
+      "variants": [
+        {
+          "name": "shipping",
+          "flags": [
+            "--loops",
+            "--fuse"
+          ]
+        },
+        {
+          "name": "unoptimized",
+          "flags": []
+        },
+        {
+          "name": "no-inline",
+          "flags": [
+            "--fuse",
+            "--optimize",
+            "--loops",
+            "--fuse-consumers",
+            "--exact-output"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "id": "BSplinePatchSolid-0-3-b322652b",
+          "workloads": [
+            "model",
+            "projection-grids",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "BlockWithThroughHole-2b69da61",
+          "workloads": [
+            "model",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "BsplineCrescentSheet-fa3fdecd",
+          "workloads": [
+            "model",
+            "projection-grids",
+            "edges",
+            "faces",
+            "refinement",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "Cylinder-164ce2b6",
+          "workloads": [
+            "model",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "JODY-W4-7d0e094a",
+          "workloads": [
+            "model",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "Sphere-0-3-2ecadf5f",
+          "workloads": [
+            "model",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "Torus-0-3-0-1-67f84a46",
+          "workloads": [
+            "model",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "UnitBox-60f33546",
+          "workloads": [
+            "model",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        },
+        {
+          "id": "block-e69360b4",
+          "workloads": [
+            "model",
+            "edges",
+            "faces",
+            "assembly",
+            "curve-eval",
+            "surface-eval",
+            "projection"
+          ]
+        }
+      ],
+      "holdout": [
+        "Sphere-0-3-2ecadf5f"
+      ],
+      "uncovered_dimensions": [],
+      "raw_samples": "corpus-integration.samples.jsonl.gz",
+      "raw_sha256": "ceccb6f810f4038b2772ce48b9ea7412d21471e9204293f130f1648783e709f7",
+      "gzip_sha256": "42939c63ad9e6d9685ac6fa307378247bd42bdd59a5d19f08b4f8da3fe9cf88e",
+      "rows": 198,
+      "row_statuses": {
+        "ok": 198
+      },
+      "all_checks_pass": true,
+      "comparison_statuses": {
+        "inconclusive": 264
+      },
+      "correctness_anchor": "unoptimized",
+      "process_seconds": 147.49953240004834,
+      "fixture_validation": {
+        "checked": 15,
+        "cached": 12,
+        "seconds": 45.38734260000638,
+        "probe": {
+          "optimizer-fixture-probe.deps.json": "3609400c18ec5055f6a2e2b9288c684ca4149406c5297eaee26fa71d0f60e4f1",
+          "optimizer-fixture-probe.dll": "1fe663a76ebbb465c4915945e631b9e8ceda89023f24a0928fa1252a3185c7d9",
+          "optimizer-fixture-probe.exe": "504207071434d1c944411ec04e4b9083149796ffc5e1a78f71dce9483cdc531b",
+          "optimizer-fixture-probe.pdb": "ee9fd93de37dac6cd4512b30df06c77f5c361c537fbe821705b7fb9d8459ff1e",
+          "optimizer-fixture-probe.runtimeconfig.json": "28329cf08f6505e73806b17558b187c02f0c1c516fe47ebfb7a013d082aaa306"
+        }
+      },
+      "runtime": {
+        "framework": ".NET 8.0.30",
+        "gc_latency": "Interactive",
+        "process_architecture": "X64",
+        "processor_count": 22,
+        "server_gc": true,
+        "version": "8.0.30"
+      }
+    }
+  ],
+  "prediction": {
+    "schema": 1,
+    "control": "shipping",
+    "status": "insufficient_evidence",
+    "observations": [
+      {
+        "variant": "no-inline",
+        "status": "insufficient_evidence",
+        "reason": "missing, invalid, unmeasured or inconclusive selected/holdout comparisons"
+      },
+      {
+        "variant": "unoptimized",
+        "status": "insufficient_evidence",
+        "reason": "missing, invalid, unmeasured or inconclusive selected/holdout comparisons"
+      }
+    ],
+    "selected_ids": [
+      "BSplinePatchSolid-0-3-b322652b",
+      "BlockWithThroughHole-2b69da61",
+      "BsplineCrescentSheet-fa3fdecd",
+      "block-e69360b4"
+    ],
+    "reserved_ids": [
+      "Sphere-0-3-2ecadf5f"
+    ],
+    "prediction_validated": false,
+    "limitation": "Descriptive comparison of supplied runs only; independent cases, equivalent inputs and measurement conditions must be verified by the caller."
+  }
+}
