@@ -14,12 +14,13 @@ type Number { }
 type Object { }
 type Function1<A, R> { }
 type InlineBox { Value: Integer; }
-library Operators {
+library Intrinsics {
     Add(a: Integer, b: Integer): Integer;
     Divide(a: Integer, b: Integer): Integer;
     Subtract(a: Integer, b: Integer): Integer;
     LessThan(a: Integer, b: Integer): Boolean;
     GreaterThan(a: Integer, b: Integer): Boolean;
+    Equals(a: Integer, b: Integer): Boolean;
     Tick(x: Integer): Integer;
     First(x: Integer): Integer;
     Second(x: Integer): Integer;
@@ -56,12 +57,15 @@ library StatementProbe {
         captured = captured + 1;
         return result;
     }
+    Choose(x: Integer, order: Integer): Integer { var local = order + 0; return local == 0 ? x.Twice : x.First; }
+    Simplified(x: Integer): Integer => x.Choose(0);
 }";
 
-    [TestCase(false, false)]
-    [TestCase(true, false)]
-    [TestCase(true, true)]
-    public static void ClonedLocalsAndUnusedActualsPreserveExecution(bool inline, bool lambdas)
+    [TestCase(false, false, false)]
+    [TestCase(true, false, false)]
+    [TestCase(true, true, false)]
+    [TestCase(true, true, true)]
+    public static void ClonedLocalsAndUnusedActualsPreserveExecution(bool inline, bool lambdas, bool simplify)
     {
         var dir = Path.Combine(Path.GetTempPath(), "plato-statement-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(dir);
@@ -72,7 +76,7 @@ library StatementProbe {
             Assert.That(compilation.SymbolFactory.Errors, Is.Empty,
                 string.Join("\n", compilation.SymbolFactory.Errors.Select(e => e.Message)));
             var writer = new CSharpWriter(compilation, "unused-statement")
-                { ExtensionStyle = true, InlineStatements = inline, EliminateKnownLambdas = lambdas };
+                { ExtensionStyle = true, InlineStatements = inline, EliminateKnownLambdas = lambdas, SimplifyInlineStatements = simplify };
             writer.WriteAll();
             var source = writer.Files["StatementProbe.g.cs"].ToString();
             if (inline)
@@ -120,6 +124,18 @@ public static Integer Second(this Integer x) => throw new System.InvalidOperatio
             Assert.That((int)(Integer)library.GetMethod("Unknown")!.Invoke(null,
                 new object[] { (Integer)4, (Func<Integer, Integer>)(n => (Integer)((int)n + 1)) })!, Is.EqualTo(5));
             Assert.That((int)(Integer)library.GetMethod("Mutable")!.Invoke(null, new object[] { (Integer)4 })!, Is.EqualTo(8));
+            Assert.That((int)(Integer)library.GetMethod("Simplified")!.Invoke(null, new object[] { (Integer)4 })!, Is.EqualTo(8));
+            if (simplify)
+            {
+                var simplified = TirInliner.InlineStatements(writer.TestGetGroundTir("Integer", "Simplified"), writer, "Integer", true, true);
+                Assert.That(simplified.AllNodes.OfType<Ara3D.Geometry.Compiler.Checking.TirConditional>(), Is.Empty);
+                Assert.That(simplified.AllNodes.OfType<Ara3D.Geometry.Compiler.Checking.TirCall>().Any(c => c.Name == "First"), Is.False);
+                writer.StatementNodeBudget = 1;
+                var input = writer.TestGetGroundTir("Integer", "Nested");
+                var bounded = TirInliner.InlineStatements(input, writer, "Integer", true, true);
+                Assert.That(bounded.AllNodes.Count(), Is.LessThanOrEqualTo(input.AllNodes.Count() + 1));
+                writer.StatementNodeBudget = 4096;
+            }
             if (lambdas)
             {
                 var mutable = TirInliner.InlineStatements(writer.TestGetGroundTir("Integer", "Mutable"), writer, "Integer", true);

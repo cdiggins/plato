@@ -18,9 +18,9 @@ public static partial class TirInliner
 
         public TirNode Finish(TirNode body)
         {
-            if (!_eliminateLambdas)
+            if (!_eliminateLambdas && !_simplify)
                 return body;
-            body = TirRewrite.Rewrite(body, n => n is TirLambda l && !IsEtaShaped(l)
+            body = TirRewrite.Rewrite(body, n => _eliminateLambdas && n is TirLambda l && !IsEtaShaped(l)
                 ? new TirLambda(l.Parameters, Rewrite(l.Body), l.Type, l.Origin) : n);
             for (var pass = 0; pass < MaxDepth; pass++)
             {
@@ -56,6 +56,7 @@ public static partial class TirInliner
 
         private void Remember(VariableDef def, TirNode value)
         {
+            RememberValue(def, value);
             if (!_assigned.Contains(def) && Known(value) is { } lambda)
             {
                 _known[def] = lambda;
@@ -70,13 +71,13 @@ public static partial class TirInliner
 
         private TirNode RemoveUnusedCallables(TirBlock block)
         {
-            if (!_eliminateLambdas)
+            if (!_eliminateLambdas && !_simplify)
                 return block;
             var used = block.Descendants().OfType<TirVariable>().Select(v => v.Def).ToHashSet();
             return new TirBlock(block.Statements.Where(n => n switch
             {
-                TirInlineBinding b => used.Contains(b.Def) || Known(b.Value) == null,
-                TirLet l => used.Contains(l.Def) || Known(l.Value) == null,
+                TirInlineBinding b => used.Contains(b.Def) || Known(b.Value) == null && !Discardable(b.Def, b.Value),
+                TirLet l => used.Contains(l.Def) || Known(l.Value) == null && !Discardable(l.Def, l.Value),
                 _ => true
             }).ToList(), block.Origin);
         }
@@ -142,7 +143,7 @@ public static partial class TirInliner
                 _ancestry.Clear();
                 _ancestry.UnionWith(creationAncestry);
             }
-            prefix.Add(new TirInlineRegion(result, Rewrite(clone)));
+            prefix.Add(new TirInlineRegion(result, Rewrite(clone), _ancestry.ToArray()));
             _ancestry.Clear();
             _ancestry.UnionWith(enclosingAncestry);
             _activeLambdas.Remove(lambda);

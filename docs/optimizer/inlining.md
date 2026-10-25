@@ -69,6 +69,18 @@ budget refusals and bodies already carrying generated regions that cannot yet be
 There is no shared specialization registry: callbacks whose consumers remain calls still
 allocate delegates. No storage or ABI changes are implied by callable elimination.
 
+`SimplifyInlineStatements` enables bounded repeated expansion, callable elimination, constant
+propagation, fusion and component rewriting. It also admits expression callees through the same
+eager bindings. Only unassigned bindings with identical types propagate; Integer comparisons and
+in-range addition, subtraction and multiplication fold only for the designated intrinsic
+library and exact scalar declarations. Floating arithmetic, overflow and arbitrary conversions
+do not fold. Constant guards select only their executed branch. Inline regions retain expansion
+ancestry across iterations, so recursion cannot restart on a later pass. Caller and module growth
+budgets count net nodes after simplification; a caller exceeding its allowance retains its input.
+A separate visit limit and pass cap bound compilation work. Budget properties on CSharpWriter
+and constants in StatementExpansion are the authority for limits. These are conservative bounds,
+not a profitability model, and no runtime or allocation advantage is established.
+
 [StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs)
 compiles emitted C# and checks cloned names, required evaluation of unused arguments, sibling
 fault order, return conversions, conditional guards, zero-trip loops, early exits and recursion.

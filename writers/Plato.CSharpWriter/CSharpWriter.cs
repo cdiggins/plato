@@ -187,7 +187,7 @@ namespace Ara3D.Geometry.CSharpWriter
         public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi)
         {
             if (InlineStatements)
-                tir = TirInliner.InlineStatements(tir, this, fi?.OwnerType?.Name, EliminateKnownLambdas);
+                tir = TirInliner.InlineStatements(tir, this, fi?.OwnerType?.Name, EliminateKnownLambdas, SimplifyInlineStatements, fi);
             if (TirDumpDir == null)
             {
                 tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
@@ -411,6 +411,10 @@ namespace Ara3D.Geometry.CSharpWriter
         public bool InlineCalls { get; set; }
         public bool InlineStatements { get; set; }
         public bool EliminateKnownLambdas { get; set; }
+        public bool SimplifyInlineStatements { get; set; }
+        public int StatementNodeBudget { get; set; } = 4096;
+        public int StatementModuleNodeBudget { get; set; } = 1000000;
+        internal int RemainingStatementGrowth = 1000000;
 
         // When true (--optimize-arrays, optimizer stage 2 increment 1), Map/MapRange call sites in
         // MATERIALIZATION positions (constructor / tuple arguments — results stored into structs —
@@ -723,6 +727,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // always started at 0, so file output is unchanged).
             SymbolRewriter.NextId = 0;
             TirInliner.NextRenameId = 0;
+            RemainingStatementGrowth = StatementModuleNodeBudget;
             TirFusion.NextId = 0;
             TirLoopLowerer.NextId = 0;
 

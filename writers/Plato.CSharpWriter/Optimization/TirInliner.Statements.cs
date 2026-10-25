@@ -8,13 +8,46 @@ namespace Ara3D.Geometry.CSharpWriter;
 public static partial class TirInliner
 {
     /// <summary>Experimental direct-call inlining at whole initializer and return positions.</summary>
-    public static TirFunction InlineStatements(TirFunction tir, ITirInlineHost host, string owner, bool eliminateLambdas = false)
+    public static TirFunction InlineStatements(TirFunction tir, ITirInlineHost host, string owner,
+        bool eliminateLambdas = false, bool simplify = false, CSharpFunctionInfo functionInfo = null)
     {
         if (tir?.Body == null)
             return tir;
-        var expansion = new StatementExpansion(tir, host, owner, eliminateLambdas);
-        var body = expansion.Rewrite(tir.Body);
-        body = expansion.Finish(body);
+        var expansion = new StatementExpansion(tir, host, owner, eliminateLambdas, simplify);
+        var body = tir.Body;
+        var initialSize = body.Descendants().Count();
+        var initialCalls = host.InlineReport?.StatementCallsInlined ?? 0;
+        var initialLambdas = host.InlineReport?.KnownLambdasInlined ?? 0;
+        var budget = host is CSharpWriter w ? System.Math.Min(w.StatementNodeBudget, w.RemainingStatementGrowth) : 4096;
+        for (var pass = 0; pass < (simplify ? 8 : 1); pass++)
+        {
+            var previous = body.ToString();
+            body = expansion.Finish(expansion.Rewrite(body));
+            if (simplify && host is CSharpWriter writer)
+            {
+                var current = new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,
+                    tir.ZonkedParameterTypes, tir.ZonkedReturnType);
+                current = TirFusion.Rewrite(current, writer);
+                current = TirComponentUnroller.UnrollFunction(current, functionInfo, writer);
+                body = current.Body;
+            }
+            var growth = System.Math.Max(0, body.Descendants().Count() - initialSize);
+            if (growth > budget)
+            {
+                if (host.InlineReport != null)
+                {
+                    host.InlineReport.StatementCallsInlined = initialCalls;
+                    host.InlineReport.KnownLambdasInlined = initialLambdas;
+                }
+                host.InlineReport?.Refuse(tir.Original?.Name, "statement expansion", InlineRefusal.ExpansionBudget);
+                return tir;
+            }
+            expansion.SetRemainingGrowth(budget - growth);
+            if (body.ToString() == previous)
+                break;
+        }
+        if (host is CSharpWriter module)
+            module.RemainingStatementGrowth -= System.Math.Max(0, body.Descendants().Count() - initialSize);
         return ReferenceEquals(body, tir.Body) ? tir : new TirFunction(tir.Original, tir.Parameters,
             tir.ReturnType, body, tir.ZonkedParameterTypes, tir.ZonkedReturnType);
     }
@@ -29,16 +62,22 @@ public static partial class TirInliner
         private readonly HashSet<string> _names;
         private readonly HashSet<FunctionDef> _ancestry = new();
         private int _remaining = MaxExpandedNodes;
+        private int _workRemaining = 100000;
         private int _next;
 
-        public StatementExpansion(TirFunction caller, ITirInlineHost host, string owner, bool eliminateLambdas)
+        public StatementExpansion(TirFunction caller, ITirInlineHost host, string owner, bool eliminateLambdas, bool simplify)
         {
             (_caller, _host, _owner) = (caller, host, owner);
             _names = CollectBoundNames(caller, caller.Body);
             _ancestry.Add(caller.Original);
             _eliminateLambdas = eliminateLambdas;
+            _simplify = simplify;
             RecordAssignments(caller.Body);
+            if (host is CSharpWriter writer)
+                _remaining = System.Math.Min(writer.StatementNodeBudget, writer.RemainingStatementGrowth);
         }
+
+        public void SetRemainingGrowth(int value) => _remaining = value;
 
         private VariableDef Fresh(TypeExpression type)
         {
@@ -66,6 +105,7 @@ public static partial class TirInliner
                 TirLet l => new TirLet(l.Def, Expand(l.Value, prefix), l.Type, l.Origin),
                 TirInlineBinding b => new TirInlineBinding(b.Def, Expand(b.Value, prefix)),
                 TirInlineExit e => new TirInlineExit(e.Result, Expand(e.Value, prefix)),
+                TirInlineRegion r => RewriteRegion(r),
                 TirAssign a when a.LValue is TirVariable => new TirAssign(a.LValue, Expand(a.RValue, prefix), a.Type, a.Origin),
                 TirBlock b => Rewrite(b),
                 TirIf i => new TirIf(Expand(i.Condition, prefix), RewriteScope(i.IfTrue), RewriteScope(i.IfFalse), i.Origin),
@@ -92,6 +132,9 @@ public static partial class TirInliner
 
         private TirNode Expand(TirNode node, List<TirNode> prefix)
         {
+            if (_workRemaining-- <= 0)
+                return node;
+            node = Simplify(node);
             if (_eliminateLambdas && node is TirInvoke invoke)
                 return ExpandInvoke(invoke, prefix);
             if (node is TirConditional conditional && Ground(node.Type))
@@ -99,12 +142,17 @@ public static partial class TirInliner
             if (node is TirCoerce coerce)
                 return coerce.WithChildren(new[] { Expand(coerce.Inner, prefix) });
             if (node is TirCall nested)
-                node = ExpandArguments(nested, prefix);
+                node = Simplify(ExpandArguments(nested, prefix));
             if (node is not TirCall call || call.Callee?.Body == null || call.Args.Count == 0)
                 return node;
             var receiver = TrustedTypeName(_caller, call.Args[0], _host, _owner);
             var callee = _host.TryGetGroundTirByTypeName(call.Callee, receiver);
-            if (callee?.Body is not TirBlock block || _ancestry.Contains(callee.Original)
+            if (callee?.Body == null)
+                return node;
+            var block = callee.Body as TirBlock;
+            if (block == null && _simplify)
+                block = new TirBlock(new[] { new TirReturn(callee.Body, callee.Body.Origin) }, callee.Body.Origin);
+            if (block == null || _ancestry.Contains(callee.Original)
                 || _ancestry.Count >= MaxDepth || !Eligible(call, callee, block))
                 return node;
             var size = block.Descendants().Count() + call.Args.Count * 2 + 2;
@@ -119,7 +167,7 @@ public static partial class TirInliner
             var resultDef = Fresh(callee.ZonkedReturnType ?? callee.ReturnType);
             var cloned = CloneBody(block, parameters, locals, resultDef);
             RecordAssignments(cloned);
-            prefix.Add(new TirInlineRegion(resultDef, Rewrite(cloned)));
+            prefix.Add(new TirInlineRegion(resultDef, Rewrite(cloned), _ancestry.ToArray()));
             if (_host.InlineReport != null) _host.InlineReport.StatementCallsInlined++;
             _ancestry.Remove(callee.Original);
             return new TirVariable(resultDef, resultDef.Type, call.Origin);
@@ -148,6 +196,8 @@ public static partial class TirInliner
         private TirNode ExpandConditional(TirConditional node, List<TirNode> prefix)
         {
             var condition = Expand(node.Condition, prefix);
+            if (_simplify && BooleanValue(condition) is { } selected)
+                return Expand(selected ? node.IfTrue : node.IfFalse, prefix);
             var yes = new List<TirNode>();
             var no = new List<TirNode>();
             var ifTrue = Expand(node.IfTrue, yes);
@@ -158,7 +208,7 @@ public static partial class TirInliner
             yes.Add(new TirInlineExit(result, ifTrue));
             no.Add(new TirInlineExit(result, ifFalse));
             var branch = new TirIf(condition, new TirBlock(yes, node.Origin), new TirBlock(no, node.Origin), node.Origin);
-            prefix.Add(new TirInlineRegion(result, new TirBlock(new[] { branch }, node.Origin)));
+            prefix.Add(new TirInlineRegion(result, new TirBlock(new[] { branch }, node.Origin), _ancestry.ToArray()));
             return new TirVariable(result, node.Type, node.Origin);
         }
 

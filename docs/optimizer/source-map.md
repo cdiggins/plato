@@ -181,31 +181,32 @@ links refer to this checkout's reviewed snapshot.
 
 ## TirInlineExit
 
-[`Ara3D.Geometry.CSharpWriter.TirInlineExit`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L24)
+[`Ara3D.Geometry.CSharpWriter.TirInlineExit`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L25)
 
-- [`Ara3D.Geometry.CSharpWriter.TirInlineExit.Children`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L33)
-- [`Ara3D.Geometry.CSharpWriter.TirInlineExit.Result`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L26)
-- [`Ara3D.Geometry.CSharpWriter.TirInlineExit.ToString()`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L36)
-- [`Ara3D.Geometry.CSharpWriter.TirInlineExit.Value`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L27)
-- [`Ara3D.Geometry.CSharpWriter.TirInlineExit.WithChildren(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L34)
+- [`Ara3D.Geometry.CSharpWriter.TirInlineExit.Children`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L34)
+- [`Ara3D.Geometry.CSharpWriter.TirInlineExit.Result`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L27)
+- [`Ara3D.Geometry.CSharpWriter.TirInlineExit.ToString()`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L37)
+- [`Ara3D.Geometry.CSharpWriter.TirInlineExit.Value`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L28)
+- [`Ara3D.Geometry.CSharpWriter.TirInlineExit.WithChildren(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L35)
 
 ## TirInlineRegion
 
 [`Ara3D.Geometry.CSharpWriter.TirInlineRegion`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L8)
 
+- [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.Ancestry`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L12)
 - [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.Body`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L11)
-- [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.Children`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L18)
-- [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.ExitLabel`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L12)
+- [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.Children`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L19)
+- [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.ExitLabel`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L13)
 - [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.Result`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L10)
-- [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.ToString()`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L21)
-- [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.WithChildren(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L19)
+- [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.ToString()`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L22)
+- [`Ara3D.Geometry.CSharpWriter.TirInlineRegion.WithChildren(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs#L20)
 
 ## TirInliner
 
 [`Ara3D.Geometry.CSharpWriter.TirInliner`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.Callables.cs#L8)
 
 - [`Ara3D.Geometry.CSharpWriter.TirInliner.Inline(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.ITirInlineHost, string, out int)`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.cs#L51)
-- [`Ara3D.Geometry.CSharpWriter.TirInliner.InlineStatements(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.ITirInlineHost, string, bool)`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs#L11)
+- [`Ara3D.Geometry.CSharpWriter.TirInliner.InlineStatements(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.ITirInlineHost, string, bool, bool, Ara3D.Geometry.CSharpWriter.CSharpFunctionInfo)`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs#L11)
 - [`Ara3D.Geometry.CSharpWriter.TirInliner.NextRenameId`](../../writers/Plato.CSharpWriter/Optimization/TirInliner.cs#L49)
 
 ## TirLiteralUnroller

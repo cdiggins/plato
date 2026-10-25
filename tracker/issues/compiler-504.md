@@ -55,7 +55,7 @@ It is a proposal, not an instruction to execute the earlier design plan.
 - [x] Agree the experiment scope and shared prerequisites with compiler-483/485/486/487.
 - [x] Statement-body calls, including selected branching/looping kernels, inline with preserved evaluation and conversions in executable C# tests.
 - [ ] Known lambdas disappear through locals/parameters and inside nested callback scopes; remaining callables have explicit reasons.
-- [ ] Iterative simplification exposes deeper expansion with bounded growth and correct recursion handling.
+- [x] Iterative simplification exposes deeper expansion with bounded growth and correct recursion handling.
 - [ ] Ablation measurements on equivalent BRep meshes distinguish enabling effects, allocations and runtime performance; C# only.
 
 ## Implementation scope and recovery
@@ -98,3 +98,11 @@ have report categories. Tests execute three policies and require removal of invo
 lambdas from statement-bodied and nested-capture fixtures; mutable captures remain explicit.
 Recorded build and 18 focused tests pass. Shared callback variants and production eligibility
 are not yet established; keep the callable acceptance box open until that coverage is assessed.
+
+Fourth milestone adds SimplifyInlineStatements: repeated expansion, known-callable elimination,
+conservative Integer/Boolean simplification, fusion and component rewriting. Regions preserve
+callee ancestry between passes; callable expansion uses creation ancestry. Caller and module
+budgets use net growth after simplification, with separate pass and visit limits. Over-budget
+callers retain their original bodies. Four executable policy arms and a tight-budget check pass;
+19 focused tests pass in the latest run. Next: expose policies for reproducible production
+generation, assess remaining callback coverage, lower loops in preserved regions, then measure.

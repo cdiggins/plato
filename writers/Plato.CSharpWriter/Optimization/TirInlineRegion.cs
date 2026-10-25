@@ -9,15 +9,16 @@ public sealed class TirInlineRegion : TirNode
 {
     public VariableDef Result { get; }
     public TirNode Body { get; }
+    public IReadOnlyList<FunctionDef> Ancestry { get; }
     public string ExitLabel => Result.Name + "_exit";
 
-    public TirInlineRegion(VariableDef result, TirNode body)
+    public TirInlineRegion(VariableDef result, TirNode body, IReadOnlyList<FunctionDef> ancestry = null)
         : base(result.Type, body.Origin)
-        => (Result, Body) = (result, body);
+        => (Result, Body, Ancestry) = (result, body, ancestry);
 
     public override IEnumerable<TirNode> Children => new[] { Body };
     public override TirNode WithChildren(IReadOnlyList<TirNode> children)
-        => new TirInlineRegion(Result, children[0]);
+        => new TirInlineRegion(Result, children[0], Ancestry);
     public override string ToString() => $"region {Result.Name}: {Body}";
 }
 
