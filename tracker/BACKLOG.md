@@ -86,6 +86,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [repo-494](issues/repo-494.md) | Give Greenhouse audits explicit source scope and useful ranking | idea | p2 | M | low | repo | idea |  |
 | [compiler-469](issues/compiler-469.md) | Retire inactive parser and symbol XML writer sketches | debt | p3 | S | low | compiler | idea |  |
 | [compiler-487](issues/compiler-487.md) | Evaluate concrete storage and callback specialization | feature | p3 | L | med | compiler | idea |  |
+| [compiler-501](issues/compiler-501.md) | Refresh optimizer evidence for concrete type writer | debt | p3 | S | low | compiler | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
 | [plato-334](issues/plato-334.md) | Query/solve result types share no interface: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |
