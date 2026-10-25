@@ -28,7 +28,7 @@ Evidence and regression source are committed in plato-brep21f03c4e under staging
 - [x] A configured deadline bounds compiled invocation, conversion and comparison without running the shared interpreter on an abandoned worker.
 - [x] Timed-out workers cannot publish late mismatches, and the next law can execute with the deadline cleared.
 - [x] Cold and cached witness requests, genuine mismatches, fault classification and unsupported conversion retain their intended behavior.
-- [ ] Focused tests pass against the changed assembly; the committed production compiler and pinned plato-brep consumer are verified separately.
+- [x] Focused tests pass against the changed assembly; the committed production compiler and pinned plato-brep consumer are verified separately.
 
 ## Ownership
 
@@ -60,3 +60,27 @@ The accepted native NUnit selector requires exactly one named case per child.
 The final acceptance box remains open: build the actual committed production
 compiler, verify its consumers, then move the plato-brep pin. The private assembly
 is not a substitute for that final committed-build evidence.
+
+## Pinned consumer integration verified
+
+The actual committed fc4b5 production Release compiler and its consumer are
+verified separately from the private unit assembly. Plato-brep 0d316ed1 moves
+both compiler pin locations and promotes the regenerated output. TKT-1025 closes
+in that same scoped commit. Evidence is committed under
+staging/differential-witness-cap/fix in plato-brep.
+
+Production03 has zero errors; its warnings match the prior normal build. All
+25 strict consumer commands passed with the original law/witness limits. Two
+fresh normal regenerations match exactly and emit no degraded code. The original
+Git-archive comparison stopped on LF versus CRLF and remains failed; a separate
+strict proof binds prior raw output to committed Git blobs and proves every fresh
+raw body unchanged after the compiler provenance header. No other normalization
+is accepted. All 54 mesher, 33 decoder and one AP214 host tests passed without
+skips; fresh host builds have zero warnings/errors. Actual runtime and input
+closures remain unchanged.
+
+Host receipt: 796ea54ea33b840e427d372a99af6b1c80fefc25403380525fafe5fe19472458.
+Supplemental regeneration receipt: 3a5e3cc442ae14f46bbe3ae097f5faaa35f2e3ebceef5d8f1bae97b225837bea.
+Consumer receipt: 529be8ee1734f38bbdc89e49a55847962097779999a09fcb6cf9a70cc3707784.
+The previous corpus evidence is carried forward by exact generated/runtime body
+equality and fresh host gates; no fresh corpus or full law sweep is claimed.
