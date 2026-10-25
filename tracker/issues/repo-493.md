@@ -20,7 +20,7 @@ The Greenhouse audit (repo-492) confirmed duplicated implementation-selection po
 ## Done means
 
 - [x] Share ScoreFunction and ChooseBestFunction across the five writers, preserving intrinsic precedence, concrete precedence, interface distance, tie counts and first-candidate ordering; retain thin compatibility wrappers if public consumers require them.
-- [ ] Share source-to-CSharpWriter setup, wrapper construction/invocation and the small runtime prelude in the constraint emission fixtures, reusing CSharpTestCompilation; preserve separate type-bound and function-bound assertions and negative controls.
+- [x] Share source-to-CSharpWriter setup, wrapper construction/invocation and the small runtime prelude in the constraint emission fixtures, reusing CSharpTestCompilation; preserve separate type-bound and function-bound assertions and negative controls.
 - [ ] Parameterize the three array-receiver emission cases with named cases and preserve all expected signatures and stub assertions; measure before claiming a test-speed benefit.
 - [ ] Verify focused tests and representative output for affected backends, then record the required integration gates.
 
@@ -37,3 +37,7 @@ Shared compiler FunctionSelection owns the unchanged selection algorithm. All fi
 Verification: recorded CLI build passed (17.5 s), final test build passed (10.4 s), selection plus Rust/TypeScript regressions passed (9 tests, 28 s), final isolated selection tests passed (5 tests), native writer suite passed (8 tests, 34 s; MSVC and nvcc exercised). All 27 demo output files across six dialects match the baseline after normalizing only creation-time banners (4.78 s comparison). Evidence: .temp/repo-493 and .temp/csharp-build-logs/repo-493-*.log. Sandbox restore initially failed without compiler diagnostics; the recorded build succeeded with external dependency access.
 
 Root PROGRESS.md belongs to another mission; checkpoints are recorded here. Pre-existing status-report changes are backed up under .temp/repo-493 and will be preserved.
+
+## Milestone 2
+
+GeneratedCSharpFixture shares source emission, resolution/file assertions and the minimal runtime prelude. GeneratedValueReflection shares constructor/method wrapper conversion and unwrapping; sum-type fixtures reuse only unwrapping because their prelude differs. CSharpTestCompilation remains the sole generated-C# compiler. No fixture caches or test cases were removed. All 17 existing test bodies are text-identical, and all 17 pass (5 s) after a recorded build (12.4 s). Evidence: .temp/repo-493/helpers.trx.

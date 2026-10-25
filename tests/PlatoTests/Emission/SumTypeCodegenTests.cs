@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Ara3D.Geometry.CSharpWriter;
 using NUnit.Framework;
+using static PlatoTests.GeneratedValueReflection;
 using PlatoCompilation = Ara3D.Geometry.Compiler.Compilation;
 
 namespace PlatoTests
@@ -64,15 +65,6 @@ namespace Ara3D.Geometry
     public struct Vector2 { }
     public struct Angle { }
 }";
-
-        /// <summary>Reads the payload out of a generated scalar WRAPPER (Boolean/Integer/Number/...)
-        /// returned through reflection, so assertions compare against plain BCL values. Needed since
-        /// scalar erasure was retired 2026-08-01: these members used to return bool/int directly.</summary>
-        private static object Unwrap(object v)
-        {
-            var f = v?.GetType().GetField("Value");
-            return f == null ? v : f.GetValue(v);
-        }
 
         // --- struct-shape assertions ---------------------------------------------
 

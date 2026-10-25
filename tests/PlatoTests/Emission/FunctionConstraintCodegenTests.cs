@@ -1,9 +1,10 @@
-﻿// Checks C# emission for constrained function parameters.
+// Checks C# emission for constrained function parameters.
 using System;
-using System.IO;
 using System.Linq;
 using Ara3D.Geometry.CSharpWriter;
 using NUnit.Framework;
+using static PlatoTests.GeneratedCSharpFixture;
+using static PlatoTests.GeneratedValueReflection;
 
 namespace PlatoTests
 {
@@ -74,34 +75,7 @@ library Mixers
 ";
 
         private static CSharpWriter Emit(string source = null)
-        {
-            var dir = Path.Combine(Path.GetTempPath(), "plato393c-" + Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(dir);
-            try
-            {
-                File.WriteAllText(Path.Combine(dir, "corpus.plato"), source ?? Source);
-                var comp = CheckerTestSupport.CompileFolder(dir);
-                CollectionAssert.IsEmpty(comp.SymbolFactory.Errors.Select(e => e.ToString()).ToArray(),
-                    "the fixture must resolve cleanly or every assertion below would be vacuous");
-                var w = new CSharpWriter(comp, "unused-function-bounds-codegen")
-                {
-                    ExtensionStyle = true,
-                };
-                w.WriteAll();
-                return w;
-            }
-            finally
-            {
-                try { Directory.Delete(dir, true); } catch { /* best effort */ }
-            }
-        }
-
-        private static string File_(CSharpWriter w, string name)
-        {
-            Assert.IsTrue(w.Files.ContainsKey(name),
-                $"expected an emitted file '{name}'; got: {string.Join(", ", w.Files.Keys)}");
-            return w.Files[name].ToString();
-        }
+            => GeneratedCSharpFixture.Emit(source ?? Source, "plato393c-", "unused-function-bounds-codegen");
 
         private static string LineContaining(string src, string needle)
         {
@@ -147,58 +121,6 @@ library Mixers
         }
 
         // --- the strong gate: the emitted C# compiles and runs ---------------------
-
-        // Enough runtime for the emitted files to stand alone: the namespace the header `using`
-        // names, and the hash helper the struct scaffolding calls.
-        private const string Prelude = @"
-namespace Ara3D.Collections { }
-namespace Ara3D.Geometry
-{
-    public static class Intrinsics
-    {
-        public static int CombineHashCodes(params object[] xs)
-        {
-            var h = 17;
-            foreach (var x in xs) h = h * 31 + (x?.GetHashCode() ?? 0);
-            return h;
-        }
-    }
-}";
-
-        /// <summary>Builds a generated struct from plain BCL values, wrapping each argument in the
-        /// scalar WRAPPER its constructor actually declares (Number/Integer/...). Since scalar
-        /// erasure was retired 2026-08-01 these constructors take Number, not float, and
-        /// Activator.CreateInstance does not apply the implicit conversion.</summary>
-        private static object New(System.Type t, params object[] args)
-        {
-            var ctor = t.GetConstructors().First(c => c.GetParameters().Length == args.Length);
-            var ps = ctor.GetParameters();
-            var converted = args
-                .Select((a, i) => ps[i].ParameterType.IsInstanceOfType(a)
-                    ? a
-                    : Activator.CreateInstance(ps[i].ParameterType, a))
-                .ToArray();
-            return ctor.Invoke(converted);
-        }
-        /// <summary>Invokes a generated method, wrapping plain BCL arguments in the scalar WRAPPER
-        /// the parameter declares, and unwrapping a wrapper result back to its payload.</summary>
-        private static object Call(System.Reflection.MethodInfo m, object receiver, params object[] args)
-        {
-            var ps = m.GetParameters();
-            var converted = args
-                .Select((a, i) => ps[i].ParameterType.IsInstanceOfType(a)
-                    ? a
-                    : Activator.CreateInstance(ps[i].ParameterType, a))
-                .ToArray();
-            return Unwrap(m.Invoke(receiver, converted));
-        }
-
-        /// <summary>Reads the payload out of a generated scalar wrapper returned via reflection.</summary>
-        private static object Unwrap(object v)
-        {
-            var f = v?.GetType().GetField("Value");
-            return f == null ? v : f.GetValue(v);
-        }
 
         [Test]
         public static void TheEmittedBoundedFunctionCompilesAndRuns()
