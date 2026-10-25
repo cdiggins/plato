@@ -22,5 +22,7 @@ handbook's source evidence behind the concrete writer implementation.
 
 ## Done means
 
-- [ ] Refresh the affected Greenhouse source evidence following tools/optimizer-docs/MAINTENANCE.md.
-- [ ] Review the affected prose and pass the documentation freshness check.
+- [x] Refresh the affected Greenhouse source evidence following tools/optimizer-docs/MAINTENANCE.md.
+- [x] Review the affected prose and pass the documentation freshness check.
+
+Refreshed and reviewed together with compiler-499; freshness and maintenance tests pass.

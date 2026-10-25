@@ -188,7 +188,7 @@ public static class TirLoopLowerer
             case TirArray arr:
                 return new TirArray(arr.Elements.Select(a => Lower(a, hoists, writer)).ToList(), arr.Type, arr.Origin);
             case TirConstructorCall cc:
-                return new TirConstructorCall(cc.TypeName, cc.Args.Select(a => Lower(a, hoists, writer)).ToList());
+                return new TirConstructorCall(cc.TypeName, cc.Args.Select(a => Lower(a, hoists, writer)).ToList(), cc.Type);
             case TirBooleanChain bc:
                 return new TirBooleanChain(bc.Op, bc.Terms.Select(t => Lower(t, hoists, writer)).ToList());
             case TirComponentAccess ca:

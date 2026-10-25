@@ -269,9 +269,21 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         var def = type?.Def;
         var typedIndex = def != null && type.Name != "Integer" && !def.IsSum
             && def.Fields.Count == 1 && def.Fields[0].Type?.Name == "Integer";
-        if (typedIndex) Write("((Integer)");
-        WriteNode(index);
-        if (typedIndex) Write(")");
+        if (typedIndex)
+            WriteScalarCast("Integer", index, NeedsReceiverParentheses(index));
+        else
+            WriteNode(index);
+    }
+
+    private static bool NeedsReceiverParentheses(TirNode node)
+        => TirRewrite.StripCoerce(node) is TirConditional or TirLambda or TirAssign or TirBooleanChain;
+
+    private void WritePostfixReceiver(TirNode node)
+    {
+        var wrap = NeedsReceiverParentheses(node);
+        if (wrap) Write("(");
+        WriteNode(node);
+        if (wrap) Write(")");
     }
 
     /// <summary>The C# name a constructor call writes after <c>new</c>. In extension-style library
@@ -787,7 +799,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             && TirRewrite.StripCoerce(args[0])?.Type?.Name == "Array")
         {
             Write("((Integer)");
-            WriteNode(args[0]);
+            WritePostfixReceiver(args[0]);
             Write(".Count)");
             return;
         }
@@ -802,13 +814,13 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 && _tw.Writer.GetExtensionPlanByTypeName(recvType) != null
                 && !CSharpWriter.ScalarPrimitives.ContainsKey(recvType))
             {
-                WriteNode(args[0]);
+                WritePostfixReceiver(args[0]);
                 Write(".At(");
                 WriteArgs(args.Skip(1));
                 Write(")");
                 return;
             }
-            WriteNode(args[0]);
+            WritePostfixReceiver(args[0]);
             Write("[");
             var firstIndex = true;
             foreach (var index in args.Skip(1))
@@ -842,16 +854,9 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             // (`Maybe<Integer>.Just(n)`, TKT-443).
             Write(ConstructedTypeName(sum.Name, call.Type));
         }
-        else if (recvNode is TirConditional || recvNode is TirLambda || recvNode is TirAssign
-            || recvNode is TirBooleanChain)
-        {
-            Write("(");
-            WriteNode(args[0]);
-            Write(")");
-        }
         else
         {
-            WriteNode(args[0]);
+            WritePostfixReceiver(args[0]);
         }
         Write(".");
         Write(name);

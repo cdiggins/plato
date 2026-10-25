@@ -38,6 +38,10 @@ callback append directly to the result list. Exact array/element types and raw s
 required. Other arms retain evaluation and copying in their selected branch. This does not make
 general nested-loop lowering available.
 
+Rebuilding constructor markers while lowering their arguments preserves their resolved
+type. Losing it changes receiver-aware field emission after inlining. Array count and
+index access use the same parenthesized receiver rendering as ordinary member calls.
+
 ## Usage, tests and effectiveness
 
 Enable `--loops`; use `--dump-tir` to distinguish a lowered marker from a surviving runtime call.

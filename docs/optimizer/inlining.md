@@ -32,6 +32,15 @@ Skipping evaluation of an unused argument or moving it into a branch is distinct
 work. The [sequencing investigation](../../tracker/issues/compiler-483.md) covers these questions;
 the current guard set should not be read as proof of unrestricted eager equivalence.
 
+Constructor recovery retains the callee's resolved return type on the new constructor
+node. Later passes must preserve it: the emitter uses the receiver type to distinguish
+fields from methods. Inlined conditional expressions also require parentheses when
+used as array receivers or beneath a typed-index cast; otherwise C# changes their meaning.
+
+[InlinedExpressionEmissionTests](../../tests/PlatoTests/Emission/InlinedExpressionEmissionTests.cs)
+compiles and executes conditional array receivers, typed indices and constructor-field
+reads with inlining disabled, enabled, and followed by loop lowering.
+
 ## Usage, tests and effectiveness
 
 Enable `--inline`; use `--inline-report` to see accepted totals and categorized refusals from

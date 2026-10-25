@@ -304,7 +304,8 @@ public static class TirInliner
         if (tupleCtorRewrite && inlined is TirCall rootTuple
             && rootTuple.Name != null && rootTuple.Name.StartsWith("Tuple"))
         {
-            inlined = new TirConstructorCall(returnTypeName, rootTuple.Args);
+            inlined = new TirConstructorCall(returnTypeName, rootTuple.Args,
+                calleeTir.ZonkedReturnType ?? calleeTir.ReturnType);
             if (report != null) report.TupleConstructorRewrites++;
         }
 

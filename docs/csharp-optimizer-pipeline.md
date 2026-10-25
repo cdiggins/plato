@@ -92,6 +92,10 @@ writer prints the conditional as C# `a ? b : false`, which already short-circuit
 writers call `TirShortCircuit.TryMatch` to print `&&` and `||`. Fusion can rewrite expressions inside
 the conditional without hoisting them; the loop lowerer does not descend into it (sections 4a and 7).
 
+Constructor markers created by inlining retain the resolved result type through loop
+lowering. Emission groups conditional receivers for array count/index access and groups
+a conditional operand beneath a typed-index cast, preserving the TIR expression boundary.
+
 ## 4. Pass 1: `TirInliner` (`--inline`)
 
 File `writers/Plato.CSharpWriter/Optimization/TirInliner.cs`; refusal reasons in `InlineReport.cs`; host interface

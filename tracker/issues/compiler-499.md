@@ -41,6 +41,20 @@ raise diagnostic ceilings or treat partial experiment builds as a production fix
 
 ## Done means
 
-- [ ] Reproduce each diagnostic family with a focused regression and repair its cause.
+- [x] Reproduce each diagnostic family with a focused regression and repair its cause.
 - [ ] Full B-rep generation with `--inline --loops --fuse` compiles without file fallback.
 - [ ] Mesh digests, face diagnostics, and contract checks match the non-inlined baseline.
+
+
+## Repair milestone
+
+Constructor recovery and loop lowering now preserve resolved result types. The C#
+emitter groups conditional array receivers and conditional typed-index cast operands.
+The focused fixture reproduces the underlying field-call and conditional-precedence
+failures: baseline passed before repair, both inline modes failed; all three now
+compile and execute correctly. Nine focused emission/inliner tests pass. Full B-rep
+compilation and meshing equivalence remain outstanding. Greenhouse evidence and prose
+review are refreshed; the documentation check and six maintenance tests pass.
+
+The requested rerun also measures component expansion combined with fusion and loops,
+with pass-stage evidence to test which downstream transformations inlining enables.
