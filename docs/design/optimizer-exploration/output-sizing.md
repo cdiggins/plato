@@ -1,8 +1,8 @@
 # Exact destination allocation for fixed-output FlatMap
 
-Exploration under [compiler-509](../../../tracker/issues/compiler-509.md), governed by
-[contract O1](wave.md). The bounded experiment has been executed; production integration
-is a separate, unimplemented step. Measurements live in the
+Work under [compiler-509](../../../tracker/issues/compiler-509.md), governed by
+[the coordinated wave](wave.md). The standalone experiment and real-TIR preflight led to
+the bounded implementation described here. Measurements and verification status live in the
 [dated experiment report](../../reports/optimizer-output-sizing-2026-10-25.md).
 
 ## Opportunity and source evidence
@@ -15,19 +15,30 @@ describes conditional singleton elimination, which should not be claimed as new 
 
 For a callback returning an exact-typed raw array literal of invariant width, the final
 length is source length multiplied by literal width. Allocate that final destination once
-and write consecutive elements into it. The initial version should retain callback arrays;
+and write consecutive elements into it. The initial version retains callback arrays;
 this isolates result storage savings from a later literal-element append optimization.
 The C# boundary remains `IReadOnlyList<T>` and production scalar wrappers remain intact.
 
 ## Eligibility and legality
 
-Match only an already lowered, trusted intrinsic FlatMap with a materialized, immutable,
-compiler-owned source whose Count and indexing have their expected semantics. Require an
+`TirExactOutput.TryGetWidth` matches only an already lowered, trusted intrinsic FlatMap.
+`TirLoweredLoop.SourceFunction` retains resolved callee identity across rebuilding;
+`TirIntrinsicIdentity` checks reference membership in the compilation's intrinsic library.
+The default-off `--exact-output` switch requires `--loops`; library callers use
+`CSharpWriter.ExactOutputAllocation` together with loop lowering. Require an
 expression-bodied lambda whose body is a raw `TirArray`, with exact concrete element and
 result types. Width comes from `TirArray.Elements.Count`, never from evaluating a callback
-or inspecting a sample result. Refuse coercions, unknown callbacks, branches with varying
-width, arbitrary host lists, and fused producer chains in the first slice. Do not use a
+or inspecting a sample result. Refuse wrapped callback/array shapes, unknown callbacks,
+branches with varying width and fused producer chains. Element conversions remain in their
+original literal context. `MaximumCallbackNodes` bounds duplicated callback code because
+the exact and fallback branches both render the body. Do not use a
 name-only operation match or strip conversions to make a pattern fit.
+
+The emitter selects exact storage at runtime only when the already evaluated source is a
+concrete element array. Arbitrary host lists retain the grow-list path. The array guard
+proves stable length, not immutability: callbacks may mutate later source values, and
+the same ordered reads observe those mutations. No ownership proof is needed because
+the transformation neither stores into nor reuses the source storage.
 
 Preserve source evaluation and callback binding order. Evaluate each callback once per
 source element, including when the proved width is zero; preserve literal element order,
@@ -63,17 +74,18 @@ depends on that concrete type. Claims of end-to-end speedup require real generat
 1. Completed bounded step: run the [standalone experiment](../../../tools/experiments/optimizer-exploration/output-sizing/run.py).
    It extracts the actual runtime FlatMap body, compares exact storage while keeping callback
    arrays, and exercises order, faults, empty cases, unsafe width assumptions and overflow fallback.
-2. Inspect dumped TIR from a real fixed-output Plato fixture and representative geometry
-   workloads. Record whether raw arrays survive inlining/coercion and whether operation
-   provenance and source ownership are sufficient. Stop integration if these proofs are absent.
-3. After shared-file ownership transfer, implement a focused literal-width matcher and
-   exact destination branch in the loop emitter; keep fallback and runtime unchanged.
-   Add optimized/unoptimized compiled tests with actual wrapper types, conversions,
-   direct and refused shapes, and same-name non-intrinsic calls.
+2. Completed real-TIR preflight: [probe.py](../../../tools/experiments/optimizer-exploration/output-sizing/probe.py)
+   compiles a Plato fixture against foundation and inspects raw and lowered bodies using
+   existing compiled assemblies. Literal arrays and canonical provenance survive capture
+   rewriting. Representative geometry coverage remains a future measurement.
+3. Implemented bounded matcher and emitter in `Optimization/TirExactOutput.cs` and
+   `TirCSharpBodyWriter.ExactOutput.cs`. `ExactOutputTests` compile flag-off/on generated
+   code against the actual wrapper runtime, cover ordering and fallback, and measure
+   allocation. The dated report records which checks passed, rather than this design.
 4. Compare exact arrays, reserved List capacity and the existing grow-list emitter in
    warmed paired generated-code runs. Check allocation trends and realistic callback cost;
    retain the implementation only if eligible workload benefit warrants code complexity.
 5. Follow [optimizer stewardship](../../../tools/optimizer-docs/MAINTENANCE.md), refresh
    affected source evidence and guides, run freshness and relevant optimizer regressions,
-   then supervisor-owned final gates. Production integration remains unstarted until this
-   execution plan receives its own owned implementation chunk.
+   then supervisor-owned final gates. Broadening to equal-width branches, fused producers
+   or callback-array elimination requires separate proof and tests.

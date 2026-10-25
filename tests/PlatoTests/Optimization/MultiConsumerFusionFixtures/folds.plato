@@ -1,0 +1,92 @@
+library MultiConsumerProbe
+{
+    Pair(n: Integer, value: Number, weight: Number, first: Boolean): Number
+    {
+        var samples = n.MapRange(i => value);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var squares = samples.Reduce(1.0, (acc, x) => acc + x * x * weight);
+        return first ? sum : squares;
+    }
+
+    Literal(value: Number, first: Boolean): Number
+    {
+        var samples = [value, 1.0, value];
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var product = samples.Reduce(1.0, (acc, x) => acc * x);
+        return first ? sum : product;
+    }
+
+    Producer(n: Integer, f: Function1<Integer, Number>, first: Boolean): Number
+    {
+        var samples = n.MapRange(f);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var squares = samples.Reduce(1.0, (acc, x) => acc + x * x);
+        return first ? sum : squares;
+    }
+
+    Foreign(samples: Array<Number>): Number
+    {
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var squares = samples.Reduce(0.0, (acc, x) => acc + x * x);
+        return sum + squares;
+    }
+
+    DependentSeed(n: Integer, value: Number): Number
+    {
+        var samples = n.MapRange(i => value);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var squares = samples.Reduce(sum, (acc, x) => acc + x * x);
+        return sum + squares;
+    }
+
+    DependentCallback(n: Integer, value: Number): Number
+    {
+        var samples = n.MapRange(i => value);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var squares = samples.Reduce(0.0, (acc, x) => acc + x * sum);
+        return sum + squares;
+    }
+
+    UnknownCallback(n: Integer, value: Number, f: Function1<Number, Number>): Number
+    {
+        var samples = n.MapRange(i => value);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var squares = samples.Reduce(0.0, (acc, x) => acc + f(x));
+        return sum + squares;
+    }
+
+    Interrupted(n: Integer, value: Number): Number
+    {
+        var samples = n.MapRange(i => value);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var barrier = value + value;
+        var squares = samples.Reduce(0.0, (acc, x) => acc + x * x);
+        return sum + squares + barrier;
+    }
+
+    MutableCapture(n: Integer, value: Number): Number
+    {
+        var mutable = value;
+        var samples = n.MapRange(i => value);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + mutable);
+        var squares = samples.Reduce(0.0, (acc, x) => acc + x * x);
+        mutable = value + value;
+        return sum + squares + mutable;
+    }
+
+    UnusedLambdaName(n: Integer, value: Number): Number
+    {
+        var samples = n.MapRange(_mc0_source => value);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var squares = samples.Reduce(0.0, (acc, x) => acc + x * x);
+        return sum + squares;
+    }
+
+    Names(n: Integer, _mc0_index: Number): Number
+    {
+        var samples = n.MapRange(i => _mc0_index);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var squares = samples.Reduce(0.0, (acc, x) => acc + x * x);
+        return sum + squares;
+    }
+}

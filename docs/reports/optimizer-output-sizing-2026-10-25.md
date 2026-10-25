@@ -68,6 +68,62 @@ Experiment source SHA-256:
 Runner SHA-256:
 `fbf32bcf9ffebae7e79257c10ab99a0a630b9e6cbaad09a5da415280e3ad69c7`.
 
+## Production follow-up: real TIR and bounded implementation
+
+After the user authorized production work, `probe.py` built a private harness against
+the existing CLI assemblies and compiled the actual foundation plus a Plato fixture.
+Its recorded build passed with no errors/warnings in 8.42 seconds. Both parameter-source
+and literal-source `FlatMap(x => [value(x), value(x)])` calls retained canonical
+`Intrinsics.FlatMap` identity, a raw `TirLambda`/`TirArray` callback, exact `Number`
+element/result types, and no fused source stages. Capture rewriting bound the captured
+delegates before the loop without obscuring the raw array. A varying-width conditional
+remained `TirConditional` and is outside the matcher. Evidence and assembly fingerprints
+are under `.temp/optimizer-exploration/output-sizing/tir-probe/`; rerun with:
+
+```powershell
+python tools/experiments/optimizer-exploration/output-sizing/probe.py
+```
+
+The production matcher and emitter are now written under the supervisor's P2 ownership
+contract. The runtime array guard establishes stable source length even when callbacks
+mutate its values; non-array sources preserve the existing cached-count traversal.
+The new flag is default-off. Generated-name reservation includes unused lambda parameters
+and inline declarations. Callback node count is bounded to limit code duplicated between
+the exact and fallback branches.
+
+The supervisor's coordinated Release build and focused run verified the production tests.
+All 17 `ExactOutputTests` cases passed. They cover actual wrapper code with flags off/on,
+both new flags enabled, loop lowering disabled, captured provenance, literal fault order,
+null faults, source mutation, custom-list Count/index traces, zero-width array output,
+identity/type/coercion/size refusals, name collisions and warmed allocation comparison.
+
+| Recorded gate | Result | Seconds |
+| --- | --- | ---: |
+| C# writer build | Pass | 4.46 |
+| Test assembly build | Pass | 5.83 |
+| Exact-output cases in focused combined run | All passed | Combined run: 27.16 |
+
+The combined run also included multi-consumer tests with separate harness failures;
+its duration is not an isolated exact-output test timing and this report does not mark
+that entire run green. The supervisor also verified successful CLI generation with both
+new options enabled, rejection when required loop lowering is absent, and rejection for
+non-C# output.
+
+`AllocationDropsOnRealGeneratedWrapperCode` used 4,096 `Number` wrappers and a literal
+callback width of two, retained both per-callback arrays, and compiled off/on variants
+with Roslyn Release optimization and the default language version. It warmed each variant
+32 times, then measured eight invocations using thread-local allocation counters, checking
+each output's length and final value. Input and callback construction were outside the
+measured region. The generated baseline allocated **295,200 bytes/call**, compared with
+**229,400 bytes/call** with exact allocation: **22.29% less allocation**. This replaces the
+earlier handwritten long-payload prototype as the evidence for the implemented pass;
+different callback width and runtime types make the two percentages incomparable.
+
+No production execution-time speedup was measured. The huge custom-list test validates
+fallback fault order; it does not allocate a real array beyond `Array.MaxLength`. Profile
+gpu32, realistic geometry timings and the reserved-List alternative are not measured here.
+Repository-wide gates and publication remain the supervisor's integration responsibility.
+
 ## Supervisor review
 
 The overflow-fallback check initially lacked an assertion that its expected callback fault actually occurred. The supervisor added that assertion and reran the recorded build and full executable successfully. Allocation results remained consistent; timing remained noisy. The source fingerprint above describes the agent measurement before this test-only correction. No candidate kernel behavior changed.

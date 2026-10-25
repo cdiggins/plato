@@ -181,47 +181,54 @@ namespace Ara3D.Geometry.CSharpWriter
         public InlineReport InlineReport { get; set; }
 
         /// <summary>The ONE place the pass order is written. Applies the optimizer TIR passes in order (inline → fusion/literal-unroll →
-        /// component-unroll → array-materialize → loop-lower; see docs/csharp-optimizer-pipeline.md) and returns the transformed function. Shared by every
+        /// component-unroll → consumer-fusion → array-materialize → loop-lower; see docs/csharp-optimizer-pipeline.md) and returns the transformed function. Shared by every
         /// body-emit site so the pass pipeline is defined once. With <see cref="TirDumpDir"/> set,
         /// records each phase that changed the tree (see the field comment).</summary>
         public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi)
         {
-            if (TirDumpDir == null)
+            StringBuilder sb = null;
+            string prev = null;
+            if (TirDumpDir != null)
             {
-                if (InlineStatements)
-                    tir = TirInliner.InlineStatements(tir, this, fi?.OwnerType?.Name, EliminateKnownLambdas, SimplifyInlineStatements, fi);
-                tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
-                tir = TirFusion.Rewrite(tir, this);
-                tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
-                tir = TirArrayMaterializer.Rewrite(tir, this);
-                tir = TirLoopLowerer.Rewrite(tir, this);
-                return tir;
+                var key = SanitizeFileName(fi?.OwnerType?.Name ?? "Static");
+                if (!_tirDumps.TryGetValue(key, out sb))
+                    _tirDumps[key] = sb = new StringBuilder();
+                var ps = fi?.ParameterTypes ?? (IReadOnlyList<string>)System.Array.Empty<string>();
+                sb.AppendLine($"======== {fi?.ReturnType} {fi?.Name}({string.Join(", ", ps)}) ========");
+                prev = tir?.Body?.ToString() ?? "<null>";
+                sb.AppendLine("-- input (elaborated / monomorphized) --");
+                sb.AppendLine(prev);
             }
-
-            var key = SanitizeFileName(fi?.OwnerType?.Name ?? "Static");
-            if (!_tirDumps.TryGetValue(key, out var sb))
-                _tirDumps[key] = sb = new StringBuilder();
-            var ps = fi?.ParameterTypes ?? (IReadOnlyList<string>)System.Array.Empty<string>();
-            sb.AppendLine($"======== {fi?.ReturnType} {fi?.Name}({string.Join(", ", ps)}) ========");
-            var prev = tir?.Body?.ToString() ?? "<null>";
-            sb.AppendLine("-- input (elaborated / monomorphized) --");
-            sb.AppendLine(prev);
-            void Phase(string name, TirFunction t)
+            void Phase(string name)
             {
-                var s = t?.Body?.ToString() ?? "<null>";
-                if (s != prev) { sb.AppendLine($"-- after {name} --"); sb.AppendLine(s); prev = s; }
+                if (sb == null)
+                    return;
+                var value = tir?.Body?.ToString() ?? "<null>";
+                if (value != prev)
+                {
+                    sb.AppendLine($"-- after {name} --");
+                    sb.AppendLine(value);
+                    prev = value;
+                }
             }
             if (InlineStatements)
             {
                 tir = TirInliner.InlineStatements(tir, this, fi?.OwnerType?.Name, EliminateKnownLambdas, SimplifyInlineStatements, fi);
-                Phase("experimental statement / callable expansion", tir);
+                Phase("experimental statement / callable expansion");
             }
-            tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _); Phase("inline (layer 7)", tir);
-            tir = TirFusion.Rewrite(tir, this);                       Phase("fuse / combinator fusion (layer 7b)", tir);
-            tir = TirComponentUnroller.UnrollFunction(tir, fi, this);  Phase("optimize / component-unroll (layer 8)", tir);
-            tir = TirArrayMaterializer.Rewrite(tir, this);            Phase("optimize-arrays / materialize (layer 9)", tir);
-            tir = TirLoopLowerer.Rewrite(tir, this);                  Phase("loops / lower (layer 10)", tir);
-            sb.AppendLine();
+            tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
+            Phase("inline (layer 7)");
+            tir = TirFusion.Rewrite(tir, this);
+            Phase("fuse / combinator fusion (layer 7b)");
+            tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
+            Phase("optimize / component-unroll (layer 8)");
+            tir = TirMultiConsumerFusion.Rewrite(tir, this);
+            Phase("fuse-consumers / independent reductions");
+            tir = TirArrayMaterializer.Rewrite(tir, this);
+            Phase("optimize-arrays / materialize (layer 9)");
+            tir = TirLoopLowerer.Rewrite(tir, this);
+            Phase("loops / lower (layer 10)");
+            sb?.AppendLine();
             return tir;
         }
 
@@ -406,6 +413,8 @@ namespace Ara3D.Geometry.CSharpWriter
         // code (see TirFusion, TirLiteralUnroller). Pure rewrites: the output computes the same
         // values with fewer arrays. Usually combined with --loops.
         public bool FuseCombinators;
+        public bool FuseConsumers { get; set; }
+        public bool ExactOutputAllocation { get; set; }
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at

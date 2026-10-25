@@ -1,8 +1,10 @@
 # Fuse independent reductions over the same materialized source
 
-Exploration and ordered implementation plan for [compiler-506](../../../tracker/issues/compiler-506.md),
-under [contract O1](wave.md). This proposes a compiler transformation; the executable prototype is
-handwritten candidate C# using the real scalar runtime. It does not implement a Plato pass.
+Design and implementation plan for [compiler-506](../../../tracker/issues/compiler-506.md).
+The production pass is [TirMultiConsumerFusion](../../../writers/Plato.CSharpWriter/Optimization/TirMultiConsumerFusion.cs),
+enabled independently with `--fuse-consumers --loops`. It is disabled by default.
+The original executable prototype is handwritten candidate C# using the real scalar runtime;
+its measurements do not establish the performance of generated Plato programs.
 Measurements belong in the [dated report](../../reports/optimizer-multi-consumer-2026-10-25.md).
 
 ## Opportunity and existing boundaries
@@ -29,6 +31,31 @@ be inspected before accepting it. Reusing its repeated tangent/weight computatio
 common-subexpression optimization and must not be credited to traversal fusion.
 
 ## Initial acceptance contract
+
+The implemented slice is narrower than the general opportunity: a top-level block must contain
+an array-producing local immediately followed by the two reduction locals. The array producer
+must be a raw array literal or the canonical resolved intrinsic `MapRange`, with exact primitive
+`Array<Number>` type. `MapRange` materializes its result eagerly before either reduction begins;
+its callback may fail, and that failure remains before both folds. The source is never passed
+to another call between its construction and the reductions. No nested scopes are searched.
+
+Both folds must resolve to the canonical `Intrinsics.Reduce`, with literal `Number` seeds and
+raw lambdas whose closed signature is `Function2<Number, Number, Number>`. The total-expression
+classifier accepts only Number literals, unassigned function/lambda parameters, and canonical
+Number `Add` or `Multiply` calls. It deliberately rejects all local captures, executable or
+identity coercions, unknown calls, delegates, indexing and other arithmetic. Declaration names
+alone never establish intrinsic identity. Primitive type definitions and resolved intrinsic
+declarations must belong to the current compilation.
+
+The pass runs before array materialization and ordinary loop lowering. Its
+[marker](../../../writers/Plato.CSharpWriter/Optimization/TirMultiReduction.cs) retains the original
+local definitions and exposes both calls to generic child rewrites, including lambda capture
+rewriting. The [emitter](../../../writers/Plato.CSharpWriter/TirCSharpBodyWriter.MultiConsumer.cs)
+initializes both accumulators, loads each element once, and evaluates the original update trees
+in order. Generated names reserve all local, parameter, lambda and inline-region declarations.
+
+The rules below describe the broader exploration contract; they do not expand the implemented
+subset without new proofs and execution tests.
 
 Limit the first production slice to adjacent local bindings of independent full reductions in
 the same block, over exactly the same resolved source binding. Require a previously materialized

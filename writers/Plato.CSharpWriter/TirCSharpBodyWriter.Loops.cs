@@ -209,6 +209,8 @@ public partial class TirCSharpBodyWriter
                 break;
             case "FlatMap":
             {
+                if (TryWriteExactOutput(ll, srcNames[0], elem, count0))
+                    break;
                 // One growable list for the whole chain; each element's list is appended in place
                 // (the intrinsic FlatMap does the same over a materialized receiver).
                 var list = $"_l{k}";

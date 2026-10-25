@@ -19,6 +19,6 @@
   ],
   "project": "writers/Plato.CSharpWriter/Plato.CSharpWriter.csproj",
   "symbol_directory": "writers/Plato.CSharpWriter/Optimization/",
-  "required_types": ["TirInliner", "TirFusion", "TirLiteralUnroller", "TirComponentUnroller", "TirArrayMaterializer", "TirLoopLowerer", "TirRewrite", "ITirInlineHost", "InlineReport", "ComponentUnroller"],
-  "pages": ["README.md", "inlining.md", "fusion.md", "literal-expansion.md", "component-expansion.md", "materialization.md", "loops.md", "rewrite-infrastructure.md", "evaluation.md", "references.md"]
+  "required_types": ["TirInliner", "TirFusion", "TirLiteralUnroller", "TirComponentUnroller", "TirArrayMaterializer", "TirLoopLowerer", "TirRewrite", "ITirInlineHost", "InlineReport", "ComponentUnroller", "TirMultiConsumerFusion", "TirMultiReduction", "TirExactOutput", "TirIntrinsicIdentity", "LoopOptimizationOptions"],
+  "pages": ["README.md", "inlining.md", "fusion.md", "consumer-fusion.md", "exact-output.md", "literal-expansion.md", "component-expansion.md", "materialization.md", "loops.md", "rewrite-infrastructure.md", "evaluation.md", "references.md"]
 }

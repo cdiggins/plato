@@ -1,0 +1,11 @@
+library ExactOutputProbe
+{
+    ExactPairs(xs: Array<Number>, value: Function1<Number, Number>): Array<Number>
+        => xs.FlatMap(x => [value(x), value(x)]);
+
+    ExactVariable(xs: Array<Number>, keep: Function1<Number, Boolean>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [x] : [x, x]);
+
+    ExactDelegate(xs: Array<Number>, callback: Function1<Number, Array<Number>>): Array<Number>
+        => xs.FlatMap(callback);
+}

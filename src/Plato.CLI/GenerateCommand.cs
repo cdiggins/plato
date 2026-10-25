@@ -44,6 +44,14 @@ internal static class GenerateCommand
 
         var loops = args.Contains("--loops");
 
+        var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"));
+        if ((loopOptimizations.FuseConsumers || loopOptimizations.ExactOutputAllocation)
+            && (!loops || typeScript || rust || glsl || cpp || cuda))
+        {
+            Console.Error.WriteLine("--fuse-consumers and --exact-output require C# generation with --loops.");
+            return 1;
+        }
+
         var fuse = args.Contains("--fuse");
 
         var tirDumpDir = args.Where(a => a.StartsWith("--dump-tir="))
@@ -161,7 +169,7 @@ internal static class GenerateCommand
         else
         {
             logger.Log("Writing C# Files");
-            var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract, profile, fuse, statementInlining);
+            var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract, profile, fuse, statementInlining, loopOptimizations);
             logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
             if (output.DegradedBodies.Count > 0)
             {

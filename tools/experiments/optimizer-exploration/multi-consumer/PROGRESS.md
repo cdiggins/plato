@@ -1,8 +1,9 @@
-compiler-506: isolated multiple-consumer experiment; owner multi_consumer.
-Read optimizer handbook, BREP plan, runtime Reduce, lowerer/emitter; shared compiler unchanged.
-Prototype compares real Number wrapper folds, preserves per-accumulator order.
-Counterexamples cover callback fault ordering, stateful host source, reassociation.
-Verified: recorded net8 Release build; 209 bitwise cases; three unsafe counterexamples.
-Warmed paired kernels show traversal benefit, zero allocation savings; see dated report.
-Design/review/ordered plan written. Next: read-only TIR candidate census; production unimplemented.
-Supervisor owns tracker, integration and commits.
+compiler-506 production track, P2: implemented and focused verification passed.
+Supervisor writer/test builds passed using existing dependencies; unrelated parakeet graph broken.
+Actual canonical foundation TIR and emitted two-loop Pair inspected; no arithmetic reassociation.
+Focused MultiConsumerFusionTests: 13 passed, 64.79s; production/consumer-focused.log.
+Tests cover both fold bit patterns, refusals, faults, collisions, marker rebuilding and flags.
+Combined new flags plus expression/statement inlining compile and execute at Release/default C#.
+Generated scalar instance bodies adapted to extension receivers for embedded runtime test assembly.
+Root owns broader gates, explicit generated timing, stewardship, tracker and commits.
+Production/test source remains frozen; no local build or test processes running.

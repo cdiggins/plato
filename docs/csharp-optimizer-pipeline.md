@@ -27,18 +27,35 @@ Plato source
   -> 1. TirInliner.Inline                                --inline
   -> 1b. TirFusion.Rewrite (uses TirLiteralUnroller)      --fuse
   -> 2. TirComponentUnroller.UnrollFunction              --optimize
+  -> 2b. TirMultiConsumerFusion.Rewrite                  --loops --fuse-consumers
   -> 3. TirArrayMaterializer.Rewrite                     --optimize-arrays
   -> 4. TirLoopLowerer.Rewrite                           --loops
   -> TirCSharpBodyWriter                                 always on; prints the final tree as C#
+       TirExactOutput specialization                    --loops --exact-output
 ```
 
 Each pass returns its input unchanged when its flag is off or nothing matched, so any subset of these
-flags is valid and with no flag the output is the unoptimized C#. The flags are parsed in
+baseline flags is valid and with no flag the output is the unoptimized C#. The new
+`--fuse-consumers` and `--exact-output` generation flags require C# output and `--loops`;
+the CLI rejects incompatible combinations. Both are independently disabled by default.
+The flags are parsed in
 `src/Plato.CLI/Program.cs` and stored on `CSharpWriter` as `InlineCalls`, `FuseCombinators`, `Optimize`,
 `OptimizeArrays` and `LowerLoops`. The compiled law backend in `src/Plato.Laws/CSharpProgram.cs` accepts
 both `LowerLoops` and `FuseCombinators`; `plato run --backend=csharp --loops --fuse` enables them.
 `--fuse` can rewrite expressions without `--loops`. Conversely, `--loops` consumes supported
 `Map`/`MapRange` producer chains even without `--fuse` (section 7).
+
+`LoopOptimizationOptions` carries the additional default-off options through `ToCSharp`
+and the compiled-law `CSharpProgram.Build` API. These two options are generation CLI flags;
+they are not currently exposed by `plato run`. `FuseConsumers` combines only contiguous
+independent Number folds over a completed owned local array, before materialization changes
+producer spelling. See [consumer fusion](optimizer/consumer-fusion.md) for the exact legality
+boundary. `ExactOutputAllocation` specializes canonical FlatMap loop emission when a raw
+literal callback proves output width, guarded by a runtime array source and capacity check.
+See [exact allocation](optimizer/exact-output.md) for callback preservation and fallback.
+
+Dumping and ordinary emission share the same scheduling sequence; diagnostics observe
+each phase without running a separate copy of the pipeline.
 
 The experimental writer property `InlineStatements` adds direct statement-body call expansion
 before this pipeline. Its typed local marker, `TirInlineBinding`, preserves argument and result

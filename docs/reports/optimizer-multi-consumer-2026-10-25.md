@@ -72,3 +72,49 @@ totality and source-provenance checks before implementation. Do not release arbi
 fusion on the strength of this favorable scalar kernel. The first executable experiment is done;
 actual compiler recognition, emission, compiled Plato fixtures, optimizer stewardship and
 whole-application validation are outstanding.
+
+## Production continuation
+
+The actual canonical foundation TIR for the `Pair` fixture was inspected using the existing CLI.
+It contains an eager `MapRange` local followed by raw `Reduce` calls with literal seeds and
+resolved Number `Add`/`Multiply` operator calls. Evidence is in
+`.temp/optimizer-exploration/multi-consumer/tir-dump/Integer.tir.txt`. The dump completed;
+the same exploratory CLI invocation later failed while writing `docs.html` because its private
+output directory had not been created. That invocation is evidence of TIR shape, not a passing
+generation gate.
+
+The continuation implements an independent, default-off `--fuse-consumers` pass requiring
+`--loops`. Recognition requires consecutive producer/fold/fold locals, canonical intrinsic and
+primitive identities, and a deliberately small total Number-expression subset. The producer
+stays before the folded work. The emitter combines the traversals without changing either
+accumulator's arithmetic tree or index order. No runtime API or additional package is needed.
+
+Critical review found a generated-name collision risk from unused lambda parameters. Name
+reservation now scans declarations, including unused lambda parameters and inline-region locals,
+and the executable fixture includes that case. Review also confirmed that raw ParameterDef
+annotations are not the authoritative types for inferred lambdas; recognition uses the closed
+lambda signature and typed parameter-reference nodes instead.
+
+Actual compiled Plato tests passed for off/on bitwise results, producer execution order and
+faults, array literals, dependent and unknown callbacks, foreign sources, mutable captures,
+coercions, forged intrinsic targets, capture-compatible marker rebuilding, independent flags,
+and the dump path. The supervisor's focused run passed all 13 tests in 64.79 seconds; evidence is
+`.temp/optimizer-exploration/production/consumer-focused.log` and its adjacent results directory.
+The combined-flags test also compiles and executes with both new optimizations, expression and
+statement inlining, and producer-consumer fusion enabled. Generated-loop assertions verify that
+the materialized producer remains while the separate reductions become a shared traversal.
+
+The test harness compiles generated library methods at Release optimization and the default C#
+language version against the real runtime embedded in the test assembly. The writer also emits
+native primitive forwarding adapters; the harness selects the authoritative library methods.
+Because an existing runtime assembly cannot be extended with partial struct declarations, the
+generated Number `Add` and `Multiply` instance methods are adapted to test-local extension
+methods with Roslyn. Their generated arithmetic bodies are preserved; only the receiver and
+static signature change. This exercises the emitted fold code and real scalar operators, but
+is not a claim that the entire generated foundation library compiled as one fresh assembly.
+
+The supervisor's whole-graph build was constrained by unrelated parakeet sibling SDK project
+references; the successful writer/test build used existing dependency binaries. Broader gates
+and the non-gating generated-code timing test remain supervisor-owned. No new production speedup
+is claimed at this checkpoint. The original handwritten experiment above remains separate
+evidence. The real Clothoid caller is outside the arithmetic subset and remains refused.

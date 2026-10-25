@@ -25,12 +25,13 @@ public class TirLoweredLoop : TirNode
     public bool IndexSource { get; set; }
     public string TempName { get; }
     public int Id { get; }
+    public FunctionDef SourceFunction { get; }
     // The RESULT element type, taken from the producing function's own type (the call's zonked
     // return type can be looser than the produced elements).
     public TypeExpression ElemType { get; set; }
 
     public TirLoweredLoop(string kind, IReadOnlyList<TirNode> sources, TirNode fn, TirNode seed,
-        TirNode includeFirst, string tempName, int id, TypeExpression type, Symbol origin)
+        TirNode includeFirst, string tempName, int id, TypeExpression type, Symbol origin, FunctionDef sourceFunction = null)
         : base(type, origin)
     {
         Kind = kind;
@@ -40,6 +41,7 @@ public class TirLoweredLoop : TirNode
         IncludeFirst = includeFirst;
         TempName = tempName;
         Id = id;
+        SourceFunction = sourceFunction;
     }
 
     public override IEnumerable<TirNode> Children
@@ -50,7 +52,7 @@ public class TirLoweredLoop : TirNode
         var i = Sources.Count;
         TirNode Next(TirNode original) => original == null ? null : children[i++];
         var rebuilt = new TirLoweredLoop(Kind, children.Take(Sources.Count).ToList(),
-            Next(Fn), Next(Seed), Next(IncludeFirst), TempName, Id, Type, Origin)
+            Next(Fn), Next(Seed), Next(IncludeFirst), TempName, Id, Type, Origin, SourceFunction)
             { ElemType = ElemType, IndexSource = IndexSource };
         rebuilt.SourceStages = children.Skip(i).ToList();
         return rebuilt;
@@ -101,103 +103,7 @@ public static partial class TirLoopLowerer
     {
         if (!writer.LowerLoops || tir?.Body == null)
             return tir;
-        if (writer.InlineStatements)
-            return RewriteScoped(tir);
-        var body = tir.Body;
-        TirNode newBody;
-        if (body is TirBlock block)
-        {
-            var stmts = new List<TirNode>();
-            var changed = false;
-            foreach (var s in block.Statements)
-            {
-                var hoists = new List<TirNode>();
-                var s2 = LowerStatement(s, hoists, writer);
-                changed |= hoists.Count > 0 || !ReferenceEquals(s2, s);
-                stmts.AddRange(hoists);
-                stmts.Add(s2);
-            }
-            if (!changed)
-                return tir;
-            newBody = new TirBlock(stmts, block.Origin);
-        }
-        else
-        {
-            var hoists = new List<TirNode>();
-            var e = Lower(body, hoists, writer);
-            if (hoists.Count == 0)
-                return tir;
-            var stmts = new List<TirNode>(hoists) { new TirReturn(e, body.Origin) };
-            newBody = new TirBlock(stmts, body.Origin);
-        }
-        return new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, newBody,
-            tir.ZonkedParameterTypes, tir.ZonkedReturnType);
-    }
-
-    private static TirNode LowerStatement(TirNode s, List<TirNode> hoists, CSharpWriter writer)
-    {
-        switch (s)
-        {
-            case TirReturn r:
-                return new TirReturn(Lower(r.Value, hoists, writer), r.Origin);
-            case TirLet let:
-                return new TirLet(let.Def, Lower(let.Value, hoists, writer), let.Type, let.Origin);
-            case TirBlock or TirIf or TirLoop:
-                return s; // control flow: left intact (v1)
-            default:
-                return Lower(s, hoists, writer);
-        }
-    }
-
-    private static TirNode Lower(TirNode n, List<TirNode> hoists, CSharpWriter writer)
-    {
-        switch (n)
-        {
-            case null:
-                return null;
-            case TirLambda:
-            case TirConditional:
-                return n; // evaluation-count boundaries: not descended
-            case TirCall c:
-            {
-                // A chain consumer's receiver (TKT-506) is lowered through LowerChainReceiver, which
-                // leaves the Map and MapRange producers in place for TryLower to walk inside this
-                // loop; everything beneath them is lowered as usual.
-                var chain = IsChainConsumer(c);
-                var args = c.Args.Select((a, idx) => chain && idx == 0
-                    ? LowerChainReceiver(a, hoists, writer)
-                    : Lower(a, hoists, writer)).ToList();
-                var call = new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, c.ReturnType,
-                    args, c.Type, c.Origin, c.Name);
-                var lowered = TryLower(call, hoists);
-                if (lowered == null && chain)
-                {
-                    // Not lowerable as a whole: lower the producers on their own, as before.
-                    args[0] = Lower(args[0], hoists, writer);
-                    call = new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, c.ReturnType,
-                        args, c.Type, c.Origin, c.Name);
-                    lowered = TryLower(call, hoists);
-                }
-                return lowered ?? call;
-            }
-            case TirCoerce co:
-                return new TirCoerce(Lower(co.Inner, hoists, writer), co.FromType, co.ToType, co.ConversionFn, co.Origin);
-            case TirInvoke inv:
-                return new TirInvoke(Lower(inv.Target, hoists, writer),
-                    inv.Args.Select(a => Lower(a, hoists, writer)).ToList(), inv.Type, inv.Origin);
-            case TirNew nw:
-                return new TirNew(nw.NewType, nw.Args.Select(a => Lower(a, hoists, writer)).ToList(), nw.Type, nw.Origin);
-            case TirArray arr:
-                return new TirArray(arr.Elements.Select(a => Lower(a, hoists, writer)).ToList(), arr.Type, arr.Origin);
-            case TirConstructorCall cc:
-                return new TirConstructorCall(cc.TypeName, cc.Args.Select(a => Lower(a, hoists, writer)).ToList(), cc.Type);
-            case TirBooleanChain bc:
-                return new TirBooleanChain(bc.Op, bc.Terms.Select(t => Lower(t, hoists, writer)).ToList());
-            case TirComponentAccess ca:
-                return new TirComponentAccess(Lower(ca.Receiver, hoists, writer), ca.FieldName, ca.CastTo, ca.ScalarComponentPrim);
-            default:
-                return n; // leaves and anything else: unchanged
-        }
+        return RewriteScoped(tir);
     }
 
     /// <summary>Whether a call is a single-source consumer whose receiver chain the lowerer walks
@@ -211,18 +117,6 @@ public static partial class TirLoopLowerer
         => TirRewrite.StripCoerce(n) is TirCall p && p.Args.Count == 2 && FnOk(p.Args[1], 1)
            && ((p.Name == "Map" && IsListTyped(p.Args[0])) || p.Name == "MapRange" || p.Name == "MapRangeEager");
 
-    /// <summary>Lower a chain consumer's receiver: the producer calls stay, their counts and base
-    /// lists are lowered. Functions are lambdas, which Lower never descends.</summary>
-    private static TirNode LowerChainReceiver(TirNode a, List<TirNode> hoists, CSharpWriter writer)
-    {
-        if (!IsProducer(a) || !(TirRewrite.StripCoerce(a) is TirCall p))
-            return Lower(a, hoists, writer);
-        var baseArg = p.Name == "Map" ? LowerChainReceiver(p.Args[0], hoists, writer) : Lower(p.Args[0], hoists, writer);
-        var rebuilt = new TirCall(p.Callee, p.EmissionKind, p.ParameterTypes, p.ReturnType,
-            new List<TirNode> { baseArg, p.Args[1] }, p.Type, p.Origin, p.Name);
-        return a is TirCoerce co ? new TirCoerce(rebuilt, co.FromType, co.ToType, co.ConversionFn, co.Origin) : rebuilt;
-    }
-
     private static bool IsListTyped(TirNode node)
         => TirRewrite.IsListType(TirRewrite.StripCoerce(node)?.Type);
 
@@ -231,8 +125,7 @@ public static partial class TirLoopLowerer
     private static bool FnOk(TirNode f, int arity, bool allowStatements = false)
     {
         f = TirRewrite.StripCoerce(f);
-        // A lambda whose body is a statement tree (a block or return the inliner or capture
-        // hoist left) has no expression to place in the loop; it stays a delegate (TKT-505).
+        // Producer-chain stages remain expression-valued; consumers can own a local result region.
         if (f is TirLambda lam)
             return lam.Parameters.Count == arity
                    && (allowStatements || !TirRewrite.IsStatementNode(lam.Body))
@@ -359,7 +252,7 @@ public static partial class TirLoopLowerer
 
         var id = NextId++;
         var temp = $"_lp{id}";
-        hoists.Add(new TirLoweredLoop(kind, sources, fn, seed, includeFirst, temp, id, c.Type, c.Origin)
+        hoists.Add(new TirLoweredLoop(kind, sources, fn, seed, includeFirst, temp, id, c.Type, c.Origin, c.Callee)
             { ElemType = elem, SourceStages = stages, IndexSource = indexSource });
         return new TirTempRef(temp, c.Type, c.Origin);
     }

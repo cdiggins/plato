@@ -1,5 +1,34 @@
 # Additional optimizer exploration
 
+## Production continuation P2
+
+The user authorized production implementation after the initial experiments. The priority
+is multiple-consumer fusion and exact-output allocation. Both are independently disabled
+by default; generation flags `--fuse-consumers` and `--exact-output` require C# `--loops`.
+The writer API exposes independent switches and retains the existing path on refusal.
+
+The fusion owner writes `TirMultiConsumerFusion.cs`, `TirMultiReduction.cs`,
+`TirCSharpBodyWriter.MultiConsumer.cs`, `MultiConsumerFusionTests.cs` and its fixture folder.
+The exact-output owner writes `TirExactOutput.cs`, `TirCSharpBodyWriter.ExactOutput.cs`,
+`ExactOutputTests.cs` and its fixture folder. All are under the existing writer optimization,
+writer body or PlatoTests optimization folders. The supervisor owns shared files, CLI/API
+wiring, identity checks, provenance retention, integration, documentation evidence and commits.
+An independent reviewer reads both implementations. The secondary census owner writes only
+its separate experiment/evidence subtree and dated report for the other proposals.
+
+Fusion initially recognizes a contiguous source declaration followed by independent total
+Number reductions. It runs before materialization and ordinary loop lowering, retaining
+resolved calls and original binding identities in an explicit statement marker. Exact-output
+allocation validates retained intrinsic provenance at loop emission and guards on a runtime
+array with fixed length; it preserves ordered source reads and full callback evaluation,
+so it need not prove source ownership. Both reject unsupported coercions and uncertain shapes.
+
+Builds are supervisor-owned and run only after relevant writers freeze their files. Focused
+tests must compile and execute actual Plato-generated C#, cover disabled/enabled/refused
+cases and combined flags, and preserve arithmetic grouping, conversions and fault behavior.
+The supervisor also checks CLI flag validation, both dump modes, optimizer regressions and
+documentation freshness. Default-path output must remain unchanged by the optional features.
+
 Status: active exploration under [compiler-506](../../../tracker/issues/compiler-506.md)
 through [compiler-511](../../../tracker/issues/compiler-511.md). This is not a release of
 unreviewed production optimizations.

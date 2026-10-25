@@ -29,6 +29,12 @@ turns its refusals into diagnostics. [CSharpWriter](../../writers/Plato.CSharpWr
 owns scheduling, dump output and per-generation counter resets. These are supporting components,
 not additional independently enabled optimization passes.
 
+`TirMultiReduction` participates in child rebuilding and statement recognition, preserving
+its source and original fold bindings across capture rewriting. `TirLoweredLoop.SourceFunction`
+retains the resolved call identity through `WithChildren`; `TirIntrinsicIdentity` checks that
+identity against the compilation's designated intrinsic library. The new consumer and exact
+allocation passes use it without changing the recognition policy of older passes.
+
 ## Usage, tests and effectiveness
 
 There is no user-facing rewrite flag. [TirRewriteTests](../../tests/PlatoTests/Optimization/TirRewriteTests.cs)

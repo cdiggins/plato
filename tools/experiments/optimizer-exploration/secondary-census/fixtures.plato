@@ -1,0 +1,15 @@
+type CensusPair { First: Number; Second: Number; }
+library SecondaryCensus
+{
+    DirectProjection(a: Number, b: Number): Number => CensusPair(a, b).First;
+    FaultingUnused(a: Number, b: Function1<Number, Number>): Number => CensusPair(a, b(a)).First;
+    EscapePair(a: Number, b: Number): CensusPair => CensusPair(a, b);
+    OwnedLength(n: Integer): Integer { var xs = n.MapRange(i => i); return xs.Count; }
+    ExternalLength(xs: Array<Integer>): Integer => xs.Count;
+    Neighbor(n: Integer): Array<Integer> { var xs = n.MapRange(i => i); return (n - 1).MapRange(i => xs.At(i + 1)); }
+    Invariant(n: Integer, mode: Boolean): Array<Integer> => n.MapRange(i => mode ? i + 1 : i - 1);
+    Variant(n: Integer): Array<Integer> => n.MapRange(i => i > 0 ? i + 1 : i - 1);
+    FaultingCondition(n: Integer, mode: Function1<Integer, Boolean>): Array<Integer> => n.MapRange(i => mode(0) ? i + 1 : i - 1);
+    Grid(width: Integer, height: Integer, sample: Function2<Integer, Integer, Number>): Array<Array<Number>>
+        => height.MapRange(y => width.MapRange(x => sample(x, y) + sample(x + 1, y) + sample(x, y + 1) + sample(x + 1, y + 1)));
+}

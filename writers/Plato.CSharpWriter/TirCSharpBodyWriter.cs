@@ -266,6 +266,10 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 WriteLoweredLoop(ll);
                 return;
 
+            case TirMultiReduction pair:
+                WriteMultiReduction(pair);
+                return;
+
             default:
                 // an expression used in statement position
                 WriteNode(n);

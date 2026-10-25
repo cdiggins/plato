@@ -23,12 +23,15 @@ precedence over both documents.
 | [Fusion](fusion.md) | Compose adjacent producers or put a producer inside its consumer | `--fuse` |
 | [Literal expansion](literal-expansion.md) | Evaluate the structure of a small, statically bounded traversal at compile time | Part of `--fuse` |
 | [Component expansion](component-expansion.md) | Replace fixed-size collection plumbing with field expressions | `--optimize` |
+| [Multiple-consumer fusion](consumer-fusion.md) | Traverse a completed array once for adjacent independent Number folds | `--loops --fuse-consumers` |
 | [Materialization](materialization.md) | Mark selected array construction boundaries with eager helper names | `--optimize-arrays`; runtime incompatibility documented |
 | [Loop lowering and emission](loops.md) | Turn recognized dynamic combinators into local loops | `--loops` |
+| [Exact output allocation](exact-output.md) | Allocate fixed-width FlatMap results directly for runtime array sources | `--loops --exact-output` |
 | [Rewrite infrastructure](rewrite-infrastructure.md) | Rebuild typed trees and substitute parameters consistently | Used by passes |
 
 `CSharpWriter.RunOptimizerPasses` schedules inlining, fusion, component expansion,
-materialization and loop lowering in that order. Literal expansion belongs to fusion, rather
+multiple-consumer fusion, materialization and loop lowering in that order. Exact output
+allocation specializes loop emission. Both new options default to off. Literal expansion belongs to fusion, rather
 than being an independently scheduled pass. The [generated source map](source-map.md) gives
 Greenhouse-extracted public symbols and source links, including marker nodes and host contracts.
 

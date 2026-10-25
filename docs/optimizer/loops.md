@@ -54,6 +54,12 @@ callback append directly to the result list. Exact array/element types and raw s
 required. Other arms retain evaluation and copying in their selected branch. This does not make
 general nested-loop lowering available.
 
+The independent default-off [exact output option](exact-output.md) recognizes a raw literal
+FlatMap callback and chooses exact result storage only for runtime array sources. The marker's
+`SourceFunction` preserves resolved intrinsic provenance through capture rebuilding; emission
+does not infer identity from the string `Kind`. [Consumer fusion](consumer-fusion.md) runs
+before this lowerer and emits its own traversable paired-fold marker.
+
 Rebuilding constructor markers while lowering their arguments preserves their resolved
 type. Losing it changes receiver-aware field emission after inlining. Array count and
 index access use the same parenthesized receiver rendering as ordinary member calls.
