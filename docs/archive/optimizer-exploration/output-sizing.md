@@ -1,4 +1,4 @@
-> **EXECUTED 2026-10-25** — see [compiler-509](../../../tracker/issues/compiler-509.md). Historical record; do not execute.
+> **EXECUTED 2026-10-25** â€” see [compiler-509](../../../tracker/issues/compiler-509.md). Historical record; do not execute.
 > The bounded implementation and [geometry qualification](../../reports/optimizer-geometry-exact-output-2026-10-25.md) are complete. Unexecuted broader comparisons below remain proposals, not approved follow-up work.
 
 # Exact destination allocation for fixed-output FlatMap

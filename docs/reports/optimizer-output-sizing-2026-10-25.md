@@ -58,7 +58,7 @@ An earlier run with default tiered compilation showed unstable small-input timin
 reported run disables tiering. Neither run validates a live compiler rewrite. Real TIR
 shape coverage, wrapper-generated execution, a reserved-List alternative, documentation
 freshness and repository-wide gates were not run in this isolated track. The
-[execution plan](../design/optimizer-exploration/output-sizing.md) separates these next steps.
+[execution plan](../archive/optimizer-exploration/output-sizing.md) separates these next steps.
 
 Evidence base HEAD during final recording: `340975d68f3a2b8f74e60c1a1ec4b08b19838c9e`.
 Actual runtime source SHA-256:
