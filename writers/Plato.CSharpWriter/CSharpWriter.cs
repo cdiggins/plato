@@ -186,10 +186,10 @@ namespace Ara3D.Geometry.CSharpWriter
         /// records each phase that changed the tree (see the field comment).</summary>
         public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi)
         {
-            if (InlineStatements)
-                tir = TirInliner.InlineStatements(tir, this, fi?.OwnerType?.Name, EliminateKnownLambdas, SimplifyInlineStatements, fi);
             if (TirDumpDir == null)
             {
+                if (InlineStatements)
+                    tir = TirInliner.InlineStatements(tir, this, fi?.OwnerType?.Name, EliminateKnownLambdas, SimplifyInlineStatements, fi);
                 tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
                 tir = TirFusion.Rewrite(tir, this);
                 tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
@@ -210,6 +210,11 @@ namespace Ara3D.Geometry.CSharpWriter
             {
                 var s = t?.Body?.ToString() ?? "<null>";
                 if (s != prev) { sb.AppendLine($"-- after {name} --"); sb.AppendLine(s); prev = s; }
+            }
+            if (InlineStatements)
+            {
+                tir = TirInliner.InlineStatements(tir, this, fi?.OwnerType?.Name, EliminateKnownLambdas, SimplifyInlineStatements, fi);
+                Phase("experimental statement / callable expansion", tir);
             }
             tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _); Phase("inline (layer 7)", tir);
             tir = TirFusion.Rewrite(tir, this);                       Phase("fuse / combinator fusion (layer 7b)", tir);

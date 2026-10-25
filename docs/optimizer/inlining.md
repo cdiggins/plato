@@ -95,6 +95,10 @@ fault order, return conversions, conditional guards, zero-trip loops, early exit
 Enable `--inline`; use `--inline-report` to see accepted totals and categorized refusals from
 [InlineReport](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs). Use `--dump-tir`
 to see which later transformations the exposed body enables.
+The report also counts distinct source sites and their outcomes, separately from expansion
+events. One source site may have several outcomes across cloned callers or iterations;
+outcome totals must not be added to infer a site count. Generated nodes without source origins
+use node identity. The dump records the original input before experimental expansion.
 
 [InlinerTests](../../tests/PlatoTests/Optimization/InlinerTests.cs) checks TIR shapes for the
 Transform family, including removal of delegate calls and recovery of constructors. It is not

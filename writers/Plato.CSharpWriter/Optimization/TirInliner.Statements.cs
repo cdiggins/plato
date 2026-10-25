@@ -143,21 +143,33 @@ public static partial class TirInliner
                 return coerce.WithChildren(new[] { Expand(coerce.Inner, prefix) });
             if (node is TirCall nested)
                 node = Simplify(ExposeCallback((TirCall)ExpandArguments(nested, prefix)));
-            if (node is not TirCall call || call.Callee?.Body == null || call.Args.Count == 0)
+            if (node is not TirCall call)
                 return node;
+            TirNode Refuse(string reason)
+            {
+                _host.InlineReport?.RecordSite(_owner, _caller.Original, call, reason);
+                return call;
+            }
+            if (call.Callee?.Body == null || call.Args.Count == 0)
+                return Refuse("no body or nullary call");
             var receiver = TrustedTypeName(_caller, call.Args[0], _host, _owner);
             var callee = _host.TryGetGroundTirByTypeName(call.Callee, receiver);
             if (callee?.Body == null)
-                return node;
+                return Refuse("no ground body");
             var block = callee.Body as TirBlock;
             if (block == null && _simplify)
                 block = new TirBlock(new[] { new TirReturn(callee.Body, callee.Body.Origin) }, callee.Body.Origin);
-            if (block == null || _ancestry.Contains(callee.Original)
-                || _ancestry.Count >= MaxDepth || !Eligible(call, callee, block))
-                return node;
+            if (block == null)
+                return Refuse("expression policy disabled");
+            if (_ancestry.Contains(callee.Original))
+                return Refuse("recursive ancestry");
+            if (_ancestry.Count >= MaxDepth)
+                return Refuse("depth limit");
+            if (!Eligible(call, callee, block))
+                return Refuse("signature or body not proven");
             var size = block.Descendants().Count() + call.Args.Count * 2 + 2;
             if (size > _remaining)
-                return node;
+                return Refuse("growth limit");
             _remaining -= size;
             var parameters = new Dictionary<ParameterDef, TirNode>();
             for (var i = 0; i < call.Args.Count; i++)
@@ -169,6 +181,7 @@ public static partial class TirInliner
             RecordAssignments(cloned);
             prefix.Add(new TirInlineRegion(resultDef, Rewrite(cloned), _ancestry.ToArray()));
             if (_host.InlineReport != null) _host.InlineReport.StatementCallsInlined++;
+            _host.InlineReport?.RecordSite(_owner, _caller.Original, call, "statement region expanded");
             _ancestry.Remove(callee.Original);
             return new TirVariable(resultDef, resultDef.Type, call.Origin);
         }

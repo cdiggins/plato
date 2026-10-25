@@ -119,7 +119,12 @@ public static partial class TirInliner
         var report = host.InlineReport;
         var callerName = callerTir?.Original?.Name;
         var calleeName = call.Callee?.Name;
-        bool Refuse(InlineRefusal r) { report?.Refuse(callerName, calleeName, r); return false; }
+        bool Refuse(InlineRefusal r)
+        {
+            report?.Refuse(callerName, calleeName, r);
+            report?.RecordSite(ownerTypeName, callerTir?.Original, call, r.ToString());
+            return false;
+        }
 
         // A resolved member call with an explicit receiver; operators/conversions/properties are
         // all fine (they are ordinary functions in Plato), but the callee must be known.
@@ -131,7 +136,10 @@ public static partial class TirInliner
         if (call.Args.Count == 0)
         {
             if (TryInlineNullary(call, host, insideLambda, out inlined))
+            {
+                report?.RecordSite(ownerTypeName, callerTir?.Original, call, "expression expanded");
                 return true;
+            }
             return Refuse(InlineRefusal.NullaryRefused);
         }
 
@@ -326,6 +334,7 @@ public static partial class TirInliner
         if (HasResidualLambdaInvoke(inlined))
             return Refuse(InlineRefusal.LambdaArgRefused);
         passPairs.Add(pair);
+        report?.RecordSite(ownerTypeName, callerTir?.Original, call, "expression expanded");
         return true;
     }
 

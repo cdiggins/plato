@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ara3D.Geometry.Compiler.Checking;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -35,6 +36,10 @@ public enum InlineRefusal
 /// A pure diagnostic; has no effect on emitted C#.</summary>
 public sealed class InlineReport
 {
+    private readonly HashSet<(string Owner, object Caller, object Origin, string Outcome)> _sites = new();
+
+    public void RecordSite(string owner, object caller, TirNode node, string outcome)
+        => _sites.Add((owner, caller, node.Origin ?? (object)node, outcome));
     private readonly Dictionary<(string Caller, string Callee, InlineRefusal Reason), int> _refusals
         = new Dictionary<(string, string, InlineRefusal), int>();
     private readonly Dictionary<InlineRefusal, int> _byReason = new Dictionary<InlineRefusal, int>();
@@ -63,6 +68,10 @@ public sealed class InlineReport
         sb.AppendLine($"tuple ctor rewrites:      {TupleConstructorRewrites}");
         sb.AppendLine($"statement calls inlined:  {StatementCallsInlined}");
         sb.AppendLine($"known lambdas inlined:    {KnownLambdasInlined}");
+        sb.AppendLine($"distinct source sites:    {_sites.Select(s => (s.Owner, s.Caller, s.Origin)).Distinct().Count()}");
+        sb.AppendLine("unique source-site outcomes (a site can have multiple outcomes):");
+        foreach (var group in _sites.GroupBy(s => s.Outcome).OrderBy(g => g.Key))
+            sb.AppendLine($"  {group.Key}: {group.Count()}");
         sb.AppendLine();
         sb.AppendLine("refusals by reason:");
         foreach (var kv in _byReason.OrderByDescending(k => k.Value))

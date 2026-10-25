@@ -119,6 +119,7 @@ public static partial class TirInliner
             TirNode Refuse(InlineRefusal reason)
             {
                 _host.InlineReport?.Refuse(_caller.Original?.Name, "delegate invocation", reason);
+                _host.InlineReport?.RecordSite(_owner, _caller.Original, invoke, reason.ToString());
                 return invoke;
             }
             var lambda = Known(invoke.Target);
@@ -161,6 +162,7 @@ public static partial class TirInliner
             _ancestry.UnionWith(enclosingAncestry);
             _activeLambdas.Remove(lambda);
             if (_host.InlineReport != null) _host.InlineReport.KnownLambdasInlined++;
+            _host.InlineReport?.RecordSite(_owner, _caller.Original, invoke, "known callable expanded");
             return new TirVariable(result, result.Type, invoke.Origin);
         }
     }
