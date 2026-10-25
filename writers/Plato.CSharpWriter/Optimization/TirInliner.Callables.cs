@@ -95,25 +95,6 @@ public static partial class TirInliner
             }).ToList(), block.Origin);
         }
 
-        private TirNode CloneBody(TirNode body, Dictionary<ParameterDef, TirNode> parameters,
-            Dictionary<VariableDef, VariableDef> locals, VariableDef result)
-        {
-            var lambdaParameters = body.Descendants().OfType<TirLambda>()
-                .SelectMany(l => l.Parameters).Distinct().ToDictionary(p => p,
-                    p => new ParameterDef(p.Scope, Fresh(p.Type).Name, p.Type, p.Index));
-            var depth = 0;
-            return TirRewrite.Rewrite(body, n => n switch
-            {
-                TirParameter p when parameters.TryGetValue(p.Def, out var value) => value,
-                TirParameter p when lambdaParameters.TryGetValue(p.Def, out var renamed) => new TirParameter(renamed, p.Type, p.Origin),
-                TirVariable v when locals.TryGetValue(v.Def, out var def) => new TirVariable(def, def.Type ?? v.Type, v.Origin),
-                TirLet l => new TirLet(locals[l.Def], l.Value, l.Type, l.Origin),
-                TirLambda l => new TirLambda(l.Parameters.Select(p => lambdaParameters[p]).ToList(), l.Body, l.Type, l.Origin),
-                TirReturn r when depth == 0 => new TirInlineExit(result, r.Value),
-                _ => n
-            }, n => { if (n is TirLambda) depth++; }, n => { if (n is TirLambda) depth--; });
-        }
-
         private TirNode ExpandInvoke(TirInvoke invoke, List<TirNode> prefix)
         {
             TirNode Refuse(InlineRefusal reason)
@@ -148,8 +129,7 @@ public static partial class TirInliner
             for (var i = 0; i < invoke.Args.Count; i++)
                 parameters[lambda.Parameters[i]] = Bind(Expand(invoke.Args[i], prefix), signature[i], prefix);
             var result = Fresh(invoke.Type);
-            var locals = body.Descendants().OfType<TirLet>().ToDictionary(l => l.Def, l => Fresh(l.Value.Type));
-            var clone = CloneBody(body, parameters, locals, result);
+            var clone = TirInlineCloner.Clone(body, parameters, result, Fresh);
             RecordAssignments(clone);
             var enclosingAncestry = _ancestry.ToArray();
             if (_lambdaAncestry.TryGetValue(lambda, out var creationAncestry))

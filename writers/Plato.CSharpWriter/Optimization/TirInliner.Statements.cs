@@ -98,29 +98,18 @@ public static partial class TirInliner
 
         private IEnumerable<TirNode> Statement(TirNode node)
         {
-            var prefix = new List<TirNode>();
-            var result = node switch
-            {
-                TirReturn r => new TirReturn(Expand(r.Value, prefix), r.Origin),
-                TirLet l => new TirLet(l.Def, Expand(l.Value, prefix), l.Type, l.Origin),
-                TirInlineBinding b => new TirInlineBinding(b.Def, Expand(b.Value, prefix)),
-                TirInlineExit e => new TirInlineExit(e.Result, Expand(e.Value, prefix)),
-                TirInlineRegion r => RewriteRegion(r),
-                TirAssign a when a.LValue is TirVariable => new TirAssign(a.LValue, Expand(a.RValue, prefix), a.Type, a.Origin),
-                TirBlock b => Rewrite(b),
-                TirIf i => new TirIf(Expand(i.Condition, prefix), RewriteScope(i.IfTrue), RewriteScope(i.IfFalse), i.Origin),
-                TirLoop l => new TirLoop(l.Condition, RewriteScope(l.Body), l.Origin),
-                _ => node
-            };
+            var statements = TirStatementRewriter.Rewrite(node, Expand, RewriteScope, RewriteRegion);
+            var result = statements.Last();
             if (result is TirLet let)
                 Remember(let.Def, let.Value);
             if (result is TirInlineBinding binding)
                 Remember(binding.Def, binding.Value);
-            return prefix.Append(result);
+            return statements;
         }
 
         private TirNode RewriteScope(TirNode node)
-            => node == null ? null : new TirBlock(Statement(node).ToList(), node.Origin);
+            => node == null ? null : node is TirBlock ? Rewrite(node)
+                : new TirBlock(Statement(node).ToList(), node.Origin);
 
         private TirNode Bind(TirNode value, TypeExpression type, List<TirNode> prefix)
         {
@@ -175,9 +164,8 @@ public static partial class TirInliner
             for (var i = 0; i < call.Args.Count; i++)
                 parameters[callee.Parameters[i]] = Bind(call.Args[i], ParameterType(callee, i), prefix);
             _ancestry.Add(callee.Original);
-            var locals = block.Descendants().OfType<TirLet>().ToDictionary(l => l.Def, l => Fresh(l.Value.Type));
             var resultDef = Fresh(callee.ZonkedReturnType ?? callee.ReturnType);
-            var cloned = CloneBody(block, parameters, locals, resultDef);
+            var cloned = TirInlineCloner.Clone(block, parameters, resultDef, Fresh);
             RecordAssignments(cloned);
             prefix.Add(new TirInlineRegion(resultDef, Rewrite(cloned), _ancestry.ToArray()));
             if (_host.InlineReport != null) _host.InlineReport.StatementCallsInlined++;
@@ -190,19 +178,8 @@ public static partial class TirInliner
         {
             if (call.Args.Any(a => !Ground(a.Type) || a is TirTypeRef))
                 return call;
-            var parts = call.Args.Select(a =>
-            {
-                var before = new List<TirNode>();
-                return (Before: before, Value: Expand(a, before));
-            }).ToList();
-            if (parts.All(p => p.Before.Count == 0))
-                return call.WithChildren(parts.Select(p => p.Value).ToList());
-            var values = new List<TirNode>();
-            foreach (var part in parts)
-            {
-                prefix.AddRange(part.Before);
-                values.Add(Bind(part.Value, part.Value.Type, prefix));
-            }
+            var parts = call.Args.Select(a => TirEvaluation.Capture(a, Expand)).ToArray();
+            var values = TirEvaluation.Sequence(parts, prefix, (value, before) => Bind(value, value.Type, before));
             return call.WithChildren(values);
         }
 
@@ -211,18 +188,9 @@ public static partial class TirInliner
             var condition = Expand(node.Condition, prefix);
             if (_simplify && BooleanValue(condition) is { } selected)
                 return Expand(selected ? node.IfTrue : node.IfFalse, prefix);
-            var yes = new List<TirNode>();
-            var no = new List<TirNode>();
-            var ifTrue = Expand(node.IfTrue, yes);
-            var ifFalse = Expand(node.IfFalse, no);
-            if (yes.Count == 0 && no.Count == 0)
-                return new TirConditional(condition, ifTrue, ifFalse, node.Type, node.Origin);
-            var result = Fresh(node.Type);
-            yes.Add(new TirInlineExit(result, ifTrue));
-            no.Add(new TirInlineExit(result, ifFalse));
-            var branch = new TirIf(condition, new TirBlock(yes, node.Origin), new TirBlock(no, node.Origin), node.Origin);
-            prefix.Add(new TirInlineRegion(result, new TirBlock(new[] { branch }, node.Origin), _ancestry.ToArray()));
-            return new TirVariable(result, node.Type, node.Origin);
+            return TirEvaluation.Conditional(node, condition,
+                TirEvaluation.Capture(node.IfTrue, Expand), TirEvaluation.Capture(node.IfFalse, Expand),
+                Fresh, _ancestry.ToArray()).AppendTo(prefix);
         }
 
         private bool Eligible(TirCall call, TirFunction callee, TirBlock body)

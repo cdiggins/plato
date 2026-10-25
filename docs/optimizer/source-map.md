@@ -169,6 +169,17 @@ links refer to this checkout's reviewed snapshot.
 - [`Ara3D.Geometry.CSharpWriter.TirConstructorCall.TypeName`](../../writers/Plato.CSharpWriter/Optimization/TirComponentUnroller.cs#L66)
 - [`Ara3D.Geometry.CSharpWriter.TirConstructorCall.WithChildren(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirComponentUnroller.cs#L77)
 
+## TirEvaluation
+
+[`Ara3D.Geometry.CSharpWriter.TirEvaluation`](../../writers/Plato.CSharpWriter/Optimization/TirEvaluation.cs#L10)
+
+- [`Ara3D.Geometry.CSharpWriter.TirEvaluation.AppendTo(System.Collections.Generic.List<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirEvaluation.cs#L18)
+- [`Ara3D.Geometry.CSharpWriter.TirEvaluation.Capture(Ara3D.Geometry.Compiler.Checking.TirNode, System.Func<Ara3D.Geometry.Compiler.Checking.TirNode, System.Collections.Generic.List<Ara3D.Geometry.Compiler.Checking.TirNode>, Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirEvaluation.cs#L39)
+- [`Ara3D.Geometry.CSharpWriter.TirEvaluation.Conditional(Ara3D.Geometry.Compiler.Checking.TirConditional, Ara3D.Geometry.Compiler.Checking.TirNode, Ara3D.Geometry.CSharpWriter.TirEvaluation, Ara3D.Geometry.CSharpWriter.TirEvaluation, System.Func<Ara3D.Geometry.Compiler.Symbols.TypeExpression, Ara3D.Geometry.Compiler.Symbols.VariableDef>, System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Compiler.Symbols.FunctionDef>)`](../../writers/Plato.CSharpWriter/Optimization/TirEvaluation.cs#L24)
+- [`Ara3D.Geometry.CSharpWriter.TirEvaluation.Sequence(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.CSharpWriter.TirEvaluation>, System.Collections.Generic.List<Ara3D.Geometry.Compiler.Checking.TirNode>, System.Func<Ara3D.Geometry.Compiler.Checking.TirNode, System.Collections.Generic.List<Ara3D.Geometry.Compiler.Checking.TirNode>, Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirEvaluation.cs#L47)
+- [`Ara3D.Geometry.CSharpWriter.TirEvaluation.Statements`](../../writers/Plato.CSharpWriter/Optimization/TirEvaluation.cs#L12)
+- [`Ara3D.Geometry.CSharpWriter.TirEvaluation.Value`](../../writers/Plato.CSharpWriter/Optimization/TirEvaluation.cs#L13)
+
 ## TirExactOutput
 
 [`Ara3D.Geometry.CSharpWriter.TirExactOutput`](../../writers/Plato.CSharpWriter/Optimization/TirExactOutput.cs#L9)
@@ -202,6 +213,13 @@ links refer to this checkout's reviewed snapshot.
 - [`Ara3D.Geometry.CSharpWriter.TirInlineBinding.ToString()`](../../writers/Plato.CSharpWriter/Optimization/TirInlineBinding.cs#L22)
 - [`Ara3D.Geometry.CSharpWriter.TirInlineBinding.Value`](../../writers/Plato.CSharpWriter/Optimization/TirInlineBinding.cs#L11)
 - [`Ara3D.Geometry.CSharpWriter.TirInlineBinding.WithChildren(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirInlineBinding.cs#L19)
+
+## TirInlineCloner
+
+[`Ara3D.Geometry.CSharpWriter.TirInlineCloner`](../../writers/Plato.CSharpWriter/Optimization/TirInlineCloner.cs#L10)
+
+- [`Ara3D.Geometry.CSharpWriter.TirInlineCloner.Clone(Ara3D.Geometry.Compiler.Checking.TirNode, System.Collections.Generic.IReadOnlyDictionary<Ara3D.Geometry.Compiler.Symbols.ParameterDef, Ara3D.Geometry.Compiler.Checking.TirNode>, Ara3D.Geometry.Compiler.Symbols.VariableDef, System.Func<Ara3D.Geometry.Compiler.Symbols.TypeExpression, Ara3D.Geometry.Compiler.Symbols.VariableDef>)`](../../writers/Plato.CSharpWriter/Optimization/TirInlineCloner.cs#L20)
+- [`Ara3D.Geometry.CSharpWriter.TirInlineCloner.RedirectReturns(Ara3D.Geometry.Compiler.Checking.TirNode, Ara3D.Geometry.Compiler.Symbols.VariableDef)`](../../writers/Plato.CSharpWriter/Optimization/TirInlineCloner.cs#L12)
 
 ## TirInlineExit
 
@@ -252,9 +270,9 @@ links refer to this checkout's reviewed snapshot.
 
 [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L95)
 
-- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.IsRenderableConcrete(Ara3D.Geometry.Compiler.Symbols.TypeExpression)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L389)
+- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.IsRenderableConcrete(Ara3D.Geometry.Compiler.Symbols.TypeExpression)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L281)
 - [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.NextId`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L100)
-- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.ProducesArray(string)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L378)
+- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.ProducesArray(string)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L270)
 - [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.Rewrite(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.CSharpWriter)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L102)
 
 ## TirLoweredLoop
@@ -307,6 +325,12 @@ links refer to this checkout's reviewed snapshot.
 - [`Ara3D.Geometry.CSharpWriter.TirRewrite.StripCoerce(Ara3D.Geometry.Compiler.Checking.TirNode)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L153)
 - [`Ara3D.Geometry.CSharpWriter.TirRewrite.Substitute(Ara3D.Geometry.Compiler.Checking.TirNode, System.Collections.Generic.IReadOnlyDictionary<Ara3D.Geometry.Compiler.Symbols.ParameterDef, Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L106)
 - [`Ara3D.Geometry.CSharpWriter.TirRewrite.TryBetaReduce(Ara3D.Geometry.Compiler.Checking.TirInvoke, out Ara3D.Geometry.Compiler.Checking.TirNode, System.Func<Ara3D.Geometry.Compiler.Checking.TirNode, bool>)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L122)
+
+## TirStatementRewriter
+
+[`Ara3D.Geometry.CSharpWriter.TirStatementRewriter`](../../writers/Plato.CSharpWriter/Optimization/TirStatementRewriter.cs#L9)
+
+- [`Ara3D.Geometry.CSharpWriter.TirStatementRewriter.Rewrite(Ara3D.Geometry.Compiler.Checking.TirNode, System.Func<Ara3D.Geometry.Compiler.Checking.TirNode, System.Collections.Generic.List<Ara3D.Geometry.Compiler.Checking.TirNode>, Ara3D.Geometry.Compiler.Checking.TirNode>, System.Func<Ara3D.Geometry.Compiler.Checking.TirNode, Ara3D.Geometry.Compiler.Checking.TirNode>, System.Func<Ara3D.Geometry.CSharpWriter.TirInlineRegion, Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirStatementRewriter.cs#L11)
 
 ## TirTempRef
 

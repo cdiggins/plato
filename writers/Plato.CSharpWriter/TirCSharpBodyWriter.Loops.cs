@@ -65,8 +65,7 @@ public partial class TirCSharpBodyWriter
             if (TirRewrite.IsStatementNode(lam.Body))
             {
                 var result = new VariableDef(null, $"_callback{k}", lam.Type.TypeArgs.Last(), null);
-                var body = TirRewrite.Rewrite(lam.Body, node => node is TirReturn r
-                    ? new TirInlineExit(result, r.Value) : node);
+                var body = TirInlineCloner.RedirectReturns(lam.Body, result);
                 _lambdaDepth++;
                 WriteStatement(new TirInlineRegion(result, body));
                 _lambdaDepth--;

@@ -103,103 +103,7 @@ public static partial class TirLoopLowerer
     {
         if (!writer.LowerLoops || tir?.Body == null)
             return tir;
-        if (writer.InlineStatements)
-            return RewriteScoped(tir);
-        var body = tir.Body;
-        TirNode newBody;
-        if (body is TirBlock block)
-        {
-            var stmts = new List<TirNode>();
-            var changed = false;
-            foreach (var s in block.Statements)
-            {
-                var hoists = new List<TirNode>();
-                var s2 = LowerStatement(s, hoists, writer);
-                changed |= hoists.Count > 0 || !ReferenceEquals(s2, s);
-                stmts.AddRange(hoists);
-                stmts.Add(s2);
-            }
-            if (!changed)
-                return tir;
-            newBody = new TirBlock(stmts, block.Origin);
-        }
-        else
-        {
-            var hoists = new List<TirNode>();
-            var e = Lower(body, hoists, writer);
-            if (hoists.Count == 0)
-                return tir;
-            var stmts = new List<TirNode>(hoists) { new TirReturn(e, body.Origin) };
-            newBody = new TirBlock(stmts, body.Origin);
-        }
-        return new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, newBody,
-            tir.ZonkedParameterTypes, tir.ZonkedReturnType);
-    }
-
-    private static TirNode LowerStatement(TirNode s, List<TirNode> hoists, CSharpWriter writer)
-    {
-        switch (s)
-        {
-            case TirReturn r:
-                return new TirReturn(Lower(r.Value, hoists, writer), r.Origin);
-            case TirLet let:
-                return new TirLet(let.Def, Lower(let.Value, hoists, writer), let.Type, let.Origin);
-            case TirBlock or TirIf or TirLoop:
-                return s; // control flow: left intact (v1)
-            default:
-                return Lower(s, hoists, writer);
-        }
-    }
-
-    private static TirNode Lower(TirNode n, List<TirNode> hoists, CSharpWriter writer)
-    {
-        switch (n)
-        {
-            case null:
-                return null;
-            case TirLambda:
-            case TirConditional:
-                return n; // evaluation-count boundaries: not descended
-            case TirCall c:
-            {
-                // A chain consumer's receiver (TKT-506) is lowered through LowerChainReceiver, which
-                // leaves the Map and MapRange producers in place for TryLower to walk inside this
-                // loop; everything beneath them is lowered as usual.
-                var chain = IsChainConsumer(c);
-                var args = c.Args.Select((a, idx) => chain && idx == 0
-                    ? LowerChainReceiver(a, hoists, writer)
-                    : Lower(a, hoists, writer)).ToList();
-                var call = new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, c.ReturnType,
-                    args, c.Type, c.Origin, c.Name);
-                var lowered = TryLower(call, hoists);
-                if (lowered == null && chain)
-                {
-                    // Not lowerable as a whole: lower the producers on their own, as before.
-                    args[0] = Lower(args[0], hoists, writer);
-                    call = new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, c.ReturnType,
-                        args, c.Type, c.Origin, c.Name);
-                    lowered = TryLower(call, hoists);
-                }
-                return lowered ?? call;
-            }
-            case TirCoerce co:
-                return new TirCoerce(Lower(co.Inner, hoists, writer), co.FromType, co.ToType, co.ConversionFn, co.Origin);
-            case TirInvoke inv:
-                return new TirInvoke(Lower(inv.Target, hoists, writer),
-                    inv.Args.Select(a => Lower(a, hoists, writer)).ToList(), inv.Type, inv.Origin);
-            case TirNew nw:
-                return new TirNew(nw.NewType, nw.Args.Select(a => Lower(a, hoists, writer)).ToList(), nw.Type, nw.Origin);
-            case TirArray arr:
-                return new TirArray(arr.Elements.Select(a => Lower(a, hoists, writer)).ToList(), arr.Type, arr.Origin);
-            case TirConstructorCall cc:
-                return new TirConstructorCall(cc.TypeName, cc.Args.Select(a => Lower(a, hoists, writer)).ToList(), cc.Type);
-            case TirBooleanChain bc:
-                return new TirBooleanChain(bc.Op, bc.Terms.Select(t => Lower(t, hoists, writer)).ToList());
-            case TirComponentAccess ca:
-                return new TirComponentAccess(Lower(ca.Receiver, hoists, writer), ca.FieldName, ca.CastTo, ca.ScalarComponentPrim);
-            default:
-                return n; // leaves and anything else: unchanged
-        }
+        return RewriteScoped(tir);
     }
 
     /// <summary>Whether a call is a single-source consumer whose receiver chain the lowerer walks
@@ -212,18 +116,6 @@ public static partial class TirLoopLowerer
     private static bool IsProducer(TirNode n)
         => TirRewrite.StripCoerce(n) is TirCall p && p.Args.Count == 2 && FnOk(p.Args[1], 1)
            && ((p.Name == "Map" && IsListTyped(p.Args[0])) || p.Name == "MapRange" || p.Name == "MapRangeEager");
-
-    /// <summary>Lower a chain consumer's receiver: the producer calls stay, their counts and base
-    /// lists are lowered. Functions are lambdas, which Lower never descends.</summary>
-    private static TirNode LowerChainReceiver(TirNode a, List<TirNode> hoists, CSharpWriter writer)
-    {
-        if (!IsProducer(a) || !(TirRewrite.StripCoerce(a) is TirCall p))
-            return Lower(a, hoists, writer);
-        var baseArg = p.Name == "Map" ? LowerChainReceiver(p.Args[0], hoists, writer) : Lower(p.Args[0], hoists, writer);
-        var rebuilt = new TirCall(p.Callee, p.EmissionKind, p.ParameterTypes, p.ReturnType,
-            new List<TirNode> { baseArg, p.Args[1] }, p.Type, p.Origin, p.Name);
-        return a is TirCoerce co ? new TirCoerce(rebuilt, co.FromType, co.ToType, co.ConversionFn, co.Origin) : rebuilt;
-    }
 
     private static bool IsListTyped(TirNode node)
         => TirRewrite.IsListType(TirRewrite.StripCoerce(node)?.Type);
@@ -246,7 +138,7 @@ public static partial class TirLoopLowerer
     }
 
     /// <summary>The lowered marker + temp reference for a recognized combinator call, or null.</summary>
-    private static TirNode TryLower(TirCall c, List<TirNode> hoists, bool allowStatementMapRange = false)
+    private static TirNode TryLower(TirCall c, List<TirNode> hoists, bool allowStatementCallbacks = false)
     {
         if (c.Name == null || c.Args.Count == 0)
             return null;
@@ -258,43 +150,43 @@ public static partial class TirLoopLowerer
         switch (c.Name)
         {
             case "Map" or "MapEager" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c):
-                if (FnOk(c.Args[1], 1)) { kind = "Map"; }
-                else if (FnOk(c.Args[1], 2)) { kind = "MapIdx"; }
+                if (FnOk(c.Args[1], 1, allowStatementCallbacks)) { kind = "Map"; }
+                else if (FnOk(c.Args[1], 2, allowStatementCallbacks)) { kind = "MapIdx"; }
                 else return null;
                 sources = new List<TirNode> { c.Args[0] };
                 fn = c.Args[1];
                 break;
-            case "MapRange" or "MapRangeEager" when c.Args.Count == 2 && ResultIsList(c) && FnOk(c.Args[1], 1, allowStatementMapRange):
+            case "MapRange" or "MapRangeEager" when c.Args.Count == 2 && ResultIsList(c) && FnOk(c.Args[1], 1, allowStatementCallbacks):
                 kind = "MapRange"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
-            case "Zip" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && ResultIsList(c) && FnOk(c.Args[2], 2):
+            case "Zip" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && ResultIsList(c) && FnOk(c.Args[2], 2, allowStatementCallbacks):
                 kind = "Zip2"; sources = new List<TirNode> { c.Args[0], c.Args[1] }; fn = c.Args[2];
                 break;
-            case "Zip" when c.Args.Count == 4 && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && IsListTyped(c.Args[2]) && ResultIsList(c) && FnOk(c.Args[3], 3):
+            case "Zip" when c.Args.Count == 4 && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && IsListTyped(c.Args[2]) && ResultIsList(c) && FnOk(c.Args[3], 3, allowStatementCallbacks):
                 kind = "Zip3"; sources = new List<TirNode> { c.Args[0], c.Args[1], c.Args[2] }; fn = c.Args[3];
                 break;
-            case "Reduce" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && FnOk(c.Args[2], 2):
+            case "Reduce" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && FnOk(c.Args[2], 2, allowStatementCallbacks):
                 kind = "Reduce"; sources = new List<TirNode> { c.Args[0] }; seed = c.Args[1]; fn = c.Args[2];
                 break;
-            case "All" or "Any" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && FnOk(c.Args[1], 1):
+            case "All" or "Any" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && FnOk(c.Args[1], 1, allowStatementCallbacks):
                 kind = c.Name; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
-            case "FlatMap" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 1):
+            case "FlatMap" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 1, allowStatementCallbacks):
                 kind = "FlatMap"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
             case "Reverse" when c.Args.Count == 1 && IsListTyped(c.Args[0]) && ResultIsList(c):
                 kind = "Reverse"; sources = new List<TirNode> { c.Args[0] };
                 break;
-            case "WithNext" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 2):
+            case "WithNext" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 2, allowStatementCallbacks):
                 kind = "WithNext"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1]; includeFirst = c.Args[2];
                 break;
-            case "MapPairs" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 2):
+            case "MapPairs" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 2, allowStatementCallbacks):
                 kind = "MapPairs"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
-            case "MapTriplets" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 3):
+            case "MapTriplets" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 3, allowStatementCallbacks):
                 kind = "MapTriplets"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
-            case "MapQuartets" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 4):
+            case "MapQuartets" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 4, allowStatementCallbacks):
                 kind = "MapQuartets"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
             default:

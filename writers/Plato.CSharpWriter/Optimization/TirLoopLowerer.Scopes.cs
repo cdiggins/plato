@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Ara3D.Geometry.Compiler.Checking;
+using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -9,61 +10,93 @@ public static partial class TirLoopLowerer
 {
     private static TirFunction RewriteScoped(TirFunction function)
     {
-        var nodes = function.AllNodes.ToList();
-        var assigned = nodes.OfType<TirAssign>().Select(a => a.LValue)
-            .OfType<TirVariable>().Select(v => v.Def).ToHashSet();
-        var names = nodes.Select(n => n switch
-        {
-            TirVariable v => v.Def?.Name, TirParameter p => p.Def?.Name,
-            TirLet l => l.Def?.Name, TirInlineBinding b => b.Def.Name,
-            TirInlineRegion r => r.Result.Name, TirTempRef t => t.Name, _ => null
-        }).Where(n => n != null);
-        var reservedIds = names.SelectMany(n => Regex.Matches(n, @"\d+").Cast<Match>())
-            .Select(m => int.TryParse(m.Value, out var value) ? value : -1).ToHashSet();
-
-        bool SafeArgument(TirNode n) => n is TirParameter or TirVariable or TirLiteral
-            || n is TirLambda l && !l.Body.Descendants().Any(x => x is TirLambda
-                || x is TirVariable v && assigned.Contains(v.Def));
-
-        TirNode Value(TirNode value, List<TirNode> prefix)
-        {
-            // Direct intrinsic calls only: never run the general hoister inside a newly admitted scope.
-            if (value is not TirCall call || call.Callee?.Body != null
-                || call.Callee?.OwnerType?.Name != "Intrinsics" || !call.Args.All(SafeArgument))
-                return value;
-            while (reservedIds.Contains(NextId)) NextId++;
-            return TryLower(call, prefix, true) ?? value;
-        }
-
-        TirNode Scope(TirNode node)
-        {
-            if (node == null) return null;
-            if (node is TirBlock b)
-                return new TirBlock(b.Statements.SelectMany(Statement).ToList(), b.Origin);
-            return new TirBlock(Statement(node).ToList(), node.Origin);
-        }
-
-        IEnumerable<TirNode> Statement(TirNode node)
-        {
-            var prefix = new List<TirNode>();
-            var result = node switch
-            {
-                TirBlock b => Scope(b),
-                TirInlineRegion r => new TirInlineRegion(r.Result, Scope(r.Body), r.Ancestry),
-                TirIf i => new TirIf(i.Condition, Scope(i.IfTrue), Scope(i.IfFalse), i.Origin),
-                TirLoop l => new TirLoop(l.Condition, Scope(l.Body), l.Origin),
-                TirReturn r => new TirReturn(Value(r.Value, prefix), r.Origin),
-                TirInlineExit e => new TirInlineExit(e.Result, Value(e.Value, prefix)),
-                TirLet l => new TirLet(l.Def, Value(l.Value, prefix), l.Type, l.Origin),
-                TirInlineBinding b => new TirInlineBinding(b.Def, Value(b.Value, prefix)),
-                _ => node
-            };
-            return prefix.Append(result);
-        }
-
-        var body = function.Body is TirBlock ? Scope(function.Body)
-            : Scope(new TirReturn(function.Body, function.Body.Origin));
+        var lowering = new ScopedLoopLowering(function);
+        var body = function.Body is TirBlock ? lowering.Scope(function.Body)
+            : lowering.Scope(new TirReturn(function.Body, function.Body.Origin));
         return new TirFunction(function.Original, function.Parameters, function.ReturnType, body,
             function.ZonkedParameterTypes, function.ZonkedReturnType);
+    }
+
+    private sealed class ScopedLoopLowering
+    {
+        private readonly HashSet<string> _names;
+        private readonly HashSet<int> _reservedIds;
+        private int _next;
+
+        public ScopedLoopLowering(TirFunction function)
+        {
+            _names = function.AllNodes.Select(n => n switch
+            {
+                TirVariable v => v.Def?.Name, TirParameter p => p.Def?.Name,
+                TirLet l => l.Def?.Name, TirInlineBinding b => b.Def.Name,
+                TirInlineRegion r => r.Result.Name, TirTempRef t => t.Name, _ => null
+            }).Concat(function.Parameters.Select(p => p.Name))
+                .Concat(function.AllNodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Select(p => p.Name))
+                .Where(n => n != null).ToHashSet();
+            _reservedIds = _names.SelectMany(n => Regex.Matches(n, @"\d+").Cast<Match>())
+                .Select(m => int.TryParse(m.Value, out var value) ? value : -1).ToHashSet();
+        }
+
+        private VariableDef Fresh(TypeExpression type)
+        {
+            string name;
+            do name = $"_eval{_next++}"; while (!_names.Add(name));
+            return new VariableDef(null, name, type, null);
+        }
+
+        private TirNode Bind(TirNode value, List<TirNode> before)
+        {
+            // A literal lambda is needed by loop recognition; its body does not execute here.
+            if (value is TirLambda or TirTypeRef)
+                return value;
+            var def = Fresh(value.Type);
+            before.Add(new TirInlineBinding(def, value));
+            return new TirVariable(def, def.Type, value.Origin);
+        }
+
+        public TirNode Scope(TirNode node)
+            => node == null ? null : new TirBlock((node is TirBlock b ? b.Statements : new[] { node })
+                .SelectMany(n => TirStatementRewriter.Rewrite(n, Value, Scope)).ToArray(), node.Origin);
+
+        private TirNode Value(TirNode node, List<TirNode> before)
+        {
+            if (node is TirConditional conditional)
+                return Conditional(conditional, before);
+            if (node is not (TirCall or TirCoerce or TirInvoke or TirNew or TirArray
+                or TirConstructorCall or TirComponentAccess))
+                return node;
+            var chain = node is TirCall c && IsChainConsumer(c);
+            var operands = node.Children.Select((n, i) => TirEvaluation.Capture(n,
+                chain && i == 0 ? Chain : Value)).ToArray();
+            var values = TirEvaluation.Sequence(operands, before, Bind);
+            var rebuilt = node.WithChildren(values);
+            if (rebuilt is not TirCall call)
+                return rebuilt;
+            while (_reservedIds.Contains(NextId)) NextId++;
+            var lowered = TryLower(call, before, true);
+            if (lowered != null || !chain)
+                return lowered ?? rebuilt;
+            var fallback = call.Args.Select(a => TirEvaluation.Capture(a, Value)).ToArray();
+            call = (TirCall)call.WithChildren(TirEvaluation.Sequence(fallback, before, Bind));
+            while (_reservedIds.Contains(NextId)) NextId++;
+            return TryLower(call, before, true) ?? call;
+        }
+
+        private TirNode Chain(TirNode node, List<TirNode> before)
+        {
+            if (!IsProducer(node) || TirRewrite.StripCoerce(node) is not TirCall call)
+                return Value(node, before);
+            var source = call.Name == "Map" ? Chain(call.Args[0], before) : Value(call.Args[0], before);
+            var rebuilt = call.WithChildren(new[] { source, call.Args[1] });
+            return node is TirCoerce coerce ? coerce.WithChildren(new[] { rebuilt }) : rebuilt;
+        }
+
+        private TirNode Conditional(TirConditional node, List<TirNode> before)
+        {
+            var condition = Value(node.Condition, before);
+            return TirEvaluation.Conditional(node, condition,
+                TirEvaluation.Capture(node.IfTrue, Value), TirEvaluation.Capture(node.IfFalse, Value),
+                Fresh).AppendTo(before);
+        }
     }
 }

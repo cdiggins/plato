@@ -53,6 +53,12 @@ its own exit label, so a callee return cannot exit the caller. Call arguments ar
 before any later argument's prerequisites; conditional branches keep their prerequisites
 behind the guard. Branch and loop bodies retain their scopes. Loop conditions, other compound
 expression forms and lambda bodies remain opaque. Exact ground signature checks exclude ambiguous generic dispatch.
+The pass represents an expression's prerequisites as `TirEvaluation`: an ordered statement list
+and a value. Sequencing operands completes each earlier operand before starting a later one's
+prerequisites. `TirInlineCloner` owns fresh lexical identities and return redirection independently
+of call eligibility. It preserves checked initializer types for inferred locals and keeps nested
+lambda returns separate from the enclosing function's return.
+
 Expansion ancestry and cumulative per-caller growth limits bound recursive expansion.
 This property is an implementation experiment, not a default policy or a performance
 claim. [compiler-504](../../tracker/issues/compiler-504.md) tracks broader scope and measurements.

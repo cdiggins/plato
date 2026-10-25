@@ -13,6 +13,7 @@ type Boolean { }
 type Number { }
 type Object { }
 type Function1<A, R> { }
+type Function2<A, B, R> { }
 type Array<T> { }
 type InlineBox { Value: Integer; }
 library Intrinsics {
@@ -23,6 +24,8 @@ library Intrinsics {
     GreaterThan(a: Integer, b: Integer): Boolean;
     Equals(a: Integer, b: Integer): Boolean;
     MapRange(n: Integer, f: Function1<Integer, $T>): Array<$T>;
+    Count(xs: Array<$T>): Integer;
+    Reduce(xs: Array<$T>, seed: $R, f: Function2<$R, $T, $R>): $R;
     Tick(x: Integer): Integer;
     First(x: Integer): Integer;
     Second(x: Integer): Integer;
@@ -63,6 +66,11 @@ library StatementProbe {
     Simplified(x: Integer): Integer => x.Choose(0);
     Build(n: Integer, f: Function1<Integer, Integer>): Array<Integer> { var values = n.MapRange(f); return values; }
     ScopedRange(n: Integer): Array<Integer> => n.Build(i => i + 1);
+    StatementSum(n: Integer): Integer => n.MapRange(i => i + 1).Reduce(0, (sum, value) => { var next = sum + value; return next; });
+    NestedReturns(n: Integer): Array<Integer> => n.MapRange(i => { var result = i.Apply(j => { var value = j + 1; return value; }); return result; });
+    ComputedRange(n: Integer): Array<Integer> => (n + 1).MapRange(i => i + 1);
+    GuardedRange(flag: Boolean, n: Integer): Array<Integer> => flag ? n.MapRange(i => i + 1) : n.First.MapRange(i => i);
+    ArrayOrder(n: Integer): Integer => n.First.Ignore(n.MapRange(i => i.Second).Count);
     StatementRange(n: Integer): Array<Integer> => n.Build(i => { var value = i + 1; return value; });
 }";
 
@@ -94,6 +102,11 @@ library StatementProbe {
                 @"global using System.Collections.Generic; namespace Ara3D.Collections { }
 namespace Ara3D.Geometry { public static class ProbeOperators {
 public static int Calls;
+public static R Reduce<T,R>(this IReadOnlyList<T> xs, R seed, System.Func<R,T,R> f) {
+foreach (var x in xs) seed = f(seed, x);
+return seed;
+}
+public static Integer Count<T>(this IReadOnlyList<T> xs) => (Integer)xs.Count;
 public static Integer Add(this Integer a, Integer b) => (Integer)((int)a + (int)b);
 public static Integer Divide(this Integer a, Integer b) => (Integer)((int)a / (int)b);
 public static Integer Subtract(this Integer a, Integer b) => (Integer)((int)a - (int)b);
@@ -141,6 +154,26 @@ return result;
                     Is.EqualTo(Enumerable.Range(1, count)));
                 Assert.That(((IReadOnlyList<Integer>)library.GetMethod("StatementRange")!.Invoke(null, new object[] { (Integer)count })!).Select(n => (int)n),
                     Is.EqualTo(Enumerable.Range(1, count)));
+            }
+            Assert.That((int)(Integer)library.GetMethod("StatementSum")!.Invoke(null,
+                new object[] { (Integer)3 })!, Is.EqualTo(6));
+            Assert.That(((IReadOnlyList<Integer>)library.GetMethod("NestedReturns")!.Invoke(null,
+                new object[] { (Integer)3 })!).Select(n => (int)n), Is.EqualTo(new[] { 1, 2, 3 }));
+            var sum = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "StatementSum"), writer);
+            Assert.That(sum.AllNodes.OfType<TirLoweredLoop>().Any(l => l.Kind == "Reduce"), Is.True,
+                "Statement callbacks must retain reduction loop lowering.");
+            var computed = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "ComputedRange"), writer);
+            Assert.That(computed.AllNodes.OfType<TirLoweredLoop>().Count(), Is.EqualTo(1),
+                "Turning on statement inlining must retain loops with computed arguments.");
+            Assert.That(((IReadOnlyList<Integer>)library.GetMethod("ComputedRange")!.Invoke(null,
+                new object[] { (Integer)2 })!).Select(n => (int)n), Is.EqualTo(new[] { 1, 2, 3 }));
+            Assert.That(((IReadOnlyList<Integer>)library.GetMethod("GuardedRange")!.Invoke(null,
+                new object[] { (Ara3D.Geometry.Boolean)true, (Integer)2 })!).Select(n => (int)n), Is.EqualTo(new[] { 1, 2 }));
+            {
+                var arrayOrder = Assert.Throws<System.Reflection.TargetInvocationException>(
+                    () => library.GetMethod("ArrayOrder")!.Invoke(null, new object[] { (Integer)1 }));
+                Assert.That(arrayOrder!.InnerException!.Message, Is.EqualTo("first"),
+                    "A later argument's lowered loop cannot execute before an earlier argument.");
             }
             if (lambdas)
             {

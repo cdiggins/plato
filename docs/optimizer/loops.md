@@ -16,21 +16,24 @@ allocations in a callback or result.
 
 ## Implementation and boundaries
 
-With an experimental `--inline-policy`, the scope walker in
+The scope walker in
 [TirLoopLowerer.Scopes.cs](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.Scopes.cs)
-handles blocks, inline regions, branches and loop bodies. It admits only direct calls to
-the designated intrinsic library whose arguments are leaves or safe lambda literals; it does
-not run the legacy general expression hoister inside these scopes. Loop conditions stay
-opaque. Mutable captures and nested escaping lambdas are refused. Generated numeric suffixes
-avoid names already bound in the function. This stricter route can also leave calls that the
-legacy top-level hoister accepted, so compare emitted shapes as well as flags in experiments.
+uses the same loop recognizer for computed arguments and nested calls. `TirEvaluation` carries
+ordered prerequisites; operands finish in source order before a later operand's loop executes.
+`TirStatementRewriter` places those prerequisites inside blocks, inline regions, branches and
+loop bodies. Conditional expressions become local result regions when either branch has
+prerequisites, keeping untaken work behind its guard. Loop conditions and lambda bodies stay
+opaque at this stage. Generated names avoid existing bindings. The scope traversal is separate
+from recognizing the supported array operations.
 
 Known callback propagation exposes lambdas at MapRange, Reduce and FlatMap intrinsic sites.
-The scoped MapRange path accepts statement bodies: each iteration declares the parameters,
-executes an inline result/exit region, then stores the result. No invoked lambda is introduced.
-Other statement-bodied callback kinds remain explicit calls. Tests in
+Recognized consumer callbacks accept statement bodies: each iteration declares the parameters,
+executes a local result/exit region, then consumes the result. Returns inside nested lambdas keep
+their own boundary. Producer-chain stages remain expression-valued. No invoked lambda is introduced. Tests in
 [StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs) compile
-and execute zero-, one- and multi-element ranges and assert that a statement callback lowers.
+and execute empty and populated ranges, statement reductions, nested callback returns, guarded
+branches and sibling fault order. They assert that computed arguments still lower with every
+inlining policy.
 
 [TirLoopLowerer](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs) replaces a
 recognized expression with `TirTempRef` and inserts a `TirLoweredLoop` statement for its result.
@@ -43,7 +46,7 @@ index iteration from a `MapRange`. Each stage is stored in a local so a consumer
 result repeatedly without recomputing it. This path works with `--loops` even when `--fuse` is
 off. Fusion can expose additional producers such as `Range`.
 
-The lowerer refuses lambda and conditional scopes, unsupported control-flow statements,
+The lowerer refuses unsupported callback bodies,
 unrenderable element types, non-one-dimensional collections and callbacks it cannot render.
 It does not trace a local variable back to an earlier producer definition. Those restrictions
 matter because hoisting a loop can change evaluation frequency and guards.
