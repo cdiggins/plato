@@ -107,6 +107,15 @@ links refer to this checkout's reviewed snapshot.
 - [`Ara3D.Geometry.CSharpWriter.InlineReport.ToTable()`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L57)
 - [`Ara3D.Geometry.CSharpWriter.InlineReport.TupleConstructorRewrites`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L44)
 
+## StatementInliningOptions
+
+[`Ara3D.Geometry.CSharpWriter.StatementInliningOptions`](../../writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs#L3)
+
+- [`Ara3D.Geometry.CSharpWriter.StatementInliningOptions.EliminateLambdas`](../../writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs#L3)
+- [`Ara3D.Geometry.CSharpWriter.StatementInliningOptions.ModuleNodeBudget`](../../writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs#L4)
+- [`Ara3D.Geometry.CSharpWriter.StatementInliningOptions.NodeBudget`](../../writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs#L4)
+- [`Ara3D.Geometry.CSharpWriter.StatementInliningOptions.Simplify`](../../writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs#L3)
+
 ## TirArrayMaterializer
 
 [`Ara3D.Geometry.CSharpWriter.TirArrayMaterializer`](../../writers/Plato.CSharpWriter/Optimization/TirArrayMaterializer.cs#L26)

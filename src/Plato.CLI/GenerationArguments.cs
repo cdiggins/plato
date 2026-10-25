@@ -12,7 +12,7 @@ internal static class GenerationArguments
 
     private static readonly HashSet<string> ValueOptions = new(StringComparer.Ordinal)
     {
-        "--dump-tir", "--csharp-style", "--profile", "--out"
+        "--dump-tir", "--csharp-style", "--profile", "--out", "--inline-policy", "--inline-growth"
     };
 
     public static string? UnknownOption(IReadOnlyList<string> args)

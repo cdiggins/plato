@@ -26,6 +26,17 @@ internal static class GenerateCommand
         var optimizeArrays = args.Contains("--optimize-arrays");
 
         var inline = args.Contains("--inline");
+        var inlinePolicy = args.LastOrDefault(a => a.StartsWith("--inline-policy="))?.Split('=')[1];
+        var inlineGrowth = args.LastOrDefault(a => a.StartsWith("--inline-growth="))?.Split('=')[1] ?? "4096";
+        if (inlinePolicy is not (null or "statements" or "lambdas" or "iterative")
+            || !int.TryParse(inlineGrowth, out var growth) || growth <= 0
+            || inlinePolicy != null && (typeScript || rust || glsl || cpp || cuda))
+        {
+            Console.Error.WriteLine("Experimental C# inlining requires --inline-policy=statements|lambdas|iterative and a positive --inline-growth value.");
+            return 1;
+        }
+        var statementInlining = inlinePolicy == null ? null
+            : new StatementInliningOptions(inlinePolicy != "statements", inlinePolicy == "iterative", growth);
 
         var staticAbstract = args.Contains("--static-abstract");
 
@@ -148,7 +159,7 @@ internal static class GenerateCommand
         else
         {
             logger.Log("Writing C# Files");
-            var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract, profile, fuse);
+            var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract, profile, fuse, statementInlining);
             logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
             if (output.DegradedBodies.Count > 0)
             {

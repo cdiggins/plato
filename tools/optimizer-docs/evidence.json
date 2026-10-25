@@ -1,8 +1,10 @@
 {
   "producer": "dotnet-greenhouse docs build/export --format json",
   "tool_sha256": "5fe32caac7648af3e6b6aa262a0374eadfe9400b9fabb20ce04508096bcc3418",
-  "manifest_hash": "3ce4196eb94bb98b094e06faf4b54a4d0901b9b7c47d6d6e56769fc7931ede98",
+  "manifest_hash": "eb66e718b42be160044191c749cecea488c0f1cf6652153eb590bc8d7c188b2e",
   "inputs": {
+    "src/Plato.CLI/GenerateCommand.cs": "6971f279c2ed4e28a22febdf4baea1bded5725e1828764053490de766239f9ea",
+    "src/Plato.CLI/GenerationArguments.cs": "65baf49c37bf2ba57609d59b551a464b83a534d8336a4aeab86115dfe21e09ce",
     "src/Plato.CLI/Program.cs": "c3949f230b12b1ad0bab1328dd066d9d99f48958f006079b31a2dbdc33a9017a",
     "src/Plato.Compiler/Checking/Tir.cs": "0ef31634608c8cba065932afb848d43b289a6ead3f106213c328d4981f50e33f",
     "src/Plato.Compiler/Checking/TirEmitSource.cs": "2d6da829e713ca563aebe38b1b6b68e62533b6de72b900407fcd33be76dc223f",
@@ -26,9 +28,11 @@
     "tests/PlatoTests/Optimization/TirRewriteTests.cs": "d260d0a269f7a24a52db1492679b398951a7a4daaff1f761b88f88957aa59bf5",
     "writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs": "21cee6e8425c98135b1c0cfe854c6ca072d450b85e39c929415282706c4ded55",
     "writers/Plato.CSharpWriter/CSharpWriter.cs": "4e9ebdb20d1c725985d58662ff3179e54b2158dd830e249202408b73db786df9",
+    "writers/Plato.CSharpWriter/CSharpWriterExtensions.cs": "37ac41f0f97b5d971dfa180b8d37196621b9bdde086f99c2c635e36498ea484a",
     "writers/Plato.CSharpWriter/Optimization/ComponentUnroller.cs": "e89b1a33ae27e1a999735008cb8c3d5e3fba994f1db81d366407a2390d8bb103",
     "writers/Plato.CSharpWriter/Optimization/InlineReport.cs": "1822b53783336b200e78ff3dcf88f2add1282e2a46b66886ed226f49e8773eb9",
     "writers/Plato.CSharpWriter/Optimization/ITirInlineHost.cs": "997d33e73930c03a4c1455e102170d8dd36cd049abcbab20770c84991d8e434e",
+    "writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs": "15ba73db76c93ae33224320e6b9eef541ee8d32ffff9f54b96dd321f673c6fc2",
     "writers/Plato.CSharpWriter/Optimization/TirArrayMaterializer.cs": "d6dfb3f409e0767cbb294a480ca98a72da405c0e0202231096fea34de36aba4c",
     "writers/Plato.CSharpWriter/Optimization/TirComponentUnroller.cs": "0ab5b2a5158781d328f059675e565f56cf371af2001dedb9dee41ee5b06b43ad",
     "writers/Plato.CSharpWriter/Optimization/TirFusion.cs": "11e3806d6639af4f0896a82ea4dddd8d34a0dbedc677fc8ef0ae993e38b230d4",
@@ -407,6 +411,34 @@
           "signature": "Ara3D.Geometry.CSharpWriter.InlineReport.TupleConstructorRewrites",
           "path": "writers/Plato.CSharpWriter/Optimization/InlineReport.cs",
           "line": 44
+        }
+      ]
+    },
+    {
+      "name": "StatementInliningOptions",
+      "qualified_name": "Ara3D.Geometry.CSharpWriter.StatementInliningOptions",
+      "path": "writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs",
+      "line": 3,
+      "members": [
+        {
+          "signature": "Ara3D.Geometry.CSharpWriter.StatementInliningOptions.EliminateLambdas",
+          "path": "writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs",
+          "line": 3
+        },
+        {
+          "signature": "Ara3D.Geometry.CSharpWriter.StatementInliningOptions.ModuleNodeBudget",
+          "path": "writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs",
+          "line": 4
+        },
+        {
+          "signature": "Ara3D.Geometry.CSharpWriter.StatementInliningOptions.NodeBudget",
+          "path": "writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs",
+          "line": 4
+        },
+        {
+          "signature": "Ara3D.Geometry.CSharpWriter.StatementInliningOptions.Simplify",
+          "path": "writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs",
+          "line": 3
         }
       ]
     },

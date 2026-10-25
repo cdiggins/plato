@@ -54,7 +54,7 @@ before any later argument's prerequisites; conditional branches keep their prere
 behind the guard. Branch and loop bodies retain their scopes. Loop conditions, other compound
 expression forms and lambda bodies remain opaque. Exact ground signature checks exclude ambiguous generic dispatch.
 Expansion ancestry and cumulative per-caller growth limits bound recursive expansion.
-This property is an implementation experiment, not a production CLI flag or a performance
+This property is an implementation experiment, not a default policy or a performance
 claim. [compiler-504](../../tracker/issues/compiler-504.md) tracks broader scope and measurements.
 
 `CSharpWriter.EliminateKnownLambdas` adds callable tracking to that experiment. Immutable
@@ -80,6 +80,13 @@ budgets count net nodes after simplification; a caller exceeding its allowance r
 A separate visit limit and pass cap bound compilation work. Budget properties on CSharpWriter
 and constants in StatementExpansion are the authority for limits. These are conservative bounds,
 not a profitability model, and no runtime or allocation advantage is established.
+
+Use the C#-only `--inline-policy=statements`, `--inline-policy=lambdas`, or
+`--inline-policy=iterative` to reproduce these ablations. The latter policies include the
+earlier capabilities. `--inline-growth=<positive integer>` selects the per-caller allowance.
+These options do not imply the existing `--inline` expression pass; pass that flag explicitly
+when comparing the added stage against the current inliner. With no policy option, existing
+recipes are unchanged.
 
 [StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs)
 compiles emitted C# and checks cloned names, required evaluation of unused arguments, sibling

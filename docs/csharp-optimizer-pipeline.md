@@ -43,7 +43,8 @@ both `LowerLoops` and `FuseCombinators`; `plato run --backend=csharp --loops --f
 The experimental writer property `InlineStatements` adds direct statement-body call expansion
 before this pipeline. Its typed local marker, `TirInlineBinding`, preserves argument and result
 conversion boundaries. Its restricted scope and verification are described in the
-[inlining guide](optimizer/inlining.md); the existing CLI recipes do not enable it.
+[inlining guide](optimizer/inlining.md). The C#-only `--inline-policy` option selects
+`statements`, `lambdas`, or `iterative`; existing recipes do not enable it.
 `TirInlineRegion` and `TirInlineExit` preserve branch-local prerequisites and isolate callee
 returns from caller returns. Later loop lowering currently leaves these regions opaque.
 
