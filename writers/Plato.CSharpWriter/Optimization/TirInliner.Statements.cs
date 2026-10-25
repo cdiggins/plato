@@ -7,77 +7,33 @@ namespace Ara3D.Geometry.CSharpWriter;
 
 public static partial class TirInliner
 {
-    /// <summary>Experimental direct-call inlining at whole initializer and return positions.</summary>
+    /// <summary>Experimental call expansion with ordered evaluation and lexical result regions.</summary>
     public static TirFunction InlineStatements(TirFunction tir, ITirInlineHost host, string owner,
         bool eliminateLambdas = false, bool simplify = false, CSharpFunctionInfo functionInfo = null)
-    {
-        if (tir?.Body == null)
-            return tir;
-        var expansion = new StatementExpansion(tir, host, owner, eliminateLambdas, simplify);
-        var body = tir.Body;
-        var initialSize = body.Descendants().Count();
-        var initialCalls = host.InlineReport?.StatementCallsInlined ?? 0;
-        var initialLambdas = host.InlineReport?.KnownLambdasInlined ?? 0;
-        var budget = host is CSharpWriter w ? System.Math.Min(w.StatementNodeBudget, w.RemainingStatementGrowth) : 4096;
-        for (var pass = 0; pass < (simplify ? 8 : 1); pass++)
-        {
-            var previous = body.ToString();
-            body = expansion.Finish(expansion.Rewrite(body));
-            if (simplify && host is CSharpWriter writer)
-            {
-                var current = new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,
-                    tir.ZonkedParameterTypes, tir.ZonkedReturnType);
-                current = TirFusion.Rewrite(current, writer);
-                current = TirComponentUnroller.UnrollFunction(current, functionInfo, writer);
-                body = current.Body;
-            }
-            var growth = System.Math.Max(0, body.Descendants().Count() - initialSize);
-            if (growth > budget)
-            {
-                if (host.InlineReport != null)
-                {
-                    host.InlineReport.StatementCallsInlined = initialCalls;
-                    host.InlineReport.KnownLambdasInlined = initialLambdas;
-                }
-                host.InlineReport?.Refuse(tir.Original?.Name, "statement expansion", InlineRefusal.ExpansionBudget);
-                return tir;
-            }
-            expansion.SetRemainingGrowth(budget - growth);
-            if (body.ToString() == previous)
-                break;
-        }
-        if (host is CSharpWriter module)
-            module.RemainingStatementGrowth -= System.Math.Max(0, body.Descendants().Count() - initialSize);
-        return ReferenceEquals(body, tir.Body) ? tir : new TirFunction(tir.Original, tir.Parameters,
-            tir.ReturnType, body, tir.ZonkedParameterTypes, tir.ZonkedReturnType);
-    }
+        => tir?.Body == null ? tir : new StatementPipeline(tir, host, owner,
+            eliminateLambdas, simplify, functionInfo).Run();
 
     private sealed partial class StatementExpansion
     {
-        private const int MaxExpandedNodes = 4096;
-        private const int MaxDepth = 16;
         private readonly TirFunction _caller;
         private readonly ITirInlineHost _host;
         private readonly string _owner;
         private readonly HashSet<string> _names;
         private readonly HashSet<FunctionDef> _ancestry = new();
-        private int _remaining = MaxExpandedNodes;
-        private int _workRemaining = 100000;
+        private readonly InlineExpansionBudget _budget;
+        public int Version { get; private set; }
         private int _next;
 
-        public StatementExpansion(TirFunction caller, ITirInlineHost host, string owner, bool eliminateLambdas, bool simplify)
+        public StatementExpansion(TirFunction caller, ITirInlineHost host, string owner, bool eliminateLambdas, bool simplify, InlineExpansionBudget budget)
         {
+            _budget = budget;
             (_caller, _host, _owner) = (caller, host, owner);
             _names = CollectBoundNames(caller, caller.Body);
             _ancestry.Add(caller.Original);
             _eliminateLambdas = eliminateLambdas;
             _simplify = simplify;
             RecordAssignments(caller.Body);
-            if (host is CSharpWriter writer)
-                _remaining = System.Math.Min(writer.StatementNodeBudget, writer.RemainingStatementGrowth);
         }
-
-        public void SetRemainingGrowth(int value) => _remaining = value;
 
         private VariableDef Fresh(TypeExpression type)
         {
@@ -121,17 +77,22 @@ public static partial class TirInliner
 
         private TirNode Expand(TirNode node, List<TirNode> prefix)
         {
-            if (_workRemaining-- <= 0)
+            if (!_budget.Visit())
                 return node;
             node = Simplify(node);
-            if (_eliminateLambdas && node is TirInvoke invoke)
-                return ExpandInvoke(invoke, prefix);
+            if (node is TirInvoke invoke)
+            {
+                invoke = (TirInvoke)ExpandOperands(invoke, prefix);
+                return _eliminateLambdas ? ExpandInvoke(invoke, prefix) : invoke;
+            }
+            if (node is TirNew or TirArray or TirConstructorCall or TirComponentAccess)
+                return ExpandOperands(node, prefix);
             if (node is TirConditional conditional && Ground(node.Type))
                 return ExpandConditional(conditional, prefix);
             if (node is TirCoerce coerce)
                 return coerce.WithChildren(new[] { Expand(coerce.Inner, prefix) });
             if (node is TirCall nested)
-                node = Simplify(ExposeCallback((TirCall)ExpandArguments(nested, prefix)));
+                node = Simplify(ExposeCallback((TirCall)ExpandOperands(nested, prefix)));
             if (node is not TirCall call)
                 return node;
             TirNode Refuse(string reason)
@@ -152,14 +113,13 @@ public static partial class TirInliner
                 return Refuse("expression policy disabled");
             if (_ancestry.Contains(callee.Original))
                 return Refuse("recursive ancestry");
-            if (_ancestry.Count >= MaxDepth)
+            if (_ancestry.Count >= InlineExpansionBudget.MaxDepth)
                 return Refuse("depth limit");
             if (!Eligible(call, callee, block))
                 return Refuse("signature or body not proven");
             var size = block.Descendants().Count() + call.Args.Count * 2 + 2;
-            if (size > _remaining)
+            if (!_budget.TrySpend(size))
                 return Refuse("growth limit");
-            _remaining -= size;
             var parameters = new Dictionary<ParameterDef, TirNode>();
             for (var i = 0; i < call.Args.Count; i++)
                 parameters[callee.Parameters[i]] = Bind(call.Args[i], ParameterType(callee, i), prefix);
@@ -171,16 +131,18 @@ public static partial class TirInliner
             if (_host.InlineReport != null) _host.InlineReport.StatementCallsInlined++;
             _host.InlineReport?.RecordSite(_owner, _caller.Original, call, "statement region expanded");
             _ancestry.Remove(callee.Original);
+            Version++;
             return new TirVariable(resultDef, resultDef.Type, call.Origin);
         }
 
-        private TirNode ExpandArguments(TirCall call, List<TirNode> prefix)
+        private TirNode ExpandOperands(TirNode node, List<TirNode> prefix)
         {
-            if (call.Args.Any(a => !Ground(a.Type) || a is TirTypeRef))
-                return call;
-            var parts = call.Args.Select(a => TirEvaluation.Capture(a, Expand)).ToArray();
+            var children = node.Children.ToArray();
+            if (children.Any(a => !Ground(a.Type) || a is TirTypeRef))
+                return node;
+            var parts = children.Select(a => TirEvaluation.Capture(a, Expand)).ToArray();
             var values = TirEvaluation.Sequence(parts, prefix, (value, before) => Bind(value, value.Type, before));
-            return call.WithChildren(values);
+            return node.WithChildren(values);
         }
 
         private TirNode ExpandConditional(TirConditional node, List<TirNode> prefix)

@@ -28,8 +28,11 @@ per component. Recognized constructor and Boolean consumers let library bodies a
 fixed components through a temporary dynamic array.
 
 The pass needs a recognized component layout and supported expression/callback shape. Dynamic
-arrays are not fixed-component values. Unsupported or statement-shaped bodies remain unchanged;
-later passes may still handle eligible dynamic operations. Field casts retain wrapper-type
+arrays are not fixed-component values. The shared structural traversal reaches eligible calls
+inside statement blocks, inline result regions and surviving lambdas. Capture rewriting follows
+the same structural child contract, so an unrelated closure does not cancel a valid expansion.
+Existing layout, argument and callback guards
+still apply; unsupported expressions remain for later passes. Field casts retain wrapper-type
 conversion context. Expansion changes the plumbing, not the underlying numeric formula.
 
 The field-layout table currently recognizes concrete implementations of `IArrayLike`.
@@ -46,6 +49,8 @@ Enable `--optimize`; add `--inline` when component calls are hidden behind helpe
 direct fields, constructor/Boolean forms and the boundary where genuinely dynamic arrays still
 reach loop lowering. [TirRewriteTests](../../tests/PlatoTests/Optimization/TirRewriteTests.cs)
 checks traversal of marker nodes used by later passes.
+[StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs) executes
+a returned capturing lambda after literal-array expansion and checks expansion inside inline regions.
 
 The intended benefit is removal of per-operation collection and callback plumbing for fixed
 shapes. Delegate references can still produce invocations, and the resulting scalar calls still

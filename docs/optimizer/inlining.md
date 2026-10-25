@@ -46,7 +46,8 @@ reads with inlining disabled, enabled, and followed by loop lowering.
 The experimental `CSharpWriter.InlineStatements` property runs the statement extension
 in [TirInliner.Statements.cs](../../writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs)
 before the expression pipeline. It admits resolved statement callees ending in a return,
-including branches, early returns and loops. It evaluates every
+including branches, early returns and loops. Strict operands in calls, delegate invocations,
+constructors and array literals share ordered prerequisite handling. It evaluates every
 actual into an explicitly typed local in source order, clones local identities, and binds
 the result with the declared return type. An inline region assigns that result and jumps to
 its own exit label, so a callee return cannot exit the caller. Call arguments are sequenced
@@ -71,7 +72,8 @@ arguments eagerly and use the same result regions, including for statement bodie
 must refer to unassigned values; unknown callables and unproved mutable captures stay explicit.
 Nested consumers use ancestry from the callable's creation context, so repeated use of the
 same consumer is not mistaken for recursion. Unused known-callable bindings are removed only
-after their applications disappear. Remaining callback bodies are processed in their own
+after their applications disappear. Backward liveness removes dead alias chains in one block pass;
+cloning carries inferred types through those aliases. Remaining callback bodies are processed in their own
 scope. The inline report distinguishes unknown targets, mutable captures, signature mismatches,
 and budget refusals. Already rewritten callback regions can be cloned with fresh identities.
 There is no shared specialization registry: callbacks whose consumers remain calls still
@@ -85,8 +87,10 @@ library and exact scalar declarations. Floating arithmetic, overflow and arbitra
 do not fold. Constant guards select only their executed branch. Inline regions retain expansion
 ancestry across iterations, so recursion cannot restart on a later pass. Caller and module growth
 budgets count net nodes after simplification; a caller exceeding its allowance retains its input.
-A separate visit limit and pass cap bound compilation work. Budget properties on CSharpWriter
-and constants in StatementExpansion are the authority for limits. These are conservative bounds,
+`StatementPipeline` schedules exposure, expansion and cleanup; `InlineExpansionBudget` owns
+visit, depth, pass and growth limits. Passes use explicit change versions and structural identity
+instead of comparing printed trees. Budget properties on CSharpWriter and constants in
+InlineExpansionBudget are the authority for limits. These are conservative bounds,
 not a profitability model, and no runtime or allocation advantage is established.
 
 Use the C#-only `--inline-policy=statements`, `--inline-policy=lambdas`, or
@@ -94,8 +98,8 @@ Use the C#-only `--inline-policy=statements`, `--inline-policy=lambdas`, or
 earlier capabilities. `--inline-growth=<positive integer>` selects the per-caller allowance.
 The growth option requires an explicit policy; malformed values are errors.
 These options do not imply the existing `--inline` expression pass; pass that flag explicitly
-when comparing the added stage against the current inliner. With no policy option, existing
-recipes are unchanged.
+when comparing the added stage against the current inliner. Without a policy option, statement expansion stays disabled. Loop scope handling is shared by
+every policy.
 
 [StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs)
 compiles emitted C# and checks cloned names, required evaluation of unused arguments, sibling

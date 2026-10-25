@@ -12,7 +12,10 @@ the same separation between traversal and rules, with a much broader infrastruct
 
 ## Contracts
 
-`Rewrite` rebuilds children before applying a supplied rewrite to their parent. Enter/exit hooks
+`Rewrite` visits each node through its `Children` and `WithChildren` contract, then applies the
+supplied rule. It preserves the original node when its children and the rule leave it unchanged,
+so identity can signal structural progress without printing the tree. New marker types supply
+their own rebuilding behavior rather than requiring another visitor switch. Enter/exit hooks
 let a caller track scope such as lambda depth. Marker nodes introduced by earlier optimizations
 must remain traversable by later passes. `Substitute` replaces references keyed by resolved
 `ParameterDef` objects, rather than performing text replacement. `TryBetaReduce` applies a lambda

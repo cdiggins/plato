@@ -59,7 +59,7 @@ It is a proposal, not an instruction to execute the earlier design plan.
 - [ ] Ablation measurements on equivalent BRep meshes distinguish enabling effects, allocations and runtime performance; C# only.
 
 - [x] Replace the inline-policy-specific loop restriction with shared ordered prerequisites, scoped placement and lexical cloning.
-- [ ] Simplify iteration control and support callback/condition scopes without sacrificing loop opportunities; verify semantic and optimization regressions.
+- [x] Simplify iteration control and support callback/condition scopes without sacrificing loop opportunities; verify semantic and optimization regressions.
 
 ## Implementation scope and recovery
 
@@ -175,3 +175,39 @@ Recorded private build passed; all 58 focused cases passed in 28 seconds. New wi
 condition call counts, statement producer fusion, repeated known callbacks, nested ranges, and
 empty outer loops whose callback would fault. Greenhouse evidence/review/check passed. Iteration
 and work-budget separation remains before the final broad verification.
+
+
+The third redesign milestone separates StatementPipeline (pass scheduling and rollback) from
+InlineExpansionBudget (growth and work limits) and StatementExpansion (call transformation).
+Progress uses explicit transformation versions and structural identity, not printed tree comparison.
+TirRewrite now uses each node's Children/WithChildren contract, preserving unchanged identity and
+covering lowered markers without another visitor switch. Component expansion uses that traversal.
+Ordered operands include constructors, arrays and unknown delegate invocations. Backward liveness
+removes dead callable alias chains in one pass; cloned aliases retain their inferred checked types.
+The large embedded test program/runtime are separate fixture files monitored by documentation evidence.
+
+Component expansion no longer rejects statement regions or an entire function merely because a
+lambda survives. The downstream capture rewriter already traverses marker children structurally;
+an executable returned-closure witness verifies captured values after expansion. Calls without
+optional enclosing-function metadata still permit independently typed literal-array rewrites.
+Unchanged expression bodies retain expression emission. No eligibility guards were weakened to
+satisfy a source-shape assertion: the initial nine component test failures exposed unnecessary block
+wrapping, which was fixed before final validation.
+
+Final verification of this worktree on 2026-10-25:
+- Recorded Release CLI build: PASS, 18s; strict shipping-tier lint: PASS, 16s.
+- Recorded complete non-diagnostic PlatoTests selection: 396 passed, 0 failed, 140s,
+  including both ratchets. Logs/TRX: .temp/gate-logs/20261025-011637-890386/.
+- Final focused statement/component/rewrite group: 30 passed, 7s; private recorded build: 5.1s.
+- Studio battery: 61s. Legacy lint PASS 8.5s, forward lint PASS 24.7s, SDK build PASS 11.6s,
+  GeometryTests 15/15 PASS 15.5s. External frozen-V1 checksum gate FAIL 0.5s, the existing
+  cross-checkout repo-473 blocker; no manifest refresh. Log: .temp/compiler-504-pipeline/studio-gates.log.
+- Greenhouse refresh, prose review, source freshness and six maintenance tests: PASS.
+
+These are newly run gates, not inherited results. The gate recorder labels its row with the parent
+HEAD cd6dac87; its tests included this milestone's uncommitted source, recorded with this work commit.
+The shared status-report snapshot/HTML contain other sessions' edits and are not swept into this commit.
+
+The requested pipeline redesign is verified. The original experiment stays open: fresh equivalent
+BRep generation, production callable eligibility/residual assessment, allocation profiles and timing
+ablations have not been run on this redesigned pipeline. Prior profiles cannot establish its performance.

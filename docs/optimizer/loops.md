@@ -28,7 +28,8 @@ cloned independently and lowered inside their own iteration scopes; an empty out
 none of their prerequisites. Generated names avoid existing bindings. The scope traversal is separate
 from recognizing the supported array operations.
 
-Known callback propagation exposes lambdas at MapRange, Reduce and FlatMap intrinsic sites.
+Known callback propagation exposes proven callable arguments before loop recognition; it does not
+rely on a separate list of intrinsic names.
 Recognized consumer callbacks accept statement bodies: each iteration declares the parameters,
 executes a local result/exit region, then consumes the result. Returns inside nested lambdas keep
 their own boundary. Producer-chain stages use the same result emission for expression or statement

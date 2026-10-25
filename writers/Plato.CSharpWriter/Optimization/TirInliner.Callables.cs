@@ -31,14 +31,7 @@ public static partial class TirInliner
                 return body;
             body = TirRewrite.Rewrite(body, n => _eliminateLambdas && n is TirLambda l && !IsEtaShaped(l)
                 ? new TirLambda(l.Parameters, Rewrite(l.Body), l.Type, l.Origin) : n);
-            for (var pass = 0; pass < MaxDepth; pass++)
-            {
-                var before = body.Descendants().Count();
-                body = TirRewrite.Rewrite(body, n => n is TirBlock b ? RemoveUnusedCallables(b) : n);
-                if (body.Descendants().Count() == before)
-                    break;
-            }
-            return body;
+            return TirRewrite.Rewrite(body, n => n is TirBlock b ? RemoveUnusedCallables(b) : n);
         }
 
         private void RecordAssignments(TirNode node)
@@ -82,13 +75,26 @@ public static partial class TirInliner
         {
             if (!_eliminateLambdas && !_simplify)
                 return block;
-            var used = block.Descendants().OfType<TirVariable>().Select(v => v.Def).ToHashSet();
-            return new TirBlock(block.Statements.Where(n => n switch
+            var used = new HashSet<VariableDef>();
+            var live = new List<TirNode>();
+            for (var i = block.Statements.Count - 1; i >= 0; i--)
             {
-                TirInlineBinding b => used.Contains(b.Def) || Known(b.Value) == null && !Discardable(b.Def, b.Value),
-                TirLet l => used.Contains(l.Def) || Known(l.Value) == null && !Discardable(l.Def, l.Value),
-                _ => true
-            }).ToList(), block.Origin);
+                var statement = block.Statements[i];
+                var discard = statement switch
+                {
+                    TirInlineBinding b => !used.Contains(b.Def) && (Known(b.Value) != null || Discardable(b.Def, b.Value)),
+                    TirLet l => !used.Contains(l.Def) && (Known(l.Value) != null || Discardable(l.Def, l.Value)),
+                    _ => false
+                };
+                if (discard) continue;
+                live.Add(statement);
+                used.UnionWith(statement.Descendants().OfType<TirVariable>().Select(v => v.Def));
+            }
+            if (live.Count == block.Statements.Count)
+                return block;
+            live.Reverse();
+            Version++;
+            return new TirBlock(live, block.Origin);
         }
 
         private TirNode ExpandInvoke(TirInvoke invoke, List<TirNode> prefix)
@@ -114,14 +120,13 @@ public static partial class TirInliner
                 if (!Ground(signature[i]) || !Equals(signature[i], invoke.Args[i].Type))
                     return Refuse(InlineRefusal.CallableSignatureMismatch);
             var cost = lambda.Body.Descendants().Count() + invoke.Args.Count * 2 + 2;
-            if (cost > _remaining || _activeLambdas.Count >= MaxDepth)
+            if (_activeLambdas.Count >= InlineExpansionBudget.MaxDepth || !_budget.TrySpend(cost))
                 return Refuse(InlineRefusal.ExpansionBudget);
             var body = lambda.Body is TirBlock ? lambda.Body : new TirBlock(new[] { new TirReturn(lambda.Body, lambda.Origin) }, lambda.Origin);
-            _remaining -= cost;
             _activeLambdas.Add(lambda);
             var parameters = new Dictionary<ParameterDef, TirNode>();
             for (var i = 0; i < invoke.Args.Count; i++)
-                parameters[lambda.Parameters[i]] = Bind(Expand(invoke.Args[i], prefix), signature[i], prefix);
+                parameters[lambda.Parameters[i]] = Bind(invoke.Args[i], signature[i], prefix);
             var result = Fresh(invoke.Type);
             var clone = TirInlineCloner.Clone(body, parameters, result, Fresh);
             RecordAssignments(clone);
@@ -135,6 +140,7 @@ public static partial class TirInliner
             _ancestry.Clear();
             _ancestry.UnionWith(enclosingAncestry);
             _activeLambdas.Remove(lambda);
+            Version++;
             if (_host.InlineReport != null) _host.InlineReport.KnownLambdasInlined++;
             _host.InlineReport?.RecordSite(_owner, _caller.Original, invoke, "known callable expanded");
             return new TirVariable(result, result.Type, invoke.Origin);

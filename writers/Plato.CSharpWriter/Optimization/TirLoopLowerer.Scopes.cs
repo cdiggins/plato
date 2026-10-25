@@ -11,8 +11,7 @@ public static partial class TirLoopLowerer
     private static TirFunction RewriteScoped(TirFunction function)
     {
         var lowering = new ScopedLoopLowering(function);
-        var body = function.Body is TirBlock ? lowering.Scope(function.Body)
-            : lowering.Scope(new TirReturn(function.Body, function.Body.Origin));
+        var body = lowering.Body(function.Body);
         return new TirFunction(function.Original, function.Parameters, function.ReturnType, body,
             function.ZonkedParameterTypes, function.ZonkedReturnType);
     }
@@ -52,6 +51,15 @@ public static partial class TirLoopLowerer
             var def = Fresh(value.Type);
             before.Add(new TirInlineBinding(def, value));
             return new TirVariable(def, def.Type, value.Origin);
+        }
+
+        public TirNode Body(TirNode node)
+        {
+            if (TirRewrite.IsStatementNode(node))
+                return Scope(node);
+            var value = TirEvaluation.Capture(node, Value);
+            return value.Statements.Count == 0 ? value.Value : new TirBlock(value.Statements
+                .Append(new TirReturn(value.Value, node.Origin)).ToArray(), node.Origin);
         }
 
         public TirNode Scope(TirNode node)
@@ -95,12 +103,7 @@ public static partial class TirLoopLowerer
                 return coerce.WithChildren(new[] { Callback(coerce.Inner) });
             if (node is not TirLambda lambda)
                 return node;
-            if (TirRewrite.IsStatementNode(lambda.Body))
-                return lambda.WithChildren(new[] { Scope(lambda.Body) });
-            var value = TirEvaluation.Capture(lambda.Body, Value);
-            var body = value.Statements.Count == 0 ? value.Value : new TirBlock(value.Statements
-                .Append(new TirReturn(value.Value, lambda.Origin)).ToArray(), lambda.Origin);
-            return lambda.WithChildren(new[] { body });
+            return lambda.WithChildren(new[] { Body(lambda.Body) });
         }
 
         private TirNode Chain(TirNode node, List<TirNode> before)

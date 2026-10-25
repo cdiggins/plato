@@ -39,6 +39,29 @@ namespace PlatoTests
         private static TirInvoke Invoke(TirNode target, params TirNode[] args)
             => new TirInvoke(target, args.ToList(), null, null);
 
+        [Test]
+        public static void UnchangedRewritePreservesIdentity()
+        {
+            var body = new TirIf(Int(1), new TirBlock(new[] { new TirReturn(Call("f", Int(2)), null) }, null), null, null);
+            Assert.That(TirRewrite.Rewrite(body, n => n), Is.SameAs(body));
+        }
+
+        [Test]
+        public static void SubstitutionTraversesLoopMarkersAndRepeatedTests()
+        {
+            var x = Param("x");
+            var loop = new TirLoweredLoop("MapRange", new[] { Ref(x) }, Lambda(Ref(x), Param("i")),
+                null, null, "_lp7", 7, null, null) { IndexSource = true, SourceStages = new[] { Lambda(Ref(x), Param("j")) } };
+            var guarded = new TirGuardedLoop(new TirEvaluation(new[] { loop }, Ref(x)), new TirReturn(Ref(x), null));
+            var result = (TirGuardedLoop)TirRewrite.Substitute(guarded,
+                new Dictionary<ParameterDef, TirNode> { [x] = Int(9) });
+            Assert.That(result.Descendants().OfType<TirParameter>(), Is.Empty);
+            var rewritten = (TirLoweredLoop)result.Test.Statements.Single();
+            Assert.That((rewritten.Kind, rewritten.Id, rewritten.TempName, rewritten.IndexSource),
+                Is.EqualTo(("MapRange", 7, "_lp7", true)));
+            Assert.That(rewritten.SourceStages.Count, Is.EqualTo(1));
+        }
+
         // --- Substitute -------------------------------------------------------
 
         [Test]

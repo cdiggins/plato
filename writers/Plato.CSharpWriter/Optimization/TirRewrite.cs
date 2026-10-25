@@ -48,58 +48,17 @@ public static class TirRewrite
     private static TirNode RewriteCore(TirNode n, System.Func<TirNode, TirNode> f,
         System.Action<TirNode> enter, System.Action<TirNode> exit)
     {
-        List<TirNode> Rw(IReadOnlyList<TirNode> ns)
-            => ns?.Select(x => Rewrite(x, f, enter, exit)).ToList();
-
-        switch (n)
+        var children = n.Children.ToArray();
+        TirNode[] replacements = null;
+        for (var i = 0; i < children.Length; i++)
         {
-            case TirGuardedLoop loop:
-                return f(loop.WithChildren(Rw(loop.Children.ToList())));
-            case TirMultiReduction pair:
-                return f(pair.WithChildren(Rw(pair.Children.ToList())));
-            case TirInlineRegion region:
-                return f(region.WithChildren(new[] { Rewrite(region.Body, f, enter, exit) }));
-            case TirInlineExit exitRegion:
-                return f(exitRegion.WithChildren(new[] { Rewrite(exitRegion.Value, f, enter, exit) }));
-            case TirInlineBinding binding:
-                return f(binding.WithChildren(new[] { Rewrite(binding.Value, f, enter, exit) }));
-            case TirCall c:
-                return f(new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, c.ReturnType,
-                    Rw(c.Args), c.Type, c.Origin, c.Name));
-            case TirCoerce co:
-                return f(new TirCoerce(Rewrite(co.Inner, f, enter, exit), co.FromType, co.ToType, co.ConversionFn, co.Origin));
-            case TirInvoke inv:
-                return f(new TirInvoke(Rewrite(inv.Target, f, enter, exit), Rw(inv.Args), inv.Type, inv.Origin));
-            case TirConditional cond:
-                return f(new TirConditional(Rewrite(cond.Condition, f, enter, exit), Rewrite(cond.IfTrue, f, enter, exit),
-                    Rewrite(cond.IfFalse, f, enter, exit), cond.Type, cond.Origin));
-            case TirNew nw:
-                return f(new TirNew(nw.NewType, Rw(nw.Args), nw.Type, nw.Origin));
-            case TirArray arr:
-                return f(new TirArray(Rw(arr.Elements), arr.Type, arr.Origin));
-            case TirAssign asg:
-                return f(new TirAssign(Rewrite(asg.LValue, f, enter, exit), Rewrite(asg.RValue, f, enter, exit), asg.Type, asg.Origin));
-            case TirLambda lam:
-                return f(new TirLambda(lam.Parameters, Rewrite(lam.Body, f, enter, exit), lam.Type, lam.Origin));
-            case TirLet let:
-                return f(new TirLet(let.Def, Rewrite(let.Value, f, enter, exit), let.Type, let.Origin));
-            case TirBlock b:
-                return f(new TirBlock(Rw(b.Statements), b.Origin));
-            case TirReturn r:
-                return f(new TirReturn(Rewrite(r.Value, f, enter, exit), r.Origin));
-            case TirIf iff:
-                return f(new TirIf(Rewrite(iff.Condition, f, enter, exit), Rewrite(iff.IfTrue, f, enter, exit), Rewrite(iff.IfFalse, f, enter, exit), iff.Origin));
-            case TirLoop l:
-                return f(new TirLoop(Rewrite(l.Condition, f, enter, exit), Rewrite(l.Body, f, enter, exit), l.Origin));
-            case TirComponentAccess ca:
-                return f(new TirComponentAccess(Rewrite(ca.Receiver, f, enter, exit), ca.FieldName, ca.CastTo, ca.ScalarComponentPrim, ca.Type));
-            case TirConstructorCall cc:
-                return f(new TirConstructorCall(cc.TypeName, Rw(cc.Args), cc.Type));
-            case TirBooleanChain bc:
-                return f(new TirBooleanChain(bc.Op, Rw(bc.Terms), bc.Type));
-            default:
-                return f(n); // leaves
+            var child = Rewrite(children[i], f, enter, exit);
+            if (ReferenceEquals(child, children[i]))
+                continue;
+            replacements ??= (TirNode[])children.Clone();
+            replacements[i] = child;
         }
+        return f(replacements == null ? n : n.WithChildren(replacements));
     }
 
     /// <summary>Replace every <see cref="TirParameter"/> bound to a def in <paramref name="map"/> by

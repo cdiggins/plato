@@ -1,0 +1,27 @@
+global using System.Collections.Generic; namespace Ara3D.Collections { }
+namespace Ara3D.Geometry { public static class ProbeOperators {
+public static int Calls;
+public static IReadOnlyList<R> Map<T,R>(this IReadOnlyList<T> xs, System.Func<T,R> f) {
+var result = new R[xs.Count];
+for (var i = 0; i < result.Length; i++) result[i] = f(xs[i]);
+return result;
+}
+public static R Reduce<T,R>(this IReadOnlyList<T> xs, R seed, System.Func<R,T,R> f) {
+foreach (var x in xs) seed = f(seed, x);
+return seed;
+}
+public static Integer Count<T>(this IReadOnlyList<T> xs) => (Integer)xs.Count;
+public static Integer Add(this Integer a, Integer b) => (Integer)((int)a + (int)b);
+public static Integer Divide(this Integer a, Integer b) => (Integer)((int)a / (int)b);
+public static Integer Subtract(this Integer a, Integer b) => (Integer)((int)a - (int)b);
+public static Boolean LessThan(this Integer a, Integer b) => (Boolean)((int)a < (int)b);
+public static Boolean GreaterThan(this Integer a, Integer b) => (Boolean)((int)a > (int)b);
+public static Integer Tick(this Integer x) { Calls++; return x; }
+public static Integer First(this Integer x) => throw new System.InvalidOperationException("first");
+public static Integer Second(this Integer x) => throw new System.InvalidOperationException("second");
+public static IReadOnlyList<T> MapRange<T>(this Integer n, System.Func<Integer, T> f) {
+var result = new T[System.Math.Max(0, (int)n)];
+for (var i = 0; i < result.Length; i++) result[i] = f((Integer)i);
+return result;
+}
+} }

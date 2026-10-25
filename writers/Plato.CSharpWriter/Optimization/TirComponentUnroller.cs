@@ -136,8 +136,7 @@ public static class TirComponentUnroller
     /// </summary>
     public static TirNode TryUnroll(TirNode body, CSharpFunctionInfo fi, CSharpWriter writer)
     {
-        // Same scope rule as the legacy unroller: expression bodies only.
-        if (body == null || TirRewrite.IsStatementNode(body))
+        if (body == null)
             return null;
 
         if (!body.Descendants().OfType<TirCall>().Any(c => IsCandidateCall(c) || IsBodyCandidateCall(c) || IsArrayCombinatorCandidate(c)))
@@ -145,9 +144,12 @@ public static class TirComponentUnroller
 
         // Monomorphized C# type per parameter definition of this function instance.
         var paramTypes = new Dictionary<ParameterDef, string>();
-        var impl = fi.Function.Implementation;
-        for (var i = 0; i < impl.Parameters.Count && i < fi.ParameterTypes.Count; ++i)
-            paramTypes[impl.Parameters[i]] = fi.ParameterTypes[i];
+        if (fi != null)
+        {
+            var impl = fi.Function.Implementation;
+            for (var i = 0; i < impl.Parameters.Count && i < fi.ParameterTypes.Count; ++i)
+                paramTypes[impl.Parameters[i]] = fi.ParameterTypes[i];
+        }
 
         var changed = false;
         var result = Rewrite(body, n =>
@@ -167,11 +169,6 @@ public static class TirComponentUnroller
         });
 
         if (!changed)
-            return null;
-
-        // All-or-nothing safety: a surviving lambda would meet marker nodes it cannot traverse
-        // in the downstream capture rewrite (same rule as the legacy unroller).
-        if (result.Descendants().OfType<TirLambda>().Any())
             return null;
 
         return result;
@@ -623,54 +620,6 @@ public static class TirComponentUnroller
             return n;
         });
 
-    /// <summary>Post-order structural rewrite (children first, then <paramref name="f"/> on the
-    /// rebuilt node) — the TIR analogue of <c>Symbol.Rewrite</c>.</summary>
-    private static TirNode Rewrite(TirNode n, Func<TirNode, TirNode> f)
-    {
-        if (n == null)
-            return null;
-
-        List<TirNode> Rw(IReadOnlyList<TirNode> ns)
-            => ns?.Select(x => Rewrite(x, f)).ToList();
-
-        switch (n)
-        {
-            case TirCall c:
-                return f(new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, c.ReturnType,
-                    Rw(c.Args), c.Type, c.Origin, c.Name));
-            case TirCoerce co:
-                return f(new TirCoerce(Rewrite(co.Inner, f), co.FromType, co.ToType, co.ConversionFn, co.Origin));
-            case TirInvoke inv:
-                return f(new TirInvoke(Rewrite(inv.Target, f), Rw(inv.Args), inv.Type, inv.Origin));
-            case TirConditional cond:
-                return f(new TirConditional(Rewrite(cond.Condition, f), Rewrite(cond.IfTrue, f),
-                    Rewrite(cond.IfFalse, f), cond.Type, cond.Origin));
-            case TirNew nw:
-                return f(new TirNew(nw.NewType, Rw(nw.Args), nw.Type, nw.Origin));
-            case TirArray arr:
-                return f(new TirArray(Rw(arr.Elements), arr.Type, arr.Origin));
-            case TirAssign asg:
-                return f(new TirAssign(Rewrite(asg.LValue, f), Rewrite(asg.RValue, f), asg.Type, asg.Origin));
-            case TirLambda lam:
-                return f(new TirLambda(lam.Parameters, Rewrite(lam.Body, f), lam.Type, lam.Origin));
-            case TirLet let:
-                return f(new TirLet(let.Def, Rewrite(let.Value, f), let.Type, let.Origin));
-            case TirBlock b:
-                return f(new TirBlock(Rw(b.Statements), b.Origin));
-            case TirReturn r:
-                return f(new TirReturn(Rewrite(r.Value, f), r.Origin));
-            case TirIf iff:
-                return f(new TirIf(Rewrite(iff.Condition, f), Rewrite(iff.IfTrue, f), Rewrite(iff.IfFalse, f), iff.Origin));
-            case TirLoop l:
-                return f(new TirLoop(Rewrite(l.Condition, f), Rewrite(l.Body, f), l.Origin));
-            case TirComponentAccess ca:
-                return f(new TirComponentAccess(Rewrite(ca.Receiver, f), ca.FieldName, ca.CastTo, ca.ScalarComponentPrim, ca.Type));
-            case TirConstructorCall cc:
-                return f(new TirConstructorCall(cc.TypeName, Rw(cc.Args), cc.Type));
-            case TirBooleanChain bc:
-                return f(new TirBooleanChain(bc.Op, Rw(bc.Terms), bc.Type));
-            default:
-                return f(n); // leaves
-        }
-    }
+    private static TirNode Rewrite(TirNode node, Func<TirNode, TirNode> rewrite)
+        => TirRewrite.Rewrite(node, rewrite);
 }

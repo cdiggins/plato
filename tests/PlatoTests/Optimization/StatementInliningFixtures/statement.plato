@@ -1,0 +1,108 @@
+type Integer { }
+type Boolean { }
+type Number { }
+type Object { }
+type Function1<A, R> { }
+type Function2<A, B, R> { }
+type Array<T> { }
+type InlineBox { Value: Integer; }
+library Intrinsics {
+    Add(a: Integer, b: Integer): Integer;
+    Divide(a: Integer, b: Integer): Integer;
+    Subtract(a: Integer, b: Integer): Integer;
+    LessThan(a: Integer, b: Integer): Boolean;
+    GreaterThan(a: Integer, b: Integer): Boolean;
+    Equals(a: Integer, b: Integer): Boolean;
+    MapRange(n: Integer, f: Function1<Integer, $T>): Array<$T>;
+    Count(xs: Array<$T>): Integer;
+    Map(xs: Array<$T>, f: Function1<$T, $R>): Array<$R>;
+    Reduce(xs: Array<$T>, seed: $R, f: Function2<$R, $T, $R>): $R;
+    Tick(x: Integer): Integer;
+    First(x: Integer): Integer;
+    Second(x: Integer): Integer;
+}
+library StatementProbe {
+    Deferred(n: Integer): Function1<Integer, Array<Integer>> => x => [n, x].Map(i => i + 1);
+    LiteralMap(n: Integer): Array<Integer> => [n, n].Map(i => i + 1);
+    LiteralRegion(n: Integer): Array<Integer> { var result = n.LiteralMap; return result; }
+    ArrayCalls(n: Integer): Array<Integer> => [n.Twice, n.Twice];
+    BoxCalls(n: Integer): InlineBox => InlineBox(n.Twice);
+    CallOrder(n: Integer, f: Function2<Integer, Integer, Integer>): Integer => f(n.First, n.Second.Twice);
+    Twice(x: Integer): Integer { var local = x + x; return local; }
+    Ignore(x: Integer, unused: Integer): Integer { var local = x; return local; }
+    Entry(x: Integer): Integer { var _inline0 = x.Twice; return _inline0.Twice; }
+    Fault(x: Integer): Integer => x.Ignore(1 / x);
+    Once(x: Integer): Integer => x.Tick.Twice;
+    Order(x: Integer): Integer => x.First.Ignore(x.Second);
+    Unbox(x: InlineBox): Integer { var local = x; return local; }
+    BoxEntry(x: InlineBox): Integer => x.Unbox;
+    Loop(x: Integer): Integer {
+        var local = 0;
+        while (local < x) {
+            if (local > 2) { return local; }
+            local = local + 1;
+        }
+        return local;
+    }
+    AfterLoop(x: Integer): Integer => x.Loop + 7;
+    Guard(flag: Boolean, x: Integer): Integer => flag ? x.Twice : x.First.Ignore(x.Second);
+    Sibling(x: Integer): Integer => x.First.Ignore(x.Second.Twice);
+    Rec(x: Integer): Integer { var local = x; return local > 0 ? (local - 1).Rec : 0; }
+    StartRec(x: Integer): Integer => x.Rec;
+    AliasChain(n: Integer, f: Function1<Integer, Integer>): Integer {
+        var a0 = f;
+        var a1 = a0;
+        var a2 = a1;
+        var a3 = a2;
+        var a4 = a3;
+        var a5 = a4;
+        var a6 = a5;
+        var a7 = a6;
+        var a8 = a7;
+        var a9 = a8;
+        var a10 = a9;
+        var a11 = a10;
+        var a12 = a11;
+        var a13 = a12;
+        var a14 = a13;
+        var a15 = a14;
+        var a16 = a15;
+        var a17 = a16;
+        var a18 = a17;
+        var a19 = a18;
+        var a20 = a19;
+        var a21 = a20;
+        var a22 = a21;
+        var a23 = a22;
+        var a24 = a23;
+        return a24(n);
+    }
+    AliasEntry(n: Integer): Integer => n.AliasChain(i => i + 1);
+    Apply(x: Integer, f: Function1<Integer, Integer>): Integer { var g = f; return g(x); }
+    LambdaEntry(x: Integer): Integer => x.Apply(y => { var z = y + x; return z; });
+    Nested(x: Integer): Integer => x.Apply(y => y.Apply(z => z + x + y));
+    Unknown(x: Integer, f: Function1<Integer, Integer>): Integer => x.Apply(f);
+    Mutable(x: Integer): Integer {
+        var captured = x;
+        var result = x.Apply(y => y + captured);
+        captured = captured + 1;
+        return result;
+    }
+    Choose(x: Integer, order: Integer): Integer { var local = order + 0; return local == 0 ? x.Twice : x.First; }
+    Simplified(x: Integer): Integer => x.Choose(0);
+    Build(n: Integer, f: Function1<Integer, Integer>): Array<Integer> { var values = n.MapRange(f); return values; }
+    ScopedRange(n: Integer): Array<Integer> => n.Build(i => i + 1);
+    NestedRanges(n: Integer): Array<Integer> => n.MapRange(i => i.MapRange(j => j).Count);
+    EmptyCallback(n: Integer): Array<Integer> => n.MapRange(i => i.First.MapRange(j => j).Count);
+    Both(n: Integer, f: Function1<Integer, Integer>): Array<Integer> { return n.MapRange(f).Map(f); }
+    BothEntry(n: Integer): Array<Integer> => n.Both(i => { var value = i + 1; return value; });
+    Condition(n: Integer): Boolean { var count = n.Tick; return count.MapRange(i => i).Count > 0; }
+    Countdown(n: Integer): Integer { var remaining = n; while (remaining.Condition) { remaining = remaining - 1; } return remaining; }
+    ProducerStatements(n: Integer): Integer => n.MapRange(i => { var value = i + 1; return value; }).Reduce(0, (sum, value) => sum + value);
+    StatementSum(n: Integer): Integer => n.MapRange(i => i + 1).Reduce(0, (sum, value) => { var next = sum + value; return next; });
+    NestedReturns(n: Integer): Array<Integer> => n.MapRange(i => { var result = i.Apply(j => { var value = j + 1; return value; }); return result; });
+    ComputedRange(n: Integer): Array<Integer> => (n + 1).MapRange(i => i + 1);
+    GuardedRange(flag: Boolean, n: Integer): Array<Integer> => flag ? n.MapRange(i => i + 1) : n.First.MapRange(i => i);
+    ArrayOrder(n: Integer): Integer => n.First.Ignore(n.MapRange(i => i.Second).Count);
+    StatementRange(n: Integer): Array<Integer> => n.Build(i => { var value = i + 1; return value; });
+}

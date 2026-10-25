@@ -21,14 +21,25 @@ public static class TirInlineCloner
         VariableDef result, Func<TypeExpression, VariableDef> fresh)
     {
         var nodes = body.Descendants().ToArray();
-        var bindings = nodes.Select(n => n switch
+        var locals = new Dictionary<VariableDef, VariableDef>();
+        TypeExpression ValueType(TirNode value) => value switch
         {
-            TirLet l => (Def: l.Def, Type: l.Value.Type),
-            TirInlineBinding b => (Def: b.Def, Type: b.Def.Type),
-            TirInlineRegion r => (Def: r.Result, Type: r.Result.Type),
-            _ => (Def: (VariableDef)null, Type: (TypeExpression)null)
-        }).Where(b => b.Def != null);
-        var locals = bindings.GroupBy(b => b.Def).ToDictionary(g => g.Key, g => fresh(g.First().Type));
+            TirVariable v when locals.TryGetValue(v.Def, out var local) => local.Type,
+            TirParameter p when arguments.TryGetValue(p.Def, out var argument) => argument.Type,
+            _ => value.Type
+        };
+        foreach (var node in nodes)
+        {
+            var binding = node switch
+            {
+                TirLet l => (Def: l.Def, Type: ValueType(l.Value)),
+                TirInlineBinding b => (Def: b.Def, Type: b.Def.Type),
+                TirInlineRegion r => (Def: r.Result, Type: r.Result.Type),
+                _ => (Def: (VariableDef)null, Type: (TypeExpression)null)
+            };
+            if (binding.Def != null && !locals.ContainsKey(binding.Def))
+                locals.Add(binding.Def, fresh(binding.Type));
+        }
         var parameters = nodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Distinct()
             .ToDictionary(p => p, p => new ParameterDef(p.Scope, fresh(p.Type).Name, p.Type, p.Index));
         var lambdaDepth = 0;

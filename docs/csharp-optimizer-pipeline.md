@@ -252,7 +252,8 @@ Three families:
    is left alone).
 
 **Refused:** a combinator over a dynamic array (`GenuinelyDynamicArraysStillLoopLower` checks that the pass
-does not claim these), any body that is a statement tree, any body where a lambda would survive.
+does not claim these), unsupported component layouts and callback shapes. Structural rewriting enters
+statement blocks, inline regions and surviving lambdas; capture rewriting preserves the marker children.
 
 **Runtime intrinsic:** none. The output is field reads and constructors.
 
@@ -309,10 +310,13 @@ File `writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs`; the loop text 
 the unroller's interplay, `ComponentUnrollerTests.GenuinelyDynamicArraysStillLoopLower`.
 `CombinatorFusionTests` covers producer chains, including `RangeFlatMap`.
 
-**Consumes** a TIR body. **Produces** a block body: for each recognised call, a `TirLoweredLoop` marker
-statement is *hoisted* before the statement that held the call, and the call's position is replaced by a
-`TirTempRef` to the loop's result local (`_lp<id>`). The ids come from `TirLoopLowerer.NextId`, reset per
-generation.
+**Consumes** a TIR body. **Produces** ordered prerequisites and a value for each rewritten expression.
+A recognized call becomes a `TirLoweredLoop` statement and a `TirTempRef` to its result local
+(`_lp<id>`). Earlier operands finish before later prerequisites run. Conditional prerequisites remain
+inside their selected branch; statement blocks and inline regions retain their lexical scope.
+`TirGuardedLoop` keeps condition prerequisites inside every loop test. Supported callback bodies
+lower in their own execution scope, with fresh identities for each use. An unchanged expression body
+stays an expression. The ids come from `TirLoopLowerer.NextId`, reset per generation.
 
 **Recognised** call names and the loop each becomes (kind names are those in the code):
 
@@ -353,16 +357,15 @@ These rules follow the receiver expression only, not a local variable's earlier 
 
 **Refused** (the call stays a normal method call):
 
-- the call is inside a lambda or a conditional branch: hoisting it would change how often it evaluates, so
-  neither `TirLambda` nor `TirConditional` is descended into;
-- the function argument is not a lambda literal of the right arity with an expression body, and not a
-  `Function{N}` parameter or variable of exactly that arity; an `_eta` forwarding lambda and a lambda whose
-  body is a statement tree are refused;
+- the call is inside a lambda that is not a recognized loop callback; arbitrary escaping lambda
+  bodies remain for their normal emission path;
+- the function argument is not a supported lambda of the right arity or a `Function{N}` parameter
+  or variable of exactly that arity; `_eta` forwarding lambdas remain refused. Supported statement
+  callbacks use a local result and exit region inside each iteration;
 - the receiver or result is not one-dimensional: `TirRewrite.IsListType` accepts type names `Array` and
   `IArray` with one type argument (TKT-505 added `Array`; before, only `IArray` matched and the STEP
   mesher's 1,496 generated files lost every loop). 2D and 3D arrays are left to the runtime;
-- the element type is not a concrete C# type (a solver type variable such as `$T`): `IsRenderableConcrete`;
-- the statement is itself control flow (`TirBlock`, `TirIf`, `TirLoop`): left intact, version 1.
+- the element type is not a concrete C# type (a solver type variable such as `$T`): `IsRenderableConcrete`.
 
 **Runtime intrinsic:** none for the lowered combinator itself. Depending on its kind, a loop reads
 `.Count` and the indexer or walks indices directly, then writes a `T[]`, accumulates a scalar, or
@@ -430,11 +433,10 @@ elaborated tree, so a call written as a library method (`Scale`) appears as itse
   and consumer adoption; the compiler's singleton optimization does not complete that ticket.
 - **Struct functors.** Surviving callbacks use `Func<...>` delegates. The writer has no pass replacing
   them with value-type callable representations; allocation depends on captures and C# delegate caching.
-- **Loop lowering inside lambdas and conditionals.** The lowerer refuses these scopes because its
-  statement hoisting would change evaluation frequency or guards. Fusion and bounded literal unrolling
-  can still rewrite expressions there; they do not provide general nested-loop emission.
-- **Statement-shaped bodies in the unroller and the inliner.** Both refuse them; the loop lowerer lowers per
-  top-level statement and leaves `if` and `while` intact.
+- **General escaping lambda optimization.** Loop lowering enters recognized loop callbacks and
+  conditional branches, but does not descend into every surviving lambda. Unknown delegate targets
+  remain calls. Statement inlining is experimental and requires an explicit policy; the existing
+  expression inliner still refuses statement callees.
 - **`--optimize-arrays` against the live runtime** (section 6).
 
 ## 11. Where each fact lives

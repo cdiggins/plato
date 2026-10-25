@@ -15,7 +15,8 @@
     "src/Plato.Laws/CSharpProgram.cs",
     "tests/PlatoTests/Optimization/**/*.cs",
     "tests/PlatoTests/Emission/InlinedExpressionEmissionTests.cs",
-    "tests/PlatoTests/Optimization/**/*.plato"
+    "tests/PlatoTests/Optimization/**/*.plato",
+    "tests/PlatoTests/Optimization/**/*.cs.txt"
   ],
   "project": "writers/Plato.CSharpWriter/Plato.CSharpWriter.csproj",
   "symbol_directory": "writers/Plato.CSharpWriter/Optimization/",

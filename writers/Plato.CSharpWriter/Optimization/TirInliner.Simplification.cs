@@ -42,6 +42,13 @@ public static partial class TirInliner
 
         private TirNode Simplify(TirNode node)
         {
+            var result = SimplifyCore(node);
+            if (!ReferenceEquals(result, node)) Version++;
+            return result;
+        }
+
+        private TirNode SimplifyCore(TirNode node)
+        {
             if (!_simplify)
                 return node;
             if (node is TirVariable v && _values.TryGetValue(v.Def, out var value))
