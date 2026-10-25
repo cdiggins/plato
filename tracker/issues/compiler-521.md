@@ -17,9 +17,13 @@ User requests an understandable, extensible architecture for independently switc
 
 ## Done means
 
-- [ ] Review existing TIR architecture, semantic contracts and prior decisions.
-- [ ] Record the declarative rule contract, trusted boundary and validation strategy.
-- [ ] Specify parallel ownership, dependencies, scoped gates and migration/rollback sequence for all six optimizations.
+- [x] Review existing TIR architecture, semantic contracts and prior decisions.
+- [x] Record the declarative rule contract, trusted boundary and validation strategy.
+- [x] Specify parallel ownership, dependencies, scoped gates and migration/rollback sequence for all six optimizations.
 - [ ] Implement and independently review the first checked transformation slice under the plan, without widening current optimization eligibility.
 
 The current request authorizes planning. The implementation criterion remains pending; planning does not establish a safety guarantee for unimplemented checkers.
+
+## Planning review
+
+Architecture, safety and delivery subagents reviewed the existing pipeline and the proposed plan. Independent review clarified that exact-output changes emitted C#, so the first slice trusts its renderer and tests actual generated syntax and behavior; it does not claim per-compilation emitted-code equivalence. Verifier scope starts with the relevant exact-output forms and expands with fusion. Implementation is not started.
