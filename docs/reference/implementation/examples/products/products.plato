@@ -1,0 +1,11 @@
+type ReferencePair { Left: Integer; Right: Integer; }
+type ApprovedInteger sealed by ApproveInteger { Value: Integer; }
+
+library ReferenceProducts {
+    MakePair(a: Integer, b: Integer): ReferencePair => (a, b);
+    ApproveInteger(x: Integer): ApprovedInteger => ApprovedInteger(x);
+    ReadApproved(x: ApprovedInteger): Integer => x.Value;
+    Law_ReferenceTuple(): Boolean => MakePair(3, 7).Right == 7;
+    Law_ReferenceImmutableSetter(): Boolean => MakePair(3, 7).WithLeft(9).Right == 7;
+    Law_ReferenceSealed(): Boolean => ApproveInteger(11).ReadApproved == 11;
+}

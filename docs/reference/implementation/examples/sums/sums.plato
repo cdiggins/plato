@@ -1,0 +1,10 @@
+type ReferenceMaybe<T> = Present(Value: T) | Absent;
+
+library ReferenceSums {
+    ReferenceValueOr(m: ReferenceMaybe<$T>, fallback: $T): $T
+        => match (m) { Present(value) => value; Absent => fallback; };
+    ReferencePresent(x: Integer): ReferenceMaybe<Integer> => ReferenceMaybe.Present(x);
+    ReferenceAbsent(_: Integer): ReferenceMaybe<Integer> => ReferenceMaybe.Absent;
+    Law_ReferencePresent(): Boolean => ReferencePresent(7).ReferenceValueOr(3) == 7;
+    Law_ReferenceAbsent(): Boolean => Integer.ReferenceAbsent.ReferenceValueOr(3) == 3;
+}

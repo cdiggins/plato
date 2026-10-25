@@ -1,0 +1,15 @@
+// Minimal reference-example environment, not a stdlib source.
+primitive Boolean { }
+primitive Integer { }
+primitive Number { }
+primitive String { }
+primitive Array<T> { }
+primitive Function1<T, R> { }
+type Tuple2<A, B> { X0: A; X1: B; }
+
+library ExampleIntrinsics {
+    Add(a: Integer, b: Integer): Integer;
+    Multiply(a: Integer, b: Integer): Integer;
+    LessThan(a: Integer, b: Integer): Boolean;
+    Equals(a: Integer, b: Integer): Boolean;
+}

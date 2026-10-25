@@ -1,0 +1,8 @@
+State: implemented; local link audit verified.
+Owned: docs/reference/language and implementation only.
+Read contract revision 1, platonic-coder, write-docs, conventions.
+Authored focused language and implementation pages, examples, discrepancy register.
+Examples not executed by author; supervisor owns CLI validation and integration gates.
+Formal links target separate formal/README.md track.
+No tracker, compiler, stdlib, or old authority changes.
+Supervisor granted commit turn; handoff after explicit-path commit.

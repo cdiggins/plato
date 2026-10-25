@@ -1,0 +1,14 @@
+// Compile with stdlib/foundation, without the minimal example prelude.
+library ReferenceBuilders {
+    ReferenceRange(n: Integer): Array<Integer> {
+        var xs = new List<Integer>();
+        var i = 0;
+        while (i < n) {
+            xs = xs.Add(i);
+            i = i + 1;
+        }
+        return xs.Freeze();
+    }
+    Law_ReferenceBuilderCount(): Boolean => ReferenceRange(4).Count == 4;
+    Law_ReferenceBuilderAt(): Boolean => ReferenceRange(4)[2] == 2;
+}
