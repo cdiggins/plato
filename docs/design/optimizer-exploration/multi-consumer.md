@@ -116,4 +116,7 @@ separate transformation actually removes an allocation. Whole-application speed 
 Run the isolated experiment with
 `python tools/experiments/optimizer-exploration/multi-consumer/run.py`.
 The runner records builds through the repository error parser with private output paths because
-the shared status reports belong to another session. Production integration remains outstanding.
+the shared status reports belong to another session. The bounded production slice is implemented
+behind `--loops --fuse-consumers`; see the [production report](../../reports/optimizer-production-2026-10-25.md)
+for generated-code validation. Representative geometry benefit remains a separate gate before
+widening eligibility or changing defaults.

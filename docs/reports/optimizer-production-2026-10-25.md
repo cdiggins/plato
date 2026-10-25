@@ -43,6 +43,13 @@ not change existing optimizer recognition rules or the runtime intrinsic surface
 | Default-off generated output comparison | 284 files identical | Not separately timed |
 | Greenhouse source extraction and documentation check | Passed on isolated source snapshot | Not separately timed |
 | Documentation tooling tests | 6 passed | 0.395 |
+| Non-diagnostic PlatoTests, including both ratchets | 393 passed | 344 |
+| Shipping-library lint | Passed | 43 |
+| Explicit generated fusion timing check | Passed | 7.38 total test run |
+| Coordinated replacement-traversal compatibility suite | 58 passed | 33 test duration |
+| Studio legacy / forward lints | Passed / passed | 14 / 21.3 |
+| Studio SDK build / geometry tests | Passed / 15 passed | 6.4 / 14 |
+| Studio frozen-artifact checksum | Existing repo-473 failure | 0.6 |
 
 Focused execution compiles actual Plato fixtures and generated C# using default C# language
 version and Release optimization. Fusion tests need generated Number Add/Multiply methods:
@@ -60,11 +67,29 @@ passed with dependency access. The underlying checkout-layout coupling is alread
 Testhost IPC and Python temporary-file access also required environment adjustments; those failed
 attempts are not behavioral test failures.
 
-The shared checkout contains a concurrent inliner refactor. Documentation evidence was generated
+The shared checkout also contained a concurrent inliner refactor. Initial documentation evidence was generated
 from committed sources plus this work's explicit file list, excluding that unfinished refactor.
 Private evidence lives under `.temp/optimizer-exploration/production/`; binary fingerprints and
 the exact tested outputs identify the validation scope. The broader integration results are
-recorded below when completed; they must not be inferred from the focused checks.
+recorded here as they complete; they must not be inferred from the focused checks. The recorder
+used private snapshot/history destinations and `--no-build --no-restore` for the compiler suite,
+after the recorded test build, so another session's status reports were preserved.
+
+Commit d81e6065 captured a concurrent removal of the legacy loop traversal during staging.
+The owner paused that file, and f0f63d81 restored the exact reviewed snapshot while retaining
+the new intrinsic provenance. The refactor owner subsequently committed its complete replacement
+as 19df624e, with 58 passing compatibility cases including both new suites and combined flags.
+Its evidence is `.temp/compiler-504-pipeline/focused.log` and
+`.temp/compiler-504-tests/pipeline-focused.trx`; this report inspected both the completion result
+and the committed milestone. That owner also refreshed documentation for its complete source.
+The earlier 393-test suite and performance measurements cover the earlier traversal; they are
+not silently attributed to the later refactor.
+
+The final Studio battery ran during a coordinated freeze of the replacement source, with
+unchanged compiler source fingerprints through execution. It completed in 56.7 seconds.
+Its sole failure is the existing checksum mismatch for external SDK `PlatoList.cs`,
+`PlatoBuffer.cs` and `Number.cs`, tracked by repo-473. Those files and the checksum manifest
+were not edited here. No failing gate was waived or relabeled as passing.
 
 ## Measured benefit and limits
 
@@ -73,9 +98,18 @@ The actual exact-output wrapper test uses an input of 4,096 elements and literal
 229,400: a 22.29% reduction. Callback arrays remain included. This is allocation evidence for
 one generated workload, not an elapsed-time claim or a geometry-wide speedup.
 
+The generated fusion timing test warms both Release delegates, alternates execution order over
+five rounds, and measures 100 calls per round with 10,000 input values, including source allocation.
+Separate-loop times were 6.732, 6.427, 6.948, 7.063 and 6.792 ms; fused times were 11.771, 6.304,
+6.202, 6.019 and 6.279 ms. Medians were 6.792 and 6.279 ms respectively, about 7.6% less elapsed
+time for this fixture. The first fused round was slower and this shared machine was not isolated:
+the observation is modest, noisy evidence, with no timing threshold in the test and no claim of
+representative geometry acceleration.
+
 Fusion correctness includes empty input, signed zero, NaN, infinities, producer call counts and
-faults. Neither pass reassociates floating-point arithmetic. Resource-exhaustion equivalence,
-GPU32 performance and representative geometry-wide speedups are not established by this suite.
+faults. Neither pass reassociates floating-point arithmetic. Resource-exhaustion timing is
+intentionally outside these optimizations' equivalence contract. GPU32 performance and
+representative geometry-wide speedups are not established by this suite.
 Practical tests do not allocate arrays near Array.MaxLength; the widened capacity guard is
 reviewed and the custom-list fallback is executed separately.
 
