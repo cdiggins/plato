@@ -31,3 +31,7 @@ Immutable completed arrays can be streamed when outcome equivalence is establish
 - Review which compiler-483 obligations become unnecessary versus still necessary under the proposed semantics; retain existing behavior until the language decision and migration are explicit.
 
 Related: compiler-483 semantic audit and compiler-521 checked transformation architecture. No fault-policy, compiler, interpreter or runtime change is made by this capture.
+
+## User preference: mixed evaluation in geometry
+
+The user considers skipping some faults acceptable and asks whether geometry can mix eager, on-demand and lazy evaluation. Treat this as support for exploring selective evaluation, not blanket authorization to suppress required failures or alter successful geometry. Proposed boundary: implementation may choose evaluation/storage strategy and omit unnecessary pure work; defined successful results remain unchanged, and computations required by the requested result or explicit validation retain their failure behavior. Termination policy, host effects, numerical profiles and exact observation boundaries still need explicit decisions. No language/runtime behavior changed.
