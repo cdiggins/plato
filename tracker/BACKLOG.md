@@ -12,6 +12,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | in-progress |  |
 | [plato-378](issues/plato-378.md) | Shrink the host intrinsic contract to an irreducible kernel | debt | p1 | L | med | plato | in-progress |  |
 | [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | in-progress |  |
+| [compiler-496](issues/compiler-496.md) | FunctionInstance never assigns Interface so selection ignores interface distance | bug | p2 | S | med | compiler | in-progress |  |
 | [compiler-498](issues/compiler-498.md) | Measure aggressive inlining on plato-brep meshing | problem | p2 | M | low | compiler | in-progress |  |
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion interface | idea | p2 | M | low | plato | in-progress |  |
@@ -31,7 +32,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-444](issues/plato-444.md) | TriangleMesh3D.LoopSubdivided returns NaN for every original vertex | bug | p1 | M | low | plato | ready |  |
 | [plato-447](issues/plato-447.md) | VertexNormalVectors scans every face per vertex: 152s for a 7680-vertex mesh, unusable at demo scale | bug | p1 | S | low | plato | ready |  |
 | [compiler-408](issues/compiler-408.md) | Transform operator aliases cannot be derived: an interface-typed parameter does not re-resolve per implementor | problem | p2 | M | med | compiler | ready |  |
-| [compiler-496](issues/compiler-496.md) | FunctionInstance never assigns Interface so selection ignores interface distance | bug | p2 | S | med | compiler | ready |  |
 | [plato-277](issues/plato-277.md) | stdlib interface-gap burn-down: the 17 markers that need a language or interface decision | debt | p2 | M | low | plato | ready |  |
 | [plato-323](issues/plato-323.md) | Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile | bug | p2 | L | med | plato | ready |  |
 | [plato-326](issues/plato-326.md) | Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns | bug | p2 | S | low | plato | ready |  |
