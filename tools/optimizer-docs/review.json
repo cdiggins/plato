@@ -1,5 +1,5 @@
 {
-  "note": "Added the explicit System.Linq import required by the normal writer project; private tests had supplied this import implicitly. Reviewed the exact import-only diff and normal-policy compile proof with implicit usings disabled. The resolved-call emission algorithm, optimizer scheduling, and existing documentation remain unchanged.",
+  "note": "Reviewed component reduction expansion, callers and tests with Greenhouse. Both fixed-component and literal-array folds now reuse the literal-fusion substitution guard for each accumulator and element. Component guide and pipeline describe conservative fallback to loop lowering and retained single-use expansion; no pass order or defaults change.",
   "inputs": {
     "src/Plato.CLI/GenerateCommand.cs": "9a5f7c8612b895d3f6c03efa11dd110756eaa8dff29b3b090871ed36412ffc0b",
     "src/Plato.CLI/GenerationArguments.cs": "b3f72574fbd3d5f10a7edf895ad02350190904f263fb028c17cc18aa22270962",
@@ -28,6 +28,8 @@
     "tests/PlatoTests/Optimization/LoopLowererArrayTypeTests.cs": "b16dde22d414d09b3ffb36536e2fed43b0d3332e85c6096df097ee18ee319646",
     "tests/PlatoTests/Optimization/MultiConsumerFusionFixtures/folds.plato": "e4abe2e59c8cf603f43c8573dff50b2521e6ff5268a9da45fc170b9dbd679b4a",
     "tests/PlatoTests/Optimization/MultiConsumerFusionTests.cs": "f46c91bb2b64426955bde88d432e71e9f986c7cdad7dcf47ba1bd8d53c6c04fe",
+    "tests/PlatoTests/Optimization/ReductionExpansionFixtures/reductions.plato": "1d3e97a2fbbcdc2571703fd4abbe0070f9e6fc883da29ca21dfcc529bbf4e2be",
+    "tests/PlatoTests/Optimization/ReductionExpansionTests.cs": "dee4b0f3baf49e9d8f03fd2f8028b0ced65f9c5bb0879641ac304ecf24fe8cbd",
     "tests/PlatoTests/Optimization/StatementInliningFixtures/runtime.cs.txt": "1d161f71580f4dcdace3bbc95f43a611ddbfce458a4e1cb519f008fe137ee82a",
     "tests/PlatoTests/Optimization/StatementInliningFixtures/statement.plato": "05ffa69e710a44140cad65777415ab85f339feeb9d105ccd5c1b34863e0c1d53",
     "tests/PlatoTests/Optimization/StatementInliningTests.cs": "d8f567acc8d76ae3d972a450387488b5a82579d88ca4092bd8c3017ee3ec165a",
@@ -43,7 +45,7 @@
     "writers/Plato.CSharpWriter/Optimization/LoopOptimizationOptions.cs": "4013898bdc99c42c7f6723901aa6e4c867f98c0c3346aaacd7e80976d1f6b662",
     "writers/Plato.CSharpWriter/Optimization/StatementInliningOptions.cs": "15ba73db76c93ae33224320e6b9eef541ee8d32ffff9f54b96dd321f673c6fc2",
     "writers/Plato.CSharpWriter/Optimization/TirArrayMaterializer.cs": "d6dfb3f409e0767cbb294a480ca98a72da405c0e0202231096fea34de36aba4c",
-    "writers/Plato.CSharpWriter/Optimization/TirComponentUnroller.cs": "70ce17dfebdafa38abd601dc68e02b44e2283252cd3223ab281f603bd8a6d7c4",
+    "writers/Plato.CSharpWriter/Optimization/TirComponentUnroller.cs": "b4c2de3b1ad3db8e55933e84a688bc175cd84a4b55c611f3f7cf602c436f5fc5",
     "writers/Plato.CSharpWriter/Optimization/TirEvaluation.cs": "07b4649085f46203cd5d635f8c22e51423e6fbf9a05b3b92f2679f86c39fd001",
     "writers/Plato.CSharpWriter/Optimization/TirExactOutput.cs": "99e818ebec4db76a45241fe1516a75d97cd4bcd4edb5a277c8c2d6f052af10b4",
     "writers/Plato.CSharpWriter/Optimization/TirFusion.cs": "11e3806d6639af4f0896a82ea4dddd8d34a0dbedc677fc8ef0ae993e38b230d4",
@@ -75,6 +77,6 @@
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter.Loops.cs": "a1b68f1702bf47c2b21c3611f7f718c352a986410022084a617a9a99b3e2ec5b",
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter.MultiConsumer.cs": "e7882a1d457144b6b56735547285308d21fa80807adca7f7738e6431e1b4c6c2"
   },
-  "evidence_hash": "0c44a4c6bffeb456d7a9974fd4998ed9b562f19dd0f48b89a1be10ffbf2cacb4",
+  "evidence_hash": "c85a5e86e582ebe034d620c92d6b26caecb5d7686f4333112b6a94dd764a123a",
   "generator_hash": "32b4f4af3007c0fdac6454a047374cbeaf29624cd6e8d270b5680cdbd5f22bf9"
 }

@@ -263,7 +263,10 @@ Three families:
    ```
 3. **`Map`, `Zip`, `Reverse`, `Reduce`, `All`, `Any` over an array literal** (a `TirArray`, for example the
    eight corners an inlined `Corners` exposes): unrolled per element. `Map` gives a new `TirArray`;
-   `Reduce` gives a chain of calls from the seed; `All` and `Any` give `&&` or `||` chains (an empty literal
+   `Reduce` gives a chain of calls from the seed only when each substitution avoids duplicating
+   computed accumulator/element expressions or placing them under a lambda. The same guard
+   applies to fixed-component reductions; a refused fold stays intact for later loop lowering.
+   `All` and `Any` give `&&` or `||` chains (an empty literal
    is left alone).
 
 **Refused:** a combinator over a dynamic array (`GenuinelyDynamicArraysStillLoopLower` checks that the pass

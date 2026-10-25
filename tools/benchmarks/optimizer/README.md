@@ -7,8 +7,10 @@ the timer. It is intended for compiler developers deciding whether a recipe or
 parameter change helps representative workloads.
 
 Start from the Plato repository root in PowerShell. The complete recipe is the
-intended control for ablations. Its generation on the BREP shipping program is
-currently blocked by [compiler-535](../../../tracker/issues/compiler-535.md).
+intended control for ablations. The generation bottleneck tracked by
+[compiler-535](../../../tracker/issues/compiler-535.md) is resolved; the
+[verification report](../../../docs/reports/optimizer-generation-2026-10-25.md)
+records the complete recipe's generation and build against pinned BREP inputs.
 This explicit starter set exercises the workflow with available recipes:
 
 ```powershell

@@ -236,6 +236,22 @@ public static class TirComponentUnroller
                 ? Substitute(Lambda.Body, Lambda.Parameters, elems)
                 : new TirInvoke(Delegate, elems, ReturnTypeOf(Delegate), null);
 
+        public TirNode TryFold(TirNode seed, IEnumerable<TirNode> elements)
+        {
+            var acc = seed;
+            foreach (var element in elements)
+            {
+                // Repeating a computed accumulator makes the expanded fold grow exponentially.
+                // Keep the reduction for loop lowering when substitution would repeat work.
+                if (Lambda != null
+                    && (!TirFusion.CanSubstitute(Lambda.Body, Lambda.Parameters[0], acc)
+                        || !TirFusion.CanSubstitute(Lambda.Body, Lambda.Parameters[1], element)))
+                    return null;
+                acc = Apply(new[] { acc, element });
+            }
+            return acc;
+        }
+
         private static TypeExpression ReturnTypeOf(TirNode del)
         {
             var ft = FunctionTypeOf(del);
@@ -416,10 +432,7 @@ public static class TirComponentUnroller
                 if (init.Descendants().OfType<TirLambda>().Any())
                     return null;
 
-                var acc = init;
-                foreach (var fd in info.Fields)
-                    acc = hof.Apply(new[] { acc, Component(vecArgs[0], fd, info) });
-                return acc;
+                return hof.TryFold(init, info.Fields.Select(fd => Component(vecArgs[0], fd, info)));
             }
         }
 
@@ -533,10 +546,7 @@ public static class TirComponentUnroller
                     return null;
                 if (init.Descendants().OfType<TirLambda>().Any())
                     return null;
-                var acc = init;
-                foreach (var e in Src(0).Elements)
-                    acc = hof.Apply(new[] { acc, e });
-                return acc;
+                return hof.TryFold(init, Src(0).Elements);
             }
         }
 

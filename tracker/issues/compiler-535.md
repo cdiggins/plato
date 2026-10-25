@@ -52,6 +52,29 @@ binary provenance. Profile the generation phase before proposing algorithm chang
 
 ## Done means
 
-- [ ] Reproduce and identify where generation time is spent under the complete recipe.
-- [ ] Implement a bounded correction or document evidence supporting a deliberate larger setup budget.
-- [ ] Verify the complete recipe generates checked, buildable C# for the same BREP program and retain timing evidence.
+- [x] Reproduce and identify where generation time is spent under the complete recipe.
+- [x] Implement a bounded correction or document evidence supporting a deliberate larger setup budget.
+- [x] Verify the complete recipe generates checked, buildable C# for the same BREP program and retain timing evidence.
+
+## Resolution — 2026-10-25
+
+The sampled profile attributed 72.47% exclusive time to recursive TIR traversal.
+Phase diagnostics identified ModelMeshReport: component expansion duplicated its
+computed reduction accumulator, growing 1,511 node occurrences to approximately
+8.54e17. A shared fold helper now applies the existing fusion substitution guard
+before each accumulator/element substitution, retaining unsafe-to-expand reductions
+for loop lowering. No flags, defaults or arithmetic grouping changed.
+
+The same frozen inputs generate with the complete recipe in 43.8 seconds directly.
+The benchmark's generation/checking/publication stage took 84.9 seconds; the C#
+worker build and host freeze took 129.9 seconds and passed with no compiler errors
+or warnings. Both source checks report zero degraded bodies and no new obligations.
+All 28 focused tests, 399 PlatoTests, both ratchets and optimizer documentation
+checks passed. Studio lints, SDK build and geometry tests passed; its existing
+repo-473 frozen-V1 checksum failure remains unrelated and unchanged.
+
+Reproduction, profile details, fixture behavior, inputs and logs are retained in the
+[generation report](../../docs/reports/optimizer-generation-2026-10-25.md).
+Root PROGRESS.md belongs to another mission; private recovery notes are in
+`.temp/compiler-535/PROGRESS.md`. This resolves generation; it does not establish
+the complete recipe's meshing performance.

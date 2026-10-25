@@ -35,6 +35,13 @@ Existing layout, argument and callback guards
 still apply; unsupported expressions remain for later passes. Field casts retain wrapper-type
 conversion context. Expansion changes the plumbing, not the underlying numeric formula.
 
+Reduction expansion checks substitution at each fold step. A literal callback may duplicate
+cheap leaves, but may not duplicate a computed accumulator or element, or capture such an
+operand for repeated evaluation. This uses the same substitution guard as literal fusion.
+If any step refuses, the original reduction remains available for loop lowering; partially
+expanded folds are not emitted. This prevents exponential expression growth from callbacks
+that read several fields of the accumulated result. Delegate callbacks remain nested calls.
+
 The field-layout table currently recognizes concrete implementations of `IArrayLike`.
 Forward vocabulary using other contracts, such as `IVector`, does not automatically
 enter that table. Fixed-array rewrites can still run under `--optimize`, so enabling
@@ -51,6 +58,9 @@ reach loop lowering. [TirRewriteTests](../../tests/PlatoTests/Optimization/TirRe
 checks traversal of marker nodes used by later passes.
 [StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs) executes
 a returned capturing lambda after literal-array expansion and checks expansion inside inline regions.
+[ReductionExpansionTests](../../tests/PlatoTests/Optimization/ReductionExpansionTests.cs) checks
+bounded repeated-operand folds, generated execution order and faults, and continued expansion
+of single-use folds.
 
 The intended benefit is removal of per-operation collection and callback plumbing for fixed
 shapes. Delegate references can still produce invocations, and the resulting scalar calls still
