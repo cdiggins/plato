@@ -1,7 +1,10 @@
+> **EXECUTED 2026-10-25** — see [compiler-509](../../../tracker/issues/compiler-509.md). Historical record; do not execute.
+> The bounded implementation and [geometry qualification](../../reports/optimizer-geometry-exact-output-2026-10-25.md) are complete. Unexecuted broader comparisons below remain proposals, not approved follow-up work.
+
 # Exact destination allocation for fixed-output FlatMap
 
 Work under [compiler-509](../../../tracker/issues/compiler-509.md), governed by
-[the coordinated wave](wave.md). The standalone experiment and real-TIR preflight led to
+[the coordinated wave](../../design/optimizer-exploration/wave.md). The standalone experiment and real-TIR preflight led to
 the bounded implementation described here. Measurements and verification status live in the
 [dated experiment report](../../reports/optimizer-output-sizing-2026-10-25.md).
 
@@ -10,7 +13,7 @@ the bounded implementation described here. Measurements and verification status 
 `src/Plato.Intrinsics/ArrayIntrinsics.cs`, `FlatMap`, eagerly invokes each callback and
 copies its complete result to a growing `List<TResult>`. The FlatMap case in
 `writers/Plato.CSharpWriter/TirCSharpBodyWriter.Loops.cs` also grows a List. It already calls
-`TryWriteFlatMapConditional`; the older [BREP fusion proposal](../brep-compiler-optimization/fusion-filter.md)
+`TryWriteFlatMapConditional`; the older [BREP fusion proposal](../../design/brep-compiler-optimization/fusion-filter.md)
 describes conditional singleton elimination, which should not be claimed as new work here.
 
 For a callback returning an exact-typed raw array literal of invariant width, the final
@@ -44,7 +47,7 @@ Preserve source evaluation and callback binding order. Evaluate each callback on
 source element, including when the proved width is zero; preserve literal element order,
 the first fault and termination behavior. Empty output does not prove an empty computation.
 Resource-exhaustion timing changes when allocating the destination early; this needs the
-explicit allocation-optimization exception described in the [BREP contract](../brep-compiler-optimization-plan.md).
+explicit allocation-optimization exception described in the [BREP contract](../../design/brep-compiler-optimization-plan.md).
 No general permission to reorder defined faults follows from that exception.
 
 Compute capacity in widened host arithmetic. If it exceeds the supported array limit,

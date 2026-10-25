@@ -2,14 +2,14 @@
 id: compiler-509
 title: Explore exact allocation for fixed-output FlatMap
 type: idea
-status: in-progress
+status: done
 priority: p2
 effort: L
 risk: high
 area: compiler
 sprint: 
 created: 2026-10-25
-closed:
+closed: 2026-10-25
 links: [docs/design/optimizer-exploration/output-sizing.md]
 ---
 
