@@ -19,6 +19,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-412](issues/plato-412.md) | ToSdf: concrete geometry shapes as signed distance fields | feature | p2 | M | low | plato | in-progress |  |
 | [plato-413](issues/plato-413.md) | Marching cubes: isosurface extraction from dense scalar grids and sampled SDFs | idea | p2 | M | low | plato | in-progress |  |
 | [plato-448](issues/plato-448.md) | Extend stdlib comparison with geometry3Sharp and production environments | debt | p2 | S | low | plato | in-progress |  |
+| [repo-493](issues/repo-493.md) | Consolidate writer selection and test fixture helpers | debt | p2 | M | med | repo | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [compiler-483](issues/compiler-483.md) | Characterize optimizer sequencing and identity hazards | problem | p1 | M | high | compiler | ready |  |
@@ -46,7 +47,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-463](issues/plato-463.md) | Interpreter: whole-model laws still cost about 1 microsecond per call; EdgeReversalPreservesMesh 15 s, a no-memo case minutes | debt | p2 | M | med | plato | ready |  |
 | [plato-465](issues/plato-465.md) | Warm server: a renamed or deleted declaration stays alive at a compiled path; plato_check reports a phantom CHK203 | bug | p2 | M | med | plato | ready |  |
 | [plato-466](issues/plato-466.md) | plato_laws: a parse or compile failure answers ok=false with errors that a client reading typeErrors and results never sees (0 laws, 0 type errors) | bug | p2 | S | low | plato | ready |  |
-| [repo-493](issues/repo-493.md) | Consolidate writer selection and test fixture helpers | debt | p2 | M | med | repo | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-427](issues/plato-427.md) | Finite elements: nodal stress smoothing, hexahedral and higher-order elements | feature | p3 | M | low | plato | ready |  |

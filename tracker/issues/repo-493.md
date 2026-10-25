@@ -2,7 +2,7 @@
 id: repo-493
 title: Consolidate writer selection and test fixture helpers
 type: debt
-status: ready
+status: in-progress
 priority: p2
 effort: M
 risk: med
