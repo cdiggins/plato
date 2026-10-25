@@ -67,6 +67,10 @@ def verify_build_artifacts(builds):
         raise ValueError("Host dependencies differ across optimizer recipes")
     if len(workspaces) > 1 or None in workspaces:
         raise ValueError("Recipe artifacts belong to different or unidentified workspaces")
+    for build in builds:
+        target = build.get("alias_of")
+        if build["name"] in identities and target in identities and identities[build["name"]] != identities[target]:
+            raise ValueError(f"Artifact alias differs from its target: {build['name']} / {target}")
     return identities
 
 
@@ -330,14 +334,36 @@ def command_build(args):
         unknown = set(names) - {v["name"] for v in variants}
         if unknown:
             raise ValueError(f"Unknown variants: {sorted(unknown)}")
-        variants = [v for v in variants if v["name"] in names]
+        variants = [v for v in variants if v["name"] in names or v["name"] == "shipping"]
     with operation_lock(args.work, "build"):
+        previous = read_json(args.work / "builds.json") if (args.work / "builds.json").exists() else []
         result = build_variants(workspace, variants, HERE / "worker", ROOT / "tools/dotnet-build-record.ps1", timeout=args.timeout)
-    descriptions = {v["name"]: v for v in variants}
-    result = [{**descriptions[b["name"]], **b} for b in result]
-    write_json(args.work / "builds.json", result)
+        descriptions = {v["name"]: v for v in variants}
+        result = [{**descriptions[b["name"]], **b} for b in result]
+        failed = any(b["status"] not in ("ready", "unsupported") for b in result)
+        result = merge_build_results(previous, result)
+        write_json(args.work / "builds.json", result)
     print(json.dumps(result, indent=2))
-    return int(any(b["status"] not in ("ready", "unsupported") for b in result))
+    return int(failed)
+
+
+def merge_build_results(previous, current):
+    """Retain saved recipes only when their frozen shipping host still matches."""
+    def baseline(rows):
+        return next((b for b in rows if b["name"] == "shipping" and b.get("status") == "ready"), None)
+    before, after = baseline(previous), baseline(current)
+    compatible = (before and after and before.get("workspace_key") and before["workspace_key"] == after.get("workspace_key")
+                  and before.get("host_hashes") and before["host_hashes"] == after.get("host_hashes")
+                  and before.get("output_hashes") and before["output_hashes"] == after.get("output_hashes"))
+    saved = {b["name"]: dict(b) for b in previous if b.get("status") != "ready" or (
+        b.get("workspace_key") == after["workspace_key"] and b.get("host_hashes") == after["host_hashes"])} if compatible else {}
+    saved.update({b["name"]: dict(b) for b in current})
+    for build in saved.values():
+        target = saved.get(build.get("alias_of"))
+        if build.get("alias_of") and (not target or not build.get("output_hashes")
+                                       or build["output_hashes"] != target.get("output_hashes")):
+            build.pop("alias_of")
+    return list(saved.values())
 
 
 def command_fixtures(args):

@@ -28,6 +28,8 @@ Prerequisites are Python, Git, PowerShell, the .NET SDK required by the exported
 projects, a built Plato CLI and a plato-brep checkout with its pinned MeshKernel
 repository and SDK package feed available. The default compiler DLL is the Release
 output under `src/Plato.CLI`; `prepare --cli` selects another compiler build.
+Generation uses the `cpu64` profile and the worker targets .NET 8. Results apply to
+that C# backend, numeric profile and recorded runtime.
 
 Preparation exports committed library and runtime sources at `--plato-ref` and
 `--brep-ref`, defaulting to HEAD. Dirty source edits are excluded. The supplied
@@ -108,6 +110,10 @@ runtime; see the [materialization guide](../../../docs/optimizer/materialization
 
 Use `build --variants shipping,full,no-inline` to build a subset while iterating.
 Use the same `--variants` filter on `run` to measure a subset of the saved builds.
+Subset builds retain earlier recipes when their source workspace and frozen host
+match. A changed host or workspace starts a new saved set; shipping is always built
+or verified because it supplies the common host. The build exit status describes
+the requested build, while the manifest also retains earlier compatible failures.
 Quick mode defaults to full, shipping and unoptimized references; use
 `run --variants all` to screen every ablation, or name the variants of interest.
 Confirm and corpus modes use all saved variants unless filtered explicitly.

@@ -100,6 +100,8 @@ class RunnerTests(unittest.TestCase):
             full, shipping = build("full", "host"), build("shipping", "host")
             identities = benchmark.verify_build_artifacts([full, shipping])
             self.assertEqual(set(identities), {"full", "shipping"})
+            with self.assertRaisesRegex(ValueError, "Artifact alias differs"):
+                benchmark.verify_build_artifacts([{**full, "alias_of": "shipping"}, shipping])
             (root / "full/worker.dll").write_text("tampered")
             with self.assertRaisesRegex(ValueError, "artifacts changed"):
                 benchmark.verify_build_artifacts([full])
@@ -202,6 +204,26 @@ class RunnerTests(unittest.TestCase):
                 self.assertEqual(suite["cases"], [])
                 self.assertEqual(len(suite["errors"]), 1)
                 self.assertEqual(suite["errors"][0]["input"], str(root / "missing.step"))
+
+    def test_incremental_builds_retain_only_a_matching_frozen_host(self):
+        shipping = dict(name="shipping", status="ready", workspace_key="same", host_hashes={"worker": "same"}, output_hashes={"all": "same"})
+        previous = [shipping, dict(name="full", status="error", error="bounded compiler timeout")]
+        current = [shipping, dict(name="no-inline", status="ready")]
+        self.assertEqual({b["name"] for b in benchmark.merge_build_results(previous, current)},
+                         {"shipping", "full", "no-inline"})
+        for replacement in ({**shipping, "workspace_key": "new"},
+                            {**shipping, "host_hashes": {"worker": "changed"}},
+                            {**shipping, "output_hashes": {"all": "changed"}},
+                            dict(name="shipping", status="error")):
+            merged = benchmark.merge_build_results(previous, [replacement, current[1]])
+            self.assertEqual({b["name"] for b in merged}, {"shipping", "no-inline"})
+        old_target = dict(shipping, name="target", output_hashes={"all": "old"})
+        alias = dict(old_target, name="alias", alias_of="target")
+        stale = dict(old_target, name="stale", workspace_key="old")
+        merged = {b["name"]: b for b in benchmark.merge_build_results(
+            [shipping, old_target, alias, stale], [shipping, dict(old_target, output_hashes={"all": "new"})])}
+        self.assertNotIn("alias_of", merged["alias"])
+        self.assertNotIn("stale", merged)
 
     def test_budget_exhaustion_retains_planned_samples(self):
         with tempfile.TemporaryDirectory(dir=self.test_root) as folder, contextlib.redirect_stderr(io.StringIO()):
