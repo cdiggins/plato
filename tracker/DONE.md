@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-25 — [compiler-518](issues/compiler-518.md) — Open generic constructor payload is mistaken for a dispatch receiver — done (436b5c15a9d2b4b986b1d3e27edb6759d0f32a24)
 - 2026-10-25 — [compiler-519](issues/compiler-519.md) — Resolved library methods collide with same-named record fields in CSharp — done (73dedba1982998b499ec9f5cd8c6e6385c101a82); normal compiler69221fd3 passed all ten unchanged regression tests
 - 2026-10-25 — [compiler-517](issues/compiler-517.md) — Bound the compiled arm of differential witnesses — done (2a1dcccf; pinned consumer plato-brep 0d316ed1)
 - 2026-10-25 — [compiler-515](issues/compiler-515.md) — Separate law execution budgets from witness preparation — done (36850a37; focused consumer evidence plato-brep293c9389)

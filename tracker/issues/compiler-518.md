@@ -2,14 +2,14 @@
 id: compiler-518
 title: Open generic constructor payload is mistaken for a dispatch receiver
 type: bug
-status: in-progress
+status: done
 priority: p1
 effort: S
 risk: med
 area: compiler
 sprint:
 created: 2026-10-25
-closed:
+closed: 2026-10-25
 links: [plato-brep TKT-398]
 ---
 
