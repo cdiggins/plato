@@ -21,6 +21,8 @@ User-authorized optimizer exploration. Contract revision O1: dedicated agent, is
 - [x] Run a reproducible experiment with correctness checks and record limitations.
 - [x] Critically review legality, benefit, and implementation risks.
 - [x] Write an ordered execution plan and execute its first bounded step.
-- [ ] Review and commit deliverables; distinguish prototype evidence from production integration.
+- [x] Review and commit deliverables; distinguish prototype evidence from production integration.
 
 Production candidate census, generated-code validation and integration remain outstanding; this milestone executes only the isolated prototype step.
+
+- [ ] Execute the next plan milestone on actual Plato TIR and record the production integration decision; prototype results alone do not satisfy this.

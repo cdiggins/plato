@@ -30,12 +30,12 @@ For each slug below those paths are:
 
 | Track | Slug | Owner | Readiness |
 | --- | --- | --- | --- |
-| compiler-506 | multi-consumer | multi_consumer | Independent prototype |
-| compiler-507 | record-elimination | record_elimination | Independent prototype |
-| compiler-508 | array-facts | array_facts | Independent prototype |
-| compiler-509 | output-sizing | output_sizing | Independent prototype |
-| compiler-510 | loop-unswitch | loop_unswitch | Independent prototype |
-| compiler-511 | grid-reuse | grid_reuse | Independent prototype |
+| [compiler-506](../../../tracker/issues/compiler-506.md) | [multi-consumer](multi-consumer.md) | multi_consumer | Independent prototype |
+| [compiler-507](../../../tracker/issues/compiler-507.md) | [record-elimination](record-elimination.md) | record_elimination | Independent prototype |
+| [compiler-508](../../../tracker/issues/compiler-508.md) | [array-facts](array-facts.md) | array_facts | Independent prototype |
+| [compiler-509](../../../tracker/issues/compiler-509.md) | [output-sizing](output-sizing.md) | output_sizing | Independent prototype |
+| [compiler-510](../../../tracker/issues/compiler-510.md) | [loop-unswitch](loop-unswitch.md) | loop_unswitch | Independent prototype |
+| [compiler-511](../../../tracker/issues/compiler-511.md) | [grid-reuse](grid-reuse.md) | grid_reuse | Independent prototype |
 
 Agent slots determine dispatch order. Tracks may read each other's completed evidence,
 but no implementation depends on an unverified sibling prototype. Standalone projects must
@@ -59,3 +59,8 @@ Before integration the supervisor reviews artifacts, reruns meaningful checks ag
 inputs, and serializes commits using explicit paths. Production source changes additionally
 require the [optimizer stewardship workflow](../../../tools/optimizer-docs/MAINTENANCE.md).
 Incomplete production steps remain explicitly tracked; a prototype is not a shipped pass.
+
+Actual experiment outcomes and the supervisor's review are recorded in the
+[dated integration report](../../reports/optimizer-exploration-2026-10-25.md).
+The next milestone in each tracker item is the plan's actual-TIR candidate census and
+integration decision. Those milestones remain open after the isolated experiments finish.
