@@ -2,14 +2,14 @@
 id: compiler-515
 title: Separate law execution budgets from witness preparation
 type: bug
-status: in-progress
+status: done
 priority: p1
 effort: M
 risk: med
 area: compiler
 sprint:
 created: 2026-10-25
-closed:
+closed: 2026-10-25
 links: [C:/Users/cdigg/git/plato-brep/tickets/TKT-1006-law-witness-budget-accounting.md]
 ---
 
@@ -22,7 +22,7 @@ Consumer plato-brep TKT-1006: cold DomainOf witness construction is charged to b
 - [x] Domain preparation is excluded consistently from law elapsed and abandonment; case generation, premises and law execution stay charged.
 - [x] Witness caps, missing/faulted witness results and the warm whole-request RunLimit remain effective.
 - [x] Bounded real-backend tests cover cold/cached, direct/serial/parallel, actual law exhaustion, compiled abandonment, generated-case time and warm requests.
-- [ ] Consumer focused laws pass unchanged budget2 on a pinned immutable compiler/source snapshot, with zero differential mismatch and unchanged inputs.
+- [x] Consumer focused laws pass unchanged budget2 on a pinned immutable compiler/source snapshot, with zero differential mismatch and unchanged inputs.
 
 ## Ownership and verification
 
@@ -46,3 +46,25 @@ Release compiler closure from this promoted commit, through the existing consume
 regen-compiler policy, with pinned private project references. No law budget or
 witness cap is relaxed. This issue remains in-progress until the final checkbox
 is verified; the consumer dependency pin has not moved.
+
+## Final Release consumer verification
+
+The normal Release cache built from fix commit
+36850a37a0f4ad44fea51adff00a52621985e085 passed all fifteen focused baseline
+consumer runs and all five TKT-424 runs at the unchanged two-second law budget.
+Cold, combined, differential, compiled and compiled parallel-two cases retained
+exact discovery and case counts, zero differential mismatches, and unchanged
+source/compiler/runtime fingerprints. The focused consumers cover grid corners,
+projection, spline records, region winding and proofs, and segment-floor production.
+Evidence and reproducible driver are committed in plato-brep293c9389;
+its final-consumer-summary.json records the individual log and verdict hashes.
+
+The wider 29-run attempt is explicitly incomplete. An unpromoted TKT-457 catalog
+constructed twelve of thirteen witnesses: the torus reached the unchanged
+120-second witness cap. Its law took 0.01 seconds with zero mismatches; the strict
+coverage driver correctly rejected the missing witness. Seven later catalog runs
+were not attempted. This is retained construction-cap evidence, not a passing
+catalog or a waiver. TKT-457 remains open, and its source is excluded from the
+consumer pin integration. The preceding Debug parser stack overflow remains
+compiler-516. Consumer default-pin regeneration and host/corpus integration are
+tracked separately in TKT-1006; this compiler issue's focused acceptance is met.

@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-25 — [compiler-515](issues/compiler-515.md) — Separate law execution budgets from witness preparation — done (36850a37; focused consumer evidence plato-brep293c9389)
 - 2026-10-25 — [repo-513](issues/repo-513.md) — Separate slow corpus tests from routine regression runs — done (fc96a82c): opt-in slow tests, useful fast regressions, full gates preserved
 - 2026-10-24 — [compiler-499](issues/compiler-499.md) — Repair inlining emission failures on plato-brep — done (d9b13a45): repaired full C# emission; 72 meshing samples match baseline; downstream effects and remaining inlining restrictions documented
 - 2026-10-24 — [compiler-501](issues/compiler-501.md) — Refresh optimizer evidence for concrete type writer — done (8515ca59)
