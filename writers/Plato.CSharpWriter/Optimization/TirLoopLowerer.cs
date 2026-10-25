@@ -6,92 +6,7 @@ using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
-/// <summary>Emission-only marker (--loops): a recognized array-combinator call site lowered to a
-/// for-loop STATEMENT that fills <see cref="TempName"/>; the original call position holds a
-/// <see cref="TirTempRef"/> to it. Printed by TirCSharpBodyWriter.WriteLoweredLoop.</summary>
-public class TirLoweredLoop : TirNode
-{
-    public string Kind { get; }                    // Map, MapIdx, MapRange, Zip2, Zip3, Reduce, All, Any, FlatMap, Reverse, WithNext, MapPairs, MapTriplets, MapQuartets
-    public IReadOnlyList<TirNode> Sources { get; } // list expressions (the count expression for MapRange)
-    public TirNode Fn { get; }                     // lambda literal or delegate-typed parameter/variable (null for Reverse)
-    public TirNode Seed { get; }                   // Reduce only
-    public TirNode IncludeFirst { get; }           // WithNext only
-    // Fused producer chain (TKT-506): the stages (arity-1 lambdas or delegates) applied in order
-    // to the base element to get the element the loop body sees, each bound to a local inside the
-    // loop; no intermediate array exists. With IndexSource, Sources[0] is a COUNT and the base
-    // element is the index itself (the receiver was a MapRange, the form TirFusion leaves for
-    // n.Range and xs.Take(k)); otherwise it is Sources[0][i] (the receiver was a Map chain).
-    public IReadOnlyList<TirNode> SourceStages { get; set; } = System.Array.Empty<TirNode>();
-    public bool IndexSource { get; set; }
-    public string TempName { get; }
-    public int Id { get; }
-    public FunctionDef SourceFunction { get; }
-    // The RESULT element type, taken from the producing function's own type (the call's zonked
-    // return type can be looser than the produced elements).
-    public TypeExpression ElemType { get; set; }
-
-    public TirLoweredLoop(string kind, IReadOnlyList<TirNode> sources, TirNode fn, TirNode seed,
-        TirNode includeFirst, string tempName, int id, TypeExpression type, Symbol origin, FunctionDef sourceFunction = null)
-        : base(type, origin)
-    {
-        Kind = kind;
-        Sources = sources ?? new List<TirNode>();
-        Fn = fn;
-        Seed = seed;
-        IncludeFirst = includeFirst;
-        TempName = tempName;
-        Id = id;
-        SourceFunction = sourceFunction;
-    }
-
-    public override IEnumerable<TirNode> Children
-        => Sources.Concat(new[] { Fn, Seed, IncludeFirst }.Where(n => n != null)).Concat(SourceStages);
-
-    public override TirNode WithChildren(IReadOnlyList<TirNode> children)
-    {
-        var i = Sources.Count;
-        TirNode Next(TirNode original) => original == null ? null : children[i++];
-        var rebuilt = new TirLoweredLoop(Kind, children.Take(Sources.Count).ToList(),
-            Next(Fn), Next(Seed), Next(IncludeFirst), TempName, Id, Type, Origin, SourceFunction)
-            { ElemType = ElemType, IndexSource = IndexSource };
-        rebuilt.SourceStages = children.Skip(i).ToList();
-        return rebuilt;
-    }
-
-    public override string ToString() => $"loop:{Kind} -> {TempName}";
-}
-
-/// <summary>Emission-only marker (--loops): a reference to a lowered loop's result local.</summary>
-public class TirTempRef : TirNode
-{
-    public string Name { get; }
-    public TirTempRef(string name, TypeExpression type, Symbol origin) : base(type, origin) => Name = name;
-    public override string ToString() => Name;
-}
-
-/// <summary>
-/// Pass 4 of the C# optimizer. Consumes a TIR body; produces a block body in which each recognised
-/// combinator call is a hoisted <see cref="TirLoweredLoop"/> statement and the call's position holds a
-/// <see cref="TirTempRef"/>. Pass order and flags: docs/csharp-optimizer-pipeline.md.
-///
-/// Loop lowering (--loops): rewrites recognized array-combinator call sites —
-/// Map/MapEager/MapRange(Eager)/Zip/Reduce/All/Any/FlatMap/Reverse/WithNext/
-/// MapPairs/MapTriplets/MapQuartets on ONE-dimensional list receivers — into for-loop statements
-/// that fill a materialized array, append to a list, or fold/short-circuit for Reduce/All/Any. Identical value
-/// semantics for the pure language; the results are eager. Rules that keep it sound:
-///
-///   * only call sites OUTSIDE lambdas and conditionals are lowered (hoisting an expression out
-///     of a lambda or a conditional branch would change how often it evaluates);
-///   * the function argument must be a NON-eta lambda literal of the right arity (its body is
-///     emitted inline in the loop with the lambda parameters as loop locals — legal wherever the
-///     lambda itself was legal) or a delegate-typed parameter/variable reference (invoked);
-///   * the receiver and result must be one-dimensional (Array&lt;T&gt;, or IArray&lt;T&gt; in
-///     stdlib-legacy: <see cref="TirRewrite.IsListType"/>) with a renderable element type
-///     (2D/3D maps carry their dimensions through and are left to the eager intrinsics);
-///   * statement bodies lower per top-level statement; if/while statements are left intact.
-///
-/// It also lowers the MapEager sites the materializer produces. TIR-path only.
-/// </summary>
+/// <summary>Recognizes array operations; the scope traversal places their loops in evaluation order.</summary>
 public static partial class TirLoopLowerer
 {
     // Deterministic temp counter; reset per generation (CSharpWriter.WriteAll).
@@ -121,15 +36,12 @@ public static partial class TirLoopLowerer
         => TirRewrite.IsListType(TirRewrite.StripCoerce(node)?.Type);
 
     /// <summary>Whether a function argument can be placed in a loop: a non-eta lambda literal of
-    /// the arity with an expression body, or a delegate-typed reference of that arity.</summary>
-    private static bool FnOk(TirNode f, int arity, bool allowStatements = false)
+    /// the arity, or a delegate-typed reference of that arity.</summary>
+    private static bool FnOk(TirNode f, int arity)
     {
         f = TirRewrite.StripCoerce(f);
-        // A lambda whose body is a statement tree (a block or return the inliner or capture
-        // hoist left) has no expression to place in the loop; it stays a delegate (TKT-505).
         if (f is TirLambda lam)
             return lam.Parameters.Count == arity
-                   && (allowStatements || !TirRewrite.IsStatementNode(lam.Body))
                    && !(lam.Parameters.Count > 0 && lam.Parameters.All(p => p.Name != null && p.Name.StartsWith("_eta")));
         // A delegate-typed reference is INVOKED with `arity` arguments, so its declared
         // Function{N} arity must match exactly.
@@ -138,7 +50,7 @@ public static partial class TirLoopLowerer
     }
 
     /// <summary>The lowered marker + temp reference for a recognized combinator call, or null.</summary>
-    private static TirNode TryLower(TirCall c, List<TirNode> hoists, bool allowStatementCallbacks = false)
+    private static TirNode TryLower(TirCall c, List<TirNode> hoists)
     {
         if (c.Name == null || c.Args.Count == 0)
             return null;
@@ -150,43 +62,43 @@ public static partial class TirLoopLowerer
         switch (c.Name)
         {
             case "Map" or "MapEager" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c):
-                if (FnOk(c.Args[1], 1, allowStatementCallbacks)) { kind = "Map"; }
-                else if (FnOk(c.Args[1], 2, allowStatementCallbacks)) { kind = "MapIdx"; }
+                if (FnOk(c.Args[1], 1)) { kind = "Map"; }
+                else if (FnOk(c.Args[1], 2)) { kind = "MapIdx"; }
                 else return null;
                 sources = new List<TirNode> { c.Args[0] };
                 fn = c.Args[1];
                 break;
-            case "MapRange" or "MapRangeEager" when c.Args.Count == 2 && ResultIsList(c) && FnOk(c.Args[1], 1, allowStatementCallbacks):
+            case "MapRange" or "MapRangeEager" when c.Args.Count == 2 && ResultIsList(c) && FnOk(c.Args[1], 1):
                 kind = "MapRange"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
-            case "Zip" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && ResultIsList(c) && FnOk(c.Args[2], 2, allowStatementCallbacks):
+            case "Zip" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && ResultIsList(c) && FnOk(c.Args[2], 2):
                 kind = "Zip2"; sources = new List<TirNode> { c.Args[0], c.Args[1] }; fn = c.Args[2];
                 break;
-            case "Zip" when c.Args.Count == 4 && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && IsListTyped(c.Args[2]) && ResultIsList(c) && FnOk(c.Args[3], 3, allowStatementCallbacks):
+            case "Zip" when c.Args.Count == 4 && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && IsListTyped(c.Args[2]) && ResultIsList(c) && FnOk(c.Args[3], 3):
                 kind = "Zip3"; sources = new List<TirNode> { c.Args[0], c.Args[1], c.Args[2] }; fn = c.Args[3];
                 break;
-            case "Reduce" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && FnOk(c.Args[2], 2, allowStatementCallbacks):
+            case "Reduce" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && FnOk(c.Args[2], 2):
                 kind = "Reduce"; sources = new List<TirNode> { c.Args[0] }; seed = c.Args[1]; fn = c.Args[2];
                 break;
-            case "All" or "Any" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && FnOk(c.Args[1], 1, allowStatementCallbacks):
+            case "All" or "Any" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && FnOk(c.Args[1], 1):
                 kind = c.Name; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
-            case "FlatMap" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 1, allowStatementCallbacks):
+            case "FlatMap" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 1):
                 kind = "FlatMap"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
             case "Reverse" when c.Args.Count == 1 && IsListTyped(c.Args[0]) && ResultIsList(c):
                 kind = "Reverse"; sources = new List<TirNode> { c.Args[0] };
                 break;
-            case "WithNext" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 2, allowStatementCallbacks):
+            case "WithNext" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 2):
                 kind = "WithNext"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1]; includeFirst = c.Args[2];
                 break;
-            case "MapPairs" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 2, allowStatementCallbacks):
+            case "MapPairs" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 2):
                 kind = "MapPairs"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
-            case "MapTriplets" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 3, allowStatementCallbacks):
+            case "MapTriplets" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 3):
                 kind = "MapTriplets"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
-            case "MapQuartets" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 4, allowStatementCallbacks):
+            case "MapQuartets" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 4):
                 kind = "MapQuartets"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
             default:

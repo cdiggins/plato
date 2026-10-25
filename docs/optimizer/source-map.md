@@ -90,23 +90,22 @@ links refer to this checkout's reviewed snapshot.
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.NotSelfContained`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L19)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.NullaryRefused`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L25)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.ReturnTypeMismatch`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L18)
-- [`Ara3D.Geometry.CSharpWriter.InlineRefusal.RewrittenCallableBody`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L31)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.SelfRecursive`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L26)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.StatementBody`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L17)
 - [`Ara3D.Geometry.CSharpWriter.InlineRefusal.UnknownCallable`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L27)
 
 ## InlineReport
 
-[`Ara3D.Geometry.CSharpWriter.InlineReport`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L37)
+[`Ara3D.Geometry.CSharpWriter.InlineReport`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L36)
 
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.BetaReductions`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L48)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.CallsInlined`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L47)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.KnownLambdasInlined`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L51)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.RecordSite(string, object, Ara3D.Geometry.Compiler.Checking.TirNode, string)`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L41)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.Refuse(string, string, Ara3D.Geometry.CSharpWriter.InlineRefusal)`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L53)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.StatementCallsInlined`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L50)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.ToTable()`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L62)
-- [`Ara3D.Geometry.CSharpWriter.InlineReport.TupleConstructorRewrites`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L49)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.BetaReductions`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L47)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.CallsInlined`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L46)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.KnownLambdasInlined`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L50)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.RecordSite(string, object, Ara3D.Geometry.Compiler.Checking.TirNode, string)`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L40)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.Refuse(string, string, Ara3D.Geometry.CSharpWriter.InlineRefusal)`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L52)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.StatementCallsInlined`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L49)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.ToTable()`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L61)
+- [`Ara3D.Geometry.CSharpWriter.InlineReport.TupleConstructorRewrites`](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs#L48)
 
 ## LoopOptimizationOptions
 
@@ -204,6 +203,16 @@ links refer to this checkout's reviewed snapshot.
 - [`Ara3D.Geometry.CSharpWriter.TirFusion.TakeToMapRange(Ara3D.Geometry.Compiler.Checking.TirCall, Ara3D.Geometry.CSharpWriter.FusionContext)`](../../writers/Plato.CSharpWriter/Optimization/TirFusion.cs#L112)
 - [`Ara3D.Geometry.CSharpWriter.TirFusion.UnrollLimit`](../../writers/Plato.CSharpWriter/Optimization/TirFusion.cs#L45)
 
+## TirGuardedLoop
+
+[`Ara3D.Geometry.CSharpWriter.TirGuardedLoop`](../../writers/Plato.CSharpWriter/Optimization/TirGuardedLoop.cs#L8)
+
+- [`Ara3D.Geometry.CSharpWriter.TirGuardedLoop.Body`](../../writers/Plato.CSharpWriter/Optimization/TirGuardedLoop.cs#L11)
+- [`Ara3D.Geometry.CSharpWriter.TirGuardedLoop.Children`](../../writers/Plato.CSharpWriter/Optimization/TirGuardedLoop.cs#L17)
+- [`Ara3D.Geometry.CSharpWriter.TirGuardedLoop.Test`](../../writers/Plato.CSharpWriter/Optimization/TirGuardedLoop.cs#L10)
+- [`Ara3D.Geometry.CSharpWriter.TirGuardedLoop.ToString()`](../../writers/Plato.CSharpWriter/Optimization/TirGuardedLoop.cs#L24)
+- [`Ara3D.Geometry.CSharpWriter.TirGuardedLoop.WithChildren(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirGuardedLoop.cs#L20)
+
 ## TirInlineBinding
 
 [`Ara3D.Geometry.CSharpWriter.TirInlineBinding`](../../writers/Plato.CSharpWriter/Optimization/TirInlineBinding.cs#L8)
@@ -268,31 +277,31 @@ links refer to this checkout's reviewed snapshot.
 
 ## TirLoopLowerer
 
-[`Ara3D.Geometry.CSharpWriter.TirLoopLowerer`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L95)
+[`Ara3D.Geometry.CSharpWriter.TirLoopLowerer`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L10)
 
-- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.IsRenderableConcrete(Ara3D.Geometry.Compiler.Symbols.TypeExpression)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L281)
-- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.NextId`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L100)
-- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.ProducesArray(string)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L270)
-- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.Rewrite(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.CSharpWriter)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L102)
+- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.IsRenderableConcrete(Ara3D.Geometry.Compiler.Symbols.TypeExpression)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L193)
+- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.NextId`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L15)
+- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.ProducesArray(string)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L182)
+- [`Ara3D.Geometry.CSharpWriter.TirLoopLowerer.Rewrite(Ara3D.Geometry.Compiler.Checking.TirFunction, Ara3D.Geometry.CSharpWriter.CSharpWriter)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L17)
 
 ## TirLoweredLoop
 
-[`Ara3D.Geometry.CSharpWriter.TirLoweredLoop`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L12)
+[`Ara3D.Geometry.CSharpWriter.TirLoweredLoop`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L12)
 
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Children`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L47)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.ElemType`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L31)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Fn`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L16)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Id`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L27)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.IncludeFirst`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L18)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.IndexSource`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L25)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Kind`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L14)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Seed`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L17)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.SourceFunction`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L28)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.SourceStages`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L24)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Sources`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L15)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.TempName`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L26)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.ToString()`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L61)
-- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.WithChildren(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L50)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Children`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L47)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.ElemType`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L31)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Fn`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L16)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Id`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L27)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.IncludeFirst`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L18)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.IndexSource`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L25)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Kind`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L14)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Seed`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L17)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.SourceFunction`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L28)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.SourceStages`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L24)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.Sources`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L15)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.TempName`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L26)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.ToString()`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L61)
+- [`Ara3D.Geometry.CSharpWriter.TirLoweredLoop.WithChildren(System.Collections.Generic.IReadOnlyList<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirLoweredLoop.cs#L50)
 
 ## TirMultiConsumerFusion
 
@@ -316,15 +325,15 @@ links refer to this checkout's reviewed snapshot.
 
 [`Ara3D.Geometry.CSharpWriter.TirRewrite`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L32)
 
-- [`Ara3D.Geometry.CSharpWriter.TirRewrite.CountParamUses(Ara3D.Geometry.Compiler.Checking.TirNode)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L187)
-- [`Ara3D.Geometry.CSharpWriter.TirRewrite.IsCheap(Ara3D.Geometry.Compiler.Checking.TirNode)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L178)
-- [`Ara3D.Geometry.CSharpWriter.TirRewrite.IsListType(Ara3D.Geometry.Compiler.Symbols.TypeExpression)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L161)
-- [`Ara3D.Geometry.CSharpWriter.TirRewrite.IsStatementNode(Ara3D.Geometry.Compiler.Checking.TirNode)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L172)
-- [`Ara3D.Geometry.CSharpWriter.TirRewrite.ListElementType(Ara3D.Geometry.Compiler.Symbols.TypeExpression)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L165)
+- [`Ara3D.Geometry.CSharpWriter.TirRewrite.CountParamUses(Ara3D.Geometry.Compiler.Checking.TirNode)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L189)
+- [`Ara3D.Geometry.CSharpWriter.TirRewrite.IsCheap(Ara3D.Geometry.Compiler.Checking.TirNode)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L180)
+- [`Ara3D.Geometry.CSharpWriter.TirRewrite.IsListType(Ara3D.Geometry.Compiler.Symbols.TypeExpression)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L163)
+- [`Ara3D.Geometry.CSharpWriter.TirRewrite.IsStatementNode(Ara3D.Geometry.Compiler.Checking.TirNode)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L174)
+- [`Ara3D.Geometry.CSharpWriter.TirRewrite.ListElementType(Ara3D.Geometry.Compiler.Symbols.TypeExpression)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L167)
 - [`Ara3D.Geometry.CSharpWriter.TirRewrite.Rewrite(Ara3D.Geometry.Compiler.Checking.TirNode, System.Func<Ara3D.Geometry.Compiler.Checking.TirNode, Ara3D.Geometry.Compiler.Checking.TirNode>, System.Action<Ara3D.Geometry.Compiler.Checking.TirNode>, System.Action<Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L37)
-- [`Ara3D.Geometry.CSharpWriter.TirRewrite.StripCoerce(Ara3D.Geometry.Compiler.Checking.TirNode)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L153)
-- [`Ara3D.Geometry.CSharpWriter.TirRewrite.Substitute(Ara3D.Geometry.Compiler.Checking.TirNode, System.Collections.Generic.IReadOnlyDictionary<Ara3D.Geometry.Compiler.Symbols.ParameterDef, Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L106)
-- [`Ara3D.Geometry.CSharpWriter.TirRewrite.TryBetaReduce(Ara3D.Geometry.Compiler.Checking.TirInvoke, out Ara3D.Geometry.Compiler.Checking.TirNode, System.Func<Ara3D.Geometry.Compiler.Checking.TirNode, bool>)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L122)
+- [`Ara3D.Geometry.CSharpWriter.TirRewrite.StripCoerce(Ara3D.Geometry.Compiler.Checking.TirNode)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L155)
+- [`Ara3D.Geometry.CSharpWriter.TirRewrite.Substitute(Ara3D.Geometry.Compiler.Checking.TirNode, System.Collections.Generic.IReadOnlyDictionary<Ara3D.Geometry.Compiler.Symbols.ParameterDef, Ara3D.Geometry.Compiler.Checking.TirNode>)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L108)
+- [`Ara3D.Geometry.CSharpWriter.TirRewrite.TryBetaReduce(Ara3D.Geometry.Compiler.Checking.TirInvoke, out Ara3D.Geometry.Compiler.Checking.TirNode, System.Func<Ara3D.Geometry.Compiler.Checking.TirNode, bool>)`](../../writers/Plato.CSharpWriter/Optimization/TirRewrite.cs#L124)
 
 ## TirStatementRewriter
 
@@ -334,7 +343,7 @@ links refer to this checkout's reviewed snapshot.
 
 ## TirTempRef
 
-[`Ara3D.Geometry.CSharpWriter.TirTempRef`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L65)
+[`Ara3D.Geometry.CSharpWriter.TirTempRef`](../../writers/Plato.CSharpWriter/Optimization/TirTempRef.cs#L10)
 
-- [`Ara3D.Geometry.CSharpWriter.TirTempRef.Name`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L67)
-- [`Ara3D.Geometry.CSharpWriter.TirTempRef.ToString()`](../../writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs#L69)
+- [`Ara3D.Geometry.CSharpWriter.TirTempRef.Name`](../../writers/Plato.CSharpWriter/Optimization/TirTempRef.cs#L12)
+- [`Ara3D.Geometry.CSharpWriter.TirTempRef.ToString()`](../../writers/Plato.CSharpWriter/Optimization/TirTempRef.cs#L14)

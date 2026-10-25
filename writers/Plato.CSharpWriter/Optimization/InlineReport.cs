@@ -28,7 +28,6 @@ public enum InlineRefusal
     MutableCapture,
     CallableSignatureMismatch,
     ExpansionBudget,
-    RewrittenCallableBody,
 }
 
 /// <summary>Per-generation aggregation of inliner activity: every refusal keyed by

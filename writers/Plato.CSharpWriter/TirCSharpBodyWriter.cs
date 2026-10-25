@@ -1,4 +1,4 @@
-// Renders typed-IR statements, expressions, and calls as C# function bodies.
+﻿// Renders typed-IR statements, expressions, and calls as C# function bodies.
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Analysis;
@@ -250,6 +250,10 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     WriteLine("else");
                     WriteStatement(iff.IfFalse);
                 }
+                return;
+
+            case TirGuardedLoop loop:
+                WriteGuardedLoop(loop);
                 return;
 
             case TirLoop l:

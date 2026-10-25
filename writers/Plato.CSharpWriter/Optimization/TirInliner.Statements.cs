@@ -206,7 +206,7 @@ public static partial class TirInliner
                     || call.Args[i] is TirTypeRef)
                     return false;
             return body.Descendants().All(n => n is not (TirName or TirUnresolved or TirTypeRef)
-                && (n is not TirLambda lam || _eliminateLambdas && !IsEtaShaped(lam))
+                && (n is not TirLambda lam || !IsEtaShaped(lam))
                 && (n is not TirAssign a || a.LValue is TirVariable)
                 && (n is not TirLet l || Ground(l.Value.Type))
                 && (n is not TirCall c || c.Callee != null && IsCallableOnReceiver(_host, c))

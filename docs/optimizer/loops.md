@@ -22,14 +22,17 @@ uses the same loop recognizer for computed arguments and nested calls. `TirEvalu
 ordered prerequisites; operands finish in source order before a later operand's loop executes.
 `TirStatementRewriter` places those prerequisites inside blocks, inline regions, branches and
 loop bodies. Conditional expressions become local result regions when either branch has
-prerequisites, keeping untaken work behind its guard. Loop conditions and lambda bodies stay
-opaque at this stage. Generated names avoid existing bindings. The scope traversal is separate
+prerequisites, keeping untaken work behind its guard. `TirGuardedLoop` places condition
+prerequisites inside every loop test, including the terminating test. Recognized callbacks are
+cloned independently and lowered inside their own iteration scopes; an empty outer loop executes
+none of their prerequisites. Generated names avoid existing bindings. The scope traversal is separate
 from recognizing the supported array operations.
 
 Known callback propagation exposes lambdas at MapRange, Reduce and FlatMap intrinsic sites.
 Recognized consumer callbacks accept statement bodies: each iteration declares the parameters,
 executes a local result/exit region, then consumes the result. Returns inside nested lambdas keep
-their own boundary. Producer-chain stages remain expression-valued. No invoked lambda is introduced. Tests in
+their own boundary. Producer-chain stages use the same result emission for expression or statement
+bodies, so inlining a callback does not disable chain lowering. No invoked lambda is introduced. Tests in
 [StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs) compile
 and execute empty and populated ranges, statement reductions, nested callback returns, guarded
 branches and sibling fault order. They assert that computed arguments still lower with every

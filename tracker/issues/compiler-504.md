@@ -162,3 +162,16 @@ match the real test project's compile exclusion before verification.
 Next: callback producer stages, condition prerequisites, and iteration/budget separation.
 Then broader gates and any renewed measurements. Root PROGRESS.md belongs to another mission;
 local recovery notes are .temp/compiler-504-pipeline/PROGRESS.md.
+
+The second redesign milestone introduces TirGuardedLoop: condition prerequisites execute inside
+each loop test, including the final false test. Producer stages and consumers share callback
+result emission; statement callbacks retain fusion. Each callback use receives fresh local and
+parameter identities before nested loops lower within its own scope. Known callback exposure
+uses the argument's proven callable value instead of a list of intrinsic names. Statement
+inlining can preserve lambdas without enabling elimination, and already rewritten callable
+regions can be cloned. TirLoweredLoop and TirTempRef now have separate source files.
+
+Recorded private build passed; all 58 focused cases passed in 28 seconds. New witnesses cover
+condition call counts, statement producer fusion, repeated known callbacks, nested ranges, and
+empty outer loops whose callback would fault. Greenhouse evidence/review/check passed. Iteration
+and work-budget separation remains before the final broad verification.

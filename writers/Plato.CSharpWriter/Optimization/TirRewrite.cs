@@ -53,6 +53,8 @@ public static class TirRewrite
 
         switch (n)
         {
+            case TirGuardedLoop loop:
+                return f(loop.WithChildren(Rw(loop.Children.ToList())));
             case TirMultiReduction pair:
                 return f(pair.WithChildren(Rw(pair.Children.ToList())));
             case TirInlineRegion region:
@@ -171,7 +173,7 @@ public static class TirRewrite
     /// <see cref="TirLoweredLoop"/>, so including it here is a harmless superset for them).</summary>
     public static bool IsStatementNode(TirNode n)
         => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop || n is TirLoweredLoop
-            || n is TirInlineBinding || n is TirInlineRegion || n is TirInlineExit || n is TirMultiReduction;
+            || n is TirGuardedLoop || n is TirInlineBinding || n is TirInlineRegion || n is TirInlineExit || n is TirMultiReduction;
 
     /// <summary>A leaf whose repeated substitution costs nothing (parameter / variable / literal /
     /// type ref / default) — safe to substitute regardless of use count.</summary>

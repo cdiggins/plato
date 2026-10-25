@@ -25,6 +25,7 @@ library Intrinsics {
     Equals(a: Integer, b: Integer): Boolean;
     MapRange(n: Integer, f: Function1<Integer, $T>): Array<$T>;
     Count(xs: Array<$T>): Integer;
+    Map(xs: Array<$T>, f: Function1<$T, $R>): Array<$R>;
     Reduce(xs: Array<$T>, seed: $R, f: Function2<$R, $T, $R>): $R;
     Tick(x: Integer): Integer;
     First(x: Integer): Integer;
@@ -66,6 +67,13 @@ library StatementProbe {
     Simplified(x: Integer): Integer => x.Choose(0);
     Build(n: Integer, f: Function1<Integer, Integer>): Array<Integer> { var values = n.MapRange(f); return values; }
     ScopedRange(n: Integer): Array<Integer> => n.Build(i => i + 1);
+    NestedRanges(n: Integer): Array<Integer> => n.MapRange(i => i.MapRange(j => j).Count);
+    EmptyCallback(n: Integer): Array<Integer> => n.MapRange(i => i.First.MapRange(j => j).Count);
+    Both(n: Integer, f: Function1<Integer, Integer>): Array<Integer> { return n.MapRange(f).Map(f); }
+    BothEntry(n: Integer): Array<Integer> => n.Both(i => { var value = i + 1; return value; });
+    Condition(n: Integer): Boolean { var count = n.Tick; return count.MapRange(i => i).Count > 0; }
+    Countdown(n: Integer): Integer { var remaining = n; while (remaining.Condition) { remaining = remaining - 1; } return remaining; }
+    ProducerStatements(n: Integer): Integer => n.MapRange(i => { var value = i + 1; return value; }).Reduce(0, (sum, value) => sum + value);
     StatementSum(n: Integer): Integer => n.MapRange(i => i + 1).Reduce(0, (sum, value) => { var next = sum + value; return next; });
     NestedReturns(n: Integer): Array<Integer> => n.MapRange(i => { var result = i.Apply(j => { var value = j + 1; return value; }); return result; });
     ComputedRange(n: Integer): Array<Integer> => (n + 1).MapRange(i => i + 1);
@@ -102,6 +110,11 @@ library StatementProbe {
                 @"global using System.Collections.Generic; namespace Ara3D.Collections { }
 namespace Ara3D.Geometry { public static class ProbeOperators {
 public static int Calls;
+public static IReadOnlyList<R> Map<T,R>(this IReadOnlyList<T> xs, System.Func<T,R> f) {
+var result = new R[xs.Count];
+for (var i = 0; i < result.Length; i++) result[i] = f(xs[i]);
+return result;
+}
 public static R Reduce<T,R>(this IReadOnlyList<T> xs, R seed, System.Func<R,T,R> f) {
 foreach (var x in xs) seed = f(seed, x);
 return seed;
@@ -154,6 +167,33 @@ return result;
                     Is.EqualTo(Enumerable.Range(1, count)));
                 Assert.That(((IReadOnlyList<Integer>)library.GetMethod("StatementRange")!.Invoke(null, new object[] { (Integer)count })!).Select(n => (int)n),
                     Is.EqualTo(Enumerable.Range(1, count)));
+            }
+            foreach (var count in new[] { 0, 1, 3 })
+            {
+                var calls = assembly.GetType("Ara3D.Geometry.ProbeOperators")!.GetField("Calls")!;
+                calls.SetValue(null, 0);
+                Assert.That((int)(Integer)library.GetMethod("Countdown")!.Invoke(null,
+                    new object[] { (Integer)count })!, Is.Zero);
+                Assert.That(calls.GetValue(null), Is.EqualTo(count + 1), "Evaluate every loop test, including the terminating test.");
+            }
+            Assert.That((int)(Integer)library.GetMethod("ProducerStatements")!.Invoke(null,
+                new object[] { (Integer)3 })!, Is.EqualTo(6));
+            Assert.That(((IReadOnlyList<Integer>)library.GetMethod("BothEntry")!.Invoke(null,
+                new object[] { (Integer)3 })!).Select(n => (int)n), Is.EqualTo(new[] { 2, 3, 4 }),
+                "Repeated known callbacks need independent lexical identities at each loop stage.");
+            Assert.That(((IReadOnlyList<Integer>)library.GetMethod("NestedRanges")!.Invoke(null,
+                new object[] { (Integer)3 })!).Select(n => (int)n), Is.EqualTo(new[] { 0, 1, 2 }));
+            Assert.That(((IReadOnlyList<Integer>)library.GetMethod("EmptyCallback")!.Invoke(null,
+                new object[] { (Integer)0 })!), Is.Empty, "An empty outer loop must not evaluate callback prerequisites.");
+            var nestedRanges = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "NestedRanges"), writer);
+            Assert.That(nestedRanges.AllNodes.OfType<TirLoweredLoop>().Count(), Is.EqualTo(2));
+            var producer = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "ProducerStatements"), writer);
+            Assert.That(producer.AllNodes.OfType<TirLoweredLoop>().Count(), Is.EqualTo(1),
+                "A statement-bodied producer must stay fused into the consumer loop.");
+            if (inline)
+            {
+                var countdown = TirInliner.InlineStatements(writer.TestGetGroundTir("Integer", "Countdown"), writer, "Integer", lambdas, simplify);
+                Assert.That(countdown.AllNodes.OfType<TirGuardedLoop>(), Is.Not.Empty);
             }
             Assert.That((int)(Integer)library.GetMethod("StatementSum")!.Invoke(null,
                 new object[] { (Integer)3 })!, Is.EqualTo(6));

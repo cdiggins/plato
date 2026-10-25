@@ -72,14 +72,35 @@ public static partial class TirLoopLowerer
             var rebuilt = node.WithChildren(values);
             if (rebuilt is not TirCall call)
                 return rebuilt;
-            while (_reservedIds.Contains(NextId)) NextId++;
-            var lowered = TryLower(call, before, true);
+            var lowered = LowerCall(call, before);
             if (lowered != null || !chain)
                 return lowered ?? rebuilt;
             var fallback = call.Args.Select(a => TirEvaluation.Capture(a, Value)).ToArray();
             call = (TirCall)call.WithChildren(TirEvaluation.Sequence(fallback, before, Bind));
+            return LowerCall(call, before) ?? call;
+        }
+
+        private TirNode LowerCall(TirCall call, List<TirNode> before)
+        {
             while (_reservedIds.Contains(NextId)) NextId++;
-            return TryLower(call, before, true) ?? call;
+            var loops = new List<TirNode>();
+            var value = TryLower(call, loops);
+            before.AddRange(loops.Cast<TirLoweredLoop>().Select(l => TirLoopCallbacks.Freshen(l, Fresh, Callback)));
+            return value;
+        }
+
+        private TirNode Callback(TirNode node)
+        {
+            if (node is TirCoerce coerce)
+                return coerce.WithChildren(new[] { Callback(coerce.Inner) });
+            if (node is not TirLambda lambda)
+                return node;
+            if (TirRewrite.IsStatementNode(lambda.Body))
+                return lambda.WithChildren(new[] { Scope(lambda.Body) });
+            var value = TirEvaluation.Capture(lambda.Body, Value);
+            var body = value.Statements.Count == 0 ? value.Value : new TirBlock(value.Statements
+                .Append(new TirReturn(value.Value, lambda.Origin)).ToArray(), lambda.Origin);
+            return lambda.WithChildren(new[] { body });
         }
 
         private TirNode Chain(TirNode node, List<TirNode> before)

@@ -20,12 +20,8 @@ public static partial class TirInliner
         {
             if (call.Callee?.Body != null || call.Callee?.OwnerType?.Name != "Intrinsics")
                 return call;
-            var index = call.Name switch { "MapRange" or "FlatMap" => 1, "Reduce" => 2, _ => -1 };
-            if (index < 0 || call.Args.Count <= index || Known(call.Args[index]) is not { } lambda
-                || !Equals(call.Args[index].Type, lambda.Type))
-                return call;
-            var args = call.Args.ToArray();
-            args[index] = lambda;
+            var args = call.Args.Select(arg => Known(arg) is { } lambda && Equals(arg.Type, lambda.Type)
+                ? lambda : arg).ToArray();
             return (TirCall)call.WithChildren(args);
         }
 
@@ -121,8 +117,6 @@ public static partial class TirInliner
             if (cost > _remaining || _activeLambdas.Count >= MaxDepth)
                 return Refuse(InlineRefusal.ExpansionBudget);
             var body = lambda.Body is TirBlock ? lambda.Body : new TirBlock(new[] { new TirReturn(lambda.Body, lambda.Origin) }, lambda.Origin);
-            if (body.Descendants().Any(n => n is TirInlineRegion or TirInlineBinding))
-                return Refuse(InlineRefusal.RewrittenCallableBody);
             _remaining -= cost;
             _activeLambdas.Add(lambda);
             var parameters = new Dictionary<ParameterDef, TirNode>();

@@ -51,8 +51,10 @@ actual into an explicitly typed local in source order, clones local identities, 
 the result with the declared return type. An inline region assigns that result and jumps to
 its own exit label, so a callee return cannot exit the caller. Call arguments are sequenced
 before any later argument's prerequisites; conditional branches keep their prerequisites
-behind the guard. Branch and loop bodies retain their scopes. Loop conditions, other compound
-expression forms and lambda bodies remain opaque. Exact ground signature checks exclude ambiguous generic dispatch.
+behind the guard. Branch and loop bodies retain their scopes. `TirGuardedLoop` holds prerequisites
+for each condition evaluation without moving them outside the loop. Statement inlining can preserve
+lambda bodies independently of whether callable elimination is enabled. Exact ground signature checks
+exclude ambiguous generic dispatch.
 The pass represents an expression's prerequisites as `TirEvaluation`: an ordered statement list
 and a value. Sequencing operands completes each earlier operand before starting a later one's
 prerequisites. `TirInlineCloner` owns fresh lexical identities and return redirection independently
@@ -71,7 +73,7 @@ Nested consumers use ancestry from the callable's creation context, so repeated 
 same consumer is not mistaken for recursion. Unused known-callable bindings are removed only
 after their applications disappear. Remaining callback bodies are processed in their own
 scope. The inline report distinguishes unknown targets, mutable captures, signature mismatches,
-budget refusals and bodies already carrying generated regions that cannot yet be cloned.
+and budget refusals. Already rewritten callback regions can be cloned with fresh identities.
 There is no shared specialization registry: callbacks whose consumers remain calls still
 allocate delegates. No storage or ABI changes are implied by callable elimination.
 
