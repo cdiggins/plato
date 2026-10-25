@@ -1,6 +1,7 @@
 // Compares interpreter and compiled C# results for identical law cases.
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
@@ -198,6 +199,10 @@ public sealed record DifferentialValue(object Interpreter, object Host);
 /// witness. When both engines fault the interpreter's fault is thrown; when the interpreter stops
 /// at the time budget the compiled arm is not run, so a slow law is a budget error, never a
 /// mismatch. Calls run one at a time, because the interpreter's state is shared (TKT-438).
+/// A deadline bounds the compiled arm, conversion and comparison on a background worker;
+/// abandonment bounds caller latency, not the lifetime of uncooperative compiled work.
+/// The compiled backend must support parallel calls, including conversion and read-only values,
+/// to be abandoned safely. It must not invoke or mutate this shared interpreter.
 /// </summary>
 public sealed class DifferentialBackend : ILawBackend
 {
@@ -215,7 +220,13 @@ public sealed class DifferentialBackend : ILawBackend
 
     public string Name => LawBackends.DifferentialName;
     public bool SupportsParallel => false;
-    public void SetDeadline(DateTime? deadline) => Interpreted.SetDeadline(deadline);
+    private DateTime? _deadline;
+
+    public void SetDeadline(DateTime? deadline)
+    {
+        _deadline = deadline;
+        Interpreted.SetDeadline(deadline);
+    }
 
     public object FromInterpreterValue(object v)
         => v is TypeToken ? new DifferentialValue(v, v) : new DifferentialValue(v, Compiled.FromInterpreterValue(v));
@@ -225,66 +236,145 @@ public sealed class DifferentialBackend : ILawBackend
 
     public object Invoke(FunctionDef f, object[] args)
     {
+        var deadline = _deadline;
+        CheckDeadline(deadline);
         var interpArgs = args.Select(a => a is DifferentialValue d ? d.Interpreter : a).ToArray();
         var hostArgs = args.Select(a => a is DifferentialValue d ? d.Host : a).ToArray();
 
-        object mine = null, theirs = null;
-        EvaluationException mineFault = null, theirsFault = null;
+        object mine = null;
+        EvaluationException mineFault = null;
         try { mine = Interpreted.Invoke(f, interpArgs); }
         catch (EvaluationException e) when (e.Message.StartsWith(LawRunner.TimeBudgetMessage, StringComparison.Ordinal)) { throw; }
         catch (EvaluationException e) { mineFault = e; }
-        try { theirs = Compiled.Invoke(f, hostArgs); }
+        CheckDeadline(deadline);
+        var compiled = Compiled;
+        return CompleteCompiled(report => Compare(compiled, f, interpArgs, hostArgs,
+            mine, mineFault, deadline, report), deadline);
+    }
+
+    // The worker owns only compiled work and read-only value comparison. It never invokes
+    // the interpreter or publishes a mismatch. A timed-out worker may finish later, but its
+    // local result and report are discarded; the next call keeps sole interpreter ownership.
+    private object CompleteCompiled(Func<Action<string>, object> call, DateTime? deadline)
+    {
+        object value = null;
+        ExceptionDispatchInfo fault = null;
+        string mismatch = null;
+        void Run()
+        {
+            try { value = call(text => mismatch = text); }
+            catch (Exception error) { fault = ExceptionDispatchInfo.Capture(error); }
+        }
+        if (deadline is DateTime limit)
+        {
+            CheckDeadline(deadline);
+            if (!Compiled.SupportsParallel)
+                throw new EvaluationException("the differential compiled arm cannot safely abandon concurrent work");
+            var worker = new Thread(Run, LawRunner.StackBytes)
+            {
+                IsBackground = true,
+                Name = "differential compiled arm",
+            };
+            worker.Start();
+            while (true)
+            {
+                var remaining = limit - DateTime.UtcNow;
+                if (remaining <= TimeSpan.Zero)
+                    throw new EvaluationException(LawRunner.TimeBudgetMessage);
+                var wait = TimeSpan.FromMilliseconds(Math.Min(remaining.TotalMilliseconds, int.MaxValue));
+                if (worker.Join(wait))
+                    break;
+            }
+            CheckDeadline(deadline);
+        }
+        else
+            Run();
+        if (mismatch != null)
+            _mismatches.Enqueue(mismatch);
+        fault?.Throw();
+        return value;
+    }
+
+    private static void CheckDeadline(DateTime? deadline)
+    {
+        if (deadline is DateTime limit && DateTime.UtcNow >= limit)
+            throw new EvaluationException(LawRunner.TimeBudgetMessage);
+    }
+
+    private static object Compare(ILawBackend compiled, FunctionDef f, object[] interpArgs,
+        object[] hostArgs, object mine, EvaluationException mineFault, DateTime? deadline, Action<string> report)
+    {
+        CheckDeadline(deadline);
+        object theirs = null;
+        EvaluationException theirsFault = null;
+        try { theirs = compiled.Invoke(f, hostArgs); }
         catch (EvaluationException e) { theirsFault = e; }
+        CheckDeadline(deadline);
 
         if (mineFault != null && theirsFault != null)
         {
             if ((mineFault is HostObligationException) == (theirsFault is HostObligationException))
                 throw mineFault;
-            throw Differ(f, interpArgs, Describe(mineFault), Describe(theirsFault));
+            throw Differ(report, f, interpArgs, Describe(mineFault), Describe(theirsFault));
         }
         if (mineFault != null)
-            throw Differ(f, interpArgs, Describe(mineFault), Format(Compiled.ToInterpreterValue(theirs)));
+            throw Differ(report, f, interpArgs, Describe(mineFault), Format(compiled.ToInterpreterValue(theirs)));
         if (theirsFault != null)
-            throw Differ(f, interpArgs, Format(mine), Describe(theirsFault));
+            throw Differ(report, f, interpArgs, Format(mine), Describe(theirsFault));
 
         object theirsAsPlato;
-        try { theirsAsPlato = Compiled.ToInterpreterValue(theirs); }
+        try { theirsAsPlato = compiled.ToInterpreterValue(theirs); }
         catch (ValueConversionException) { return new DifferentialValue(mine, theirs); }
-        if (!Agree(mine, theirsAsPlato))
-            throw Differ(f, interpArgs, Format(mine), Format(theirsAsPlato));
+        if (!Agree(mine, theirsAsPlato, deadline))
+            throw Differ(report, f, interpArgs, Format(mine), Format(theirsAsPlato));
         return new DifferentialValue(mine, theirs);
     }
 
     /// <summary>Plato's structural equality (<see cref="ValueEquality"/>), except that two
     /// function values agree: a closure and a delegate cannot be compared, and a function field
     /// is checked through the laws that call it.</summary>
-    private static bool Agree(object a, object b)
+    private static bool Agree(object a, object b, DateTime? deadline)
     {
+        CheckDeadline(deadline);
         if (IsFunction(a) || IsFunction(b))
             return IsFunction(a) && IsFunction(b);
         switch (a)
         {
             case PlatoRecord r when b is PlatoRecord s:
-                return r.Def.Name == s.Def.Name && AllAgree(r.Fields, s.Fields);
+                return r.Def.Name == s.Def.Name && AllAgree(r.Fields, s.Fields, deadline);
             case PlatoSum u when b is PlatoSum v:
-                return u.Def.Name == v.Def.Name && u.Case.Tag == v.Case.Tag && AllAgree(u.Fields, v.Fields);
+                return u.Def.Name == v.Def.Name && u.Case.Tag == v.Case.Tag && AllAgree(u.Fields, v.Fields, deadline);
             case PlatoArray xs when b is PlatoArray ys:
-                return AllAgree(xs.Items, ys.Items);
+                return AllAgree(xs.Items, ys.Items, deadline);
             default:
-                return ValueEquality.Equals(a, b);
+                var equal = ValueEquality.Equals(a, b);
+                CheckDeadline(deadline);
+                return equal;
         }
     }
 
     private static bool IsFunction(object v) => v is PlatoFunction || v is Delegate;
 
-    private static bool AllAgree(IReadOnlyList<object> a, IReadOnlyList<object> b)
-        => a.Count == b.Count && a.Zip(b, Agree).All(x => x);
+    private static bool AllAgree(IReadOnlyList<object> a, IReadOnlyList<object> b, DateTime? deadline)
+    {
+        CheckDeadline(deadline);
+        if (a.Count != b.Count)
+            return false;
+        for (var i = 0; i < a.Count; i++)
+        {
+            CheckDeadline(deadline);
+            if (!Agree(a[i], b[i], deadline))
+                return false;
+        }
+        CheckDeadline(deadline);
+        return true;
+    }
 
-    private BackendsDifferException Differ(FunctionDef f, object[] interpArgs, string interpreted, string compiled)
+    private static BackendsDifferException Differ(Action<string> report, FunctionDef f, object[] interpArgs, string interpreted, string compiled)
     {
         var call = $"{LawSelection.FullName(f)}({string.Join(", ", interpArgs.Select(a => ValueFormat.Format(a, 80)))})";
         var message = $"interpreter: {interpreted}; csharp: {compiled}";
-        _mismatches.Enqueue($"{call}  {message}");
+        report($"{call}  {message}");
         return new BackendsDifferException(message);
     }
 
