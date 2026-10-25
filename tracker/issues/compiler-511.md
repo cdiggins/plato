@@ -31,3 +31,7 @@ User-authorized optimizer exploration. Contract revision O1: dedicated agent, is
 The committed secondary census shows only the outer rectangular MapRange is lowered; the inner range remains a callback runtime call and sampling uses separate capture aliases. Production automatic caching is deferred because nested scheduling, alias identity and callback totality are unproved.
 
 Evidence: [production report](../../docs/reports/optimizer-production-2026-10-25.md) and [secondary TIR census](../../docs/reports/optimizer-secondary-tir-2026-10-25.md). The remaining checkbox is the next execution-plan gate; this item is not closed by fixture evidence alone.
+
+## Geometry qualification
+
+The frozen current compiler lowers both rectangular MapRange levels, removing the earlier structural barrier. Raw callback identity and a narrow polynomial totality check pass. Capture aliases, coordinate conversions, domain equality and complete call-site totality remain unproved, so production caching and timing remain deferred. The remaining criterion stays open. See [geometry evidence](../../docs/reports/optimizer-geometry-grid-reuse-2026-10-25.md).

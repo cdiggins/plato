@@ -1,0 +1,9 @@
+library GridGeometryProbe
+{
+    Rectangular(width: Integer, height: Integer, sample: Function2<Integer, Integer, Number>): Array<Array<Number>>
+        => height.MapRange(y => width.MapRange(x => sample(x, y) + sample(x + 1, y) + sample(x, y + 1) + sample(x + 1, y + 1)));
+    Polynomial(x: Number, y: Number, gain: Number): Number
+        => ((x * x + y * y) * (x * x + y * y) + x * y) * gain;
+    Procedural(width: Integer, height: Integer, gain: Number): Array<Array<Number>>
+        => height.MapRange(y => width.MapRange(x => Polynomial(Number(x), Number(y), gain) + Polynomial(Number(x + 1), Number(y), gain) + Polynomial(Number(x), Number(y + 1), gain) + Polynomial(Number(x + 1), Number(y + 1), gain)));
+}
