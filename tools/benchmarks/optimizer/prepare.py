@@ -323,12 +323,20 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
     All cache identities include the worker source, builder, recorder and workspace.
     Failed/unsupported recipes remain explicit results and are never measured.
     """
+    builder_hash = digest(__file__)
     root = Path(workspace["root"]).resolve()
     cache_root = root.parent.parent
     _assert_idle(cache_root)
     verify_cache(root, workspace["identity"])
     worker_source, recorder = Path(worker_source).resolve(), Path(recorder).resolve()
     source_hashes = file_hashes(worker_source)
+
+    def assert_stable_sources():
+        if digest(__file__) != builder_hash:
+            raise ValueError("Benchmark builder changed during build")
+        if file_hashes(worker_source) != source_hashes:
+            raise ValueError("Worker source changed during build")
+
     variants = list(variants)
     shipping = next((v for v in variants if v["name"] == "shipping"),
                     dict(name="shipping", flags=workspace["shipping_flags"], kind="reference"))
@@ -344,12 +352,13 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
                 results[name] = dict(variant, status="unsupported", error=variant.get("description", "Unsupported recipe"))
                 continue
             flags = validate_flags(variant["flags"])
+            assert_stable_sources()
             canonical = tuple(sorted(flags))
             if canonical in flags_seen:
                 results[name] = dict(results[flags_seen[canonical]], name=name, alias_of=flags_seen[canonical], flags=flags)
                 continue
             identity = dict(schema=SCHEMA, workspace=workspace["key"], variant_flags=flags,
-                            worker=source_hashes, recorder=digest(recorder), builder=digest(__file__),
+                            worker=source_hashes, recorder=digest(recorder), builder=builder_hash,
                             build_environment=BUILD_ENVIRONMENT,
                             baseline=baseline["closure_hash"] if baseline else None)
             folder = cache_root / "b" / identity_hash(identity)[:12]
@@ -373,7 +382,10 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
                 _progress("generating recipe " + name)
                 generation_seconds = _generate(workspace, brep, flags, folder / "compiler.log", timeout)
                 worker = brep / "tools/optimizer-worker"
+                assert_stable_sources()
                 shutil.copytree(worker_source, worker)
+                if file_hashes(worker) != source_hashes:
+                    raise ValueError("Copied worker source changed during build")
                 projects = list(worker.glob("*.csproj"))
                 if len(projects) != 1:
                     raise ValueError("Worker must contain one csproj")
@@ -421,9 +433,11 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
                               host_hashes=host, closure_hash=identity_hash(closure), output_hashes=closure,
                               build_environment=BUILD_ENVIRONMENT,
                               workspace_key=workspace["key"])
+                assert_stable_sources()
                 write_json(folder / "result.json", result)
                 _progress("sealing successful recipe " + name)
                 seal(folder, identity)
+            assert_stable_sources()
             results[name] = result
             if name == "shipping":
                 baseline = result

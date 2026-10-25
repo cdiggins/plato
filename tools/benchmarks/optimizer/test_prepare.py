@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import patch
 import uuid
 from types import SimpleNamespace
+import prepare
 
 from prepare import (contained, export_tree, identity_hash, parse_program, read_shipping_flags,
                      seal, verify_cache, _assert_idle, build_variants, brep_export_paths, _generate)
@@ -230,6 +231,86 @@ sys.exit(bool(failures))
         rejected = build_variants(data, variants, worker, recorder)
         self.assertEqual([r["status"] for r in rejected], ["error"] * 3)
         self.assertFalse(list((self.root / "cache/b").glob("failed-*")))
+
+    def build_source_fixture(self, label):
+        base = self.root / label
+        workspace = base / "cache/w/key"
+        (workspace / "brep").mkdir(parents=True)
+        identity = {"input": label}
+        seal(workspace, identity)
+        worker = base / "worker"
+        worker.mkdir()
+        (worker / "Worker.csproj").write_text('<Project><PropertyGroup><AssemblyName>worker</AssemblyName></PropertyGroup></Project>')
+        (worker / "Program.cs").write_text("original worker source")
+        recorder = base / "recorder.ps1"
+        recorder.write_text("test")
+        return dict(root=str(workspace), identity=identity, key=identity_hash(identity), shipping_flags=[]), worker, recorder
+
+    @staticmethod
+    def write_mock_build_output(command):
+        project = Path(command[command.index("-Project") + 1])
+        output = project.parent / "bin/Release/net8.0"
+        output.mkdir(parents=True)
+        (output / "worker.runtimeconfig.json").write_text("{}")
+        (output / "worker.dll").write_bytes(b"worker")
+        (output / "Ara3D.StepBrep.dll").write_bytes(b"generated")
+        return SimpleNamespace(returncode=0, stdout="ok", stderr="")
+
+    def test_worker_source_changes_before_during_or_after_copy_fail_build(self):
+        real_copytree = shutil.copytree
+        for phase in ("after-generation", "during-copy", "after-build"):
+            with self.subTest(phase=phase):
+                data, worker, recorder = self.build_source_fixture(phase)
+
+                def generate(*args):
+                    if phase == "after-generation":
+                        (worker / "Program.cs").write_text("changed before copy")
+                    return 0.1
+
+                def copytree(source, target, *args, **kwargs):
+                    result = real_copytree(source, target, *args, **kwargs)
+                    if phase == "during-copy" and Path(source) == worker:
+                        (Path(target) / "Program.cs").write_text("changed copied source")
+                    return result
+
+                def build(command, **kwargs):
+                    result = self.write_mock_build_output(command)
+                    if phase == "after-build":
+                        (worker / "Program.cs").write_text("changed during compilation")
+                    return result
+
+                with patch("prepare._generate", side_effect=generate), patch("prepare.shutil.copytree", side_effect=copytree), patch("prepare.subprocess.run", side_effect=build) as run:
+                    results = build_variants(data, [dict(name="shipping", flags=[])], worker, recorder)
+                self.assertEqual(results[0]["status"], "error")
+                self.assertIn("worker source changed", results[0]["error"].lower())
+                if phase != "after-build":
+                    run.assert_not_called()
+                if phase == "during-copy":
+                    project = next((self.root / phase / "cache/b").glob("*/brep/tools/optimizer-worker/Worker.csproj"))
+                    self.assertNotIn("BrepRoot", project.read_text())
+                self.assertFalse(list((self.root / phase / "cache/b").rglob("complete.json")))
+
+    def test_builder_change_during_compilation_cannot_publish_new_identity(self):
+        data, worker, recorder = self.build_source_fixture("builder-change")
+        real_digest = prepare.digest
+        changed = False
+
+        def digest(path):
+            if changed and Path(path).resolve() == Path(prepare.__file__).resolve():
+                return "changed-builder"
+            return real_digest(path)
+
+        def build(command, **kwargs):
+            nonlocal changed
+            result = self.write_mock_build_output(command)
+            changed = True
+            return result
+
+        with patch("prepare.digest", side_effect=digest), patch("prepare._generate", return_value=0.1), patch("prepare.subprocess.run", side_effect=build):
+            results = build_variants(data, [dict(name="shipping", flags=[])], worker, recorder)
+        self.assertEqual(results[0]["status"], "error")
+        self.assertIn("builder changed", results[0]["error"])
+        self.assertFalse(list((self.root / "builder-change/cache/b").rglob("complete.json")))
 
 
 if __name__ == "__main__":
