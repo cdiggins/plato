@@ -2,14 +2,14 @@
 id: compiler-517
 title: Bound the compiled arm of differential witnesses
 type: bug
-status: in-progress
+status: done
 priority: p1
 effort: M
 risk: med
 area: compiler
 sprint:
 created: 2026-10-25
-closed:
+closed: 2026-10-25
 links: [plato-brep TKT-1025]
 ---
 
