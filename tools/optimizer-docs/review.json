@@ -1,5 +1,5 @@
 {
-  "note": "compiler-499: reviewed constructor type preservation through inlining and loop lowering and shared grouping of conditional receivers/typed-index operands. Updated inlining and loops guides and pipeline contract; added executable emission regression coverage. Also reviewed compiler-496 removal of the blanket IArray-interface skip in CSharpConcreteTypeWriter.ShouldSkip: user method bodies can be emitted while synthesized runtime obligations remain handled separately; pass order and optimizer contracts are unchanged.",
+  "note": "Clarify that fixed-component field layouts require IArrayLike; forward IVector vocabulary is not automatically expanded. Full BRep measurements distinguish fixed-array rewrites from field expansion; compiler algorithms and refreshed source evidence are unchanged.",
   "inputs": {
     "src/Plato.CLI/Program.cs": "c3949f230b12b1ad0bab1328dd066d9d99f48958f006079b31a2dbdc33a9017a",
     "src/Plato.Compiler/Checking/Tir.cs": "0ef31634608c8cba065932afb848d43b289a6ead3f106213c328d4981f50e33f",

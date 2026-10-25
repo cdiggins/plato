@@ -43,7 +43,7 @@ raise diagnostic ceilings or treat partial experiment builds as a production fix
 
 - [x] Reproduce each diagnostic family with a focused regression and repair its cause.
 - [x] Full B-rep generation with `--inline --loops --fuse` compiles without file fallback.
-- [ ] Mesh digests, face diagnostics, and contract checks match the non-inlined baseline.
+- [x] Mesh digests, face diagnostics, and contract checks match the non-inlined baseline.
 
 
 ## Repair milestone
@@ -70,3 +70,17 @@ A common isolated host adds complete meshing elapsed time (compiler-502) and pas
 an ODIN smoke digest/timer check. All common host/dependency DLLs are frozen across
 variants. Full PlatoTests passes 364 cases; Studio integration retains only repo-473.
 Meshing equivalence and repeated measurements across all variants remain outstanding.
+
+## Completed measurements
+
+All 54 primary samples across six policies and all 18 performance-core replication
+samples match baseline digests, face/edge diagnostics, boundary counts and contract
+tables. No generated files use fallback. Results and reproduction commands are in
+`docs/reports/brep-full-inlining-2026-10-24.md`, with raw samples, hashes, selected
+stage counts and refusal categories in the adjacent data JSON. Inlining enables
+fusion and lambda removal, but larger expression-inlining budgets do not yield a
+net speed benefit here. Statement-body and lambda restrictions remain in force;
+this is not unrestricted inlining. Allocation attribution remains compiler-500,
+the harness timing gap compiler-502, and forward component coverage compiler-503.
+All C# validation described above passes apart from the existing external repo-473
+integration failure. Native C++/CUDA checks were omitted at the user's request.

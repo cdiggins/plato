@@ -32,6 +32,13 @@ arrays are not fixed-component values. Unsupported or statement-shaped bodies re
 later passes may still handle eligible dynamic operations. Field casts retain wrapper-type
 conversion context. Expansion changes the plumbing, not the underlying numeric formula.
 
+The field-layout table currently recognizes concrete implementations of `IArrayLike`.
+Forward vocabulary using other contracts, such as `IVector`, does not automatically
+enter that table. Fixed-array rewrites can still run under `--optimize`, so enabling
+the flag alone does not establish that vector operations were expanded into fields.
+Inspect the generated form when evaluating that benefit; the forward-vocabulary
+coverage gap is tracked in [compiler-503](../../tracker/issues/compiler-503.md).
+
 ## Usage, tests and effectiveness
 
 Enable `--optimize`; add `--inline` when component calls are hidden behind helpers.
