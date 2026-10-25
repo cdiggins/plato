@@ -134,6 +134,9 @@ class PrepareTests(unittest.TestCase):
         builds = []
 
         def build(command, **kwargs):
+            self.assertEqual(kwargs["env"]["EnableSourceControlManagerQueries"], "false")
+            self.assertEqual(kwargs["env"]["EnableSourceLink"], "false")
+            self.assertEqual(kwargs["env"]["IncludeSourceRevisionInInformationalVersion"], "false")
             project = Path(command[command.index("-Project") + 1])
             output = project.parent / "bin/Release/net8.0"
             output.mkdir(parents=True)
@@ -152,6 +155,7 @@ class PrepareTests(unittest.TestCase):
         self.assertEqual(len(builds), 2)
         self.assertEqual([r["status"] for r in results], ["ready"] * 3)
         self.assertEqual(results[0]["host_hashes"], results[1]["host_hashes"])
+        self.assertEqual(results[0]["build_environment"]["EnableSourceLink"], "false")
         self.assertEqual(results[2]["alias_of"], "full")
         self.assertEqual(results, cached)
         # Completed caches are evidence: corruption is an error, never a rebuild.

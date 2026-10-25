@@ -7,6 +7,7 @@ import fnmatch
 import hashlib
 import io
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -20,6 +21,8 @@ import xml.etree.ElementTree as ET
 from recipes import validate_flags
 
 SCHEMA = 1
+BUILD_ENVIRONMENT = {"EnableSourceControlManagerQueries": "false", "EnableSourceLink": "false",
+                     "IncludeSourceRevisionInInformationalVersion": "false"}
 
 
 def _progress(message):
@@ -346,6 +349,7 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
                 continue
             identity = dict(schema=SCHEMA, workspace=workspace["key"], variant_flags=flags,
                             worker=source_hashes, recorder=digest(recorder), builder=digest(__file__),
+                            build_environment=BUILD_ENVIRONMENT,
                             baseline=baseline["closure_hash"] if baseline else None)
             folder = cache_root / "b" / identity_hash(identity)[:12]
             receipt = folder / "complete.json"
@@ -380,7 +384,8 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
                 started = time.perf_counter()
                 _progress("building recorded worker for recipe " + name)
                 build = subprocess.run(["powershell", "-NoProfile", "-File", str(recorder), "-Project", str(project),
-                                        "-TargetName", "optimizer-" + name], capture_output=True, text=True, timeout=timeout)
+                                        "-TargetName", "optimizer-" + name], capture_output=True, text=True, timeout=timeout,
+                                       env={**os.environ, **BUILD_ENVIRONMENT})
                 (folder / "build.log").write_text(build.stdout + build.stderr, encoding="utf-8")
                 if build.returncode:
                     raise ValueError("Worker build failed; see " + str(folder / "build.log"))
@@ -413,6 +418,7 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
                               generation_seconds=generation_seconds, build_seconds=time.perf_counter() - started,
                               assembly_bytes=(output / "Ara3D.StepBrep.dll").stat().st_size,
                               host_hashes=host, closure_hash=identity_hash(closure), output_hashes=closure,
+                              build_environment=BUILD_ENVIRONMENT,
                               workspace_key=workspace["key"])
                 write_json(folder / "result.json", result)
                 _progress("sealing successful recipe " + name)
