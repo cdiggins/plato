@@ -42,7 +42,7 @@ raise diagnostic ceilings or treat partial experiment builds as a production fix
 ## Done means
 
 - [x] Reproduce each diagnostic family with a focused regression and repair its cause.
-- [ ] Full B-rep generation with `--inline --loops --fuse` compiles without file fallback.
+- [x] Full B-rep generation with `--inline --loops --fuse` compiles without file fallback.
 - [ ] Mesh digests, face diagnostics, and contract checks match the non-inlined baseline.
 
 
@@ -58,3 +58,15 @@ review are refreshed; the documentation check and six maintenance tests pass.
 
 The requested rerun also measures component expansion combined with fusion and loops,
 with pass-stage evidence to test which downstream transformations inlining enables.
+
+
+## Full-build milestone
+
+Pinned repair 8515ca59 builds all six configurations without file fallback: no/current/
+aggressive source inlining, each with fusion+loops and with fusion+components+loops.
+The same throwing-stub gate passes every configuration. Stage counters and a Roslyn
+syntax utility record downstream transformations separately from expansion totals.
+A common isolated host adds complete meshing elapsed time (compiler-502) and passes
+an ODIN smoke digest/timer check. All common host/dependency DLLs are frozen across
+variants. Full PlatoTests passes 364 cases; Studio integration retains only repo-473.
+Meshing equivalence and repeated measurements across all variants remain outstanding.

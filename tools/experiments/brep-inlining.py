@@ -7,6 +7,7 @@ the repository's log recorder, which also updates its working status snapshot.
 """
 import argparse
 import csv
+from collections import Counter, defaultdict
 import fnmatch
 import hashlib
 import json
@@ -28,6 +29,9 @@ VARIANTS = {
     "large": (480, 16, 4),
     "huge": (2000, 32, 4),
     "duplicate": (2000, 32, 32),
+    "baseline-opt": (120, 8, 4),
+    "default-opt": (120, 8, 4),
+    "duplicate-opt": (2000, 32, 32),
 }
 
 
@@ -36,6 +40,7 @@ def write_json(path, value):
 
 
 def run(args, log, timeout=600, env=None):
+    started_at_unix = time.time()
     start = time.perf_counter()
     cpu_seconds = None
     with log.open("w", encoding="utf-8") as output:
@@ -56,7 +61,7 @@ def run(args, log, timeout=600, env=None):
             api.restype = wintypes.BOOL
             if api(wintypes.HANDLE(int(p._handle)), *(ctypes.byref(t) for t in times)):
                 cpu_seconds = sum((t.dwHighDateTime << 32) + t.dwLowDateTime for t in times[2:]) / 1e7
-    return {"exit": code, "seconds": time.perf_counter() - start, "cpu_seconds": cpu_seconds, "log": str(log)}
+    return {"exit": code, "started_at_unix": started_at_unix, "seconds": time.perf_counter() - start, "cpu_seconds": cpu_seconds, "log": str(log)}
 
 
 def build(project, name, log):
@@ -67,7 +72,7 @@ def build(project, name, log):
                IncludeSourceRevisionInInformationalVersion="false")
     return run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
                 ROOT / "tools/dotnet-build-record.ps1", "-Project", project,
-                "-TargetName", "inline-brep-" + name], log, env=env)
+                "-TargetName", log.parent.parent.name + "-" + name], log, env=env)
 
 
 def build_host(work, name, result):
@@ -108,7 +113,35 @@ def freeze_host(work, name, result):
     write_json(work / name / "result.json", result)
 
 
+def add_mesh_timer(work):
+    """Include work between the existing harness clocks; patch only the exported host."""
+    folder = work / "brep/tools/step-corpus-harness"
+    path = folder / "TimedMesh.cs"
+    source = path.read_text(encoding="utf-8-sig")
+    if "MeshingElapsedMs" not in source:
+        source = source.replace("    public double TotalMs", "    public double MeshingElapsedMs { get; init; }\n\n    public double TotalMs", 1)
+        start = "var allocatedBefore = GC.GetTotalAllocatedBytes(precise: true);"
+        end = "var allocatedBytes = GC.GetTotalAllocatedBytes(precise: true) - allocatedBefore;"
+        assert start in source and end in source and "contractMs, allocatedBytes);" in source
+        source = source.replace(start, start + "\n        var meshingStart = System.Diagnostics.Stopwatch.GetTimestamp();", 1)
+        source = source.replace(end, "var meshingElapsedMs = System.Diagnostics.Stopwatch.GetElapsedTime(meshingStart).TotalMilliseconds;\n        " + end, 1)
+        source = source.replace("contractMs, allocatedBytes);", "contractMs, allocatedBytes) { MeshingElapsedMs = meshingElapsedMs };", 1)
+        path.write_text(source, encoding="utf-8")
+    path = folder / "Summary.cs"
+    source = path.read_text(encoding="utf-8-sig")
+    if "MeshingElapsedMs" not in source:
+        assert "    static readonly JsonSerializerOptions" in source and "t.ContractMs, t.AllocatedBytes);" in source
+        source = source.replace("    static readonly JsonSerializerOptions", "    public double MeshingElapsedMs { get; init; }\n\n    static readonly JsonSerializerOptions", 1)
+        source = source.replace("t.ContractMs, t.AllocatedBytes);", "t.ContractMs, t.AllocatedBytes) { MeshingElapsedMs = t.MeshingElapsedMs };", 1)
+        path.write_text(source, encoding="utf-8")
+    write_json(work / "host-instrumentation.json", {
+        "metric": "MeshingElapsedMs", "scope": "tables through assembly, including inter-stage work; excludes prepare and contract checks",
+        "source_hashes": {n: hashlib.sha256((folder / n).read_bytes()).hexdigest() for n in ("TimedMesh.cs", "Summary.cs")}
+    })
+
+
 def prepare(work):
+    add_mesh_timer(work)
     info = json.loads((work / "compiler.json").read_text(encoding="utf-8-sig"))
     plato = Path(info["Plato"])
     compiler = work / "cli"
@@ -118,6 +151,7 @@ def prepare(work):
     if not writer.exists():
         shutil.copytree(plato / "writers/Plato.CSharpWriter", writer,
                         ignore=shutil.ignore_patterns("bin", "obj"))
+    shutil.copy2(plato / "writers/Plato.CSharpWriter/CSharpWriter.cs", writer / "CSharpWriter.cs")
     references = "\n".join(f'<Reference Include="{p.stem}"><HintPath>{p}</HintPath></Reference>'
                            for p in compiler.glob("*.dll")
                            if p.stem.startswith("Ara3D.") or p.stem in ("Plato.Compiler", "Plato.AST"))
@@ -153,8 +187,44 @@ def prepare(work):
     return info
 
 
-def generate(work, variants):
+def instrument_stages(work, plato):
+    """Record typed-tree counts in the isolated compiler, never production sources."""
+    path = work / "writer/CSharpWriter.cs"
+    source = "using System.Linq;\n" + (plato / "writers/Plato.CSharpWriter/CSharpWriter.cs").read_text(encoding="utf-8-sig")
+    start = "            if (TirDumpDir == null)\n            {"
+    probe = r'''
+                var evidence = System.Environment.GetEnvironmentVariable("PLATO_INLINE_STAGE_EVIDENCE");
+                void RecordStage(string stage)
+                {
+                    if (evidence == null || tir?.Body == null) return;
+                    var nodes = tir.Body.Descendants().ToList();
+                    var row = new {
+                        owner = fi?.OwnerType?.Name, function = fi?.Name ?? tir.Original?.Name, stage,
+                        nodes = nodes.GroupBy(n => n.GetType().Name).ToDictionary(g => g.Key, g => g.Count()),
+                        calls = nodes.OfType<TirCall>().GroupBy(n => n.Name ?? "<unknown>")
+                            .ToDictionary(g => g.Key, g => g.Count())
+                    };
+                    System.IO.File.AppendAllText(evidence, System.Text.Json.JsonSerializer.Serialize(row) + "\n");
+                }
+                RecordStage("input");
+'''
+    assert start in source
+    source = source.replace(start, start + probe, 1)
+    for call, stage in [("TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _)", "inline"),
+                        ("TirFusion.Rewrite(tir, this)", "fusion"),
+                        ("TirComponentUnroller.UnrollFunction(tir, fi, this)", "components"),
+                        ("TirArrayMaterializer.Rewrite(tir, this)", "materialization"),
+                        ("TirLoopLowerer.Rewrite(tir, this)", "loops")]:
+        statement = "tir = " + call + ";"
+        assert statement in source
+        source = source.replace(statement, statement + f' RecordStage("{stage}");', 1)
+    path.write_text(source, encoding="utf-8")
+
+
+def generate(work, variants, stage_evidence=False):
     info = prepare(work)
+    if stage_evidence:
+        instrument_stages(work, Path(info["Plato"]))
     original = (Path(info["Plato"]) / "writers/Plato.CSharpWriter/Optimization/TirInliner.cs").read_text()
     for name in variants:
         dest = work / name
@@ -169,14 +239,22 @@ def generate(work, variants):
         result["compiler_build"] = build(work / "writer/Plato.CSharpWriter.csproj", name + "-writer", dest / "writer-build.log")
         if result["compiler_build"]["exit"]:
             write_json(dest / "result.json", result)
-            continue
+            raise RuntimeError(f"Experimental compiler build failed: {name}")
         shutil.copy2(work / "writer/bin/Release/net8.0/Plato.CSharpWriter.dll", work / "cli/Plato.CSharpWriter.dll")
         output = dest / "generated"
         output.mkdir(exist_ok=True)
-        flags = ["--loops", "--fuse"] + ([] if name == "baseline" else ["--inline", "--inline-report"])
+        flags = ["--loops", "--fuse"] + ([] if name.startswith("baseline") else ["--inline", "--inline-report"])
+        if name.endswith("-opt"):
+            flags.append("--optimize")
+        env = os.environ.copy()
+        if stage_evidence:
+            evidence = dest / "stages.jsonl"
+            evidence.write_text("")
+            env["PLATO_INLINE_STAGE_EVIDENCE"] = str(evidence)
+            result["stage_evidence"] = str(evidence)
         result["flags"] = flags
         result["generation"] = run(["dotnet", work / "cli/Plato.CLI.dll", *sorted((work / "inputs").iterdir()),
-                                    f"--out={output}", "--profile=cpu64", *flags], dest / "generate.log")
+                                    f"--out={output}", "--profile=cpu64", *flags], dest / "generate.log", env=env)
         if result["generation"]["exit"]:
             write_json(dest / "result.json", result)
             continue
@@ -186,6 +264,15 @@ def generate(work, variants):
         result["source_bytes"] = sum(p.stat().st_size for p in files)
         log = (dest / "generate.log").read_text(encoding="utf-8", errors="replace")
         result["inlining_totals"] = re.findall(r"(?:calls inlined|beta reductions|tuple ctor rewrites):\s+\d+", log)
+        if stage_evidence:
+            totals = defaultdict(lambda: {"functions": 0, "nodes": Counter(), "calls": Counter()})
+            for line in evidence.read_text().splitlines():
+                row = json.loads(line)
+                stage = totals[row["stage"]]
+                stage["functions"] += 1
+                stage["nodes"].update(row["nodes"])
+                stage["calls"].update(row["calls"])
+            result["stage_totals"] = dict(totals)
         # Build even failed stub checks to retain the diagnostic evidence; never benchmark them.
         build_host(work, name, result)
 
@@ -194,7 +281,7 @@ def partial(work, variants):
     """Use one common fallback set so every budget is compared on the same files."""
     failed = set()
     for name in variants:
-        log = ROOT / f".temp/csharp-build-logs/inline-brep-{name}-host.log"
+        log = ROOT / f".temp/csharp-build-logs/{work.name}-{name}-host.log"
         text = log.read_text(encoding="utf-8-sig")
         errors = [line for line in text.splitlines() if ": error " in line]
         for line in errors:
@@ -241,6 +328,7 @@ def measure(work, variants, corpus, repeats, tiered):
             if name != "Ara3D.StepBrep.dll" and result["binary_hashes"].get(name) != expected:
                 raise ValueError(f"Non-treatment assembly differs from baseline: {variant}/{name}")
     write_json(runs / "configuration.json", {
+        "started_at_unix": time.time(),
         "repeats": repeats, "warmup_runs": 1, "parallel": False,
         "DOTNET_TieredCompilation": env["DOTNET_TieredCompilation"],
         "DOTNET_ReadyToRun": env["DOTNET_ReadyToRun"],
@@ -249,6 +337,7 @@ def measure(work, variants, corpus, repeats, tiered):
         "dotnet_runtimes": subprocess.check_output(["dotnet", "--list-runtimes"], text=True),
         "inputs": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in cases},
         "random_seed": 498,
+        "host_instrumentation": json.loads((work / "host-instrumentation.json").read_text()) if (work / "host-instrumentation.json").exists() else None,
         "idle_sleep_prevention": "Windows ES_SYSTEM_REQUIRED for measurement process lifetime",
     })
     order = []
@@ -293,12 +382,17 @@ def measure(work, variants, corpus, repeats, tiered):
             row = {"case": case.name, "variant": variant, "samples": len(samples),
                    "matches_baseline": bool(baseline) and baseline[0].get("Status") == "done"
                    and all(s.get(k) == baseline[0].get(k) for s in samples for k in fields)}
-            for field in ["MeshingMs", "TotalMs", "PrepareMs", "TablesMs", "EdgesMs", "FacesMs", "RefineMs", "AssembleMs", "AllocatedBytes", "ProcessCpuSeconds"]:
+            for field in ["MeshingElapsedMs", "MeshingMs", "TotalMs", "PrepareMs", "TablesMs", "EdgesMs", "FacesMs", "RefineMs", "AssembleMs", "AllocatedBytes", "ProcessCpuSeconds"]:
                 values = [s.get(field) for s in samples]
                 if all(v is not None for v in values):
                     row[field] = {"median": statistics.median(values), "min": min(values), "max": max(values)}
             rows.append(row)
     write_json(runs / "summary.json", rows)
+    complete = (len(order) == len(cases) * len(variants) * repeats
+                and len(rows) == len(cases) * len(variants)
+                and all(r["samples"] == repeats for r in rows))
+    if not complete or any(r["exit"] != 0 for r in order) or not all(r["matches_baseline"] for r in rows):
+        raise RuntimeError("Incomplete or non-equivalent measurement; see runs.json and summary.json")
 
 
 if __name__ == "__main__":
@@ -309,6 +403,7 @@ if __name__ == "__main__":
     parser.add_argument("--corpus", type=Path)
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--tiered", action="store_true")
+    parser.add_argument("--stage-evidence", action="store_true")
     args = parser.parse_args()
     args.work = args.work.resolve()
     if args.action in ("generate", "partial") and any(n not in VARIANTS for n in args.variants):
@@ -316,7 +411,7 @@ if __name__ == "__main__":
     if args.repeats < 1:
         parser.error("repeats must be positive")
     if args.action == "generate":
-        generate(args.work, args.variants)
+        generate(args.work, args.variants, args.stage_evidence)
     elif args.action == "rebuild":
         for name in args.variants:
             build_host(args.work, name, json.loads((args.work / name / "result.json").read_text()))
