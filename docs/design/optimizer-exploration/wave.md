@@ -30,6 +30,24 @@ Report refusals and no benefit honestly. Do not widen a matcher merely to make a
 New production optimizations require measurable benefit or a concrete enabling benefit, bounded
 legality, their own default-off switch, focused regressions and optimizer documentation stewardship.
 
+## Geometry promotion decisions
+
+Retain independent default-off production flags for exact-output allocation and consumer fusion.
+The [allocation qualification](../../reports/optimizer-geometry-exact-output-2026-10-25.md)
+supports the existing literal-width contract; it does not justify admitting helper calls.
+The [fusion qualification](../../reports/optimizer-geometry-consumer-fusion-2026-10-25.md)
+leaves dependable geometry performance as an open requirement.
+
+Keep the [array-facts adapter](../../reports/optimizer-geometry-array-facts-2026-10-25.md)
+private until a concrete consumer requires its producer facts. Do not add a production
+[unswitch pass](../../reports/optimizer-geometry-loop-unswitch-2026-10-25.md) without new
+benefit evidence. [Record projection](../../reports/optimizer-geometry-record-elimination-2026-10-25.md)
+requires a surviving cost or useful downstream simplification; [grid caching](../../reports/optimizer-geometry-grid-reuse-2026-10-25.md)
+requires complete capture, conversion and schedule proofs before runtime comparison.
+
+Incremental verification targets the affected behavior only. Preserve frozen inputs and private
+outputs; do not rerun broad gates or benchmark campaigns for documentation or bookkeeping changes.
+
 ## Production continuation P2
 
 The user authorized production implementation after the initial experiments. The priority

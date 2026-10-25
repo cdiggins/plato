@@ -1,9 +1,10 @@
 # Geometry qualification G3
-- Resumed by human; focused incremental checks only, no broad gates.
-- Frozen b612c392 CLI verified from meshing cache; private GeometryRuntime uses frozen cpu64 Intrinsics.
-- Snapshot: .temp/optimizer-geometry/compiler/manifest.json; no shared source/bin mutation.
-- Fusion/exact-output agents own geometry correctness and selected caller census.
-- Unswitch agent owns focused TIR eligibility probe; timings await correctness drain.
-- Array facts, grid reuse and record elimination source probes await their targeted turn.
-- Root owns freeze.py, shared contracts, tracker, integration and commit turns.
-- Preserve foreign root PROGRESS.md, reports and statement experiments.
+- Frozen b612c392 CLI and cpu64 GeometryRuntime; manifest under .temp/optimizer-geometry/compiler/.
+- All agents and owned build/timing processes drained; production source unchanged.
+- Exact-output qualified; compiler-509 closed. Existing default-off flag retained.
+- Fusion correctness passes; compiler-506 open for dependable geometry benefit.
+- Array facts private adapter qualified; compiler-508 closed without production rewrite.
+- Unswitch measured no consistent benefit; compiler-510 closed without promotion.
+- Record projection collision fixed/tested; compiler-507 open for benefit evidence.
+- Nested grid schedule established; compiler-511 open for remaining safety proofs.
+- Root finalizes documentation/publication; preserve foreign dirty files and root PROGRESS.md.
