@@ -21,7 +21,7 @@ The Greenhouse audit (repo-492) confirmed duplicated implementation-selection po
 
 - [x] Share ScoreFunction and ChooseBestFunction across the five writers, preserving intrinsic precedence, concrete precedence, interface distance, tie counts and first-candidate ordering; retain thin compatibility wrappers if public consumers require them.
 - [x] Share source-to-CSharpWriter setup, wrapper construction/invocation and the small runtime prelude in the constraint emission fixtures, reusing CSharpTestCompilation; preserve separate type-bound and function-bound assertions and negative controls.
-- [ ] Verify focused tests and representative output for affected backends, then record the required integration gates.
+- [x] Verify focused tests and representative output for affected backends, then record the required integration gates.
 
 ## Follow-on candidates requiring design review
 
@@ -42,3 +42,28 @@ Root PROGRESS.md belongs to another mission; checkpoints are recorded here. Pre-
 ## Milestone 2
 
 GeneratedCSharpFixture shares source emission, resolution/file assertions and the minimal runtime prelude. GeneratedValueReflection shares constructor/method wrapper conversion and unwrapping; sum-type fixtures reuse only unwrapping because their prelude differs. CSharpTestCompilation remains the sole generated-C# compiler. No fixture caches or test cases were removed. All 17 existing test bodies are text-identical, and all 17 pass (5 s) after a recorded build (12.4 s). Evidence: .temp/repo-493/helpers.trx.
+
+## Final verification
+
+Implementation commits: 38e2f9e3 (shared function selection) and 65e4122a (shared generated-code test helpers), both pushed. Scope is complete; array-test parameterization is separately ready as repo-497.
+
+| Check run for this mission | Result | Seconds |
+|---|---|---:|
+| Final repository CLI build | PASS | 7 |
+| Shipping-tier strict lint | PASS, no errors; warning ceiling satisfied | 20 |
+| Full PlatoTests, including both regression ceilings | 358 passed, none failed | 288 |
+| Focused helper fixtures | 17 passed; original test bodies unchanged | 5 |
+| Selection and Rust/TypeScript regressions | 9 passed | 28 |
+| Native writer suite | 8 passed, none skipped; MSVC and nvcc exercised | 34 |
+| Six-dialect baseline output comparison | 27 files identical except creation timestamps | 4.78 |
+| Studio legacy / forward lints | PASS / PASS | 15 / 24.1 |
+| Studio SDK build / geometry tests | PASS / PASS | 4.9 / 18.1 |
+| Studio frozen-artifact check | FAIL, pre-existing repo-473 | 1.3 |
+
+The external failure was rechecked: only studio/ara3d-sdk/src/Plato.Intrinsics/PlatoList.cs, PlatoBuffer.cs and Number.cs differ from its frozen manifest. None is part of this change; the manifest was not refreshed. This mission is verified locally and in the affected backends, but the whole Studio battery is not green.
+
+The new compiler-496 issue records the constructor's unassigned Interface property, which bypasses specificity ranking today. The refactor preserves that behavior; assigning the property belongs to a separately reviewed semantic fix.
+
+Logs: .temp/repo-493 (TRX, before/after generated-output snapshots and Studio logs), .temp/csharp-build-logs/repo-493-*.log, and .temp/gate-logs/20261024-210800-507962. docs/gate-log.md records the final suite. The pre-existing dirty status JSON/HTML were restored byte-for-byte; the measured snapshot is retained as .temp/repo-493/status-verified.json.
+
+Rerun: python tools/record-gates.py; dotnet test tests/Plato.CppWriter.Tests/Plato.CppWriter.Tests.csproj -c Release; powershell -NoProfile -File C:/Users/cdigg/git/studio/tools/check-all.ps1 -PlatoRoot C:/Users/cdigg/git/plato. The repeatable baseline comparison script for this session is .temp/repo-493/compare.py.
