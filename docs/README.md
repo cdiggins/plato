@@ -50,6 +50,10 @@ Work that is planned, in flight, or specified but not fully executed. These stee
 not describe what exists today. When one lands, its content moves into a reference doc and the plan
 moves to [`archive/`](archive).
 
+- [Indexed tables: convenient construction and traversal](design/indexed-tables-language-proposal.md)
+  — proposal for typed table declarations, scoped builders, and acyclic folds, with alternatives
+  and explicit backend constraints; not implemented language syntax.
+
 ## [`reports/`](reports) — assessments, surveys, harvests
 
 Frozen at the moment they were written. Read them for the analysis, never for current state: a
