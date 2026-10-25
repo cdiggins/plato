@@ -17,7 +17,7 @@ links: [plato-brep TKT-398]
 
 - [x] Capture the resolved TIR and generated CSharp for both same-name collision regressions.
 - [x] Resolved named library methods retain precedence over same-named callable and data fields; ordinary field projection and unresolved function-field invocation remain correct.
-- [ ] Both collision regressions pass on checker, interpreter, CSharp and differential using committed compiler binaries, with no weakened assertions or mismatches.
+- [x] Both collision regressions pass on checker, interpreter, CSharp and differential using committed compiler binaries, with no weakened assertions or mismatches.
 
 ## Reproduced behavior
 
@@ -102,3 +102,23 @@ The earlier proof01 failed offline package restoration before compilation;
 all failed snapshots and receipts remain retained. This compile-only result
 does not replace the final normal compiler build or behavioral regression gate.
 Optimizer source evidence was refreshed; freshness and documentation tests pass.
+
+## Committed-binary verification
+
+The normal Release compiler at 69221fd3ebefb41de0cc4913243c6443639a06aa
+built successfully. Plato-brep commit 735d7248 records that build; commit 5beb2ceb
+records the unchanged ten-test replay against its actual compiled assemblies.
+All ten tests passed, with no skipped tests or differential mismatches. The
+collision controls retained their five-law roster and fourteen exhaustive
+cases per law. Checker, interpreter, CSharp and differential paths are covered.
+No private compiler implementation was rebuilt for this replay.
+
+Test receipt 46db61299b765b990bf53ee027c174cb74d1f0523ab978f5fe24499798585c97;
+prepared input manifest f8b6022d025769c42bc3ab727e83222bc9e79fa5de1ebbad0698d6a2ba4333cf.
+The supervisor independently rehashed 7,509 test inputs and actual loaded compiler
+assemblies. All input sets, packages and normal output comparisons remained
+unchanged; test child and wrapper exited 0 without timeout.
+
+This completes this ticket's scoped collision regression. The consuming pin,
+WorkClaim workaround removal and full generated consumer verification remain
+tracked separately by compiler-518 and plato-brep TKT-398.
