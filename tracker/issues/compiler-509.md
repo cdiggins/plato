@@ -24,10 +24,16 @@ User-authorized optimizer exploration. Contract revision O1: dedicated agent, is
 - [x] Review and commit deliverables; distinguish prototype evidence from production integration.
 
 - [x] Execute the actual Plato TIR fixture milestone and record the bounded production integration decision.
-- [ ] Qualify a representative geometry FlatMap caller against the growing-list baseline before broadening eligibility or changing defaults.
+- [x] Qualify a representative geometry FlatMap caller against the growing-list baseline before broadening eligibility or changing defaults.
 
 ## Production continuation â€” 2026-10-25
 
 Actual TIR fixtures, retained intrinsic provenance and a guarded exact-allocation emitter are implemented in d81e6065. All 17 focused cases passed, including callback/read order, faults, mutation and fallback. Actual generated wrapper allocation fell 22.29% for the measured literal-width fixture. The default-off option is production code; geometry-wide benefit and broader callback shapes are not qualified.
 
-Evidence: [production report](../../docs/reports/optimizer-production-2026-10-25.md) and [secondary TIR census](../../docs/reports/optimizer-secondary-tir-2026-10-25.md). The remaining checkbox is the next execution-plan gate; this item is not closed by fixture evidence alone.
+Evidence: [production report](../../docs/reports/optimizer-production-2026-10-25.md) and [secondary TIR census](../../docs/reports/optimizer-secondary-tir-2026-10-25.md). The geometry qualification below completes the bounded exploration; broader eligibility remains a separate proposal.
+
+## Geometry qualification — 2026-10-25
+
+Actual TIR for unchanged triangle and quad corner callers becomes eligible with existing inlining. Faithful extracted generated kernels passed output, winding, empty/degenerate and fault checks against the growing-list baseline. Measured destination allocation savings were about 42% for triangle corners and 29% for fixed quad splitting; timing was noisy and does not establish stable latency or whole-mesher benefit. The independent review accepted this criterion. Keep the production flag default-off and do not widen the matcher.
+
+Evidence: [geometry report](../../docs/reports/optimizer-geometry-exact-output-2026-10-25.md). The private runtime imports the exact frozen Intrinsics sources, and the compiler cache is manifest-verified at b612c392. No production source changed in this qualification.

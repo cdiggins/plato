@@ -1,5 +1,35 @@
 # Additional optimizer exploration
 
+## Geometry qualification G3
+
+The user authorizes representative geometry validation of both opt-in production passes and
+continued execution of the remaining ideas, prioritized by measurable benefit. The existing
+compiler-506 through compiler-511 issues remain the work records. No default changes are planned.
+
+The fusion-geometry owner writes only `tools/experiments/optimizer-geometry/consumer-fusion/`,
+`.temp/optimizer-geometry/consumer-fusion/`, and its dated geometry report. The exact-geometry
+owner has the equivalent `exact-output` paths. Secondary owners receive distinct `array-facts`,
+`loop-unswitch`, `record-elimination`, or `grid-reuse` paths as slots become available. Reports
+are `docs/reports/optimizer-geometry-<slug>-2026-10-25.md`. Each owner keeps a short CHECKPOINT.md
+inside its experiment subtree. Existing compiler source and shared documents are read-only to
+agents until a specific production handoff is approved by the supervisor.
+
+The supervisor owns compiler snapshots, shared harness contracts, tracker, this plan, integration,
+documentation evidence, build reservations and Git turns. Initial agents inspect existing library
+callers and prepare actual Plato workloads while the supervisor obtains a stable compiler build.
+Frozen assemblies are supplied under `.temp/optimizer-geometry/compiler/`; agents must record
+their hashes and never silently substitute later working-tree binaries. Private harness builds
+may use that snapshot after it is declared ready. Timing runs are serialized, after correctness
+and emitted-shape checks; no parallel timing or shared project builds are allowed.
+
+Qualification requires actual generated code, flag-off/on comparison, preserved observable
+results and fault behavior, representative sizes and degenerate inputs, consumed outputs,
+warmed alternating-order samples, allocation data and explicit limitations. Distinguish unchanged
+library callers, faithful extracted kernels and newly authored representative geometry kernels.
+Report refusals and no benefit honestly. Do not widen a matcher merely to make a benchmark pass.
+New production optimizations require measurable benefit or a concrete enabling benefit, bounded
+legality, their own default-off switch, focused regressions and optimizer documentation stewardship.
+
 ## Production continuation P2
 
 The user authorized production implementation after the initial experiments. The priority

@@ -1,0 +1,30 @@
+// Corner layout matches Triangle3D/Quad3D; interfaces are omitted for isolated qualification.
+type G3Point { X: Number; Y: Number; Z: Number; }
+type G3Triangle { A: G3Point; B: G3Point; C: G3Point; }
+type G3Quad { A: G3Point; B: G3Point; C: G3Point; D: G3Point; }
+type G3TriangleFace { A: Integer; B: Integer; C: Integer; }
+type G3QuadFace { A: Integer; B: Integer; C: Integer; D: Integer; }
+
+library G3Exact
+{
+    CornerPoints(t: G3Triangle): Array<G3Point> => [t.A, t.B, t.C];
+
+    // Preserves the helper-call shape of TriangleArray3D.Points.
+    HelperCorners(triangles: Array<G3Triangle>): Array<G3Point>
+        => triangles.FlatMap(t => t.CornerPoints);
+
+    // Faithful direct expansion of the two library expressions composing HelperCorners.
+    TriangleCorners(triangles: Array<G3Triangle>): Array<G3Point>
+        => triangles.FlatMap(t => [t.A, t.B, t.C]);
+
+    QuadCorners(quads: Array<G3Quad>): Array<G3Point>
+        => quads.FlatMap(q => [q.A, q.B, q.C, q.D]);
+
+    // Representative fixed A-C fan split, grounded in QuadTriangleFaces/FanTriangles.
+    SplitQuads(faces: Array<G3QuadFace>): Array<G3TriangleFace>
+        => faces.FlatMap(f => [G3TriangleFace(f.A, f.B, f.C), G3TriangleFace(f.A, f.C, f.D)]);
+
+    // Representative indexed unwelding; preserves checked runtime index conversion.
+    GatherTriangles(faces: Array<G3TriangleFace>, vertices: Array<G3Point>): Array<G3Point>
+        => faces.FlatMap(f => [vertices[f.A], vertices[f.B], vertices[f.C]]);
+}
