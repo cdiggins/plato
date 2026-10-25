@@ -1,6 +1,8 @@
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Checking;
+using Ara3D.Geometry.CSharpWriter;
 using Ara3D.Parakeet;
 using Ara3D.Parsing;
 using NUnit.Framework;
@@ -12,13 +14,18 @@ public class FunctionSelectionTests
 {
     private const string Source = """
         primitive Number { }
-        interface IBase { }
+        interface IBase { Declared(x: Self): Self; }
         interface IChild inherits IBase { }
-        type Item implements IChild { }
+        interface IBranch inherits IBase { }
+        type Item implements IBranch, IChild { Value: Number; Other: Number; }
+        type OverrideItem implements IBranch, IChild { Value: Number; Other: Number; }
         library Intrinsics { Native(n: Number): Number; }
         library Choices
         {
             BaseChoice(x: IBase): IBase => x;
+            Choose(x: IBase): Number => 11;
+            Choose(x: IChild): Number => 22;
+            Choose(x: OverrideItem): Number => 33;
             ChildChoice(x: IChild): IChild => x;
             ConcreteA(x: Item): Item => x;
             ConcreteB(x: Item): Item => x;
@@ -56,14 +63,8 @@ public class FunctionSelectionTests
     public void ConcreteWinsBeforeInterfacesAndNearerInterfaceWinsBeforeAncestor()
     {
         var concrete = Candidate("ConcreteA");
-        var child = CopyInterfaceCandidate("ChildChoice");
-        var ancestor = CopyInterfaceCandidate("BaseChoice");
-        // compiler-496: normal construction leaves Interface null. Supply it only to
-        // exercise the existing distance branch without changing production behavior.
-        var field = typeof(FunctionInstance).GetField("<Interface>k__BackingField",
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
-        field.SetValue(child, child.InterfaceImplementation.Interface);
-        field.SetValue(ancestor, ancestor.InterfaceImplementation.Interface);
+        var child = Candidate("ChildChoice");
+        var ancestor = Candidate("BaseChoice");
         Assert.That(FunctionSelection.ScoreFunction(concrete), Is.EqualTo(-100));
         Assert.That(FunctionSelection.ScoreFunction(child), Is.LessThan(FunctionSelection.ScoreFunction(ancestor)));
         Assert.That(FunctionSelection.ChooseBestFunction(new[] { ancestor, child }, out var count), Is.SameAs(child));
@@ -72,21 +73,73 @@ public class FunctionSelectionTests
         Assert.That(count, Is.EqualTo(1));
     }
 
-    private FunctionInstance CopyInterfaceCandidate(string name)
+    [Test]
+    public void BoundDeclarationsAndImplementationsCarryTheirBindingInterface()
     {
-        var candidate = Candidate(name);
-        return candidate.InterfaceImplementation.AnalyzeConceptFunction(
-            candidate.Implementation, FunctionInstanceKind.InterfaceImplemented);
+        var child = Candidate("ChildChoice");
+        Assert.That(child.Interface, Is.SameAs(child.InterfaceImplementation.Interface));
+        Assert.That(child.InterfaceName, Is.EqualTo("IChild"));
+        var declaration = _item.DeclaredFunctions.Single(f => f.Name == "Declared");
+        Assert.That(declaration.Interface, Is.SameAs(declaration.InterfaceImplementation.Interface));
+        Assert.That(declaration.InterfaceName, Is.EqualTo("IBase"));
+        Assert.That(Candidate("ConcreteA").Interface, Is.Null);
     }
 
     [Test]
-    public void ConstructedInterfaceCandidatesKeepTheirCurrentConcreteScore()
+    public void StandaloneInterfaceFunctionsHaveNoConcreteBinding()
     {
-        var implementation = _item.AllInterfaces.Single(i => i.Name == "IChild");
-        var candidate = implementation.AnalyzeConceptFunction(
-            Candidate("ChildChoice").Implementation, FunctionInstanceKind.InterfaceImplemented);
-        Assert.That(candidate.Interface, Is.Null, "compiler-496 is a separate behavior change");
-        Assert.That(FunctionSelection.ScoreFunction(candidate), Is.EqualTo(-100));
+        var declaration = _item.DeclaredFunctions.Single(f => f.Name == "Declared");
+        var standalone = new FunctionInstance(declaration.Implementation, null, null, FunctionInstanceKind.InterfaceDeclared);
+        var extension = new FunctionInstance(Candidate("ChildChoice").Implementation, null, null, FunctionInstanceKind.InterfaceExtension);
+        Assert.That(standalone.Interface, Is.Null);
+        Assert.That(extension.Interface, Is.Null);
+    }
+
+    [Test]
+    public void SameSignatureChoosesChildRegardlessOfOrderAndConcreteOverrideStillWins()
+    {
+        var group = _item.InterfaceFunctionGroups.Single(g => g[0].Name == "Choose");
+        Assert.That(group.Select(f => f.Implementation.Id).Distinct().Count(), Is.EqualTo(2));
+        foreach (var candidates in new[] { group.ToArray(), group.AsEnumerable().Reverse().ToArray() })
+        {
+            var best = FunctionSelection.ChooseBestFunction(candidates, out var count);
+            Assert.That(best.Implementation.Parameters[0].Type.Name, Is.EqualTo("IChild"));
+            Assert.That(best.InterfaceName, Is.EqualTo("IChild"));
+            Assert.That(count, Is.EqualTo(1));
+        }
+        var overridden = _compilation.ConcreteTypes.Single(t => t.Name == "OverrideItem")
+            .InterfaceFunctionGroups.Single(g => g[0].Name == "Choose");
+        var concrete = FunctionSelection.ChooseBestFunction(overridden.AsEnumerable().Reverse().ToArray(), out var ties);
+        Assert.That(concrete.Interface, Is.Null);
+        Assert.That(concrete.Implementation.Parameters[0].Type.Name, Is.EqualTo("OverrideItem"));
+        Assert.That(ties, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void ReificationKeepsTheSelectedBodyAndGeneratedCSharpExecutesIt()
+    {
+        var group = _item.InterfaceFunctionGroups.Single(g => g[0].Name == "Choose");
+        var selected = FunctionSelection.ChooseBestFunction(group, out _);
+        var reified = _compilation.ReifiedFunctions.Single(f => f.Name == "Choose" && f.ReifiedType.Name == "Item");
+        Assert.That(reified.Original, Is.SameAs(selected.Implementation));
+        var mono = new Monomorphizer(_compilation).MonomorphizeAll()
+            .Single(f => f.Original == selected.Implementation && f.ConcreteType.Name == "Item");
+        Assert.That(mono.IsFullyGround, Is.True);
+
+        var writer = new CSharpWriter(_compilation, "unused-selection-codegen") { ExtensionStyle = true };
+        writer.WriteAll();
+        Assert.That(writer.DegradedBodies, Is.Empty);
+        var assembly = CSharpTestCompilation.CompileAndLoad(GeneratedCSharpFixture.Prelude,
+            writer.Files["_Item.g.cs"].ToString(), writer.Files["_OverrideItem.g.cs"].ToString(),
+            writer.Files["Interfaces.g.cs"].ToString(), writer.Files["Choices.g.cs"].ToString());
+        foreach (var (name, expected) in new[] { ("Item", 22d), ("OverrideItem", 33d) })
+        {
+            var type = assembly.GetType("Ara3D.Geometry." + name, true)!;
+            var method = assembly.GetType("Ara3D.Geometry.Choices", true)!.GetMethods()
+                .Single(m => m.Name == "Choose" && m.GetParameters()[0].ParameterType == type);
+            var result = GeneratedValueReflection.Call(method, null, GeneratedValueReflection.New(type, 0d, 0d));
+            Assert.That(result, Is.EqualTo(expected), name);
+        }
     }
 
     [Test]

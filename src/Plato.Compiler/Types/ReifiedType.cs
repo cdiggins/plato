@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.Compiler.Types
@@ -92,7 +93,7 @@ namespace Ara3D.Geometry.Compiler.Types
                 => te.Equals(pt) ? Type.ToTypeExpression() : te;
 
             var r = CreateFunction(library, functionDef, LocalMapType);
-            Functions.Add(r);
+            AddLibraryFunction(r);
         }
 
         public void AddConcreteTypeLibraryFunction(TypeDef library, FunctionDef functionDef)
@@ -103,7 +104,27 @@ namespace Ara3D.Geometry.Compiler.Types
             Verifier.Assert(library.IsLibrary());
 
             var r = CreateFunction(library, functionDef, x => x);
-            Functions.Add(r);
+            AddLibraryFunction(r);
+        }
+
+        private void AddLibraryFunction(ReifiedFunction function)
+        {
+            // Equal reified signatures can originate at different interface depths.
+            // Keep the writer's preferred body available to monomorphization.
+            if (Functions.TryGetValue(function, out var existing))
+            {
+                if (Score(function) >= Score(existing))
+                    return;
+                Functions.Remove(existing);
+            }
+            Functions.Add(function);
+        }
+
+        private int Score(ReifiedFunction function)
+        {
+            var receiver = function.Original.Parameters[0].Type.Def;
+            return FunctionSelection.ScoreFunction(function.Original, Type,
+                receiver.IsInterface() ? receiver : null);
         }
     }
 

@@ -1217,8 +1217,6 @@ namespace Ara3D.Geometry.CppWriter
                 return true;
             if (IgnoredFunctions.Contains(f.Name))
                 return true;
-            if (f.InterfaceName == "IArray" || f.InterfaceName == "Array")
-                return true;
             // Do not implement functions that cast to themselves.
             if (f.Name == ct.TypeDef.Name)
                 return true;

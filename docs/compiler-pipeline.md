@@ -261,6 +261,25 @@ foreach (var result in checker.CheckAll())
         Console.WriteLine(d);   // e.g. "[Error] CHK201: No overload of 'Add' matches (Boolean, Boolean) (at FunctionCall #123)"
 ```
 
+## Writer implementation selection
+
+`Analysis/FunctionSelection` ranks implementations for a concrete receiver: intrinsics first,
+then concrete implementations, then interface implementations by the receiver's `DepthTo`
+distance. Equal scores retain input order; duplicate implementation identities do not inflate
+the tie count. This policy selects emitted members; call-site overload resolution remains the
+solver's responsibility.
+
+`FunctionInstance.Interface` records the interface supplied by its concrete
+`InterfaceImplementation` binding. Standalone interface declarations and extensions have no
+such binding. `ReifiedType` uses the same ranking when library functions collide on a reified
+signature, so the preferred original body remains available to monomorphization. Keeping a
+less-specific body there can make a writer select a function for which no ground body exists.
+
+Interface metadata alone is not a reason to suppress emitted array members. Backend filtering
+must preserve the receiver's public member surface independently of specificity ranking.
+`FunctionSelectionTests` covers normal construction, precedence, ties, and execution of the
+selected generated C# body.
+
 ## Tests
 
 All in `PlatoTests`:

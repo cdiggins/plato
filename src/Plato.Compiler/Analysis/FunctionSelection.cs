@@ -4,18 +4,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Ara3D.Utils;
+using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.Compiler.Analysis;
 
 public static class FunctionSelection
 {
     public static int ScoreFunction(FunctionInstance f)
-    {
-        var a = f.OwnerType;
-        var b = f.Interface;
+        => ScoreFunction(f.Implementation, f.OwnerType, f.Interface);
 
+    internal static int ScoreFunction(FunctionDef implementation, TypeDef a, TypeDef b)
+    {
         // Intrinsics are always preferred
-        if (f.Implementation.OwnerType.Name == "Intrinsics")
+        if (implementation.OwnerType.Name == "Intrinsics")
             return -200;
 
         // We assume that if there is no interface, then the function implementation originated as a concrete type.

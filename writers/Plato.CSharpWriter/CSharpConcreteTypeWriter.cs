@@ -1,4 +1,4 @@
-﻿// Emits concrete C# structs and their generated member surfaces.
+// Emits concrete C# structs and their generated member surfaces.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -649,9 +649,6 @@ namespace Ara3D.Geometry.CSharpWriter
                 return true;
 
             if (CSharpWriter.IgnoredFunctions.Contains(f.Name))
-                return true;
-
-            if (f.InterfaceName == "IArray")
                 return true;
 
             // We have to be sure to not implement functions that cast to themselves

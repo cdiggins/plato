@@ -361,12 +361,6 @@ namespace Ara3D.Geometry.TypeScriptWriter
             if (TypeScriptWriter.IgnoredFunctions.Contains(f.Name))
                 return true;
 
-            // Unlike C# (where IReadOnlyList supplies the array members), the generated
-            // classes need At and Count; other array functions live on Arr / IArray.
-            if ((f.InterfaceName == "IArray" || f.InterfaceName == "Array")
-                && f.Name != "At" && f.Name != "Count")
-                return true;
-
             // We have to be sure to not implement functions that cast to themselves
             if (f.Name == SimpleName)
                 return true;

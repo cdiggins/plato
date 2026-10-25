@@ -27,6 +27,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
     {
         public FunctionDef Implementation { get; }
         public TypeSubstitutions Substitutions { get; private set; }
+        // The interface bound to a concrete receiver, not a standalone declaration or extension.
         public TypeDef Interface { get; }
         public TypeDef OwnerType { get; }
         public TypeExpression OwnerTypeExpression { get; }
@@ -52,6 +53,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
             OwnerType = ownerType;
             OwnerTypeExpression = ownerType?.ToTypeExpression();
             InterfaceImplementation = ii;
+            Interface = ii?.Interface;
             Kind = kind;
 
             Substitutions = substitutions;
