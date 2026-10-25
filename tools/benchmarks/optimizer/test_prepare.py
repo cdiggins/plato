@@ -9,7 +9,7 @@ import uuid
 from types import SimpleNamespace
 
 from prepare import (contained, export_tree, identity_hash, parse_program, read_shipping_flags,
-                     seal, verify_cache, _assert_idle, build_variants)
+                     seal, verify_cache, _assert_idle, build_variants, brep_export_paths)
 
 TEST_ROOT = Path(__file__).resolve().parents[3] / ".temp/optimizer-prepare-tests"
 
@@ -81,6 +81,20 @@ class PrepareTests(unittest.TestCase):
     def test_shipping_recipe_and_identity_order(self):
         self.assertEqual(read_shipping_flags("$PinnedFlags = @('--loops', '--fuse')"), ["--loops", "--fuse"])
         self.assertEqual(identity_hash({"a": 1, "b": 2}), identity_hash({"b": 2, "a": 1}))
+
+    def test_source_closure_keeps_projects_and_configs_without_corpus(self):
+        paths = brep_export_paths(["Directory.Build.props", "Directory.Build.targets", "Directory.Packages.props",
+                                   "deps.json", "NuGet.Config", "global.json", "README.md", "corpus", "tests", "docs"],
+                                  dict(layer=["00-foundation", "01-geometry"]),
+                                  ["Ara3D.StepBrep.csproj", "GeometrySet.Constructors.cs", "FutureHelper.cs", "Generated", "Intrinsics"])
+        self.assertTrue(set(("src", "tools/step-corpus-harness", "Directory.Build.props", "Directory.Build.targets",
+                             "Directory.Packages.props", "deps.json", "NuGet.Config", "global.json",
+                             "generated/Ara3D.StepBrep/Ara3D.StepBrep.csproj", "library/01-geometry")).issubset(paths))
+        self.assertIn("generated/Ara3D.StepBrep/GeometrySet.Constructors.cs", paths)
+        self.assertIn("generated/Ara3D.StepBrep/FutureHelper.cs", paths)
+        self.assertNotIn("generated/Ara3D.StepBrep/Generated", paths)
+        self.assertNotIn("generated/Ara3D.StepBrep/Intrinsics", paths)
+        self.assertFalse(set(("README.md", "corpus", "tests", "docs", "generated")).intersection(paths))
 
     def test_build_and_prepare_refuse_active_measurement(self):
         cache = self.root / "cache"

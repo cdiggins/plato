@@ -136,6 +136,25 @@ def read_shipping_flags(script):
     return validate_flags(re.findall(r"['\"]([^'\"]+)['\"]", match[1]))
 
 
+def brep_export_paths(root_entries, program, generated_root_entries=()):
+    """The build graph plus shipped Plato sources; omit corpus/docs/tests/assets.
+
+    Keep whole source/project folders so future files imported by their projects
+    are not silently omitted. The generated library is rebuilt, so retain only
+    its project definition and handwritten root C# files rather than copying its
+    cached Generated/ and Intrinsics/ trees.
+    """
+    configs = [p for p in root_entries if "/" not in p and (
+        p.lower() in ("deps.json", "global.json", "nuget.config") or p.endswith((".props", ".targets")))]
+    required = ["src", "tools/step-corpus-harness", "tools/regen-step-brep.ps1",
+                "generated/Ara3D.StepBrep/Ara3D.StepBrep.csproj",
+                "library/tools/shipped-program.txt", "library/tools/check_generated.py",
+                "library/tools/generated-stubs.txt"]
+    handwritten = ["generated/Ara3D.StepBrep/" + p for p in generated_root_entries
+                   if "/" not in p and p.endswith((".cs", ".csproj", ".props", ".targets", ".resx"))]
+    return sorted(set(configs + required + handwritten + ["library/" + layer for layer in program["layer"]]))
+
+
 def _assert_idle(cache_root):
     if (Path(cache_root).resolve().parent / ".measure.lock").exists():
         raise RuntimeError("Benchmark measurements are active; preparation/build is locked")
@@ -169,11 +188,18 @@ def prepare_workspace(plato_root, brep_root, cli, cache_root, *, plato_commit="H
     cli_files = file_hashes(cli.parent)
     dotnet = subprocess.check_output(["dotnet", "--version"], text=True).strip()
     script = _git(brep_root, "show", brep_sha + ":tools/regen-step-brep.ps1").decode("utf-8-sig")
+    program = parse_program(_git(brep_root, "show", brep_sha + ":library/tools/shipped-program.txt").decode("utf-8-sig"))
+    root_entries = _git(brep_root, "ls-tree", "--name-only", brep_sha).decode("utf-8").splitlines()
+    generated_root_entries = _git(brep_root, "ls-tree", "--name-only", brep_sha + ":generated/Ara3D.StepBrep").decode("utf-8").splitlines()
+    brep_paths = brep_export_paths(root_entries, program, generated_root_entries)
+    plato_paths = ["src/Plato.Intrinsics", *["stdlib/" + tier for tier in program["stdlib"]]]
     flags = read_shipping_flags(script) if shipping_flags is None else validate_flags(shipping_flags)
     identity = dict(schema=SCHEMA, plato_sources=plato_sha, brep=brep_sha, mesh=mesh_sha,
                     sdk_pin=sdk_pin, sdk_packages={p.name: digest(p) for p in packages},
                     cli_files=cli_files, cli_name=cli.name, cli_provenance="supplied binary; source revision unverified",
                     shipping_flags=flags, dotnet=dotnet, builder_sha256=digest(__file__))
+    identity["brep_export_paths"] = brep_paths
+    identity["plato_export_paths"] = plato_paths
     key = identity_hash(identity)
     # Keep source paths below Windows MAX_PATH. Full hashes remain in receipts;
     # a short-prefix collision fails identity validation rather than reusing data.
@@ -186,9 +212,9 @@ def prepare_workspace(plato_root, brep_root, cli, cache_root, *, plato_commit="H
         stage = final.parent / (".p-" + uuid.uuid4().hex[:8])
         stage.mkdir()
         _progress("exporting committed plato-brep source")
-        export_tree(brep_root, brep_sha, stage / "brep")
+        export_tree(brep_root, brep_sha, stage / "brep", brep_paths)
         _progress("exporting committed Plato stdlib and runtime")
-        export_tree(plato_root, plato_sha, stage / "plato", ("stdlib", "src/Plato.Intrinsics"))
+        export_tree(plato_root, plato_sha, stage / "plato", plato_paths)
         mesh = stage / "brep/deps/bim-open-data"
         # gitlinks export as empty folders, never as the live linked checkout.
         if mesh.exists():
