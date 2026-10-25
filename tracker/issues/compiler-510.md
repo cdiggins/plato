@@ -23,6 +23,11 @@ User-authorized optimizer exploration. Contract revision O1: dedicated agent, is
 - [x] Write an ordered execution plan and execute its first bounded step.
 - [x] Review and commit deliverables; distinguish prototype evidence from production integration.
 
-Production candidate census, generated-code validation and integration remain outstanding; this milestone executes only the isolated prototype step.
+- [x] Execute the actual Plato TIR fixture milestone and record the bounded production integration decision.
+- [ ] Validate the capture-aware immutable-Boolean analysis on a representative workload and measure JIT benefit before production unswitching.
 
-- [ ] Execute the next plan milestone on actual Plato TIR and record the production integration decision; prototype results alone do not satisfy this.
+## Production continuation â€” 2026-10-25
+
+The committed secondary census finds an invariant Boolean parameter in an actual MapRange callback and shows capture rewriting introduces a distinct local binding. Variant comparisons and faulting delegate conditions are refused. Production loop duplication is deferred pending capture-aware proof and measured benefit.
+
+Evidence: [production report](../../docs/reports/optimizer-production-2026-10-25.md) and [secondary TIR census](../../docs/reports/optimizer-secondary-tir-2026-10-25.md). The remaining checkbox is the next execution-plan gate; this item is not closed by fixture evidence alone.

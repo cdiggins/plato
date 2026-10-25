@@ -23,4 +23,11 @@ User-authorized optimizer exploration. Contract revision O1: dedicated agent, is
 - [x] Write an ordered execution plan and execute its first bounded step.
 - [x] Review and commit deliverables; distinguish prototype evidence from production integration.
 
-- [ ] Execute the next plan milestone on actual Plato TIR and record the production integration decision; prototype results alone do not satisfy this.
+- [x] Execute the actual Plato TIR fixture milestone and record the bounded production integration decision.
+- [ ] Establish a representative surviving cost or downstream optimization benefit, then review a typed ordered-binding projection slice before production rewriting.
+
+## Production continuation â€” 2026-10-25
+
+The committed secondary census parses actual Plato and identifies property-call over constructor-call, using resolved field identity. The unused faulting constructor argument is retained. Production replacement is deferred because the earlier JIT microkernel found no saving and no representative surviving cost is established.
+
+Evidence: [production report](../../docs/reports/optimizer-production-2026-10-25.md) and [secondary TIR census](../../docs/reports/optimizer-secondary-tir-2026-10-25.md). The remaining checkbox is the next execution-plan gate; this item is not closed by fixture evidence alone.

@@ -23,6 +23,11 @@ User-authorized optimizer exploration. Contract revision O1: dedicated agent, is
 - [x] Write an ordered execution plan and execute its first bounded step.
 - [x] Review and commit deliverables; distinguish prototype evidence from production integration.
 
-Production candidate census, generated-code validation and integration remain outstanding; this milestone executes only the isolated prototype step.
+- [x] Execute the actual Plato TIR fixture milestone and record the bounded production integration decision.
+- [ ] Qualify a representative geometry caller and record measured benefit before widening fusion eligibility or changing defaults.
 
-- [ ] Execute the next plan milestone on actual Plato TIR and record the production integration decision; prototype results alone do not satisfy this.
+## Production continuation â€” 2026-10-25
+
+Actual TIR fixtures, canonical identity checks, marker/emitter integration and compiled off/on execution are implemented in d81e6065; f0f63d81 restores the independently reviewed traversal after a shared-file race. The default-off production slice preserves producer evaluation and per-fold arithmetic order. All 13 focused fusion tests passed; the combined non-diagnostic suite passed 393 tests. Generated fixture timing shows only a modest noisy gain, not geometry qualification.
+
+Evidence: [production report](../../docs/reports/optimizer-production-2026-10-25.md) and [secondary TIR census](../../docs/reports/optimizer-secondary-tir-2026-10-25.md). The remaining checkbox is the next execution-plan gate; this item is not closed by fixture evidence alone.
