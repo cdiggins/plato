@@ -99,6 +99,8 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-524](issues/plato-524.md) | Language improvement ideas collected during reference audit | idea | p2 | L | med | plato | idea |  |
 | [repo-473](issues/repo-473.md) | Resolve external SDK frozen-artifact gate drift | problem | p2 | S | med | repo | idea |  |
 | [repo-494](issues/repo-494.md) | Give Greenhouse audits explicit source scope and useful ranking | idea | p2 | M | low | repo | idea |  |
+| [repo-531](issues/repo-531.md) | Test fixture discovery mistakes isolated output for source tree | bug | p2 | S | low | repo | idea |  |
+| [repo-532](issues/repo-532.md) | Studio frozen runtime tripwire differs from recorded baseline | problem | p2 | S | med | repo | idea |  |
 | [stdlib-526](issues/stdlib-526.md) | Audit source-documented standard-library algorithm limitations | debt | p2 | L | med | stdlib | idea |  |
 | [compiler-469](issues/compiler-469.md) | Retire inactive parser and symbol XML writer sketches | debt | p3 | S | low | compiler | idea |  |
 | [compiler-487](issues/compiler-487.md) | Evaluate concrete storage and callback specialization | feature | p3 | L | med | compiler | idea |  |
