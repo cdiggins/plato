@@ -1,6 +1,7 @@
 // Coordinates C# output files, extension plans, runtime profiles, and optimizer passes.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Checking;

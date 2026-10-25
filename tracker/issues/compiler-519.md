@@ -85,3 +85,20 @@ The private result uses fc4b5 dependency assemblies. The final criterion remains
 open until these regressions pass using the normal committed compiler build;
 consumer regeneration and pin integration also remain outstanding. Historical
 source hypotheses above are superseded by the captured evidence and this fix.
+
+## Normal-project import correction
+
+The first normal build of6634d683 failed with CS1061: IEnumerable<TypeDef>
+does not contain a definition for Where, followed by OrderBy/member cascades
+and MSB4181: The "MSBuild" task returned false but did not log an error.
+Private writer03 enabled implicit imports; the normal writer project does not.
+The correction adds only an explicit System.Linq import.
+
+Import proof02 compiled the exact normal writer sources with that one import,
+implicit imports disabled and exact normal resolved reference assemblies:
+zero errors and warnings. Receipt
+4e727a168dc96a51472b365ea6e7fd46ec893a6c8d687ccf5a0f4d2abec8b4dd.
+The earlier proof01 failed offline package restoration before compilation;
+all failed snapshots and receipts remain retained. This compile-only result
+does not replace the final normal compiler build or behavioral regression gate.
+Optimizer source evidence was refreshed; freshness and documentation tests pass.
