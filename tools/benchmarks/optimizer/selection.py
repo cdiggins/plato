@@ -27,6 +27,8 @@ def select_cases(suite, *, mode="quick", max_cases=6, budget_ms=None, discovery=
         raise ValueError("budget_ms must be positive and finite")
     cases = list(suite.get("cases", []))
     ids = [c["id"] for c in cases]
+    if discovery is not None and (not isinstance(discovery, dict) or any(i not in discovery for i in ids)):
+        raise ValueError("discovery must provide runtime costs for every supplied case")
     if budget_ms is not None and any(i not in (discovery or {}) for i in ids):
         raise ValueError("runtime budget requires discovery costs for every case")
     if len(set(ids)) != len(ids):
@@ -37,7 +39,7 @@ def select_cases(suite, *, mode="quick", max_cases=6, budget_ms=None, discovery=
         for key in ("tags", "workloads"):
             if not isinstance(c.get(key), list) or any(not isinstance(v, str) or not v for v in c[key]):
                 raise ValueError(f"invalid {key}")
-    costs = {c["id"]: (discovery or {}).get(c["id"], 1.0) for c in cases}
+    costs = {c["id"]: discovery[c["id"]] if discovery is not None else 1.0 for c in cases}
     if any(not isinstance(v, (int, float)) or isinstance(v, bool) or not math.isfinite(v) or v <= 0
            for v in costs.values()):
         raise ValueError("discovery costs must be positive and finite")
@@ -77,7 +79,7 @@ def select_cases(suite, *, mode="quick", max_cases=6, budget_ms=None, discovery=
             spent += costs[best["id"]]
     return dict(schema=1, mode=mode, cases=selected, holdout=[c["id"] for c in holdout],
                 covered_dimensions=sorted(covered), uncovered_dimensions=sorted(all_dimensions-covered),
-                estimated_ms=spent if discovery and all(i in discovery for i in ids) else None,
-                cost_basis="discovery_ms" if discovery else "uniform_coverage_cost", estimated_costs=bool(discovery),
+                estimated_ms=spent if discovery is not None else None,
+                cost_basis="discovery_ms" if discovery is not None else "uniform_coverage_cost", estimated_costs=discovery is not None,
                 prediction_validated=False,
                 limitation="Selection covers supplied tags and workloads; corpus prediction requires independent held-out measurements.")

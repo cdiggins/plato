@@ -70,6 +70,16 @@ class SelectionTests(unittest.TestCase):
                          ["projection", "mesh", "model"])
         self.assertEqual(suite, original)
 
+    def test_partial_discovery_never_assigns_unknown_cases_a_fake_cheap_cost(self):
+        suite = dict(cases=[case("measured", ["one"]), case("unknown", ["two"])])
+        for discovery in ({"measured": 100000}, {}, []):
+            with self.subTest(discovery=discovery):
+                with self.assertRaisesRegex(ValueError, "every supplied case"):
+                    select_cases(suite, discovery=discovery)
+        result = select_cases(suite, discovery={"measured": 100000, "unknown": 200000}, holdout_fraction=0)
+        self.assertEqual(result["estimated_ms"], 300000)
+        self.assertTrue(result["estimated_costs"])
+
 
 if __name__ == "__main__":
     unittest.main()

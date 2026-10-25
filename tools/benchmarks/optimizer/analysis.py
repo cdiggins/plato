@@ -40,6 +40,8 @@ def _invalid(row):
         return "invalid family"
     if "kind" in row and row["kind"] not in ("stage", "model"):
         return "invalid kind"
+    if "runtime" in row and (not isinstance(row["runtime"], dict) or not row["runtime"]):
+        return "invalid runtime metadata"
     return None
 
 
@@ -133,6 +135,10 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
                         continue
                     control_sample, candidate = pair
                     anchor = anchors[0]
+                    if (any("runtime" in r for r in (*pair, anchor))
+                            and any(r.get("runtime") != anchor.get("runtime") for r in pair)):
+                        problems.append({"block": block, "reason": "runtime metadata missing or mismatched within process block"})
+                        continue
                     if any(r["digest"] != anchor["digest"] or r["checks"] != anchor["checks"] for r in pair):
                         problems.append({"block": block, "variant": correctness_anchor,
                                          "reason": "digest or checks mismatch against correctness anchor"})
@@ -147,6 +153,8 @@ def analyze(rows, variants=None, *, baseline="full", practical_threshold=0.03, m
                     samples.append(candidate)
                 if len({r["digest"] for r in samples}) > 1:
                     problems.append({"reason": "digest changed across process blocks"})
+                if samples and any(r.get("runtime") != samples[0].get("runtime") for r in samples):
+                    problems.append({"reason": "runtime metadata changed across process blocks"})
                 result["blocks"] = len(ratios)
                 if problems or malformed:
                     if malformed:

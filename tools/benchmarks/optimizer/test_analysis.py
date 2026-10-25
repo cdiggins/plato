@@ -240,6 +240,29 @@ class AnalysisTests(unittest.TestCase):
         self.assertIn("limited equivalence", report["correctness_scope"])
         self.assertEqual(comparison(report)["status"], "faster")
 
+    def test_runtime_metadata_must_match_both_pairs_anchor_and_all_blocks(self):
+        runtime = {"framework": ".NET 8", "server_gc": True}
+        for defect in ("missing", "pair", "anchor", "across-blocks", "malformed"):
+            with self.subTest(defect=defect):
+                rows = [{**r, "runtime": runtime.copy()} for r in samples()]
+                if defect == "missing":
+                    del rows[2]["runtime"]
+                elif defect == "pair":
+                    rows[2]["runtime"]["server_gc"] = False
+                elif defect == "anchor":
+                    rows[1]["runtime"]["framework"] = ".NET 9"
+                elif defect == "across-blocks":
+                    for row in rows:
+                        if row["block"] == 1:
+                            row["runtime"]["server_gc"] = False
+                else:
+                    rows[2]["runtime"] = []
+                result = comparison(analyze(rows))
+                self.assertEqual(result["status"], "invalid")
+                self.assertNotIn("speedup", result)
+        result = comparison(analyze([{**r, "runtime": runtime.copy()} for r in samples()]))
+        self.assertEqual(result["status"], "faster")
+
 
 if __name__ == "__main__":
     unittest.main()
