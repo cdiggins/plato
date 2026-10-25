@@ -2,7 +2,7 @@
 
 Work item: compiler-508, exploration of array length and index range analysis.
 Contract: [O1](../design/optimizer-exploration/wave.md).
-Design and execution plan: [array facts](../design/optimizer-exploration/array-facts.md).
+Design and execution plan: [array facts](../archive/optimizer-exploration/array-facts.md).
 
 ## Result
 

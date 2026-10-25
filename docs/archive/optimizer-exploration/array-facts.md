@@ -1,7 +1,10 @@
+> **EXECUTED 2026-10-25** — see [compiler-508](../../../tracker/issues/compiler-508.md). Historical record; do not execute.
+> The bounded read-only adapter is qualified. Production consumers and broader range reasoning below remain separate proposals.
+
 # Array length and index range analysis
 
 Proposal under [compiler-508](../../../tracker/issues/compiler-508.md), governed by
-[exploration contract O1](wave.md). The first execution step is an isolated arithmetic
+[exploration contract O1](../../design/optimizer-exploration/wave.md). The first execution step is an isolated arithmetic
 prototype, not a production pass. Measurements are recorded in the
 [dated report](../../reports/optimizer-array-facts-2026-10-25.md), not this design.
 
@@ -16,7 +19,7 @@ and logical bounds are proved. Knowing an array's allocated capacity is insuffic
 The [pipeline reference](../../csharp-optimizer-pipeline.md) already describes loop-local
 count caching, literal unrolling and producer fusion. This proposal adds reusable analysis
 facts; it does not claim those existing optimizations as new. The
-[concrete-storage proposal](../brep-compiler-optimization/concrete-storage.md) already
+[concrete-storage proposal](../../design/brep-compiler-optimization/concrete-storage.md) already
 plans provenance for compiler-created backing arrays. Share its producer identity and
 scope machinery when integrating; do not introduce a competing storage registry.
 
