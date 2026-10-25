@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from analysis import analyze, render_markdown
+from analysis import analyze, render_markdown, validate_prediction
 
 
 def samples(count=5, ratio=0.8, case_id="a", workload="surface", family="geometry"):
@@ -54,7 +54,9 @@ class AnalysisTests(unittest.TestCase):
         invalid = [("elapsed_ns", float("nan")), ("elapsed_ns", math.inf), ("elapsed_ns", 0),
                    ("iterations", 0), ("iterations", True), ("iterations", 1.5),
                    ("allocated_bytes", -1), ("allocated_bytes", math.inf), ("checks", {}),
-                   ("checks", {"ok": 1}), ("digest", ""), ("schema", 2)]
+                   ("checks", {"ok": 1}), ("digest", ""), ("schema", 2), ("schema", True),
+                   ("status", None), ("status", 42), ("family", []), ("kind", []),
+                   ("elapsed_ns", 10**400), ("iterations", 10**400)]
         for field, value in invalid:
             with self.subTest(field=field, value=value):
                 rows = samples()
@@ -98,6 +100,7 @@ class AnalysisTests(unittest.TestCase):
 
     def test_custom_baseline_and_report_include_errors(self):
         report = analyze(samples(), baseline="candidate")
+        self.assertEqual(report["baseline"], "candidate")
         self.assertEqual(comparison(report, "full", "candidate")["status"], "slower")
         self.assertIn("95%", render_markdown(report))
 
@@ -118,6 +121,59 @@ class AnalysisTests(unittest.TestCase):
         result = comparison(analyze(rows))
         self.assertIn("timeout", result["observed_states"])
         self.assertNotIn("speedup", result)
+
+    def test_markdown_coverage_cost_and_no_partial_suite_claim(self):
+        report = analyze(samples()+samples(case_id="b"))
+        report["coverage"] = dict(cases=[{"id": "a"}], holdout=["b"],
+                                  uncovered_dimensions=["tag:spline"], estimated_costs=False,
+                                  prediction_validated=False)
+        text = render_markdown(report)
+        for expected in ("Selected case IDs: a", "Reserved holdout IDs: b", "tag:spline",
+                         "uniform coverage weights", "Prediction validated: false"):
+            self.assertIn(expected, text)
+        rows = samples()+samples(case_id="b")
+        for r in rows:
+            if r["case_id"] == "b" and r["variant"] == "candidate":
+                r["status"] = "not_measured"
+        text = render_markdown(analyze(rows))
+        self.assertIn("no suite performance conclusion", text)
+        summary = next(line for line in text.splitlines() if line.startswith("- candidate / full:"))
+        self.assertNotIn("time ratio", summary)
+
+    def test_followup_recommendations_are_consumable_case_ids_and_workloads(self):
+        rows = samples(ratio=1.2)+samples(2, case_id="tiny")+samples(case_id="failed")
+        for row in rows:
+            if row["case_id"] == "failed" and row["variant"] == "candidate":
+                row["checks"] = {"ok": False}
+        report = analyze(rows)
+        confirm = next(r for r in report["recommendations"] if r["action"] == "confirm")
+        repair = next(r for r in report["recommendations"] if r["action"] == "repair_or_investigate")
+        self.assertIn("a", confirm["case_ids"])
+        self.assertIn("tiny", confirm["case_ids"])
+        self.assertIn("surface", confirm["workloads"])
+        self.assertEqual(repair["case_ids"], ["failed"])
+        self.assertIn("Confirm regressions", render_markdown(report))
+
+    def test_prediction_reports_direction_disagreement_on_reserved_cases(self):
+        quick = analyze(samples(ratio=0.5))
+        quick["coverage"] = dict(cases=[{"id": "a"}], holdout=["heldout"])
+        corpus = analyze(samples(ratio=2, case_id="heldout"))
+        validation = validate_prediction(quick, corpus)
+        observation = next(o for o in validation["observations"] if o["variant"] == "candidate")
+        self.assertFalse(observation["direction_agrees"])
+        self.assertEqual(observation["unexpected_holdout_regression_families"], ["geometry"])
+        self.assertFalse(validation["prediction_validated"])
+        self.assertFalse(validation["ranking_agrees"])
+
+    def test_prediction_rejects_missing_holdout_and_tiny_samples(self):
+        quick = analyze(samples(2))
+        corpus = analyze(samples(case_id="heldout"))
+        self.assertEqual(validate_prediction(quick, corpus)["status"], "insufficient_evidence")
+        quick["coverage"] = dict(cases=[{"id": "a"}], holdout=["heldout"])
+        self.assertEqual(validate_prediction(quick, corpus)["status"], "insufficient_evidence")
+        quick = analyze(samples())
+        quick["coverage"] = dict(cases=[{"id": "a"}], holdout=["a"])
+        self.assertEqual(validate_prediction(quick, corpus)["status"], "insufficient_evidence")
 
 
 if __name__ == "__main__":
