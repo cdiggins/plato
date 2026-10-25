@@ -2,14 +2,14 @@
 id: compiler-499
 title: Repair inlining emission failures on plato-brep
 type: bug
-status: in-progress
+status: done
 priority: p1
 effort: M
 risk: med
 area: compiler
 sprint: 
 created: 2026-10-24
-closed:
+closed: 2026-10-24
 links: []
 ---
 
