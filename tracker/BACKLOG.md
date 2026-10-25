@@ -83,6 +83,8 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-500](issues/compiler-500.md) | Explain allocation growth from B-rep source inlining | problem | p2 | M | low | compiler | idea |  |
 | [compiler-502](issues/compiler-502.md) | Include inter-stage work in B-rep meshing timing | problem | p2 | S | low | compiler | idea |  |
 | [compiler-503](issues/compiler-503.md) | Assess component expansion for forward vector vocabulary | problem | p2 | M | med | compiler | idea |  |
+| [compiler-530](issues/compiler-530.md) | Bare generic function receiver throws during library classification | bug | p2 | M | med | compiler | idea |  |
+| [docs-529](issues/docs-529.md) | Interactive reference sandboxes and 2D/3D views | idea | p2 | L | med | docs | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
 | [plato-028](issues/plato-028.md) | Consumer-driven refactoring direction (Earcut gaps, query vocabulary, topology) | feature | p2 | L | med | plato | idea |  |
 | [plato-029](issues/plato-029.md) | Port Geometry3Sharp pure query kernels to Plato | feature | p2 | L | med | plato | idea |  |
