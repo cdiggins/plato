@@ -26,10 +26,12 @@ internal static class GenerateCommand
         var optimizeArrays = args.Contains("--optimize-arrays");
 
         var inline = args.Contains("--inline");
-        var inlinePolicy = args.LastOrDefault(a => a.StartsWith("--inline-policy="))?.Split('=')[1];
-        var inlineGrowth = args.LastOrDefault(a => a.StartsWith("--inline-growth="))?.Split('=')[1] ?? "4096";
+        var inlinePolicy = args.LastOrDefault(a => a.StartsWith("--inline-policy="))?["--inline-policy=".Length..];
+        var inlineGrowthOption = args.LastOrDefault(a => a.StartsWith("--inline-growth="));
+        var inlineGrowth = inlineGrowthOption?["--inline-growth=".Length..] ?? "4096";
         if (inlinePolicy is not (null or "statements" or "lambdas" or "iterative")
             || !int.TryParse(inlineGrowth, out var growth) || growth <= 0
+            || inlinePolicy == null && inlineGrowthOption != null
             || inlinePolicy != null && (typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("Experimental C# inlining requires --inline-policy=statements|lambdas|iterative and a positive --inline-growth value.");

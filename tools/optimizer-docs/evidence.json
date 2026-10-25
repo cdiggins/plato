@@ -3,7 +3,7 @@
   "tool_sha256": "5fe32caac7648af3e6b6aa262a0374eadfe9400b9fabb20ce04508096bcc3418",
   "manifest_hash": "eb66e718b42be160044191c749cecea488c0f1cf6652153eb590bc8d7c188b2e",
   "inputs": {
-    "src/Plato.CLI/GenerateCommand.cs": "6971f279c2ed4e28a22febdf4baea1bded5725e1828764053490de766239f9ea",
+    "src/Plato.CLI/GenerateCommand.cs": "6923b16865f380ec3095bbb7442ed283ab11a49fa74c2f9f8925a0f9b7534da5",
     "src/Plato.CLI/GenerationArguments.cs": "65baf49c37bf2ba57609d59b551a464b83a534d8336a4aeab86115dfe21e09ce",
     "src/Plato.CLI/Program.cs": "c3949f230b12b1ad0bab1328dd066d9d99f48958f006079b31a2dbdc33a9017a",
     "src/Plato.Compiler/Checking/Tir.cs": "0ef31634608c8cba065932afb848d43b289a6ead3f106213c328d4981f50e33f",

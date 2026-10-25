@@ -1,7 +1,7 @@
 {
-  "note": "Reviewed inlining and pipeline guides: source-site outcomes are distinct from expansion events and may overlap; TIR dump input now precedes the experimental stage. No transformation semantics changed.",
+  "note": "Reviewed the CLI boundary and inlining guide: malformed full values are rejected and growth requires an explicit policy. Valid policies and transformation behavior are unchanged.",
   "inputs": {
-    "src/Plato.CLI/GenerateCommand.cs": "6971f279c2ed4e28a22febdf4baea1bded5725e1828764053490de766239f9ea",
+    "src/Plato.CLI/GenerateCommand.cs": "6923b16865f380ec3095bbb7442ed283ab11a49fa74c2f9f8925a0f9b7534da5",
     "src/Plato.CLI/GenerationArguments.cs": "65baf49c37bf2ba57609d59b551a464b83a534d8336a4aeab86115dfe21e09ce",
     "src/Plato.CLI/Program.cs": "c3949f230b12b1ad0bab1328dd066d9d99f48958f006079b31a2dbdc33a9017a",
     "src/Plato.Compiler/Checking/Tir.cs": "0ef31634608c8cba065932afb848d43b289a6ead3f106213c328d4981f50e33f",
@@ -48,6 +48,6 @@
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter.FlatMap.cs": "0cd93142c3e53f7b22f3e9b73de4a0077be6e9ab9b6f8151416b153697f3378c",
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter.Loops.cs": "38ae57d4aa01b41d774f28cfc085b7c4cbcba38efe8ab079a3cdb1372da26617"
   },
-  "evidence_hash": "9eddcd0be7e781e929b64234b3380b48af210b56dd8df2cacd4f16cf30fda35f",
+  "evidence_hash": "1060ec4eca32d75501526795b180728fad483a403f06153cd978732226847f6f",
   "generator_hash": "32b4f4af3007c0fdac6454a047374cbeaf29624cd6e8d270b5680cdbd5f22bf9"
 }

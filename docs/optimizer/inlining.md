@@ -84,6 +84,7 @@ not a profitability model, and no runtime or allocation advantage is established
 Use the C#-only `--inline-policy=statements`, `--inline-policy=lambdas`, or
 `--inline-policy=iterative` to reproduce these ablations. The latter policies include the
 earlier capabilities. `--inline-growth=<positive integer>` selects the per-caller allowance.
+The growth option requires an explicit policy; malformed values are errors.
 These options do not imply the existing `--inline` expression pass; pass that flag explicitly
 when comparing the added stage against the current inliner. With no policy option, existing
 recipes are unchanged.
