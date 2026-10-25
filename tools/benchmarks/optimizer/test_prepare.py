@@ -2,6 +2,8 @@ import io
 import json
 from pathlib import Path
 import shutil
+import subprocess
+import sys
 import tarfile
 import unittest
 from unittest.mock import patch
@@ -9,7 +11,7 @@ import uuid
 from types import SimpleNamespace
 
 from prepare import (contained, export_tree, identity_hash, parse_program, read_shipping_flags,
-                     seal, verify_cache, _assert_idle, build_variants, brep_export_paths)
+                     seal, verify_cache, _assert_idle, build_variants, brep_export_paths, _generate)
 
 TEST_ROOT = Path(__file__).resolve().parents[3] / ".temp/optimizer-prepare-tests"
 
@@ -101,6 +103,71 @@ class PrepareTests(unittest.TestCase):
         (self.root / ".measure.lock").touch()
         with self.assertRaises(RuntimeError):
             _assert_idle(cache)
+
+    def test_generation_delegates_host_obligations_to_committed_checker(self):
+        # A small checker fixture exercises authority/log wiring without requiring
+        # a sibling checkout or running the real compiler in a Python unit test.
+        checker = '''import pathlib, re, sys
+output = pathlib.Path(sys.argv[1])
+log = pathlib.Path(sys.argv[sys.argv.index('--log') + 1]).read_text()
+allowed = set(pathlib.Path(__file__).with_name('generated-stubs.txt').read_text().splitlines())
+failures = []
+for file in output.glob('*.cs'):
+    text = file.read_text()
+    name = re.search(r'object (\\w+)\\(', text).group(1)
+    if 'is declared without a body' not in text:
+        failures.append('degraded ' + name)
+    elif name not in allowed:
+        failures.append('new bodiless ' + name)
+if 'DEGRADED' in log:
+    failures.append('degraded compiler log')
+print('\\n'.join(failures) if failures else 'accepted baseline host obligation')
+sys.exit(bool(failures))
+'''
+        real_run = subprocess.run
+        for label, name, message, compiler_log, accepted in (
+                ("known", "ParseStep", "is declared without a body", "", True),
+                ("new", "UnknownHost", "is declared without a body", "", False),
+                ("degraded", "CountedFlips", "no ground TIR", "", False),
+                ("logged", "ParseStep", "is declared without a body", "DEGRADED bodies: CountedFlips", False)):
+            with self.subTest(label=label):
+                case = self.root / label
+                brep = case / "build/brep"
+                tools = brep / "library/tools"
+                tools.mkdir(parents=True)
+                (tools / "shipped-program.txt").write_text("stdlib foundation\nlayer 00-foundation\n")
+                (tools / "check_generated.py").write_text(checker)
+                (tools / "generated-stubs.txt").write_text("ParseStep\n")
+                layer = brep / "library/00-foundation"
+                layer.mkdir()
+                (layer / "brep.plato").write_text("library Brep {}")
+                (brep / "generated/Ara3D.StepBrep").mkdir(parents=True)
+                foundation = case / "source/plato/stdlib/foundation"
+                foundation.mkdir(parents=True)
+                (foundation / "basic.plato").write_text("primitive Number {}")
+                runtime = case / "source/plato/src/Plato.Intrinsics"
+                runtime.mkdir(parents=True)
+                (runtime / "Plato.Intrinsics.projitems").write_text('<Project><ItemGroup><Compile Include="$(MSBuildThisFileDirectory)Scalar.cs" /></ItemGroup></Project>')
+                (runtime / "Scalar.cs").write_text("namespace Ara3D.Geometry; public struct Scalar {}")
+
+                def run(command, **kwargs):
+                    if command[0] == "dotnet":
+                        output = Path(next(arg.removeprefix("--out=") for arg in command if arg.startswith("--out=")))
+                        (output / "Library.g.cs").write_text('public static object ' + name + '() => throw new System.NotImplementedException("plato: ' + name + ' ' + message + '");')
+                        return SimpleNamespace(returncode=0, stdout=compiler_log, stderr="")
+                    self.assertEqual(command[0:3], ["python", "-I", "-S"])
+                    return real_run([sys.executable, *command[1:]], **kwargs)
+
+                workspace = dict(root=str(case / "source"), cli="supplied.dll")
+                log = case / "build/compiler.log"
+                with patch("prepare.subprocess.run", side_effect=run):
+                    if accepted:
+                        self.assertGreaterEqual(_generate(workspace, brep, [], log, 10), 0)
+                    else:
+                        with self.assertRaisesRegex(ValueError, "Generated code check failed"):
+                            _generate(workspace, brep, [], log, 10)
+                evidence = (case / "build/generated-check.log").read_text()
+                self.assertIn("accepted baseline host obligation" if accepted else "degraded" if label != "new" else "new bodiless", evidence)
 
     def test_failed_baseline_does_not_become_ready(self):
         workspace = self.root / "cache/workspaces/key"

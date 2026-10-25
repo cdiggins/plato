@@ -282,19 +282,20 @@ def _generate(workspace, brep, flags, log, timeout):
                          capture_output=True, text=True, timeout=timeout)
     text = run.stdout + run.stderr
     log.write_text(text, encoding="utf-8")
-    if run.returncode or re.search(r"DEGRADED bodies|degraded:", text, re.IGNORECASE):
-        raise ValueError("Compiler failed or emitted degraded bodies; see " + str(log))
+    if run.returncode:
+        raise ValueError("Compiler failed; see " + str(log))
     files = sorted(output.glob("*.g.cs"))
     if not files:
         raise ValueError("Compiler emitted no generated C#")
-    # Reject all throwing fallback bodies, even if a historical stub allowlist permits them.
-    for file in files:
-        if re.search(r"throw\s+new\s+(?:System\.)?(?:NotImplementedException|NotSupportedException)", file.read_text(encoding="utf-8-sig")):
-            raise ValueError("Generated throwing stub: " + file.name)
+    # The committed checker distinguishes declared host obligations from dropped
+    # compiler bodies. Only the former may use its committed baseline; every
+    # degraded body and every new bodiless declaration remains a failure.
     check = subprocess.run(["python", "-I", "-S", str(brep / "library/tools/check_generated.py"), str(output), "--log", str(log)],
                            capture_output=True, text=True, timeout=timeout)
+    checker_log = log.parent / "generated-check.log"
+    checker_log.write_text(check.stdout + check.stderr, encoding="utf-8")
     if check.returncode:
-        raise ValueError("Generated code check failed: " + check.stdout + check.stderr)
+        raise ValueError("Generated code check failed; see " + str(checker_log) + ": " + check.stdout + check.stderr)
     project = brep / "generated/Ara3D.StepBrep"
     for name in ("Generated", "Intrinsics"):
         folder = project / name
