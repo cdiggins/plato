@@ -31,6 +31,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [stdlib-464](issues/stdlib-464.md) | Stdlib conformance failures: establish domains and repair contracts | bug | ? | ? | ? | stdlib | in-progress |  |
+| [docs-525](issues/docs-525.md) | Reconcile language reference contradictions with compiler evidence | debt | p1 | M | low | docs | ready |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
 | [plato-434](issues/plato-434.md) | Collision pair tests are unusable in TypeScript: sphere-box silently reports no contact, sphere-capsule throws, box corners duplicate | bug | p1 | M | med | plato | ready |  |
@@ -92,6 +93,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-390](issues/plato-390.md) | Extract Plato.Verify: one policy engine behind the gates, the tests and plato_check | feature | p2 | L | med | plato | idea |  |
 | [plato-418](issues/plato-418.md) | TypeScript writer: MakeArray2D/Array2D never emitted, generated mesh code crashes | bug | p2 | M | low | plato | idea |  |
 | [plato-420](issues/plato-420.md) | Declared-but-unimplemented stdlib tiers: colour conversion, differential geometry, sampling patterns, voxelization | problem | p2 | L | low | plato | idea |  |
+| [plato-524](issues/plato-524.md) | Language improvement ideas collected during reference audit | idea | p2 | L | med | plato | idea |  |
 | [repo-473](issues/repo-473.md) | Resolve external SDK frozen-artifact gate drift | problem | p2 | S | med | repo | idea |  |
 | [repo-494](issues/repo-494.md) | Give Greenhouse audits explicit source scope and useful ranking | idea | p2 | M | low | repo | idea |  |
 | [compiler-469](issues/compiler-469.md) | Retire inactive parser and symbol XML writer sketches | debt | p3 | S | low | compiler | idea |  |
