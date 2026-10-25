@@ -37,6 +37,7 @@ def without_feature(flags, feature):
 
 def make_recipes(shipping_flags, *, experimental=False, inline_policies=(), growth_limits=()):
     """Return baseline, full, conditional ablations and optional one-factor sweeps."""
+    inline_policies, growth_limits = list(inline_policies), list(growth_limits)
     def recipe(name, flags, kind, description, **extra):
         return dict(name=name, flags=validate_flags(flags), kind=kind, description=description, **extra)
 
@@ -52,14 +53,17 @@ def make_recipes(shipping_flags, *, experimental=False, inline_policies=(), grow
     if (inline_policies or growth_limits) and not experimental:
         raise ValueError("Inline sweeps require experimental=True")
     if experimental:
+        if growth_limits and "statements" not in inline_policies:
+            inline_policies.append("statements")
         for policy in inline_policies:
             result.append(recipe("inline-" + policy, [*FULL_FLAGS, "--inline-policy=" + policy],
-                                 "parameter", "Change inline policy within full", experimental=True))
+                                 "parameter", "Change inline policy within full", experimental=True, reference="full"))
         # Growth has meaning only within an explicit policy. Hold that policy fixed.
         for growth in growth_limits:
             result.append(recipe("inline-statements-growth-" + str(growth),
                                  [*FULL_FLAGS, "--inline-policy=statements", "--inline-growth=" + str(growth)],
-                                 "parameter", "Change growth within full and statement inlining", experimental=True))
+                                 "parameter", "Change growth within full and statement inlining", experimental=True,
+                                 reference="inline-statements"))
     names = [r["name"] for r in result]
     if len(names) != len(set(names)):
         raise ValueError("Duplicate recipe name")

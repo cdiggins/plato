@@ -33,6 +33,16 @@ class RecipeTests(unittest.TestCase):
         self.assertEqual(next(r for r in recipes if r["name"] == "inline-statements-growth-128")["flags"],
                          [*FULL_FLAGS, "--inline-policy=statements", "--inline-growth=128"])
 
+    def test_growth_alone_adds_default_policy_reference_once(self):
+        for policies in ((), ("statements",)):
+            recipes = make_recipes([], experimental=True, inline_policies=policies, growth_limits=[128])
+            references = [r for r in recipes if r["name"] == "inline-statements"]
+            self.assertEqual(len(references), 1)
+            self.assertEqual(references[0]["flags"], [*FULL_FLAGS, "--inline-policy=statements"])
+            growth = next(r for r in recipes if r["name"] == "inline-statements-growth-128")
+            self.assertEqual(growth["reference"], "inline-statements")
+            self.assertEqual(growth["flags"][:-1], references[0]["flags"])
+
 
 if __name__ == "__main__":
     unittest.main()
