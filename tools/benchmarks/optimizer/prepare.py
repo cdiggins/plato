@@ -10,6 +10,7 @@ import json
 import re
 import shutil
 import subprocess
+import sys
 import tarfile
 import time
 import uuid
@@ -19,6 +20,10 @@ import xml.etree.ElementTree as ET
 from recipes import validate_flags
 
 SCHEMA = 1
+
+
+def _progress(message):
+    print("optimizer setup: " + message, file=sys.stderr, flush=True)
 
 
 def digest(path):
@@ -144,6 +149,7 @@ def prepare_workspace(plato_root, brep_root, cli, cache_root, *, plato_commit="H
     Package bytes are hashed; a folder named after a pin is not proof of a build.
     """
     _assert_idle(cache_root)
+    _progress("resolving committed source and supplied compiler inputs")
     plato_root, brep_root, cli = map(lambda p: Path(p).resolve(), (plato_root, brep_root, cli))
     cache_root = Path(cache_root).resolve()
     plato_sha = _git(plato_root, "rev-parse", "--verify", plato_commit + "^{commit}").decode().strip()
@@ -173,12 +179,15 @@ def prepare_workspace(plato_root, brep_root, cli, cache_root, *, plato_commit="H
     # a short-prefix collision fails identity validation rather than reusing data.
     final = cache_root / "w" / key[:12]
     if final.exists():
+        _progress("verifying cached workspace " + str(final))
         verify_cache(final, identity)
     else:
         final.parent.mkdir(parents=True, exist_ok=True)
         stage = final.parent / (".p-" + uuid.uuid4().hex[:8])
         stage.mkdir()
+        _progress("exporting committed plato-brep source")
         export_tree(brep_root, brep_sha, stage / "brep")
+        _progress("exporting committed Plato stdlib and runtime")
         export_tree(plato_root, plato_sha, stage / "plato", ("stdlib", "src/Plato.Intrinsics"))
         mesh = stage / "brep/deps/bim-open-data"
         # gitlinks export as empty folders, never as the live linked checkout.
@@ -188,6 +197,7 @@ def prepare_workspace(plato_root, brep_root, cli, cache_root, *, plato_commit="H
             mesh.rmdir()
         mesh.parent.mkdir(parents=True, exist_ok=True)
         (mesh.parent / ".deps-root").write_text("Prepared benchmark dependency root\n", encoding="utf-8")
+        _progress("exporting pinned MeshKernel source")
         export_tree(mesh_root, mesh_sha, mesh, ("src/data/Ara3D.MeshKernel", "Directory.Build.props", "Directory.Build.targets"))
         # Use the host's package/version rules for MeshKernel, too.
         for name in ("Directory.Build.props", "Directory.Build.targets"):
@@ -196,13 +206,19 @@ def prepare_workspace(plato_root, brep_root, cli, cache_root, *, plato_commit="H
         dest_feed.mkdir(parents=True)
         for package in packages:
             shutil.copyfile(package, dest_feed / package.name)
+        _progress("copying supplied compiler binary closure")
         shutil.copytree(cli.parent, stage / "cli")
-        if file_hashes(stage / "cli") != cli_files:
+        _progress("hashing copied workspace and sealing its receipt")
+        receipt = seal(stage, identity)
+        copied_cli = {name.removeprefix("cli/"): value for name, value in receipt["files"].items() if name.startswith("cli/")}
+        if copied_cli != cli_files:
             raise ValueError("Supplied compiler closure changed during copy")
-        if {p.name: digest(p) for p in dest_feed.glob("*.nupkg")} != identity["sdk_packages"]:
+        feed_prefix = dest_feed.relative_to(stage).as_posix() + "/"
+        copied_packages = {name.removeprefix(feed_prefix): value for name, value in receipt["files"].items() if name.startswith(feed_prefix)}
+        if copied_packages != identity["sdk_packages"]:
             raise ValueError("Package feed changed during copy")
-        seal(stage, identity)
         stage.rename(final)
+        _progress("workspace ready " + str(final))
     return dict(key=key, root=str(final), brep_root=str(final / "brep"), cli=str(final / "cli" / cli.name),
                 shipping_flags=flags, manifest=str(final / "complete.json"), identity=identity)
 
@@ -307,13 +323,23 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
                             baseline=baseline["closure_hash"] if baseline else None)
             folder = cache_root / "b" / identity_hash(identity)[:12]
             receipt = folder / "complete.json"
+            if folder.exists() and not receipt.exists():
+                # Preserve interrupted/failed diagnostics; complete corrupt caches
+                # must fail verification rather than quietly becoming cache misses.
+                source = contained(folder.parent, folder.name)
+                failed = contained(folder.parent, "failed-" + uuid.uuid4().hex[:8])
+                _progress("preserving incomplete build " + str(source) + " as " + str(failed))
+                source.rename(failed)
             if folder.exists():
+                _progress("verifying cached recipe " + name)
                 record = verify_cache(folder, identity)
                 result = json.loads((folder / "result.json").read_text())
             else:
                 folder.mkdir(parents=True)
                 brep = folder / "brep"
+                _progress("copying immutable inputs for recipe " + name)
                 shutil.copytree(root / "brep", brep)
+                _progress("generating recipe " + name)
                 generation_seconds = _generate(workspace, brep, flags, folder / "compiler.log", timeout)
                 worker = brep / "tools/optimizer-worker"
                 shutil.copytree(worker_source, worker)
@@ -326,6 +352,7 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
                 ET.SubElement(props, "BrepRoot").text = str(brep)
                 xml.write(project, encoding="utf-8", xml_declaration=True)
                 started = time.perf_counter()
+                _progress("building recorded worker for recipe " + name)
                 build = subprocess.run(["powershell", "-NoProfile", "-File", str(recorder), "-Project", str(project),
                                         "-TargetName", "optimizer-" + name], capture_output=True, text=True, timeout=timeout)
                 (folder / "build.log").write_text(build.stdout + build.stderr, encoding="utf-8")
@@ -362,6 +389,7 @@ def build_variants(workspace, variants, worker_source, recorder, *, timeout=900)
                               host_hashes=host, closure_hash=identity_hash(closure), output_hashes=closure,
                               workspace_key=workspace["key"])
                 write_json(folder / "result.json", result)
+                _progress("sealing successful recipe " + name)
                 seal(folder, identity)
             results[name] = result
             if name == "shipping":

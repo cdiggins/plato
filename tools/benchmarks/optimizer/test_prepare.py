@@ -100,8 +100,11 @@ class PrepareTests(unittest.TestCase):
         data = dict(root=str(workspace), identity=identity, key=identity_hash(identity), shipping_flags=[])
         with patch("prepare._generate", side_effect=ValueError("test generation failure")):
             results = build_variants(data, [dict(name="shipping", flags=[]), dict(name="full", flags=["--inline"])], worker, recorder)
+            retried = build_variants(data, [dict(name="shipping", flags=[]), dict(name="full", flags=["--inline"])], worker, recorder)
         self.assertEqual([r["status"] for r in results], ["error", "error"])
         self.assertIn("baseline failed", results[1]["error"])
+        self.assertEqual([r["status"] for r in retried], ["error", "error"])
+        self.assertEqual(len(list((self.root / "cache/b").glob("failed-*"))), 1)
 
     def test_build_freezes_host_and_deduplicates_equal_flags(self):
         workspace = self.root / "cache/workspaces/key"
@@ -137,6 +140,11 @@ class PrepareTests(unittest.TestCase):
         self.assertEqual(results[0]["host_hashes"], results[1]["host_hashes"])
         self.assertEqual(results[2]["alias_of"], "full")
         self.assertEqual(results, cached)
+        # Completed caches are evidence: corruption is an error, never a rebuild.
+        (Path(results[1]["worker"]).parent / "host.dll").write_bytes(b"corrupt")
+        rejected = build_variants(data, variants, worker, recorder)
+        self.assertEqual([r["status"] for r in rejected], ["error"] * 3)
+        self.assertFalse(list((self.root / "cache/b").glob("failed-*")))
 
 
 if __name__ == "__main__":
