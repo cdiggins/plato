@@ -2,7 +2,7 @@
 id: stdlib-464
 title: Stdlib laws unguarded against generated inputs fail in both backends (seven under cpu64, ten under gpu32)
 type: bug
-status: ready
+status: in-progress
 priority: "?"
 effort: "?"
 risk: "?"
@@ -41,3 +41,16 @@ or a tolerance scaled to the profile's `RoundingUnit`.
 - [ ] Each of the eight laws is guarded by its function's precondition, and the three seam laws
       use a tolerance that holds under gpu32; the conformance runner and the interpreter report
       no failure from them under either profile.
+
+## Current capsule diagnosis (2026-10-25)
+
+The current cpu64 failure is reproduced against fc4b5 in plato-brep commit
+12487045, with exact argument bits and unchanged inputs. Negative finite height
+reverses the specialized Clamp bounds while the point lies inside the documented
+origin-to-(0,height,0) segment. Negative radius is not necessary for this defect.
+The shipping capsule function has no positive-height precondition. For this law,
+repair endpoint ordering and retain the original property; the historical blanket
+guard diagnosis above does not establish the documented domain. Independent fixed
+distance regressions are staged; no production fix or acceptance is claimed yet.
+The other listed laws and gpu32 remain unverified. Do not tick the combined
+acceptance box based on the capsule repair alone.
