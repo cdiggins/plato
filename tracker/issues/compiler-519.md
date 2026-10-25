@@ -2,14 +2,14 @@
 id: compiler-519
 title: Resolved library methods collide with same-named record fields in CSharp
 type: bug
-status: in-progress
+status: done
 priority: p1
 effort: M
 risk: med
 area: compiler
 sprint:
 created: 2026-10-25
-closed:
+closed: 2026-10-25
 links: [plato-brep TKT-398]
 ---
 
