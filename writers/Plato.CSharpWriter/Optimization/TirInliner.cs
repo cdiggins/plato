@@ -37,7 +37,7 @@ namespace Ara3D.Geometry.CSharpWriter;
 /// Exposing Map/MapComponents calls hidden inside small library functions to the later passes is
 /// the point of the exercise. Refusal reasons: InlineReport.cs.
 /// </summary>
-public static class TirInliner
+public static partial class TirInliner
 {
     private const int MaxBodyNodes = 120;
     private const int MaxPasses = 8;

@@ -53,6 +53,8 @@ public static class TirRewrite
 
         switch (n)
         {
+            case TirInlineBinding binding:
+                return f(binding.WithChildren(new[] { Rewrite(binding.Value, f, enter, exit) }));
             case TirCall c:
                 return f(new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, c.ReturnType,
                     Rw(c.Args), c.Type, c.Origin, c.Name));
@@ -162,7 +164,7 @@ public static class TirRewrite
     /// writer each used to keep a private copy of (the pre-lowering passes never see a
     /// <see cref="TirLoweredLoop"/>, so including it here is a harmless superset for them).</summary>
     public static bool IsStatementNode(TirNode n)
-        => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop || n is TirLoweredLoop;
+        => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop || n is TirLoweredLoop || n is TirInlineBinding;
 
     /// <summary>A leaf whose repeated substitution costs nothing (parameter / variable / literal /
     /// type ref / default) — safe to substitute regardless of use count.</summary>

@@ -43,6 +43,21 @@ reads with inlining disabled, enabled, and followed by loop lowering.
 
 ## Usage, tests and effectiveness
 
+The experimental `CSharpWriter.InlineStatements` property runs the statement extension
+in [TirInliner.Statements.cs](../../writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs)
+before the expression pipeline. It admits whole local initializers and return expressions
+whose resolved callees contain local declarations followed by a return. It evaluates every
+actual into an explicitly typed local in source order, clones local identities, and binds
+the result with the declared return type. Branch and loop bodies retain their scopes;
+conditions, nested expression positions, lambda bodies and non-straight-line callees remain
+outside this initial slice. Exact ground signature checks exclude ambiguous generic dispatch.
+Expansion ancestry and cumulative per-caller growth limits bound recursive expansion.
+This property is an implementation experiment, not a production CLI flag or a performance
+claim. [compiler-504](../../tracker/issues/compiler-504.md) tracks broader scope and measurements.
+
+[StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs)
+compiles emitted C# and checks cloned names and required evaluation of unused arguments.
+
 Enable `--inline`; use `--inline-report` to see accepted totals and categorized refusals from
 [InlineReport](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs). Use `--dump-tir`
 to see which later transformations the exposed body enables.

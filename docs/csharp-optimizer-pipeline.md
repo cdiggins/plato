@@ -40,6 +40,11 @@ both `LowerLoops` and `FuseCombinators`; `plato run --backend=csharp --loops --f
 `--fuse` can rewrite expressions without `--loops`. Conversely, `--loops` consumes supported
 `Map`/`MapRange` producer chains even without `--fuse` (section 7).
 
+The experimental writer property `InlineStatements` adds direct statement-body call expansion
+before this pipeline. Its typed local marker, `TirInlineBinding`, preserves argument and result
+conversion boundaries. Its restricted scope and verification are described in the
+[inlining guide](optimizer/inlining.md); the existing CLI recipes do not enable it.
+
 Two diagnostics help while working on a pass. `--dump-tir=<dir>` writes one file per owner type, listing for
 every body its input and the tree after each pass that changed it. `--inline-report` prints, to standard
 error, each inliner refusal keyed by (caller, callee, reason), plus totals.

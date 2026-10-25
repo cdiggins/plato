@@ -186,6 +186,8 @@ namespace Ara3D.Geometry.CSharpWriter
         /// records each phase that changed the tree (see the field comment).</summary>
         public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi)
         {
+            if (InlineStatements)
+                tir = TirInliner.InlineStatements(tir, this, fi?.OwnerType?.Name);
             if (TirDumpDir == null)
             {
                 tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
@@ -407,6 +409,7 @@ namespace Ara3D.Geometry.CSharpWriter
         // become visible to those transforms. See TirInliner for the eligibility rules.
         // Default (false) output is unchanged.
         public bool InlineCalls { get; set; }
+        public bool InlineStatements { get; set; }
 
         // When true (--optimize-arrays, optimizer stage 2 increment 1), Map/MapRange call sites in
         // MATERIALIZATION positions (constructor / tuple arguments — results stored into structs —

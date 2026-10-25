@@ -52,8 +52,32 @@ It is a proposal, not an instruction to execute the earlier design plan.
 
 ## Done means
 
-- [ ] Agree the experiment scope and shared prerequisites with compiler-483/485/486/487.
+- [x] Agree the experiment scope and shared prerequisites with compiler-483/485/486/487.
 - [ ] Statement-body calls, including selected branching/looping kernels, inline with preserved evaluation and conversions in executable C# tests.
 - [ ] Known lambdas disappear through locals/parameters and inside nested callback scopes; remaining callables have explicit reasons.
 - [ ] Iterative simplification exposes deeper expansion with bounded growth and correct recursion handling.
 - [ ] Ablation measurements on equivalent BRep meshes distinguish enabling effects, allocations and runtime performance; C# only.
+
+## Implementation scope and recovery
+
+The user's request to tackle this issue authorizes this experiment, not the older combined
+plan. The shared prerequisite is ordered, explicitly typed bindings in the existing TirInliner
+and C# emitter. compiler-485 owns broader preserved scopes; compiler-486's exact signature,
+eager actual and growth constraints apply here. compiler-487's shared callback clone registry
+does not yet exist: no competing registry or storage change is introduced. compiler-483's
+hazards require executable witnesses before admitting the affected shapes. The experiment
+remains opt-in, C# only, with the existing inline policy retained as an ablation baseline.
+
+First milestone adds CSharpWriter.InlineStatements and direct expansion of straight-line
+statement callees at whole initializers and returns. All actuals are bound in order, even
+unused ones; local definitions are cloned and the return boundary has an explicit type.
+An ancestry set and per-caller node/depth budgets bound expansion. Conditions and nested
+expressions remain opaque, and lambdas, unresolved types and non-straight-line callees are
+refused. There is no CLI flag or benchmark claim yet.
+
+Verification: recorded Release test-project build passed; 17 focused generated-C# and rewrite
+tests passed, including single evaluation, unused-actual faults, sibling fault order, fresh
+local names and return conversion. Greenhouse evidence and optimizer guide review refreshed.
+Root PROGRESS.md belongs to another mission; this section is the recovery record.
+Next: ordered expression prerequisites and explicit inline exit/result regions, then known
+callables, bounded iterative simplification, and the pinned BRep ablation/profile matrix.

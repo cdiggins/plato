@@ -192,6 +192,12 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     {
         switch (n)
         {
+            case TirInlineBinding binding:
+                Write(CSharpTypeName(binding.Type));
+                Write($" {CSharpTypeWriter.Identifier(binding.Def.Name)} = ");
+                WriteNode(binding.Value);
+                WriteLine(";");
+                return;
             case TirBlock b:
                 WriteStartBlock();
                 foreach (var s in b.Statements)
