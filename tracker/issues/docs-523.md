@@ -2,14 +2,14 @@
 id: docs-523
 title: Hierarchical language and standard-library reference with React reader
 type: feature
-status: in-progress
+status: done
 priority: p1
 effort: L
 risk: med
 area: docs
 sprint: 
 created: 2026-10-25
-closed:
+closed: 2026-10-25
 links: []
 ---
 
