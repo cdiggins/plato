@@ -45,18 +45,21 @@ reads with inlining disabled, enabled, and followed by loop lowering.
 
 The experimental `CSharpWriter.InlineStatements` property runs the statement extension
 in [TirInliner.Statements.cs](../../writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs)
-before the expression pipeline. It admits whole local initializers and return expressions
-whose resolved callees contain local declarations followed by a return. It evaluates every
+before the expression pipeline. It admits resolved statement callees ending in a return,
+including branches, early returns and loops. It evaluates every
 actual into an explicitly typed local in source order, clones local identities, and binds
-the result with the declared return type. Branch and loop bodies retain their scopes;
-conditions, nested expression positions, lambda bodies and non-straight-line callees remain
-outside this initial slice. Exact ground signature checks exclude ambiguous generic dispatch.
+the result with the declared return type. An inline region assigns that result and jumps to
+its own exit label, so a callee return cannot exit the caller. Call arguments are sequenced
+before any later argument's prerequisites; conditional branches keep their prerequisites
+behind the guard. Branch and loop bodies retain their scopes. Loop conditions, other compound
+expression forms and lambda bodies remain opaque. Exact ground signature checks exclude ambiguous generic dispatch.
 Expansion ancestry and cumulative per-caller growth limits bound recursive expansion.
 This property is an implementation experiment, not a production CLI flag or a performance
 claim. [compiler-504](../../tracker/issues/compiler-504.md) tracks broader scope and measurements.
 
 [StatementInliningTests](../../tests/PlatoTests/Optimization/StatementInliningTests.cs)
-compiles emitted C# and checks cloned names and required evaluation of unused arguments.
+compiles emitted C# and checks cloned names, required evaluation of unused arguments, sibling
+fault order, return conversions, conditional guards, zero-trip loops, early exits and recursion.
 
 Enable `--inline`; use `--inline-report` to see accepted totals and categorized refusals from
 [InlineReport](../../writers/Plato.CSharpWriter/Optimization/InlineReport.cs). Use `--dump-tir`

@@ -61,8 +61,11 @@ public static partial class TirInliner
             {
                 TirReturn r => new TirReturn(Expand(r.Value, prefix), r.Origin),
                 TirLet l => new TirLet(l.Def, Expand(l.Value, prefix), l.Type, l.Origin),
+                TirInlineBinding b => new TirInlineBinding(b.Def, Expand(b.Value, prefix)),
+                TirInlineExit e => new TirInlineExit(e.Result, Expand(e.Value, prefix)),
+                TirAssign a when a.LValue is TirVariable => new TirAssign(a.LValue, Expand(a.RValue, prefix), a.Type, a.Origin),
                 TirBlock b => Rewrite(b),
-                TirIf i => new TirIf(i.Condition, RewriteScope(i.IfTrue), RewriteScope(i.IfFalse), i.Origin),
+                TirIf i => new TirIf(Expand(i.Condition, prefix), RewriteScope(i.IfTrue), RewriteScope(i.IfFalse), i.Origin),
                 TirLoop l => new TirLoop(l.Condition, RewriteScope(l.Body), l.Origin),
                 _ => node
             };
@@ -81,6 +84,12 @@ public static partial class TirInliner
 
         private TirNode Expand(TirNode node, List<TirNode> prefix)
         {
+            if (node is TirConditional conditional && Ground(node.Type))
+                return ExpandConditional(conditional, prefix);
+            if (node is TirCoerce coerce)
+                return coerce.WithChildren(new[] { Expand(coerce.Inner, prefix) });
+            if (node is TirCall nested)
+                node = ExpandArguments(nested, prefix);
             if (node is not TirCall call || call.Callee?.Body == null || call.Args.Count == 0)
                 return node;
             var receiver = TrustedTypeName(_caller, call.Args[0], _host, _owner);
@@ -96,25 +105,61 @@ public static partial class TirInliner
             var parameters = new Dictionary<ParameterDef, TirNode>();
             for (var i = 0; i < call.Args.Count; i++)
                 parameters[callee.Parameters[i]] = Bind(call.Args[i], ParameterType(callee, i), prefix);
-            var locals = block.Statements.OfType<TirLet>().ToDictionary(l => l.Def, l => Fresh(l.Value.Type));
+            var locals = block.Descendants().OfType<TirLet>().ToDictionary(l => l.Def, l => Fresh(l.Value.Type));
+            var resultDef = Fresh(callee.ZonkedReturnType ?? callee.ReturnType);
             TirNode Clone(TirNode n) => TirRewrite.Rewrite(n, x => x switch
             {
                 TirParameter p when parameters.TryGetValue(p.Def, out var value) => value,
                 TirVariable v when locals.TryGetValue(v.Def, out var def) => new TirVariable(def, v.Type, v.Origin),
+                TirLet l => new TirInlineBinding(locals[l.Def], l.Value),
+                TirReturn r => new TirInlineExit(resultDef, r.Value),
                 _ => x
             });
-            foreach (var local in block.Statements.OfType<TirLet>())
-                prefix.Add(new TirInlineBinding(locals[local.Def], Expand(Clone(local.Value), prefix)));
-            var result = Expand(Clone(((TirReturn)block.Statements.Last()).Value), prefix);
-            result = Bind(result, callee.ZonkedReturnType ?? callee.ReturnType, prefix);
+            prefix.Add(new TirInlineRegion(resultDef, Rewrite(Clone(block))));
             _ancestry.Remove(callee.Original);
-            return result;
+            return new TirVariable(resultDef, resultDef.Type, call.Origin);
+        }
+
+        private TirNode ExpandArguments(TirCall call, List<TirNode> prefix)
+        {
+            if (call.Args.Any(a => !Ground(a.Type) || a is TirTypeRef))
+                return call;
+            var parts = call.Args.Select(a =>
+            {
+                var before = new List<TirNode>();
+                return (Before: before, Value: Expand(a, before));
+            }).ToList();
+            if (parts.All(p => p.Before.Count == 0))
+                return call.WithChildren(parts.Select(p => p.Value).ToList());
+            var values = new List<TirNode>();
+            foreach (var part in parts)
+            {
+                prefix.AddRange(part.Before);
+                values.Add(Bind(part.Value, part.Value.Type, prefix));
+            }
+            return call.WithChildren(values);
+        }
+
+        private TirNode ExpandConditional(TirConditional node, List<TirNode> prefix)
+        {
+            var condition = Expand(node.Condition, prefix);
+            var yes = new List<TirNode>();
+            var no = new List<TirNode>();
+            var ifTrue = Expand(node.IfTrue, yes);
+            var ifFalse = Expand(node.IfFalse, no);
+            if (yes.Count == 0 && no.Count == 0)
+                return new TirConditional(condition, ifTrue, ifFalse, node.Type, node.Origin);
+            var result = Fresh(node.Type);
+            yes.Add(new TirInlineExit(result, ifTrue));
+            no.Add(new TirInlineExit(result, ifFalse));
+            var branch = new TirIf(condition, new TirBlock(yes, node.Origin), new TirBlock(no, node.Origin), node.Origin);
+            prefix.Add(new TirInlineRegion(result, new TirBlock(new[] { branch }, node.Origin)));
+            return new TirVariable(result, node.Type, node.Origin);
         }
 
         private bool Eligible(TirCall call, TirFunction callee, TirBlock body)
         {
             if (body.Statements.Count == 0 || body.Statements.Last() is not TirReturn
-                || body.Statements.Take(body.Statements.Count - 1).Any(n => n is not TirLet)
                 || callee.Parameters.Count != call.Args.Count
                 || !Ground(callee.ZonkedReturnType ?? callee.ReturnType)
                 || !Equals(call.Type, callee.ZonkedReturnType ?? callee.ReturnType))
@@ -124,7 +169,8 @@ public static partial class TirInliner
                     || !Equals(call.Args[i].Type, ParameterType(callee, i))
                     || call.Args[i] is TirTypeRef)
                     return false;
-            return body.Descendants().All(n => n is not (TirName or TirUnresolved or TirLambda or TirAssign or TirTypeRef)
+            return body.Descendants().All(n => n is not (TirName or TirUnresolved or TirLambda or TirTypeRef)
+                && (n is not TirAssign a || a.LValue is TirVariable)
                 && (n is not TirLet l || Ground(l.Value.Type))
                 && (n is not TirCall c || c.Callee != null && IsCallableOnReceiver(_host, c))
                 && (n.Type == null || Ground(n.Type)));

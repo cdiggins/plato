@@ -53,7 +53,7 @@ It is a proposal, not an instruction to execute the earlier design plan.
 ## Done means
 
 - [x] Agree the experiment scope and shared prerequisites with compiler-483/485/486/487.
-- [ ] Statement-body calls, including selected branching/looping kernels, inline with preserved evaluation and conversions in executable C# tests.
+- [x] Statement-body calls, including selected branching/looping kernels, inline with preserved evaluation and conversions in executable C# tests.
 - [ ] Known lambdas disappear through locals/parameters and inside nested callback scopes; remaining callables have explicit reasons.
 - [ ] Iterative simplification exposes deeper expansion with bounded growth and correct recursion handling.
 - [ ] Ablation measurements on equivalent BRep meshes distinguish enabling effects, allocations and runtime performance; C# only.
@@ -79,5 +79,11 @@ Verification: recorded Release test-project build passed; 17 focused generated-C
 tests passed, including single evaluation, unused-actual faults, sibling fault order, fresh
 local names and return conversion. Greenhouse evidence and optimizer guide review refreshed.
 Root PROGRESS.md belongs to another mission; this section is the recovery record.
-Next: ordered expression prerequisites and explicit inline exit/result regions, then known
-callables, bounded iterative simplification, and the pinned BRep ablation/profile matrix.
+Second milestone adds ordered call-argument prerequisites, guarded conditional prerequisites,
+and explicit inline result/exit regions. Branching and looping callees ending in a return
+can expand; early returns jump to the local region exit. Tests assert disappearance of the
+selected calls and preserve zero-trip loops, early exits, sibling faults and recursive calls.
+The recorded build and 17 focused tests pass. Loop conditions and other compound expression
+forms remain opaque; regions are not yet traversed by loop lowering.
+Next: known callables, scoped loop lowering, bounded iterative simplification, and the pinned
+BRep ablation/profile matrix. No mesh or allocation claim has been made.

@@ -16,6 +16,9 @@ type InlineBox { Value: Integer; }
 library Operators {
     Add(a: Integer, b: Integer): Integer;
     Divide(a: Integer, b: Integer): Integer;
+    Subtract(a: Integer, b: Integer): Integer;
+    LessThan(a: Integer, b: Integer): Boolean;
+    GreaterThan(a: Integer, b: Integer): Boolean;
     Tick(x: Integer): Integer;
     First(x: Integer): Integer;
     Second(x: Integer): Integer;
@@ -29,6 +32,19 @@ library StatementProbe {
     Order(x: Integer): Integer => x.First.Ignore(x.Second);
     Unbox(x: InlineBox): Integer { var local = x; return local; }
     BoxEntry(x: InlineBox): Integer => x.Unbox;
+    Loop(x: Integer): Integer {
+        var local = 0;
+        while (local < x) {
+            if (local > 2) { return local; }
+            local = local + 1;
+        }
+        return local;
+    }
+    AfterLoop(x: Integer): Integer => x.Loop + 7;
+    Guard(flag: Boolean, x: Integer): Integer => flag ? x.Twice : x.First.Ignore(x.Second);
+    Sibling(x: Integer): Integer => x.First.Ignore(x.Second.Twice);
+    Rec(x: Integer): Integer { var local = x; return local > 0 ? (local - 1).Rec : 0; }
+    StartRec(x: Integer): Integer => x.Rec;
 }";
 
     [TestCase(false)]
@@ -48,13 +64,20 @@ library StatementProbe {
             writer.WriteAll();
             var source = writer.Files["StatementProbe.g.cs"].ToString();
             if (inline)
+            {
                 Assert.That(source, Does.Contain("_inline1"), "Fixture must exercise statement expansion.");
+                Assert.That(source, Does.Not.Contain(".Loop()").And.Not.Contain(".Twice()").And.Not.Contain(".Unbox()"));
+                Assert.That(source, Does.Contain("goto _inline"));
+            }
             var assembly = CSharpTestCompilation.CompileAndLoad(new[] { source, writer.Files["_InlineBox.g.cs"].ToString(),
                 @"global using System.Collections.Generic; namespace Ara3D.Collections { }
 namespace Ara3D.Geometry { public static class ProbeOperators {
 public static int Calls;
 public static Integer Add(this Integer a, Integer b) => (Integer)((int)a + (int)b);
 public static Integer Divide(this Integer a, Integer b) => (Integer)((int)a / (int)b);
+public static Integer Subtract(this Integer a, Integer b) => (Integer)((int)a - (int)b);
+public static Boolean LessThan(this Integer a, Integer b) => (Boolean)((int)a < (int)b);
+public static Boolean GreaterThan(this Integer a, Integer b) => (Boolean)((int)a > (int)b);
 public static Integer Tick(this Integer x) { Calls++; return x; }
 public static Integer First(this Integer x) => throw new System.InvalidOperationException(""first"");
 public static Integer Second(this Integer x) => throw new System.InvalidOperationException(""second"");
@@ -71,6 +94,15 @@ public static Integer Second(this Integer x) => throw new System.InvalidOperatio
             Assert.That(ordered!.InnerException!.Message, Is.EqualTo("first"));
             var box = Activator.CreateInstance(assembly.GetType("Ara3D.Geometry.InlineBox")!, (Integer)13)!;
             Assert.That((int)(Integer)library.GetMethod("BoxEntry")!.Invoke(null, new[] { box })!, Is.EqualTo(13));
+            foreach (var n in new[] { 0, 1, 5 })
+                Assert.That((int)(Integer)library.GetMethod("AfterLoop")!.Invoke(null, new object[] { (Integer)n })!,
+                    Is.EqualTo(Math.Min(n, 3) + 7));
+            Assert.That((int)(Integer)library.GetMethod("Guard")!.Invoke(null,
+                new object[] { (Ara3D.Geometry.Boolean)true, (Integer)9 })!, Is.EqualTo(18));
+            var sibling = Assert.Throws<System.Reflection.TargetInvocationException>(
+                () => library.GetMethod("Sibling")!.Invoke(null, new object[] { (Integer)0 }));
+            Assert.That(sibling!.InnerException!.Message, Is.EqualTo("first"));
+            Assert.That((int)(Integer)library.GetMethod("StartRec")!.Invoke(null, new object[] { (Integer)4 })!, Is.Zero);
         }
         finally
         {

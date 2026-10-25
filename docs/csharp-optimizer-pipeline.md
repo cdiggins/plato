@@ -44,6 +44,8 @@ The experimental writer property `InlineStatements` adds direct statement-body c
 before this pipeline. Its typed local marker, `TirInlineBinding`, preserves argument and result
 conversion boundaries. Its restricted scope and verification are described in the
 [inlining guide](optimizer/inlining.md); the existing CLI recipes do not enable it.
+`TirInlineRegion` and `TirInlineExit` preserve branch-local prerequisites and isolate callee
+returns from caller returns. Later loop lowering currently leaves these regions opaque.
 
 Two diagnostics help while working on a pass. `--dump-tir=<dir>` writes one file per owner type, listing for
 every body its input and the tree after each pass that changed it. `--inline-report` prints, to standard

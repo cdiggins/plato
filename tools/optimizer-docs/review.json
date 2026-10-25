@@ -1,5 +1,5 @@
 {
-  "note": "Reviewed the opt-in direct statement-call extension, typed binding emission and executable tests. Updated the inlining guide and pipeline contract with exact eligibility, sequencing, conversion and growth boundaries; default CLI recipes are unchanged.",
+  "note": "Reviewed ordered call-argument prerequisites and guarded conditional regions. Explicit typed result and goto exit isolate early returns; loop conditions remain opaque. Updated inlining and pipeline guides. Executable tests require calls to disappear and preserve faults, conversions, branches, loops and recursion.",
   "inputs": {
     "src/Plato.CLI/Program.cs": "c3949f230b12b1ad0bab1328dd066d9d99f48958f006079b31a2dbdc33a9017a",
     "src/Plato.Compiler/Checking/Tir.cs": "0ef31634608c8cba065932afb848d43b289a6ead3f106213c328d4981f50e33f",
@@ -20,7 +20,7 @@
     "tests/PlatoTests/Optimization/InlinerTests.cs": "dcfccfd83e0fcea67bc9afbb803bba6deb8718894e0fec953e3863f93c8007eb",
     "tests/PlatoTests/Optimization/LiteralUnrollingTests.cs": "0cedbc9396d4fd0de5a4f9dbc9af77cae1e06226934f55d77be92ca8499a1015",
     "tests/PlatoTests/Optimization/LoopLowererArrayTypeTests.cs": "b16dde22d414d09b3ffb36536e2fed43b0d3332e85c6096df097ee18ee319646",
-    "tests/PlatoTests/Optimization/StatementInliningTests.cs": "955de565a83cef323f310418a39a1968df979f3d21cfe7be24eb6ec10e5a77fc",
+    "tests/PlatoTests/Optimization/StatementInliningTests.cs": "81610097bb362d66abb49900d8c7a266cdad2db6982235995190f58316541470",
     "tests/PlatoTests/Optimization/TirRewriteTests.cs": "d260d0a269f7a24a52db1492679b398951a7a4daaff1f761b88f88957aa59bf5",
     "writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs": "21cee6e8425c98135b1c0cfe854c6ca072d450b85e39c929415282706c4ded55",
     "writers/Plato.CSharpWriter/CSharpWriter.cs": "04cfea92c1acaa7fbf9b04f9e38fd8519c88f2fdfd0d977a1937279017e1720f",
@@ -32,14 +32,15 @@
     "writers/Plato.CSharpWriter/Optimization/TirFusion.cs": "11e3806d6639af4f0896a82ea4dddd8d34a0dbedc677fc8ef0ae993e38b230d4",
     "writers/Plato.CSharpWriter/Optimization/TirInlineBinding.cs": "ea513499f26009a31f198915a292c736f5b57df505ecdb2dd216c27a417a08d3",
     "writers/Plato.CSharpWriter/Optimization/TirInliner.cs": "d8f767f6dc75a0c14c37425ada077f9164d90e1e6e13af059310831bfc175ac8",
-    "writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs": "50cbbb9cbacaf225e650fce44d89fc6da9573aa318409bc1d531ac9ce9278386",
+    "writers/Plato.CSharpWriter/Optimization/TirInliner.Statements.cs": "516ab13be24ecef8f595eea90fa6684fa25b2890c51ff43263c05699a398e8b9",
+    "writers/Plato.CSharpWriter/Optimization/TirInlineRegion.cs": "10c836fd7f88496ebf43538156d1671498cfc5183def78e9d75dc1f9a86c403f",
     "writers/Plato.CSharpWriter/Optimization/TirLiteralUnroller.cs": "d1e5460d67b203697d28cad24c014f7ae2aa71d59dbe4a4479d13fe8c9646ffb",
     "writers/Plato.CSharpWriter/Optimization/TirLoopLowerer.cs": "da1b3c0377a2671f2b1814c3a420ac98be2db1d20648476a5898953eb4ca1f48",
-    "writers/Plato.CSharpWriter/Optimization/TirRewrite.cs": "1a06d93d048a084f77fb6a5eb6259abc48b95a5d69ee3681edde1006b871c266",
-    "writers/Plato.CSharpWriter/TirCSharpBodyWriter.cs": "59c0e52a30315afc4c9bdb9e0f496b31aaa947d2291317623da34c71f4b223ed",
+    "writers/Plato.CSharpWriter/Optimization/TirRewrite.cs": "8148e5ad366aa0d76710a546a8031fec0fa9f0b87c9e0186f2e69ed53eb64fbf",
+    "writers/Plato.CSharpWriter/TirCSharpBodyWriter.cs": "1d10fca4115e7e9cef1914f2b1675b746029cdec00683983ede485564521c14d",
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter.FlatMap.cs": "0cd93142c3e53f7b22f3e9b73de4a0077be6e9ab9b6f8151416b153697f3378c",
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter.Loops.cs": "23cd544d231eb1e312963bd90e45229aba5e255be737a17ccfca7f5e233bad12"
   },
-  "evidence_hash": "6a7362012577d55529a0207713924317e61a0cd773be31d3082a3945d65ddd20",
+  "evidence_hash": "6b9203f07778c16410dd6c97d7f202a01be49af73509a20f190a2a3622e5c87a",
   "generator_hash": "32b4f4af3007c0fdac6454a047374cbeaf29624cd6e8d270b5680cdbd5f22bf9"
 }

@@ -192,6 +192,16 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     {
         switch (n)
         {
+            case TirInlineRegion region:
+                WriteLine($"{CSharpTypeName(region.Type)} {region.Result.Name};");
+                WriteStatement(region.Body);
+                WriteLine($"{region.ExitLabel}: ;");
+                return;
+            case TirInlineExit exitRegion:
+                Write($"{exitRegion.Result.Name} = ");
+                WriteNode(exitRegion.Value);
+                WriteLine($"; goto {exitRegion.Result.Name}_exit;");
+                return;
             case TirInlineBinding binding:
                 Write(CSharpTypeName(binding.Type));
                 Write($" {CSharpTypeWriter.Identifier(binding.Def.Name)} = ");
