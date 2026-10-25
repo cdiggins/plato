@@ -53,6 +53,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-463](issues/plato-463.md) | Interpreter: whole-model laws still cost about 1 microsecond per call; EdgeReversalPreservesMesh 15 s, a no-memo case minutes | debt | p2 | M | med | plato | ready |  |
 | [plato-465](issues/plato-465.md) | Warm server: a renamed or deleted declaration stays alive at a compiled path; plato_check reports a phantom CHK203 | bug | p2 | M | med | plato | ready |  |
 | [plato-466](issues/plato-466.md) | plato_laws: a parse or compile failure answers ok=false with errors that a client reading typeErrors and results never sees (0 laws, 0 type errors) | bug | p2 | S | low | plato | ready |  |
+| [repo-512](issues/repo-512.md) | C# build recorder project mode calls missing run_build | bug | p2 | S | low | repo | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-427](issues/plato-427.md) | Finite elements: nodal stress smoothing, hexahedral and higher-order elements | feature | p3 | M | low | plato | ready |  |

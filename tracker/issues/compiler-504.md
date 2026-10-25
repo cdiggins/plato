@@ -117,3 +117,16 @@ the legacy top-level hoister accepted, so the production comparison must report 
 An isolated six-policy production build matrix is running under .temp/statement-brep against
 the earlier 3d279705 compiler checkpoint; rerun treatment variants on this later milestone
 before using them for performance claims. No production results have been accepted yet.
+
+The final compiler snapshot is d0a6773f; ceda0337 only tightens malformed CLI argument
+validation and does not affect its valid experimental recipes. The final build/measurement
+workspace is .temp/statement-brep-final. The driver freezes all host dependencies and rejects
+changed or failed variants. Allocation profiles use a separate host with phase events,
+the same library DLLs, and a TraceEvent reader; only second-run meshing phases are attributed.
+The first ODIN baseline/current profiles have complete stacks, no lost events, and equivalent
+mesh diagnostics. Full profiling and timing remain in progress.
+
+The repository gate recorder passed all 368 PlatoTests and both ratchets; a separate direct
+assembly run also passed and saved .temp/compiler-504-tests/compiler-504-full.trx. The Studio
+battery passed both lints, its SDK build and geometry tests. Its external frozen-artifact gate
+failed in the already tracked repo-473 category. No checksum baseline was changed.
