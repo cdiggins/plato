@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-25 — [compiler-522](issues/compiler-522.md) — Prepared-corpus optimizer performance benchmark for plato-brep — done (6bf68914c38a232a6210f39ca69c3feba712fe93)
 - 2026-10-25 — [docs-523](issues/docs-523.md) — Hierarchical language and standard-library reference with React reader — done (bf35c348ee3d6876cc8102d7ea064fa444b0879c)
 - 2026-10-25 — [docs-527](issues/docs-527.md) — Clarify implemented status of historical sum-type design — done (7afd7c21): historical design clarified against semantics, checker, writer and tests; local links and whitespace checked
 - 2026-10-25 — [compiler-510](issues/compiler-510.md) — Explore loop splitting on invariant conditions — done (e412eeef); geometry comparison found no consistent benefit; no production pass promoted

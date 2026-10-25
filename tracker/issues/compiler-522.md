@@ -2,14 +2,14 @@
 id: compiler-522
 title: Prepared-corpus optimizer performance benchmark for plato-brep
 type: feature
-status: in-progress
+status: done
 priority: p1
 effort: L
 risk: med
 area: compiler
 sprint:
 created: 2026-10-25
-closed:
+closed: 2026-10-25
 links: []
 ---
 
