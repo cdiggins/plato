@@ -329,7 +329,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                     return ApplyFunctionType(p.Def?.Type, argTypes, fc);
 
                 case VariableRefSymbol v:
-                    return ApplyFunctionType(v.Def?.Type, argTypes, fc);
+                    return ApplyFunctionType(Synthesize(v), argTypes, fc);
 
                 default:
                     return Vars.Fresh("Call");

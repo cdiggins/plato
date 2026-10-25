@@ -34,6 +34,21 @@ Plato source
        TirExactOutput specialization                    --loops --exact-output
 ```
 
+Emission preserves the callee selected by the checker. For supported concrete, non-generic
+receivers, a bodied library method that collides with a record field is emitted in a separately
+named static class, and its resolved calls use a fully qualified static call. This avoids both
+an illegal field/method declaration and C# instance-field shadowing of extension syntax.
+[ExtensionStylePlan](../writers/Plato.CSharpWriter/ExtensionStyleWriter.cs) selects the route by
+the resolved FunctionDef and receiver plan, not by name alone. Field projection and unresolved
+stored-function invocation keep their existing routes. A supported type-reference receiver
+supplies the default receiver value. [CSharpWriter](../writers/Plato.CSharpWriter/CSharpWriter.cs)
+allocates class names that avoid declared types, output names and emitted method names;
+[TirCSharpBodyWriter](../writers/Plato.CSharpWriter/TirCSharpBodyWriter.cs) emits the qualified call.
+This route does not establish generic-receiver collision support, change pass order or require
+an optimization flag. Behavioral coverage lives in
+[FunctionFieldCallTests](../tests/Plato.Interpreter.Tests/FunctionFieldCallTests.cs) and
+[FunctionFieldCollisionControls](../tests/Plato.Interpreter.Tests/FunctionFieldCollisionControls.cs).
+
 Each pass returns its input unchanged when its flag is off or nothing matched, so any subset of these
 baseline flags is valid and with no flag the output is the unoptimized C#. The new
 `--fuse-consumers` and `--exact-output` generation flags require C# output and `--loops`;

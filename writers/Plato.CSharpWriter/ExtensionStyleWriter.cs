@@ -116,6 +116,14 @@ public class ExtensionStylePlan
 
     public IEnumerable<FunctionInstance> MovedFunctions => _moved;
 
+    private readonly List<MovedExtensionMember> _fieldCollisionMembers = new();
+    public IReadOnlyList<MovedExtensionMember> FieldCollisionMembers => _fieldCollisionMembers;
+    public string FieldCollisionClassName { get; internal set; }
+
+    public bool HasFieldCollision(Ara3D.Geometry.Compiler.Symbols.FunctionDef callee)
+        => callee != null && _fieldCollisionMembers.Any(m => ReferenceEquals(m.Function.Implementation, callee));
+
+
     public ExtensionStylePlan(CSharpWriter writer, ConcreteType ct)
     {
         var typeDef = ct.TypeDef;
@@ -138,6 +146,13 @@ public class ExtensionStylePlan
         foreach (var g in ct.InterfaceFunctionGroups)
         {
             var f = writer.Analyzer.ChooseBestFunction(g, out _);
+            // A field and method cannot share a C# member name. Resolved calls use
+            // a qualified static method; projection and delegate invocation stay fields.
+            if (!isGeneric && fieldNames.Contains(f.Name) && f.ParameterNames.Count > 1
+                && f.ParameterNames[0] != "_" && f.Implementation.Body != null
+                && f.Implementation.OwnerType?.IsLibrary() == true
+                && !CSharpConcreteTypeWriter.SkipFunction(f, fieldNames, ct.Name, skipFields: false))
+                _fieldCollisionMembers.Add(new MovedExtensionMember(f, ct, f.Implementation.OwnerType.Name, this));
             if (CSharpConcreteTypeWriter.SkipFunction(f, fieldNames, ct.Name))
                 continue;
             candidates.Add((f, typeWriter.ToFunctionInfo(f, typeDef)));
@@ -261,6 +276,13 @@ public class ExtensionStylePlan
 /// <summary>Writes the per-library extension-method files ({Library}.g.cs) from the moved members.</summary>
 public static class ExtensionStyleWriter
 {
+    public static string AllocateClassName(string name, ISet<string> takenNames)
+    {
+        while (!takenNames.Add(name))
+            name += "Library";
+        return name;
+    }
+
     public static void WriteLibraryFiles(CSharpWriter writer)
     {
         // Names already claimed in the generated namespace: a static library class may not
@@ -271,12 +293,17 @@ public static class ExtensionStyleWriter
             if (t != null && (t.IsConcrete() || t.IsInterface()))
                 takenNames.Add(t.Name);
 
+        foreach (var plan in writer.ExtensionPlans.Values)
+            if (plan.FieldCollisionMembers.Count > 0)
+            {
+                var className = plan.FieldCollisionClassName;
+                takenNames.Add(className);
+                writer.WriteFile($"{className}.g.cs", () => WriteLibraryClass(writer, className, plan.FieldCollisionMembers.ToList()));
+            }
+
         foreach (var libGroup in writer.MovedMembers.GroupBy(m => m.LibraryName))
         {
-            var className = libGroup.Key;
-            while (takenNames.Contains(className))
-                className += "Library";
-            takenNames.Add(className);
+            var className = AllocateClassName(libGroup.Key, takenNames);
 
             var members = libGroup.ToList();
             writer.WriteFile($"{className}.g.cs", () => WriteLibraryClass(writer, className, members));

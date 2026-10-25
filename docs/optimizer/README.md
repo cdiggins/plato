@@ -41,6 +41,8 @@ optimization is disabled. After the passes, [TirCSharpBodyWriter](../../writers/
 renders their trees and marker nodes. The [compiler's TIR provider](../../src/Plato.Compiler/Checking/TirEmitSource.cs)
 supplies specialized bodies; the optimizer does not reparse Plato or introduce another resolver. Open-generic fallback also admits type-agnostic constructor payloads: payload values are not dispatch receivers, while unresolved expressions and unlicensed dispatch nested in constructor arguments remain rejected.
 
+The [pipeline reference](../csharp-optimizer-pipeline.md#1-what-runs-in-order) also describes how emission preserves resolved calls when a record field has the same name.
+
 ## What effectiveness means
 
 Removing an intermediate array is a structural benefit; it is not by itself a measured speedup.

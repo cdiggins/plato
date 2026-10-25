@@ -130,7 +130,10 @@ known. There are four routes, tried in this order for a `TirCall`:
 3. **Syntactic call.** A call the elaborator left without a callee: the predicates, projections
    and factories the `match` lowering and the qualified case syntax produce (`IsCircle(c)`,
    `Circle_Radius(c)`, `BrepCurve.Circle(f, r)`), a field read, or a name resolved against the
-   argument values by the checker's own tiers (exact, generic, interface, conversion).
+   argument values by the checker's own tiers (exact, generic, interface, conversion). If no named
+   method resolves and the receiver is a record with a function-valued field of that name,
+   dispatch invokes the stored function with the remaining arguments. A resolved named method
+   keeps precedence.
 4. **Shape-derived members.** The members the C# writer synthesizes from a struct's declared
    shape rather than from Plato source: structural `Equals`, `NotEquals` and `Hash`; `Count` and
    `At` over the fields, or over a single indexable field; `Components`, `NumComponents`,

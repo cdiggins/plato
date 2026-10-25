@@ -795,6 +795,26 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             return;
         }
 
+        if (args[0]?.Type?.Def is { } receiver && _tw.Writer.ExtensionPlans != null
+            && _tw.Writer.ExtensionPlans.TryGetValue(receiver, out var fieldPlan)
+            && fieldPlan.HasFieldCollision(call.Callee))
+        {
+            Write($"global::{_tw.Writer.Namespace}.{fieldPlan.FieldCollisionClassName}.{call.Callee.Name}(");
+            if (TirRewrite.StripCoerce(args[0]) is TirTypeRef)
+            {
+                Write($"default(global::{_tw.Writer.Namespace}.{receiver.Name})");
+                if (args.Count > 1)
+                {
+                    Write(", ");
+                    WriteArgs(args.Skip(1));
+                }
+            }
+            else
+                WriteArgs(args);
+            Write(")");
+            return;
+        }
+
         // A `_` receiver is Plato's TYPE-LEVEL idiom (`FromOffset(_: Point2D, v: Vector2D): Point2D`,
         // `Pi(_: Number): Number`): the member emits as a C# STATIC (CSharpFunctionInfo.IsStatic),
         // so a VALUE receiver at the call site must be replaced by the receiver's type name â€” C#

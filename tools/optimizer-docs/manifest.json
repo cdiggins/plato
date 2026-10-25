@@ -2,6 +2,9 @@
   "source_globs": [
     "writers/Plato.CSharpWriter/Optimization/*.cs",
     "writers/Plato.CSharpWriter/CSharpWriter.cs",
+    "writers/Plato.CSharpWriter/ExtensionStyleWriter.cs",
+    "tests/Plato.Interpreter.Tests/FunctionFieldCallTests.cs",
+    "tests/Plato.Interpreter.Tests/FunctionFieldCollisionControls.cs",
     "writers/Plato.CSharpWriter/CSharpWriterExtensions.cs",
     "writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs",
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter*.cs",

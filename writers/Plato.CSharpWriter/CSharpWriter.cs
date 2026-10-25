@@ -78,6 +78,27 @@ namespace Ara3D.Geometry.CSharpWriter
                 if (!IgnoredTypes.Contains(c.TypeDef.Name) && !c.TypeDef.IsUnique && !ExtensionPlans.ContainsKey(c.TypeDef))
                     ExtensionPlans[c.TypeDef] = new ExtensionStylePlan(this, c);
 
+            var collisionNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "Constants", "Extensions", "Intrinsics", "Interfaces", "NumberProfile",
+            };
+            foreach (var type in Compilation.AllTypeAndLibraryDefinitions.Where(t => t != null))
+            {
+                collisionNames.Add(type.Name);
+                collisionNames.Add("_" + type.Name); // Concrete-type output file stem.
+                collisionNames.Add(type.Name + "Extensions");
+            }
+            foreach (var plan in ExtensionPlans.Values)
+                foreach (var member in plan.FieldCollisionMembers)
+                    collisionNames.Add(member.Function.Name);
+            var collisionIndex = 0;
+            foreach (var plan in ExtensionPlans.OrderBy(p => p.Key.Name, StringComparer.Ordinal).Select(p => p.Value))
+                if (plan.FieldCollisionMembers.Count > 0)
+                {
+                    plan.FieldCollisionClassName = ExtensionStyleWriter.AllocateClassName(
+                        "__PlatoFieldCalls" + collisionIndex++, collisionNames);
+                }
+
             // The struct-surface property-name set (the uniform rendering rule): every name that
             // renders with member/property syntax at a call site — exactly the per-type field +
             // pseudo-field names (unioned below) plus the BCL Count/NumColumns/NumRows

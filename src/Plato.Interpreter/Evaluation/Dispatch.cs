@@ -439,6 +439,14 @@ public sealed partial class Interpreter
         if (f != null)
             return Apply(f, converted, call);
 
+        // Preserve ordinary method precedence before invoking a stored function.
+        if (args.Length > 1 && args[0] is PlatoRecord record)
+        {
+            var field = record.IndexOf(name);
+            if (field >= 0 && record.Fields[field] is PlatoFunction)
+                return InvokeValue(record.Fields[field], args.Skip(1).ToArray());
+        }
+
         var derived = ShapeDerived(name, args, out var handled);
         if (handled)
             return derived;
