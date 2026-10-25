@@ -12,7 +12,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-520](issues/compiler-520.md) | Report useful grammar failure locations | bug | p1 | S | med | compiler | in-progress |  |
 | [compiler-521](issues/compiler-521.md) | Plan declarative checked optimizer transformations | idea | p1 | L | high | compiler | in-progress |  |
 | [compiler-534](issues/compiler-534.md) | Define outcome semantics and optimization-friendly contracts | idea | p1 | L | high | compiler | in-progress |  |
-| [compiler-535](issues/compiler-535.md) | Complete optimizer recipe exceeds BREP generation budget | problem | p1 | M | med | compiler | in-progress |  |
 | [plato-229](issues/plato-229.md) | Complete the Plato v2 interface lattice | feature | p1 | L | high | plato | in-progress |  |
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | in-progress |  |
 | [plato-378](issues/plato-378.md) | Shrink the host intrinsic contract to an irreducible kernel | debt | p1 | L | med | plato | in-progress |  |
