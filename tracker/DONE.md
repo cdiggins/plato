@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-10-25 — [docs-527](issues/docs-527.md) — Clarify implemented status of historical sum-type design — done (7afd7c21): historical design clarified against semantics, checker, writer and tests; local links and whitespace checked
 - 2026-10-25 — [compiler-510](issues/compiler-510.md) — Explore loop splitting on invariant conditions — done (e412eeef); geometry comparison found no consistent benefit; no production pass promoted
 - 2026-10-25 — [compiler-508](issues/compiler-508.md) — Explore array length and index range analysis — done (917131b1); private read-only producer facts qualified; no runtime rewrite
 - 2026-10-25 — [compiler-509](issues/compiler-509.md) — Explore exact allocation for fixed-output FlatMap — done (ea30ca0c); representative generated geometry allocation qualified; keep opt-in

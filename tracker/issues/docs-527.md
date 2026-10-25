@@ -2,14 +2,14 @@
 id: docs-527
 title: Clarify implemented status of historical sum-type design
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: S
 risk: low
 area: docs
 sprint: 
 created: 2026-10-25
-closed:
+closed: 2026-10-25
 links: [docs/design/plato-sum-types-design-2026-07-27.md]
 ---
 

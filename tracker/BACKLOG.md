@@ -21,7 +21,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-506](issues/compiler-506.md) | Explore fusion of multiple array consumers | idea | p2 | L | high | compiler | in-progress |  |
 | [compiler-507](issues/compiler-507.md) | Explore elimination of temporary records | idea | p2 | L | high | compiler | in-progress |  |
 | [compiler-511](issues/compiler-511.md) | Explore reuse of neighboring grid samples | idea | p2 | L | high | compiler | in-progress |  |
-| [docs-527](issues/docs-527.md) | Clarify implemented status of historical sum-type design | debt | p2 | S | low | docs | in-progress |  |
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion interface | idea | p2 | M | low | plato | in-progress |  |
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
