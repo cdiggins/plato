@@ -58,6 +58,9 @@ It is a proposal, not an instruction to execute the earlier design plan.
 - [x] Iterative simplification exposes deeper expansion with bounded growth and correct recursion handling.
 - [ ] Ablation measurements on equivalent BRep meshes distinguish enabling effects, allocations and runtime performance; C# only.
 
+- [x] Replace the inline-policy-specific loop restriction with shared ordered prerequisites, scoped placement and lexical cloning.
+- [ ] Simplify iteration control and support callback/condition scopes without sacrificing loop opportunities; verify semantic and optimization regressions.
+
 ## Implementation scope and recovery
 
 The user's request to tackle this issue authorizes this experiment, not the older combined
@@ -130,3 +133,32 @@ The repository gate recorder passed all 368 PlatoTests and both ratchets; a sepa
 assembly run also passed and saved .temp/compiler-504-tests/compiler-504-full.trx. The Studio
 battery passed both lints, its SDK build and geometry tests. Its external frozen-artifact gate
 failed in the already tracked repo-473 category. No checksum baseline was changed.
+
+
+## Pipeline redesign requested 2026-10-25
+
+The user stopped benchmark completion and asked for a simpler, flexible inlining pipeline with
+proper scope handling. The earlier allocation profiles describe the superseded implementation;
+they are not evidence for the revised pipeline. No timing matrix or closure is accepted yet.
+
+Milestone 19df624e extracts TirEvaluation (statements followed by a value), TirStatementRewriter
+(scope placement), and TirInlineCloner (fresh identities and return boundaries). Both inlining
+and loop lowering use the ordered prerequisites. The loop traversal no longer switches to a
+restricted direct-intrinsic recognizer when InlineStatements is enabled. Computed arguments,
+guarded conditional expressions and statement-bodied consumers remain optimizable. Nested
+lambda returns stay local to their lambda.
+
+Recorded private Release build passed; 58 focused cases passed in 33 seconds, including
+computed ranges, statement reductions, nested returns, sibling faults, loop emission and the
+combined consumer-fusion/exact-output options. Greenhouse freshness and six maintenance tests
+passed. Evidence: .temp/compiler-504-tests/pipeline-focused.trx and
+.temp/compiler-504-pipeline/. The shared-output build failed MSB3021/MSB3027 because another
+testhost held Plato.CSharpWriter.dll; verification now uses private outputs. An initial cloner
+refactor failed two assertions by using unresolved declaration types instead of checked local
+initializer types; corrected before commit. A temporary private harness reference to legacy
+Ara3D.Geometry caused CS0121 (ambiguous Enumerable.Any/ArrayExtensions.Any); it was removed to
+match the real test project's compile exclusion before verification.
+
+Next: callback producer stages, condition prerequisites, and iteration/budget separation.
+Then broader gates and any renewed measurements. Root PROGRESS.md belongs to another mission;
+local recovery notes are .temp/compiler-504-pipeline/PROGRESS.md.
