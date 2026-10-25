@@ -91,8 +91,8 @@ public class GeneratorTests
     }
 
     [TestCase(LawBackendKind.Interpreter)]
-    [TestCase(LawBackendKind.CSharp)]
-    [TestCase(LawBackendKind.Differential)]
+    [TestCase(LawBackendKind.CSharp, Category = "Slow")]
+    [TestCase(LawBackendKind.Differential, Category = "Slow")]
     public void Laws_over_generated_types_see_only_valid_values(LawBackendKind kind)
     {
         var interp = new Ara3D.Geometry.Interpreter.Interpreter(LawRunnerSelectionTests.CompileSource(Source), NumberProfile.Cpu64);

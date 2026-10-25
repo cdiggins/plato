@@ -12,11 +12,12 @@ namespace Plato.Navigation.Tests;
 [TestFixture]
 public class IncrementalIndexerTests
 {
-    [Test]
-    public void UpdateMatchesFullBuildAcrossEveryKindOfChange()
+    [TestCase(false)]
+    [TestCase(true, Category = "Slow")]
+    public void UpdateMatchesFullBuildAcrossEveryKindOfChange(bool fullCorpus)
     {
         var indexer = new IncrementalIndexer();
-        var texts = CorpusTexts();
+        var texts = fullCorpus ? CorpusTexts() : SmallTexts();
 
         AssertMatchesFullBuild(indexer, Snapshot(texts));                       // (a) first build
         AssertMatchesFullBuild(indexer, Snapshot(texts));                       // (b) unchanged
@@ -38,7 +39,7 @@ public class IncrementalIndexerTests
     public void EditingOneFileReparsesExactlyOneFile()
     {
         var indexer = new IncrementalIndexer();
-        var texts = CorpusTexts();
+        var texts = SmallTexts();
 
         indexer.Update(Snapshot(texts));
         Assert.That(indexer.LastUpdate.FilesParsed, Is.EqualTo(texts.Count), "cold build parses everything");
@@ -126,6 +127,13 @@ public class IncrementalIndexerTests
 
     private static Dictionary<FilePath, string> CorpusTexts()
         => Corpus.Index.Snapshot.Files.ToDictionary(f => f.Path, f => f.Text);
+
+    private static Dictionary<FilePath, string> SmallTexts()
+        => new()
+        {
+            [new FilePath("cache-types.plato")] = "type Number { } type CacheBase { Value: Number; }",
+            [new FilePath("cache-user.plato")] = "type CacheUser { Base: CacheBase; }"
+        };
 
     /// <summary>Paths that exist only inside a snapshot — nothing in this fixture touches the disk
     /// (<see cref="SourceSnapshot.FromTexts"/> takes the text directly), so they name a folder that

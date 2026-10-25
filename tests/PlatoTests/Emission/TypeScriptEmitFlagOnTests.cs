@@ -1,9 +1,13 @@
 // Checks TypeScript emission through the typed-body path.
 using System.Collections.Generic;
 using System.Linq;
+using Ara3D.Geometry.AST;
+using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.TypeScriptWriter;
+using Ara3D.Parakeet;
+using Ara3D.Parsing;
 using NUnit.Framework;
 
 namespace PlatoTests
@@ -21,7 +25,7 @@ namespace PlatoTests
             => string.Join("\n", (s ?? "").Replace("\r\n", "\n").Split('\n')
                 .Where(line => !line.StartsWith("// Created on ")));
 
-        [Test]
+        [Test, Category("Slow")]
         public static void UseTirOnReproducesTheFullTypeScriptLibraryByteForByte()
         {
             var flagOff = new TypeScriptWriter(CheckerTestSupport.CompileStdLib(), "unused-flag-off") { UseTir = false };
@@ -108,14 +112,28 @@ namespace PlatoTests
         [Test]
         public static void TirMemberBodiesKeepLocalFieldAccessAndMethodCallsSeparate()
         {
-            // PositionVector/Offset live in the forward stdlib's geometry tier.
-            var writer = new TypeScriptWriter(CheckerTestSupport.CompileForwardStdLibShippingTiers(), "unused-field-test") { UseTir = true };
+            const string source = @"
+type Number { }
+type Vector3D { X: Number; }
+type Point3D { Value: Vector3D; }
+library Points {
+    Offset(self: Point3D): Vector3D => self.Value;
+    PositionVector(self: Point3D): Vector3D => self.Offset;
+}";
+            var parser = CommonParsers.PlatoParser(new ParserInput(source, "member-calls.plato"), Ara3D.Logging.Logger.Null);
+            Assert.That(parser.Succeeded, Is.True, parser.ParserErrorsString);
+            var compilation = new Compilation(Ara3D.Logging.Logger.Null, new[] { parser.Cst!.ToAst() });
+            Assert.That(compilation.CompletedCompilation, Is.True);
+            Assert.That(compilation.SymbolFactory.Errors, Is.Empty);
+            var writer = new TypeScriptWriter(compilation, "unused-field-test") { UseTir = true };
             writer.WriteAll();
 
             var ts = writer.Files["plato.g.ts"].ToString();
 
             Assert.That(ts, Does.Contain("PositionVector(): Vector3D { return this.Offset(); }"));
             Assert.That(ts, Does.Not.Contain("PositionVector(): Vector3D { return this.Offset; }"));
+            Assert.That(ts, Does.Contain("Offset(): Vector3D { return this.Value; }"));
+            Assert.That(writer.TirFallbackBodies, Is.Zero);
         }
     }
 }

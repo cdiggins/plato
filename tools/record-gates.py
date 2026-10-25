@@ -139,10 +139,16 @@ def measure(full: bool, include_future: bool = False,
         f"{lint['errors']} error / {lint['warnings']} warning / {lint['infos']} info; "
         f"ratchet {lint['ratchet']}"))
 
-    out, code, secs = invoke("compiler-tests", ["dotnet", "test", PLATO_TESTS, "-c", "Release", "--nologo", "-v", "q"])
+    test_args = ["dotnet", "test", PLATO_TESTS, "-c", "Release", "--nologo", "-v", "q",
+                 "--filter", "TestCategory!=Diagnostic"]
+    if log_dir is not None:
+        test_args += ["--logger", "trx;LogFileName=compiler-tests.trx",
+                      "--results-directory", str(log_dir)]
+    out, code, secs = invoke("compiler-tests", test_args)
     t = parse_test_counts(out)
     extras["platotests"] = t
-    gates.append(gate("PlatoTests (incl. both ratchets)", "PASS" if code == 0 else "FAIL", secs,
+    gates.append(gate("PlatoTests (incl. both ratchets)",
+                      "PASS" if code == 0 and t and t["total"] > 0 else "FAIL", secs,
                       f"{t['passed']} passed / {t['failed']} failed" if t else "did not report"))
 
     if not full:

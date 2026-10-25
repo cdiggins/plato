@@ -19,7 +19,7 @@ namespace PlatoTests
             => string.Join("\n", (s ?? "").Replace("\r\n", "\n").Split('\n')
                 .Where(line => !line.StartsWith("// Created on ")));
 
-        [Test]
+        [Test, Category("Slow")]
         public static void UseTirOnReproducesTheFullRustLibraryByteForByte()
         {
             var flagOff = new RustWriter(CheckerTestSupport.CompileStdLib(), "unused-flag-off") { UseTir = false };

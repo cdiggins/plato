@@ -12,7 +12,7 @@ namespace Plato.Interpreter.Tests;
 /// the law is <c>differs</c> with both answers, and a witness built differently is reported and
 /// dropped. The disagreement is forced through a compiled arm that answers one function wrongly.
 /// </summary>
-[TestFixture]
+[TestFixture, Category("Slow")]
 public class DifferentialBackendTests
 {
     private const string Source = """

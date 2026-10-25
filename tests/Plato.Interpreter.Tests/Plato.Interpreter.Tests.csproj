@@ -9,6 +9,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>
+    <RunSettingsFilePath Condition="'$(RunSettingsFilePath)' == '' and '$(VSTestTestCaseFilter)' == ''">$(MSBuildThisFileDirectory)..\default.runsettings</RunSettingsFilePath>
     <Platforms>AnyCPU;x64</Platforms>
     <NoWarn>$(NoWarn);CS8632</NoWarn>
   </PropertyGroup>

@@ -57,7 +57,7 @@ namespace PlatoTests
                 .OrderByDescending(g => g.Count())
                 .Select(g => $"  {g.Key} x{g.Count()} ({g.First().Severity})");
 
-        [Test]
+        [Test, Category("Slow")]
         public static void ForwardStdLibLintRatchetDoesNotRegress()
         {
             var linter = LintForwardStdLib();
@@ -77,14 +77,14 @@ namespace PlatoTests
         }
 
         /// <summary>Not an assertion — the worklist. Run it to see what the ratchet is made of.</summary>
-        [Test]
+        [Test, Category("Diagnostic"), Explicit("Report only; select by name or Diagnostic category.")]
         public static void SummarizeForwardStdLibLint()
             => Summarize(LintForwardStdLib());
 
         /// <summary>The opt-in view: lint including `stdlib/future`, which the ratchet above does
         /// not gate on. Reporting only — a finding here is information about vocabulary nobody is
         /// shipping yet, not a regression.</summary>
-        [Test]
+        [Test, Category("Diagnostic"), Explicit("Report only; select by name or Diagnostic category.")]
         public static void SummarizeForwardStdLibLintIncludingFuture()
             => Summarize(new Linter(CheckerTestSupport.CompileForwardStdLib()));
 

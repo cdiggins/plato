@@ -10,7 +10,7 @@ namespace Plato.Interpreter.Tests;
 /// unload it. Loaded into the default context, every program the warm server recompiled stayed in
 /// memory for the server's life (15 GB after three hours of edits on 2026-10-22).
 /// </summary>
-[TestFixture]
+[TestFixture, Category("Slow")]
 public class CSharpProgramUnloadTests
 {
     private const string Source = """

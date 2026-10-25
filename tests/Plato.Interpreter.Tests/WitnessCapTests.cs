@@ -35,7 +35,7 @@ public class WitnessCapTests
         """;
 
     [TestCase(LawBackendKind.Interpreter)]
-    [TestCase(LawBackendKind.CSharp)]
+    [TestCase(LawBackendKind.CSharp, Category = "Slow")]
     public void A_witness_past_its_cap_is_dropped_and_its_law_is_an_error_naming_it(LawBackendKind kind)
     {
         var compilation = LawRunnerSelectionTests.CompileSource(Source);

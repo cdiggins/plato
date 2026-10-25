@@ -10,7 +10,7 @@ namespace Plato.Interpreter.Tests;
 /// index past the end (and for -1), so an off-by-one in a corner walk read a wrong vertex with
 /// no error. Each in-range law passes and each out-of-range law is an error, on both backends.
 /// </summary>
-[TestFixture]
+[TestFixture, Category("Slow")]
 public class FaceCornerRangeTests
 {
     [Test]

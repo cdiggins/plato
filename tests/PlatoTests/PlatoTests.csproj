@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <RunSettingsFilePath Condition="'$(RunSettingsFilePath)' == '' and '$(VSTestTestCaseFilter)' == ''">$(MSBuildThisFileDirectory)..\default.runsettings</RunSettingsFilePath>
     <Platforms>AnyCPU;x64</Platforms>
     <!-- The imported Plato.Intrinsics shared sources use unsafe blocks (Vector4). -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

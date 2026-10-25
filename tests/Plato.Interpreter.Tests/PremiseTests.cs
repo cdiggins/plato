@@ -44,7 +44,7 @@ public class PremiseTests
     }
 
     [TestCase(LawBackendKind.Interpreter)]
-    [TestCase(LawBackendKind.CSharp)]
+    [TestCase(LawBackendKind.CSharp, Category = "Slow")]
     public void A_premise_that_never_holds_makes_the_law_vacuous(LawBackendKind kind)
     {
         var by = Run(kind);

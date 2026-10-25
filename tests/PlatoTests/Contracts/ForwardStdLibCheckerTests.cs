@@ -77,7 +77,7 @@ namespace PlatoTests
         /// while the old floor stayed where a four-hundred-file corpus had put it (stdlib-400).</summary>
         private const int MinCorpusFiles = 100;
 
-        [Test]
+        [Test, Category("Slow")]
         public static void ForwardStdLibParsesAndCompiles()
         {
             var folder = CheckerTestSupport.FindForwardStdLib();
@@ -140,7 +140,7 @@ namespace PlatoTests
                 "CompletedCompilation == false must imply at least one InternalErrors entry");
         }
 
-        [Test]
+        [Test, Category("Diagnostic"), Explicit("Report only; select by name or Diagnostic category.")]
         public static void SummarizeForwardStdLibDiagnostics()
         {
             var results = new TypeChecker(CheckerTestSupport.CompileForwardStdLib()).CheckAll();
@@ -172,7 +172,7 @@ namespace PlatoTests
                     TestContext.WriteLine($"  {r.Function?.OwnerType?.Name}.{r.Function?.Name}: {d.Code} {d.Message}");
         }
 
-        [Test]
+        [Test, Category("Diagnostic"), Explicit("Report only; select by name or Diagnostic category.")]
         public static void SummarizeForwardStdLibSumTypeDiagnostics()
         {
             var comp = CheckerTestSupport.CompileForwardStdLib();
@@ -197,7 +197,7 @@ namespace PlatoTests
         // has no non-generic view and no defined C# lowering. Zero is a hard gate, not a ratchet:
         // a new CHK308 means a new interface was stored existentially without any object-safe
         // member, which the writer cannot emit (see ExistentialConceptChecker / the plato-311 ADR).
-        [Test]
+        [Test, Category("Slow")]
         public static void ForwardStdLibHasNoViewlessExistentialReferences()
         {
             var comp = CheckerTestSupport.CompileForwardStdLib();
@@ -213,7 +213,7 @@ namespace PlatoTests
         // supply an argument that satisfies the bound, and every bound must name an interface. Zero is
         // a hard gate, not a ratchet — a CHK309 means a declaration promises something its argument
         // cannot do, which is precisely the class of error bounds were added to catch.
-        [Test]
+        [Test, Category("Slow")]
         public static void ForwardStdLibSatisfiesEveryDeclaredBound()
         {
             var comp = CheckerTestSupport.CompileForwardStdLib();
@@ -242,7 +242,7 @@ namespace PlatoTests
         /// (phase D). The set is asserted by name rather than counted so that a NEW one cannot hide
         /// behind a ceiling; the expected set is EMPTY and adding to it needs a stated reason.
         /// </summary>
-        [Test]
+        [Test, Category("Slow")]
         public static void ForwardStdLibUnlicensedBoundedCalls()
         {
             // Was { "IntervalsTransformsBounds.Center" } until `TPoint: Interpolatable` was declared
@@ -264,7 +264,7 @@ namespace PlatoTests
                 + "or record the new one here with the reason");
         }
 
-        [Test]
+        [Test, Category("Slow")]
         public static void ForwardStdLibDiagnosticCountDoesNotRegress()
         {
             var results = new TypeChecker(CheckerTestSupport.CompileForwardStdLib()).CheckAll();

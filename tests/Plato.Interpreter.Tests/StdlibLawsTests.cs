@@ -8,7 +8,7 @@ namespace Plato.Interpreter.Tests;
 /// stdlib/tests through the interpreter under cpu64. An Error is an interpreter defect and fails
 /// the test; a Fail is a law the stdlib itself breaks and is listed in the output; obligations
 /// and skips are counted and listed.</summary>
-[TestFixture]
+[TestFixture, Category("Slow")]
 public class StdlibLawsTests
 {
     /// <summary>Laws that fault in the stdlib itself, not in the interpreter: the generated

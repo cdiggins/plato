@@ -105,8 +105,8 @@ public class SealedGeneratorTests
     }
 
     [TestCase(LawBackendKind.Interpreter)]
-    [TestCase(LawBackendKind.CSharp)]
-    [TestCase(LawBackendKind.Differential)]
+    [TestCase(LawBackendKind.CSharp, Category = "Slow")]
+    [TestCase(LawBackendKind.Differential, Category = "Slow")]
     public void Laws_over_sealed_types_see_only_values_their_constructors_build(LawBackendKind kind)
     {
         var interp = new Ara3D.Geometry.Interpreter.Interpreter(LawRunnerSelectionTests.CompileSource(Source), NumberProfile.Cpu64);

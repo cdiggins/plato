@@ -16,7 +16,7 @@ namespace PlatoTests
     [TestFixture]
     public static class CheckerDiagnosticsSummaryTests
     {
-        [Test]
+        [Test, Category("Diagnostic"), Explicit("Report only; select by name or Diagnostic category.")]
         public static void SummarizeUnresolvedStdLibDiagnostics()
         {
             var results = new TypeChecker(CheckerTestSupport.CompileStdLib()).CheckAll();

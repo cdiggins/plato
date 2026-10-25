@@ -98,7 +98,7 @@ namespace PlatoTests
 
         /// <summary>Not an assertion — the checklist. Run it to see the contract a new backend
         /// must satisfy.</summary>
-        [Test, Explicit]
+        [Test, Category("Diagnostic"), Explicit]
         public static void SummarizeIntrinsicContract()
         {
             foreach (var s in SignatureLines())

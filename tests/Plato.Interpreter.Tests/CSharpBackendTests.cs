@@ -72,7 +72,7 @@ public class CSharpBackendTests
     private static string Verdicts(IEnumerable<LawResult> results)
         => string.Join("\n", results.OrderBy(r => r.Name, StringComparer.Ordinal).Select(r => $"{r.Name} {r.Status.ToString().ToLowerInvariant()} {r.Trials}"));
 
-    [Test]
+    [Test, Category("Slow")]
     public void Both_backends_reach_the_same_verdicts_over_the_same_number_of_cases()
     {
         TestContext.Out.WriteLine(Verdicts(Compiled));
@@ -80,7 +80,7 @@ public class CSharpBackendTests
         Assert.That(Verdicts(Compiled), Is.EqualTo(Verdicts(Interpreted)));
     }
 
-    [Test]
+    [Test, Category("Slow")]
     public void Statuses_cover_pass_fail_and_obligation()
     {
         var by = Compiled.ToDictionary(r => r.Name.Substring(r.Name.IndexOf('.') + 1), r => r);
@@ -95,7 +95,7 @@ public class CSharpBackendTests
         Assert.That(by["Law_UnitPairWitnessIsSeen"].Status, Is.EqualTo(LawStatus.Pass));
     }
 
-    [Test]
+    [Test, Category("Slow")]
     public void The_failing_witness_is_formatted_as_the_interpreter_formats_it()
     {
         var compiled = Compiled.Single(r => r.Name.EndsWith("Law_FirstIsNotNegative"));
@@ -104,7 +104,7 @@ public class CSharpBackendTests
         Assert.That(compiled.FormatWitness(), Is.EqualTo(interpreted.FormatWitness()));
     }
 
-    [Test]
+    [Test, Category("Slow")]
     public void Elapsed_time_is_recorded_and_reported_in_milliseconds()
     {
         var verdicts = LawReport.Verdicts(Compiled);

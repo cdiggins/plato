@@ -83,7 +83,7 @@ namespace PlatoTests
         private static string BaselinePath([CallerFilePath] string thisFile = "")
             => Path.Combine(Path.GetDirectoryName(thisFile), "implicit-cast-inventory.txt");
 
-        [Test]
+        [Test, Category("Slow")]
         public static void ImplicitCastsMatchBaseline()
         {
             var actual = BuildInventory();

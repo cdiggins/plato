@@ -11,7 +11,7 @@ namespace Plato.Interpreter.Tests;
 /// in both arms. A known, explained divergence is listed in <see cref="Allowed"/> with its reason;
 /// an entry whose law no longer diverges fails the test so the list cannot go stale.
 /// </summary>
-[TestFixture]
+[TestFixture, Category("Slow")]
 public class DifferentialTests
 {
     /// <summary>Law key (C# declaring type and method) to the reason its arms may disagree.</summary>

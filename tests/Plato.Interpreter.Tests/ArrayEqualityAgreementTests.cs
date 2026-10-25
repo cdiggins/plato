@@ -11,7 +11,7 @@ namespace Plato.Interpreter.Tests;
 /// IReadOnlyList field by reference, so a B-spline model built twice differed from itself
 /// compiled (Law_WitnessIsSameAsItself on the STEP mesher's witness 7).
 /// </summary>
-[TestFixture]
+[TestFixture, Category("Slow")]
 public class ArrayEqualityAgreementTests
 {
     private const string Source = """

@@ -33,7 +33,7 @@ public static class SimplifierCorpusTests
         return (parsed.Count(f => !f.Parsed), comp.SymbolFactory?.Errors.Count ?? 0);
     }
 
-    [Test]
+    [Test, Category("Slow")]
     public static void SimplifiedCorpusStillCompiles()
     {
         var snapshot = Corpus.Index.Snapshot;

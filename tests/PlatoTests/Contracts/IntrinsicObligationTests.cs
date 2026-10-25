@@ -124,7 +124,7 @@ namespace PlatoTests
             return missing;
         }
 
-        [Test]
+        [Test, Category("Slow")]
         public static void ForwardStdLibIntrinsicObligationsAreDischargedOrPinned()
         {
             var missing = AssertScopeSane(CheckerTestSupport.CompileForwardStdLib(), "stdlib (forward)");

@@ -76,7 +76,7 @@ public class DegradedModeTests
         Assert.That(c.Generation, Is.Not.EqualTo(a.Generation));
     }
 
-    [Test]
+    [Test, Category("Slow")]
     public void FullCorpusBuildStaysInsideItsBudget()
     {
         var snapshot = Corpus.Index.Snapshot;   // force the shared corpus to be warm first
@@ -97,7 +97,7 @@ public class DegradedModeTests
             $"rebuild-the-world is the v2 incremental strategy: {snapshot.Files.Count} files, budget {budget} ms");
     }
 
-    [Test]
+    [Test, Category("Slow")]
     public void WarmCorpusUpdateStaysInsideItsBudget()
     {
         var snapshot = Corpus.Index.Snapshot;

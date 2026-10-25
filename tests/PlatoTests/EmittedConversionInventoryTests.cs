@@ -96,7 +96,7 @@ namespace PlatoTests
         private static string BaselinePath([CallerFilePath] string thisFile = "")
             => Path.Combine(Path.GetDirectoryName(thisFile), "emitted-conversion-inventory.txt");
 
-        [Test]
+        [Test, Category("Slow")]
         public static void EmittedConversionsMatchBaseline()
         {
             var actual = BuildInventory();

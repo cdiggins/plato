@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <RunSettingsFilePath Condition="'$(RunSettingsFilePath)' == '' and '$(VSTestTestCaseFilter)' == ''">$(MSBuildThisFileDirectory)..\default.runsettings</RunSettingsFilePath>
     <IsTestProject>true</IsTestProject>
     <Platforms>AnyCPU;x64</Platforms>
     <RootNamespace>Plato.Navigation.Tests</RootNamespace>
