@@ -1,0 +1,20 @@
+type GenericCounted<T> { Value: T; Work: Integer; }
+library ConcreteFirstGenericRepro
+{
+    CountedFlips(n: Integer, value: $T): GenericCounted<$T>
+        => GenericCounted(value, n);
+
+    Law_ConcreteFirstInteger(_: Boolean): Boolean
+    {
+        var a = CountedFlips(3, -7);
+        var b = CountedFlips(9, 12);
+        return a.Value + b.Value == 5 && a.Work + b.Work == 12;
+    }
+
+    Law_ConcreteFirstBoolean(_: Boolean): Boolean
+    {
+        var a = CountedFlips(4, true);
+        var b = CountedFlips(8, false);
+        return a.Value && b.Value.Not && a.Work + b.Work == 12;
+    }
+}

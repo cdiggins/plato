@@ -39,7 +39,7 @@ Before these optional passes, the compiler's [short-circuit normalization](../..
 expresses Boolean short-circuiting as conditionals. It implements language semantics even when
 optimization is disabled. After the passes, [TirCSharpBodyWriter](../../writers/Plato.CSharpWriter/TirCSharpBodyWriter.cs)
 renders their trees and marker nodes. The [compiler's TIR provider](../../src/Plato.Compiler/Checking/TirEmitSource.cs)
-supplies specialized bodies; the optimizer does not reparse Plato or introduce another resolver.
+supplies specialized bodies; the optimizer does not reparse Plato or introduce another resolver. Open-generic fallback also admits type-agnostic constructor payloads: payload values are not dispatch receivers, while unresolved expressions and unlicensed dispatch nested in constructor arguments remain rejected.
 
 ## What effectiveness means
 

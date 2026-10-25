@@ -7,7 +7,7 @@
     "src/Plato.CLI/GenerationArguments.cs": "b3f72574fbd3d5f10a7edf895ad02350190904f263fb028c17cc18aa22270962",
     "src/Plato.CLI/Program.cs": "c3949f230b12b1ad0bab1328dd066d9d99f48958f006079b31a2dbdc33a9017a",
     "src/Plato.Compiler/Checking/Tir.cs": "0ef31634608c8cba065932afb848d43b289a6ead3f106213c328d4981f50e33f",
-    "src/Plato.Compiler/Checking/TirEmitSource.cs": "2d6da829e713ca563aebe38b1b6b68e62533b6de72b900407fcd33be76dc223f",
+    "src/Plato.Compiler/Checking/TirEmitSource.cs": "0c9960b787d17b78a2ea2f0acff9f45927cd852488f6a849f2a04157d573971f",
     "src/Plato.Compiler/Checking/TirLambdaCaptureRewriter.cs": "2c65ea9bafd4f20686da91226a6a9b059840dd23ceeb6035caf565c5c6d1b76d",
     "src/Plato.Compiler/Checking/TirShortCircuit.cs": "c6cbe7279b2edcaa882d57cba5acd7f7ce14c13bf3bb3010ac66416640882180",
     "src/Plato.Compiler/Checking/TirTypeVerifier.cs": "15514d7af4de8f83f1449ed39ba7939894a543560041eee9e1f5e73956bdbc86",

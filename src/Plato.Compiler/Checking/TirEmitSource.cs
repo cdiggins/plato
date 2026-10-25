@@ -106,7 +106,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             {
                 if (n is TirUnresolved)
                     return false;
-                if (n is TirCall c && c.Args.Count > 0)
+                if (n is TirCall c && c.EmissionKind != EmissionKind.Constructor && c.Args.Count > 0)
                 {
                     var recv = AbstractReceiverType(c);
                     if (recv != null && !BoundLicenses(recv, c, inherited))

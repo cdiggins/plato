@@ -1,11 +1,11 @@
 {
-  "note": "Reviewed pipeline scheduling and extracted budget, structural child rebuilding, backward alias liveness and preserved expression bodies. Updated inlining, rewrite, component and loop guides plus the normative pipeline reference. Removed stale whole-function lambda refusal after checking structural capture traversal and executing a returned capturing callback regression; fixed-array/component rewrites now compose with statement regions. Reviewed remaining callback, dispatch and budget restrictions. No production speed claim.",
+  "note": "Compiler-518 excludes constructor calls only from receiver-dispatch licensing; AllNodes still rejects unresolved nodes and nested unlicensed dispatch. Reviewed Greenhouse callers/callees for IsOpenGenericEmittable and TryGetOpenGenericTir, and the private baseline/candidate regressions including negative controls. README explains open-generic payload fallback; pipeline ordering, flags, inliner eligibility, component expansion, materialization and traversal contracts remain unchanged. Public source-map signatures are unchanged.",
   "inputs": {
     "src/Plato.CLI/GenerateCommand.cs": "9a5f7c8612b895d3f6c03efa11dd110756eaa8dff29b3b090871ed36412ffc0b",
     "src/Plato.CLI/GenerationArguments.cs": "b3f72574fbd3d5f10a7edf895ad02350190904f263fb028c17cc18aa22270962",
     "src/Plato.CLI/Program.cs": "c3949f230b12b1ad0bab1328dd066d9d99f48958f006079b31a2dbdc33a9017a",
     "src/Plato.Compiler/Checking/Tir.cs": "0ef31634608c8cba065932afb848d43b289a6ead3f106213c328d4981f50e33f",
-    "src/Plato.Compiler/Checking/TirEmitSource.cs": "2d6da829e713ca563aebe38b1b6b68e62533b6de72b900407fcd33be76dc223f",
+    "src/Plato.Compiler/Checking/TirEmitSource.cs": "0c9960b787d17b78a2ea2f0acff9f45927cd852488f6a849f2a04157d573971f",
     "src/Plato.Compiler/Checking/TirLambdaCaptureRewriter.cs": "2c65ea9bafd4f20686da91226a6a9b059840dd23ceeb6035caf565c5c6d1b76d",
     "src/Plato.Compiler/Checking/TirShortCircuit.cs": "c6cbe7279b2edcaa882d57cba5acd7f7ce14c13bf3bb3010ac66416640882180",
     "src/Plato.Compiler/Checking/TirTypeVerifier.cs": "15514d7af4de8f83f1449ed39ba7939894a543560041eee9e1f5e73956bdbc86",
@@ -72,6 +72,6 @@
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter.Loops.cs": "a1b68f1702bf47c2b21c3611f7f718c352a986410022084a617a9a99b3e2ec5b",
     "writers/Plato.CSharpWriter/TirCSharpBodyWriter.MultiConsumer.cs": "e7882a1d457144b6b56735547285308d21fa80807adca7f7738e6431e1b4c6c2"
   },
-  "evidence_hash": "5ec8d3f0bd9af7c5885f670370503ffcf77b55b02abfd2371496e684039ffd61",
+  "evidence_hash": "c88c4199686959cec455caeb3875f0c5eb1fb4e38e577a00f3fe13ad65b6fcd4",
   "generator_hash": "32b4f4af3007c0fdac6454a047374cbeaf29624cd6e8d270b5680cdbd5f22bf9"
 }
