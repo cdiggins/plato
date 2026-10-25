@@ -1,0 +1,18 @@
+library UnswitchGeometry
+{
+    // Sampling this exact extracted spline helper isolates boundary-index selection.
+    SampleBoundary(xs: Array<Number>, count: Integer, closed: Boolean): Array<Number>
+        => count.MapRange(i => xs.AtWrapped(i - 1, closed));
+
+    SampleGrid(count: Integer, closed: Boolean): Array<Number>
+        => count.MapRange(i => GridParameter(i, count, closed));
+
+    SampleRing(count: Integer, forward: Boolean): Array<Integer>
+        => count.MapRange(i => RingSlot(0, count, forward, i));
+
+    Variant(count: Integer): Array<Integer>
+        => count.MapRange(i => i == 0 ? i : i - 1);
+
+    UnknownCondition(count: Integer, condition: Function0<Boolean>): Array<Integer>
+        => count.MapRange(i => condition() ? i : i - 1);
+}
