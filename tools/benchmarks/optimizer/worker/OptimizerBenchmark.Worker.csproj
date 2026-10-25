@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AssemblyName>optimizer-benchmark-worker</AssemblyName>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(BrepRoot)/tools/step-corpus-harness/StepCorpusHarness.csproj" />
+  </ItemGroup>
+  <Target Name="RequireBrepRoot" BeforeTargets="PrepareForBuild" Condition="'$(BrepRoot)' == ''">
+    <Error Text="Set BrepRoot to the exported plato-brep snapshot root." />
+  </Target>
+</Project>
