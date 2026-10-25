@@ -53,6 +53,23 @@ class WorkerIntegrationTests(unittest.TestCase):
                 self.assertTrue(sample["checks"]["input_unchanged"])
                 self.assertTrue(sample["checks"]["repeat_digest_matches"])
 
+    def test_spline_diagnostic_strings_round_trip_and_execute(self):
+        fixture = self.folder / "crescent.json"
+        arguments = ["prepare", "--input", "witness:BsplineCrescentSheet",
+            "--output", fixture, "--id", "integration-crescent", "--chordal", "0.1"]
+        first = benchmark.invoke_worker(self.worker, arguments, timeout=60)
+        self.assertEqual(first["status"], "ok", first)
+        original = fixture.read_bytes()
+        second = benchmark.invoke_worker(self.worker, arguments, timeout=60)
+        self.assertEqual(second["status"], "ok", second)
+        self.assertEqual(original, fixture.read_bytes())
+        result = benchmark.invoke_worker(self.worker, ["run-set", "--fixture", fixture,
+            "--workloads", "model,curve-eval,surface-eval,projection", "--warmup", "1",
+            "--warmup-ms", "1", "--target-ms", "1", "--max-iterations", "2"], timeout=60)
+        for sample in result["samples"]:
+            self.assertEqual(sample["status"], "ok", sample)
+            self.assertTrue(all(v is True for v in sample["checks"].values()), sample)
+
     def test_bad_fixture_schema_and_absent_workload_are_errors(self):
         data = json.loads(self.fixture.read_text())
         data["schema"] = 999

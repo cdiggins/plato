@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "description": "Portable seed inputs; supplement with real STEP models and reserve a holdout before tuning.",
+  "inputs": [
+    "witness:UnitBox",
+    "witness:BlockWithThroughHole",
+    "witness:Cylinder",
+    "witness:Sphere:0.3",
+    "witness:Torus:0.3:0.1",
+    "witness:BSplinePatchSolid:0.3",
+    "witness:BsplineCrescentSheet"
+  ]
+}

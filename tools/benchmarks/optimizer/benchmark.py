@@ -116,6 +116,25 @@ def tool_identity():
     return {name: file_hash(HERE / name) for name in ("benchmark.py", "analysis.py", "selection.py", "recipes.py", "prepare.py")}
 
 
+def render_report(result):
+    from analysis import render_markdown
+    markdown = render_markdown(result)
+    if result.get("preparation_errors"):
+        markdown += "\nFixture preparation failures (outside measured coverage):\n\n" + "\n".join(
+            "- " + str(e.get("input", "unknown input")) + ": " + str(e.get("error", "preparation failed"))[:500]
+            for e in result["preparation_errors"]) + "\n"
+    return markdown
+
+
+def report_failed(result, rows):
+    return int(bool(result.get("preparation_errors"))
+               or any(row["status"] not in ("ok", "not_measured", "unsupported") for row in rows)
+               or any(row["status"] == "ok" and (not row.get("checks") or any(v is not True for v in row["checks"].values())) for row in rows)
+               or bool(result.get("malformed_rows"))
+               or any(c["status"] == "invalid" and "unsupported" not in c.get("observed_states", [])
+                      for c in result.get("comparisons", [])))
+
+
 @contextlib.contextmanager
 def operation_lock(work, phase):
     path = Path(work) / ".operation.lock"
@@ -339,6 +358,14 @@ def prepare_fixtures(args):
     folder.mkdir(parents=True, exist_ok=True)
     cases, errors = [], []
     sources = list(args.input or [])
+    if args.input_list:
+        input_list = read_json(args.input_list)
+        if not isinstance(input_list, dict) or input_list.get("schema") != 1 or not isinstance(input_list.get("inputs"), list):
+            raise ValueError("Expected a schema:1 input list")
+        for source in input_list["inputs"]:
+            if not isinstance(source, str) or not source:
+                raise ValueError("Input list entries must be nonempty strings")
+            sources.append(source if source.startswith("witness:") else str((args.input_list.resolve().parent / source).resolve()))
     if args.corpus:
         if not args.corpus.is_dir():
             raise ValueError(f"Corpus directory does not exist: {args.corpus}")
@@ -348,10 +375,14 @@ def prepare_fixtures(args):
     if args.max_inputs:
         sources = sources[:args.max_inputs]
     if not sources:
-        raise ValueError("Supply --input or a nonempty --corpus")
+        raise ValueError("Supply --input, --input-list or a nonempty --corpus")
     seen_inputs = set()
     for source in sources:
-        input_identity = source if source.startswith("witness:") else file_hash(source)
+        try:
+            input_identity = source if source.startswith("witness:") else file_hash(source)
+        except OSError as error:
+            errors.append({"input": source, "status": "error", "error": str(error)})
+            continue
         if input_identity in seen_inputs:
             continue
         seen_inputs.add(input_identity)
@@ -492,6 +523,7 @@ def command_run(args):
                 "host": {"platform": platform.platform(), "processor": platform.processor(), "cpu_count": os.cpu_count()},
                 "runtime_env": {**{k: v for k, v in os.environ.items() if k.startswith(("DOTNET_", "COMPlus_"))}, **RUNTIME},
                 "parameters": parameters, "variants": builds, "selection": selection,
+                "preparation_errors": suite.get("errors", []),
                 "suite_hash": file_hash(args.suite), "binary_identity": identities}
     write_json(folder / "run.json", metadata)
     with measurement_lock(args.work):
@@ -509,14 +541,11 @@ def command_run(args):
             raise ValueError("Benchmark tools changed during measurement; run is invalid")
     result = analyze(rows, builds, baseline=args.baseline)
     result["coverage"] = selection
+    result["preparation_errors"] = suite.get("errors", [])
     write_json(folder / "report.json", result)
-    (folder / "report.md").write_text(render_markdown(result), encoding="utf-8")
+    (folder / "report.md").write_text(render_report(result), encoding="utf-8")
     print(str(folder / "report.md"))
-    return int(any(row["status"] not in ("ok", "not_measured", "unsupported") for row in rows)
-               or any(row["status"] == "ok" and (not row.get("checks") or any(v is not True for v in row["checks"].values())) for row in rows)
-               or bool(result.get("malformed_rows"))
-               or any(c["status"] == "invalid" and "unsupported" not in c.get("observed_states", [])
-                      for c in result.get("comparisons", [])))
+    return report_failed(result, rows)
 
 
 def parameters_without_mode(parameters):
@@ -533,12 +562,14 @@ def command_report(args):
     result = analyze(rows, metadata.get("variants"), baseline=args.baseline or metadata.get("baseline", "full"))
     if metadata.get("selection"):
         result["coverage"] = metadata["selection"]
+    result["preparation_errors"] = metadata.get("preparation_errors", [])
     result["planned_coverage_verified"] = bool(metadata)
     if not metadata:
         result["limitations"].append("No run manifest supplied; planned coverage cannot be verified from observed rows alone.")
     write_json(args.output.with_suffix(".json"), result)
-    args.output.write_text(render_markdown(result), encoding="utf-8")
+    args.output.write_text(render_report(result), encoding="utf-8")
     print(args.output)
+    return report_failed(result, rows)
 
 
 def command_validate(args):
@@ -614,6 +645,7 @@ def parser():
     fixtures = commands.add_parser("fixtures", help="Parse/prepare fixture inputs outside measurement")
     fixtures.add_argument("--work", type=Path, required=True)
     fixtures.add_argument("--input", action="append")
+    fixtures.add_argument("--input-list", type=Path, help="Portable schema:1 JSON input list; paths resolve relative to its file")
     fixtures.add_argument("--corpus", type=Path)
     fixtures.add_argument("--max-inputs", type=positive_int)
     fixtures.add_argument("--variant", default="shipping")

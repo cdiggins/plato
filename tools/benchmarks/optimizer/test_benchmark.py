@@ -171,6 +171,37 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual({v["name"] for v in plan["variants"]}, {"full", "shipping", "unoptimized"})
             self.assertTrue((root / "runs/quick/report.md").is_file())
             self.assertEqual(benchmark.read_json(root / "runs/quick/report.json")["correctness_anchor"], "unoptimized")
+            suite = benchmark.read_json(root / "suite.json")
+            suite["errors"] = [{"input": "failed.step", "error": "fixture contract failed"}]
+            benchmark.write_json(root / "suite.json", suite)
+            args.name = "preparation-errors"
+            with patch.object(benchmark, "run_samples", side_effect=measured):
+                self.assertEqual(benchmark.command_run(args), 1)
+            report = root / "runs/preparation-errors/report.md"
+            self.assertIn("failed.step: fixture contract failed", report.read_text())
+            rebuilt = root / "reanalyzed.md"
+            self.assertEqual(benchmark.command_report(benchmark.parser().parse_args(["report", "--samples",
+                str(report.parent / "samples.jsonl"), "--output", str(rebuilt)])), 1)
+            self.assertIn("failed.step: fixture contract failed", rebuilt.read_text())
+
+    def test_input_list_rejects_bad_roots_and_records_missing_inputs(self):
+        with tempfile.TemporaryDirectory(dir=self.test_root) as folder, contextlib.redirect_stdout(io.StringIO()):
+            root = Path(folder)
+            inputs = root / "inputs.json"
+            build = dict(name="shipping", status="ready", worker="worker.dll")
+            args = benchmark.parser().parse_args(["fixtures", "--work", str(root), "--input-list",
+                str(inputs), "--output", str(root / "suite.json")])
+            with patch.object(benchmark, "load_builds", return_value=[build]), patch.object(
+                    benchmark, "verify_build_artifacts", return_value={"shipping": {"worker": "hash"}}):
+                benchmark.write_json(inputs, [])
+                with self.assertRaisesRegex(ValueError, "schema:1 input list"):
+                    benchmark.prepare_fixtures(args)
+                benchmark.write_json(inputs, dict(schema=1, inputs=["missing.step"]))
+                self.assertEqual(benchmark.prepare_fixtures(args), 1)
+                suite = benchmark.read_json(args.output)
+                self.assertEqual(suite["cases"], [])
+                self.assertEqual(len(suite["errors"]), 1)
+                self.assertEqual(suite["errors"][0]["input"], str(root / "missing.step"))
 
     def test_budget_exhaustion_retains_planned_samples(self):
         with tempfile.TemporaryDirectory(dir=self.test_root) as folder, contextlib.redirect_stderr(io.StringIO()):

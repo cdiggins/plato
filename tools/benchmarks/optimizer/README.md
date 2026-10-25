@@ -12,7 +12,7 @@ Start from the Plato repository root in PowerShell:
 python tools/benchmarks/optimizer/benchmark.py matrix
 python tools/benchmarks/optimizer/benchmark.py prepare --work .temp/ob
 python tools/benchmarks/optimizer/benchmark.py build --work .temp/ob
-python tools/benchmarks/optimizer/benchmark.py fixtures --work .temp/ob --corpus ../plato-brep/data/step-samples --output .temp/ob/suite.json
+python tools/benchmarks/optimizer/benchmark.py fixtures --work .temp/ob --input-list tools/benchmarks/optimizer/corpus.json --output .temp/ob/suite.json
 python tools/benchmarks/optimizer/benchmark.py discover --work .temp/ob --suite .temp/ob/suite.json --output .temp/ob/discovery.json
 python tools/benchmarks/optimizer/benchmark.py run --work .temp/ob --suite .temp/ob/suite.json --discovery .temp/ob/discovery.json
 ```
@@ -53,7 +53,9 @@ recipe in the run; it is never replaced with a less optimized fallback.
 
 ## Fixture preparation and workload boundaries
 
-Use repeated `fixtures --input <file.step>` arguments to prepare specific files,
+The checked-in `corpus.json` supplies portable witness models spanning analytic and
+spline geometry and meshing paths. It is a seed corpus; add actual application
+models before drawing production conclusions. Use repeated `fixtures --input <file.step>` arguments to prepare specific files,
 or `--corpus <directory>` to enumerate STEP files recursively. Duplicate source
 contents are prepared once. `--max-inputs` bounds setup during experimentation;
 it is an input-order limit and does not select representative models. Use
@@ -135,6 +137,9 @@ warmup and batch costs and accounts for variant and block counts when fitting th
 selection to the run budget. The estimate is not a runtime guarantee. Without discovery it uses uniform costs
 and labels the estimate as unknown. Redundant tag coverage does not earn another
 fixture a place merely because it came from another file.
+
+Preparation failures remain explicit in the suite and run report, outside measured
+coverage. A partial preparation cannot quietly become a complete corpus result.
 
 The mode defaults live in `benchmark.py:MODES`. Quick mode screens for promising
 changes and obvious regressions; its default repetition count cannot establish
