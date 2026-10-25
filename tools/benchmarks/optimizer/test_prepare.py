@@ -1,5 +1,8 @@
 import io
+from contextlib import nullcontext
+import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -12,7 +15,7 @@ from types import SimpleNamespace
 import prepare
 
 from prepare import (contained, export_tree, identity_hash, parse_program, read_shipping_flags,
-                     seal, verify_cache, _assert_idle, build_variants, brep_export_paths, _generate)
+                     seal, verify_cache, _assert_idle, build_variants, brep_export_paths, _generate, file_hashes)
 
 TEST_ROOT = Path(__file__).resolve().parents[3] / ".temp/optimizer-prepare-tests"
 
@@ -52,10 +55,86 @@ class PrepareTests(unittest.TestCase):
             verify_cache(self.root, {"compiler": "b"})
         receipt = self.root / "complete.json"
         record = json.loads(receipt.read_text())
-        record["files"]["../outside"] = "bad"
-        receipt.write_text(json.dumps(record))
-        with self.assertRaises(ValueError):
+        for name in ("../outside", "/absolute", "C:/outside", "nested\\outside", "nested//outside",
+                     "nested/./outside", "", "bad\0name"):
+            with self.subTest(name=name):
+                record["files"] = {name: "bad"}
+                receipt.write_text(json.dumps(record))
+                with self.assertRaisesRegex(ValueError, "Unsafe cache file name"):
+                    verify_cache(self.root)
+        for files in ([42], None):
+            record["files"] = files
+            receipt.write_text(json.dumps(record))
+            with self.assertRaisesRegex(ValueError, "Invalid cache file manifest"):
+                verify_cache(self.root)
+        record["files"] = {42: "bad"}
+        with patch("prepare.json.loads", return_value=record), self.assertRaisesRegex(ValueError, "Unsafe cache file name"):
             verify_cache(self.root)
+
+    def test_nested_hashes_and_exact_exclusions(self):
+        nested = self.root / "nested/deeper"
+        nested.mkdir(parents=True)
+        (self.root / "root.txt").write_bytes(b"root text")
+        (nested / "binary.bin").write_bytes(b"\0\xff\x01")
+        (self.root / "nested/skip.bin").write_bytes(b"excluded")
+        self.assertEqual(file_hashes(self.root, exclude=("nested/skip.bin",)), {
+            "root.txt": hashlib.sha256(b"root text").hexdigest(),
+            "nested/deeper/binary.bin": hashlib.sha256(b"\0\xff\x01").hexdigest(),
+        })
+
+    def test_file_and_directory_symlinks_are_rejected_even_when_excluded(self):
+        target_file = self.root / "target.txt"
+        target_file.write_bytes(b"target")
+        target_dir = self.root / "target-dir"
+        target_dir.mkdir()
+        (target_dir / "child.txt").write_bytes(b"child")
+        seal(self.root, {"input": "links"})
+        for target in (target_file, target_dir):
+            link = self.root / "alias"
+            try:
+                link.symlink_to(target, target_is_directory=target.is_dir())
+            except (OSError, NotImplementedError) as exc:
+                self.skipTest("Symlink creation unavailable: " + str(exc))
+            try:
+                with self.assertRaisesRegex(ValueError, "Links are not cache inputs"):
+                    file_hashes(self.root, exclude=("alias",))
+                with self.assertRaisesRegex(ValueError, "Links are not cache inputs"):
+                    verify_cache(self.root)
+                with self.assertRaisesRegex(ValueError, "Links are not cache inputs"):
+                    file_hashes(link)
+            finally:
+                link.unlink()
+
+    def test_symlink_metadata_is_rejected_without_opening_target(self):
+        metadata = SimpleNamespace(st_mode=prepare.stat.S_IFLNK, st_reparse_tag=None)
+        entry = SimpleNamespace(name="alias", path=str(self.root / "alias"), stat=lambda **kwargs: metadata)
+        with patch("prepare.os.scandir", return_value=nullcontext([entry])), patch("prepare.digest", side_effect=AssertionError("must not open target")):
+            with self.assertRaisesRegex(ValueError, "Links are not cache inputs"):
+                file_hashes(self.root, exclude=("alias",))
+
+    @unittest.skipUnless(os.name == "nt", "Windows junctions only")
+    def test_windows_junction_is_rejected(self):
+        import _winapi
+        if not hasattr(_winapi, "CreateJunction"):
+            self.skipTest("Junction creation unavailable")
+        target = self.root / "target"
+        target.mkdir()
+        (target / "child.txt").write_bytes(b"child")
+        seal(self.root, {"input": "junction"})
+        junction = self.root / "junction"
+        try:
+            _winapi.CreateJunction(str(target), str(junction))
+        except OSError as exc:
+            self.skipTest("Junction creation unavailable: " + str(exc))
+        try:
+            with self.assertRaisesRegex(ValueError, "Links are not cache inputs"):
+                file_hashes(self.root)
+            with self.assertRaisesRegex(ValueError, "Links are not cache inputs"):
+                verify_cache(self.root)
+            with self.assertRaisesRegex(ValueError, "Links are not cache inputs"):
+                file_hashes(junction)
+        finally:
+            junction.rmdir()
 
     def test_path_containment(self):
         for name in ("../outside", "/absolute", "C:/outside", "nested/../../outside"):
@@ -169,6 +248,44 @@ sys.exit(bool(failures))
                             _generate(workspace, brep, [], log, 10)
                 evidence = (case / "build/generated-check.log").read_text()
                 self.assertIn("accepted baseline host obligation" if accepted else "degraded" if label != "new" else "new bodiless", evidence)
+
+    def test_compiler_and_checker_timeouts_preserve_partial_logs_and_failure(self):
+        for phase in ("compiler", "checker"):
+            with self.subTest(phase=phase):
+                case = self.root / phase
+                brep = case / "build/brep"
+                tools = brep / "library/tools"
+                tools.mkdir(parents=True)
+                (tools / "shipped-program.txt").write_text("stdlib foundation\nlayer 00-foundation\n")
+                layer = brep / "library/00-foundation"
+                layer.mkdir()
+                (layer / "brep.plato").write_text("library Brep {}")
+                (brep / "generated/Ara3D.StepBrep").mkdir(parents=True)
+                foundation = case / "source/plato/stdlib/foundation"
+                foundation.mkdir(parents=True)
+                (foundation / "basic.plato").write_text("primitive Number {}")
+                error = subprocess.TimeoutExpired("test command", 10,
+                                                 output=b"partial stdout\xff\n" if phase == "compiler" else "partial stdout\n",
+                                                 stderr="partial stderr\n" if phase == "compiler" else b"partial stderr\xff\n")
+
+                def run(command, **kwargs):
+                    if phase == "compiler" or command[0] == "python":
+                        raise error
+                    output = Path(next(arg.removeprefix("--out=") for arg in command if arg.startswith("--out=")))
+                    (output / "Unit.g.cs").write_text("public struct Unit {}")
+                    return SimpleNamespace(returncode=0, stdout="compiler complete\n", stderr="")
+
+                log = case / "build/compiler.log"
+                with patch("prepare.subprocess.run", side_effect=run), self.assertRaises(subprocess.TimeoutExpired) as raised:
+                    _generate(dict(root=str(case / "source"), cli="supplied.dll"), brep, [], log, 10)
+                self.assertIs(raised.exception, error)
+                if phase == "compiler":
+                    self.assertEqual(log.read_text(encoding="utf-8"), "partial stdout\ufffd\npartial stderr\n")
+                    self.assertFalse((log.parent / "generated-check.log").exists())
+                else:
+                    self.assertEqual(log.read_text(encoding="utf-8"), "compiler complete\n")
+                    self.assertEqual((log.parent / "generated-check.log").read_text(encoding="utf-8"), "partial stdout\npartial stderr\ufffd\n")
+                self.assertFalse((brep / "generated/Ara3D.StepBrep/Generated").exists())
 
     def test_failed_baseline_does_not_become_ready(self):
         workspace = self.root / "cache/workspaces/key"
@@ -311,6 +428,16 @@ sys.exit(bool(failures))
         self.assertEqual(results[0]["status"], "error")
         self.assertIn("builder changed", results[0]["error"])
         self.assertFalse(list((self.root / "builder-change/cache/b").rglob("complete.json")))
+
+    def test_changed_workspace_source_aborts_before_generation(self):
+        data, worker, recorder = self.build_source_fixture("workspace-change")
+        source = Path(data["root"]) / "brep/Dependency.cs"
+        source.write_text("original dependency")
+        seal(data["root"], data["identity"])
+        source.write_text("changed dependency")
+        with patch("prepare._generate") as generate, self.assertRaisesRegex(ValueError, "Cache content changed"):
+            build_variants(data, [dict(name="shipping", flags=[])], worker, recorder)
+        generate.assert_not_called()
 
 
 if __name__ == "__main__":

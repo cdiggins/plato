@@ -10,6 +10,7 @@ import json
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tarfile
@@ -58,14 +59,41 @@ def contained(root, relative):
     return target
 
 
+def _validate_manifest_name(name):
+    if (not isinstance(name, str) or not name or "\\" in name or ":" in name or "\0" in name
+            or any(part in ("", ".", "..") for part in name.split("/"))):
+        raise ValueError("Unsafe cache file name: " + repr(name))
+
+
+def _reject_link(path, metadata):
+    tag = getattr(metadata, "st_reparse_tag", None)
+    junction = tag is not None and tag == getattr(stat, "IO_REPARSE_TAG_MOUNT_POINT", None)
+    if stat.S_ISLNK(metadata.st_mode) or junction:
+        raise ValueError("Links are not cache inputs: " + str(path))
+
+
 def file_hashes(root, *, exclude=()):
+    """Check each entry once instead of resolving every file's ancestors."""
     root = Path(root)
+    _reject_link(root, root.lstat())
+    root = root.resolve()
+    excluded = set(exclude)
     result = {}
-    for path in sorted(root.rglob("*")):
-        name = path.relative_to(root).as_posix()
-        contained(root, name)
-        if path.is_file() and name not in exclude:
-            result[name] = digest(path)
+
+    def visit(folder, prefix=""):
+        with os.scandir(folder) as iterator:
+            entries = sorted(iterator, key=lambda entry: entry.name)
+        for entry in entries:
+            name = prefix + entry.name
+            _validate_manifest_name(name)
+            metadata = entry.stat(follow_symlinks=False)
+            _reject_link(entry.path, metadata)
+            if stat.S_ISDIR(metadata.st_mode):
+                visit(entry.path, name + "/")
+            elif stat.S_ISREG(metadata.st_mode) and name not in excluded:
+                result[name] = digest(entry.path)
+
+    visit(root)
     return result
 
 
@@ -87,8 +115,10 @@ def verify_cache(root, identity=None, name="complete.json"):
         raise ValueError("Invalid cache receipt identity")
     if identity is not None and record["identity"] != identity:
         raise ValueError("Cache inputs differ")
+    if not isinstance(record.get("files"), dict):
+        raise ValueError("Invalid cache file manifest")
     for relative in record["files"]:
-        contained(root, relative)
+        _validate_manifest_name(relative)
     if file_hashes(root, exclude=(name,)) != record["files"]:
         raise ValueError("Cache content changed: " + str(root))
     return record
@@ -278,8 +308,12 @@ def _generate(workspace, brep, flags, log, timeout):
     output = brep.parent / "emitted"
     output.mkdir()
     started = time.perf_counter()
-    run = subprocess.run(["dotnet", workspace["cli"], *roots, "--out=" + str(output), "--profile=cpu64", *flags],
-                         capture_output=True, text=True, timeout=timeout)
+    try:
+        run = subprocess.run(["dotnet", workspace["cli"], *roots, "--out=" + str(output), "--profile=cpu64", *flags],
+                             capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired as exc:
+        log.write_text(_timeout_output(exc), encoding="utf-8")
+        raise
     text = run.stdout + run.stderr
     log.write_text(text, encoding="utf-8")
     if run.returncode:
@@ -290,9 +324,13 @@ def _generate(workspace, brep, flags, log, timeout):
     # The committed checker distinguishes declared host obligations from dropped
     # compiler bodies. Only the former may use its committed baseline; every
     # degraded body and every new bodiless declaration remains a failure.
-    check = subprocess.run(["python", "-I", "-S", str(brep / "library/tools/check_generated.py"), str(output), "--log", str(log)],
-                           capture_output=True, text=True, timeout=timeout)
     checker_log = log.parent / "generated-check.log"
+    try:
+        check = subprocess.run(["python", "-I", "-S", str(brep / "library/tools/check_generated.py"), str(output), "--log", str(log)],
+                               capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired as exc:
+        checker_log.write_text(_timeout_output(exc), encoding="utf-8")
+        raise
     checker_log.write_text(check.stdout + check.stderr, encoding="utf-8")
     if check.returncode:
         raise ValueError("Generated code check failed; see " + str(checker_log) + ": " + check.stdout + check.stderr)
@@ -315,6 +353,13 @@ def _generate(workspace, brep, flags, log, timeout):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(source.read_text(encoding="utf-8-sig").replace("Ara3D.Geometry", "Ara3D.StepBrep"), encoding="utf-8")
     return time.perf_counter() - started
+
+
+def _timeout_output(error):
+    # TimeoutExpired may carry bytes even when subprocess.run used text=True.
+    def text(value):
+        return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else value or ""
+    return text(error.stdout) + text(error.stderr)
 
 
 def build_variants(workspace, variants, worker_source, recorder, *, timeout=900):
