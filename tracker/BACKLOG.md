@@ -70,6 +70,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-486](issues/compiler-486.md) | Specialize constant arguments without changing calls | feature | p2 | L | high | compiler | idea |  |
 | [compiler-488](issues/compiler-488.md) | Prove local-binding fusion and empty filter lowering | problem | p2 | L | high | compiler | idea |  |
 | [compiler-500](issues/compiler-500.md) | Explain allocation growth from B-rep source inlining | problem | p2 | M | low | compiler | idea |  |
+| [compiler-502](issues/compiler-502.md) | Include inter-stage work in B-rep meshing timing | problem | p2 | S | low | compiler | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
 | [plato-028](issues/plato-028.md) | Consumer-driven refactoring direction (Earcut gaps, query vocabulary, topology) | feature | p2 | L | med | plato | idea |  |
 | [plato-029](issues/plato-029.md) | Port Geometry3Sharp pure query kernels to Plato | feature | p2 | L | med | plato | idea |  |
