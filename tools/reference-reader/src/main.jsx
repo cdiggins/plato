@@ -124,7 +124,7 @@ function App() {
   const navigate = id => { location.hash = routeFor(id); setMobileOpen(false); };
   const toggle = key => setExpanded(current => new Set(current.has(key) ? [...current].filter(item => item !== key) : [...current, key]));
   const download = () => {
-    const url = URL.createObjectURL(new Blob([page.markdown], { type: 'text/markdown;charset=utf-8' }));
+    const url = URL.createObjectURL(new Blob([page.rawMarkdown ?? page.markdown], { type: 'text/markdown;charset=utf-8' }));
     const anchor = document.createElement('a'); anchor.href = url; anchor.download = `${page.path.split('/').at(-1)}`; anchor.click(); URL.revokeObjectURL(url);
   };
   useEffect(() => {

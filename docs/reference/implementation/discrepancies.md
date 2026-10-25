@@ -65,7 +65,29 @@ This register keeps contradictions visible while providing a usable reference. I
 
 **Consequence.** Mathematical “inspect one sum value” intuition is insufficient to infer a once-only evaluation guarantee. Bind a complex subject to a local. A normative evaluation rule and lowering fixture should settle the intended contract, including faults and builders, before stating a whole-language semantics-preservation theorem.
 
-## Ownership is a discipline, not a complete static proof
+## Host-derived setters are not automatically source functions
+
+**Conflict.** SEMANTICS describes immutable per-field setters as part of the derived value surface.
+The C# writer emits `With...` methods, but a minimal source program calling an undeclared
+`WithLeft` fails symbol resolution. `SymbolFactory` derives accessors, constructors and conversion
+relations, not a source library declaration for every C# convenience.
+
+**Consequence.** A source example must explicitly define its update function or construct the
+replacement record. A clean-room implementation needs an explicit decision about whether these
+setters are intended source features or host-only conveniences. The runnable product fixture
+defines its `WithLeft` body visibly rather than assuming automatic binding.
+
+## Bare generic receiver classification fails before checking
+
+**Observed.** A library function `F(x: $T): Integer where $T: IReferenceValue` throws from
+`Compilation.AddLibraryFunctionsToReifiedTypes` because its first parameter is neither a concrete
+type nor an interface. A bound does not alter that receiver classification.
+
+**Consequence.** Use a constructed receiver or a concrete/interface receiver with a separate
+generic parameter in tested examples. A clear rejection or supported lowering is needed; a raw
+exception must not be mistaken for a successful generic typing rule.
+
+## Ownership enforcement boundary
 
 **Gap.** [Primitive declarations](../../../stdlib/foundation/primitives.plato) describe affine builder ownership, forbid capture/storage, and require rebind/consume patterns. The present implementation combines lint checks and runtime invalidation; it does not statically prove unique ownership for all programs.
 

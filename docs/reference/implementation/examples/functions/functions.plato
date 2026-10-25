@@ -5,8 +5,8 @@ library ReferenceFunctions {
     ReferenceValue(x: ReferenceBox): Integer => x.Value;
     ApplyReference(x: Integer, f: Function1<Integer, Integer>): Integer => f(x);
     TwiceReference(x: Integer): Integer => x + x;
-    BoundedReference(x: $T): Integer where $T: IReferenceValue => x.ReferenceValue;
+    BoundedReference(_: Integer, x: $T): Integer where $T: IReferenceValue => x.ReferenceValue;
     Law_ReferenceLambda(): Boolean => ApplyReference(4, x => x + 1) == 5;
     Law_ReferenceEta(): Boolean => ApplyReference(4, TwiceReference) == 8;
-    Law_ReferenceBound(): Boolean => BoundedReference(ReferenceBox(6)) == 6;
+    Law_ReferenceBound(): Boolean => Integer.BoundedReference(ReferenceBox(6)) == 6;
 }

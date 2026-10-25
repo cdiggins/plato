@@ -20,6 +20,11 @@ an observation. Everything in `kebab-case.md` is descriptive, historical, or exp
 
 ## Reference — how things currently work
 
+The [hierarchical Plato reference](reference/README.md) teaches the core language and standard
+library through small linked chapters, source-derived API pages, formal models and an explicit
+discrepancy register. Its [React reader](../tools/reference-reader/README.md) assembles the
+Markdown into a searchable browser with a dynamic table of contents.
+
 The [optimizer handbook](optimizer/README.md) explains the C# optimization components, their
 motivation, source and test evidence, and related compiler ideas. Its [pipeline reference](csharp-optimizer-pipeline.md)
 defines scheduling and runtime contracts.

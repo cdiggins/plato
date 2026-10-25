@@ -19,6 +19,11 @@ npm --prefix tools/reference-reader run preview
 
 The small pure navigation/search helpers can be checked with `npm --prefix tools/reference-reader test`.
 
+The `predev` and `prebuild` scripts regenerate the reference data automatically, so Python 3.10
+or later is also required. A failed source/link check stops the build instead of silently using
+stale reader data. The initial explicit generator command is useful for seeing documentation
+errors before dependency installation.
+
 ## Structure and extension points
 
 - `src/navigation.js` parses hash routes, derives heading slugs, builds the hierarchical folder tree, and searches page titles and Markdown bodies.

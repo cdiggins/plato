@@ -38,11 +38,17 @@ Bounds also license operations on a parameter within the relevant generic contex
 ## Bounds on functions
 
 ```plato
-Midpoint(a: $T, b: $T): $T where $T: IInterpolatable
-    => a.Lerp(b, 0.5);
+Midpoint(pair: Pair<$T>): $T where $T: IInterpolatable
+    => pair.First.Lerp(pair.Second, 0.5);
 ```
 
 Function bounds follow the return type and precede the body. They license body operations and filter overload candidates at each call: the inferred argument type must satisfy the bound. A failed call obligation is CHK206. An operation absent from a known bound is CHK205. A bound naming a variable not mentioned in the signature is a linter finding because it constrains no useful input or output.
+
+The example uses a constructed receiver `Pair<$T>`. A bare signature variable as the first
+parameter, such as `F(x: $T)`, currently reaches an unhandled receiver-classification exception
+before checking, even with a bound. Use a concrete/constructed receiver or an interface receiver
+for the implemented path. This restriction is an implementation boundary requiring a diagnostic
+and specification decision; it is not a theorem about bounded polymorphism.
 
 An important implementation caveat: an unbounded signature variable is not universally rejected for all capability uses. The solver retains permissive behavior for unbounded parameters. This means absence of an error is not a proof of parametricity or complete constraint inference. For reusable public algorithms, declare the capabilities actually required.
 

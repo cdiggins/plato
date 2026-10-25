@@ -20,9 +20,9 @@ formal notation, and explicit contradictions. Other writers are not semantic evi
 
 ## Done means
 
-- [ ] Small hierarchical language chapters explain syntax, static and dynamic semantics, with source evidence, formal rules, and related work.
-- [ ] Every forward stdlib source has a generated reference entry retaining its declarations, comments, bodies, tier, and unresolved obligations; domain guides teach conventions and use.
-- [ ] A reproducible generator validates coverage, provenance, local links, and freshness and builds the React reader with navigation, search, and deep links.
+- [x] Small hierarchical language chapters explain syntax, static and dynamic semantics, with source evidence, formal rules, and related work.
+- [x] Every forward stdlib source has a generated reference entry retaining its declarations, comments, bodies, tier, and unresolved obligations; domain guides teach conventions and use.
+- [x] A reproducible generator validates coverage, provenance, local links, and freshness and builds the React reader with navigation, search, and deep links.
 - [ ] Reader production build, generator checks, and appropriate repository gates are run and limitations recorded; discrepancies remain explicit.
 
 ## Scope decisions

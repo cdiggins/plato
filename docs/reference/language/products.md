@@ -10,11 +10,17 @@ type Reading {
 
 library Readings {
     Create(_: Reading, x: Number, u: Number): Reading => Reading(x, u);
-    Shift(r: Reading, d: Number): Reading => r.WithEstimate(r.Estimate + d);
+    Shift(r: Reading, d: Number): Reading => Reading(r.Estimate + d, r.Uncertainty);
 }
 ```
 
-The compiler derives the constructor and field access functions. `r.Estimate` reads a field. `r.WithEstimate(x)` returns a record with the new estimate and the old uncertainty. It does not mutate `r`. Product-derived members also provide equality, hashing, tuple conversion, and deconstruction; the exact C# surface is described in [C# mapping](../implementation/csharp.md).
+The compiler derives the constructor and field access functions. `r.Estimate` reads a field.
+`Shift` explicitly constructs a new record while preserving uncertainty; it does not mutate `r`.
+The C# writer also derives immutable `With...` methods, equality, hashing, tuple conversion and
+deconstruction. These host conveniences are not all automatically bound as Plato source functions:
+a minimal source fixture calling an undeclared `WithEstimate` fails resolution. Define a source
+update function explicitly when needed. See [C# mapping](../implementation/csharp.md) and the
+[discrepancy register](../implementation/discrepancies.md) for this distinction.
 
 ## Nominal identity, structural construction
 

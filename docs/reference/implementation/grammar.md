@@ -53,7 +53,7 @@ Keep a distinction between “member syntax without an argument list” and “m
 
 ## Binding a global program
 
-Collect declarations before resolving their references. Build nominal type identities, declared type parameter scopes, interface inheritance links, fields/cases, and global function groups. Libraries organize ownership but do not isolate names. Derive constructors, accessors, immutable field setters, and conversion relations from products; derive case constructors and tests/projections from sums.
+Collect declarations before resolving their references. Build nominal type identities, declared type parameter scopes, interface inheritance links, fields/cases, and global function groups. Libraries organize ownership but do not isolate names. Derive source constructors, accessors and conversion relations from products; derive case constructors and tests/projections from sums. The C# writer's additional immutable `With...` methods are host conveniences, not automatically resolved source setter declarations.
 
 Reference nodes should point to definition identities, not merely equal-looking strings. Normalization deliberately reuses parameter/local definition objects so rewritten references still identify the same binding. A reimplementation that clones definitions without remapping references will break closures and local lookups.
 

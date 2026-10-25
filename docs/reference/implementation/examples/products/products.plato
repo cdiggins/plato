@@ -3,6 +3,7 @@ type ApprovedInteger sealed by ApproveInteger { Value: Integer; }
 
 library ReferenceProducts {
     MakePair(a: Integer, b: Integer): ReferencePair => (a, b);
+    WithLeft(p: ReferencePair, left: Integer): ReferencePair => (left, p.Right);
     ApproveInteger(x: Integer): ApprovedInteger => ApprovedInteger(x);
     ReadApproved(x: ApprovedInteger): Integer => x.Value;
     Law_ReferenceTuple(): Boolean => MakePair(3, 7).Right == 7;
