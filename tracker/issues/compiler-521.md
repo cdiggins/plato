@@ -27,3 +27,7 @@ The current request authorizes planning. The implementation criterion remains pe
 ## Planning review
 
 Architecture, safety and delivery subagents reviewed the existing pipeline and the proposed plan. Independent review clarified that exact-output changes emitted C#, so the first slice trusts its renderer and tests actual generated syntax and behavior; it does not claim per-compilation emitted-code equivalence. Verifier scope starts with the relevant exact-output forms and expands with fusion. Implementation is not started.
+
+## Semantic prerequisites
+
+The [semantic audit](../../docs/reports/optimizer-semantics-audit-2026-10-25.md) adds explicit language/intrinsic/backend premise sources, affine effects and executable coercions to the plan. Characterize older passes under compiler-483 before claiming whole-pipeline equivalence; the exact-output pilot remains a bounded adjacent-stage migration. Implementation is still pending.

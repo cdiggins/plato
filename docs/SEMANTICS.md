@@ -27,9 +27,15 @@ declaration in the compilation shares one global scope, and declaration order ne
 Library names are organizational only; they do not scope names. Interface names use an `I`
 prefix (`IEquatable`, `IOrderable`, …).
 
-Everything is an immutable value and every function is pure: no mutation, no I/O, no exceptions,
-no null, no reflection, no observable evaluation order. A function's meaning is exactly the value
-it returns for its arguments. Typing is static and **nominal** — types match by name, not
+Ordinary values are immutable and functions are pure: no user-visible mutation of shared state,
+I/O, null values or reflection. Local assignment and affine builders are described in §3;
+their mutation preserves purity through uniqueness. There are no source-level
+`throw`/`try`/`catch` constructs, but computations can still fault or fail to terminate.
+Purity is not totality and does not by itself permit an optimizer to skip, duplicate or reorder
+evaluation. The conditional and Boolean short-circuit rules (§6), conversion semantics, and
+intrinsic evaluation contracts still apply; for example, `MapRange` eagerly computes each
+element once in index order in both the interpreter and the C# runtime. Host-runtime obligations
+must also be preserved by that backend. Typing is static and **nominal** — types match by name, not
 structure (with one deliberate exception: tuple construction, §6). Generic and interface-generic
 code is **monomorphized**: the compiler stamps a concrete copy per implementing type, so there is
 no runtime dispatch, no boxing, and no abstraction penalty.

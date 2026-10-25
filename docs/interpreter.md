@@ -423,8 +423,10 @@ the interpreter's `--budget` keeps the slow interpreter arm to the laws that are
 stops is a budget error, never a mismatch (TKT-438). Only the calls the runner makes are
 compared, not the calls inside them, so a wrong helper shows up through the laws that use it.
 
-- **Arrays are eager** here and lazy in the C# runtime. The observable difference is cost, and
-  the point at which a faulting element function faults.
+- **MapRange is eager** in both the interpreter and the C# runtime: each element function is
+  evaluated once in index order, and a fault stops construction at that element. Arbitrary
+  host-supplied C# collections have their own access behavior; they are not evidence that Plato
+  array construction is lazy. See [the runtime contract](../src/Plato.Intrinsics/ArrayIntrinsics.cs).
 - **Hash seeds.** The C# backend combines field hashes with `HashCode.Combine`, whose seed is per
   process, so no hash value is comparable across runs in either engine; the interpreter's hash is
   stable within a process and consistent with its equality.

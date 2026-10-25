@@ -73,6 +73,24 @@ This limitation does not exempt actual TIR rewrites from validating their constr
 
 ## Facts, revisions, and refusal
 
+Each rule must identify which premises come from source-language semantics, intrinsic contracts,
+and backend host compatibility. A pure source function need not terminate or be defined for every
+input. Short-circuit conditionals preserve skipped faults/nontermination; ordinary type names and
+operator spellings do not authorize algebraic rewrites. Numeric profiles determine machine
+arithmetic, and a user-defined conversion is executable computation, not an annotation.
+
+Track affine builder observation, mutation and consumption separately. Static affine checking
+is incomplete, so well-typed TIR alone does not prove unique ownership, safe duplication or
+safe capture. A sealed source type restricts Plato construction, but its public generated host
+constructor is not a trustworthy certificate of a runtime predicate by itself.
+
+Before expanding a rule or adopting a combined optimizer recipe, characterize the current older
+passes under [compiler-483](../../tracker/issues/compiler-483.md). In particular, expression
+substitution, eager producer fusion, literal expansion, component expansion and loop lowering
+need their own evaluation/identity arguments. Checking a new rule relative to an already altered
+input cannot establish equivalence of the entire pipeline. Use an unoptimized reference as well
+as adjacent-stage checks; name the exact phase and flag combinations the evidence covers.
+
 Start with facts needed by an actual consumer: resolved type/intrinsic identity, literal output
 width, immutable bindings, completed owned array producers, assigned/captured symbols, and the
 existing narrow total Number arithmetic contract. Keep separate facts for nonthrowing behavior,

@@ -18,5 +18,9 @@ Independent review identified H-01 through H-05 by source inspection, without ex
 ## Done means
 
 - [ ] Build minimized executable reproductions or disprove reachability for H-01 through H-05.
-- [ ] State expected behavior from semantics/runtime contracts and distinguish domain faults, termination and resource exhaustion.
+- [x] State expected behavior from semantics/runtime contracts and distinguish domain faults, termination and resource exhaustion.
 - [ ] File confirmed independent defects or close disproved hypotheses with evidence; define conservative prerequisites for broader optimization.
+
+## Semantic audit — 2026-10-25
+
+[Audit and per-pass consequences](../../docs/reports/optimizer-semantics-audit-2026-10-25.md) distinguish source purity, partiality, intrinsic sequencing, numeric profiles, affine effects and host compatibility. The broad introductory no-order/no-exceptions wording and stale interpreter claim of lazy C# arrays are corrected against existing detailed contracts. Read-only review confirms mechanisms behind H-02/H-03 and substitution/expansion concerns; these are not new executable reproductions. The remaining criteria stay open: minimize actual Plato/C# cases or disprove reachability, then file confirmed independent defects. Inherited Count caching must be distinguished from exact-output-versus-lowered-loop equivalence. No compiler code or flag defaults changed; no builds or runtime tests ran.
