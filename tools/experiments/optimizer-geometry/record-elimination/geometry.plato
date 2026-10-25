@@ -1,0 +1,10 @@
+// New coordinate-extraction kernel, not an unchanged shipping library workload.
+type ProjectionPoint { X: Number; Y: Number; Z: Number; }
+library RecordGeometry
+{
+    Coordinate(x: Number, y: Number, z: Number): Number => ProjectionPoint(x, y, z).X;
+    FaultingUnused(x: Number, y: Function1<Number, Number>, z: Function1<Number, Number>): Number
+        => ProjectionPoint(x, y(x), z(x)).X;
+    Receiver(point: ProjectionPoint): Number => point.X;
+    Escape(x: Number, y: Number, z: Number): ProjectionPoint => ProjectionPoint(x, y, z);
+}

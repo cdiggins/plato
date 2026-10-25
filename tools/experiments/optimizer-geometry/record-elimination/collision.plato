@@ -1,0 +1,5 @@
+library RecordCollision
+{
+    Collision(n: Integer, x: Number, z: Number): Number
+        => ProjectionPoint(x, n.MapRange(projectionField0 => x).At(0), z).X;
+}
