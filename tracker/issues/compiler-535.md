@@ -2,7 +2,7 @@
 id: compiler-535
 title: Complete optimizer recipe exceeds BREP generation budget
 type: problem
-status: ready
+status: in-progress
 priority: p1
 effort: M
 risk: med

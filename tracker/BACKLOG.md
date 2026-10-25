@@ -12,6 +12,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [compiler-520](issues/compiler-520.md) | Report useful grammar failure locations | bug | p1 | S | med | compiler | in-progress |  |
 | [compiler-521](issues/compiler-521.md) | Plan declarative checked optimizer transformations | idea | p1 | L | high | compiler | in-progress |  |
 | [compiler-534](issues/compiler-534.md) | Define outcome semantics and optimization-friendly contracts | idea | p1 | L | high | compiler | in-progress |  |
+| [compiler-535](issues/compiler-535.md) | Complete optimizer recipe exceeds BREP generation budget | problem | p1 | M | med | compiler | in-progress |  |
 | [plato-229](issues/plato-229.md) | Complete the Plato v2 interface lattice | feature | p1 | L | high | plato | in-progress |  |
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | in-progress |  |
 | [plato-378](issues/plato-378.md) | Shrink the host intrinsic contract to an irreducible kernel | debt | p1 | L | med | plato | in-progress |  |
@@ -30,7 +31,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [stdlib-464](issues/stdlib-464.md) | Stdlib conformance failures: establish domains and repair contracts | bug | ? | ? | ? | stdlib | in-progress |  |
-| [compiler-535](issues/compiler-535.md) | Complete optimizer recipe exceeds BREP generation budget | problem | p1 | M | med | compiler | ready |  |
 | [docs-525](issues/docs-525.md) | Reconcile language reference contradictions with compiler evidence | debt | p1 | M | low | docs | ready |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
