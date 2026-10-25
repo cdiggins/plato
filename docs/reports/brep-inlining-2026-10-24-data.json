@@ -1,0 +1,4643 @@
+{
+  "schema": 1,
+  "inputs": {
+    "meshkernel": "047670a70232826f0f30c1112d327cff6c05a9ff",
+    "compiler": {
+      "schema": 1,
+      "plato": "763034a67612fb1ada95891434cba8fc2ecf5707",
+      "parakeet": "f4f9a8af7fce930c03b75d990cc927070192133a",
+      "sdk": "98a90590b7f3b964c2a9bdbd01dba24ffe33fab0",
+      "dotnet": "10.0.400",
+      "platform": "Win32NT",
+      "architecture": "X64",
+      "policy": "bbd1d5d4c90ed19d08900c2fc48703350fd52e759316df0730fa4ac11959c2fc",
+      "locks": "a7f2d42f0884d8cd4504c65b78e0134d8a3b422f277adb61f0f18c55d7b42e87",
+      "configuration": "Release",
+      "framework": "net8.0",
+      "restoreSource": "https://api.nuget.org/v3/index.json"
+    },
+    "plato": "763034a67612fb1ada95891434cba8fc2ecf5707",
+    "brep": "99c8fdee6be8d3fc92f45401321d442e15375316",
+    "packageHashes": {
+      "Ara3D.Collections.1.6.2-pin98a90590.nupkg": "c9be780404b98e00a0339e210bb2c9fae239932bea862b8e80c49ac5651ae357",
+      "Ara3D.DataTable.1.6.2-pin98a90590.nupkg": "b0bb7f61b0b51c08372b86a0f8b99b573cdf3295757156a3111c8b37ee349711",
+      "Ara3D.Domo.1.6.2-pin98a90590.nupkg": "a2b31306e9594a11601fdf33692ad36088f7dfc953418a03f93a8a8ced5f3f7f",
+      "Ara3D.Events.1.6.2-pin98a90590.nupkg": "cea43cef62dae6e9846db3218eff064935f48038bf38912f8e3441f713a5170d",
+      "Ara3D.F8.1.6.2-pin98a90590.nupkg": "841454ef0ca0443e905ac78b57ac628dfaa87cd08ebfc26293cbdb0ef85e886d",
+      "Ara3D.Flow.1.6.2-pin98a90590.nupkg": "885b6ac7781342c244308829b45c2cb1c310cea268984471df6ae3f0d4bad2ba",
+      "Ara3D.Geometry.1.6.2-pin98a90590.nupkg": "e6efd5a7949f26e36a56b6654fc78bede0cca0150d362488e524b2dfbecffed5",
+      "Ara3D.Graphics.1.6.2-pin98a90590.nupkg": "43cd5817b853274f9712d9dd6abe8c4337dc25f57dc3757e2b09e57a37147cca",
+      "Ara3D.IO.BFAST.1.6.2-pin98a90590.nupkg": "33d885ad14d7f300d1e62c080ae6afba1aace41a6bed75d68a650d8d6f9fb209",
+      "Ara3D.IO.G3D.1.6.2-pin98a90590.nupkg": "b4506896347f1912f855b27bcb79886f3784e2bdd13ae19a74f3dc1b77c32302",
+      "Ara3D.IO.GeoJson.1.6.2-pin98a90590.nupkg": "5bab71116e1ceeaf818857908f5c343799d9980be2be3de9a49caa8e848c0986",
+      "Ara3D.IO.GltfExporter.1.6.2-pin98a90590.nupkg": "662773b86f91acf68498bd737dc20b54f8b83e05130ef3e05059d3122ee8e10a",
+      "Ara3D.IO.PLY.1.6.2-pin98a90590.nupkg": "365f59084f46eb1c5d40d6564b59e3395edfc1795375e49b0e84352c1a03c567",
+      "Ara3D.IO.SharpGLTF.1.6.2-pin98a90590.nupkg": "1ade4f5e45c3fbfe151d2ecdd87da42b550586a7fd0fa34a142c07ac2de016e2",
+      "Ara3D.IO.StepParser.1.6.2-pin98a90590.nupkg": "348f830974f01c43332c00b757cd2c55e321455e186ea967f4c9f88f34c8a190",
+      "Ara3D.IO.VIM.1.6.2-pin98a90590.nupkg": "c017fa3fd6ed5eac04500c64e091df5e8c79ac2bd7eb8cfd227f1e16a9bbec65",
+      "Ara3D.Logging.1.6.2-pin98a90590.nupkg": "07a1049920f81e0f3cc66ef48b6a9c1b7f859ea5e78f610a4c804bb3fd1c7118",
+      "Ara3D.MCP.1.6.2-pin98a90590.nupkg": "f9ec5df707dc6728ce7e0adf601017963a4a2e7a823f57de4d5180d6eb3d0852",
+      "Ara3D.Memory.1.6.2-pin98a90590.nupkg": "662be9d480233866bcc3c28e6c155eac8ed52920d26bb005317c6c41b0f8d6c6",
+      "Ara3D.Models.1.6.2-pin98a90590.nupkg": "cd36ad003b515a32cf880cbfa4f534d02d92fb0ab83e04a6eaa1e3110b5e689c",
+      "Ara3D.PropKit.1.6.2-pin98a90590.nupkg": "f69d954e776b5a351cf47ce34b7f3f8baf9ce2e185b0a237061d1bfa12cc589d",
+      "Ara3D.SDK.1.6.2-pin98a90590.nupkg": "98860cdae8a16fa0d69d03398bc915590dd8493752ff34dd0f65dc41d1bc29a8",
+      "Ara3D.SDK.1.6.2-pin98a90590.symbols.nupkg": "98860cdae8a16fa0d69d03398bc915590dd8493752ff34dd0f65dc41d1bc29a8",
+      "Ara3D.SDK.Core.1.6.2-pin98a90590.nupkg": "4bddaef5eb31b948c22a3b9d034e8d9f79c41aa2914768ea6b641114378b92bc",
+      "Ara3D.SDK.Geometry.1.6.2-pin98a90590.nupkg": "5679808f7639fd0ef12a6251090ec1b55c40e42155b8e98c7b480d4c15e0672c",
+      "Ara3D.SDK.IO.1.6.2-pin98a90590.nupkg": "52e4489da1f2409491246c4605e9d3d951a841515408b989a46f4e76f21dc014",
+      "Ara3D.Studio.API.1.6.2-pin98a90590.nupkg": "f798ba9558ea249f4b2ec5db3e8abe09d026cf06b224ffe1091b5d0b43c0fcf3",
+      "Ara3D.Utils.1.6.2-pin98a90590.nupkg": "1d49ed28e86c4b3c337cc7037096cf16b532f938d838b1e921b3e383ed5e5f66",
+      "Ara3D.Utils.Roslyn.1.6.2-pin98a90590.nupkg": "f98bb7246fd4b156e7707e08048bd55b25c9f617643d5be59f8dcfbf0e002a84",
+      "Ara3D.Utils.Wpf.1.6.2-pin98a90590.nupkg": "1e913f5ba2af51e77b760cbf16875caac2d725f09560011aaaefab7b654bc324",
+      "Ara3D.WorkItems.1.6.2-pin98a90590.nupkg": "cca7dd9dc76943fc26c2f4647a1e237296de129133b585cef6fdc423919c0bfb"
+    }
+  },
+  "compiler": {
+    "Key": "b6290d230dc07e2e34cdc1243c888a87fd06f29126c249a03295c812644f2431",
+    "Identity": {
+      "schema": 1,
+      "plato": "763034a67612fb1ada95891434cba8fc2ecf5707",
+      "parakeet": "f4f9a8af7fce930c03b75d990cc927070192133a",
+      "sdk": "98a90590b7f3b964c2a9bdbd01dba24ffe33fab0",
+      "dotnet": "10.0.400",
+      "platform": "Win32NT",
+      "architecture": "X64",
+      "policy": "bbd1d5d4c90ed19d08900c2fc48703350fd52e759316df0730fa4ac11959c2fc",
+      "locks": "a7f2d42f0884d8cd4504c65b78e0134d8a3b422f277adb61f0f18c55d7b42e87",
+      "configuration": "Release",
+      "framework": "net8.0",
+      "restoreSource": "https://api.nuget.org/v3/index.json"
+    },
+    "Root": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\compiler-cache\\b6290d230dc07e2e34cdc1243c888a87fd06f29126c249a03295c812644f2431",
+    "Plato": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\compiler-cache\\b6290d230dc07e2e34cdc1243c888a87fd06f29126c249a03295c812644f2431\\plato",
+    "Cli": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\compiler-cache\\b6290d230dc07e2e34cdc1243c888a87fd06f29126c249a03295c812644f2431\\build\\bin\\Plato.CLI\\release\\Plato.CLI.dll",
+    "Cached": false
+  },
+  "policies": {
+    "baseline": {
+      "variant": "baseline",
+      "body_nodes": 120,
+      "passes": 8,
+      "cheap_cost_exclusive": 4,
+      "compiler_build": {
+        "exit": 0,
+        "seconds": 15.604134699999122,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\baseline\\writer-build.log"
+      },
+      "flags": [
+        "--loops",
+        "--fuse"
+      ],
+      "generation": {
+        "exit": 0,
+        "seconds": 73.68084850002197,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\baseline\\generate.log"
+      },
+      "stub_check": {
+        "exit": 0,
+        "seconds": 58.515073199989274,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\baseline\\stub-check.log"
+      },
+      "source_bytes": 17499004,
+      "inlining_totals": [],
+      "host_build": {
+        "exit": 0,
+        "seconds": 23.7,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\inline-brep-baseline-host.log",
+        "note": "Retried with pinned SDK feed"
+      },
+      "assembly_bytes": 7453696,
+      "binary_hashes": {
+        "Ara3D.Collections.dll": "4d57b12e54124cfb6b4558af20888c4ad0e217ed8cbb5d81dde9b845a3b9287e",
+        "Ara3D.F8.dll": "000782918692221feadb22c24a67c6284ee358f507394ba94a2126b9e5cd6313",
+        "Ara3D.Geometry.dll": "b6a19e5f8cce25e90ad0ea00aac25f5d4d49e9f0093b75aa1abbdb137dcafe54",
+        "Ara3D.IO.BFAST.dll": "ede839c4409cdc5cd474582ded420b9f854eb5555030289da09167192711ee98",
+        "Ara3D.IO.StepParser.dll": "94c7448ab15446c7dd0e287a142cee269e79a949cdc7658c73231d387647c800",
+        "Ara3D.Logging.dll": "9c1bebde7209154941f54e0723f9c404bab34f93732515b54229b6d07ad72dba",
+        "Ara3D.Memory.dll": "2cf7888a85d795e4bb296a7fa9af393df12ec0cf2c57c0d5c301a380dfe49bb2",
+        "Ara3D.MeshKernel.dll": "4b80c0c8b0ecd05f8f3a8f4a98301f5b270f053a3b11e1519e148f512c805b32",
+        "Ara3D.Models.dll": "656bd24b3d3a4fd02b0ec023645435ff9759559a5f46591e0552b288e34d7076",
+        "Ara3D.Step.Decode.dll": "2bf2edc57f3ccb65b1a97217a49005fa1b429d2aac1f29efdf66b706de3b3eee",
+        "Ara3D.Step.Entities.dll": "b96e7a40b1612e9014a8d44a64df9d126969222720ca9833f869017b2215e1a1",
+        "Ara3D.Step.Mesher.dll": "28017857d3df4a2b741e5cc37f7f9c9bdfbd660927360850991352c9759bbed7",
+        "Ara3D.StepBrep.dll": "d3aded1c6bbe11f90f1cf5d8f1e33be432931b0a877a0200b7b475991af9fe4f",
+        "Ara3D.Utils.dll": "383a79e68d5fbdc980c3f780368fdd9e05d606a17cc2242b0cda2fd904a5d077",
+        "step-corpus-harness.dll": "6ba8dda00c3bc9f10df91b0e715fed8e6d843f2fdb619ffe5daa979f4ea7c5a8"
+      }
+    },
+    "default": {
+      "variant": "default",
+      "body_nodes": 120,
+      "passes": 8,
+      "cheap_cost_exclusive": 4,
+      "compiler_build": {
+        "exit": 0,
+        "seconds": 26.105435799981933,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\default\\writer-build.log"
+      },
+      "flags": [
+        "--loops",
+        "--fuse",
+        "--inline",
+        "--inline-report"
+      ],
+      "generation": {
+        "exit": 0,
+        "seconds": 97.06214110000292,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\default\\generate.log"
+      },
+      "stub_check": {
+        "exit": 0,
+        "seconds": 79.34142089998932,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\default\\stub-check.log"
+      },
+      "source_bytes": 25284362,
+      "inlining_totals": [
+        "calls inlined:            62785",
+        "beta reductions:          15",
+        "tuple ctor rewrites:      4708"
+      ],
+      "host_build": {
+        "exit": 1,
+        "seconds": 94.96567750000395,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\default\\host-build.log"
+      }
+    },
+    "default-partial": {
+      "variant": "default-partial",
+      "body_nodes": 120,
+      "passes": 8,
+      "cheap_cost_exclusive": 4,
+      "compiler_build": {
+        "exit": 0,
+        "seconds": 26.105435799981933,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\default\\writer-build.log"
+      },
+      "flags": [
+        "--loops",
+        "--fuse",
+        "--inline",
+        "--inline-report"
+      ],
+      "generation": {
+        "exit": 0,
+        "seconds": 97.06214110000292,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\default\\generate.log"
+      },
+      "stub_check": {
+        "exit": 0,
+        "seconds": 79.34142089998932,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\default\\stub-check.log"
+      },
+      "source_bytes": 21820044,
+      "inlining_totals": [
+        "calls inlined:            62785",
+        "beta reductions:          15",
+        "tuple ctor rewrites:      4708"
+      ],
+      "host_build": {
+        "exit": 0,
+        "seconds": 26.242605000006733,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\default-partial\\host-build.log"
+      },
+      "original_variant": "default",
+      "fallback_files": [
+        "BisectionCached.g.cs",
+        "BisectionCachedLaws.g.cs",
+        "BrepCheckingDiscretization.g.cs",
+        "BrepCheckingReports.g.cs",
+        "BrepCheckingStep.g.cs",
+        "BrepCheckingTopology.g.cs",
+        "BrepCheckingTopologyGiven.g.cs",
+        "BrepGeometryLaws.g.cs",
+        "BrepOracles.g.cs",
+        "BrepTopology.g.cs",
+        "BsplineLocalEvaluationLaws.g.cs",
+        "BsplineOracles.g.cs",
+        "BsplineSides.g.cs",
+        "BsplineWitnesses.g.cs",
+        "Curves.g.cs",
+        "DiscretizationClosedSpanLaws.g.cs",
+        "EdgeDiscretizing.g.cs",
+        "EdgeDiscretizingLaws.g.cs",
+        "EdgeDiscretizingProofs.g.cs",
+        "EdgeGuards.g.cs",
+        "EdgeRangedDiscretizing.g.cs",
+        "EdgeRefineIndexed.g.cs",
+        "EdgeRefineIndexedLaws.g.cs",
+        "EdgeTabledDiscretizing.g.cs",
+        "GeometryLawsOnce.g.cs",
+        "IntervalsTransformsDeformable.g.cs",
+        "NumericStructures.g.cs",
+        "Polyhedra.g.cs",
+        "StepToMesh.g.cs",
+        "StepToMeshProofsDiscretizationWitnessLaws.g.cs",
+        "SurfaceCurveDomainLaws.g.cs",
+        "TermDiscretize.g.cs",
+        "Transforms.g.cs",
+        "V1JodyShellSewing.g.cs",
+        "_AxisAngle.g.cs",
+        "_BrepModel.g.cs",
+        "_Circle.g.cs",
+        "_EulerAngles.g.cs",
+        "_Integer.g.cs",
+        "_Number.g.cs",
+        "_PolygonMesh3D.g.cs",
+        "_Pose2D.g.cs",
+        "_Pose3D.g.cs",
+        "_Quaternion.g.cs",
+        "_RawDecodedModel.g.cs",
+        "_Rotation2D.g.cs",
+        "_RotationAbout2D.g.cs",
+        "_RotationAbout3D.g.cs",
+        "_ScalingAbout2D.g.cs",
+        "_ScalingAbout3D.g.cs",
+        "_UvRegion.g.cs"
+      ],
+      "fallback_reason": "Retain identical baseline files for the union of generated C# errors across all compared policies",
+      "assembly_bytes": 8791552,
+      "binary_hashes": {
+        "Ara3D.Collections.dll": "4d57b12e54124cfb6b4558af20888c4ad0e217ed8cbb5d81dde9b845a3b9287e",
+        "Ara3D.F8.dll": "000782918692221feadb22c24a67c6284ee358f507394ba94a2126b9e5cd6313",
+        "Ara3D.Geometry.dll": "b6a19e5f8cce25e90ad0ea00aac25f5d4d49e9f0093b75aa1abbdb137dcafe54",
+        "Ara3D.IO.BFAST.dll": "ede839c4409cdc5cd474582ded420b9f854eb5555030289da09167192711ee98",
+        "Ara3D.IO.StepParser.dll": "94c7448ab15446c7dd0e287a142cee269e79a949cdc7658c73231d387647c800",
+        "Ara3D.Logging.dll": "9c1bebde7209154941f54e0723f9c404bab34f93732515b54229b6d07ad72dba",
+        "Ara3D.Memory.dll": "2cf7888a85d795e4bb296a7fa9af393df12ec0cf2c57c0d5c301a380dfe49bb2",
+        "Ara3D.MeshKernel.dll": "4b80c0c8b0ecd05f8f3a8f4a98301f5b270f053a3b11e1519e148f512c805b32",
+        "Ara3D.Models.dll": "656bd24b3d3a4fd02b0ec023645435ff9759559a5f46591e0552b288e34d7076",
+        "Ara3D.Step.Decode.dll": "2bf2edc57f3ccb65b1a97217a49005fa1b429d2aac1f29efdf66b706de3b3eee",
+        "Ara3D.Step.Entities.dll": "b96e7a40b1612e9014a8d44a64df9d126969222720ca9833f869017b2215e1a1",
+        "Ara3D.Step.Mesher.dll": "28017857d3df4a2b741e5cc37f7f9c9bdfbd660927360850991352c9759bbed7",
+        "Ara3D.StepBrep.dll": "00542f8ccdaa71e805771f972d00f1400efafa789cdb8920b736d4ced66d0cf8",
+        "Ara3D.Utils.dll": "383a79e68d5fbdc980c3f780368fdd9e05d606a17cc2242b0cda2fd904a5d077",
+        "step-corpus-harness.dll": "6ba8dda00c3bc9f10df91b0e715fed8e6d843f2fdb619ffe5daa979f4ea7c5a8"
+      },
+      "host_policy": "Frozen baseline host and dependencies; only Ara3D.StepBrep.dll differs"
+    },
+    "duplicate": {
+      "variant": "duplicate",
+      "body_nodes": 2000,
+      "passes": 32,
+      "cheap_cost_exclusive": 32,
+      "compiler_build": {
+        "exit": 0,
+        "seconds": 7.651421199989272,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\duplicate\\writer-build.log"
+      },
+      "flags": [
+        "--loops",
+        "--fuse",
+        "--inline",
+        "--inline-report"
+      ],
+      "generation": {
+        "exit": 0,
+        "seconds": 81.09919999999693,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\duplicate\\generate.log"
+      },
+      "stub_check": {
+        "exit": 0,
+        "seconds": 53.26076480001211,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\duplicate\\stub-check.log"
+      },
+      "source_bytes": 25834144,
+      "inlining_totals": [
+        "calls inlined:            63471",
+        "beta reductions:          15",
+        "tuple ctor rewrites:      4733"
+      ],
+      "host_build": {
+        "exit": 1,
+        "seconds": 28.863493099983316,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\duplicate\\host-build.log"
+      }
+    },
+    "duplicate-partial": {
+      "variant": "duplicate-partial",
+      "body_nodes": 2000,
+      "passes": 32,
+      "cheap_cost_exclusive": 32,
+      "compiler_build": {
+        "exit": 0,
+        "seconds": 7.651421199989272,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\duplicate\\writer-build.log"
+      },
+      "flags": [
+        "--loops",
+        "--fuse",
+        "--inline",
+        "--inline-report"
+      ],
+      "generation": {
+        "exit": 0,
+        "seconds": 81.09919999999693,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\duplicate\\generate.log"
+      },
+      "stub_check": {
+        "exit": 0,
+        "seconds": 53.26076480001211,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\duplicate\\stub-check.log"
+      },
+      "source_bytes": 21858935,
+      "inlining_totals": [
+        "calls inlined:            63471",
+        "beta reductions:          15",
+        "tuple ctor rewrites:      4733"
+      ],
+      "host_build": {
+        "exit": 0,
+        "seconds": 25.202347100013867,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\duplicate-partial\\host-build.log"
+      },
+      "original_variant": "duplicate",
+      "fallback_files": [
+        "BisectionCached.g.cs",
+        "BisectionCachedLaws.g.cs",
+        "BrepCheckingDiscretization.g.cs",
+        "BrepCheckingReports.g.cs",
+        "BrepCheckingStep.g.cs",
+        "BrepCheckingTopology.g.cs",
+        "BrepCheckingTopologyGiven.g.cs",
+        "BrepGeometryLaws.g.cs",
+        "BrepOracles.g.cs",
+        "BrepTopology.g.cs",
+        "BsplineLocalEvaluationLaws.g.cs",
+        "BsplineOracles.g.cs",
+        "BsplineSides.g.cs",
+        "BsplineWitnesses.g.cs",
+        "Curves.g.cs",
+        "DiscretizationClosedSpanLaws.g.cs",
+        "EdgeDiscretizing.g.cs",
+        "EdgeDiscretizingLaws.g.cs",
+        "EdgeDiscretizingProofs.g.cs",
+        "EdgeGuards.g.cs",
+        "EdgeRangedDiscretizing.g.cs",
+        "EdgeRefineIndexed.g.cs",
+        "EdgeRefineIndexedLaws.g.cs",
+        "EdgeTabledDiscretizing.g.cs",
+        "GeometryLawsOnce.g.cs",
+        "IntervalsTransformsDeformable.g.cs",
+        "NumericStructures.g.cs",
+        "Polyhedra.g.cs",
+        "StepToMesh.g.cs",
+        "StepToMeshProofsDiscretizationWitnessLaws.g.cs",
+        "SurfaceCurveDomainLaws.g.cs",
+        "TermDiscretize.g.cs",
+        "Transforms.g.cs",
+        "V1JodyShellSewing.g.cs",
+        "_AxisAngle.g.cs",
+        "_BrepModel.g.cs",
+        "_Circle.g.cs",
+        "_EulerAngles.g.cs",
+        "_Integer.g.cs",
+        "_Number.g.cs",
+        "_PolygonMesh3D.g.cs",
+        "_Pose2D.g.cs",
+        "_Pose3D.g.cs",
+        "_Quaternion.g.cs",
+        "_RawDecodedModel.g.cs",
+        "_Rotation2D.g.cs",
+        "_RotationAbout2D.g.cs",
+        "_RotationAbout3D.g.cs",
+        "_ScalingAbout2D.g.cs",
+        "_ScalingAbout3D.g.cs",
+        "_UvRegion.g.cs"
+      ],
+      "fallback_reason": "Retain identical baseline files for the union of generated C# errors across all compared policies",
+      "assembly_bytes": 8824320,
+      "binary_hashes": {
+        "Ara3D.Collections.dll": "4d57b12e54124cfb6b4558af20888c4ad0e217ed8cbb5d81dde9b845a3b9287e",
+        "Ara3D.F8.dll": "000782918692221feadb22c24a67c6284ee358f507394ba94a2126b9e5cd6313",
+        "Ara3D.Geometry.dll": "b6a19e5f8cce25e90ad0ea00aac25f5d4d49e9f0093b75aa1abbdb137dcafe54",
+        "Ara3D.IO.BFAST.dll": "ede839c4409cdc5cd474582ded420b9f854eb5555030289da09167192711ee98",
+        "Ara3D.IO.StepParser.dll": "94c7448ab15446c7dd0e287a142cee269e79a949cdc7658c73231d387647c800",
+        "Ara3D.Logging.dll": "9c1bebde7209154941f54e0723f9c404bab34f93732515b54229b6d07ad72dba",
+        "Ara3D.Memory.dll": "2cf7888a85d795e4bb296a7fa9af393df12ec0cf2c57c0d5c301a380dfe49bb2",
+        "Ara3D.MeshKernel.dll": "4b80c0c8b0ecd05f8f3a8f4a98301f5b270f053a3b11e1519e148f512c805b32",
+        "Ara3D.Models.dll": "656bd24b3d3a4fd02b0ec023645435ff9759559a5f46591e0552b288e34d7076",
+        "Ara3D.Step.Decode.dll": "2bf2edc57f3ccb65b1a97217a49005fa1b429d2aac1f29efdf66b706de3b3eee",
+        "Ara3D.Step.Entities.dll": "b96e7a40b1612e9014a8d44a64df9d126969222720ca9833f869017b2215e1a1",
+        "Ara3D.Step.Mesher.dll": "28017857d3df4a2b741e5cc37f7f9c9bdfbd660927360850991352c9759bbed7",
+        "Ara3D.StepBrep.dll": "2c1e36b9e6235c22631b033e7a7f28f09d0a4af4050b3eee7f7097168d06d846",
+        "Ara3D.Utils.dll": "383a79e68d5fbdc980c3f780368fdd9e05d606a17cc2242b0cda2fd904a5d077",
+        "step-corpus-harness.dll": "6ba8dda00c3bc9f10df91b0e715fed8e6d843f2fdb619ffe5daa979f4ea7c5a8"
+      },
+      "host_policy": "Frozen baseline host and dependencies; only Ara3D.StepBrep.dll differs"
+    },
+    "huge": {
+      "variant": "huge",
+      "body_nodes": 2000,
+      "passes": 32,
+      "cheap_cost_exclusive": 4,
+      "compiler_build": {
+        "exit": 0,
+        "seconds": 11.654564900003606,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\huge\\writer-build.log"
+      },
+      "flags": [
+        "--loops",
+        "--fuse",
+        "--inline",
+        "--inline-report"
+      ],
+      "generation": {
+        "exit": 0,
+        "seconds": 79.2622507000051,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\huge\\generate.log"
+      },
+      "stub_check": {
+        "exit": 0,
+        "seconds": 57.07237329997588,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\huge\\stub-check.log"
+      },
+      "source_bytes": 25791586,
+      "inlining_totals": [
+        "calls inlined:            63034",
+        "beta reductions:          15",
+        "tuple ctor rewrites:      4708"
+      ],
+      "host_build": {
+        "exit": 1,
+        "seconds": 27.003321600001073,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\huge\\host-build.log"
+      }
+    },
+    "huge-partial": {
+      "variant": "huge-partial",
+      "body_nodes": 2000,
+      "passes": 32,
+      "cheap_cost_exclusive": 4,
+      "compiler_build": {
+        "exit": 0,
+        "seconds": 11.654564900003606,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\huge\\writer-build.log"
+      },
+      "flags": [
+        "--loops",
+        "--fuse",
+        "--inline",
+        "--inline-report"
+      ],
+      "generation": {
+        "exit": 0,
+        "seconds": 79.2622507000051,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\huge\\generate.log"
+      },
+      "stub_check": {
+        "exit": 0,
+        "seconds": 57.07237329997588,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\huge\\stub-check.log"
+      },
+      "source_bytes": 21824618,
+      "inlining_totals": [
+        "calls inlined:            63034",
+        "beta reductions:          15",
+        "tuple ctor rewrites:      4708"
+      ],
+      "host_build": {
+        "exit": 0,
+        "seconds": 97.51068779997877,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\huge-partial\\host-build.log"
+      },
+      "original_variant": "huge",
+      "fallback_files": [
+        "BisectionCached.g.cs",
+        "BisectionCachedLaws.g.cs",
+        "BrepCheckingDiscretization.g.cs",
+        "BrepCheckingReports.g.cs",
+        "BrepCheckingStep.g.cs",
+        "BrepCheckingTopology.g.cs",
+        "BrepCheckingTopologyGiven.g.cs",
+        "BrepGeometryLaws.g.cs",
+        "BrepOracles.g.cs",
+        "BrepTopology.g.cs",
+        "BsplineLocalEvaluationLaws.g.cs",
+        "BsplineOracles.g.cs",
+        "BsplineSides.g.cs",
+        "BsplineWitnesses.g.cs",
+        "Curves.g.cs",
+        "DiscretizationClosedSpanLaws.g.cs",
+        "EdgeDiscretizing.g.cs",
+        "EdgeDiscretizingLaws.g.cs",
+        "EdgeDiscretizingProofs.g.cs",
+        "EdgeGuards.g.cs",
+        "EdgeRangedDiscretizing.g.cs",
+        "EdgeRefineIndexed.g.cs",
+        "EdgeRefineIndexedLaws.g.cs",
+        "EdgeTabledDiscretizing.g.cs",
+        "GeometryLawsOnce.g.cs",
+        "IntervalsTransformsDeformable.g.cs",
+        "NumericStructures.g.cs",
+        "Polyhedra.g.cs",
+        "StepToMesh.g.cs",
+        "StepToMeshProofsDiscretizationWitnessLaws.g.cs",
+        "SurfaceCurveDomainLaws.g.cs",
+        "TermDiscretize.g.cs",
+        "Transforms.g.cs",
+        "V1JodyShellSewing.g.cs",
+        "_AxisAngle.g.cs",
+        "_BrepModel.g.cs",
+        "_Circle.g.cs",
+        "_EulerAngles.g.cs",
+        "_Integer.g.cs",
+        "_Number.g.cs",
+        "_PolygonMesh3D.g.cs",
+        "_Pose2D.g.cs",
+        "_Pose3D.g.cs",
+        "_Quaternion.g.cs",
+        "_RawDecodedModel.g.cs",
+        "_Rotation2D.g.cs",
+        "_RotationAbout2D.g.cs",
+        "_RotationAbout3D.g.cs",
+        "_ScalingAbout2D.g.cs",
+        "_ScalingAbout3D.g.cs",
+        "_UvRegion.g.cs"
+      ],
+      "fallback_reason": "Retain identical baseline files for the union of generated C# errors across all compared policies",
+      "assembly_bytes": 8797696,
+      "binary_hashes": {
+        "Ara3D.Collections.dll": "4d57b12e54124cfb6b4558af20888c4ad0e217ed8cbb5d81dde9b845a3b9287e",
+        "Ara3D.F8.dll": "000782918692221feadb22c24a67c6284ee358f507394ba94a2126b9e5cd6313",
+        "Ara3D.Geometry.dll": "b6a19e5f8cce25e90ad0ea00aac25f5d4d49e9f0093b75aa1abbdb137dcafe54",
+        "Ara3D.IO.BFAST.dll": "ede839c4409cdc5cd474582ded420b9f854eb5555030289da09167192711ee98",
+        "Ara3D.IO.StepParser.dll": "94c7448ab15446c7dd0e287a142cee269e79a949cdc7658c73231d387647c800",
+        "Ara3D.Logging.dll": "9c1bebde7209154941f54e0723f9c404bab34f93732515b54229b6d07ad72dba",
+        "Ara3D.Memory.dll": "2cf7888a85d795e4bb296a7fa9af393df12ec0cf2c57c0d5c301a380dfe49bb2",
+        "Ara3D.MeshKernel.dll": "4b80c0c8b0ecd05f8f3a8f4a98301f5b270f053a3b11e1519e148f512c805b32",
+        "Ara3D.Models.dll": "656bd24b3d3a4fd02b0ec023645435ff9759559a5f46591e0552b288e34d7076",
+        "Ara3D.Step.Decode.dll": "2bf2edc57f3ccb65b1a97217a49005fa1b429d2aac1f29efdf66b706de3b3eee",
+        "Ara3D.Step.Entities.dll": "b96e7a40b1612e9014a8d44a64df9d126969222720ca9833f869017b2215e1a1",
+        "Ara3D.Step.Mesher.dll": "28017857d3df4a2b741e5cc37f7f9c9bdfbd660927360850991352c9759bbed7",
+        "Ara3D.StepBrep.dll": "0ebc1cdc61399a5f44a1e51641fb98a8d37bb5a4592ef2361085cd3af3c0a9a4",
+        "Ara3D.Utils.dll": "383a79e68d5fbdc980c3f780368fdd9e05d606a17cc2242b0cda2fd904a5d077",
+        "step-corpus-harness.dll": "6ba8dda00c3bc9f10df91b0e715fed8e6d843f2fdb619ffe5daa979f4ea7c5a8"
+      },
+      "host_policy": "Frozen baseline host and dependencies; only Ara3D.StepBrep.dll differs"
+    },
+    "large": {
+      "variant": "large",
+      "body_nodes": 480,
+      "passes": 16,
+      "cheap_cost_exclusive": 4,
+      "compiler_build": {
+        "exit": 0,
+        "seconds": 16.953301000001375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\large\\writer-build.log"
+      },
+      "flags": [
+        "--loops",
+        "--fuse",
+        "--inline",
+        "--inline-report"
+      ],
+      "generation": {
+        "exit": 0,
+        "seconds": 156.28956430000835,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\large\\generate.log"
+      },
+      "stub_check": {
+        "exit": 0,
+        "seconds": 66.88584939998691,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\large\\stub-check.log"
+      },
+      "source_bytes": 25791586,
+      "inlining_totals": [
+        "calls inlined:            63034",
+        "beta reductions:          15",
+        "tuple ctor rewrites:      4708"
+      ],
+      "host_build": {
+        "exit": 1,
+        "seconds": 34.51743159999023,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\large\\host-build.log"
+      }
+    },
+    "large-partial": {
+      "variant": "large-partial",
+      "body_nodes": 480,
+      "passes": 16,
+      "cheap_cost_exclusive": 4,
+      "compiler_build": {
+        "exit": 0,
+        "seconds": 16.953301000001375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\large\\writer-build.log"
+      },
+      "flags": [
+        "--loops",
+        "--fuse",
+        "--inline",
+        "--inline-report"
+      ],
+      "generation": {
+        "exit": 0,
+        "seconds": 156.28956430000835,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\large\\generate.log"
+      },
+      "stub_check": {
+        "exit": 0,
+        "seconds": 66.88584939998691,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\large\\stub-check.log"
+      },
+      "source_bytes": 21824618,
+      "inlining_totals": [
+        "calls inlined:            63034",
+        "beta reductions:          15",
+        "tuple ctor rewrites:      4708"
+      ],
+      "host_build": {
+        "exit": 0,
+        "seconds": 25.18126109999139,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\large-partial\\host-build.log"
+      },
+      "original_variant": "large",
+      "fallback_files": [
+        "BisectionCached.g.cs",
+        "BisectionCachedLaws.g.cs",
+        "BrepCheckingDiscretization.g.cs",
+        "BrepCheckingReports.g.cs",
+        "BrepCheckingStep.g.cs",
+        "BrepCheckingTopology.g.cs",
+        "BrepCheckingTopologyGiven.g.cs",
+        "BrepGeometryLaws.g.cs",
+        "BrepOracles.g.cs",
+        "BrepTopology.g.cs",
+        "BsplineLocalEvaluationLaws.g.cs",
+        "BsplineOracles.g.cs",
+        "BsplineSides.g.cs",
+        "BsplineWitnesses.g.cs",
+        "Curves.g.cs",
+        "DiscretizationClosedSpanLaws.g.cs",
+        "EdgeDiscretizing.g.cs",
+        "EdgeDiscretizingLaws.g.cs",
+        "EdgeDiscretizingProofs.g.cs",
+        "EdgeGuards.g.cs",
+        "EdgeRangedDiscretizing.g.cs",
+        "EdgeRefineIndexed.g.cs",
+        "EdgeRefineIndexedLaws.g.cs",
+        "EdgeTabledDiscretizing.g.cs",
+        "GeometryLawsOnce.g.cs",
+        "IntervalsTransformsDeformable.g.cs",
+        "NumericStructures.g.cs",
+        "Polyhedra.g.cs",
+        "StepToMesh.g.cs",
+        "StepToMeshProofsDiscretizationWitnessLaws.g.cs",
+        "SurfaceCurveDomainLaws.g.cs",
+        "TermDiscretize.g.cs",
+        "Transforms.g.cs",
+        "V1JodyShellSewing.g.cs",
+        "_AxisAngle.g.cs",
+        "_BrepModel.g.cs",
+        "_Circle.g.cs",
+        "_EulerAngles.g.cs",
+        "_Integer.g.cs",
+        "_Number.g.cs",
+        "_PolygonMesh3D.g.cs",
+        "_Pose2D.g.cs",
+        "_Pose3D.g.cs",
+        "_Quaternion.g.cs",
+        "_RawDecodedModel.g.cs",
+        "_Rotation2D.g.cs",
+        "_RotationAbout2D.g.cs",
+        "_RotationAbout3D.g.cs",
+        "_ScalingAbout2D.g.cs",
+        "_ScalingAbout3D.g.cs",
+        "_UvRegion.g.cs"
+      ],
+      "fallback_reason": "Retain identical baseline files for the union of generated C# errors across all compared policies",
+      "assembly_bytes": 8797696,
+      "binary_hashes": {
+        "Ara3D.Collections.dll": "4d57b12e54124cfb6b4558af20888c4ad0e217ed8cbb5d81dde9b845a3b9287e",
+        "Ara3D.F8.dll": "000782918692221feadb22c24a67c6284ee358f507394ba94a2126b9e5cd6313",
+        "Ara3D.Geometry.dll": "b6a19e5f8cce25e90ad0ea00aac25f5d4d49e9f0093b75aa1abbdb137dcafe54",
+        "Ara3D.IO.BFAST.dll": "ede839c4409cdc5cd474582ded420b9f854eb5555030289da09167192711ee98",
+        "Ara3D.IO.StepParser.dll": "94c7448ab15446c7dd0e287a142cee269e79a949cdc7658c73231d387647c800",
+        "Ara3D.Logging.dll": "9c1bebde7209154941f54e0723f9c404bab34f93732515b54229b6d07ad72dba",
+        "Ara3D.Memory.dll": "2cf7888a85d795e4bb296a7fa9af393df12ec0cf2c57c0d5c301a380dfe49bb2",
+        "Ara3D.MeshKernel.dll": "4b80c0c8b0ecd05f8f3a8f4a98301f5b270f053a3b11e1519e148f512c805b32",
+        "Ara3D.Models.dll": "656bd24b3d3a4fd02b0ec023645435ff9759559a5f46591e0552b288e34d7076",
+        "Ara3D.Step.Decode.dll": "2bf2edc57f3ccb65b1a97217a49005fa1b429d2aac1f29efdf66b706de3b3eee",
+        "Ara3D.Step.Entities.dll": "b96e7a40b1612e9014a8d44a64df9d126969222720ca9833f869017b2215e1a1",
+        "Ara3D.Step.Mesher.dll": "28017857d3df4a2b741e5cc37f7f9c9bdfbd660927360850991352c9759bbed7",
+        "Ara3D.StepBrep.dll": "0ebc1cdc61399a5f44a1e51641fb98a8d37bb5a4592ef2361085cd3af3c0a9a4",
+        "Ara3D.Utils.dll": "383a79e68d5fbdc980c3f780368fdd9e05d606a17cc2242b0cda2fd904a5d077",
+        "step-corpus-harness.dll": "6ba8dda00c3bc9f10df91b0e715fed8e6d843f2fdb619ffe5daa979f4ea7c5a8"
+      },
+      "host_policy": "Frozen baseline host and dependencies; only Ara3D.StepBrep.dll differs"
+    }
+  },
+  "fallback_files": [
+    "BisectionCached.g.cs",
+    "BisectionCachedLaws.g.cs",
+    "BrepCheckingDiscretization.g.cs",
+    "BrepCheckingReports.g.cs",
+    "BrepCheckingStep.g.cs",
+    "BrepCheckingTopology.g.cs",
+    "BrepCheckingTopologyGiven.g.cs",
+    "BrepGeometryLaws.g.cs",
+    "BrepOracles.g.cs",
+    "BrepTopology.g.cs",
+    "BsplineLocalEvaluationLaws.g.cs",
+    "BsplineOracles.g.cs",
+    "BsplineSides.g.cs",
+    "BsplineWitnesses.g.cs",
+    "Curves.g.cs",
+    "DiscretizationClosedSpanLaws.g.cs",
+    "EdgeDiscretizing.g.cs",
+    "EdgeDiscretizingLaws.g.cs",
+    "EdgeDiscretizingProofs.g.cs",
+    "EdgeGuards.g.cs",
+    "EdgeRangedDiscretizing.g.cs",
+    "EdgeRefineIndexed.g.cs",
+    "EdgeRefineIndexedLaws.g.cs",
+    "EdgeTabledDiscretizing.g.cs",
+    "GeometryLawsOnce.g.cs",
+    "IntervalsTransformsDeformable.g.cs",
+    "NumericStructures.g.cs",
+    "Polyhedra.g.cs",
+    "StepToMesh.g.cs",
+    "StepToMeshProofsDiscretizationWitnessLaws.g.cs",
+    "SurfaceCurveDomainLaws.g.cs",
+    "TermDiscretize.g.cs",
+    "Transforms.g.cs",
+    "V1JodyShellSewing.g.cs",
+    "_AxisAngle.g.cs",
+    "_BrepModel.g.cs",
+    "_Circle.g.cs",
+    "_EulerAngles.g.cs",
+    "_Integer.g.cs",
+    "_Number.g.cs",
+    "_PolygonMesh3D.g.cs",
+    "_Pose2D.g.cs",
+    "_Pose3D.g.cs",
+    "_Quaternion.g.cs",
+    "_RawDecodedModel.g.cs",
+    "_Rotation2D.g.cs",
+    "_RotationAbout2D.g.cs",
+    "_RotationAbout3D.g.cs",
+    "_ScalingAbout2D.g.cs",
+    "_ScalingAbout3D.g.cs",
+    "_UvRegion.g.cs"
+  ],
+  "source_hashes": {
+    "baseline": "c9aad53030a37ea548346fc679be1f2c2a8178939c82c88c36582a1a72e7a650",
+    "default": "a8e5d8b678d279f0afb6760a548cbb653b7804b03b4cd73838be561978e45c2a",
+    "large": "9ff524fb3899c38345ae7175949bd81123ee1e4963a734cc1d2187be56c7d4a4",
+    "huge": "9ff524fb3899c38345ae7175949bd81123ee1e4963a734cc1d2187be56c7d4a4"
+  },
+  "controlled": {
+    "config": {
+      "repeats": 3,
+      "warmup_runs": 1,
+      "parallel": false,
+      "DOTNET_TieredCompilation": "1",
+      "DOTNET_ReadyToRun": "1",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "cpu_count": 22,
+      "dotnet_sdk": "10.0.400",
+      "dotnet_runtimes": "Microsoft.AspNetCore.App 8.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\nMicrosoft.AspNetCore.App 8.0.22 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\nMicrosoft.AspNetCore.App 8.0.30 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\nMicrosoft.AspNetCore.App 9.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\nMicrosoft.AspNetCore.App 9.0.19 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\nMicrosoft.AspNetCore.App 10.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\nMicrosoft.NETCore.App 6.0.35 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\nMicrosoft.NETCore.App 7.0.0 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\nMicrosoft.NETCore.App 8.0.12 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\nMicrosoft.NETCore.App 8.0.22 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\nMicrosoft.NETCore.App 8.0.30 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\nMicrosoft.NETCore.App 9.0.3 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\nMicrosoft.NETCore.App 9.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\nMicrosoft.NETCore.App 9.0.19 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\nMicrosoft.NETCore.App 10.0.9 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\nMicrosoft.NETCore.App 10.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\nMicrosoft.WindowsDesktop.App 6.0.35 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\nMicrosoft.WindowsDesktop.App 7.0.0 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\nMicrosoft.WindowsDesktop.App 8.0.12 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\nMicrosoft.WindowsDesktop.App 8.0.22 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\nMicrosoft.WindowsDesktop.App 8.0.30 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\nMicrosoft.WindowsDesktop.App 9.0.3 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\nMicrosoft.WindowsDesktop.App 9.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\nMicrosoft.WindowsDesktop.App 9.0.19 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\nMicrosoft.WindowsDesktop.App 10.0.9 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\nMicrosoft.WindowsDesktop.App 10.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\n",
+      "inputs": {
+        "ODIN-W160.STEP": "a7d07868deb0c2d4668386896fbf37e31097f3c6da38d8bcb1f2ed1431177c15",
+        "ELLA-W1.STEP": "2764c12d80976d7d742b313792fbee306ee40f4119507cca036baafd73e29b30",
+        "JODY-W3.STEP": "8d0ecea38e9a8481a6ae7ae163cf09ed2b28ce4b53dc5cdfda71b587926c3c8d"
+      },
+      "random_seed": 498,
+      "idle_sleep_prevention": "Windows ES_SYSTEM_REQUIRED for measurement process lifetime"
+    },
+    "runs": [
+      {
+        "exit": 0,
+        "seconds": 5.643535000010161,
+        "cpu_seconds": 10.125,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ODIN-W160-0-baseline.log",
+        "variant": "baseline",
+        "case": "ODIN-W160.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 44.5257,
+          "DecodeMs": 244.5691,
+          "PrepareMs": 305.0521,
+          "TablesMs": 13.2588,
+          "EdgesMs": 134.8292,
+          "FacesMs": 540.9275,
+          "RefineMs": 0.802,
+          "AssembleMs": 28.5739,
+          "TotalMs": 1312.5383,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 158.6708,
+          "AllocatedBytes": 456199920,
+          "MeshingMs": 718.3914,
+          "ProcessCpuSeconds": 10.125,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 5.328781300020637,
+        "cpu_seconds": 8.5625,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ODIN-W160-0-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 53.1208,
+          "DecodeMs": 207.9885,
+          "PrepareMs": 487.8941,
+          "TablesMs": 9.716199999999999,
+          "EdgesMs": 166.0908,
+          "FacesMs": 573.056,
+          "RefineMs": 0.7613,
+          "AssembleMs": 21.8239,
+          "TotalMs": 1520.4515999999999,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 156.5575,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 771.4482,
+          "ProcessCpuSeconds": 8.5625,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 5.381117999990238,
+        "cpu_seconds": 8.6875,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ODIN-W160-0-default-partial.log",
+        "variant": "default-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 45.0837,
+          "DecodeMs": 216.1365,
+          "PrepareMs": 488.5274,
+          "TablesMs": 9.2011,
+          "EdgesMs": 171.021,
+          "FacesMs": 572.4884,
+          "RefineMs": 0.7607,
+          "AssembleMs": 22.0251,
+          "TotalMs": 1525.2439,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 171.5829,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 775.4962999999999,
+          "ProcessCpuSeconds": 8.6875,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 19.67147840000689,
+        "cpu_seconds": 25.296875,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ELLA-W1-0-default-partial.log",
+        "variant": "default-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 46.5085,
+          "DecodeMs": 316.9257,
+          "PrepareMs": 1640.6429,
+          "TablesMs": 32.9163,
+          "EdgesMs": 4983.4625,
+          "FacesMs": 1236.0137,
+          "RefineMs": 34.3654,
+          "AssembleMs": 34.3926,
+          "TotalMs": 8325.2276,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 218.2685,
+          "AllocatedBytes": 1882101232,
+          "MeshingMs": 6321.1505,
+          "ProcessCpuSeconds": 25.296875,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 18.666364499978954,
+        "cpu_seconds": 28.375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ELLA-W1-0-baseline.log",
+        "variant": "baseline",
+        "case": "ELLA-W1.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 53.149,
+          "DecodeMs": 295.1106,
+          "PrepareMs": 1455.8264,
+          "TablesMs": 29.3805,
+          "EdgesMs": 4357.9713,
+          "FacesMs": 1173.674,
+          "RefineMs": 33.5538,
+          "AssembleMs": 38.9066,
+          "TotalMs": 7437.5722,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 193.4193,
+          "AllocatedBytes": 1226239856,
+          "MeshingMs": 5633.4862,
+          "ProcessCpuSeconds": 28.375,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 19.99832199999946,
+        "cpu_seconds": 27.046875,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ELLA-W1-0-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 42.5534,
+          "DecodeMs": 317.08,
+          "PrepareMs": 1719.6506,
+          "TablesMs": 36.4759,
+          "EdgesMs": 5046.0546,
+          "FacesMs": 1255.5493,
+          "RefineMs": 35.8299,
+          "AssembleMs": 36.6094,
+          "TotalMs": 8489.803100000001,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 227.3073,
+          "AllocatedBytes": 1882101184,
+          "MeshingMs": 6410.5191,
+          "ProcessCpuSeconds": 27.046875,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 19.45120399998268,
+        "cpu_seconds": 27.625,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\JODY-W3-0-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 20.0916,
+          "DecodeMs": 338.3052,
+          "PrepareMs": 461.72,
+          "TablesMs": 132.4822,
+          "EdgesMs": 1699.6287,
+          "FacesMs": 5739.7257,
+          "RefineMs": 1.4708,
+          "AssembleMs": 24.4247,
+          "TotalMs": 8417.848899999999,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 200.215,
+          "AllocatedBytes": 21855075424,
+          "MeshingMs": 7597.7321,
+          "ProcessCpuSeconds": 27.625,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 20.36728299999959,
+        "cpu_seconds": 32.9375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\JODY-W3-0-default-partial.log",
+        "variant": "default-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 20.3079,
+          "DecodeMs": 352.9501,
+          "PrepareMs": 408.0401,
+          "TablesMs": 153.9452,
+          "EdgesMs": 1800.907,
+          "FacesMs": 6012.4006,
+          "RefineMs": 2.689,
+          "AssembleMs": 26.9344,
+          "TotalMs": 8778.1743,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 181.5448,
+          "AllocatedBytes": 21855080752,
+          "MeshingMs": 7996.8762,
+          "ProcessCpuSeconds": 32.9375,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 18.745825199992396,
+        "cpu_seconds": 29.171875,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\JODY-W3-0-baseline.log",
+        "variant": "baseline",
+        "case": "JODY-W3.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 20.5725,
+          "DecodeMs": 218.8993,
+          "PrepareMs": 349.2781,
+          "TablesMs": 123.4825,
+          "EdgesMs": 1587.5535,
+          "FacesMs": 5570.5818,
+          "RefineMs": 1.4832,
+          "AssembleMs": 33.7662,
+          "TotalMs": 7905.6170999999995,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 154.3813,
+          "AllocatedBytes": 21988971808,
+          "MeshingMs": 7316.8672,
+          "ProcessCpuSeconds": 29.171875,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 5.828954500000691,
+        "cpu_seconds": 10.15625,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ODIN-W160-1-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 49.4637,
+          "DecodeMs": 236.0542,
+          "PrepareMs": 558.417,
+          "TablesMs": 11.815800000000001,
+          "EdgesMs": 168.252,
+          "FacesMs": 615.1261,
+          "RefineMs": 0.945,
+          "AssembleMs": 28.3727,
+          "TotalMs": 1668.4464999999998,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 162.6143,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 824.5115999999999,
+          "ProcessCpuSeconds": 10.15625,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 5.5295410999970045,
+        "cpu_seconds": 9.4375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ODIN-W160-1-baseline.log",
+        "variant": "baseline",
+        "case": "ODIN-W160.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 48.7426,
+          "DecodeMs": 240.0001,
+          "PrepareMs": 438.7245,
+          "TablesMs": 13.873299999999999,
+          "EdgesMs": 150.5987,
+          "FacesMs": 533.4326,
+          "RefineMs": 0.698,
+          "AssembleMs": 31.1095,
+          "TotalMs": 1457.1793,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 158.5163,
+          "AllocatedBytes": 456199920,
+          "MeshingMs": 729.7121,
+          "ProcessCpuSeconds": 9.4375,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 5.786584499990568,
+        "cpu_seconds": 10.59375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ODIN-W160-1-default-partial.log",
+        "variant": "default-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 51.082,
+          "DecodeMs": 223.4105,
+          "PrepareMs": 585.5532,
+          "TablesMs": 10.3164,
+          "EdgesMs": 161.6488,
+          "FacesMs": 631.0732,
+          "RefineMs": 0.9422,
+          "AssembleMs": 30.1163,
+          "TotalMs": 1694.1426,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 142.8459,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 834.0969,
+          "ProcessCpuSeconds": 10.59375,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 18.659737999987556,
+        "cpu_seconds": 27.609375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ELLA-W1-1-baseline.log",
+        "variant": "baseline",
+        "case": "ELLA-W1.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 52.1639,
+          "DecodeMs": 349.0462,
+          "PrepareMs": 1550.1876,
+          "TablesMs": 35.6126,
+          "EdgesMs": 4686.4925,
+          "FacesMs": 1163.3088,
+          "RefineMs": 32.7469,
+          "AssembleMs": 45.7032,
+          "TotalMs": 7915.2617,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 200.4082,
+          "AllocatedBytes": 1226238856,
+          "MeshingMs": 5963.8640000000005,
+          "ProcessCpuSeconds": 27.609375,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 21.00285150000127,
+        "cpu_seconds": 28.671875,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ELLA-W1-1-default-partial.log",
+        "variant": "default-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 55.4907,
+          "DecodeMs": 343.8441,
+          "PrepareMs": 1738.8947,
+          "TablesMs": 35.8427,
+          "EdgesMs": 5407.544,
+          "FacesMs": 1417.2774,
+          "RefineMs": 36.3563,
+          "AssembleMs": 36.7965,
+          "TotalMs": 9072.0464,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 225.9085,
+          "AllocatedBytes": 1882102536,
+          "MeshingMs": 6933.8169,
+          "ProcessCpuSeconds": 28.671875,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 20.510514699999476,
+        "cpu_seconds": 27.109375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ELLA-W1-1-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 55.1137,
+          "DecodeMs": 354.1448,
+          "PrepareMs": 1762.7969,
+          "TablesMs": 33.3174,
+          "EdgesMs": 5303.8225,
+          "FacesMs": 1352.5459,
+          "RefineMs": 34.5659,
+          "AssembleMs": 38.3608,
+          "TotalMs": 8934.6679,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 279.0121,
+          "AllocatedBytes": 1882101088,
+          "MeshingMs": 6762.6125,
+          "ProcessCpuSeconds": 27.109375,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 20.32362959999591,
+        "cpu_seconds": 32.859375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\JODY-W3-1-baseline.log",
+        "variant": "baseline",
+        "case": "JODY-W3.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 21.3768,
+          "DecodeMs": 221.8049,
+          "PrepareMs": 402.0455,
+          "TablesMs": 154.77419999999998,
+          "EdgesMs": 1688.4077,
+          "FacesMs": 5774.9453,
+          "RefineMs": 2.5858,
+          "AssembleMs": 30.3143,
+          "TotalMs": 8296.254500000001,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 168.4041,
+          "AllocatedBytes": 21988971760,
+          "MeshingMs": 7651.027300000001,
+          "ProcessCpuSeconds": 32.859375,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 20.049415699992096,
+        "cpu_seconds": 31.53125,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\JODY-W3-1-default-partial.log",
+        "variant": "default-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 21.2729,
+          "DecodeMs": 278.1236,
+          "PrepareMs": 351.2422,
+          "TablesMs": 126.3136,
+          "EdgesMs": 1755.7921,
+          "FacesMs": 6080.9125,
+          "RefineMs": 1.5702,
+          "AssembleMs": 37.172,
+          "TotalMs": 8652.3991,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 180.659,
+          "AllocatedBytes": 21855075368,
+          "MeshingMs": 8001.7604,
+          "ProcessCpuSeconds": 31.53125,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 20.997982299973955,
+        "cpu_seconds": 36.46875,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\JODY-W3-1-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 23.0123,
+          "DecodeMs": 337.802,
+          "PrepareMs": 424.4559,
+          "TablesMs": 150.12949999999998,
+          "EdgesMs": 1771.0559,
+          "FacesMs": 6008.6063,
+          "RefineMs": 3.0189,
+          "AssembleMs": 27.4659,
+          "TotalMs": 8745.546699999999,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 206.0968,
+          "AllocatedBytes": 21855075752,
+          "MeshingMs": 7960.276500000001,
+          "ProcessCpuSeconds": 36.46875,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 6.184466099977726,
+        "cpu_seconds": 12.875,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ODIN-W160-2-default-partial.log",
+        "variant": "default-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 44.0487,
+          "DecodeMs": 237.9662,
+          "PrepareMs": 1061.5999,
+          "TablesMs": 10.285,
+          "EdgesMs": 169.3755,
+          "FacesMs": 584.0744,
+          "RefineMs": 0.7058,
+          "AssembleMs": 25.66,
+          "TotalMs": 2133.7155,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 148.5063,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 790.1007,
+          "ProcessCpuSeconds": 12.875,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 5.286434200010262,
+        "cpu_seconds": 10.40625,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ODIN-W160-2-baseline.log",
+        "variant": "baseline",
+        "case": "ODIN-W160.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 50.4585,
+          "DecodeMs": 302.6333,
+          "PrepareMs": 239.7176,
+          "TablesMs": 13.812,
+          "EdgesMs": 132.9519,
+          "FacesMs": 577.2245,
+          "RefineMs": 0.7215,
+          "AssembleMs": 30.97,
+          "TotalMs": 1348.4893000000004,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 147.8009,
+          "AllocatedBytes": 456199920,
+          "MeshingMs": 755.6799,
+          "ProcessCpuSeconds": 10.40625,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 5.37038430001121,
+        "cpu_seconds": 9.609375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ODIN-W160-2-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 49.5372,
+          "DecodeMs": 199.1919,
+          "PrepareMs": 426.2424,
+          "TablesMs": 9.2795,
+          "EdgesMs": 157.6468,
+          "FacesMs": 588.4381,
+          "RefineMs": 0.7671,
+          "AssembleMs": 23.1471,
+          "TotalMs": 1454.2501,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 145.1056,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 779.2786,
+          "ProcessCpuSeconds": 9.609375,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 18.887695100012934,
+        "cpu_seconds": 25.359375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ELLA-W1-2-baseline.log",
+        "variant": "baseline",
+        "case": "ELLA-W1.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 40.9278,
+          "DecodeMs": 339.3801,
+          "PrepareMs": 1607.2632,
+          "TablesMs": 31.3452,
+          "EdgesMs": 4680.1027,
+          "FacesMs": 1258.7516,
+          "RefineMs": 44.7928,
+          "AssembleMs": 46.302,
+          "TotalMs": 8048.8654,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 212.285,
+          "AllocatedBytes": 1226240104,
+          "MeshingMs": 6061.2943000000005,
+          "ProcessCpuSeconds": 25.359375,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 21.016328800003976,
+        "cpu_seconds": 25.234375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ELLA-W1-2-default-partial.log",
+        "variant": "default-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 52.5982,
+          "DecodeMs": 302.6574,
+          "PrepareMs": 1778.3839,
+          "TablesMs": 30.789099999999998,
+          "EdgesMs": 5571.6319,
+          "FacesMs": 1331.3756,
+          "RefineMs": 45.6287,
+          "AssembleMs": 41.9416,
+          "TotalMs": 9155.0064,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 219.9004,
+          "AllocatedBytes": 1882101184,
+          "MeshingMs": 7021.3669,
+          "ProcessCpuSeconds": 25.234375,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 22.876094500010367,
+        "cpu_seconds": 35.109375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\ELLA-W1-2-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 50.8989,
+          "DecodeMs": 298.9024,
+          "PrepareMs": 1776.4833,
+          "TablesMs": 33.2832,
+          "EdgesMs": 5393.193,
+          "FacesMs": 1491.1008,
+          "RefineMs": 37.2935,
+          "AssembleMs": 33.1698,
+          "TotalMs": 9114.3249,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 237.591,
+          "AllocatedBytes": 1882102592,
+          "MeshingMs": 6988.040300000001,
+          "ProcessCpuSeconds": 35.109375,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 21.616715699987253,
+        "cpu_seconds": 35.875,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\JODY-W3-2-baseline.log",
+        "variant": "baseline",
+        "case": "JODY-W3.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 24.3323,
+          "DecodeMs": 326.474,
+          "PrepareMs": 350.0833,
+          "TablesMs": 146.6695,
+          "EdgesMs": 1696.2262,
+          "FacesMs": 7593.9369,
+          "RefineMs": 1.6126,
+          "AssembleMs": 36.7924,
+          "TotalMs": 10176.1272,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 204.5183,
+          "AllocatedBytes": 21988976720,
+          "MeshingMs": 9475.2376,
+          "ProcessCpuSeconds": 35.875,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 20.795411400002195,
+        "cpu_seconds": 29.15625,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\JODY-W3-2-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 27.9806,
+          "DecodeMs": 357.1247,
+          "PrepareMs": 394.6756,
+          "TablesMs": 171.92219999999998,
+          "EdgesMs": 1758.3295,
+          "FacesMs": 5964.0353,
+          "RefineMs": 1.4835,
+          "AssembleMs": 26.9178,
+          "TotalMs": 8702.4692,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 180.206,
+          "AllocatedBytes": 21855075752,
+          "MeshingMs": 7922.6883,
+          "ProcessCpuSeconds": 29.15625,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 20.909792799997376,
+        "cpu_seconds": 31.4375,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs-tiered\\JODY-W3-2-default-partial.log",
+        "variant": "default-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 33.1108,
+          "DecodeMs": 347.1245,
+          "PrepareMs": 422.4694,
+          "TablesMs": 137.0308,
+          "EdgesMs": 1695.8473,
+          "FacesMs": 6172.4005,
+          "RefineMs": 2.2044,
+          "AssembleMs": 43.153,
+          "TotalMs": 8853.3407,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 190.9134,
+          "AllocatedBytes": 21855075344,
+          "MeshingMs": 8050.6359999999995,
+          "ProcessCpuSeconds": 31.4375,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      }
+    ],
+    "summary": [
+      {
+        "case": "ODIN-W160.STEP",
+        "variant": "baseline",
+        "samples": 3,
+        "matches_baseline": true,
+        "MeshingMs": {
+          "median": 729.7121,
+          "min": 718.3914,
+          "max": 755.6799
+        },
+        "TotalMs": {
+          "median": 1348.4893000000004,
+          "min": 1312.5383,
+          "max": 1457.1793
+        },
+        "PrepareMs": {
+          "median": 305.0521,
+          "min": 239.7176,
+          "max": 438.7245
+        },
+        "TablesMs": {
+          "median": 13.812,
+          "min": 13.2588,
+          "max": 13.873299999999999
+        },
+        "EdgesMs": {
+          "median": 134.8292,
+          "min": 132.9519,
+          "max": 150.5987
+        },
+        "FacesMs": {
+          "median": 540.9275,
+          "min": 533.4326,
+          "max": 577.2245
+        },
+        "RefineMs": {
+          "median": 0.7215,
+          "min": 0.698,
+          "max": 0.802
+        },
+        "AssembleMs": {
+          "median": 30.97,
+          "min": 28.5739,
+          "max": 31.1095
+        },
+        "AllocatedBytes": {
+          "median": 456199920,
+          "min": 456199920,
+          "max": 456199920
+        },
+        "ProcessCpuSeconds": {
+          "median": 10.125,
+          "min": 9.4375,
+          "max": 10.40625
+        }
+      },
+      {
+        "case": "ODIN-W160.STEP",
+        "variant": "default-partial",
+        "samples": 3,
+        "matches_baseline": true,
+        "MeshingMs": {
+          "median": 790.1007,
+          "min": 775.4962999999999,
+          "max": 834.0969
+        },
+        "TotalMs": {
+          "median": 1694.1426,
+          "min": 1525.2439,
+          "max": 2133.7155
+        },
+        "PrepareMs": {
+          "median": 585.5532,
+          "min": 488.5274,
+          "max": 1061.5999
+        },
+        "TablesMs": {
+          "median": 10.285,
+          "min": 9.2011,
+          "max": 10.3164
+        },
+        "EdgesMs": {
+          "median": 169.3755,
+          "min": 161.6488,
+          "max": 171.021
+        },
+        "FacesMs": {
+          "median": 584.0744,
+          "min": 572.4884,
+          "max": 631.0732
+        },
+        "RefineMs": {
+          "median": 0.7607,
+          "min": 0.7058,
+          "max": 0.9422
+        },
+        "AssembleMs": {
+          "median": 25.66,
+          "min": 22.0251,
+          "max": 30.1163
+        },
+        "AllocatedBytes": {
+          "median": 504794840,
+          "min": 504794840,
+          "max": 504794840
+        },
+        "ProcessCpuSeconds": {
+          "median": 10.59375,
+          "min": 8.6875,
+          "max": 12.875
+        }
+      },
+      {
+        "case": "ODIN-W160.STEP",
+        "variant": "duplicate-partial",
+        "samples": 3,
+        "matches_baseline": true,
+        "MeshingMs": {
+          "median": 779.2786,
+          "min": 771.4482,
+          "max": 824.5115999999999
+        },
+        "TotalMs": {
+          "median": 1520.4515999999999,
+          "min": 1454.2501,
+          "max": 1668.4464999999998
+        },
+        "PrepareMs": {
+          "median": 487.8941,
+          "min": 426.2424,
+          "max": 558.417
+        },
+        "TablesMs": {
+          "median": 9.716199999999999,
+          "min": 9.2795,
+          "max": 11.815800000000001
+        },
+        "EdgesMs": {
+          "median": 166.0908,
+          "min": 157.6468,
+          "max": 168.252
+        },
+        "FacesMs": {
+          "median": 588.4381,
+          "min": 573.056,
+          "max": 615.1261
+        },
+        "RefineMs": {
+          "median": 0.7671,
+          "min": 0.7613,
+          "max": 0.945
+        },
+        "AssembleMs": {
+          "median": 23.1471,
+          "min": 21.8239,
+          "max": 28.3727
+        },
+        "AllocatedBytes": {
+          "median": 504794840,
+          "min": 504794840,
+          "max": 504794840
+        },
+        "ProcessCpuSeconds": {
+          "median": 9.609375,
+          "min": 8.5625,
+          "max": 10.15625
+        }
+      },
+      {
+        "case": "ELLA-W1.STEP",
+        "variant": "baseline",
+        "samples": 3,
+        "matches_baseline": true,
+        "MeshingMs": {
+          "median": 5963.8640000000005,
+          "min": 5633.4862,
+          "max": 6061.2943000000005
+        },
+        "TotalMs": {
+          "median": 7915.2617,
+          "min": 7437.5722,
+          "max": 8048.8654
+        },
+        "PrepareMs": {
+          "median": 1550.1876,
+          "min": 1455.8264,
+          "max": 1607.2632
+        },
+        "TablesMs": {
+          "median": 31.3452,
+          "min": 29.3805,
+          "max": 35.6126
+        },
+        "EdgesMs": {
+          "median": 4680.1027,
+          "min": 4357.9713,
+          "max": 4686.4925
+        },
+        "FacesMs": {
+          "median": 1173.674,
+          "min": 1163.3088,
+          "max": 1258.7516
+        },
+        "RefineMs": {
+          "median": 33.5538,
+          "min": 32.7469,
+          "max": 44.7928
+        },
+        "AssembleMs": {
+          "median": 45.7032,
+          "min": 38.9066,
+          "max": 46.302
+        },
+        "AllocatedBytes": {
+          "median": 1226239856,
+          "min": 1226238856,
+          "max": 1226240104
+        },
+        "ProcessCpuSeconds": {
+          "median": 27.609375,
+          "min": 25.359375,
+          "max": 28.375
+        }
+      },
+      {
+        "case": "ELLA-W1.STEP",
+        "variant": "default-partial",
+        "samples": 3,
+        "matches_baseline": true,
+        "MeshingMs": {
+          "median": 6933.8169,
+          "min": 6321.1505,
+          "max": 7021.3669
+        },
+        "TotalMs": {
+          "median": 9072.0464,
+          "min": 8325.2276,
+          "max": 9155.0064
+        },
+        "PrepareMs": {
+          "median": 1738.8947,
+          "min": 1640.6429,
+          "max": 1778.3839
+        },
+        "TablesMs": {
+          "median": 32.9163,
+          "min": 30.789099999999998,
+          "max": 35.8427
+        },
+        "EdgesMs": {
+          "median": 5407.544,
+          "min": 4983.4625,
+          "max": 5571.6319
+        },
+        "FacesMs": {
+          "median": 1331.3756,
+          "min": 1236.0137,
+          "max": 1417.2774
+        },
+        "RefineMs": {
+          "median": 36.3563,
+          "min": 34.3654,
+          "max": 45.6287
+        },
+        "AssembleMs": {
+          "median": 36.7965,
+          "min": 34.3926,
+          "max": 41.9416
+        },
+        "AllocatedBytes": {
+          "median": 1882101232,
+          "min": 1882101184,
+          "max": 1882102536
+        },
+        "ProcessCpuSeconds": {
+          "median": 25.296875,
+          "min": 25.234375,
+          "max": 28.671875
+        }
+      },
+      {
+        "case": "ELLA-W1.STEP",
+        "variant": "duplicate-partial",
+        "samples": 3,
+        "matches_baseline": true,
+        "MeshingMs": {
+          "median": 6762.6125,
+          "min": 6410.5191,
+          "max": 6988.040300000001
+        },
+        "TotalMs": {
+          "median": 8934.6679,
+          "min": 8489.803100000001,
+          "max": 9114.3249
+        },
+        "PrepareMs": {
+          "median": 1762.7969,
+          "min": 1719.6506,
+          "max": 1776.4833
+        },
+        "TablesMs": {
+          "median": 33.3174,
+          "min": 33.2832,
+          "max": 36.4759
+        },
+        "EdgesMs": {
+          "median": 5303.8225,
+          "min": 5046.0546,
+          "max": 5393.193
+        },
+        "FacesMs": {
+          "median": 1352.5459,
+          "min": 1255.5493,
+          "max": 1491.1008
+        },
+        "RefineMs": {
+          "median": 35.8299,
+          "min": 34.5659,
+          "max": 37.2935
+        },
+        "AssembleMs": {
+          "median": 36.6094,
+          "min": 33.1698,
+          "max": 38.3608
+        },
+        "AllocatedBytes": {
+          "median": 1882101184,
+          "min": 1882101088,
+          "max": 1882102592
+        },
+        "ProcessCpuSeconds": {
+          "median": 27.109375,
+          "min": 27.046875,
+          "max": 35.109375
+        }
+      },
+      {
+        "case": "JODY-W3.STEP",
+        "variant": "baseline",
+        "samples": 3,
+        "matches_baseline": true,
+        "MeshingMs": {
+          "median": 7651.027300000001,
+          "min": 7316.8672,
+          "max": 9475.2376
+        },
+        "TotalMs": {
+          "median": 8296.254500000001,
+          "min": 7905.6170999999995,
+          "max": 10176.1272
+        },
+        "PrepareMs": {
+          "median": 350.0833,
+          "min": 349.2781,
+          "max": 402.0455
+        },
+        "TablesMs": {
+          "median": 146.6695,
+          "min": 123.4825,
+          "max": 154.77419999999998
+        },
+        "EdgesMs": {
+          "median": 1688.4077,
+          "min": 1587.5535,
+          "max": 1696.2262
+        },
+        "FacesMs": {
+          "median": 5774.9453,
+          "min": 5570.5818,
+          "max": 7593.9369
+        },
+        "RefineMs": {
+          "median": 1.6126,
+          "min": 1.4832,
+          "max": 2.5858
+        },
+        "AssembleMs": {
+          "median": 33.7662,
+          "min": 30.3143,
+          "max": 36.7924
+        },
+        "AllocatedBytes": {
+          "median": 21988971808,
+          "min": 21988971760,
+          "max": 21988976720
+        },
+        "ProcessCpuSeconds": {
+          "median": 32.859375,
+          "min": 29.171875,
+          "max": 35.875
+        }
+      },
+      {
+        "case": "JODY-W3.STEP",
+        "variant": "default-partial",
+        "samples": 3,
+        "matches_baseline": true,
+        "MeshingMs": {
+          "median": 8001.7604,
+          "min": 7996.8762,
+          "max": 8050.6359999999995
+        },
+        "TotalMs": {
+          "median": 8778.1743,
+          "min": 8652.3991,
+          "max": 8853.3407
+        },
+        "PrepareMs": {
+          "median": 408.0401,
+          "min": 351.2422,
+          "max": 422.4694
+        },
+        "TablesMs": {
+          "median": 137.0308,
+          "min": 126.3136,
+          "max": 153.9452
+        },
+        "EdgesMs": {
+          "median": 1755.7921,
+          "min": 1695.8473,
+          "max": 1800.907
+        },
+        "FacesMs": {
+          "median": 6080.9125,
+          "min": 6012.4006,
+          "max": 6172.4005
+        },
+        "RefineMs": {
+          "median": 2.2044,
+          "min": 1.5702,
+          "max": 2.689
+        },
+        "AssembleMs": {
+          "median": 37.172,
+          "min": 26.9344,
+          "max": 43.153
+        },
+        "AllocatedBytes": {
+          "median": 21855075368,
+          "min": 21855075344,
+          "max": 21855080752
+        },
+        "ProcessCpuSeconds": {
+          "median": 31.53125,
+          "min": 31.4375,
+          "max": 32.9375
+        }
+      },
+      {
+        "case": "JODY-W3.STEP",
+        "variant": "duplicate-partial",
+        "samples": 3,
+        "matches_baseline": true,
+        "MeshingMs": {
+          "median": 7922.6883,
+          "min": 7597.7321,
+          "max": 7960.276500000001
+        },
+        "TotalMs": {
+          "median": 8702.4692,
+          "min": 8417.848899999999,
+          "max": 8745.546699999999
+        },
+        "PrepareMs": {
+          "median": 424.4559,
+          "min": 394.6756,
+          "max": 461.72
+        },
+        "TablesMs": {
+          "median": 150.12949999999998,
+          "min": 132.4822,
+          "max": 171.92219999999998
+        },
+        "EdgesMs": {
+          "median": 1758.3295,
+          "min": 1699.6287,
+          "max": 1771.0559
+        },
+        "FacesMs": {
+          "median": 5964.0353,
+          "min": 5739.7257,
+          "max": 6008.6063
+        },
+        "RefineMs": {
+          "median": 1.4835,
+          "min": 1.4708,
+          "max": 3.0189
+        },
+        "AssembleMs": {
+          "median": 26.9178,
+          "min": 24.4247,
+          "max": 27.4659
+        },
+        "AllocatedBytes": {
+          "median": 21855075752,
+          "min": 21855075424,
+          "max": 21855075752
+        },
+        "ProcessCpuSeconds": {
+          "median": 29.15625,
+          "min": 27.625,
+          "max": 36.46875
+        }
+      }
+    ],
+    "power_events": [],
+    "power_event_check_end_local": "2026-10-24T22:12:35-04:00",
+    "loaded_runtime": "Microsoft.NETCore.App/8.0.30/coreclr.dll (verified loaded module)"
+  },
+  "interrupted": {
+    "wall_times_valid_for_conclusions": false,
+    "reason": "Windows sleep/Modern Standby; interrupted after 33 samples",
+    "runs": [
+      {
+        "exit": 0,
+        "seconds": 10.477654799993616,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-0-default-partial.log",
+        "variant": "default-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 33.0714,
+          "DecodeMs": 132.8191,
+          "PrepareMs": 1017.7977,
+          "TablesMs": 7.4852,
+          "EdgesMs": 279.0157,
+          "FacesMs": 1072.873,
+          "RefineMs": 1.6619,
+          "AssembleMs": 14.9342,
+          "TotalMs": 2559.6582000000003,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 272.0421,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 1375.97,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 9.742804600013187,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-0-baseline.log",
+        "variant": "baseline",
+        "case": "ODIN-W160.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 33.82,
+          "DecodeMs": 252.5987,
+          "PrepareMs": 848.1638,
+          "TablesMs": 6.4985,
+          "EdgesMs": 211.9423,
+          "FacesMs": 889.5198,
+          "RefineMs": 1.4091,
+          "AssembleMs": 22.0961,
+          "TotalMs": 2266.0483,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 242.1196,
+          "AllocatedBytes": 456199920,
+          "MeshingMs": 1131.4658,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 10.503498600010062,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-0-large-partial.log",
+        "variant": "large-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 33.3033,
+          "DecodeMs": 130.0025,
+          "PrepareMs": 1026.3132,
+          "TablesMs": 7.1089,
+          "EdgesMs": 259.7461,
+          "FacesMs": 1026.186,
+          "RefineMs": 1.3764,
+          "AssembleMs": 17.2753,
+          "TotalMs": 2501.3116999999997,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 259.9606,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 1311.6926999999998,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 10.378892900014762,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-0-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 35.657,
+          "DecodeMs": 145.3721,
+          "PrepareMs": 1049.5959,
+          "TablesMs": 7.1933,
+          "EdgesMs": 258.2218,
+          "FacesMs": 1040.2565,
+          "RefineMs": 1.492,
+          "AssembleMs": 14.8604,
+          "TotalMs": 2552.649,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 280.1206,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 1322.024,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 10.375731000007363,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-0-huge-partial.log",
+        "variant": "huge-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 29.8724,
+          "DecodeMs": 135.6703,
+          "PrepareMs": 1051.1654,
+          "TablesMs": 7.4571,
+          "EdgesMs": 265.997,
+          "FacesMs": 1035.3011,
+          "RefineMs": 1.6535,
+          "AssembleMs": 18.4569,
+          "TotalMs": 2545.5737000000004,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 281.7112,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 1328.8655999999999,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 34.16041530002258,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ELLA-W1-0-huge-partial.log",
+        "variant": "huge-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 30.7611,
+          "DecodeMs": 462.2074,
+          "PrepareMs": 2706.4136,
+          "TablesMs": 36.174,
+          "EdgesMs": 8834.0874,
+          "FacesMs": 2204.4564,
+          "RefineMs": 60.4298,
+          "AssembleMs": 22.666,
+          "TotalMs": 14357.1957,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 484.1497,
+          "AllocatedBytes": 1882101528,
+          "MeshingMs": 11157.8136,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 31.509391700004926,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ELLA-W1-0-baseline.log",
+        "variant": "baseline",
+        "case": "ELLA-W1.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 33.6282,
+          "DecodeMs": 471.653,
+          "PrepareMs": 2323.3155,
+          "TablesMs": 35.866099999999996,
+          "EdgesMs": 7531.3531,
+          "FacesMs": 2253.8577,
+          "RefineMs": 54.8003,
+          "AssembleMs": 32.862,
+          "TotalMs": 12737.335900000002,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 410.0953,
+          "AllocatedBytes": 1226239744,
+          "MeshingMs": 9908.7392,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 39.71189549998962,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ELLA-W1-0-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 50.7543,
+          "DecodeMs": 838.907,
+          "PrepareMs": 3813.2072,
+          "TablesMs": 46.8685,
+          "EdgesMs": 11848.3717,
+          "FacesMs": 2799.6995,
+          "RefineMs": 72.7781,
+          "AssembleMs": 36.2877,
+          "TotalMs": 19506.873999999996,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 580.8215,
+          "AllocatedBytes": 1882105928,
+          "MeshingMs": 14804.0055,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 46.71381720001227,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ELLA-W1-0-large-partial.log",
+        "variant": "large-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 38.8144,
+          "DecodeMs": 715.8168,
+          "PrepareMs": 3624.2933,
+          "TablesMs": 40.4068,
+          "EdgesMs": 12187.0151,
+          "FacesMs": 3045.5993,
+          "RefineMs": 98.9725,
+          "AssembleMs": 41.0443,
+          "TotalMs": 19791.962500000005,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 594.1265,
+          "AllocatedBytes": 1882106984,
+          "MeshingMs": 15413.038,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 44.750614000018686,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ELLA-W1-0-default-partial.log",
+        "variant": "default-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 40.848,
+          "DecodeMs": 610.8631,
+          "PrepareMs": 3366.2833,
+          "TablesMs": 46.8843,
+          "EdgesMs": 11294.8085,
+          "FacesMs": 2997.3043,
+          "RefineMs": 69.1305,
+          "AssembleMs": 41.2888,
+          "TotalMs": 18467.410799999998,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 555.0862,
+          "AllocatedBytes": 1882101872,
+          "MeshingMs": 14449.416399999998,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 39.58046110000578,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\JODY-W3-0-baseline.log",
+        "variant": "baseline",
+        "case": "JODY-W3.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 18.7721,
+          "DecodeMs": 292.4241,
+          "PrepareMs": 656.3271,
+          "TablesMs": 255.4201,
+          "EdgesMs": 3707.7239,
+          "FacesMs": 11569.1653,
+          "RefineMs": 1.3756,
+          "AssembleMs": 25.1196,
+          "TotalMs": 16526.327800000003,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 391.8673,
+          "AllocatedBytes": 21988971784,
+          "MeshingMs": 15558.8045,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 39.54547690000618,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\JODY-W3-0-default-partial.log",
+        "variant": "default-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 17.7787,
+          "DecodeMs": 303.1436,
+          "PrepareMs": 744.8063,
+          "TablesMs": 298.26939999999996,
+          "EdgesMs": 3366.5798,
+          "FacesMs": 11461.4136,
+          "RefineMs": 1.912,
+          "AssembleMs": 17.9437,
+          "TotalMs": 16211.847099999999,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 393.0825,
+          "AllocatedBytes": 21855075408,
+          "MeshingMs": 15146.1185,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 39.32034589999239,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\JODY-W3-0-large-partial.log",
+        "variant": "large-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 18.4897,
+          "DecodeMs": 275.5312,
+          "PrepareMs": 752.2828,
+          "TablesMs": 244.7961,
+          "EdgesMs": 3312.9091,
+          "FacesMs": 11420.1728,
+          "RefineMs": 1.839,
+          "AssembleMs": 20.8696,
+          "TotalMs": 16046.890300000001,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 406.6848,
+          "AllocatedBytes": 21855075360,
+          "MeshingMs": 15000.5866,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 39.52683389998856,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\JODY-W3-0-huge-partial.log",
+        "variant": "huge-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 17.6713,
+          "DecodeMs": 276.5191,
+          "PrepareMs": 742.5435,
+          "TablesMs": 246.9099,
+          "EdgesMs": 3312.31,
+          "FacesMs": 11269.8234,
+          "RefineMs": 2.0877,
+          "AssembleMs": 19.0796,
+          "TotalMs": 15886.944499999998,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 399.4776,
+          "AllocatedBytes": 21855075384,
+          "MeshingMs": 14850.210599999999,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 361.6379638000217,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\JODY-W3-0-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 0,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 7.5613,
+          "DecodeMs": 113.263,
+          "PrepareMs": 331.4133,
+          "TablesMs": 135.54070000000002,
+          "EdgesMs": 1837.4206,
+          "FacesMs": 340090.251,
+          "RefineMs": 0.8153,
+          "AssembleMs": 14.9807,
+          "TotalMs": 342531.24590000004,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 342.6323,
+          "AllocatedBytes": 21855075784,
+          "MeshingMs": 342079.0083,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 6.897480500017991,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-1-baseline.log",
+        "variant": "baseline",
+        "case": "ODIN-W160.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 23.5873,
+          "DecodeMs": 173.9916,
+          "PrepareMs": 505.3845,
+          "TablesMs": 4.4346,
+          "EdgesMs": 158.1973,
+          "FacesMs": 621.5521,
+          "RefineMs": 1.0709,
+          "AssembleMs": 13.5321,
+          "TotalMs": 1501.7504,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 157.7788,
+          "AllocatedBytes": 456199920,
+          "MeshingMs": 798.787,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 6.041836799995508,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-1-large-partial.log",
+        "variant": "large-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 18.9208,
+          "DecodeMs": 79.699,
+          "PrepareMs": 577.636,
+          "TablesMs": 4.2852,
+          "EdgesMs": 143.8719,
+          "FacesMs": 552.5155,
+          "RefineMs": 0.8642,
+          "AssembleMs": 9.5207,
+          "TotalMs": 1387.3132999999998,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 153.6232,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 711.0575,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 5.627394300012384,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-1-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 17.1421,
+          "DecodeMs": 78.9519,
+          "PrepareMs": 582.6925,
+          "TablesMs": 4.1825,
+          "EdgesMs": 154.3374,
+          "FacesMs": 565.2504,
+          "RefineMs": 0.8938,
+          "AssembleMs": 12.0989,
+          "TotalMs": 1415.5494999999999,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 150.0305,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 736.763,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 5.950947000004817,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-1-huge-partial.log",
+        "variant": "huge-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 23.8747,
+          "DecodeMs": 83.552,
+          "PrepareMs": 591.2767,
+          "TablesMs": 3.9960999999999998,
+          "EdgesMs": 148.8526,
+          "FacesMs": 552.3922,
+          "RefineMs": 0.8805,
+          "AssembleMs": 10.254,
+          "TotalMs": 1415.0787999999998,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 162.1439,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 716.3754,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 5.955960299994331,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-1-default-partial.log",
+        "variant": "default-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 20.1731,
+          "DecodeMs": 78.1694,
+          "PrepareMs": 546.9551,
+          "TablesMs": 4.069,
+          "EdgesMs": 147.6194,
+          "FacesMs": 560.0271,
+          "RefineMs": 0.847,
+          "AssembleMs": 10.2814,
+          "TotalMs": 1368.1415000000002,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 154.4595,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 722.8439000000001,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 19.09423419999075,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ELLA-W1-1-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 17.4527,
+          "DecodeMs": 256.0667,
+          "PrepareMs": 1549.5269,
+          "TablesMs": 20.2745,
+          "EdgesMs": 4794.8506,
+          "FacesMs": 1195.2663,
+          "RefineMs": 29.422,
+          "AssembleMs": 14.4996,
+          "TotalMs": 7877.359299999999,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 229.6218,
+          "AllocatedBytes": 1882106248,
+          "MeshingMs": 6054.313,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 16.92165489998297,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ELLA-W1-1-baseline.log",
+        "variant": "baseline",
+        "case": "ELLA-W1.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 17.1153,
+          "DecodeMs": 257.5495,
+          "PrepareMs": 1418.7238,
+          "TablesMs": 20.560000000000002,
+          "EdgesMs": 4012.8338,
+          "FacesMs": 1088.5371,
+          "RefineMs": 28.6072,
+          "AssembleMs": 18.0459,
+          "TotalMs": 6861.9726,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 222.2359,
+          "AllocatedBytes": 1226240128,
+          "MeshingMs": 5168.584,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 19.15448340002331,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ELLA-W1-1-huge-partial.log",
+        "variant": "huge-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 17.241,
+          "DecodeMs": 259.1494,
+          "PrepareMs": 1560.8093,
+          "TablesMs": 19.463600000000003,
+          "EdgesMs": 4749.689,
+          "FacesMs": 1251.1379,
+          "RefineMs": 36.7615,
+          "AssembleMs": 15.1996,
+          "TotalMs": 7909.4513,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 239.6553,
+          "AllocatedBytes": 1882101440,
+          "MeshingMs": 6072.2516000000005,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 21.38076000000001,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ELLA-W1-1-large-partial.log",
+        "variant": "large-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 16.1205,
+          "DecodeMs": 292.0737,
+          "PrepareMs": 1998.2916,
+          "TablesMs": 19.8749,
+          "EdgesMs": 5134.3059,
+          "FacesMs": 1391.039,
+          "RefineMs": 28.5983,
+          "AssembleMs": 15.1789,
+          "TotalMs": 8895.482800000002,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 266.5437,
+          "AllocatedBytes": 1882104040,
+          "MeshingMs": 6588.997,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 22.23371000000043,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ELLA-W1-1-default-partial.log",
+        "variant": "default-partial",
+        "case": "ELLA-W1.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ELLA-W1.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 20684,
+          "Faces": 7754,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 7752,
+          "ParseMs": 17.4584,
+          "DecodeMs": 289.9468,
+          "PrepareMs": 1849.2984,
+          "TablesMs": 19.0866,
+          "EdgesMs": 5208.9404,
+          "FacesMs": 1347.2603,
+          "RefineMs": 31.4075,
+          "AssembleMs": 15.6466,
+          "TotalMs": 8779.045,
+          "Digest": {
+            "Vertices": 13788,
+            "Triangles": 10400,
+            "Quads": 7428,
+            "Hash": "F055B9C79AF600D6"
+          },
+          "Check": {
+            "BoundaryEdges": 608,
+            "NonManifoldEdges": 2,
+            "MisorientedEdges": 4,
+            "Closed": false,
+            "Oriented": false
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 7754 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -1 excused 0",
+          "ClosedShellsClosed": false,
+          "Boundary": "closed shells 426/429 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 608, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 233.3998,
+          "AllocatedBytes": 1882101184,
+          "MeshingMs": 6622.3414,
+          "table_hashes": {
+            "edges": "b6190566298751b80341ced486f1aadfbd1348ed3710628422c8248a51be3b72",
+            "faces": "647b52979759cd16ac87776be43c12d439dd397f49212332d66cd3e34776974c",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 20.428862100001425,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\JODY-W3-1-duplicate-partial.log",
+        "variant": "duplicate-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 7.9155,
+          "DecodeMs": 147.7409,
+          "PrepareMs": 415.6263,
+          "TablesMs": 135.90109999999999,
+          "EdgesMs": 1733.1161,
+          "FacesMs": 6000.7861,
+          "RefineMs": 0.8355,
+          "AssembleMs": 8.682,
+          "TotalMs": 8450.6035,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 207.7898,
+          "AllocatedBytes": 21855075832,
+          "MeshingMs": 7879.3208,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 20.79559339999105,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\JODY-W3-1-huge-partial.log",
+        "variant": "huge-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 12.1895,
+          "DecodeMs": 141.8618,
+          "PrepareMs": 404.6744,
+          "TablesMs": 118.9212,
+          "EdgesMs": 1811.869,
+          "FacesMs": 5829.9937,
+          "RefineMs": 0.7958,
+          "AssembleMs": 9.1212,
+          "TotalMs": 8329.426599999999,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 208.3644,
+          "AllocatedBytes": 21855075392,
+          "MeshingMs": 7770.7009,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 21.24229250001372,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\JODY-W3-1-default-partial.log",
+        "variant": "default-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 15.9588,
+          "DecodeMs": 144.2116,
+          "PrepareMs": 350.7413,
+          "TablesMs": 195.12990000000002,
+          "EdgesMs": 1671.9567,
+          "FacesMs": 5746.1468,
+          "RefineMs": 0.8445,
+          "AssembleMs": 9.1789,
+          "TotalMs": 8134.168500000001,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 215.9748,
+          "AllocatedBytes": 21855075336,
+          "MeshingMs": 7623.2568,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 20.180144100013422,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\JODY-W3-1-large-partial.log",
+        "variant": "large-partial",
+        "case": "JODY-W3.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 9.6398,
+          "DecodeMs": 130.3485,
+          "PrepareMs": 424.3348,
+          "TablesMs": 145.5462,
+          "EdgesMs": 1682.7962,
+          "FacesMs": 5683.8434,
+          "RefineMs": 0.6662,
+          "AssembleMs": 8.6406,
+          "TotalMs": 8085.815699999999,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 194.6336,
+          "AllocatedBytes": 21855075704,
+          "MeshingMs": 7521.4926,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 19.248571800009813,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\JODY-W3-1-baseline.log",
+        "variant": "baseline",
+        "case": "JODY-W3.STEP",
+        "repeat": 1,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\JODY-W3.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 13483,
+          "Faces": 5191,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 5191,
+          "ParseMs": 8.8196,
+          "DecodeMs": 147.4982,
+          "PrepareMs": 427.9369,
+          "TablesMs": 124.8832,
+          "EdgesMs": 1555.744,
+          "FacesMs": 5564.9494,
+          "RefineMs": 0.6534,
+          "AssembleMs": 12.2285,
+          "TotalMs": 7842.7132,
+          "Digest": {
+            "Vertices": 9952,
+            "Triangles": 7542,
+            "Quads": 3919,
+            "Hash": "33CE0F943499AE4F"
+          },
+          "Check": {
+            "BoundaryEdges": 3128,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": false,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 5191 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.969 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 112/112 closed; boundary OpenShell 3128, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 172.0849,
+          "AllocatedBytes": 21988972976,
+          "MeshingMs": 7258.458500000001,
+          "table_hashes": {
+            "edges": "392127f6e1268d1a42fa5ea4f397056ca9967b290ce8a2956edb7464d3914d4e",
+            "faces": "fb4635ff9727e3cc1c0a600a07ff38087ecd55be5bd456230770448f7868a5c8",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 6.024544499989133,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-2-baseline.log",
+        "variant": "baseline",
+        "case": "ODIN-W160.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 20.9181,
+          "DecodeMs": 124.486,
+          "PrepareMs": 520.221,
+          "TablesMs": 4.0008,
+          "EdgesMs": 138.696,
+          "FacesMs": 601.5832,
+          "RefineMs": 0.8246,
+          "AssembleMs": 11.995,
+          "TotalMs": 1422.7246999999998,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 149.4109,
+          "AllocatedBytes": 456199920,
+          "MeshingMs": 757.0996,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 6.483552799996687,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-2-huge-partial.log",
+        "variant": "huge-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 23.9355,
+          "DecodeMs": 111.5257,
+          "PrepareMs": 687.5963,
+          "TablesMs": 3.8909000000000002,
+          "EdgesMs": 161.8916,
+          "FacesMs": 602.6673,
+          "RefineMs": 1.1807,
+          "AssembleMs": 10.4693,
+          "TotalMs": 1603.1572999999999,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 167.39,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 780.0998,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      {
+        "exit": 0,
+        "seconds": 6.832175099989399,
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\inline-brep\\runs\\ODIN-W160-2-large-partial.log",
+        "variant": "large-partial",
+        "case": "ODIN-W160.STEP",
+        "repeat": 2,
+        "summary": {
+          "File": "C:\\Users\\cdigg\\git\\plato-brep\\data\\ublox-benchmark\\3D-Step-Models-Library-f3c136d200f21a07377a5d45bb9eaa0669a1128a\\SHO\\ODIN-W160.STEP",
+          "Path": "host",
+          "Parallel": false,
+          "Status": "done",
+          "Edges": 7767,
+          "Faces": 3552,
+          "EdgesThrew": 0,
+          "FacesThrew": 0,
+          "FacesMeshed": 3552,
+          "ParseMs": 20.2467,
+          "DecodeMs": 81.6019,
+          "PrepareMs": 646.697,
+          "TablesMs": 6.4539,
+          "EdgesMs": 158.1834,
+          "FacesMs": 606.2562,
+          "RefineMs": 0.8241,
+          "AssembleMs": 10.6349,
+          "TotalMs": 1530.8981,
+          "Digest": {
+            "Vertices": 9069,
+            "Triangles": 6856,
+            "Quads": 4715,
+            "Hash": "B63A972E5FB09FC8"
+          },
+          "Check": {
+            "BoundaryEdges": 0,
+            "NonManifoldEdges": 0,
+            "MisorientedEdges": 0,
+            "Closed": true,
+            "Oriented": true
+          },
+          "Failures": [],
+          "Contract": "contract holds faces 3552 over-chordal 0 flipped 0 degenerate 0 unexplained 0 worst-excess -0.94 excused 0",
+          "ClosedShellsClosed": true,
+          "Boundary": "closed shells 464/464 closed; boundary OpenShell 0, EdgeCitedOnce 0, BesideUnmeshedFace 0, GapBetweenMeshedFaces 0, InsideFace 0",
+          "ContractMs": 189.7634,
+          "AllocatedBytes": 504794840,
+          "MeshingMs": 782.3525000000001,
+          "table_hashes": {
+            "edges": "ba6c5ae3f5cb90c94442186a14f9838da004ce7566cf89a22e69035c98fb710d",
+            "faces": "e825dcb1da3d1881fcdce4aded3640894b5b9bf3ed5d60b607c2b40ea3ba29de",
+            "contract": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      }
+    ],
+    "power_events": [
+      {
+        "TimeCreated": "2026-10-24T22:02:27.2879801-04:00",
+        "Id": 507
+      },
+      {
+        "TimeCreated": "2026-10-24T22:01:25.402832-04:00",
+        "Id": 506
+      },
+      {
+        "TimeCreated": "2026-10-24T22:00:53.1791099-04:00",
+        "Id": 507
+      },
+      {
+        "TimeCreated": "2026-10-24T22:00:52.7218674-04:00",
+        "Id": 506
+      },
+      {
+        "TimeCreated": "2026-10-24T21:55:38.2847817-04:00",
+        "Id": 107
+      },
+      {
+        "TimeCreated": "2026-10-24T21:55:31.6188688-04:00",
+        "Id": 42
+      },
+      {
+        "TimeCreated": "2026-10-24T21:55:25.9887957-04:00",
+        "Id": 507
+      },
+      {
+        "TimeCreated": "2026-10-24T21:50:41.5047948-04:00",
+        "Id": 506
+      }
+    ]
+  },
+  "verification": {
+    "studio": {
+      "seconds": 319.2,
+      "exit": 1,
+      "gates": [
+        {
+          "name": "frozen-v1",
+          "result": "FAIL",
+          "seconds": 0.9,
+          "issue": "repo-473"
+        },
+        {
+          "name": "legacy strict lint",
+          "result": "PASS",
+          "seconds": 127.6
+        },
+        {
+          "name": "forward strict lint",
+          "result": "PASS",
+          "seconds": 68.3
+        },
+        {
+          "name": "SDK build",
+          "result": "PASS",
+          "seconds": 23.4
+        },
+        {
+          "name": "geometry tests",
+          "result": "PASS",
+          "passed": 15,
+          "seconds": 98.5
+        }
+      ]
+    },
+    "optimizer_docs": {
+      "result": "FAIL",
+      "issue": "compiler-501",
+      "stale_source": "writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs"
+    },
+    "script_syntax": "Python py_compile and PowerShell parser passed",
+    "repository": {
+      "exit": 0,
+      "cli_build_seconds": 132,
+      "shipping_lint_seconds": 18,
+      "tests_seconds": 537,
+      "tests_passed": 361,
+      "tests_failed": 0,
+      "logs": ".temp/gate-logs/20261024-221236-016732"
+    }
+  }
+}

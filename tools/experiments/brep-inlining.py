@@ -249,6 +249,7 @@ def measure(work, variants, corpus, repeats, tiered):
         "dotnet_runtimes": subprocess.check_output(["dotnet", "--list-runtimes"], text=True),
         "inputs": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in cases},
         "random_seed": 498,
+        "idle_sleep_prevention": "Windows ES_SYSTEM_REQUIRED for measurement process lifetime",
     })
     order = []
     rng = random.Random(498)
@@ -328,4 +329,17 @@ if __name__ == "__main__":
     else:
         if args.corpus is None:
             parser.error("measure requires --corpus")
-        measure(args.work, args.variants, args.corpus, args.repeats, args.tiered)
+        previous_execution_state = None
+        if os.name == "nt":
+            import ctypes
+            api = ctypes.WinDLL("kernel32", use_last_error=True).SetThreadExecutionState
+            api.argtypes = [ctypes.c_uint]
+            api.restype = ctypes.c_uint
+            previous_execution_state = api(0x80000001)  # continuous + system required; display may sleep
+            if not previous_execution_state:
+                raise OSError("Cannot request idle-sleep prevention for measurements")
+        try:
+            measure(args.work, args.variants, args.corpus, args.repeats, args.tiered)
+        finally:
+            if previous_execution_state is not None:
+                api(previous_execution_state)
