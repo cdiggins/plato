@@ -46,6 +46,19 @@ public sealed class CSharpProgram
     // What <ImplicitUsings>enable</ImplicitUsings> gives the generated project.
     private const string ImplicitUsings = "global using System; global using System.Collections.Generic; global using System.IO; global using System.Linq; global using System.Net.Http; global using System.Threading; global using System.Threading.Tasks;";
 
+    /// <summary>The preprocessor symbols <c>Plato.Intrinsics.projitems</c> defines for
+    /// <paramref name="profile"/>. <c>PLATO_NUMBER_GPU32</c> selects binary32 <c>Number</c>;
+    /// <c>PLATO_INTEGER_32</c> selects a 32-bit <c>Integer</c>.</summary>
+    public static IReadOnlyList<string> ProfileSymbols(NumberProfile profile)
+    {
+        var symbols = new List<string> { "PLATO_FORWARD_CONCEPTS" };
+        if (profile.NumberBits == 32)
+            symbols.Add("PLATO_NUMBER_GPU32");
+        if (profile.IntegerBits == 32)
+            symbols.Add("PLATO_INTEGER_32");
+        return symbols;
+    }
+
     /// <summary>Emits and compiles; throws <see cref="InvalidOperationException"/> listing the
     /// first C# errors when the generated program does not compile. <paramref name="lowerLoops"/>
     /// is the CLI's <c>--loops</c> (TKT-505): a differential run then checks the lowered loops
@@ -60,9 +73,7 @@ public sealed class CSharpProgram
         var emit = sw.Elapsed;
 
         sw.Restart();
-        var symbols = new List<string> { "PLATO_FORWARD_CONCEPTS" };
-        if (profile == NumberProfile.Gpu32)
-            symbols.Add("PLATO_NUMBER_GPU32");
+        var symbols = ProfileSymbols(profile);
         var parse = new CSharpParseOptions(preprocessorSymbols: symbols);
         var trees = writer.Files
             .Select(kv => CSharpSyntaxTree.ParseText(kv.Value.ToString(), parse, kv.Key))

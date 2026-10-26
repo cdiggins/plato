@@ -5,13 +5,15 @@ namespace Ara3D.Geometry.Interpreter;
 
 /// <summary>
 /// The arithmetic a <see cref="NumberProfile"/> gives Number and Integer, applied by every host
-/// intrinsic and every literal. Number is always stored as a double; under gpu32 each result is
-/// rounded to binary32 (a double holding a float is exact, and rounding a binary64 result of
-/// +, -, *, / or sqrt to binary32 gives the correctly rounded binary32 result, so the stored
-/// doubles are the floats the C# gpu32 build would hold). The transcendental functions go
-/// through MathF under gpu32 and Math under cpu64, as the C# runtime's NumberMath alias does.
-/// Integer is a long; under gpu32 it wraps to 32 bits after every operation, as the C# runtime's
-/// int does; under cpu64 it is 64-bit storage, exact within 2^53 when converted to Number.
+/// intrinsic and every literal. Number is always stored as a double; when the profile's Number
+/// is binary32 (gpu32) each result is rounded to binary32 (a double holding a float is exact,
+/// and rounding a binary64 result of +, -, *, / or sqrt to binary32 gives the correctly rounded
+/// binary32 result, so the stored doubles are the floats the C# gpu32 build would hold). The
+/// transcendental functions go through MathF when Number is binary32 and Math when it is
+/// binary64 (cpu64 and cpu64i32), as the C# runtime's NumberMath alias does. Integer is a long;
+/// when the profile's Integer is 32-bit (cpu64i32 and gpu32) it wraps to 32 bits after every
+/// operation, as the C# runtime's int does; under cpu64 it is 64-bit storage, exact within 2^53
+/// when converted to Number. Under cpu64i32 every Integer converts to Number exactly.
 /// </summary>
 public sealed class Numbers
 {

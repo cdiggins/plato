@@ -76,7 +76,7 @@ public static class IntegerTests
     [Test]
     public static void AdditionWrapsAroundUnchecked()
         => Assert.That((Integer.MaxValue + I(1)).Value, Is.EqualTo(IntegerValue.MinValue),
-            "wraps at the profile's width: 64 bits under cpu64, 32 under gpu32");
+            "wraps at the profile's width: 64 bits under cpu64, 32 under cpu64i32 and gpu32");
 
     [Test]
     public static void ComparisonOperators()
@@ -110,10 +110,10 @@ public static class IntegerTests
         Assert.That(PlatoNumberProfile.IntegerBits, Is.EqualTo(PlatoNumberProfile.Name == "cpu64" ? 64 : 32));
     }
 
-#if !PLATO_NUMBER_GPU32
+#if !PLATO_INTEGER_32
     // TARGET-LANGUAGE.md section 5.6 (TKT-315): under cpu64 an Integer is exact within
     // ±(2^53 - 1), so it converts to Number and back without loss, and products past 2^31 do
-    // not wrap. gpu32 keeps a 32-bit Integer, so these two tests exist only under cpu64.
+    // not wrap. cpu64i32 and gpu32 keep a 32-bit Integer, so these two tests exist only under cpu64.
     [Test]
     public static void Cpu64IntegerIsExactWithinTwoToTheFiftyThree()
     {

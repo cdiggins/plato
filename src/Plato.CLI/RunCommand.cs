@@ -10,7 +10,7 @@ using Ara3D.Utils;
 
 namespace Ara3D.Geometry.CLI
 {
-    // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|gpu32]
+    // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|cpu64i32|gpu32]
     //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--filter=<text>[,<text>...]] [--laws-from=<file>]
     //                [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N]
     //                [--budget=<seconds per law>] [--abandon=<seconds>] [--witness-budget=<seconds per witness>]
@@ -104,7 +104,7 @@ namespace Ara3D.Geometry.CLI
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             if (folders.Count == 0 || (!laws && calls.Count == 0))
             {
-                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
+                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|cpu64i32|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
                 return 1;
             }
 

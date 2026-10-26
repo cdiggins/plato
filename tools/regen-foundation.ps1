@@ -14,7 +14,7 @@
 #   2. build      the generated project (net8.0, DEFAULT LangVersion — hard rule 3).
 #   3. test       optional (-Test): tests\Plato.Generated.Foundation.Tests.
 #
-# Usage: .\tools\regen-foundation.ps1 [-WhatIf] [-Test] [-Profile cpu64|gpu32] [-Flags '--optimize','--inline']
+# Usage: .\tools\regen-foundation.ps1 [-WhatIf] [-Test] [-Profile cpu64|cpu64i32|gpu32] [-Flags '--optimize','--inline']
 #   -Profile  the Number profile (docs/SEMANTICS.md section 1): passed to the CLI as --profile= and
 #             to the build and test as -p:PlatoNumberProfile=. Default cpu64, the tracked output.
 #   -WhatIf   generate into .temp\regen-foundation and report how many files would change,
@@ -29,7 +29,7 @@
 param(
     [switch]   $WhatIf,
     [switch]   $Test,
-    [ValidateSet('cpu64', 'gpu32')]
+    [ValidateSet('cpu64', 'cpu64i32', 'gpu32')]
     [string]   $Profile = 'cpu64',
     [string[]] $Flags = @()
 )

@@ -27,8 +27,8 @@ namespace Ara3D.Geometry.CSharpWriter
         public string Namespace = "Ara3D.Geometry";
 
         // The C# name the emitted code uses for the machine type under Number: an alias that
-        // src/Plato.Intrinsics/NumberProfile.cs binds to double (cpu64) or float (gpu32). Emitting
-        // the alias rather than a keyword keeps the type in one place.
+        // src/Plato.Intrinsics/NumberProfile.cs binds to double (cpu64, cpu64i32) or float (gpu32).
+        // Emitting the alias rather than a keyword keeps the type in one place.
         public const string NumberRuntimeType = "NumberValue";
 
         // When true, emits the "extension style" output (--csharp-style=extensions, roadmap P2.2
@@ -816,9 +816,9 @@ namespace Ara3D.Geometry.CSharpWriter
                 case float f:
                     return LiteralString((double)f);
                 case long l:
-                    return l.ToString(inv);
+                    return IntegerLiteral(l, Profile.IntegerBits);
                 case int i:
-                    return i.ToString(inv);
+                    return IntegerLiteral(i, Profile.IntegerBits);
                 default:
                     return value.ToLiteralString();
             }
@@ -840,13 +840,30 @@ namespace Ara3D.Geometry.CSharpWriter
         public static string BodilessStub(string functionName)
             => $" => throw new System.NotImplementedException(\"plato: {functionName} is declared without a body\");";
 
+        /// <summary>
+        /// A C# integer literal for <paramref name="value"/> at the profile's integer width.
+        /// A 32-bit profile spells a value C# cannot write as an <c>int</c> literal — outside
+        /// the <c>int</c> range, or <c>int.MinValue</c>, whose decimal form is a <c>long</c> —
+        /// as an unchecked narrowing cast, which is the wrap the runtime's <c>int</c> performs.
+        /// </summary>
+        public static string IntegerLiteral(long value, int integerBits)
+        {
+            var text = value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (integerBits == 32 && (value <= int.MinValue || value > int.MaxValue))
+                return $"unchecked((int)({text}L))";
+            return text;
+        }
+
         // Stops the C# build when it is not under the profile this code was written for: the
-        // runtime binds NumberValue from the MSBuild property PlatoNumberProfile, and literals here
-        // are spelled for this writer's profile.
+        // runtime binds NumberValue and IntegerValue from the MSBuild property PlatoNumberProfile,
+        // and literals here are spelled for this writer's profile. PLATO_NUMBER_GPU32 means
+        // binary32 Number; PLATO_INTEGER_32 means a 32-bit Integer. Either symbol in the wrong
+        // state is a different profile.
         public CSharpWriter WriteNumberProfileCheck()
         {
-            var gpu32 = Profile == NumberProfile.Gpu32;
-            WriteLine(gpu32 ? "#if !PLATO_NUMBER_GPU32" : "#if PLATO_NUMBER_GPU32");
+            var numberWrong = Profile.NumberBits == 32 ? "!PLATO_NUMBER_GPU32" : "PLATO_NUMBER_GPU32";
+            var integerWrong = Profile.IntegerBits == 32 ? "!PLATO_INTEGER_32" : "PLATO_INTEGER_32";
+            WriteLine($"#if {numberWrong} || {integerWrong}");
             WriteLine($"#error This code was generated under Number profile {Profile.Name}; build it with -p:PlatoNumberProfile={Profile.Name}, or regenerate it with the profile you build under.");
             WriteLine("#endif");
             return this;

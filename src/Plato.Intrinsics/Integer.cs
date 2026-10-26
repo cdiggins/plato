@@ -9,10 +9,10 @@ namespace Ara3D.Geometry
 {
     /// <summary>
     /// A wrapper around the profile's machine integer, <c>IntegerValue</c> (NumberProfile.cs):
-    /// <c>long</c> under cpu64, <c>int</c> under gpu32, forwarding all arithmetic to it. The
-    /// conversion to <c>int</c> stays implicit, because indexers and counts of the .NET
-    /// collections the runtime wraps are <c>int</c>; under cpu64 it is checked, so an Integer
-    /// outside the <c>int</c> range used as an index throws instead of wrapping.
+    /// <c>long</c> under cpu64, <c>int</c> under cpu64i32 and gpu32, forwarding all arithmetic
+    /// to it. The conversion to <c>int</c> stays implicit, because indexers and counts of the
+    /// .NET collections the runtime wraps are <c>int</c>; under cpu64 it is checked, so an
+    /// Integer outside the <c>int</c> range used as an index throws instead of wrapping.
     /// </summary>
     [DataContract, JsonConverter(typeof(IntegerJsonConverter))]
     public readonly partial struct Integer 
@@ -38,7 +38,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)]
         public static Integer FromSystem(IntegerValue i) => new(i);
 
-#if PLATO_NUMBER_GPU32
+#if PLATO_INTEGER_32
         [MethodImpl(AggressiveInlining)]
         public static implicit operator Integer(int i) => FromSystem(i);
 

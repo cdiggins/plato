@@ -66,7 +66,7 @@ dotnet build src/Plato.CLI/Plato.CLI.csproj -c Release
 ```
 
 ```bash
-dotnet src/Plato.CLI/bin/Release/net8.0/Plato.CLI.dll run <folder>... --laws [--recursive] [--exclude=<file name>] [--profile=cpu64|gpu32] [--filter=<text>] [--trials=N] [--seed=N] [--call=<Name>]
+dotnet src/Plato.CLI/bin/Release/net8.0/Plato.CLI.dll run <folder>... --laws [--recursive] [--exclude=<file name>] [--profile=cpu64|cpu64i32|gpu32] [--filter=<text>] [--trials=N] [--seed=N] [--call=<Name>]
 ```
 
 Each folder is read top-level only unless `--recursive` is given; `*.spec.plato` files are

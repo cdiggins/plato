@@ -15,7 +15,7 @@ using Ara3D.Collections;
 
 namespace Ara3D.Geometry
 {
-    #if PLATO_NUMBER_GPU32
+    #if PLATO_NUMBER_GPU32 || PLATO_INTEGER_32
     #error This code was generated under Number profile cpu64; build it with -p:PlatoNumberProfile=cpu64, or regenerate it with the profile you build under.
     #endif
 }

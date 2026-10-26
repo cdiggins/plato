@@ -50,6 +50,14 @@ namespace Ara3D.Geometry.Compiler.Types
         public static readonly NumberProfile Cpu64 = new NumberProfile("cpu64", 64, 53, 64);
 
         /// <summary>
+        /// Binary64 <c>Number</c> with a 32-bit <c>Integer</c>. Every <c>Integer</c> converts to
+        /// <c>Number</c> exactly, and the width matches the <c>int</c> .NET uses for indexes and
+        /// counts. This is the profile a mesh or boundary representation wants: coordinates stay
+        /// double, and topology indices do not pay for a 64-bit integer.
+        /// </summary>
+        public static readonly NumberProfile Cpu64I32 = new NumberProfile("cpu64i32", 64, 53, 32);
+
+        /// <summary>
         /// On request, for code that must match a GPU: <c>Number</c> is binary32 and <c>Integer</c>
         /// is 32-bit.
         /// </summary>
@@ -57,7 +65,7 @@ namespace Ara3D.Geometry.Compiler.Types
 
         public static NumberProfile Default => Cpu64;
 
-        public static IReadOnlyList<NumberProfile> All { get; } = new[] { Cpu64, Gpu32 };
+        public static IReadOnlyList<NumberProfile> All { get; } = new[] { Cpu64, Cpu64I32, Gpu32 };
 
         /// <summary>The profile of that name, or null.</summary>
         public static NumberProfile TryParse(string name)

@@ -8,7 +8,7 @@ namespace Ara3D.Geometry
 {
     /// <summary>
     /// A simple wrapper around the machine type the Number profile selects (<c>NumberValue</c>:
-    /// <c>double</c> under cpu64, <c>float</c> under gpu32; see NumberProfile.cs), forwarding all arithmetic to it.
+    /// <c>double</c> under cpu64 and cpu64i32, <c>float</c> under gpu32; see NumberProfile.cs), forwarding all arithmetic to it.
     /// The Plato math intrinsics live in <see cref="NumberIntrinsics"/> as extension methods
     /// (all-extension-methods runtime: struct = field + constructor + operators + conversions).
     /// </summary>

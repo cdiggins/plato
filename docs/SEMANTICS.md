@@ -60,17 +60,19 @@ profile. There is no second floating type and no per-declaration width.
 | Profile | `Number` | `Integer` | Selected by |
 |---|---|---|---|
 | `cpu64` (default) | IEEE 754 binary64 | 64-bit two's complement; every value within ±(2^53 − 1) converts to `Number` exactly | nothing, or `Plato.CLI --profile=cpu64` |
+| `cpu64i32` | IEEE 754 binary64 | 32-bit two's complement; every value converts to `Number` exactly | `Plato.CLI --profile=cpu64i32` |
 | `gpu32` | IEEE 754 binary32 | 32-bit two's complement | `Plato.CLI --profile=gpu32` |
 
-Where each backend stands (2026-10-18): the C# writer and the interpreter implement both
-profiles. The C# output names the machine number `NumberValue`, an alias
-`src/Plato.Intrinsics/NumberProfile.cs` binds from the MSBuild property `PlatoNumberProfile`
-(`dotnet build -p:PlatoNumberProfile=gpu32`), which binds the machine integer `IntegerValue`
-inside the `Integer` wrapper the same way; an `Integer` converts implicitly to `int` for .NET
-indexers and counts, checked under `cpu64`, so an index past the `int` range throws; the emitted
-`NumberProfile.g.cs` stops a build whose property disagrees with the profile the code was
-generated under, and every emitted file names its profile in the header. The other writers ignore
-the profile and keep fixed types: TypeScript and Rust binary64, C++, CUDA and GLSL binary32.
+The C# writer and the interpreter implement these profiles. The C# output names the machine
+number `NumberValue`, an alias `src/Plato.Intrinsics/NumberProfile.cs` binds from the MSBuild
+property `PlatoNumberProfile` (`dotnet build -p:PlatoNumberProfile=gpu32`, or `cpu64i32`), which
+binds the machine integer `IntegerValue` inside the `Integer` wrapper the same way. An `Integer`
+converts implicitly to `int` for .NET indexers and counts. Under `cpu64` that conversion is
+checked, so an index past the `int` range throws. Under `cpu64i32` and `gpu32` the stored value
+is already an `int`. The emitted `NumberProfile.g.cs` stops a build whose property disagrees
+with the profile the code was generated under, and every emitted file names its profile in the
+header. The other writers ignore the profile and keep fixed types: TypeScript and Rust binary64,
+C++, CUDA and GLSL binary32.
 Literals are emitted exactly for the profile (shortest round-trip digits, invariant culture).
 Basic operations, `Sqrt` and the elementary functions are the host's (`System.Math` or
 `System.MathF` in C#). Library precision requirements (`requires Number.ResolutionAt(1.0e8) <=

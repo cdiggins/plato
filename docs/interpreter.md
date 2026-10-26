@@ -80,14 +80,14 @@ A `NumberProfile` (`src/Plato.Compiler/Types/NumberProfile.cs`, the per-compilat
 TKT-315) fixes the width of `Number` and `Integer`. The interpreter takes one in its constructor
 and routes every literal and every host intrinsic through `Numbers` (`Numbers.cs`):
 
-- `Number` is always stored as a `double`. Under `cpu64` it is binary64 arithmetic. Under `gpu32`
-  each result of `+`, `-`, `*`, `/` and `sqrt` is rounded to binary32 after the binary64
-  operation, which gives the correctly rounded binary32 result, so the stored doubles are exactly
-  the floats a `gpu32` C# build would hold. Transcendental functions go through `MathF` under
-  `gpu32` and `Math` under `cpu64`, as the C# runtime's `NumberMath` alias does.
-- `Integer` is a `long`. Under `gpu32` it wraps to 32 bits after every operation, as the C#
-  runtime's `int` does; under `cpu64` it is 64-bit storage, exact within 2^53 when converted to
-  `Number`.
+- `Number` is always stored as a `double`. Under `cpu64` and `cpu64i32` it is binary64 arithmetic.
+  Under `gpu32` each result of `+`, `-`, `*`, `/` and `sqrt` is rounded to binary32 after the
+  binary64 operation, which gives the correctly rounded binary32 result, so the stored doubles are
+  exactly the floats a `gpu32` C# build would hold. Transcendental functions go through `MathF`
+  under `gpu32` and `Math` under `cpu64` and `cpu64i32`, as the C# runtime's `NumberMath` alias does.
+- `Integer` is a `long`. Under `cpu64i32` and `gpu32` it wraps to 32 bits after every operation,
+  as the C# runtime's `int` does; under `cpu64` it is 64-bit storage, exact within 2^53 when
+  converted to `Number`. Under `cpu64i32` every integer converts to `Number` exactly.
 - Hashes, `MinValue`, `MaxValue`, `Epsilon` and `Pi` follow the profile's width.
 
 A literal typed `Number` by the checker is a `double`; one typed `Integer` is a `long`. The
@@ -255,7 +255,7 @@ that a law that fails on generated input in one engine fails in the other.
 
 ```
 Plato.CLI run <folder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>]
-                          [--profile=cpu64|gpu32] [--backend=interpreter|csharp]
+                          [--profile=cpu64|cpu64i32|gpu32] [--backend=interpreter|csharp]
                           [--filter=<text>[,<text>...]] [--laws-from=<file>]
                           [--report=<file>] [--baseline=<file>]
                           [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--parallel=N]
