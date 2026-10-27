@@ -64,7 +64,7 @@ public static class FlatMapFilterTests
         var sources = new[]
         {
             writer.Files["_ProbeUv.g.cs"].ToString(),
-            KeepMethods(writer.Files["Extensions.g.cs"].ToString(), n => n.StartsWith("F1") || n.StartsWith("F3") || n is "Candidates" or "Take"),
+            KeepMethods(writer.Files["Extensions.g.cs"].ToString(), n => n.StartsWith("F1") || n.StartsWith("F3") || n.StartsWith("F4") || n is "Candidates" or "Take" or "Filter"),
             RangeReference(writer)
         };
         var text = string.Join("\n", sources);
@@ -499,6 +499,27 @@ public static class FlatMapFilterTests
             var slow = Measure(ordinary.Invoke);
             TestContext.WriteLine($"{size},{fast / 1000},{slow / 1000},{(slow - fast) / 1000}");
             Assert.That(slow - fast, Is.GreaterThanOrEqualTo(size * 24L * 1000), "one T[1] per dropped element");
+        }
+    }
+
+    [TestCase(false, false)]
+    [TestCase(true, false)]
+    [TestCase(true, true)]
+    public static void NamedFilterAgreesWithTheIdiomItStandsFor(bool loops, bool fuse)
+    {
+        var program = GetProgram(loops, fuse);
+        foreach (var name in new[] { "F4Filter", "F4Lambda", "F4Idiom" })
+        {
+            var filter = Method(program.Assembly, name).CreateDelegate<Unary>();
+            foreach (var input in Inputs)
+            foreach (var mode in new[] { "all", "none", "mixed" })
+            {
+                var trace = new List<string>();
+                bool Accept(Number x) => mode == "all" || mode == "mixed" && (double)x <= 2;
+                var actual = filter(input, x => { trace.Add($"p{x}"); return Accept(x); });
+                Assert.That(actual, Is.EqualTo(input.Where(Accept)), $"{name} {mode}");
+                Assert.That(trace, Is.EqualTo(input.Select(x => $"p{x}")), $"{name} {mode}: one call per element, in order");
+            }
         }
     }
 }

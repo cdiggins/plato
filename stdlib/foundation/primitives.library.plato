@@ -215,6 +215,23 @@ library Primitives
         => MapRange(xs.Count + ys.Count, i => i < xs.Count ? xs[i] : ys[i - xs.Count]);
 
     //==
+    // # Array — filtering
+    //
+    // FlatMap is the only length-varying producer, so a filter is a FlatMap whose
+    // callback returns one element or none. The empty result is spelled
+    // `[x].Take(0)`, the idiom the C# writer's FlatMap lowering recognises: inside
+    // a concrete caller's loop the kept element is appended to the result list
+    // and nothing is built for the dropped one
+    // (docs/csharp-optimizer-pipeline.md, section 7). A call to Filter itself is
+    // an ordinary generic call until the writer expands it at the call site.
+
+    // The elements that satisfy the predicate, in their original order
+    // (https://en.wikipedia.org/wiki/Filter_(higher-order_function)). The
+    // predicate is called once per element, in index order.
+    Filter(xs: Array<$T>, keep: Function1<$T, Boolean>): Array<$T>
+        => xs.FlatMap(x => keep(x) ? [x] : [x].Take(0));
+
+    //==
     // # Array — predicates
     //
     // Folds rather than loops with an early exit, which a Plato body cannot

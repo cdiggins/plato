@@ -62,4 +62,14 @@ library FlatMapProbe
     // A parameter receiver: --fuse rewrites the call to a MapRange, which this lowering does not recognise.
     F3Parameter(xs: Array<Number>, keep: Function1<Number, Boolean>): Array<Number>
         => xs.FlatMap(x => keep(x) ? [x] : xs.Take(0));
+
+    // The named filter and the idiom it stands for.
+    F4Filter(xs: Array<Number>, keep: Function1<Number, Boolean>): Array<Number>
+        => xs.Filter(keep);
+
+    F4Lambda(xs: Array<Number>, keep: Function1<Number, Boolean>): Array<Number>
+        => xs.Filter(x => keep(x));
+
+    F4Idiom(xs: Array<Number>, keep: Function1<Number, Boolean>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [x] : [x].Take(0));
 }
