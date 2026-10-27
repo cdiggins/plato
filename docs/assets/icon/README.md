@@ -1,6 +1,6 @@
 # Plato icon
 
-The root spiral: the spiral of Theodorus, named in Plato's *Theaetetus*. Eight right triangles with hypotenuses √2 … √9, filled gold, separated by transparent gaps where the spokes would be. Irrationals drawn exactly, as geometry rather than as a floating-point approximation.
+The root spiral: the spiral of Theodorus, named in Plato's *Theaetetus*. Eight right triangles with hypotenuses √2 … √9, filled gold, separated by transparent gaps where the spokes would be. Irrationals drawn exactly, as geometry rather than as a floating-point approximation. Usage rules for the mark are in the [brand guidelines](../../brand/README.md).
 
 Every file here except this README is written by `make-icons.py`, which holds the geometry. Do not edit the outputs by hand; change the script and rerun it:
 

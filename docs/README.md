@@ -43,6 +43,7 @@ Maintained, descriptive, superseded by editing rather than by writing a successo
 - [`interpreter.md`](interpreter.md) — the TIR evaluator, its law runner, and `plato run`; no code generation.
 - [`affine-types.md`](affine-types.md), [`affine-types-overview.md`](affine-types-overview.md) — the `unique` feature.
 - [`verification-inventory.md`](verification-inventory.md) — every tool that checks this repo.
+- [`brand/`](brand/README.md) — voice, colour, type, the root-spiral mark and the wordmark; `brand/tokens.json` holds the values.
 
 ## [`design/`](design) — proposals and specs
 
