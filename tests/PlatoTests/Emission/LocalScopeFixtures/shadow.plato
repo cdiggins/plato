@@ -1,0 +1,68 @@
+// Fixture for LocalScopeTests (TKT-1038): locals that share a name in nested and later scopes.
+// The bodies pick between their arguments instead of computing, so the emitted C# needs none of
+// the foundation's arithmetic: a value shows which declaration a reference resolved to.
+
+library LocalScopeProbe
+{
+    Left(a: Number, b: Number): Number => a;
+    Right(a: Number, b: Number): Number => b;
+
+    // The inner `abc` sits in an early-return block; the outer `abc` is declared after it.
+    ShadowEarlyReturn(p: Integer, a: Number, b: Number): Number
+    {
+        var ab = Left(a, b);
+        if (p == 2)
+        {
+            var abc = Right(ab, b);
+            return Left(abc, ab);
+        }
+        var cd = Right(a, b);
+        var abc = Left(ab, cd);
+        return Right(ab, abc);
+    }
+
+    // The outer `abc` is declared before the block that redeclares the name.
+    ShadowAfterOuter(p: Integer, a: Number, b: Number): Number
+    {
+        var abc = Left(a, b);
+        if (p == 2)
+        {
+            var abc = Right(a, b);
+            return Left(abc, a);
+        }
+        return Right(b, abc);
+    }
+
+    // Two sibling blocks declare the same name: C# allows it, so nothing is renamed.
+    SiblingScopes(p: Integer, a: Number, b: Number): Number
+    {
+        if (p == 2)
+        {
+            var abc = Left(a, b);
+            return abc;
+        }
+        if (p == 3)
+        {
+            var abc = Right(a, b);
+            return abc;
+        }
+        return Left(b, a);
+    }
+
+    // Three declarations of one name, nested twice.
+    ShadowThrice(p: Integer, a: Number, b: Number): Number
+    {
+        if (p == 1)
+        {
+            var abc = Left(a, b);
+            if (p == 1)
+            {
+                var abc = Right(a, b);
+                return Left(abc, a);
+            }
+            return abc;
+        }
+        var abc = Right(a, a);
+        return Right(abc, a);
+    }
+}

@@ -1,0 +1,17 @@
+// Fixture for ArrayEqualityTests (TKT-1040): == and != on arrays compare their elements.
+
+type Tri { A: Integer; B: Integer; C: Integer; }
+
+library ArrayEqualityProbe
+{
+    SameInts(a: Array<Integer>, b: Array<Integer>): Boolean => a == b;
+    DifferentInts(a: Array<Integer>, b: Array<Integer>): Boolean => a != b;
+    SameTris(a: Array<Tri>, b: Array<Tri>): Boolean => a == b;
+    DifferentTris(a: Array<Tri>, b: Array<Tri>): Boolean => a != b;
+    SameRows(a: Array<Array<Integer>>, b: Array<Array<Integer>>): Boolean => a == b;
+    DifferentRows(a: Array<Array<Integer>>, b: Array<Array<Integer>>): Boolean => a != b;
+
+    // The shape of the STEP mesher's reuse law: a comparison under a conditional.
+    SameWhenCounted(n: Integer, a: Array<Integer>, b: Array<Integer>): Boolean
+        => n == 6 ? a == b : false;
+}
