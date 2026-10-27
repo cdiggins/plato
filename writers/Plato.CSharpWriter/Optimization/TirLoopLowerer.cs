@@ -189,14 +189,21 @@ public static partial class TirLoopLowerer
 
     /// <summary>Whether a type expression names a concrete, renderable C# type — not a solver
     /// type variable (name-mangled with '$', or flagged <see cref="TypeExpression.IsTypeVariable"/>).
-    /// A `new {elem}[n]` allocation needs a real type.</summary>
+    /// A `new {elem}[n]` allocation needs a real type. The test descends into the type arguments:
+    /// <c>Located&lt;$T&gt;</c> has a renderable name but is no more a C# type than <c>$T</c> is
+    /// (TKT-1070).</summary>
     public static bool IsRenderableConcrete(TypeExpression t)
     {
         var name = t?.Name;
         if (string.IsNullOrEmpty(name) || t.IsTypeVariable)
             return false;
         var c0 = name[0];
-        return char.IsLetter(c0) || c0 == '_';
+        if (!char.IsLetter(c0) && c0 != '_')
+            return false;
+        foreach (var arg in t.TypeArgs)
+            if (!IsRenderableConcrete(arg))
+                return false;
+        return true;
     }
 
     /// <summary>The RETURN type of the function argument: the last type argument of its
