@@ -522,4 +522,21 @@ public static class FlatMapFilterTests
             }
         }
     }
+
+    /// <summary>Under --fuse a Filter call becomes the idiom its stdlib body states, so the loop lowerer
+    /// emits one loop that appends kept elements: no Filter call, no per-element array, no Take.</summary>
+    [TestCase("F4Filter")]
+    [TestCase("F4Lambda")]
+    public static void FilterCallIsOneLoopUnderFuse(string name)
+    {
+        var body = Body(GetProgram(true, true), name);
+        Assert.That(System.Text.RegularExpressions.Regex.Matches(body, @"for \(var _i").Count, Is.EqualTo(1), body);
+        Assert.That(body, Does.Contain(".Add(").And.Contain("if ((bool)(").And.Not.Contain(".Filter(")
+            .And.Not.Contain("MakeArray").And.Not.Contain(".Take("), body);
+    }
+
+    /// <summary>Without --fuse the call stays: the rule is fusion's, not the lowerer's.</summary>
+    [Test]
+    public static void WithoutFuseTheFilterCallRemains()
+        => Assert.That(Body(GetProgram(true, false), "F4Filter"), Does.Contain(".Filter("));
 }
