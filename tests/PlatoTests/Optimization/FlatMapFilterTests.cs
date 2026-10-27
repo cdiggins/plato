@@ -19,8 +19,8 @@ public static class FlatMapFilterTests
     private delegate IReadOnlyList<Number> Filter(IReadOnlyList<Number> xs, Func<Number, Boolean> keep,
         Func<Number, Number> value, Func<Number, IReadOnlyList<Number>> fallback);
 
-    private sealed record Program(CSharpWriter Writer, Assembly Assembly, string Text);
-    private static readonly Dictionary<(bool, bool), Program> Programs = new();
+    private sealed record Program(CSharpWriter Writer, Assembly Assembly, string Text, IReadOnlyList<string> Sources);
+    private static readonly Dictionary<(bool, bool, bool), Program> Programs = new();
     private static readonly Lazy<Ara3D.Geometry.Compiler.Compilation> Compilation = new(() =>
     {
         var foundation = Path.Combine(CheckerTestSupport.FindForwardStdLib(), "foundation");
@@ -53,25 +53,25 @@ public static class FlatMapFilterTests
         return "namespace Ara3D.Geometry { public static class RangeReference { public static IReadOnlyList<Integer> Range(this Integer self) " + body + " } }";
     }
 
-    private static Program GetProgram(bool loops, bool fuse)
+    private static Program GetProgram(bool loops, bool fuse, bool inline = false)
     {
-        if (Programs.TryGetValue((loops, fuse), out var program))
+        if (Programs.TryGetValue((loops, fuse, inline), out var program))
             return program;
         var writer = new CSharpWriter(Compilation.Value, "unused-filter")
-            { ExtensionStyle = true, LowerLoops = loops, FuseCombinators = fuse, InlineCalls = false };
+            { ExtensionStyle = true, LowerLoops = loops, FuseCombinators = fuse, InlineCalls = inline };
         writer.WriteAll();
         // Use actual generated reference bodies and records, plus the test assembly's real runtime.
         var sources = new[]
         {
             writer.Files["_ProbeUv.g.cs"].ToString(),
-            KeepMethods(writer.Files["Extensions.g.cs"].ToString(), n => n.StartsWith("F1") || n is "Candidates" or "Take"),
+            KeepMethods(writer.Files["Extensions.g.cs"].ToString(), n => n.StartsWith("F1") || n.StartsWith("F3") || n is "Candidates" or "Take"),
             RangeReference(writer)
         };
         var text = string.Join("\n", sources);
         Directory.CreateDirectory(Evidence);
-        File.WriteAllText(Path.Combine(Evidence, $"generated-loops-{loops}-fuse-{fuse}.cs"), text);
-        program = new Program(writer, Compile(sources), text);
-        Programs[(loops, fuse)] = program;
+        File.WriteAllText(Path.Combine(Evidence, $"generated-loops-{loops}-fuse-{fuse}-inline-{inline}.cs"), text);
+        program = new Program(writer, Compile(sources), text, sources);
+        Programs[(loops, fuse, inline)] = program;
         return program;
     }
 
@@ -112,8 +112,7 @@ public static class FlatMapFilterTests
         Assert.That(array.Type.TypeArgs.Single(), Is.EqualTo(loop.ElemType));
         Assert.That(array.Elements.Single().Type, Is.EqualTo(loop.ElemType));
         var body = Body(program, "Candidates");
-        Assert.That(body, Does.Contain("if ((bool)(").And.Contain(".Take("));
-        Assert.That(body.Split("Intrinsics.MakeArray<ProbeUv>(").Length - 1, Is.EqualTo(1), body);
+        Assert.That(body, Does.Contain("if ((bool)(").And.Not.Contain(".Take(").And.Not.Contain("MakeArray<ProbeUv>"), body);
     }
 
     [TestCase(false, false)]
@@ -209,10 +208,17 @@ public static class FlatMapFilterTests
     private static TirCoerce Wrapped(TirNode node)
         => new(node, node.Type, node.Type, null, node.Origin);
 
+    private const string SelectParameters = "IReadOnlyList<Number> xs, Func<Number, Boolean> keep, "
+        + "Func<Number, Number> value, Func<Number, IReadOnlyList<Number>> fallback";
+
     private static (Filter Invoke, string Body) Variant(string name, Func<TirLoweredLoop, TirLoweredLoop> change)
+        => Variant<Filter>(name, "F1Select", SelectParameters, change);
+
+    private static (T Invoke, string Body) Variant<T>(string name, string function, string parameters,
+        Func<TirLoweredLoop, TirLoweredLoop> change) where T : Delegate
     {
         var writer = GetProgram(true, true).Writer;
-        var tir = Lowered(writer, "F1Select");
+        var tir = Lowered(writer, function);
         TirNode Rewrite(TirNode node)
         {
             if (node is TirLoweredLoop loop)
@@ -220,14 +226,14 @@ public static class FlatMapFilterTests
             var children = node.Children.ToArray();
             return children.Length == 0 ? node : node.WithChildren(children.Select(Rewrite).ToArray());
         }
-        var function = new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, Rewrite(tir.Body),
+        var rewritten = new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, Rewrite(tir.Body),
             tir.ZonkedParameterTypes, tir.ZonkedReturnType);
-        var body = new TirCSharpBodyWriter(new CSharpTypeWriter(writer, null), function, isStatic: true).ToString();
+        var body = new TirCSharpBodyWriter(new CSharpTypeWriter(writer, null), rewritten, isStatic: true).ToString();
         var source = "namespace Ara3D.Geometry { public static class Variant { "
-            + "public static IReadOnlyList<Number> Run(IReadOnlyList<Number> xs, Func<Number, Boolean> keep, "
-            + "Func<Number, Number> value, Func<Number, IReadOnlyList<Number>> fallback) " + body + " } }";
+            + "public static IReadOnlyList<Number> Run(" + parameters + ") " + body + " } }";
         File.WriteAllText(Path.Combine(Evidence, name + ".cs"), source);
-        return (Method(Compile(new[] { source }), "Run").CreateDelegate<Filter>(), body);
+        // The program's own Take, Range and records come along: a variant may still call them.
+        return (Method(Compile(GetProgram(true, true).Sources.Append(source).ToArray()), "Run").CreateDelegate<T>(), body);
     }
 
     private static TirLoweredLoop WithCallback(TirLoweredLoop loop, TirNode callback)
@@ -325,5 +331,174 @@ public static class FlatMapFilterTests
         }
         File.WriteAllLines(Path.Combine(Evidence, "allocation.csv"), lines);
         TestContext.WriteLine(string.Join("\n", lines));
+    }
+
+    private delegate IReadOnlyList<Number> Select3(IReadOnlyList<Number> xs, Func<Number, Boolean> keep, Func<Number, Number> value);
+    private delegate IReadOnlyList<Number> Mixed(IReadOnlyList<Number> xs, Func<Number, Boolean> keep, Func<Number, IReadOnlyList<Number>> fallback);
+    private delegate IReadOnlyList<Number> Indexed(IReadOnlyList<Number> xs, IReadOnlyList<Number> ys, Func<Integer, Boolean> keep);
+    private delegate IReadOnlyList<Number> Counted(IReadOnlyList<Number> xs, Func<Number, Boolean> keep, Integer count);
+    private delegate IReadOnlyList<Number> Unary(IReadOnlyList<Number> xs, Func<Number, Boolean> keep);
+    private delegate IReadOnlyList<Number> Faulting(IReadOnlyList<Number> xs, Func<Number, Boolean> keep,
+        Func<Number, Number> accept, Func<Number, Number> reject);
+
+    private const string Select3Parameters = "IReadOnlyList<Number> xs, Func<Number, Boolean> keep, Func<Number, Number> value";
+    private const string FaultingParameters = "IReadOnlyList<Number> xs, Func<Number, Boolean> keep, "
+        + "Func<Number, Number> accept, Func<Number, Number> reject";
+
+    private static readonly Number[][] Inputs = { new Number[] { 3, 1, 2, 1 }, Array.Empty<Number>() };
+
+    [TestCase(false, false)]
+    [TestCase(true, false)]
+    [TestCase(true, true)]
+    public static void EmptyTakeArmAppendsNothing(bool loops, bool fuse)
+    {
+        var program = GetProgram(loops, fuse);
+        foreach (var (name, keptWhen) in new[] { ("F3EmptyArm", true), ("F3EmptyFirst", false) })
+        {
+            var select = Method(program.Assembly, name).CreateDelegate<Select3>();
+            foreach (var input in Inputs)
+            foreach (var mode in new[] { "all", "none", "mixed" })
+            {
+                var trace = new List<string>();
+                bool Accept(Number x) => mode == "all" || mode == "mixed" && (double)x <= 2;
+                var actual = select(input, x => { trace.Add($"p{x}"); return Accept(x); },
+                    x => { trace.Add($"v{x}"); return (Number)((double)x * 10); });
+                var kept = input.Where(x => Accept(x) == keptWhen).ToArray();
+                Assert.That(actual, Is.EqualTo(kept.Select(x => (Number)((double)x * 10))), $"{name} {mode}");
+                Assert.That(trace, Is.EqualTo(input.SelectMany(x => Accept(x) == keptWhen ? new[] { $"p{x}", $"v{x}" } : new[] { $"p{x}" })));
+            }
+            if (!loops)
+                continue;
+            var body = Body(program, name);
+            Assert.That(body, Does.Not.Contain("MakeArray").And.Not.Contain("Take(").And.Not.Contain("for (var _j")
+                .And.Not.Contain("else").And.Contain(keptWhen ? "if ((bool)(" : "if (!(bool)("), body);
+        }
+    }
+
+    [TestCase(false, false)]
+    [TestCase(true, false)]
+    [TestCase(true, true)]
+    public static void EmptyTakeArmBesideACopiedArmAndOverFieldReads(bool loops, bool fuse)
+    {
+        var program = GetProgram(loops, fuse);
+        var mixed = Method(program.Assembly, "F3Mixed").CreateDelegate<Mixed>();
+        var calls = new List<Number>();
+        Func<Number, IReadOnlyList<Number>> twice = x => { calls.Add(x); return new[] { x, x }; };
+        Assert.That(mixed(new Number[] { 3, 1, 2 }, x => (double)x != 1, twice), Is.EqualTo(new Number[] { 3, 3, 2, 2 }));
+        Assert.That(calls, Is.EqualTo(new Number[] { 3, 2 }));
+        if (loops)
+            Assert.That(Body(program, "F3Mixed"), Does.Not.Contain("MakeArray").And.Not.Contain("Take(").And.Not.Contain("else")
+                .And.Contain("for (var _j"));
+
+        var fields = Method(program.Assembly, "F3Fields");
+        var uv = program.Assembly.GetType("Ara3D.Geometry.ProbeUv")!;
+        var records = Array.CreateInstance(uv, 3);
+        for (var i = 0; i < 3; i++)
+            records.SetValue(Activator.CreateInstance(uv, (Number)(i + 1), (Number)(10 * (i + 1))), i);
+        var result = (System.Collections.IEnumerable)fields.Invoke(null,
+            new object[] { records, (Func<Number, Boolean>)(u => (double)u != 2) })!;
+        Assert.That(result.Cast<object>().Select(r => (double)(Number)uv.GetField("U")!.GetValue(r)!), Is.EqualTo(new[] { 1d, 3d }));
+        if (loops)
+            Assert.That(Body(program, "F3Fields"), Does.Not.Contain("MakeArray").And.Not.Contain("Take(").And.Not.Contain("else"));
+    }
+
+    [TestCase(false, false)]
+    [TestCase(true, false)]
+    [TestCase(true, true)]
+    public static void EmptyTakeReceiverThatMayFaultIsStillEvaluated(bool loops, bool fuse)
+    {
+        var program = GetProgram(loops, fuse);
+        var indexed = Method(program.Assembly, "F3Index").CreateDelegate<Indexed>();
+        var xs = new Number[] { 1, 2 };
+        Assert.That(indexed(xs, new Number[] { 5, 6 }, k => (int)k == 0), Is.EqualTo(new Number[] { 1 }));
+        Assert.That(indexed(xs, Array.Empty<Number>(), _ => true), Is.EqualTo(xs), "a kept element never reads the dropped arm's receiver");
+        Assert.That(() => indexed(xs, new Number[] { 5 }, k => (int)k == 0), Throws.TypeOf<ArgumentOutOfRangeException>(),
+            "the dropped element's receiver ys[1] must still be read");
+
+        var calls = new List<Number>();
+        var rejecting = Method(program.Assembly, "F3Call").CreateDelegate<Mixed>();
+        Assert.That(rejecting(new Number[] { 3, 1, 2 }, x => (double)x == 1, x => { calls.Add(x); return Array.Empty<Number>(); }),
+            Is.EqualTo(new Number[] { 1 }));
+        Assert.That(calls, Is.EqualTo(new Number[] { 3, 2 }));
+        if (loops)
+            foreach (var name in new[] { "F3Index", "F3Call" })
+                Assert.That(Body(program, name), Does.Contain("IReadOnlyList<Number> _p").And.Not.Contain("for (var _j"), name);
+    }
+
+    [TestCase(false, false)]
+    [TestCase(true, false)]
+    [TestCase(true, true)]
+    public static void TakeOtherThanTheLiteralZeroIsCopied(bool loops, bool fuse)
+    {
+        var program = GetProgram(loops, fuse);
+        var counted = Method(program.Assembly, "F3Count").CreateDelegate<Counted>();
+        var xs = new Number[] { 1, 2 };
+        Assert.That(counted(xs, x => (double)x == 1, (Integer)0), Is.EqualTo(new Number[] { 1 }));
+        Assert.That(counted(xs, x => (double)x == 1, (Integer)1), Is.EqualTo(new Number[] { 1, 2 }));
+        if (loops)
+            Assert.That(Body(program, "F3Count"), Does.Contain("for (var _j").And.Contain("Take("));
+
+        var parameter = Method(program.Assembly, "F3Parameter").CreateDelegate<Unary>();
+        Assert.That(parameter(xs, x => (double)x == 1), Is.EqualTo(new Number[] { 1 }));
+        if (loops && !fuse)
+            Assert.That(Body(program, "F3Parameter"), Does.Not.Contain("Take(").And.Not.Contain("for (var _j"));
+    }
+
+    [TestCase("callee")]
+    [TestCase("count")]
+    [TestCase("coerced")]
+    public static void TakeCallsThatAreNotTheStandardEmptyTakeKeepTheirCopy(string shape)
+    {
+        var skip = Compilation.Value.LibraryDefinitionsByName["Primitives"].Functions.First(f => f.Name == "Skip");
+        var variant = Variant<Faulting>("take-refused-" + shape, "F1FaultTake", FaultingParameters, loop =>
+        {
+            var lambda = (TirLambda)loop.Fn;
+            var conditional = (TirConditional)lambda.Body;
+            var take = (TirCall)conditional.IfFalse;
+            TirNode arm = shape switch
+            {
+                // A call named Take whose callee is another function.
+                "callee" => new TirCall(skip, take.EmissionKind, take.ParameterTypes, take.ReturnType, take.Args, take.Type, take.Origin, "Take"),
+                "count" => take.WithChildren(new[] { take.Args[0], new TirLiteral(1, Ara3D.Geometry.AST.LiteralTypesEnum.Integer, take.Args[1].Type, null) }),
+                _ => Wrapped(take),
+            };
+            return WithCallback(loop, new TirLambda(lambda.Parameters,
+                new TirConditional(conditional.Condition, conditional.IfTrue, arm, conditional.Type, conditional.Origin), lambda.Type, lambda.Origin));
+        });
+        Assert.That(variant.Body, Does.Contain("MakeArray<Number>").And.Contain("for (var _j"));
+        Assert.That(variant.Invoke(new Number[] { 1, 2 }, x => (double)x == 1, x => x, x => (Number)((double)x * 10)),
+            Is.EqualTo(shape == "count" ? new Number[] { 1, 20 } : new Number[] { 1 }));
+    }
+
+    [Test]
+    public static void EmptyTakeAllocationIsRemovedAgainstTheSameLoweredPath()
+    {
+        var optimized = Variant<Select3>("take-allocation-optimized", "F3EmptyArm", Select3Parameters, loop => loop);
+        var ordinary = Variant<Select3>("take-allocation-ordinary", "F3EmptyArm", Select3Parameters,
+            loop => WithCallback(loop, Wrapped(loop.Fn)));
+        Assert.That(optimized.Body, Does.Not.Contain("MakeArray<Number>"));
+        Assert.That(ordinary.Body, Does.Contain("MakeArray<Number>"));
+        Func<Number, Boolean> dropAll = _ => false;
+        Func<Number, Number> identity = x => x;
+        foreach (var size in new[] { 8, 64, 512 })
+        {
+            var input = Enumerable.Range(1, size).Select(x => (Number)x).ToArray();
+            foreach (var filter in new[] { optimized.Invoke, ordinary.Invoke })
+                for (var i = 0; i < 10000; i++) filter(input, dropAll, identity);
+            long Measure(Select3 filter)
+            {
+                var count = 0;
+                var before = GC.GetAllocatedBytesForCurrentThread();
+                for (var i = 0; i < 1000; i++)
+                    count += filter(input, dropAll, identity).Count;
+                var bytes = GC.GetAllocatedBytesForCurrentThread() - before;
+                Assert.That(count, Is.EqualTo(0));
+                return bytes;
+            }
+            var fast = Measure(optimized.Invoke);
+            var slow = Measure(ordinary.Invoke);
+            TestContext.WriteLine($"{size},{fast / 1000},{slow / 1000},{(slow - fast) / 1000}");
+            Assert.That(slow - fast, Is.GreaterThanOrEqualTo(size * 24L * 1000), "one T[1] per dropped element");
+        }
     }
 }
