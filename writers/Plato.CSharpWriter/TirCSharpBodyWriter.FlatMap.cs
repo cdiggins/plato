@@ -61,9 +61,9 @@ public partial class TirCSharpBodyWriter
                 Write($"IReadOnlyList<{elem}> {part} = ");
                 WriteNode(arm);
                 WriteLine(";");
-                WriteLine($"for (var {index} = 0; {index} < {part}.Count; {index}++)");
+                WriteLine($"for (var {index} = 0; {index} < {ListCount(part)}; {index}++)");
                 WriteStartBlock();
-                WriteLine($"{list}.Add({part}[{index}]);");
+                WriteLine($"{list}.Add({ListAt(part, index)});");
                 WriteEndBlock();
             }
             WriteEndBlock();

@@ -443,6 +443,13 @@ namespace Ara3D.Geometry.CSharpWriter
         // Default (false) output is unchanged.
         public bool LeanInlining { get; set; }
 
+        // When true (--concrete-arrays, TKT-1093), every Count and single-index read of an
+        // Array-typed (IReadOnlyList) value goes through ConcreteArrayAccess.g.cs, which tests
+        // for an exact T[] and reads it directly; the JIT cannot devirtualize the array's
+        // IReadOnlyList calls. Signatures and stored types are unchanged. Default (false) output
+        // is unchanged.
+        public bool ConcreteArrays { get; set; }
+
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at
         // the call site (parameters replaced by argument nodes), iteratively, before the
@@ -760,6 +767,37 @@ namespace Ara3D.Geometry.CSharpWriter
             return this;
         }
 
+        /// <summary>The class --concrete-arrays reads arrays through (TKT-1093).</summary>
+        public const string ConcreteArrayAccessClass = "ConcreteArrayAccess";
+
+        // Written only under --concrete-arrays, so the default output has no such file. A T[] test
+        // is `GetType() == typeof(T[])`: exact, so a covariant Derived[] behind IReadOnlyList<Base>
+        // keeps the interface path, and a JIT intrinsic the JIT folds when it knows the type. The
+        // explicit range test sends a bad index to the interface, which throws what it always threw.
+        private CSharpWriter WriteConcreteArrayAccess()
+        {
+            WriteLine($"{GeneratedCodeAttributes}");
+            WriteLine($"public static class {ConcreteArrayAccessClass}");
+            WriteStartBlock();
+            WriteLine("[MethodImpl(AggressiveInlining)]");
+            WriteLine("public static int Count<T>(IReadOnlyList<T> xs)");
+            WriteLine("    => xs.GetType() == typeof(T[]) ? Unsafe.As<T[]>(xs).Length : xs.Count;");
+            WriteLine();
+            WriteLine("[MethodImpl(AggressiveInlining)]");
+            WriteLine("public static T At<T>(IReadOnlyList<T> xs, int i)");
+            WriteStartBlock();
+            WriteLine("if (xs.GetType() == typeof(T[]))");
+            WriteStartBlock();
+            WriteLine("var a = Unsafe.As<T[]>(xs);");
+            WriteLine("if ((uint)i < (uint)a.Length)");
+            WriteLine("    return a[i];");
+            WriteEndBlock();
+            WriteLine("return xs[i];");
+            WriteEndBlock();
+            WriteEndBlock();
+            return this;
+        }
+
         public CSharpWriter WriteAll()
         {
             // The lambda-capture hoist names (`_var{N}`) and the inliner's collision-rename
@@ -795,6 +833,9 @@ namespace Ara3D.Geometry.CSharpWriter
 
             if (LeanInlining)
                 LeanInliningPass.Apply(Files);
+
+            if (ConcreteArrays)
+                WriteFile($"{ConcreteArrayAccessClass}.g.cs", WriteConcreteArrayAccess);
 
             FlushTirDumps();
             return this;

@@ -940,6 +940,13 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (name == "Count" && args.Count == 1
             && TirRewrite.StripCoerce(args[0])?.Type?.Name == "Array")
         {
+            if (_tw.Writer.ConcreteArrays && IsInterfaceList(args[0]))
+            {
+                Write($"((Integer){CSharpWriter.ConcreteArrayAccessClass}.Count(");
+                WriteNode(args[0]);
+                Write("))");
+                return;
+            }
             Write("((Integer)");
             WritePostfixReceiver(args[0]);
             Write(".Count)");
@@ -959,6 +966,15 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 WritePostfixReceiver(args[0]);
                 Write(".At(");
                 WriteArgs(args.Skip(1));
+                Write(")");
+                return;
+            }
+            if (_tw.Writer.ConcreteArrays && args.Count == 2 && IsInterfaceList(args[0]))
+            {
+                Write($"{CSharpWriter.ConcreteArrayAccessClass}.At(");
+                WriteNode(args[0]);
+                Write(", ");
+                WriteIndexArgument(args[1]);
                 Write(")");
                 return;
             }
