@@ -1,0 +1,14 @@
+library ConcreteArraysProbe
+{
+    Size(xs: Array<Number>): Integer
+        => xs.Count;
+
+    Item(xs: Array<Number>, i: Integer): Number
+        => xs[i];
+
+    Mapped(xs: Array<Number>, f: Function1<Number, Number>): Array<Number>
+        => xs.Map(f);
+
+    Total(xs: Array<Number>, f: Function2<Number, Number, Number>): Number
+        => xs.Reduce(0.0, f);
+}
