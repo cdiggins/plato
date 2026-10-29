@@ -42,6 +42,7 @@ namespace Ara3D.Geometry.CSharpWriter
             var writer = new CSharpWriter(compilation, outputFolder) { Profile = profile ?? Compiler.Types.NumberProfile.Default, ExtensionStyle = extensionStyle, Optimize = optimize, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, LowerLoops = lowerLoops, FuseCombinators = fuseCombinators, StaticAbstract = staticAbstract, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
             writer.FuseConsumers = loopOptimizations?.FuseConsumers ?? false;
             writer.ExactOutputAllocation = loopOptimizations?.ExactOutputAllocation ?? false;
+            writer.LeanInlining = loopOptimizations?.LeanInlining ?? false;
             if (statementInlining != null)
             {
                 writer.InlineStatements = true;

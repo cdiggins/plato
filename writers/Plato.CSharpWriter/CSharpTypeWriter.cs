@@ -39,7 +39,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     // currently writing. See ITypeToCSharp.GroundingOwner / ConceptGrounding.GroundsSelf.
     public TypeDef GroundingOwner => TypeDef;
 
-    public static string Annotation => $"[MethodImpl(AggressiveInlining)]";
+    public string Annotation => Writer?.InliningAttribute ?? CSharpWriter.AggressiveInliningAttribute;
 
     public CSharpTypeWriter(CSharpWriter writer, TypeDef type)
     {
@@ -388,7 +388,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
             var parameters = f.ParameterNames.Zip(parameterTypes, (pn, pt) => $"{pt} {pn}").JoinStringsWithComma();
             var constraints = $"where Self : {selfType}";
             var retType = f.Function.ReturnType.Name == selfTypeName ? "Self" : f.ReturnType;
-            var extensionSignature = $"{CSharpFunctionInfo.Annotation}public static {retType} {f.Name}<{generics}>(this {parameters}) {constraints}";
+            var extensionSignature = $"{f.Annotation}public static {retType} {f.Name}<{generics}>(this {parameters}) {constraints}";
             return Write($"{extensionSignature}").WriteBody(f, true);
         }
         else
