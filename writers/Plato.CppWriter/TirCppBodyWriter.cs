@@ -19,7 +19,7 @@ namespace Ara3D.Geometry.CppWriter;
 ///
 /// The text produced here is dialect independent — see <see cref="CppPrelude"/>.
 /// </summary>
-public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
+public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
 {
     private readonly CppWriter _w;
     private readonly TirFunction _tir;
@@ -69,7 +69,8 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
     private void WriteFunctionBody()
     {
         var body = _tir.Body;
-        PrepareFunctors(body);
+        if (!UsesCpuLambdas)
+            PrepareFunctors(body);
 
         if (IsStatementNode(body))
         {
@@ -255,8 +256,8 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
 
     // --- statements ----------------------------------------------------------
 
-    private static bool IsStatementNode(TirNode n)
-        => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop;
+    private bool IsStatementNode(TirNode n)
+        => UsesCpuLambdas ? TirRewrite.IsStatementNode(n) : n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop;
 
     private void WriteStatement(TirNode n)
     {
@@ -296,6 +297,10 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                     WriteLine("else");
                     WriteStatement(Blockify(iff.IfFalse));
                 }
+                return;
+
+            case TirInlineRegion or TirInlineExit or TirInlineBinding or TirGuardedLoop or TirLoweredLoop or TirMultiReduction when UsesCpuLambdas:
+                WriteCpuStatement(n);
                 return;
 
             case TirLoop l:
@@ -454,7 +459,9 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
     /// <summary>Writes a returned value, converted to the signature's return type.</summary>
     private void WriteReturnValue(TirNode value)
     {
-        if (_retCpp == null)
+        if (_lambdaReturns.Count > 0)
+            WriteLambdaReturnValue(value);
+        else if (_retCpp == null)
             WriteConverted(value, _tir.ZonkedReturnType);
         else
             WriteConvertedTo(value, _retCpp, _retPlato);
@@ -527,7 +534,14 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 return;
 
             case TirParameter p:
-                Write(CppWriter.EscapeName(p.Def?.Name ?? "?"));
+                if (p.Def != null && _loopParamNames.TryGetValue(p.Def, out var loopName))
+                    Write(loopName);
+                else
+                    Write(CppWriter.EscapeName(p.Def?.Name ?? "?"));
+                return;
+
+            case TirTempRef tr when UsesCpuLambdas:
+                Write(tr.Name);
                 return;
 
             case TirVariable v:
@@ -540,7 +554,9 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
 
             case TirLet let:
             {
-                var type = _w.CppTypeName(let.Value?.Type ?? let.Type);
+                var type = UsesCpuLambdas
+                    ? (let.Value is TirLambda ? null : _w.CppTypeNameOrNull(let.Value?.Type ?? let.Type)) ?? "auto"
+                    : _w.CppTypeName(let.Value?.Type ?? let.Type);
                 Write($"{type} {CppWriter.EscapeName(let.Def?.Name ?? "?")} = ");
                 WriteNode(let.Value);
                 return;
@@ -595,6 +611,10 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 WriteNode(asg.RValue);
                 return;
 
+            case TirLambda lam when UsesCpuLambdas:
+                WriteCpuLambda(lam);
+                return;
+
             case TirLambda lam:
             {
                 if (!_functors.TryGetValue(lam, out var info))
@@ -614,6 +634,10 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 Write(")");
                 return;
             }
+
+            case TirArray arr when UsesCpuLambdas:
+                WriteCpuArray(arr);
+                return;
 
             case TirArray arr:
             {
