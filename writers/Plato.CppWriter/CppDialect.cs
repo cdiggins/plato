@@ -14,14 +14,18 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>CUDA C++ (nvcc). float2/float3/float4 and make_floatN come from cuda_runtime.h;
         /// every emitted function is qualified __host__ __device__.</summary>
         Cuda,
+
+        /// <summary>The cpu64i32 prototype (TKT-1097): double, int32_t, std::string, dynamic arena arrays,
+        /// ordinary vector structs, and split output files. Bodies differ from the two dialects above.</summary>
+        Cpu,
     }
 
     public static class CppDialectExtensions
     {
         public static string FileName(this CppDialect d)
-            => d == CppDialect.Cuda ? "plato.cu" : "plato.hpp";
+            => d == CppDialect.Cuda ? "plato.cu" : d == CppDialect.Cpu ? "plato_functions.hpp" : "plato.hpp";
 
         public static string DisplayName(this CppDialect d)
-            => d == CppDialect.Cuda ? "CUDA" : "C++";
+            => d == CppDialect.Cuda ? "CUDA" : d == CppDialect.Cpu ? "C++ (cpu64i32)" : "C++";
     }
 }

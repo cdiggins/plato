@@ -6,9 +6,11 @@ namespace Ara3D.Geometry.CppWriter
     public static class CppWriterExtensions
     {
         public static CppWriter ToCpp(this Compiler.Compilation compilation, DirectoryPath outputFolder,
-            CppDialect dialect = CppDialect.Cpp, bool inlineCalls = false)
+            CppDialect dialect = CppDialect.Cpp, bool inlineCalls = false, CppCpuOptions cpuOptions = null)
         {
-            var writer = new CppWriter(compilation, outputFolder, dialect) { InlineCalls = inlineCalls };
+            var writer = new CppWriter(compilation, outputFolder, dialect) { InlineCalls = inlineCalls || dialect == CppDialect.Cpu };
+            if (cpuOptions != null)
+                writer.CpuOptions = cpuOptions;
             writer.WriteAll();
             return writer;
         }

@@ -45,8 +45,21 @@ internal static class GenerateCommand
         var loops = args.Contains("--loops");
 
         var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"));
+        var profileArg = args.Where(a => a.StartsWith("--profile="))
+            .Select(a => a.Substring("--profile=".Length)).LastOrDefault();
+        // --cpp --profile=cpu64i32 selects the Cpu dialect (TKT-1097); it implies --inline.
+        var cpu = cpp && !cuda && profileArg == "cpu64i32";
+        var cppRoots = args.Where(a => a.StartsWith("--cpp-roots="))
+            .Select(a => a.Substring("--cpp-roots=".Length)).LastOrDefault();
+        if (cppRoots != null && !cpu)
+        {
+            Console.Error.WriteLine("--cpp-roots requires --cpp --profile=cpu64i32.");
+            return 1;
+        }
+        if (cpu)
+            inline = true;
         if ((loopOptimizations.FuseConsumers || loopOptimizations.ExactOutputAllocation)
-            && (!loops || typeScript || rust || glsl || cpp || cuda))
+            && (!loops || typeScript || rust || glsl || (cpp && !cpu) || cuda))
         {
             Console.Error.WriteLine("--fuse-consumers and --exact-output require C# generation with --loops.");
             return 1;
@@ -90,7 +103,7 @@ internal static class GenerateCommand
             Console.Error.WriteLine($"Unknown --profile value '{profileName}' (expected one of: {NumberProfile.Names})");
             return 1;
         }
-        if (profileName != null && (typeScript || rust || glsl || cpp || cuda))
+        if (profileName != null && !cpu && (typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--profile= is implemented by the C# writer only; the other writers still use their fixed scalar types.");
             return 1;
@@ -154,11 +167,26 @@ internal static class GenerateCommand
         }
         else if (cpp || cuda)
         {
-            var dialect = cuda ? CppDialect.Cuda : CppDialect.Cpp;
+            var dialect = cuda ? CppDialect.Cuda : cpu ? CppDialect.Cpu : CppDialect.Cpp;
             logger.Log($"Writing {dialect.DisplayName()} Files");
-            var output = compilation.ToCpp(outputFolder, dialect, inline);
+            var cpuOptions = cpu
+                ? new CppCpuOptions(loops, fuse, args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
+                    (cppRoots ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                : null;
+            var output = compilation.ToCpp(outputFolder, dialect, inline, cpuOptions);
             logger.Log($"{dialect.DisplayName()} functions emitted: {output.FunctionsEmitted}, skipped: {output.Skipped.Count}");
             GeneratedFiles.Write(output.Files, outputFolder, logger);
+            if (cpu)
+            {
+                var unreachable = output.UnemittedReachableFromRoots();
+                if (unreachable.Count > 0)
+                {
+                    Console.Error.WriteLine($"{unreachable.Count} function(s) reachable from --cpp-roots were not emitted:");
+                    foreach (var line in unreachable)
+                        Console.Error.WriteLine("  " + line);
+                    return 1;
+                }
+            }
         }
         else if (rust)
         {
