@@ -31,26 +31,26 @@ int main()
 
     // Range, Map, Reduce, FlatMap, Zip
     Array<int32_t> r = Range(5);
-    CHECK(Count(r) == 5 && At(r, 4) == 4);
-    CHECK(Count(Range(-3)) == 0);
+    CHECK(ToCount(r) == 5 && At(r, 4) == 4);
+    CHECK(ToCount(Range(-3)) == 0);
     Array<double> sq = Map(r, [](int32_t i) { return i * 1.5; });
-    CHECK(Count(sq) == 5 && At(sq, 3) == 4.5);
+    CHECK(ToCount(sq) == 5 && At(sq, 3) == 4.5);
     CHECK(Reduce(r, 0, [](int32_t acc, int32_t x) { return acc + x * x; }) == 30);
     Array<int32_t> fm = FlatMap(r, [](int32_t i) { return Range(i); });   // 0 + 01 + 012 + 0123 = 10 items
-    CHECK(Count(fm) == 10 && At(fm, 9) == 3 && At(fm, 1) == 0 && At(fm, 3) == 0);
+    CHECK(ToCount(fm) == 10 && At(fm, 9) == 3 && At(fm, 1) == 0 && At(fm, 3) == 0);
     Array<double> z = Zip(r, sq, [](int32_t i, double d) { return i + d; });
-    CHECK(Count(z) == 5 && At(z, 2) == 5.0);
+    CHECK(ToCount(z) == 5 && At(z, 2) == 5.0);
     Array<double> lit = make_array(1.0, 2.0, 3.0);
     Array<double> cat = Concatenate(lit, Reverse(lit));
-    CHECK(Count(cat) == 6 && At(cat, 2) == 3.0 && At(cat, 3) == 3.0 && At(cat, 5) == 1.0);
-    CHECK(Count(Append(lit, 4.0)) == 4 && At(Prepend(lit, 0.0), 0) == 0.0);
-    CHECK(IndexOf(lit, 2.0) == 1 && !Contains(lit, 9.0) && Count(Skip(Take(lit, 2), 1)) == 1);
+    CHECK(ToCount(cat) == 6 && At(cat, 2) == 3.0 && At(cat, 3) == 3.0 && At(cat, 5) == 1.0);
+    CHECK(ToCount(Append(lit, 4.0)) == 4 && At(Prepend(lit, 0.0), 0) == 0.0);
+    CHECK(IndexOf(lit, 2.0) == 1 && !Contains(lit, 9.0) && ToCount(Skip(Take(lit, 2), 1)) == 1);
     CHECK(lit == make_array(1.0, 2.0, 3.0));
     const double raw[] = { 7.0, 8.0 };
     CHECK(At(make_array(raw, 2), 1) == 8.0);
     PlatoList<int32_t> l = EmptyList(r);
     for (int i = 0; i < 20; i++) l = Add(l, i);
-    CHECK(Count(l) == 20 && At(Freeze(l), 19) == 19);
+    CHECK(ToCount(l) == 20 && At(Freeze(l), 19) == 19);
     PlatoBuffer<double> buf = make_buffer<double>(3);
     buf = Set(buf, 1, 2.5);
     CHECK(At(Freeze(buf), 0) == 0.0 && At(buf, 1) == 2.5);
@@ -59,9 +59,9 @@ int main()
     CHECK(Modulo(-7.5, 2.0) == -1.5 && Modulo(7.5, -2.0) == 1.5);   // -7.5 % 2 = -1.5 in C#
     CHECK(Modulo(-7, 3) == -1 && Modulo(7, -3) == 1);
     CHECK(Floor(-0.5) == -1.0 && Floor(2.7) == 2.0);
-    CHECK(Round(0.5, 0) == 0.0 && Round(1.5, 0) == 2.0 && Round(2.5, 0) == 2.0 && Round(-2.5, 0) == -2.0);   // ToEven
-    CHECK(Round(2.675, 2) == 2.68);   // 2.675 * 100 is exactly 267.5 in double; ToEven gives 268 (as Math.Round does)
-    CHECK(Round(1.005, 2) == 1.0 && Round(0.125, 2) == 0.12);
+    CHECK(ToRound(0.5, 0) == 0.0 && ToRound(1.5, 0) == 2.0 && ToRound(2.5, 0) == 2.0 && ToRound(-2.5, 0) == -2.0);   // ToEven
+    CHECK(ToRound(2.675, 2) == 2.68);   // 2.675 * 100 is exactly 267.5 in double; ToEven gives 268 (as Math.Round does)
+    CHECK(ToRound(1.005, 2) == 1.0 && ToRound(0.125, 2) == 0.12);
     CHECK(ToInteger(3.99) == 3 && ToInteger(-3.99) == -3 && ToInteger(1e20) == INT32_MAX && ToInteger(std::nan("")) == 0);
     CHECK(ShiftLeft(1, 33) == 2 && ShiftRight(-8, 1) == -4);
     CHECK(Hash(0.0) == Hash(-0.0) && Hash(1.0) == 1072693248);   // 0x3FF0000000000000 -> 0x3FF00000 ^ 0
@@ -93,7 +93,7 @@ int main()
     CHECK(d["name"].as_string() == "a\"b\n\xC3\xA9");
     Array<Pt> pts{};
     from_json(d["pts"], pts);
-    CHECK(Count(pts) == 2 && pts.data[1].X == 3.0 && pts.data[1].Y == -4.5);   // member "x" read as X
+    CHECK(ToCount(pts) == 2 && pts.data[1].X == 3.0 && pts.data[1].Y == -4.5);   // member "x" read as X
     CHECK(d["ok"].as_bool() && d["none"].is_null() && std::isinf(d["inf"].as_number()) && d["missing"].is_null());
     std::string again = json_dump(d);
     Json d2;

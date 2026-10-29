@@ -65,6 +65,14 @@ namespace Ara3D.Geometry.CppWriter
                     AllFieldNames.Add(f.Name);
                     fields.Add(f.Name);
                 }
+                // A closed sum lays out its cases' fields flattened as Case_Field (Cpu dialect).
+                if (ct.TypeDef.IsSum)
+                    foreach (var cs in ct.TypeDef.Cases)
+                        foreach (var f in cs.Fields)
+                        {
+                            AllFieldNames.Add(f.FlatName);
+                            fields.Add(f.FlatName);
+                        }
                 FieldsByType[ct.TypeDef.Name] = fields;
             }
         }
@@ -240,7 +248,13 @@ namespace Ara3D.Geometry.CppWriter
         /// Those become <c>ToMatrix4x4</c>. Call sites go through the same mapping.
         /// </summary>
         public string FunctionName(string name)
-            => StructNames.Contains(name) ? "To" + EscapeName(name) : EscapeName(name);
+            => StructNames.Contains(name) || (IsCpu && CpuPreludeToNames.Contains(name)) ? "To" + EscapeName(name) : EscapeName(name);
+
+        /// <summary>
+        /// Plato functions the Cpu prelude defines as ToX because a library type is also called X
+        /// (a struct and a function of one name cannot both be used in a C++ scope).
+        /// </summary>
+        private static readonly HashSet<string> CpuPreludeToNames = new HashSet<string> { "Count", "Round" };
 
         /// <summary>True when a type name is a generated tuple or function type (unsupported).</summary>
         private static bool IsTupleOrFunctionType(string name)
@@ -1290,7 +1304,8 @@ namespace Ara3D.Geometry.CppWriter
             if (!StructNames.Contains(name))
                 return handled;
             if (!ct.AllInterfaces.Any(i => i.ToString().StartsWith("IArrayLike")
-                                           || i.ToString().StartsWith("FixedArray")))
+                                           || i.ToString().StartsWith("FixedArray")
+                                           || (IsCpu && i.ToString().StartsWith("IIndexable<"))))
                 return handled;
 
             var fields = ct.TypeDef.Fields.Select(f => EscapeName(f.Name)).ToList();
@@ -1551,7 +1566,7 @@ namespace Ara3D.Geometry.CppWriter
             }
             catch (CppUnsupportedException e)
             {
-                Skipped.Add($"{label}: {e.Message}");
+                Skipped.Add($"{label}: {e.Message} [{fi.Name}({string.Join(", ", fi.ParameterTypes.Select(t => t?.ToString()))})]");
             }
         }
 

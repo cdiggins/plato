@@ -351,6 +351,13 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
 
     private void WriteConvertedTo(TirNode inner, string to, string toPlato)
     {
+        // A tuple literal (a, b, c) used where a record is expected: C# converts it implicitly,
+        // C++ writes the record's braced initializer.
+        if (to != null && _w.StructNames.Contains(to) && IsTupleLiteral(inner, out var tupleArgs))
+        {
+            WriteConstruction(to, tupleArgs);
+            return;
+        }
         var from = InferExprCppType(inner);
         if (inner == null || to == null || from == to)
         {
@@ -422,6 +429,18 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         Write($"{_w.FunctionName(toPlato)}(");
         WriteNode(inner);
         Write(")");
+    }
+
+    private static bool IsTupleLiteral(TirNode n, out IReadOnlyList<TirNode> args)
+    {
+        args = null;
+        if (n is TirCall c && c.Name != null && c.Name.StartsWith("Tuple") && c.Name.Length > 5
+            && char.IsDigit(c.Name[c.Name.Length - 1]) && c.Args.Count > 0)
+        {
+            args = c.Args;
+            return true;
+        }
+        return false;
     }
 
     private string InferExprCppType(TirNode n)

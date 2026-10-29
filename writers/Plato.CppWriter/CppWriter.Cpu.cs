@@ -221,7 +221,7 @@ namespace Ara3D.Geometry.CppWriter
                 chain = $"(i <= {i} ? self.{fields[i]} : {chain})";
             AddGenerated("At", new[] { name, "int32_t" }, $"PLATO_FN {elem} At({name} self, int32_t i)", $" {{ return {chain}; }}");
             handled.Add("At");
-            AddGenerated("Count", new[] { name }, $"PLATO_FN int32_t Count({name} self)", $" {{ return {n}; }}");
+            AddGenerated("Count", new[] { name }, $"PLATO_FN int32_t ToCount({name} self)", $" {{ return {n}; }}");
             handled.Add("Count");
             AddGenerated("NumComponents", new[] { name }, $"PLATO_FN int32_t NumComponents({name} self)", $" {{ return {n}; }}");
             handled.Add("NumComponents");
@@ -448,7 +448,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 "PLATO_FN Angle CreateFromComponents(Angle _, double x)", " { return Angle{ x }; }");
             AddGenerated("At", new[] { "Angle", "int32_t" },
                 "PLATO_FN double At(Angle self, int32_t i)", " { return self.Radians; }");
-            AddGenerated("Count", new[] { "Angle" }, "PLATO_FN int32_t Count(Angle self)", " { return 1; }");
+            AddGenerated("Count", new[] { "Angle" }, "PLATO_FN int32_t ToCount(Angle self)", " { return 1; }");
             AddGenerated("NumComponents", new[] { "Angle" }, "PLATO_FN int32_t NumComponents(Angle self)", " { return 1; }");
             AddGenerated("Components", new[] { "Angle" }, "PLATO_FN double Components(Angle self)", " { return self.Radians; }");
 
@@ -488,6 +488,16 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 }
                 AddGenerated("GetHashCode", new[] { n }, $"PLATO_FN int32_t GetHashCode(const {n}& a)", body);
 
+                // Per-case factories, called as Type.Case(x) = Case(Type{}, x) like every static member.
+                if (s.Type != null && s.Type.TypeDef.IsSum)
+                    foreach (var cs in s.Type.TypeDef.Cases)
+                    {
+                        var fieldTypes = cs.Fields.Select(f => FieldCppOrNull(new CppField(f.FlatName, f.Type))).ToList();
+                        var ps = fieldTypes.Select((t, i) => $"{t} p{i}").Prepend($"{n} _").JoinStringsWithComma();
+                        var sets = cs.Fields.Select((f, i) => $" r.{EscapeName(f.FlatName)} = p{i};").JoinStrings("");
+                        AddGenerated(cs.Name, fieldTypes.Prepend(n).ToArray(), $"PLATO_FN {n} {FunctionName(cs.Name)}({ps})",
+                            $" {{ {n} r{{}}; r.Kind = {n}::{cs.TagConstName};{sets} return r; }}");
+                    }
                 if (s.Type != null && s.Type.TypeDef.IsSum)
                     foreach (var cs in s.Type.TypeDef.Cases)
                         AddGenerated(cs.PredicateName, new[] { n }, $"PLATO_FN bool {cs.PredicateName}(const {n}& s)",

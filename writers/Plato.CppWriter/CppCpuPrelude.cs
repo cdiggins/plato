@@ -163,7 +163,7 @@ namespace plato
         return Array<T>{ p, n };
     }
 
-    template <class T> inline int32_t Count(Array<T> xs) { return xs.count; }
+    template <class T> inline int32_t ToCount(Array<T> xs) { return xs.count; }
     template <class T> inline T At(Array<T> xs, int32_t i) { PLATO_ASSERT(i >= 0 && i < xs.count); return xs.data[i]; }
 
     // MapRange: f(0) to f(n - 1), each once, in index order; n <= 0 gives the empty array.
@@ -354,7 +354,7 @@ namespace plato
     template <class T> using List = PlatoList<T>;
 
     template <class T> inline PlatoList<T> EmptyList(Array<T>) { return PlatoList<T>{ nullptr, 0, 0 }; }
-    template <class T> inline int32_t Count(PlatoList<T> l) { return l.count; }
+    template <class T> inline int32_t ToCount(PlatoList<T> l) { return l.count; }
     template <class T> inline T At(PlatoList<T> l, int32_t i) { PLATO_ASSERT(i >= 0 && i < l.count); return l.items[i]; }
 
     template <class T>
@@ -418,7 +418,7 @@ namespace plato
             new (p + i) T();
         return PlatoBuffer<T>{ p, n };
     }
-    template <class T> inline int32_t Count(PlatoBuffer<T> b) { return b.count; }
+    template <class T> inline int32_t ToCount(PlatoBuffer<T> b) { return b.count; }
     template <class T> inline T At(PlatoBuffer<T> b, int32_t i) { PLATO_ASSERT(i >= 0 && i < b.count); return b.items[i]; }
     template <class T>
     inline PlatoBuffer<T> Set(PlatoBuffer<T> b, int32_t i, typename std::common_type<T>::type x)
@@ -478,7 +478,7 @@ namespace plato
 
     // Math.Round(x, digits): ToEven (nearbyint under the default rounding mode, not C's round);
     // digits is clamped to 0..15, and as in .NET a magnitude of 1e16 or more is returned unchanged.
-    inline double Round(double x, int32_t digits)
+    inline double ToRound(double x, int32_t digits)
     {
         if (digits < 0) digits = 0;
         if (digits > 15) digits = 15;
@@ -514,7 +514,7 @@ namespace plato
     }
 
     // String.Count / At (Character is char; a String is UTF-8 here, UTF-16 in C#, identical for ASCII).
-    inline int32_t Count(const std::string& s) { return static_cast<int32_t>(s.size()); }
+    inline int32_t ToCount(const std::string& s) { return static_cast<int32_t>(s.size()); }
     inline char At(const std::string& s, int32_t i) { PLATO_ASSERT(i >= 0 && static_cast<size_t>(i) < s.size()); return s[static_cast<size_t>(i)]; }
 
     // ---- Helpers the body writer emits (names as in the GPU prelude, on double) ----
