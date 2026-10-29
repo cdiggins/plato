@@ -428,7 +428,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 foreach (var f in s.Fields)
                     sb.Append($"    from_json(j[\"{f.Name}\"], v.{EscapeName(f.Name)});\n");
                 sb.Append("}\n\n");
-                sb.Append($"Json to_json(const {s.Name}& v)\n{{\n    Json j = Json::object();\n");
+                sb.Append($"Json to_json(const {s.Name}& v)\n{{\n    Json j = Json::Object();\n");
                 foreach (var f in s.Fields)
                     sb.Append($"    j.set(\"{f.Name}\", to_json(v.{EscapeName(f.Name)}));\n");
                 sb.Append("    return j;\n}\n\n");
