@@ -37,7 +37,7 @@ namespace Ara3D.Geometry.CSharpWriter;
 /// (a fused producer stage, say): both programs fail, at the same element.
 ///
 /// Exposure: a variant call in an unconditional position whose callee is a small forwarding
-/// function (an expression body with no conditional, short-circuit chain, lambda or delegate call)
+/// function (an expression body of at most 48 nodes with no conditional, short-circuit chain or lambda)
 /// is expanded under the inliner's under-lambda rules when, and only when, the expansion contains
 /// an expression these rules hoist. That is how `g.PartialU(s, uv)` in a loop over `uv` gives up
 /// `g.SurfaceAt(s)` and `g.DomainOnce(s)`, which the call's body computes per sample.
@@ -191,7 +191,7 @@ public static class TirLoopInvariantHoister
         foreach (var d in body.Descendants())
         {
             if (++count > MaxExposedNodes
-                || d is TirConditional or TirBooleanChain or TirLambda or TirInvoke or TirLet or TirAssign
+                || d is TirConditional or TirBooleanChain or TirLambda or TirLet or TirAssign
                 || TirRewrite.IsStatementNode(d))
                 return false;
         }
