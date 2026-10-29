@@ -8,8 +8,8 @@ namespace PlatoTests.Optimization;
 
 /// <summary>
 /// TKT-1091: by default every generated member carries <c>[MethodImpl(AggressiveInlining)]</c>;
-/// under <see cref="CSharpWriter.LeanInlining"/> none does, and nothing else changes. The
-/// handwritten intrinsics are copied, not written, so they keep their own attributes.
+/// under <see cref="CSharpWriter.LeanInlining"/> only one-line forwarding members keep it, and
+/// nothing else changes. The handwritten intrinsics are copied, not written, so they keep theirs.
 /// </summary>
 [TestFixture]
 public static class LeanInliningTests
@@ -52,11 +52,47 @@ public static class LeanInliningTests
         Assert.That(files["Extensions.g.cs"], Does.Contain(Attribute + " public static "));
     }
 
+    private static IEnumerable<string> MarkedLines(IReadOnlyDictionary<string, string> files)
+        => files.Values.SelectMany(text => text.Split('\n')).Where(line => line.Contains(Attribute));
+
     [Test]
-    public static void LeanMarksNoGeneratedMember()
+    public static void LeanKeepsTheAttributeOnlyOnForwardingMembers()
     {
-        var marked = Emit(true).Where(kv => kv.Value.Contains("AggressiveInlining")).Select(kv => kv.Key).ToList();
-        Assert.That(marked, Is.Empty);
+        var kept = MarkedLines(Emit(true)).ToList();
+        Assert.That(kept, Is.Not.Empty);
+        Assert.That(kept.Count, Is.LessThan(MarkedLines(Emit(false)).Count()));
+        foreach (var line in kept)
+        {
+            var rest = line.Substring(line.IndexOf(Attribute, StringComparison.Ordinal));
+            Assert.That(rest.Contains("=>") && LeanInliningPass.IsForwarding(rest.Substring(rest.IndexOf("=>", StringComparison.Ordinal) + 2)),
+                Is.True, line);
+        }
+        Assert.That(Emit(true)["_Number.g.cs"], Does.Contain(Attribute + " public Number Multiply(Number b) => this * b;"));
+    }
+
+    [TestCase("a.Name(b, c);", true)]
+    [TestCase("x.MagnitudeSquared().LessThanOrEquals(tolerance);", true)]
+    [TestCase("new Pair(a, b);", true)]
+    [TestCase("this.Candelas; }", true)]
+    [TestCase("PlatoJson.Deserialize<Angle>(input);", true)]
+    [TestCase("this * b;", true)]
+    [TestCase("this.LessThanOrEquals(b) ? this.NotEquals(b) : false;", false)]
+    [TestCase("a.Add(b.Multiply(c));", false)]
+    [TestCase("x.Add(1.0D);", false)]
+    [TestCase("xs.Map(x => x.Add(y));", false)]
+    [TestCase("a * b + c;", false)]
+    public static void ForwardingShapes(string body, bool forwarding)
+        => Assert.That(LeanInliningPass.IsForwarding(body), Is.EqualTo(forwarding));
+
+    [Test]
+    public static void ApplyDropsTheAttributeFromStatementAndComplexBodies()
+    {
+        var text = "    [MethodImpl(AggressiveInlining)] public Number F(Number b)\r\n    {\r\n"
+            + "    [MethodImpl(AggressiveInlining)] public Number G(Number b) => b.Add(b.Add(b));\r\n"
+            + "    [MethodImpl(AggressiveInlining)] public Number H(Number b) => b.Add(b);\r\n";
+        Assert.That(LeanInliningPass.Apply(text), Is.EqualTo("    public Number F(Number b)\r\n    {\r\n"
+            + "    public Number G(Number b) => b.Add(b.Add(b));\r\n"
+            + "    [MethodImpl(AggressiveInlining)] public Number H(Number b) => b.Add(b);\r\n"));
     }
 
     [Test]

@@ -438,14 +438,10 @@ namespace Ara3D.Geometry.CSharpWriter
         public bool FuseConsumers { get; set; }
         public bool ExactOutputAllocation { get; set; }
 
-        // When true (--lean-inlining, TKT-1091), generated members carry no
-        // [MethodImpl(AggressiveInlining)]; only the handwritten intrinsics keep it. Forcing every
-        // generated method inline exhausts the JIT's per-method local budget, so it then refuses
-        // the small Number/Integer/Boolean wrappers. Default (false) output is unchanged.
+        // When true (--lean-inlining, TKT-1091), [MethodImpl(AggressiveInlining)] stays only on
+        // one-line forwarding members (see LeanInliningPass); the handwritten intrinsics keep theirs.
+        // Default (false) output is unchanged.
         public bool LeanInlining { get; set; }
-
-        public const string AggressiveInliningAttribute = "[MethodImpl(AggressiveInlining)]";
-        public string InliningAttribute => LeanInlining ? "" : AggressiveInliningAttribute;
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at
@@ -796,6 +792,9 @@ namespace Ara3D.Geometry.CSharpWriter
 
             if (ExtensionStyle)
                 ExtensionStyleWriter.WriteLibraryFiles(this);
+
+            if (LeanInlining)
+                LeanInliningPass.Apply(Files);
 
             FlushTirDumps();
             return this;

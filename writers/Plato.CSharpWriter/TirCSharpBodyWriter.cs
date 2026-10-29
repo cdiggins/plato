@@ -250,7 +250,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         var isBlock = body is TirBlock;
 
         if (isProp)
-            Write($" {{ {_tw.Annotation} get ");
+            Write($" {{ {CSharpTypeWriter.Annotation} get ");
 
         if (!isBlock)
         {
