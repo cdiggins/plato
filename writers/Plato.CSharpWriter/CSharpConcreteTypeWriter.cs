@@ -43,7 +43,7 @@ namespace Ara3D.Geometry.CSharpWriter
         /// true for primitives and for the shape-generated-but-behaviour-handwritten types
         /// (<see cref="CSharpWriter.IntrinsicBackedTypes"/>, plato-365).</summary>
         public bool IsIntrinsicBacked => CSharpWriter.IsIntrinsicBacked(Name);
-        public string Attr => TypeWriter.Annotation;
+        public string Attr => CSharpTypeWriter.Annotation;
         public bool IsArrayLike => ConcreteType.AllInterfaces.Any(te => te.Name == "IArrayLike");
         public Compilation Compilation => TypeWriter.Writer.Compilation;
         public List<string> FieldNames { get; }
@@ -760,7 +760,7 @@ namespace Ara3D.Geometry.CSharpWriter
         {
             var parameterTypes = fi.ParameterTypes.Skip(1).ToList().Prepend(primType);
             var parameters = fi.ParameterNames.Zip(parameterTypes, (n, t) => $"{t} {n}").JoinStringsWithComma();
-            var sig = $"{fi.Annotation}public static {fi.ReturnType} {fi.Name}{fi.ExtensionGenericsString}(this {parameters})";
+            var sig = $"{CSharpFunctionInfo.Annotation}public static {fi.ReturnType} {fi.Name}{fi.ExtensionGenericsString}(this {parameters})";
             var args = fi.ParameterNames.Count <= 1 ? "" : "(" + fi.ParameterNames.Skip(1).JoinStringsWithComma() +")";
             // Extension style: forwarded no-arg members that moved out of the struct are classic
             // extension METHODS, and so is every other no-arg member whose name is not pinned to
