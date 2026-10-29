@@ -1261,7 +1261,10 @@ namespace Ara3D.Geometry.CppWriter
                 var name = ct.TypeDef.Name;
                 if (IgnoredTypes.Contains(name) || IsTupleOrFunctionType(name) || name.StartsWith("Function"))
                     continue;
-                var supported = NativePrimitives.ContainsKey(name)
+                // Cpu: library functions whose receiver is a concrete Array<X> (PlainLoop(Array<UvCoordinate>))
+                // belong to the generic Array type; the ones over a type variable skip with a reason.
+                var supported = (IsCpu && name == "Array")
+                                || NativePrimitives.ContainsKey(name)
                                 || IsNativeVectorName(name)
                                 || PreambleTypes.Contains(name)
                                 || StructNames.Contains(name);

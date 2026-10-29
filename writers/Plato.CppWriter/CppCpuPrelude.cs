@@ -18,6 +18,7 @@ namespace Ara3D.Geometry.CppWriter
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <limits>
 #include <new>
 #include <string>
 #include <type_traits>
@@ -473,6 +474,14 @@ namespace plato
     inline double Pow(double x, double p) { return std::pow(x, p); }
     inline double FusedMultiplyAdd(double x, double y, double z) { return std::fma(x, y, z); }
     inline double Atan2Radians(double y, double x) { return std::atan2(y, x); }   // Math.Atan2(self, x)
+    // The `_`-receiver constants of Number.cs and Integer.cs: Type.Pi reads Pi(tag), the tag only selects the type.
+    // Epsilon is System.Double.Epsilon (the smallest denormal), not DBL_EPSILON.
+    inline double Pi(double) { return 3.14159265358979323846; }
+    inline double Epsilon(double) { return std::numeric_limits<double>::denorm_min(); }
+    inline double MaxValue(double) { return std::numeric_limits<double>::max(); }
+    inline double MinValue(double) { return std::numeric_limits<double>::lowest(); }
+    inline int32_t MaxValue(int32_t) { return std::numeric_limits<int32_t>::max(); }
+    inline int32_t MinValue(int32_t) { return std::numeric_limits<int32_t>::lowest(); }
     inline bool IsNaN(double x) { return std::isnan(x); }
     inline bool IsInfinite(double x) { return std::isinf(x); }
 

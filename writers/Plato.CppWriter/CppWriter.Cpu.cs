@@ -321,6 +321,10 @@ namespace Ara3D.Geometry.CppWriter
                         sb.Append($"    static constexpr int32_t {cs.TagConstName} = {cs.Tag};\n");
                 foreach (var f in s.Fields)
                     sb.Append($"    {CppTypeName(f)} {EscapeName(f.Name)};\n");
+                // A one-field wrapper unwraps implicitly, as the C# struct's implicit operator does
+                // (a typed index passes where the intrinsic wants an int32_t).
+                if (s.Name != "Angle" && s.Fields.Count == 1 && !(s.Type != null && s.Type.TypeDef.IsSum))
+                    sb.Append($"    operator {CppTypeName(s.Fields[0])}() const {{ return {EscapeName(s.Fields[0].Name)}; }}\n");
                 sb.Append("};\n\n");
             }
 
@@ -549,9 +553,15 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
         {
             if (UntrackedHofNames.Contains(c.Name) || IsPreambleArrayMethod(c))
                 return true;
+            // Any other array-first call is answered only when the prelude really defines that name;
+            // otherwise a library function (PlainLoop(Array<UvCoordinate>)) that was never emitted would pass.
             return c.Types.Count > 0 && c.Types[0] != null && c.Types[0].StartsWith("Array<")
-                   && !byName[c.Name].Any();
+                   && !byName[c.Name].Any() && PreludeNames.Contains(c.Name);
         }
+
+        private static readonly HashSet<string> PreludeNames = new HashSet<string>(
+            System.Text.RegularExpressions.Regex.Matches(CppCpuPrelude.Text, @"([A-Za-z_]\w*)\s*\(")
+                .Cast<System.Text.RegularExpressions.Match>().Select(m => m.Groups[1].Value));
 
         private void PruneCpu()
         {

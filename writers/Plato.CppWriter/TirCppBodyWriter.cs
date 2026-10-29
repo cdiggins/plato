@@ -690,7 +690,8 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         switch (lit.LiteralType)
         {
             case LiteralTypesEnum.Number:
-                Write(FloatLiteral(value));
+                // Cpu: Number is double, so a literal carries no f suffix (a float literal would round it).
+                Write(UsesCpuLambdas ? DoubleLiteral(value) : FloatLiteral(value));
                 return;
             case LiteralTypesEnum.Integer:
                 Write(value);
@@ -699,6 +700,11 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             {
                 var raw = lit.Value?.ToString() ?? "";
                 var esc = CppWriter.EscapeCppStringPublic(raw);
+                if (UsesCpuLambdas)
+                {
+                    Write($"String(\"{esc}\")");
+                    return;
+                }
                 Write($"make_string_n(\"{esc}\", {raw.Length})");
                 return;
             }
@@ -721,6 +727,9 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             s += ".0";
         return s + "f";
     }
+
+    public static string DoubleLiteral(string s)
+        => s.Contains(".") || s.Contains("e") || s.Contains("E") || s.Contains("N") || s.Contains("I") ? s : s + ".0";
 
     private void WriteDefault(TirDefault d)
     {
