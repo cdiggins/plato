@@ -258,6 +258,8 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("presize / counted List fills");
             tir = TirInPlaceUpdates.Rewrite(tir, this);
             Phase("in-place / last-use array updates (TKT-1132)");
+            tir = TirLoopInvariantHoister.Rewrite(tir, this, fi?.OwnerType?.Name);
+            Phase("hoist-invariants / loop-invariant callback work");
             sb?.AppendLine();
             return tir;
         }
@@ -484,6 +486,14 @@ namespace Ara3D.Geometry.CSharpWriter
         // (a match on a call lowers to a test and a field read per case, each naming the call) is
         // evaluated once into a local (see TirSharedCalls). Default (false) output is unchanged.
         public bool ShareCalls { get; set; }
+
+        // When true (--hoist-invariants, requires --loops), invariant work in a lowered loop's
+        // callback is computed once ahead of the loop (see TirLoopInvariantHoister). The counts
+        // are diagnostics for the generation log; default (false) output is unchanged.
+        public bool HoistInvariants { get; set; }
+        public int HoistedInvariants;
+        public int HoistExposingInlines;
+        public int HoistedLoops;
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at

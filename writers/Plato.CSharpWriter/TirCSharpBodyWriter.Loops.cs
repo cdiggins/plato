@@ -50,12 +50,13 @@ public partial class TirCSharpBodyWriter
         var index = new Operand($"((Integer){i})", i);
 
         void For(string count, System.Action body)
-        {
-            WriteLine($"for (var {i} = 0; {i} < {count}; {i}++)");
-            WriteStartBlock();
-            body();
-            WriteEndBlock();
-        }
+            => WriteHoistedGuard(ll, count, () =>
+            {
+                WriteLine($"for (var {i} = 0; {i} < {count}; {i}++)");
+                WriteStartBlock();
+                body();
+                WriteEndBlock();
+            });
 
         // The function argument: a lambda literal's body is emitted INLINE with its parameters
         // declared as loop locals; a delegate-typed reference is invoked.
@@ -316,5 +317,25 @@ public partial class TirCSharpBodyWriter
             foreach (var p in sl.Parameters)
                 UnbindLoopParameter(p);
 
+    }
+
+    // --hoist-invariants: the loop's invariant locals, computed once and only when the loop runs at
+    // least one iteration (see TirLoopInvariantHoister). Without hoisted locals the loop is written
+    // exactly as before.
+    private void WriteHoistedGuard(TirLoweredLoop ll, string count, System.Action loop)
+    {
+        if (ll.Hoisted.Count == 0)
+        {
+            loop();
+            return;
+        }
+        WriteLine($"if ({count} > 0)");
+        WriteStartBlock();
+        PushLocalScope(ll.Hoisted);
+        foreach (var let in ll.Hoisted)
+            WriteStatement(let);
+        loop();
+        PopLocalScope();
+        WriteEndBlock();
     }
 }

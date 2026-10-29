@@ -55,7 +55,9 @@ public partial class TirCSharpBodyWriter
         WriteEndBlock();
         return true;
 
-        void WriteItems(string append)
+        void WriteItems(string append) => WriteHoistedGuard(loop, n, () => WriteLoop(append));
+
+        void WriteLoop(string append)
         {
             WriteLine($"for (var {i} = 0; {i} < {n}; {i}++)");
             WriteStartBlock();

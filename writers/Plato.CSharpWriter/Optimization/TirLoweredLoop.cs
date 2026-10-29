@@ -23,6 +23,9 @@ public class TirLoweredLoop : TirNode
     // n.Range and xs.Take(k)); otherwise it is Sources[0][i] (the receiver was a Map chain).
     public IReadOnlyList<TirNode> SourceStages { get; set; } = System.Array.Empty<TirNode>();
     public bool IndexSource { get; set; }
+    // Loop-invariant callback work (--hoist-invariants, TirLoopInvariantHoister): each local is
+    // computed once, inside `if (count > 0)` ahead of the loop, and the callback body reads it.
+    public IReadOnlyList<TirLet> Hoisted { get; set; } = System.Array.Empty<TirLet>();
     public string TempName { get; }
     public int Id { get; }
     public FunctionDef SourceFunction { get; }
@@ -45,7 +48,7 @@ public class TirLoweredLoop : TirNode
     }
 
     public override IEnumerable<TirNode> Children
-        => Sources.Concat(new[] { Fn, Seed, IncludeFirst }.Where(n => n != null)).Concat(SourceStages);
+        => Sources.Concat(new[] { Fn, Seed, IncludeFirst }.Where(n => n != null)).Concat(SourceStages).Concat(Hoisted);
 
     public override TirNode WithChildren(IReadOnlyList<TirNode> children)
     {
@@ -54,7 +57,8 @@ public class TirLoweredLoop : TirNode
         var rebuilt = new TirLoweredLoop(Kind, children.Take(Sources.Count).ToList(),
             Next(Fn), Next(Seed), Next(IncludeFirst), TempName, Id, Type, Origin, SourceFunction)
             { ElemType = ElemType, IndexSource = IndexSource };
-        rebuilt.SourceStages = children.Skip(i).ToList();
+        rebuilt.SourceStages = children.Skip(i).Take(SourceStages.Count).ToList();
+        rebuilt.Hoisted = children.Skip(i + SourceStages.Count).Cast<TirLet>().ToList();
         return rebuilt;
     }
 
