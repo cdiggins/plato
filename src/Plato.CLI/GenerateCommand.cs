@@ -45,7 +45,7 @@ internal static class GenerateCommand
         var loops = args.Contains("--loops");
         var lowerScalars = args.Contains("--lower-scalars");
 
-        var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"));
+        var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"), LeanInlining: args.Contains("--lean-inlining"));
         var profileArg = args.Where(a => a.StartsWith("--profile="))
             .Select(a => a.Substring("--profile=".Length)).LastOrDefault();
         // --cpp --profile=cpu64i32 selects the Cpu dialect (TKT-1097); it implies --inline.

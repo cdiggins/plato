@@ -43,6 +43,7 @@ namespace Ara3D.Geometry.CSharpWriter
             writer.LowerScalars = lowerScalars;
             writer.FuseConsumers = loopOptimizations?.FuseConsumers ?? false;
             writer.ExactOutputAllocation = loopOptimizations?.ExactOutputAllocation ?? false;
+            writer.LeanInlining = loopOptimizations?.LeanInlining ?? false;
             if (statementInlining != null)
             {
                 writer.InlineStatements = true;

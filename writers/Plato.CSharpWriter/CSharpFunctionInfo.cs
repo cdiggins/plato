@@ -136,7 +136,9 @@ namespace Ara3D.Geometry.CSharpWriter
         // A C# property cannot be generic, so a no-arg member that still carries a type
         // variable (Array2D.Count<T>) must render as a METHOD however the recipe is configured.
         public bool IsProperty => ParameterNames.Count <= 1 && !EmitAsMethod && Generics.Count == 0;
-        public static string Annotation => "[MethodImpl(AggressiveInlining)] ";
+        // TKT-1091: empty under --lean-inlining (the writer that owns this function decides).
+        public string Annotation => (TypeToCSharp as CSharpTypeWriter)?.Writer is { LeanInlining: true }
+            ? "" : CSharpWriter.AggressiveInliningAttribute + " ";
         public string FunctionAnnotation => IsProperty ? "" : Annotation;
         public string Constraints
             => Function.ConstrainedTypeVariables.Select(ConstraintString).JoinStrings("")

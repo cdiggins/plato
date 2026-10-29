@@ -70,6 +70,7 @@ public sealed class CSharpProgram
         var writer = new CSharpWriter.CSharpWriter(comp, "unused-in-memory") { ExtensionStyle = true, Profile = profile, LowerLoops = lowerLoops, FuseCombinators = fuse, LowerScalars = lowerScalars };
         writer.FuseConsumers = loopOptimizations?.FuseConsumers ?? false;
         writer.ExactOutputAllocation = loopOptimizations?.ExactOutputAllocation ?? false;
+        writer.LeanInlining = loopOptimizations?.LeanInlining ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 
