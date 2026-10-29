@@ -363,14 +363,14 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             return;
         }
         // Angle → float: unwrap Radians (C-style cast on a struct is invalid).
-        if (from == "Angle" && to == "float")
+        if (from == "Angle" && to == _w.NumberCpp)
         {
             Write("(");
             WriteNode(inner);
             Write(").Radians");
             return;
         }
-        if (CppWriter.IsScalar(to))
+        if (IsScalarT(to))
         {
             Write(to);
             Write("(");
@@ -491,7 +491,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             return;
         }
 
-        if (CppWriter.IsScalar(cppType))
+        if (IsScalarT(cppType))
         {
             // "new Number(x)" on a native scalar is a cast.
             Write($"{cppType}(");
@@ -513,9 +513,9 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             if (fromType != null)
                 return fromType;
         }
-        if (CppWriter.NativePrimitives.TryGetValue(cc.TypeName, out var prim))
+        if (TryNativePrimitive(cc.TypeName, out var prim))
             return prim;
-        if (CppWriter.NativeVectors.TryGetValue(cc.TypeName, out var vec))
+        if (!UsesCpuLambdas && CppWriter.NativeVectors.TryGetValue(cc.TypeName, out var vec))
             return vec;
         if (_w.StructNames.Contains(cc.TypeName))
             return cc.TypeName;
@@ -706,6 +706,11 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
     private void WriteDefault(TirDefault d)
     {
         var type = _w.CppTypeName(d.Type);
+        if (UsesCpuLambdas)
+        {
+            Write(type == _w.NumberCpp ? "0.0" : type == "bool" ? "false" : type == "char" ? "'\\0'" : _w.IsScalarCpp(type) ? "0" : type + "{}");
+            return;
+        }
         if (type.StartsWith("Array<") && type.EndsWith(">"))
         {
             Write(_w.DefaultValueExpr(type));
@@ -797,13 +802,14 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         // A call named after a type is a construction only when its arguments are components
         // (scalars). A type-named call taking some OTHER type is a conversion function —
         // Vector3D(Point3D), Matrix4x4(Transform3D) — and stays a call.
-        var allArgsScalar = args.All(a => CppWriter.IsScalar(_w.CppTypeNameOrNull(a.Type) ?? ""));
-        if (CppWriter.NativeVectors.TryGetValue(name, out var vec) && allArgsScalar)
+        var allArgsScalar = args.All(a => IsScalarT(_w.CppTypeNameOrNull(a.Type) ?? ""));
+        string vec = null;
+        if (!UsesCpuLambdas && CppWriter.NativeVectors.TryGetValue(name, out vec) && allArgsScalar)
         {
             WriteConstruction(vec, args);
             return;
         }
-        if (CppWriter.NativePrimitives.TryGetValue(name, out var prim) && args.Count == 1 && allArgsScalar)
+        if (TryNativePrimitive(name, out var prim) && args.Count == 1 && allArgsScalar)
         {
             WriteConstruction(prim, args);
             return;
@@ -833,11 +839,11 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         if (types.Any(t => t == null))
             return false;
 
-        var allScalarNumeric = types.All(t => t == "float" || t == "int");
+        var allScalarNumeric = types.All(t => t == _w.NumberCpp || t == _w.IntegerCpp);
         var allBool = types.All(t => t == "bool");
         // The preamble defines vector/vector and vector/scalar arithmetic for float2/3/4.
         var vectorish = types.Any(CppWriter.IsVector)
-                        && types.All(t => CppWriter.IsVector(t) || t == "float")
+                        && types.All(t => CppWriter.IsVector(t) || t == _w.NumberCpp)
                         && types.Where(CppWriter.IsVector).Distinct().Count() == 1;
         var sameType = types.Distinct().Count() == 1;
         IReadOnlyList<string> sFields = null;
@@ -845,7 +851,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                         && _w.TryFloatComponents(types[0], out sFields)
                         && sFields.Count >= 2 && sFields.Count <= 4
                         && !CppWriter.IsVector(types[0])
-                        && types.All(t => t == types[0] || t == "float");
+                        && types.All(t => t == types[0] || t == _w.NumberCpp);
 
         bool ok;
         switch (op)
@@ -889,7 +895,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         }
 
         // C++ % is integer only; float modulo is fmodf.
-        if (op == "%" && types.Any(t => t == "float"))
+        if (op == "%" && types.Any(t => t == _w.NumberCpp))
         {
             Write("fmodf(");
             WriteNode(args[0]);
@@ -914,7 +920,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         // call's result type, not the operand struct.
         var asVector = CppWriter.IsVector(resultCpp);
         var ret = asVector ? resultCpp
-            : (types[0] == "float" ? types[1] : (resultCpp ?? types[0]));
+            : (types[0] == _w.NumberCpp ? types[1] : (resultCpp ?? types[0]));
         if (asVector)
             Write($"make_{ret}(");
         else
@@ -929,7 +935,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 WriteNode(args[0]);
                 Write($".{f})");
             }
-            else if (types[0] == "float")
+            else if (types[0] == _w.NumberCpp)
             {
                 Write("(");
                 WriteNode(args[0]);
@@ -937,7 +943,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 WriteNode(args[1]);
                 Write($".{f})");
             }
-            else if (types[1] == "float")
+            else if (types[1] == _w.NumberCpp)
             {
                 if (op == "%")
                 {

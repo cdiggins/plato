@@ -465,3 +465,18 @@ public partial class TirCppBodyWriter
             WriteLine($"for (int32_t {j} = 0; {j} < {parts}[{i}].count; {j}++) {fa}[{off}++] = {parts}[{i}].data[{j}];"));
     }
 }
+
+public partial class TirCppBodyWriter
+{
+    // Scalar and native-primitive names follow the dialect's profile (double / int32_t in Cpu).
+    private bool IsScalarT(string cpp) => UsesCpuLambdas ? _w.IsScalarCpp(cpp) : CppWriter.IsScalar(cpp);
+
+    private bool TryNativePrimitive(string platoName, out string cpp)
+    {
+        if (!CppWriter.NativePrimitives.TryGetValue(platoName, out cpp))
+            return false;
+        if (UsesCpuLambdas)
+            cpp = platoName == "Number" ? _w.NumberCpp : platoName == "Integer" ? _w.IntegerCpp : cpp;
+        return true;
+    }
+}
