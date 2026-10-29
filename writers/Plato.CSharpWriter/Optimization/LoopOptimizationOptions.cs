@@ -6,4 +6,9 @@ namespace Ara3D.Geometry.CSharpWriter;
 // T[] directly when the runtime value is one.
 // LowerScalars (--lower-scalars, TKT-1129) is emission-time and needs no other flag: inside a body,
 // Number, Integer and Boolean are the primitives they wrap (CSharpWriter.LowerScalars).
-public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool ExactOutputAllocation = false, bool ConcreteArrays = false, bool LeanInlining = false, bool Presize = false, bool InPlace = false, bool ShareCalls = false, bool LowerScalars = false);
+public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool ExactOutputAllocation = false, bool ConcreteArrays = false, bool LeanInlining = false, bool Presize = false, bool InPlace = false, bool ShareCalls = false, bool LowerScalars = false)
+{
+    // --in-params (TKT-1066): large readonly structs pass by reference (see LargeStructPassing).
+    // Independent of --loops.
+    public bool InParameters { get; init; }
+}

@@ -108,7 +108,14 @@ namespace Ara3D.Geometry.CSharpWriter
         public IReadOnlyList<string> ParameterTypes { get; private set; }
         public IEnumerable<string> MethodParameterNames => ParameterNames.Skip(1);
         public IEnumerable<string> MethodParameterTypes => ParameterTypes.Skip(1);
-        public IEnumerable<string> Parameters => ParameterNames.Zip(ParameterTypes, (n, t) => $"{t} {n}");
+        public IEnumerable<string> Parameters => ParameterNames.Zip(ParameterTypes, (n, t) => $"{t} {n}")
+            .Select((p, i) => ParameterModifiers != null && i < ParameterModifiers.Count ? ParameterModifiers[i] + p : p);
+
+        // --in-params (TKT-1066, see LargeStructPassing): "in " per parameter passed by reference,
+        // and whether the member returns `ref readonly`. Set only on moved extension members.
+        public IReadOnlyList<string> ParameterModifiers { get; set; }
+        public bool ReturnsRef { get; set; }
+        private string ExtensionReturnType => ReturnsRef ? $"ref readonly {ReturnType}" : ReturnType;
         public IEnumerable<string> MethodParameters => MethodParameterNames.Zip(MethodParameterTypes, (n, t) => $"{t} {n}");
         public string GenericsString => Generics.Count > 0 ? $"<{Generics.JoinStringsWithComma()}>" : "";
         public string StaticParametersString => NumParameters > 0 ? $"({Parameters.JoinStringsWithComma()})" : EmitAsMethod ? "()" : "";
@@ -117,7 +124,7 @@ namespace Ara3D.Geometry.CSharpWriter
         public string StaticSignature => $"{FunctionAnnotation}public static {ReturnType} {Name}{GenericsString}{StaticParametersString}{Constraints}";
         
         public string ExtensionGenericsString => AllGenerics.Count > 0 ? $"<{AllGenerics.JoinStringsWithComma()}>" : "";
-        public string ExtensionSignature => $"{Annotation}public static {ReturnType} {Name}{ExtensionGenericsString}{ExtensionParametersString}{Constraints}";
+        public string ExtensionSignature => $"{Annotation}public static {ExtensionReturnType} {Name}{ExtensionGenericsString}{ExtensionParametersString}{Constraints}";
 
         // TODO: this used to be a way to signal static methods.
         public bool IsStatic => ParameterNames.Count == 0 || ParameterNames[0] == "_";

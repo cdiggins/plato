@@ -40,6 +40,9 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // The names a lowered loop's inlined lambda parameters are declared under (TKT-505): a
     // lambda parameter may shadow an enclosing local, a loop local of the same name may not.
     private readonly Dictionary<ParameterDef, string> _loopParamNames = new();
+    // --in-params (null when off): see LargeStructPassing.
+    private LargeStructPassing _largeStructs => _tw.Writer.LargeStructs;
+    private HashSet<VariableDef> _nonRefLocals;
 
     public TirCSharpBodyWriter(CSharpTypeWriter tw, TirFunction tir, bool isStatic = false,
         CSharpFunctionInfo fi = null)
@@ -248,11 +251,20 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         var body = TirLambdaCaptureRewriter.Rewrite(_tir.Body);
         PlanLocalNames(body);
         var isBlock = body is TirBlock;
+        if (_largeStructs != null)
+            _nonRefLocals = LargeStructPassing.NonRefLocals(body);
 
         if (isProp)
             Write($" {{ {CSharpTypeWriter.Annotation} get ");
 
-        if (!isBlock)
+        if (!isBlock && _fi?.ReturnsRef == true && _largeStructs.IsLargeElementRead(body, out var refRead))
+        {
+            // --in-params: a table accessor returns a reference into the table.
+            Write(" => ref ");
+            WriteRefAt(refRead);
+            Write(";");
+        }
+        else if (!isBlock)
         {
             Write(" => ");
             WriteNode(body);
@@ -338,6 +350,11 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     WriteLine(";");
                     return;
                 }
+                if (TryWriteRefLocal(let))
+                {
+                    WriteLine(";");
+                    return;
+                }
                 Write("var ");
                 Write(LocalName(let.Def));
                 Write(" = ");
@@ -420,6 +437,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
     private void WritePostfixReceiver(TirNode node)
     {
+        if (TryWriteRefElement(node))
+            return;
         var wrap = NeedsReceiverParentheses(node);
         if (wrap) Write("(");
         WriteNode(node);
@@ -493,8 +512,52 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             if (!first)
                 Write(", ");
             first = false;
-            WriteNode(a);
+            WriteArgument(a);
         }
+    }
+
+    // --- --in-params (TKT-1066): ref readonly element reads -----------------------------------
+
+    private void WriteArgument(TirNode a)
+    {
+        if (!TryWriteRefElement(a))
+            WriteNode(a);
+    }
+
+    /// <summary>A large element read in receiver or argument position reads through the ref
+    /// readonly accessor, so the element is not copied out of its list.</summary>
+    private bool TryWriteRefElement(TirNode node)
+    {
+        if (_largeStructs == null || !_largeStructs.IsLargeElementRead(node, out var read))
+            return false;
+        WriteRefAt(read);
+        return true;
+    }
+
+    private void WriteRefAt(TirCall read)
+    {
+        Write($"{LargeStructPassing.HelperClass}.RefAt(");
+        WriteNode(read.Args[0]);
+        Write(", ");
+        WriteIndexArgument(read.Args[1]);
+        Write(")");
+    }
+
+    /// <summary>A local initialised by a large element read, or by a ref readonly table accessor,
+    /// is a <c>ref readonly var</c> when no lambda captures it and nothing assigns it.</summary>
+    private bool TryWriteRefLocal(TirLet let)
+    {
+        if (_largeStructs == null || let.Def == null || _nonRefLocals == null || _nonRefLocals.Contains(let.Def))
+            return false;
+        var isRead = _largeStructs.IsLargeElementRead(let.Value, out var read);
+        if (!isRead && !(let.Value is TirCall call && _largeStructs.ReturnsRef(call)))
+            return false;
+        Write($"ref readonly var {LocalName(let.Def)} = ref ");
+        if (isRead)
+            WriteRefAt(read);
+        else
+            WriteNode(let.Value);
+        return true;
     }
 
     private void WriteNode(TirNode n)
@@ -539,6 +602,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             case TirLet let:
                 // A let in expression position (statement-position lets are handled in
                 // WriteStatement); the reference writes the same `var` form.
+                if (TryWriteRefLocal(let))
+                    return;
                 Write($"var {LocalName(let.Def)} = ");
                 WriteNode(let.Value);
                 return;
@@ -627,7 +692,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // into a forwarding lambda `(_p0..._pN) => M(_p0, ..., _pN)` (Normalizer R3). The
                 // reference writer never saw that rewrite â€” it consumes the original graph and
                 // emits the bare member name `M`. Recover the bare reference so we match it.
-                if (TryGetEtaForwardedName(lam, out var etaName))
+                if (TryGetEtaForwardedName(lam, out var etaName)
+                    && !(_largeStructs?.KeepsEtaLambda(lam) ?? false))
                 {
                     WriteBareName(etaName);
                     return;
@@ -1115,7 +1181,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         {
             if (argIndex > 1)
                 Write(", ");
-            WriteNode(a);
+            WriteArgument(a);
             argIndex++;
         }
         Write(")");

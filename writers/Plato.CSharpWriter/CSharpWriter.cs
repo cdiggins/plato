@@ -484,6 +484,13 @@ namespace Ara3D.Geometry.CSharpWriter
         // (a match on a call lowers to a test and a field read per case, each naming the call) is
         // evaluated once into a local (see TirSharedCalls). Default (false) output is unchanged.
         public bool ShareCalls { get; set; }
+        // When true (--in-params, TKT-1066), large readonly structs pass by reference: `in`
+        // parameters, ref readonly element reads and table accessors (see LargeStructPassing).
+        // Extension style only. Default (false) output is unchanged.
+        public bool InParameters { get; set; }
+        private LargeStructPassing _largeStructs;
+        public LargeStructPassing LargeStructs
+            => InParameters && ExtensionPlans != null ? _largeStructs ??= new LargeStructPassing(this) : null;
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at
@@ -871,6 +878,9 @@ namespace Ara3D.Geometry.CSharpWriter
 
             if (ConcreteArrays)
                 WriteFile($"{ConcreteArrayAccessClass}.g.cs", WriteConcreteArrayAccess);
+
+            if (LargeStructs != null)
+                WriteFile(LargeStructPassing.HelperFile, () => { LargeStructPassing.WriteHelper(this); return this; });
 
             FlushTirDumps();
             return this;

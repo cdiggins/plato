@@ -329,10 +329,6 @@ public static class ExtensionStyleWriter
             if (!emittedSignatures.Add(sigKey))
                 continue;
 
-            // ExtensionSignature: [MethodImpl(AggressiveInlining)] public static R Name<..>(this T recv, ...) where ...
-            // No-arg moved functions are deliberately METHODS (v.Length()), never properties;
-            // the body writer is told so via propOverride: false.
-            tw.Write(fi.ExtensionSignature);
             // Moved bodies emit from the fully-ground monomorphized TIR, rendered in static mode
             // (receiver by parameter name) with the extension re-qualification context set on tw
             // above — the sole body writer since C4. Moved members are always bodied (the plan
@@ -341,6 +337,25 @@ public static class ExtensionStyleWriter
                     ? writer.TryGetGroundTir(m.Function.Implementation, m.ConcreteType.TypeDef)
                       ?? writer.TryGetOpenGenericTir(m.Function.Implementation, m.ConcreteType.TypeDef)
                     : null;
+            if (tir != null)
+            {
+                writer.TirBodiesEmitted++;
+                tir = writer.RunOptimizerPasses(tir, fi);
+                // --in-params: the signature depends on the body (captures, assignments, shape).
+                if (writer.LargeStructs is { } passing)
+                {
+                    fi.ParameterModifiers = passing.ParameterModifiers(fi, tir);
+                    fi.ReturnsRef = passing.IsRefAccessor(m.Function.Implementation, m.ConcreteType.TypeDef);
+                    if (fi.ReturnsRef && !passing.HasRefAccessorShape(tir, fi))
+                        throw new System.InvalidOperationException(
+                            $"--in-params: {fi.Name} was planned as a ref readonly accessor but its optimized body is not an element read.");
+                }
+            }
+
+            // ExtensionSignature: [MethodImpl(AggressiveInlining)] public static R Name<..>(this T recv, ...) where ...
+            // No-arg moved functions are deliberately METHODS (v.Length()), never properties;
+            // the body writer is told so via propOverride: false.
+            tw.Write(fi.ExtensionSignature);
             if (tir == null)
             {
                 // Degrade gracefully (see CSharpTypeWriter.WriteBody): a moved extension body
@@ -355,8 +370,6 @@ public static class ExtensionStyleWriter
                 writer.WriteWithLineStateSync(tw.ToString());
                 continue;
             }
-            writer.TirBodiesEmitted++;
-            tir = writer.RunOptimizerPasses(tir, fi);
             tw.Write(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
             writer.WriteWithLineStateSync(tw.ToString());
         }
