@@ -143,6 +143,89 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
     // --- top level: mirror CSharpFunctionBodyWriter's default-mode framing exactly ----------
 
+    // --- local names ---------------------------------------------------------
+    //
+    // A C# local's scope is the whole block that declares it, before and after the declaration, and a
+    // nested scope may not reuse the name (CS0136) nor may one scope declare it twice (CS0128). Plato
+    // lets an inner block declare a name the enclosing block declares later, so a let whose name is
+    // taken by an enclosing scope, or by an earlier let of its own scope, is written under a fresh name
+    // (name_2, name_3, ...). Every reference goes through LocalName, so declaration and uses agree.
+
+    private readonly Dictionary<VariableDef, string> _localNames = new();
+
+    private string LocalName(VariableDef def)
+        => def != null && _localNames.TryGetValue(def, out var renamed)
+            ? renamed
+            : CSharpTypeWriter.Identifier(def?.Name) ?? "?";
+
+    private void PlanLocalNames(TirNode body)
+    {
+        _localNames.Clear();
+        var root = new HashSet<string>(_tir.Parameters.Select(p => p.Name));
+        var all = new HashSet<string>(root);
+        CollectNames(body, all);
+        PlanScopes(body, new List<HashSet<string>> { root }, all);
+    }
+
+    private static void CollectNames(TirNode n, HashSet<string> all)
+    {
+        if (n == null)
+            return;
+        if (n is TirLet let && let.Def?.Name != null)
+            all.Add(let.Def.Name);
+        if (n is TirLambda lam)
+            foreach (var p in lam.Parameters)
+                all.Add(p.Name);
+        foreach (var c in n.Children)
+            CollectNames(c, all);
+    }
+
+    private static void ShallowLets(TirNode n, List<TirLet> lets, bool isRoot)
+    {
+        if (n == null || (!isRoot && (n is TirBlock || n is TirLambda)))
+            return;
+        if (n is TirLet let)
+            lets.Add(let);
+        foreach (var c in n.Children)
+            ShallowLets(c, lets, false);
+    }
+
+    private void PlanScopes(TirNode n, List<HashSet<string>> enclosing, HashSet<string> all)
+    {
+        if (n == null)
+            return;
+        var stack = enclosing;
+        if (n is TirBlock || n is TirLambda)
+        {
+            var mine = new HashSet<string>();
+            if (n is TirLambda lam)
+                foreach (var p in lam.Parameters)
+                    mine.Add(p.Name);
+            var lets = new List<TirLet>();
+            ShallowLets(n, lets, true);
+            foreach (var let in lets)
+            {
+                var name = let.Def?.Name;
+                if (name == null)
+                    continue;
+                var emitted = name;
+                if (mine.Contains(name) || enclosing.Any(s => s.Contains(name)))
+                {
+                    var i = 2;
+                    while (all.Contains($"{name}_{i}"))
+                        i++;
+                    emitted = $"{name}_{i}";
+                    all.Add(emitted);
+                    _localNames[let.Def] = emitted;
+                }
+                mine.Add(emitted);
+            }
+            stack = new List<HashSet<string>>(enclosing) { mine };
+        }
+        foreach (var c in n.Children)
+            PlanScopes(c, stack, all);
+    }
+
     private void WriteFunctionBody()
     {
         if (_tir?.Body == null)
@@ -163,6 +246,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // The reference writer hoists lambda-captured references into `var _var{N} = x;` blocks
         // before emitting (RewriteLambdasCapturingVars); mirror it, sharing the same counter.
         var body = TirLambdaCaptureRewriter.Rewrite(_tir.Body);
+        PlanLocalNames(body);
         var isBlock = body is TirBlock;
 
         if (isProp)
@@ -234,7 +318,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
             case TirLet let:
                 Write("var ");
-                Write(CSharpTypeWriter.Identifier(let.Def?.Name) ?? "?");
+                Write(LocalName(let.Def));
                 Write(" = ");
                 WriteNode(let.Value);
                 WriteLine(";");
@@ -405,7 +489,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             }
 
             case TirVariable v:
-                Write(CSharpTypeWriter.Identifier(v.Def?.Name) ?? "?");
+                Write(LocalName(v.Def));
                 return;
 
             case TirTypeRef t:
@@ -421,7 +505,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             case TirLet let:
                 // A let in expression position (statement-position lets are handled in
                 // WriteStatement); the reference writes the same `var` form.
-                Write($"var {CSharpTypeWriter.Identifier(let.Def?.Name) ?? "?"} = ");
+                Write($"var {LocalName(let.Def)} = ");
                 WriteNode(let.Value);
                 return;
 

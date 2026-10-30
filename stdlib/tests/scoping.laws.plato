@@ -1,0 +1,61 @@
+// Law library for local names in generated code: Plato lets a nested block declare a name that the
+// enclosing block declares later, and C# does not (CS0136), so the C# writer renames the clash.
+// The laws only run if the generated C# compiles; the interpreter checks the values.
+library ScopingLaws
+{
+    // The inner `scaled` is declared before the outer one, in a nested block.
+    InnerBeforeOuter(x: Number, p: Integer): Number
+    {
+        var total = 0.0;
+        if (p == 2)
+        {
+            var scaled = x + 1.0;
+            total = total + scaled;
+            return total;
+        }
+        var scaled = x * 2.0;
+        total = total + scaled;
+        return total;
+    }
+
+    // The same name in two sibling blocks and again in the enclosing block, three levels deep.
+    ThreeLevels(x: Number, p: Integer): Number
+    {
+        if (p == 0)
+        {
+            var v = x + 1.0;
+            if (p == 0)
+            {
+                var v = v * 2.0;
+                return v;
+            }
+            return v;
+        }
+        var v = x - 1.0;
+        return v;
+    }
+
+    // A lambda body declares the name the enclosing function declares after it.
+    InLambda(x: Number): Number
+    {
+        var inner = 3.mapRangeLocal(x);
+        var w = x + 100.0;
+        return w + inner;
+    }
+
+    mapRangeLocal(n: Integer, x: Number): Number
+        => n.MapRange(i =>
+        {
+            var w = x + i.ToNumber;
+            return w;
+        }).Count.ToNumber;
+
+    Law_InnerBlockMayReuseALaterOuterName(): Boolean
+        => InnerBeforeOuter(1.0, 2) == 2.0 && InnerBeforeOuter(1.0, 0) == 2.0 && InnerBeforeOuter(3.0, 2) == 4.0;
+
+    Law_NestedBlocksMayReuseAName(): Boolean
+        => ThreeLevels(1.0, 0) == 4.0 && ThreeLevels(1.0, 1) == 0.0;
+
+    Law_LambdaBodyMayReuseALaterOuterName(): Boolean
+        => InLambda(1.0) == 104.0;
+}
