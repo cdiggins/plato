@@ -510,6 +510,15 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             return;
         }
 
+        if (UsesCpuLambdas && cppType.StartsWith("Buffer<") && args.Count == 1)
+        {
+            // new Buffer<T>(n) is the prelude factory: the aggregate PlatoBuffer has no size constructor.
+            Write("make_buffer<" + cppType.Substring(7, cppType.Length - 8) + ">(");
+            WriteNode(args[0]);
+            Write(")");
+            return;
+        }
+
         if (IsScalarT(cppType))
         {
             // "new Number(x)" on a native scalar is a cast.
