@@ -40,6 +40,7 @@ public sealed class Numbers
     public double Floor(double a) => Is32 ? MathF.Floor((float)a) : Math.Floor(a);
     public double Round(double a, long digits) => Is32 ? MathF.Round((float)a, (int)digits) : Math.Round(a, (int)digits);
     public double Sqrt(double a) => Is32 ? MathF.Sqrt((float)a) : Math.Sqrt(a);
+    public double Cbrt(double a) => Is32 ? MathF.Cbrt((float)a) : Math.Cbrt(a);
     public double Exp(double a) => Is32 ? MathF.Exp((float)a) : Math.Exp(a);
     public double NaturalLog(double a) => Is32 ? MathF.Log((float)a) : Math.Log(a);
     public double Pow(double a, double b) => Is32 ? MathF.Pow((float)a, (float)b) : Math.Pow(a, b);

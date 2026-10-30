@@ -465,6 +465,7 @@ namespace plato
 
     inline double Floor(double x) { return std::floor(x); }
     inline double Sqrt(double x) { return std::sqrt(x); }
+    inline double Cbrt(double x) { return std::cbrt(x); }   // Math.Cbrt: correctly rounded
     inline double Exp(double x) { return std::exp(x); }
     inline double NaturalLog(double x) { return std::log(x); }
     inline double Sin(double x) { return std::sin(x); }

@@ -90,6 +90,20 @@ public static class NumberKernelTests
     }
 
     [Test]
+    public static void CbrtIsExactOnCubesOddAndKeepsTheSignOfZero()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(N(8f).Cbrt().Value, Is.EqualTo(2f));
+            Assert.That(N(-27f).Cbrt().Value, Is.EqualTo(-3f));
+            Assert.That(N(0.125f).Cbrt().Value, Is.EqualTo(0.5f));
+            Assert.That(NumberValue.IsNegative(N(-0f).Cbrt().Value), Is.True);
+            Assert.That(NumberValue.IsNegative(N(0f).Cbrt().Value), Is.False);
+            Assert.That(NumberValue.IsNaN(N(float.NaN).Cbrt().Value));
+        });
+    }
+
+    [Test]
     public static void Atan2TakesTheReceiverAsYAndCoversAllFourQuadrants()
     {
         Assert.Multiple(() =>

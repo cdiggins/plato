@@ -66,6 +66,7 @@ int main()
     CHECK(ShiftLeft(1, 33) == 2 && ShiftRight(-8, 1) == -4);
     CHECK(Hash(0.0) == Hash(-0.0) && Hash(1.0) == 1072693248);   // 0x3FF0000000000000 -> 0x3FF00000 ^ 0
     CHECK(Atan2Radians(1.0, 1.0) > 0.785398 && Atan2Radians(1.0, 1.0) < 0.785399);
+    CHECK(Cbrt(8.0) == 2.0 && Cbrt(-27.0) == -3.0 && std::signbit(Cbrt(-0.0)) && !std::signbit(Cbrt(0.0)) && Cbrt(0.125) == 0.5);
     CHECK(LessThanOrEquals(std::string("B"), std::string("a")) && !LessThanOrEquals(std::string("a"), std::string("B")) && LessThanOrEquals(std::string("ab"), std::string("abc")) && !LessThanOrEquals(std::string("abc"), std::string("ab")) && LessThanOrEquals(std::string(), std::string("a")) && !LessThanOrEquals(std::string("é"), std::string("z")));
 
     // ToString

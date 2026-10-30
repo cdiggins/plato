@@ -368,7 +368,7 @@ library Primitives
     // Reference bodies for every `Number` member that used to be a host intrinsic
     // but is a formula over the surviving kernel (plato-378). The kernel is the
     // six arithmetic operators, `LessThanOrEquals` / `Equals` / `Hash`, `Floor`,
-    // `Round`, `Sqrt` / `Exp` / `NaturalLog` / `Pow` / `FusedMultiplyAdd`,
+    // `Round`, `Sqrt` / `Cbrt` / `Exp` / `NaturalLog` / `Pow` / `FusedMultiplyAdd`,
     // `Sin` / `Cos` / `Atan2Radians`, the four limits, `IsNaN` / `IsInfinite` and
     // `ToInteger`.
     //
@@ -376,7 +376,7 @@ library Primitives
     // against the derived `<` or `>`, so nothing here can recurse back through the
     // IOrderable generics in `core.library.plato`.
     //
-    // Accuracy note: a native `Log10`, `Cbrt` or `Acos` is usually a few ulp better
+    // Accuracy note: a native `Log10` or `Acos` is usually a few ulp better
     // than the identity below. That is the whole point of the plato-368 override
     // table — these bodies fix the SEMANTICS and a backend substitutes its own
     // verified implementation. Do not tighten a formula here to chase ulps.

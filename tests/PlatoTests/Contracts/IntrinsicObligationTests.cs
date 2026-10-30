@@ -175,7 +175,6 @@ namespace PlatoTests
             "Number.Atanh",
             "Number.BitDecrement",
             "Number.BitIncrement",
-            "Number.Cbrt",
             "Number.Ceiling",
             "Number.Clamp",
             "Number.CopySign",

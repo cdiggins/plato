@@ -74,6 +74,7 @@ public sealed class HostIntrinsics
         Add("Floor(Number)", (_, a) => n.Floor(D(a[0])));
         Add("Round(Number, Integer)", (_, a) => n.Round(D(a[0]), L(a[1])));
         Add("Sqrt(Number)", (_, a) => n.Sqrt(D(a[0])));
+        Add("Cbrt(Number)", (_, a) => n.Cbrt(D(a[0])));
         Add("Exp(Number)", (_, a) => n.Exp(D(a[0])));
         Add("NaturalLog(Number)", (_, a) => n.NaturalLog(D(a[0])));
         Add("Pow(Number, Number)", (_, a) => n.Pow(D(a[0]), D(a[1])));

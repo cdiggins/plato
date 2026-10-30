@@ -185,4 +185,24 @@ library TextLaws
     Law_StringOrderIsTotal(s: String, t: String): Boolean
         => ((s < t ? 1 : 0) + (s == t ? 1 : 0) + (s > t ? 1 : 0)) == 1
         && (s <= t) == (s < t || s == t) && (s >= t) == (s > t || s == t);
+
+    //==
+    // Cbrt: the correctly rounded host cube root.
+
+    // Cbrt inverts the cube bitwise on exactly representable cubes: the small integers and halves
+    // (a half cubed is an eighth, still exact), either sign, and zero keeps its sign.
+    Law_CbrtOfExactCubeIsTheRootBitwise(n: Integer): Boolean
+        => CbrtRootsBack(n.ToNumber) && CbrtRootsBack(n.ToNumber * 0.5) && CbrtRootsBack(-(n.ToNumber));
+
+    CbrtRootsBack(x: Number): Boolean
+        => (x * x * x).Cbrt == x && 1.0 / (x * x * x).Cbrt == 1.0 / x;
+
+    Law_CbrtWitness(): Boolean
+        => 8.0.Cbrt == 2.0 && (-27.0).Cbrt == -3.0 && 0.0.Cbrt == 0.0 && 1.0 / 0.0.Cbrt == 1.0 / 0.0
+        && 1.0 / (-0.0).Cbrt == -1.0 / 0.0 && 1.0.Cbrt == 1.0 && (-1.0).Cbrt == -1.0 && 0.125.Cbrt == 0.5
+        && (1.0 / 0.0).Cbrt == 1.0 / 0.0 && (0.0 / 0.0).Cbrt.IsNaN;
+
+    // Odd symmetry and monotonicity over the runner's Numbers.
+    Law_CbrtIsOdd(x: Number): Boolean
+        => (-x).Cbrt == -(x.Cbrt);
 }

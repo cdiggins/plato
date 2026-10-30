@@ -113,7 +113,7 @@ namespace Ara3D.Geometry
         //
         // Everything derivable from these has a Plato reference body in
         // primitives.library.plato (Abs, Sign, Square, Reciprocal, Min, Max,
-        // Ceiling, Truncate, Cbrt, Log/Log2/Log10, Tan/Sinh/Cosh/Tanh, the inverse-trig
+        // Ceiling, Truncate, Log/Log2/Log10, Tan/Sinh/Cosh/Tanh, the inverse-trig
         // family, IsFinite) and MUST NOT be duplicated here - a duplicate makes every
         // generated call site ambiguous (CS0121).
         // ------------------------------------------------------------------------------
@@ -121,6 +121,8 @@ namespace Ara3D.Geometry
         public Integer Hash { [MethodImpl(AggressiveInlining)] get => Value.GetHashCode(); }
         public Number Floor { [MethodImpl(AggressiveInlining)] get => NumberMath.Floor(Value); }
         public Number Sqrt { [MethodImpl(AggressiveInlining)] get => NumberMath.Sqrt(Value); }
+        /// <summary>The correctly rounded real cube root (<c>Math.Cbrt</c>): odd, so negative input is defined, and a zero keeps its sign. A method, not a property: the C# writer spells a bodiless declaration as a method unless <c>PrimitiveSurfaceOverrides</c> pins it.</summary>
+        [MethodImpl(AggressiveInlining)] public Number Cbrt() => NumberMath.Cbrt(Value);
         public Number Exp { [MethodImpl(AggressiveInlining)] get => NumberMath.Exp(Value); }
         public Number NaturalLog { [MethodImpl(AggressiveInlining)] get => NumberMath.Log(Value); }
         public Number Sin { [MethodImpl(AggressiveInlining)] get => NumberMath.Sin(Value); }
