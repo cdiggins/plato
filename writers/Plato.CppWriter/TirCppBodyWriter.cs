@@ -353,7 +353,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
     {
         // A tuple literal (a, b, c) used where a record is expected: C# converts it implicitly,
         // C++ writes the record's braced initializer.
-        if (to != null && _w.StructNames.Contains(to) && IsTupleLiteral(inner, out var tupleArgs))
+        if (to != null && _w.StructNames.Contains(BaseTypeName(to)) && IsTupleLiteral(inner, out var tupleArgs))
         {
             WriteConstruction(to, tupleArgs);
             return;
@@ -429,6 +429,13 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         Write($"{_w.FunctionName(toPlato)}(");
         WriteNode(inner);
         Write(")");
+    }
+
+    /// <summary>The name of a C++ type without its template arguments: Array2D&lt;TV0&gt; is Array2D.</summary>
+    private static string BaseTypeName(string cppType)
+    {
+        var lt = cppType.IndexOf('<');
+        return lt < 0 ? cppType : cppType.Substring(0, lt);
     }
 
     private static bool IsTupleLiteral(TirNode n, out IReadOnlyList<TirNode> args)
@@ -876,9 +883,105 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
 
         // Everything else: a free-function call.
         RecordCall(name, args);
-        Write($"{_w.FunctionName(name)}(");
+        Write($"{_w.FunctionName(name)}{ExplicitTemplateArguments(call)}(");
         WriteArgs(args);
         Write(")");
+    }
+
+    /// <summary>
+    /// The explicit template arguments a call to a generic library function needs: a type variable that only
+    /// the return type or a function-typed parameter names cannot be deduced by C++ (MakeArray2D&lt;$T&gt;). The
+    /// generated template lists its type variables in order of first appearance, parameters before the
+    /// return type, so every variable is bound from the call's instantiated types and written in that order.
+    /// A call on an Array2D or Array3D receiver (Map) writes the grid's element type first, then the
+    /// variables the receiver does not name. Empty when every variable is deducible or a binding is missing.
+    /// </summary>
+    private string ExplicitTemplateArguments(TirCall call)
+    {
+        var callee = call.Callee;
+        if (!UsesCpuLambdas || callee == null || callee.Body == null || callee.OwnerType == null || callee.Parameters.Count != call.Args.Count)
+            return "";
+        var recvCpp = call.Args.Count > 0 ? _w.CppTypeNameOrNull(call.Args[0].Type) : null;
+        var grid = recvCpp != null && (recvCpp.StartsWith("Array2D<") || recvCpp.StartsWith("Array3D<"));
+        // A call on another generic receiver (Map on an Array) may resolve to the prelude's overload, whose
+        // template parameters differ, and an interface member has no template of its own to name.
+        if (!grid && callee.FunctionType == FunctionType.Interface)
+            return "";
+
+        var order = new List<string>();
+        var deducible = new HashSet<string>();
+        var receiverVars = new HashSet<string>();
+        void Collect(TypeExpression t, bool deduces, ISet<string> into)
+        {
+            if (t == null)
+                return;
+            if (t.Def.Kind == TypeKind.TypeVariable || t.Name.StartsWith("$"))
+            {
+                if (!order.Contains(t.Name))
+                    order.Add(t.Name);
+                if (deduces)
+                    deducible.Add(t.Name);
+                into?.Add(t.Name);
+                return;
+            }
+            foreach (var a in t.TypeArgs)
+                Collect(a, deduces, into);
+        }
+        for (var i = 0; i < callee.Parameters.Count; i++)
+        {
+            var p = callee.Parameters[i];
+            if (!p.Type.Name.StartsWith("Function"))
+                Collect(p.Type, true, i == 0 ? receiverVars : null);
+        }
+        Collect(callee.ReturnType, false, null);
+        if (!grid && receiverVars.Count > 0)
+            return "";
+        var extra = order.Where(v => !receiverVars.Contains(v)).ToList();
+        if (extra.Count == 0 || extra.All(deducible.Contains))
+            return "";
+
+        var bound = new Dictionary<string, TypeExpression>();
+        void Bind(TypeExpression g, TypeExpression c)
+        {
+            if (g == null || c == null)
+                return;
+            if (g.Def.Kind == TypeKind.TypeVariable || g.Name.StartsWith("$"))
+            {
+                if (!bound.ContainsKey(g.Name))
+                    bound[g.Name] = c;
+                return;
+            }
+            if (g.Def.Name != c.Def.Name || g.TypeArgs.Count != c.TypeArgs.Count)
+                return;
+            for (var i = 0; i < g.TypeArgs.Count; i++)
+                Bind(g.TypeArgs[i], c.TypeArgs[i]);
+        }
+        for (var i = 0; i < callee.Parameters.Count; i++)
+            Bind(callee.Parameters[i].Type, call.Args[i].Type);
+        Bind(callee.ReturnType, call.Type);
+        // A function-typed argument's own return type binds the variables the lambda produces.
+        for (var i = 0; i < callee.Parameters.Count; i++)
+        {
+            var pt = callee.Parameters[i].Type;
+            var at = call.Args[i].Type;
+            if (pt.Name.StartsWith("Function") && at != null && at.Name.StartsWith("Function") && pt.TypeArgs.Count == at.TypeArgs.Count)
+                for (var k = 0; k < pt.TypeArgs.Count; k++)
+                    Bind(pt.TypeArgs[k], at.TypeArgs[k]);
+        }
+
+        var names = new List<string>();
+        if (grid)
+            names.Add(recvCpp.Substring(recvCpp.IndexOf('<') + 1, recvCpp.Length - recvCpp.IndexOf('<') - 2));
+        foreach (var v in extra)
+        {
+            if (!bound.TryGetValue(v, out var te))
+                return "";
+            var cpp = _w.CppTypeNameOrNull(te);
+            if (cpp == null)
+                return "";
+            names.Add(cpp);
+        }
+        return "<" + string.Join(", ", names) + ">";
     }
 
     private bool TryWriteOperator(TirCall call)
