@@ -155,6 +155,7 @@ namespace Ara3D.Geometry.CppWriter
             public bool Provided;       // the prelude defines it; nothing is written
             public List<string> TemplateVars;  // type variables ($T, _T0) emitted as template parameters; null when none
             public bool Pruned;         // dropped because a callee was skipped
+            public bool FromInterface;  // an interface member instantiated for its owner (a concrete overload of the same shape wins)
             public string Name => Key.StartsWith("template") ? Key : Key.Substring(0, Math.Max(0, Key.IndexOf('(')));
         }
 
@@ -1626,6 +1627,7 @@ namespace Ara3D.Geometry.CppWriter
                     typeVars = null;
 
                 Add(label, SignatureKey(fi.Name, paramTypes), sig, definition, callees, typeVars);
+                _emitted[_emitted.Count - 1].FromInterface = fi.Kind != FunctionInstanceKind.ConcreteType;
             }
             catch (CppUnsupportedException e)
             {

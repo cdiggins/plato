@@ -957,6 +957,51 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
         }
 
         /// <summary>
+        /// Map(xs: Array2D&lt;$T1&gt;, f) and the IIndexable Map(xs, f) instantiated for Array2D have one shape: as C++ templates
+        /// a call is ambiguous. Plato's dispatch picks the concrete type's own function, so the interface instance goes.
+        /// </summary>
+        private void DropShadowedInterfaceInstances()
+        {
+            var B = (char)92;
+            foreach (var g in _emitted.Where(e => !e.Provided && e.IsTemplate && e.Key.EndsWith(")") && e.TemplateVars != null)
+                .GroupBy(e => System.Text.RegularExpressions.Regex.Replace(e.Key, B + "b(?:F" + B + "d+|" + string.Join("|", e.TemplateVars.Select(System.Text.RegularExpressions.Regex.Escape)) + ")" + B + "b", "@")))
+            {
+                if (g.Count() < 2 || g.All(e => e.FromInterface) || g.All(e => !e.FromInterface))
+                    continue;
+                foreach (var e in g.Where(e => e.FromInterface).ToList())
+                    _emitted.Remove(e);
+            }
+        }
+
+        /// <summary>
+        /// A field the type's interface declares as a member (IJagged: Offsets(self), Values(self)) is read as a
+        /// function by the stdlib bodies that go through the interface; the C# field function is this accessor.
+        /// </summary>
+        private void EmitFieldAccessors()
+        {
+            foreach (var s in CpuStructs())
+            {
+                var n = s.Name;
+                if (s.Type == null || s.Type.TypeDef.IsSum)
+                    continue;
+                foreach (var f in s.Fields)
+                {
+                    if (!s.Type.DeclaredFunctions.Any(d => d.Name == f.Name && d.ParameterNames.Count == 1) || (f.Name == "Value" && s.Fields.Count == 1))
+                        continue;
+                    string ftype;
+                    using (ParamScope(s.Type))
+                        ftype = CppTypeName(f);
+                    var self = SelfTypeName(n, s.Type);
+                    var fkey = SignatureKey(f.Name, new[] { self });
+                    if (!_claimedSignatures.Add(fkey))
+                        continue;
+                    var fsig = $"{TemplatePrefix(s.Type)}PLATO_FN {ftype} {FunctionName(f.Name)}({self} self)";
+                    Add($"generated.{f.Name}", fkey, fsig, $"{fsig} {{ return self.{EscapeName(f.Name)}; }}", null, GenericParamNames(s.Type).ToList());
+                }
+            }
+        }
+
+        /// <summary>
         /// A tuple converted to a record by a call, <c>JaggedArray((offsets, values))</c>, where the body writer could not write the
         /// record's braced initializer (the tuple is a local, not a literal). One conversion function per
         /// record such a call names, over the tuple type of its field types (a template when the record is).
@@ -1044,15 +1089,31 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
             if (cond.Length == 0)
                 return;
             var cppName = FunctionName(e.Name);
-            var rx = new System.Text.RegularExpressions.Regex(@"^(template ?<[^>]*> )(.*?) " + System.Text.RegularExpressions.Regex.Escape(cppName) + @"\(");
+            var rx = new System.Text.RegularExpressions.Regex(@"^(.*?) " + System.Text.RegularExpressions.Regex.Escape(cppName) + @"\(");
             string Rewrite(string text)
-                => rx.Replace(text, m => $"{m.Groups[1].Value}std::enable_if_t<{cond}, {m.Groups[2].Value}> {cppName}(", 1);
+            {
+                // The template header ends at the '>' that closes its '<'; defaulted parameters contain '>' too.
+                var depth = 0;
+                var end = -1;
+                for (var k = text.IndexOf('<'); k >= 0 && k < text.Length; k++)
+                {
+                    if (text[k] == '<') depth++;
+                    else if (text[k] == '>' && --depth == 0) { end = k + 1; break; }
+                }
+                if (end < 0 || !text.StartsWith("template"))
+                    return text;
+                var header = text.Substring(0, end) + " ";
+                var rest = text.Substring(end).TrimStart();
+                return header + rx.Replace(rest, m => $"std::enable_if_t<{cond}, {m.Groups[1].Value}> {cppName}(", 1);
+            }
             e.Prototype = Rewrite(e.Prototype);
             e.Definition = Rewrite(e.Definition);
         }
 
         private void PruneCpu()
         {
+            EmitFieldAccessors();
+            DropShadowedInterfaceInstances();
             EmitTupleConversions();
             ConstrainFunctionInterfaceOverloads();
             var byKey = new Dictionary<string, Emitted>();
