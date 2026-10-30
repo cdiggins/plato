@@ -82,6 +82,14 @@ int main()
     CHECK(Substring("abcd", 0, 0) == "" && Substring("abcd", 0, -5) == "" && Substring("abcd", 4, 1) == "" && Substring("abcd", 9, 1) == "");
     CHECK(Substring("abcd", INT32_MIN, INT32_MAX) == "" && Substring("abcd", -1, INT32_MAX) == "abcd" && Substring("abcd", 2, INT32_MAX) == "cd" && Substring("", 0, 1) == "");
 
+    CHECK(IsNumberText("1.") && IsNumberText(".5") && IsNumberText("1.E-06") && IsNumberText("-0") && IsNumberText("+7") && IsNumberText("12e3") && IsNumberText("0.1E+2"));
+    CHECK(!IsNumberText("") && !IsNumberText(".") && !IsNumberText("-") && !IsNumberText("1e") && !IsNumberText("1e+") && !IsNumberText(".e1") && !IsNumberText("NaN")
+        && !IsNumberText("Infinity") && !IsNumberText("0x10") && !IsNumberText(" 1") && !IsNumberText("1 ") && !IsNumberText("1,5") && !IsNumberText("1.5.2") && !IsNumberText("1e999") && !IsNumberText("--1"));
+    CHECK(NumberFromText("1.5E1") == 15.0 && NumberFromText("abc") == 0.0 && NumberFromText(".5") == 0.5 && NumberFromText("1.") == 1.0 && NumberFromText("1.E-06") == 1e-6 && NumberFromText("+2.5") == 2.5);
+    CHECK(std::signbit(NumberFromText("-0")) && std::signbit(NumberFromText("-0.0E5")) && !std::signbit(NumberFromText("0")));
+    CHECK(NumberFromText("0.1") == 0.1 && NumberFromText("123456789012345678901234567890") == 1.2345678901234568e29 && NumberFromText("4.9e-324") == 4.9406564584124654e-324);
+    CHECK(NumberFromText("1e-400") == 0.0 && NumberFromText("2.2250738585072011e-308") == 2.2250738585072009e-308 && NumberFromText("1.7976931348623157e308") == 1.7976931348623157e308);
+
     // Json: Array<double> and a nested object
     arena_reset();
     Array<double> xs = make_array(0.1, -2.5, 1e20, 3.0);

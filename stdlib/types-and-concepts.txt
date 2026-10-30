@@ -697,6 +697,7 @@ type Number3 implements IVector{X:Number;Y:Number;Z:Number;}
 type Number4 implements IVector{X:Number;Y:Number;Z:Number;W:Number;}
 type Number8 implements IVector{X0:Number;X1:Number;X2:Number;X3:Number;X4:Number;X5:Number;X6:Number;X7:Number;}
 type NumberInterval implements IInterval<Number>{Start:Number;End:Number;}
+type NumberParse implements IValue{Value:Number;Ok:Boolean;}
 type NurbsCurve2D implements ICurve2D,IDeformable2D{ControlPoints:Array<Point2D>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
 type NurbsCurve3D implements ICurve3D,IDeformable3D{ControlPoints:Array<Point3D>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
 type NurbsSurface implements IParametricSurface,IDeformable3D{ControlPoints:Array2D<Point3D>;Weights:Array2D<Number>;UDegree:Integer;VDegree:Integer;UKnots:KnotVector;VKnots:KnotVector;}

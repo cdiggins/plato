@@ -64,6 +64,19 @@ namespace Ara3D.Geometry
             return new String(Value.Substring((int)first, (int)n));
         }
         
+        /// <summary>True when the text is a number in the P21 real forms and its value is finite:
+        /// an optional sign, digits with an optional point and more digits (at least one digit
+        /// in all), then an optional exponent <c>E</c> or <c>e</c> with an optional sign and digits.
+        /// <c>1.</c>, <c>.5</c> and <c>1.E-06</c> are numbers; <c>1e999</c> is not (it rounds to
+        /// infinity), and neither are <c>NaN</c>, <c>Infinity</c>, <c>0x10</c>, <c>1,5</c>, an empty
+        /// text or any text with a space. (<c>IsNumberText</c> in the contract.)</summary>
+        public Boolean IsNumberText() => TextForms.TryParseNumber(Value, out _);
+
+        /// <summary>The correctly rounded value of the number the text spells, parsed by the
+        /// host's own parser in the invariant culture after the form is checked; 0 when
+        /// <see cref="IsNumberText"/> is false. (<c>NumberFromText</c> in the contract.)</summary>
+        public Number NumberFromText() => TextForms.TryParseNumber(Value, out var v) ? v : 0;
+
         // -------------------------------------------------------------------------------
         // Conversions
         // -------------------------------------------------------------------------------
@@ -92,6 +105,53 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)]
         public static bool operator >(String a, String b) => a.Value.CompareTo(b.Value) > 0;
 
+    }
+
+    /// <summary>
+    /// The text forms the parse intrinsics accept, checked by hand so the three runtimes agree
+    /// on what is a number, and then parsed by the host's correctly rounded parser.
+    /// </summary>
+    internal static class TextForms
+    {
+        private static bool IsDigit(char c) => c >= '0' && c <= '9';
+
+        /// <summary>Sign, digits with an optional point, optional exponent; nothing else.</summary>
+        internal static bool IsRealForm(string t)
+        {
+            var i = 0;
+            var n = t.Length;
+            if (i < n && (t[i] == '+' || t[i] == '-'))
+                i++;
+            var digits = 0;
+            while (i < n && IsDigit(t[i])) { i++; digits++; }
+            if (i < n && t[i] == '.')
+            {
+                i++;
+                while (i < n && IsDigit(t[i])) { i++; digits++; }
+            }
+            if (digits == 0)
+                return false;
+            if (i < n && (t[i] == 'e' || t[i] == 'E'))
+            {
+                i++;
+                if (i < n && (t[i] == '+' || t[i] == '-'))
+                    i++;
+                var exponentDigits = 0;
+                while (i < n && IsDigit(t[i])) { i++; exponentDigits++; }
+                if (exponentDigits == 0)
+                    return false;
+            }
+            return i == n;
+        }
+
+        /// <summary>The value of a real-form text, false when the form is wrong or the value overflows to infinity.</summary>
+        internal static bool TryParseNumber(string t, out NumberValue value)
+        {
+            value = 0;
+            return IsRealForm(t)
+                && NumberValue.TryParse(t, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out value)
+                && NumberValue.IsFinite(value);
+        }
     }
 
     /// <summary>

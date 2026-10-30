@@ -1,4 +1,5 @@
 // Applies the selected numeric profile to interpreted arithmetic and literals.
+using System.Globalization;
 using Ara3D.Geometry.Compiler.Types;
 
 namespace Ara3D.Geometry.Interpreter;
@@ -67,6 +68,59 @@ public sealed class Numbers
     public long HashNumber(double a) => I(Is32 ? ((float)a).GetHashCode() : a.GetHashCode());
     public long HashInteger(long a) => I(_int32 ? ((int)a).GetHashCode() : a.GetHashCode());
 
+    /// <summary>The Number a P21 real-form text spells under this profile (binary32 parses as a float,
+    /// so the double holds that float exactly); false when the form is wrong or the value is infinite.</summary>
+    public bool TryParseNumber(string t, out double value)
+    {
+        value = 0;
+        if (!TextForms.IsRealForm(t))
+            return false;
+        if (Is32)
+        {
+            if (!float.TryParse(t, NumberStyles.Float, CultureInfo.InvariantCulture, out var f) || !float.IsFinite(f))
+                return false;
+            value = f;
+            return true;
+        }
+        return double.TryParse(t, NumberStyles.Float, CultureInfo.InvariantCulture, out value) && double.IsFinite(value);
+    }
+
     public long IntegerMinValue => _int32 ? int.MinValue : long.MinValue;
     public long IntegerMaxValue => _int32 ? int.MaxValue : long.MaxValue;
+}
+
+/// <summary>The text forms the parse intrinsics accept: the same grammar as the C# runtime's
+/// TextForms (src/Plato.Intrinsics/String.cs), checked by hand so every runtime agrees.</summary>
+internal static class TextForms
+{
+    private static bool IsDigit(char c) => c >= '0' && c <= '9';
+
+    /// <summary>Sign, digits with an optional point, optional exponent; nothing else.</summary>
+    internal static bool IsRealForm(string t)
+    {
+        var i = 0;
+        var n = t.Length;
+        if (i < n && (t[i] == '+' || t[i] == '-'))
+            i++;
+        var digits = 0;
+        while (i < n && IsDigit(t[i])) { i++; digits++; }
+        if (i < n && t[i] == '.')
+        {
+            i++;
+            while (i < n && IsDigit(t[i])) { i++; digits++; }
+        }
+        if (digits == 0)
+            return false;
+        if (i < n && (t[i] == 'e' || t[i] == 'E'))
+        {
+            i++;
+            if (i < n && (t[i] == '+' || t[i] == '-'))
+                i++;
+            var exponentDigits = 0;
+            while (i < n && IsDigit(t[i])) { i++; exponentDigits++; }
+            if (exponentDigits == 0)
+                return false;
+        }
+        return i == n;
+    }
 }

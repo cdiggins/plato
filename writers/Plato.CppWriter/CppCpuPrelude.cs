@@ -546,6 +546,59 @@ namespace plato
         return s.substr(static_cast<size_t>(first), static_cast<size_t>(n));
     }
 
+    // IsNumberText / NumberFromText: the P21 real forms, checked by hand (sign, digits with an optional point,
+    // optional exponent; at least one digit before the exponent) and read by std::from_chars, which is correctly
+    // rounded and locale-free. A value that overflows to infinity is not a number; an underflow is read by strtod,
+    // which rounds a subnormal or zero correctly. The same grammar and results as the C# runtime's TextForms.
+    inline bool IsRealForm(const std::string& t)
+    {
+        size_t i = 0;
+        const size_t n = t.size();
+        auto digit = [&](size_t k) { return k < n && t[k] >= '0' && t[k] <= '9'; };
+        if (i < n && (t[i] == '+' || t[i] == '-')) ++i;
+        int digits = 0;
+        while (digit(i)) { ++i; ++digits; }
+        if (i < n && t[i] == '.')
+        {
+            ++i;
+            while (digit(i)) { ++i; ++digits; }
+        }
+        if (digits == 0) return false;
+        if (i < n && (t[i] == 'e' || t[i] == 'E'))
+        {
+            ++i;
+            if (i < n && (t[i] == '+' || t[i] == '-')) ++i;
+            int exponentDigits = 0;
+            while (digit(i)) { ++i; ++exponentDigits; }
+            if (exponentDigits == 0) return false;
+        }
+        return i == n;
+    }
+
+    inline bool TryParseNumber(const std::string& t, double& value)
+    {
+        value = 0.0;
+        if (!IsRealForm(t)) return false;
+        const char* first = t.data();
+        const char* last = first + t.size();
+        const bool negative = *first == '-';
+        if (*first == '+' || *first == '-') ++first;
+        double v = 0.0;
+        auto r = std::from_chars(first, last, v);
+        if (r.ec == std::errc::result_out_of_range)
+        {
+            v = std::strtod(std::string(first, last).c_str(), nullptr);   // C locale: the program never calls setlocale
+            if (std::isinf(v)) return false;
+        }
+        else if (r.ec != std::errc() || r.ptr != last)
+            return false;
+        value = negative ? -v : v;
+        return true;
+    }
+
+    inline bool IsNumberText(const std::string& t) { double v; return TryParseNumber(t, v); }
+    inline double NumberFromText(const std::string& t) { double v; return TryParseNumber(t, v) ? v : 0.0; }
+
     // ---- Helpers the body writer emits (names as in the GPU prelude, on double) ----
 
     inline double min_(double a, double b) { return a < b ? a : b; }

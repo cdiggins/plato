@@ -40,4 +40,35 @@ library TextLaws
     Law_SubstringWitness(): Boolean
         => Substring("abcd", 1, 2) == "bc" && Substring("abcd", -1, 3) == "ab" && Substring("abcd", 3, 9) == "d"
         && Substring("abcd", 0, 0) == "" && Substring("abcd", 4, 1) == "" && Substring("abcd", 0, -2) == "";
+
+    //==
+    // ParseNumber.
+
+    // Two-line witness: the accepted forms and their values.
+    Law_ParseNumberAcceptedForms(): Boolean
+        => ParseNumber("1.5E1").Ok && ParseNumber("1.5E1").Value == 15.0 && ParseNumber("1.").Value == 1.0
+        && ParseNumber(".5").Value == 0.5 && ParseNumber("1.E-06").Value == 0.000001 && ParseNumber("-2.5e+1").Value == -25.0
+        && ParseNumber("+7").Value == 7.0 && ParseNumber("0").Ok && ParseNumber("1.").Ok && ParseNumber(".5").Ok && ParseNumber("1.E-06").Ok;
+
+    // Two-line witness: the rejected forms are Ok false with Value 0.
+    Law_ParseNumberRejectedForms(): Boolean
+        => !ParseNumber("").Ok && !ParseNumber(".").Ok && !ParseNumber("-").Ok && !ParseNumber("1e").Ok && !ParseNumber("1e+").Ok
+        && !ParseNumber("NaN").Ok && !ParseNumber("Infinity").Ok && !ParseNumber("0x10").Ok && !ParseNumber(" 1").Ok
+        && !ParseNumber("1 ").Ok && !ParseNumber("1,5").Ok && !ParseNumber("1.5.2").Ok && !ParseNumber("1e999").Ok
+        && ParseNumber("1e999").Value == 0.0 && ParseNumber("abc").Value == 0.0;
+
+    // A text of letters, the runner's String, is never a number.
+    Law_ParseNumberRejectsLetters(s: String): Boolean
+        => s.Count == 0 || !ParseNumber(s).Ok;
+
+    // Correct rounding: a decimal exactly halfway between two Numbers rounds to even, and the
+    // nearest Number to 0.1 is the one the literal 0.1 denotes.
+    Law_ParseNumberIsCorrectlyRounded(): Boolean
+        => ParseNumber("0.1").Value == 0.1 && ParseNumber("9007199254740993").Value == 9007199254740992.0
+        && ParseNumber("9007199254740995").Value == 9007199254740996.0 && ParseNumber("1e-400").Value == 0.0
+        && ParseNumber("4.9e-324").Value > 0.0;
+
+    // Negative zero survives: 1 / ParseNumber("-0") is negative infinity.
+    Law_ParseNumberKeepsNegativeZero(): Boolean
+        => 1.0 / ParseNumber("-0").Value < 0.0 && 1.0 / ParseNumber("0").Value > 0.0;
 }

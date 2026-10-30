@@ -164,6 +164,23 @@ library Intrinsics
     // Substring("abcd", -1, 3) == "ab" and Substring("abcd", 3, 9) == "d".
     Substring(s: String, start: Integer, count: Integer): String;
 
+    // Whether the text is a number in the P21 real forms: an optional sign, digits with
+    // an optional point and more digits (at least one digit in all), then an optional
+    // exponent E or e with an optional sign and digits. "1.", ".5" and "1.E-06" are
+    // numbers. Anything else is not: "", ".", "1e", "NaN", "Infinity", "0x10", " 1", and
+    // a text whose value rounds to infinity ("1e999"). The form is checked by hand so
+    // that every runtime agrees on it; ParseNumber in text.library.plato pairs this with
+    // NumberFromText. Witness: IsNumberText("1.E-06") and not IsNumberText("1e").
+    IsNumberText(s: String): Boolean;
+
+    // The value of the number the text spells, correctly rounded to the nearest Number by
+    // the host's own parser (double.Parse in the invariant culture, std::from_chars in
+    // C++), so the runtimes agree bit for bit; "-0" is negative zero. 0 when IsNumberText
+    // is false. Not expressible in Plato: it is a correctly rounded decimal-to-binary
+    // conversion, which needs the host's big-integer path or a table of powers.
+    // Witness: NumberFromText("1.5E1") == 15.0 and NumberFromText("abc") == 0.0.
+    NumberFromText(s: String): Number;
+
     //==
     // Array — the five-function kernel.
     //

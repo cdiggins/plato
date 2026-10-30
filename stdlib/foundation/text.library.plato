@@ -1,0 +1,17 @@
+//==
+// # Text
+//
+// Reading numbers from text. The host half is in `intrinsics.library.plato`
+// (`IsNumberText`, `NumberFromText`); the functions here return it as a record the
+// caller checks.
+
+library Text
+{
+    // Reads a real number in the P21 forms: optional sign, digits, optional point and
+    // digits, optional exponent E or e with an optional sign. "1.", ".5" and "1.E-06"
+    // are accepted; anything else, and a value that rounds to infinity, has Ok false
+    // and Value 0. The value is correctly rounded, so every runtime agrees bit for bit.
+    // Witness: ParseNumber("1.5E1") is (15, true); ParseNumber("1e") is (0, false).
+    ParseNumber(s: String): NumberParse
+        => NumberParse(s.NumberFromText, s.IsNumberText);
+}

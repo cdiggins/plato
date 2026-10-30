@@ -138,6 +138,8 @@ public sealed class HostIntrinsics
                 n = text.Length - first;
             return text.Substring((int)first, (int)n);
         });
+        Add("IsNumberText(String)", (_, a) => Boxes.Of(n.TryParseNumber((string)a[0], out var ignored)));
+        Add("NumberFromText(String)", (_, a) => n.TryParseNumber((string)a[0], out var v) ? v : 0.0);
         Add("FromCharacters(Array)", (_, a) =>
         {
             var cs = (PlatoArray)a[0];
