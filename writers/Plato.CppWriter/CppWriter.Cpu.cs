@@ -347,6 +347,9 @@ namespace Ara3D.Geometry.CppWriter
             "GetHashCode", "FlatMap", "EmptyList", "Count", "Contains", "Concatenate", "At", "Append", "Any", "All", "AddRange",
         };
 
+        /// <summary>Bodiless functions whose first parameter is an Array of a primitive but whose result is not: the prelude defines them (FromCharacters).</summary>
+        private static readonly HashSet<string> CpuPreludeArrayIntrinsics = new HashSet<string> { "FromCharacters" };
+
         private static bool IsPreludeArrayTemplate(string name, IReadOnlyList<string> paramTypes)
             => CpuPreludeArrayNames.Contains(name)
                && (paramTypes.Any(t => t.StartsWith("Array<")) || name == "Range" || name == "MapRange" || name == "EmptyList");
@@ -404,7 +407,8 @@ namespace Ara3D.Geometry.CppWriter
                 return;
             }
 
-            if (CpuPreludeOwners.Contains(owner) && PreludeNames.Contains(FunctionName(fi.Name)))
+            if ((CpuPreludeOwners.Contains(owner) || (owner == "Array" && CpuPreludeArrayIntrinsics.Contains(fi.Name)))
+                && PreludeNames.Contains(FunctionName(fi.Name)))
             {
                 // The prelude defines it under the same name; record the key so callers resolve.
                 _emitted.Add(new Emitted { Label = label, Key = sigKey, Prototype = "", Definition = "", Provided = true });
@@ -906,6 +910,9 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
         /// <summary>A call the prelude answers: higher-order array helpers, and any array method no Plato function of that name shadows.</summary>
         private bool PreludeAnswers(CallSite c, ILookup<string, Emitted> byName)
         {
+            // String.At: the host's own (ICountable), which the prelude defines on std::string.
+            if (c.Name == "At" && c.Types.Count == 2 && c.Types[0] == "String")
+                return true;
             var onArray2D = c.Types.Count > 0 && c.Types[0] != null && (c.Types[0].StartsWith("Array2D<") || c.Types[0].StartsWith("Array3D<"));
             if ((UntrackedHofNames.Contains(c.Name) && !onArray2D) || IsPreambleArrayMethod(c))
                 return true;
