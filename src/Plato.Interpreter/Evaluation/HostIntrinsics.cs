@@ -122,6 +122,14 @@ public sealed class HostIntrinsics
         Add("Equals(Character, Character)", (_, a) => Boxes.Of((char)a[0] == (char)a[1]));
         Add("Count(String)", (_, a) => Boxes.Of((long)((string)a[0]).Length));
         Add("At(String, Integer)", (_, a) => ((string)a[0])[(int)L(a[1])]);
+        Add("FromCharacters(Array)", (_, a) =>
+        {
+            var cs = (PlatoArray)a[0];
+            var chars = new char[cs.Count];
+            for (var i = 0; i < chars.Length; i++)
+                chars[i] = (char)cs[i];
+            return new string(chars);
+        });
 
         // Array: the five-function kernel.
         Add("Count(Array)", (_, a) => Boxes.Of((long)((PlatoArray)a[0]).Count));

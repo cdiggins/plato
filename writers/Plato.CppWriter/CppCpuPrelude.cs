@@ -531,6 +531,9 @@ namespace plato
     inline int32_t ToCount(const std::string& s) { return static_cast<int32_t>(s.size()); }
     inline char At(const std::string& s, int32_t i) { PLATO_ASSERT(i >= 0 && static_cast<size_t>(i) < s.size()); return s[static_cast<size_t>(i)]; }
 
+    // FromCharacters: the String of the array's characters, in order.
+    inline std::string FromCharacters(Array<char> cs) { return cs.count > 0 ? std::string(cs.data, static_cast<size_t>(cs.count)) : std::string(); }
+
     // ---- Helpers the body writer emits (names as in the GPU prelude, on double) ----
 
     inline double min_(double a, double b) { return a < b ? a : b; }

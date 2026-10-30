@@ -75,6 +75,9 @@ int main()
     CHECK(ToString(1.0 / 3.0) == "0.3333333333333333");
     CHECK(ToString(std::nan("")) == "NaN" && ToString(-HUGE_VAL) == "-Infinity" && ToString(-42) == "-42");
 
+    // Text intrinsics
+    CHECK(FromCharacters(make_array('a', 'b')) == "ab" && FromCharacters(make_array_empty<char>()) == "");
+
     // Json: Array<double> and a nested object
     arena_reset();
     Array<double> xs = make_array(0.1, -2.5, 1e20, 3.0);

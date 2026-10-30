@@ -73,4 +73,21 @@ namespace Ara3D.Geometry
         public static bool operator >(String a, String b) => a.Value.CompareTo(b.Value) > 0;
 
     }
+
+    /// <summary>
+    /// String members that take or produce an Array of Characters: the host half of
+    /// <c>FromCharacters</c> (<c>stdlib/foundation/intrinsics.library.plato</c>). Array is
+    /// <c>IReadOnlyList</c> in the C# runtime, so the receiver is the list, as for MapRange.
+    /// </summary>
+    public static class StringIntrinsics
+    {
+        /// <summary>The String whose characters are <c>cs</c> in order; the empty array gives the empty String.</summary>
+        public static String FromCharacters(this IReadOnlyList<Character> cs)
+        {
+            var chars = new char[cs.Count];
+            for (var i = 0; i < chars.Length; i++)
+                chars[i] = cs[i].Value;
+            return new String(new string(chars));
+        }
+    }
 }

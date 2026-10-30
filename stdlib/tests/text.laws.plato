@@ -1,0 +1,21 @@
+// Law library for the text intrinsics the STEP parser needs: FromCharacters, Substring,
+// ParseNumber, ParseInteger and NumberToShortestString (intrinsics.library.plato,
+// text.library.plato).
+//
+// Same conventions as `foundation.laws.plato`: `Law_*` Boolean functions are universally
+// quantified over their parameters; the runner generates Strings of lower-case letters and
+// Numbers in [-10, 10], so the laws that need other text state it as a literal witness.
+library TextLaws
+{
+    //==
+    // FromCharacters.
+
+    // The characters of a String, rebuilt, are the String.
+    Law_FromCharactersOfCharactersIsIdentity(s: String): Boolean
+        => FromCharacters(MapRange(s.Count, i => s.At(i))) == s;
+
+    // Two-line witness: the characters of "ab" in reverse order make "ba"; none make "".
+    Law_FromCharactersWitness(): Boolean
+        => FromCharacters(["ab".At(1), "ab".At(0)]) == "ba"
+        && FromCharacters(MapRange(0, i => "ab".At(i))) == "";
+}
