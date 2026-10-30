@@ -951,9 +951,12 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         }
 
         // 0.0 / 0.0 is how the library spells NaN; C++ rejects a constant division by zero (C2124).
-        if (UsesCpuLambdas && op == "/" && IsZeroNumberLiteral(args[0]) && IsZeroNumberLiteral(args[1]))
+        if (UsesCpuLambdas && op == "/" && TryNumberLiteral(args[1], out var divisor) && divisor == 0.0
+            && TryNumberLiteral(args[0], out var dividend))
         {
-            Write("std::numeric_limits<double>::quiet_NaN()");
+            Write(dividend == 0.0 ? "std::numeric_limits<double>::quiet_NaN()"
+                : dividend > 0 ? "std::numeric_limits<double>::infinity()"
+                : "(-std::numeric_limits<double>::infinity())");
             return true;
         }
 
@@ -965,10 +968,21 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         return true;
     }
 
-    private static bool IsZeroNumberLiteral(TirNode n)
-        => TirRewrite.StripCoerce(n) is TirLiteral { LiteralType: LiteralTypesEnum.Number } lit
-           && double.TryParse(lit.Value.ToLiteralString().TrimEnd('f', 'F'), System.Globalization.NumberStyles.Float,
-               System.Globalization.CultureInfo.InvariantCulture, out var d) && d == 0.0;
+    // The value of a Number literal, looking through a coercion and a unary minus.
+    private static bool TryNumberLiteral(TirNode n, out double value)
+    {
+        n = TirRewrite.StripCoerce(n);
+        if (n is TirCall { Args.Count: 1 } neg && Operators.NameToUnaryOperator(neg.Name) == "-"
+            && TryNumberLiteral(neg.Args[0], out var inner))
+        {
+            value = -inner;
+            return true;
+        }
+        value = 0.0;
+        return n is TirLiteral { LiteralType: LiteralTypesEnum.Number } lit
+               && double.TryParse(lit.Value.ToLiteralString().TrimEnd('f', 'F'), System.Globalization.NumberStyles.Float,
+                   System.Globalization.CultureInfo.InvariantCulture, out value);
+    }
 
     private void WriteStructComponentOp(string op, IReadOnlyList<TirNode> args,
         IReadOnlyList<string> types, IReadOnlyList<string> fields, string resultCpp)
