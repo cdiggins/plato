@@ -950,6 +950,13 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             return true;
         }
 
+        // 0.0 / 0.0 is how the library spells NaN; C++ rejects a constant division by zero (C2124).
+        if (UsesCpuLambdas && op == "/" && IsZeroNumberLiteral(args[0]) && IsZeroNumberLiteral(args[1]))
+        {
+            Write("std::numeric_limits<double>::quiet_NaN()");
+            return true;
+        }
+
         Write("(");
         WriteNode(args[0]);
         Write($" {op} ");
@@ -957,6 +964,11 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         Write(")");
         return true;
     }
+
+    private static bool IsZeroNumberLiteral(TirNode n)
+        => TirRewrite.StripCoerce(n) is TirLiteral { LiteralType: LiteralTypesEnum.Number } lit
+           && double.TryParse(lit.Value.ToLiteralString().TrimEnd('f', 'F'), System.Globalization.NumberStyles.Float,
+               System.Globalization.CultureInfo.InvariantCulture, out var d) && d == 0.0;
 
     private void WriteStructComponentOp(string op, IReadOnlyList<TirNode> args,
         IReadOnlyList<string> types, IReadOnlyList<string> fields, string resultCpp)
