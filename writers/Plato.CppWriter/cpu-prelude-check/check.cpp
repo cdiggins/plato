@@ -90,6 +90,11 @@ int main()
     CHECK(NumberFromText("0.1") == 0.1 && NumberFromText("123456789012345678901234567890") == 1.2345678901234568e29 && NumberFromText("4.9e-324") == 4.9406564584124654e-324);
     CHECK(NumberFromText("1e-400") == 0.0 && NumberFromText("2.2250738585072011e-308") == 2.2250738585072009e-308 && NumberFromText("1.7976931348623157e308") == 1.7976931348623157e308);
 
+    CHECK(IsIntegerText("-12") && IsIntegerText("+7") && IsIntegerText("007") && IsIntegerText("-0") && IsIntegerText("2147483647") && IsIntegerText("-2147483648") && IsIntegerText("000000000000000000000000000001"));
+    CHECK(!IsIntegerText("") && !IsIntegerText("+") && !IsIntegerText("-") && !IsIntegerText("1.0") && !IsIntegerText("1e3") && !IsIntegerText(" 1") && !IsIntegerText("1 ")
+        && !IsIntegerText("2147483648") && !IsIntegerText("-2147483649") && !IsIntegerText("99999999999999999999") && !IsIntegerText("--1") && !IsIntegerText("0x10"));
+    CHECK(IntegerFromText("-12") == -12 && IntegerFromText("1.0") == 0 && IntegerFromText("2147483647") == INT32_MAX && IntegerFromText("-2147483648") == INT32_MIN && IntegerFromText("2147483648") == 0 && IntegerFromText("+7") == 7);
+
     // Json: Array<double> and a nested object
     arena_reset();
     Array<double> xs = make_array(0.1, -2.5, 1e20, 3.0);

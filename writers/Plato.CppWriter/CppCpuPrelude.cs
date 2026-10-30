@@ -599,6 +599,33 @@ namespace plato
     inline bool IsNumberText(const std::string& t) { double v; return TryParseNumber(t, v); }
     inline double NumberFromText(const std::string& t) { double v; return TryParseNumber(t, v) ? v : 0.0; }
 
+    // IsIntegerText / IntegerFromText: an optional sign and one or more digits, within int32_t (this dialect's
+    // Integer); overflow is reported, never wrapped. The same results as the C# runtime's TextForms under cpu64i32.
+    inline bool TryParseInteger(const std::string& t, int32_t& value)
+    {
+        value = 0;
+        const char* first = t.data();
+        const char* last = first + t.size();
+        const bool negative = first != last && *first == '-';
+        if (first != last && (*first == '+' || *first == '-')) ++first;
+        if (first == last) return false;
+        for (const char* p = first; p != last; ++p)
+            if (*p < '0' || *p > '9') return false;
+        int64_t v = 0;
+        for (const char* p = first; p != last; ++p)
+        {
+            v = v * 10 + (*p - '0');
+            if (v > INT64_C(2147483648)) return false;
+        }
+        if (negative) v = -v;
+        if (v < INT32_MIN || v > INT32_MAX) return false;
+        value = static_cast<int32_t>(v);
+        return true;
+    }
+
+    inline bool IsIntegerText(const std::string& t) { int32_t v; return TryParseInteger(t, v); }
+    inline int32_t IntegerFromText(const std::string& t) { int32_t v; return TryParseInteger(t, v) ? v : 0; }
+
     // ---- Helpers the body writer emits (names as in the GPU prelude, on double) ----
 
     inline double min_(double a, double b) { return a < b ? a : b; }

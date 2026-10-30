@@ -71,4 +71,25 @@ library TextLaws
     // Negative zero survives: 1 / ParseNumber("-0") is negative infinity.
     Law_ParseNumberKeepsNegativeZero(): Boolean
         => 1.0 / ParseNumber("-0").Value < 0.0 && 1.0 / ParseNumber("0").Value > 0.0;
+
+    //==
+    // ParseInteger. Range edges depend on the profile (64-bit under cpu64, 32-bit under
+    // cpu64i32), so the witnesses use values that overflow or fit both: 2147483647 fits,
+    // 99999999999999999999 overflows. The 64-bit edges are in Plato.Intrinsics.Tests.
+
+    // Two-line witness: accepted forms and their values.
+    Law_ParseIntegerAcceptedForms(): Boolean
+        => ParseInteger("-12").Ok && ParseInteger("-12").Value == -12 && ParseInteger("+7").Value == 7 && ParseInteger("007").Value == 7
+        && ParseInteger("-0").Value == 0 && ParseInteger("-0").Ok && ParseInteger("2147483647").Value == 2147483647 && ParseInteger("-2147483648").Value == -2147483647 - 1;
+
+    // Two-line witness: rejected forms and overflow are Ok false with Value 0.
+    Law_ParseIntegerRejectedForms(): Boolean
+        => !ParseInteger("").Ok && !ParseInteger("+").Ok && !ParseInteger("-").Ok && !ParseInteger("1.0").Ok && !ParseInteger("1e3").Ok
+        && !ParseInteger(" 1").Ok && !ParseInteger("1 ").Ok && !ParseInteger("--1").Ok && !ParseInteger("0x10").Ok
+        && !ParseInteger("99999999999999999999").Ok && !ParseInteger("-99999999999999999999").Ok
+        && ParseInteger("99999999999999999999").Value == 0 && ParseInteger("1.0").Value == 0;
+
+    // A text of letters, the runner's String, is never an integer.
+    Law_ParseIntegerRejectsLetters(s: String): Boolean
+        => s.Count == 0 || !ParseInteger(s).Ok;
 }

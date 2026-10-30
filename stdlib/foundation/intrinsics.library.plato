@@ -181,6 +181,20 @@ library Intrinsics
     // Witness: NumberFromText("1.5E1") == 15.0 and NumberFromText("abc") == 0.0.
     NumberFromText(s: String): Number;
 
+    // Whether the text is an optional sign and one or more decimal digits whose value fits
+    // Integer under the profile (64-bit under cpu64, 32-bit under cpu64i32 and gpu32).
+    // "-0", "+7" and "007" are integers. "", "+", "1.0", "1e3", " 1" and a value past the
+    // range are not: overflow is reported, never wrapped. Pairs with IntegerFromText in
+    // ParseInteger (text.library.plato). Witness: IsIntegerText("-12") and not
+    // IsIntegerText("99999999999999999999").
+    IsIntegerText(s: String): Boolean;
+
+    // The Integer the text spells; 0 when IsIntegerText is false. Expressible in Plato with
+    // a loop over At and an overflow test, but then every runtime owns a copy of the range
+    // test and the profile decides it; one host call keeps the limits where the type's own
+    // are. Witness: IntegerFromText("-12") == -12 and IntegerFromText("1.0") == 0.
+    IntegerFromText(s: String): Integer;
+
     //==
     // Array — the five-function kernel.
     //

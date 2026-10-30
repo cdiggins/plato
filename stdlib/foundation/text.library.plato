@@ -2,8 +2,8 @@
 // # Text
 //
 // Reading numbers from text. The host half is in `intrinsics.library.plato`
-// (`IsNumberText`, `NumberFromText`); the functions here return it as a record the
-// caller checks.
+// (`IsNumberText`, `NumberFromText`, `IsIntegerText`, `IntegerFromText`); the functions
+// here return it as a record the caller checks.
 
 library Text
 {
@@ -14,4 +14,11 @@ library Text
     // Witness: ParseNumber("1.5E1") is (15, true); ParseNumber("1e") is (0, false).
     ParseNumber(s: String): NumberParse
         => NumberParse(s.NumberFromText, s.IsNumberText);
+
+    // Reads an integer: an optional sign and one or more decimal digits. Anything else,
+    // and a value outside Integer's range under the profile, has Ok false and Value 0;
+    // overflow is reported, never wrapped.
+    // Witness: ParseInteger("-12") is (-12, true); ParseInteger("1.0") is (0, false).
+    ParseInteger(s: String): IntegerParse
+        => IntegerParse(s.IntegerFromText, s.IsIntegerText);
 }

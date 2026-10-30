@@ -85,6 +85,23 @@ public sealed class Numbers
         return double.TryParse(t, NumberStyles.Float, CultureInfo.InvariantCulture, out value) && double.IsFinite(value);
     }
 
+    /// <summary>The Integer an integer-form text spells under this profile's Integer width; false when the
+    /// form is wrong or the value overflows.</summary>
+    public bool TryParseInteger(string t, out long value)
+    {
+        value = 0;
+        if (!TextForms.IsIntegerForm(t))
+            return false;
+        if (_int32)
+        {
+            if (!int.TryParse(t, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var i))
+                return false;
+            value = i;
+            return true;
+        }
+        return long.TryParse(t, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out value);
+    }
+
     public long IntegerMinValue => _int32 ? int.MinValue : long.MinValue;
     public long IntegerMaxValue => _int32 ? int.MaxValue : long.MaxValue;
 }
@@ -94,6 +111,18 @@ public sealed class Numbers
 internal static class TextForms
 {
     private static bool IsDigit(char c) => c >= '0' && c <= '9';
+
+    /// <summary>Sign and at least one digit; nothing else.</summary>
+    internal static bool IsIntegerForm(string t)
+    {
+        var i = t.Length > 0 && (t[0] == '+' || t[0] == '-') ? 1 : 0;
+        if (i == t.Length)
+            return false;
+        for (; i < t.Length; i++)
+            if (!IsDigit(t[i]))
+                return false;
+        return true;
+    }
 
     /// <summary>Sign, digits with an optional point, optional exponent; nothing else.</summary>
     internal static bool IsRealForm(string t)

@@ -568,6 +568,7 @@ type Integer implements IWhole,IBitwise{}
 type IntegerBounds2D implements IValue{Min:IntegerVector2;Max:IntegerVector2;}
 type IntegerBounds3D implements IValue{Min:IntegerVector3;Max:IntegerVector3;}
 type IntegerInterval implements IInterval<Integer>{Start:Integer;End:Integer;}
+type IntegerParse implements IValue{Value:Integer;Ok:Boolean;}
 type IntegerSize2D implements IValue,IHashable{Width:Integer;Height:Integer;}
 type IntegerSize3D implements IValue,IHashable{Width:Integer;Height:Integer;Depth:Integer;}
 type IntegerVector2 implements IValue,IHashable{X:Integer;Y:Integer;}

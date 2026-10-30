@@ -77,6 +77,17 @@ namespace Ara3D.Geometry
         /// <see cref="IsNumberText"/> is false. (<c>NumberFromText</c> in the contract.)</summary>
         public Number NumberFromText() => TextForms.TryParseNumber(Value, out var v) ? v : 0;
 
+        /// <summary>True when the text is an optional sign and one or more decimal digits whose value
+        /// fits Integer under the build's profile (64-bit under cpu64, 32-bit under cpu64i32 and
+        /// gpu32): <c>-0</c>, <c>+7</c> and <c>007</c> are integers; an empty text, <c>1.0</c>,
+        /// <c>1e3</c>, a space, and a value past the range (overflow is reported, never wrapped)
+        /// are not. (<c>IsIntegerText</c> in the contract.)</summary>
+        public Boolean IsIntegerText() => TextForms.TryParseInteger(Value, out _);
+
+        /// <summary>The Integer the text spells; 0 when <see cref="IsIntegerText"/> is false.
+        /// (<c>IntegerFromText</c> in the contract.)</summary>
+        public Integer IntegerFromText() => TextForms.TryParseInteger(Value, out var v) ? v : 0;
+
         // -------------------------------------------------------------------------------
         // Conversions
         // -------------------------------------------------------------------------------
@@ -142,6 +153,26 @@ namespace Ara3D.Geometry
                     return false;
             }
             return i == n;
+        }
+
+        /// <summary>Sign and at least one digit; nothing else.</summary>
+        internal static bool IsIntegerForm(string t)
+        {
+            var i = t.Length > 0 && (t[0] == '+' || t[0] == '-') ? 1 : 0;
+            if (i == t.Length)
+                return false;
+            for (; i < t.Length; i++)
+                if (!IsDigit(t[i]))
+                    return false;
+            return true;
+        }
+
+        /// <summary>The value of an integer-form text, false when the form is wrong or the value is outside IntegerValue.</summary>
+        internal static bool TryParseInteger(string t, out IntegerValue value)
+        {
+            value = 0;
+            return IsIntegerForm(t)
+                && IntegerValue.TryParse(t, System.Globalization.NumberStyles.AllowLeadingSign, System.Globalization.CultureInfo.InvariantCulture, out value);
         }
 
         /// <summary>The value of a real-form text, false when the form is wrong or the value overflows to infinity.</summary>

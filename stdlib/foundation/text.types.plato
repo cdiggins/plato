@@ -19,3 +19,13 @@ type NumberParse
     Value: Number;
     Ok: Boolean;
 }
+
+// The result of reading an integer from text (`ParseInteger` in `text.library.plato`).
+// When Ok is true Value is the Integer the text spells; when Ok is false the text was not
+// an optional sign and digits, or its value does not fit Integer, and Value is 0 and means nothing.
+type IntegerParse
+    implements IValue
+{
+    Value: Integer;
+    Ok: Boolean;
+}

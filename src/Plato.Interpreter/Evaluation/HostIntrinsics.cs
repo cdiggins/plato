@@ -140,6 +140,8 @@ public sealed class HostIntrinsics
         });
         Add("IsNumberText(String)", (_, a) => Boxes.Of(n.TryParseNumber((string)a[0], out var ignored)));
         Add("NumberFromText(String)", (_, a) => n.TryParseNumber((string)a[0], out var v) ? v : 0.0);
+        Add("IsIntegerText(String)", (_, a) => Boxes.Of(n.TryParseInteger((string)a[0], out var ignored)));
+        Add("IntegerFromText(String)", (_, a) => Boxes.Of(n.TryParseInteger((string)a[0], out var v) ? v : 0L));
         Add("FromCharacters(Array)", (_, a) =>
         {
             var cs = (PlatoArray)a[0];
