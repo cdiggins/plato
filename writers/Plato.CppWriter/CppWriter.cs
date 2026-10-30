@@ -1253,7 +1253,7 @@ namespace Ara3D.Geometry.CppWriter
         {
             if (ct.TypeDef.Fields.Any(fd => fd.Name == f.Name))
                 return true;
-            if (IgnoredFunctions.Contains(f.Name))
+            if (IgnoredFunctions.Contains(f.Name) && !(IsCpu && f.Name == "MakeArray2D"))
                 return true;
             // Do not implement functions that cast to themselves.
             if (f.Name == ct.TypeDef.Name)
@@ -1266,11 +1266,20 @@ namespace Ara3D.Geometry.CppWriter
             foreach (var ct in Compilation.ConcreteTypes)
             {
                 var name = ct.TypeDef.Name;
-                if (IsIgnoredType(name) || IsExcludedTupleOrFunction(name) || name.StartsWith("Function"))
+                // Cpu: a function whose receiver is a function value (MinimizeOverDomain(eval: Function1<..>, ..))
+                // belongs to the FunctionN type; it is emitted as a template over the callable (F0, F1, ...).
+                var isFunctionOwner = IsCpu && name.StartsWith("Function") && name.Length > 8 && char.IsDigit(name[name.Length - 1]);
+                // Cpu: List, Buffer and TupleN are prelude or template types whose library functions
+                // (Holds(List<Integer>, ..), JaggedArray(Tuple2<..>)) are emitted like those of Array.
+                var isBuilderOrTuple = IsCpu && (name == "List" || name == "Buffer"
+                                                 || (name.StartsWith("Tuple") && name.Length > 5 && char.IsDigit(name[name.Length - 1])));
+                if (IsIgnoredType(name) || (!isFunctionOwner && !isBuilderOrTuple && (IsExcludedTupleOrFunction(name) || name.StartsWith("Function"))))
                     continue;
                 // Cpu: library functions whose receiver is a concrete Array<X> (PlainLoop(Array<UvCoordinate>))
                 // belong to the generic Array type; the ones over a type variable skip with a reason.
                 var supported = (IsCpu && name == "Array")
+                                || isFunctionOwner
+                                || isBuilderOrTuple
                                 || NativePrimitives.ContainsKey(name)
                                 || IsNativeVectorName(name)
                                 || PreambleTypes.Contains(name)
@@ -1518,8 +1527,8 @@ namespace Ara3D.Geometry.CppWriter
                 var templateNames = new List<string>();
                 var paramTypes = IsCpu
                     ? CpuParameterTypes(useZonked
-                        ? tir.ZonkedParameterTypes.Select(t => (PlatoTypeName(t), (Func<string>)(() => CppTypeName(t)))).ToList()
-                        : fi.ParameterTypes.Select(t => (t?.Name, (Func<string>)(() => CppTypeName(t)))).ToList(), templateNames)
+                        ? tir.ZonkedParameterTypes.Select(t => (PlatoTypeName(t), (Func<string>)(() => CppTypeName(t)), IsInterfaceParameter(TypeInstance.Create(t)))).ToList()
+                        : fi.ParameterTypes.Select(t => (t?.Name, (Func<string>)(() => CppTypeName(t)), IsInterfaceParameter(t))).ToList(), templateNames, ct)
                     : useZonked
                         ? tir.ZonkedParameterTypes.Select(CppTypeName).ToList()
                         : fi.ParameterTypes.Select(CppTypeName).ToList();
@@ -1558,6 +1567,12 @@ namespace Ara3D.Geometry.CppWriter
                     if (IsCpu)
                     {
                         _claimedSignatures.Remove(sigKey);
+                        if (_tvMap != null && _tvMap.Keys.Any(k => k.StartsWith("#interface")))
+                        {
+                            // An abstract interface member: the implementing types carry the bodies.
+                            Skipped.Add($"{label}: bodiless member over a template parameter [{sigKey}]");
+                            return;
+                        }
                         EmitCpuBodiless(ct, fi, label, paramNames, paramTypes, ret);
                         return;
                     }

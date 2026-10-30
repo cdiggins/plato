@@ -255,15 +255,30 @@ namespace Ara3D.Geometry.CppWriter
         /// Parameter types for a Cpu function. A function-typed parameter becomes a template parameter
         /// (F0, F1, ...), so the body writer can pass lambdas at call sites with no std::function.
         /// </summary>
-        private static List<string> CpuParameterTypes(List<(string Plato, Func<string> Cpp)> ps, List<string> templateNames)
+        private List<string> CpuParameterTypes(List<(string Plato, Func<string> Cpp, bool Interface)> ps, List<string> templateNames, ConcreteType owner)
         {
             var result = new List<string>();
-            foreach (var (plato, cpp) in ps)
+            foreach (var (plato, cpp, isInterface) in ps)
             {
                 if (plato != null && plato.StartsWith("Function") && plato.Length > 8 && char.IsDigit(plato[plato.Length - 1]))
                 {
                     var name = "F" + templateNames.Count;
                     templateNames.Add(name);
+                    result.Add(name);
+                }
+                else if (isInterface && result.Count == 0 && OwnerSelfForInterface(owner, plato) is string self)
+                {
+                    // The receiver of an interface member: one concrete overload per implementing type
+                    // (Plato's own dispatch), so overloads of one name over different interfaces never collide.
+                    result.Add(self);
+                }
+                else if (isInterface && _tvMap != null)
+                {
+                    // An interface-typed parameter is one template parameter; At, Count and the rest the
+                    // interface promises resolve on the argument's concrete type by overload.
+                    var name = "TV" + _tvMap.Count;
+                    _tvMap["#interface" + _tvMap.Count] = name;
+                    _tvOrder.Add(name);
                     result.Add(name);
                 }
                 else
@@ -273,6 +288,30 @@ namespace Ara3D.Geometry.CppWriter
             }
             return result;
         }
+
+        /// <summary>The owner as a C++ type when it implements the named interface; null otherwise.</summary>
+        private string OwnerSelfForInterface(ConcreteType owner, string iface)
+        {
+            if (owner == null || _tvMap == null)
+                return null;
+            if (!owner.AllInterfaces.Any(i => { var t = i.ToString(); return t == iface || t.StartsWith(iface + "<"); }))
+                return null;
+            var ps = GenericParamNames(owner);
+            if (ps.Count == 0)
+                return CppNameFor(owner.TypeDef.Name);
+            foreach (var p in ps)
+                if (!_tvMap.ContainsKey(p))
+                {
+                    _tvMap[p] = p;
+                    _tvOrder.Add(p);
+                }
+            return SelfTypeName(owner.TypeDef.Name, owner);
+        }
+
+        /// <summary>True for a parameter type that is an interface other than Array/IArray (those are plato::Array).</summary>
+        private static bool IsInterfaceParameter(TypeInstance ti)
+            => ti != null && ti.Def != null && ti.Def.Kind == Ara3D.Geometry.AST.TypeKind.Interface
+               && ti.Name != "Array" && ti.Name != "IArray";
 
         private static bool IsTemplateParamType(string t)
             => t != null && t.Length >= 2 && t[0] == 'F' && t.Skip(1).All(char.IsDigit);
@@ -341,10 +380,18 @@ namespace Ara3D.Geometry.CppWriter
                 return;
             }
 
-            if (CpuPreludeOwners.Contains(owner))
+            if (CpuPreludeOwners.Contains(owner) && PreludeNames.Contains(FunctionName(fi.Name)))
             {
                 // The prelude defines it under the same name; record the key so callers resolve.
                 _emitted.Add(new Emitted { Label = label, Key = sigKey, Prototype = "", Definition = "", Provided = true });
+                return;
+            }
+
+            // A function the library declares and defers ("OffsetSecondDerivative(...): Vector3D;"): the C#
+            // output throws NotImplementedException; the C++ output aborts, with the same reach.
+            if (!CpuPreludeOwners.Contains(owner) && StructNames.Contains(owner) && ret != null)
+            {
+                Add(label, sigKey, sig, $"{sig} {{ std::abort(); }}", null);
                 return;
             }
 
@@ -440,6 +487,8 @@ namespace Ara3D.Geometry.CppWriter
             handled.Add("ZipComponents");
             AddTemplate($"template <typename F> PLATO_FN bool AllZipComponents({name} a, {name} b, F f)",
                 $" {{ int32_t n = a.{field}.count < b.{field}.count ? a.{field}.count : b.{field}.count; for (int32_t i = 0; i < n; i++) if (!f(a.{field}.data[i], b.{field}.data[i])) return false; return true; }}");
+            AddTemplate($"template <typename F> PLATO_FN bool AllZipComponents({name} a, {name} b, {name} c, F f)",
+                $" {{ int32_t n = a.{field}.count; if (b.{field}.count < n) n = b.{field}.count; if (c.{field}.count < n) n = c.{field}.count; for (int32_t i = 0; i < n; i++) if (!f(a.{field}.data[i], b.{field}.data[i], c.{field}.data[i])) return false; return true; }}");
             handled.Add("AllZipComponents");
             AddTemplate($"template <typename F> PLATO_FN bool AnyZipComponents({name} a, {name} b, F f)",
                 $" {{ int32_t n = a.{field}.count < b.{field}.count ? a.{field}.count : b.{field}.count; for (int32_t i = 0; i < n; i++) if (f(a.{field}.data[i], b.{field}.data[i])) return true; return false; }}");
@@ -713,6 +762,11 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                         : $"hash_({member})";
                 }
 
+                // IIndex promises Value(x); the typed indices satisfy it with their field.
+                if (s.Type != null && s.Fields.Count == 1 && s.Fields[0].Name == "Value"
+                    && s.Type.AllInterfaces.Any(i => i.ToString() == "IIndex"))
+                    AddGenerated("Value", new[] { n }, $"PLATO_FN int32_t Value(const {n}& x)", " { return x.Value; }");
+
                 string body;
                 if (s.Type != null && s.Type.TypeDef.IsSum)
                 {
@@ -803,7 +857,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
             if (open < 0 || !e.Key.EndsWith(")"))
                 return false;
             var inner = e.Key.Substring(open + 1, e.Key.Length - open - 2);
-            var vars = System.Text.RegularExpressions.Regex.Matches(inner, @"\b(?:" + string.Join("|", e.TemplateVars.Select(System.Text.RegularExpressions.Regex.Escape)) + @")\b");
+            var vars = System.Text.RegularExpressions.Regex.Matches(inner, @"\b(?:F\d+|" + string.Join("|", e.TemplateVars.Select(System.Text.RegularExpressions.Regex.Escape)) + @")\b");
             var pattern = new StringBuilder("^");
             var bound = new HashSet<string>();
             var last = 0;
@@ -821,7 +875,16 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
         /// <summary>A call the prelude answers: higher-order array helpers, and any array method no Plato function of that name shadows.</summary>
         private bool PreludeAnswers(CallSite c, ILookup<string, Emitted> byName)
         {
-            if (UntrackedHofNames.Contains(c.Name) || IsPreambleArrayMethod(c))
+            var onArray2D = c.Types.Count > 0 && c.Types[0] != null && (c.Types[0].StartsWith("Array2D<") || c.Types[0].StartsWith("Array3D<"));
+            if ((UntrackedHofNames.Contains(c.Name) && !onArray2D) || IsPreambleArrayMethod(c))
+                return true;
+            // Array operations the prelude defines as templates (Take, Skip, Slice, ...): the Provided entry
+            // carries the template key, which a concrete call does not match by text.
+            if (c.Types.Count > 0 && c.Types[0] != null && c.Types[0].StartsWith("Array<") && CpuPreludeArrayNames.Contains(c.Name))
+                return true;
+            // An argument whose type is an interface (written "?") resolves by C++ overload on the concrete
+            // type at the instantiation, when the prelude or a generated member of that name exists.
+            if (c.Types.Any(t => t == null) && (byName[c.Name].Any() || PreludeNames.Contains(c.Name) || PreludeNames.Contains(FunctionName(c.Name))))
                 return true;
             // The prelude's PlatoList / PlatoBuffer define Count, At, Add, AddRange, Set, Freeze, EmptyList.
             if (c.Types.Count > 0 && c.Types[0] != null && (c.Types[0].StartsWith("List<") || c.Types[0].StartsWith("Buffer<"))
@@ -833,9 +896,34 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                    && !byName[c.Name].Any() && PreludeNames.Contains(c.Name);
         }
 
-        private static readonly HashSet<string> PreludeNames = new HashSet<string>(
-            System.Text.RegularExpressions.Regex.Matches(CppCpuPrelude.Text, @"([A-Za-z_]\w*)\s*\(")
-                .Cast<System.Text.RegularExpressions.Match>().Select(m => m.Groups[1].Value));
+        private static HashSet<string> _preludeNames;
+
+        private static HashSet<string> PreludeNames => _preludeNames ??= BuildPreludeNames();
+
+        /// <summary>Every identifier the prelude text writes directly before a parenthesis.</summary>
+        private static HashSet<string> BuildPreludeNames()
+        {
+            var text = CppCpuPrelude.Text;
+            var names = new HashSet<string>();
+            var i = 0;
+            while (i < text.Length)
+            {
+                if (!(char.IsLetter(text[i]) || text[i] == '_'))
+                {
+                    i++;
+                    continue;
+                }
+                var start = i;
+                while (i < text.Length && (char.IsLetterOrDigit(text[i]) || text[i] == '_'))
+                    i++;
+                var end = i;
+                while (i < text.Length && char.IsWhiteSpace(text[i]))
+                    i++;
+                if (i < text.Length && text[i] == '(')
+                    names.Add(text.Substring(start, end - start));
+            }
+            return names;
+        }
 
         private void PruneCpu()
         {
