@@ -43,6 +43,26 @@ namespace Ara3D.Geometry
         // Property, not method: `Count` is the `Countable` interface member, and an interface
         // obligation can only be discharged by a member of the matching shape.
         public Integer Count { [MethodImpl(AggressiveInlining)] get => Value.Length; }
+
+        /// <summary>The characters at the indices <c>start</c> to <c>start + count - 1</c> that exist:
+        /// the range is clamped to the String at both ends, and a count of zero or less, or a range
+        /// wholly outside, gives the empty String. Never fails. (<c>Substring</c> in the contract.)</summary>
+        public String Substring(Integer start, Integer count)
+        {
+            long first = start.Value;
+            long n = count.Value;
+            var length = (long)Value.Length;
+            if (first < 0)
+            {
+                n += first; // first is negative and n may be any value: no overflow when n > 0
+                first = 0;
+            }
+            if (n <= 0 || first >= length)
+                return new String(string.Empty);
+            if (n > length - first)
+                n = length - first;
+            return new String(Value.Substring((int)first, (int)n));
+        }
         
         // -------------------------------------------------------------------------------
         // Conversions

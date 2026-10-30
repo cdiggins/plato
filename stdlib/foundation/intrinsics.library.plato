@@ -155,6 +155,15 @@ library Intrinsics
     // Witness: FromCharacters of the characters of "ab" is "ab"; of none, "".
     FromCharacters(cs: Array<Character>): String;
 
+    // The characters at the indices start to start + count - 1 that exist. The range
+    // is clamped to the String at both ends, so a negative start, a count past the end,
+    // a count of zero or less, and a range wholly outside never fail: the last two give
+    // "". Expressible as FromCharacters over MapRange and At, but that copies and
+    // allocates once per character and the STEP parser slices every keyword; the
+    // intrinsic is one block copy. Witness: Substring("abcd", 1, 2) == "bc";
+    // Substring("abcd", -1, 3) == "ab" and Substring("abcd", 3, 9) == "d".
+    Substring(s: String, start: Integer, count: Integer): String;
+
     //==
     // Array — the five-function kernel.
     //

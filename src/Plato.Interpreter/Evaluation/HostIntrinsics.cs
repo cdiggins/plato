@@ -122,6 +122,22 @@ public sealed class HostIntrinsics
         Add("Equals(Character, Character)", (_, a) => Boxes.Of((char)a[0] == (char)a[1]));
         Add("Count(String)", (_, a) => Boxes.Of((long)((string)a[0]).Length));
         Add("At(String, Integer)", (_, a) => ((string)a[0])[(int)L(a[1])]);
+        Add("Substring(String, Integer, Integer)", (_, a) =>
+        {
+            var text = (string)a[0];
+            var first = L(a[1]);
+            var n = L(a[2]);
+            if (first < 0)
+            {
+                n += first;
+                first = 0;
+            }
+            if (n <= 0 || first >= text.Length)
+                return "";
+            if (n > text.Length - first)
+                n = text.Length - first;
+            return text.Substring((int)first, (int)n);
+        });
         Add("FromCharacters(Array)", (_, a) =>
         {
             var cs = (PlatoArray)a[0];

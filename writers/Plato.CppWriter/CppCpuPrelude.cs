@@ -534,6 +534,18 @@ namespace plato
     // FromCharacters: the String of the array's characters, in order.
     inline std::string FromCharacters(Array<char> cs) { return cs.count > 0 ? std::string(cs.data, static_cast<size_t>(cs.count)) : std::string(); }
 
+    // Substring: the characters at start .. start + count - 1 that exist; clamped at both ends, never fails.
+    inline std::string Substring(const std::string& s, int32_t start, int32_t count)
+    {
+        int64_t first = start;
+        int64_t n = count;
+        const int64_t length = static_cast<int64_t>(s.size());
+        if (first < 0) { n += first; first = 0; }
+        if (n <= 0 || first >= length) return std::string();
+        if (n > length - first) n = length - first;
+        return s.substr(static_cast<size_t>(first), static_cast<size_t>(n));
+    }
+
     // ---- Helpers the body writer emits (names as in the GPU prelude, on double) ----
 
     inline double min_(double a, double b) { return a < b ? a : b; }

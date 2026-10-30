@@ -78,6 +78,10 @@ int main()
     // Text intrinsics
     CHECK(FromCharacters(make_array('a', 'b')) == "ab" && FromCharacters(make_array_empty<char>()) == "");
 
+    CHECK(Substring("abcd", 1, 2) == "bc" && Substring("abcd", -1, 3) == "ab" && Substring("abcd", 3, 9) == "d");
+    CHECK(Substring("abcd", 0, 0) == "" && Substring("abcd", 0, -5) == "" && Substring("abcd", 4, 1) == "" && Substring("abcd", 9, 1) == "");
+    CHECK(Substring("abcd", INT32_MIN, INT32_MAX) == "" && Substring("abcd", -1, INT32_MAX) == "abcd" && Substring("abcd", 2, INT32_MAX) == "cd" && Substring("", 0, 1) == "");
+
     // Json: Array<double> and a nested object
     arena_reset();
     Array<double> xs = make_array(0.1, -2.5, 1e20, 3.0);
