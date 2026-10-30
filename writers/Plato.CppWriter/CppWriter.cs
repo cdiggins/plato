@@ -1263,7 +1263,25 @@ namespace Ara3D.Geometry.CppWriter
 
         private void CollectMemberFunctions()
         {
-            foreach (var ct in Compilation.ConcreteTypes)
+            // Cpu: the unique builder types (List, Buffer) have no ConcreteType in the compilation (they are
+            // intrinsic-backed), yet the library writes functions over their closed instances
+            // (Holds(xs: List<Integer>, x)). Their analysis is built here, and only functions with a body are emitted.
+            var concreteTypes = Compilation.ConcreteTypes.ToList();
+            var uniqueOwners = new HashSet<ConcreteType>();
+            if (IsCpu)
+            {
+                foreach (var td in Compilation.GetConcreteTypes().Where(t => t.IsUnique))
+                {
+                    try
+                    {
+                        var uct = new ConcreteType(td, Compilation.Libraries);
+                        concreteTypes.Add(uct);
+                        uniqueOwners.Add(uct);
+                    }
+                    catch (Exception) { /* no analysis for this builder type: its library functions stay unemitted */ }
+                }
+            }
+            foreach (var ct in concreteTypes)
             {
                 var name = ct.TypeDef.Name;
                 // Cpu: a function whose receiver is a function value (MinimizeOverDomain(eval: Function1<..>, ..))
@@ -1291,6 +1309,14 @@ namespace Ara3D.Geometry.CppWriter
                 // fixed-size array: its accessors are generated structurally from the fields,
                 // because the stdlib bodies route through the dynamic IArray.
                 var handled = EmitArrayLikeMembers(ct);
+
+                if (uniqueOwners.Contains(ct))
+                {
+                    foreach (var f in ct.ConcreteFunctions)
+                        if (f.Implementation?.Body != null && !SkipFunction(ct, f))
+                            TryEmitFunction(f, ct);
+                    continue;
+                }
 
                 foreach (var g in ct.InterfaceFunctionGroups)
                 {

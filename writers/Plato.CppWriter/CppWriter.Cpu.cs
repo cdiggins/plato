@@ -391,7 +391,14 @@ namespace Ara3D.Geometry.CppWriter
             // output throws NotImplementedException; the C++ output aborts, with the same reach.
             if (!CpuPreludeOwners.Contains(owner) && StructNames.Contains(owner) && ret != null)
             {
-                Add(label, sigKey, sig, $"{sig} {{ std::abort(); }}", null);
+                // A generic owner's member is a template over the owner's type parameters.
+                var vars = CpuTemplateVarsInUse();
+                var tsig = vars.Count == 0 ? sig : TemplateHeader(vars) + sig;
+                // IEquatable's members on a record: the structural operators of plato_types.hpp.
+                var structural = paramNames.Count == 2 && ret == "bool"
+                    ? fi.Name == "Equals" ? $"{a} == {b}" : fi.Name == "NotEquals" ? $"{a} != {b}" : null
+                    : null;
+                Add(label, sigKey, tsig, structural != null ? $"{tsig} {{ return {structural}; }}" : $"{tsig} {{ std::abort(); }}", null, vars);
                 return;
             }
 
@@ -925,8 +932,37 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
             return names;
         }
 
+        /// <summary>
+        /// A tuple converted to a record by a call, <c>JaggedArray((offsets, values))</c>, where the body writer could not write the
+        /// record's braced initializer (the tuple is a local, not a literal). One conversion function per
+        /// record such a call names, over the tuple type of its field types (a template when the record is).
+        /// </summary>
+        private void EmitTupleConversions()
+        {
+            var wanted = new HashSet<string>();
+            foreach (var e in _emitted)
+                foreach (var c in e.Callees)
+                    if (c.Types.Count == 1 && c.Types[0] != null && c.Types[0].StartsWith("Tuple") && StructNames.Contains(c.Name))
+                        wanted.Add(c.Name);
+            foreach (var s in CpuStructs().Where(s => wanted.Contains(s.Name) && s.Fields.Count >= 2 && s.Fields.Count <= 10))
+            {
+                string tupleType;
+                using (ParamScope(s.Type))
+                    tupleType = $"Tuple{s.Fields.Count}<{s.Fields.Select(f => CppTypeName(f)).JoinStringsWithComma()}>";
+                var tn = SelfTypeName(s.Name, s.Type);
+                var vars = GenericParamNames(s.Type);
+                var key = SignatureKey(s.Name, new[] { tupleType });
+                if (!_claimedSignatures.Add(key))
+                    continue;
+                var inits = Enumerable.Range(0, s.Fields.Count).Select(i => $"t.X{i}").JoinStringsWithComma();
+                var sig = $"{TemplatePrefix(s.Type)}PLATO_FN {tn} {FunctionName(s.Name)}({tupleType} t)";
+                Add($"generated.{s.Name}", key, sig, $"{sig} {{ return {tn}{{ {inits} }}; }}", null, vars.ToList());
+            }
+        }
+
         private void PruneCpu()
         {
+            EmitTupleConversions();
             var byKey = new Dictionary<string, Emitted>();
             foreach (var e in _emitted)
                 if (!byKey.ContainsKey(e.Key))
