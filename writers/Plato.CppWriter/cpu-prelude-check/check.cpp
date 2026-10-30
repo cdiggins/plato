@@ -103,6 +103,9 @@ int main()
     }
     CHECK(!IsNumberText(NumberToShortestString(std::nan(""))) && !IsNumberText(NumberToShortestString(HUGE_VAL)) && !IsNumberText(NumberToShortestString(-HUGE_VAL)));
 
+    CHECK(ToInteger('a') == 97 && ToInteger(static_cast<char>(200)) == 200 && ToCharacter(97) == 'a' && ToInteger(ToCharacter(255)) == 255 && At(std::string("abc"), 1) == 'b');
+    CHECK(FromCharacters(make_array(ToCharacter(10), ToCharacter(13))) == std::string("\x0a\x0d"));
+
     // Json: Array<double> and a nested object
     arena_reset();
     Array<double> xs = make_array(0.1, -2.5, 1e20, 3.0);

@@ -531,6 +531,11 @@ namespace plato
     inline int32_t ToCount(const std::string& s) { return static_cast<int32_t>(s.size()); }
     inline char At(const std::string& s, int32_t i) { PLATO_ASSERT(i >= 0 && static_cast<size_t>(i) < s.size()); return s[static_cast<size_t>(i)]; }
 
+    // Character <-> Integer: the code unit (a Character is one byte here, so 0 to 255 agree with C#).
+    inline int32_t ToInteger(char c) { return static_cast<int32_t>(static_cast<unsigned char>(c)); }
+    inline int32_t ToInteger(int32_t x) { return x; }
+    inline char ToCharacter(int32_t n) { return static_cast<char>(n); }
+
     // FromCharacters: the String of the array's characters, in order.
     inline std::string FromCharacters(Array<char> cs) { return cs.count > 0 ? std::string(cs.data, static_cast<size_t>(cs.count)) : std::string(); }
 

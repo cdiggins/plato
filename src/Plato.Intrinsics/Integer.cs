@@ -32,6 +32,11 @@ namespace Ara3D.Geometry
         // Convert to/from int
         // -------------------------------------------------------------------------------
        
+        /// <summary>The Character with this code unit value: the low 16 bits of the Integer. Codes 0 to 255
+        /// (Latin-1, one byte per character) are the same in every runtime. (<c>ToCharacter</c> in the contract.)</summary>
+        [MethodImpl(AggressiveInlining)]
+        public Character ToCharacter() => (char)Value;
+
         [MethodImpl(AggressiveInlining)]
         public IntegerValue ToSystem() => Value;
 

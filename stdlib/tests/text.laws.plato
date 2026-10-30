@@ -20,6 +20,24 @@ library TextLaws
         && FromCharacters(MapRange(0, i => "ab".At(i))) == "";
 
     //==
+    // At, ToInteger and ToCharacter.
+
+    // Two-line witness: the character at an index, its code, and the code's character.
+    Law_CharacterWitness(): Boolean
+        => "abc".At(1).ToInteger == 98 && "a".At(0).ToInteger == 97 && 97.ToCharacter.ToInteger == 97
+        && 97.ToCharacter == "a".At(0) && FromCharacters([10.ToCharacter, 13.ToCharacter]).Count == 2
+        && FromCharacters([10.ToCharacter, 13.ToCharacter]).At(0).ToInteger == 10;
+
+    // At reads what FromCharacters wrote, at every index.
+    Law_AtReadsWhatFromCharactersWrote(s: String): Boolean
+        => FromCharacters(MapRange(s.Count, i => s.At(i))).Count == s.Count
+        && s.Count.Range.All(i => s.At(i).ToInteger.ToCharacter == s.At(i));
+
+    // The code of a character is in the Latin-1 range for the runner's lower-case letters, and ToCharacter inverts it.
+    Law_ToCharacterInvertsToInteger(n: Integer): Boolean
+        => n < 0 || n > 255 || n.ToCharacter.ToInteger == n;
+
+    //==
     // Substring.
 
     // The length is the size of the intersection of [start, start + count) with [0, Count).

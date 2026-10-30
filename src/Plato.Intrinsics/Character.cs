@@ -29,6 +29,10 @@ namespace Ara3D.Geometry
         // Conversions
         // -------------------------------------------------------------------------------
 
+        /// <summary>The UTF-16 code unit value, 0 to 65535. (<c>ToInteger</c> on Character in the contract.)</summary>
+        [MethodImpl(AggressiveInlining)]
+        public Integer ToInteger() => (IntegerValue)Value;
+
         [MethodImpl(AggressiveInlining)]
         public char ToSystem() => Value;
 

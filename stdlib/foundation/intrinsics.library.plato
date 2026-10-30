@@ -155,6 +155,22 @@ library Intrinsics
     // Witness: FromCharacters of the characters of "ab" is "ab"; of none, "".
     FromCharacters(cs: Array<Character>): String;
 
+    // The character at index n. Precondition: 0 <= n < Count; outside it the call faults
+    // (the C# runtime throws IndexOutOfRangeException, the interpreter an evaluation
+    // error, the C++ prelude asserts), so test the index first. A Character is one UTF-16
+    // code unit in C# and the interpreter and one byte in the C++ prelude, identical for
+    // the Latin-1 text the STEP parser reads. Witness: "abc".At(1).ToInteger == 98.
+    At(s: String, n: Integer): Character;
+
+    // The code unit value of the character: 97 for a. Witness: "a".At(0).ToInteger == 97.
+    ToInteger(self: Character): Integer;
+
+    // The character with that code unit value (the low 16 bits in C#, the low 8 in the C++
+    // prelude; 0 to 255 agree everywhere). With FromCharacters this builds any text,
+    // including the line feed (10) and carriage return (13) a Plato literal cannot hold.
+    // Witness: 97.ToCharacter.ToInteger == 97 and FromCharacters([10.ToCharacter]).Count == 1.
+    ToCharacter(self: Integer): Character;
+
     // The characters at the indices start to start + count - 1 that exist. The range
     // is clamped to the String at both ends, so a negative start, a count past the end,
     // a count of zero or less, and a range wholly outside never fail: the last two give
