@@ -38,6 +38,16 @@ library TextLaws
         => n < 0 || n > 255 || n.ToCharacter.ToInteger == n;
 
     //==
+    // String literals. The value of a literal is the characters between the quotes, verbatim; the writers
+    // escape them, so a backslash and a non-ASCII character reach the generated C# and C++ unchanged.
+
+    // "André\x" is seven characters: the e acute (233), a backslash (92) and an x.
+    Law_StringLiteralKeepsBackslashAndNonAscii(): Boolean
+        => "André\x".Count == 7 && "André\x".At(4).ToInteger == 233
+        && "André\x".At(5).ToInteger == 92 && "André\x".At(6).ToInteger == 120
+        && "André\x" == FromCharacters([65.ToCharacter, 110.ToCharacter, 100.ToCharacter, 114.ToCharacter, 233.ToCharacter, 92.ToCharacter, 120.ToCharacter]);
+
+    //==
     // Substring.
 
     // The length is the size of the intersection of [start, start + count) with [0, Count).

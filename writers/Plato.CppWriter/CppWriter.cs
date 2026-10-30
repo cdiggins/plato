@@ -1213,8 +1213,35 @@ namespace Ara3D.Geometry.CppWriter
         public static string EscapeCppStringPublic(string s)
             => EscapeCppString(s);
 
+        /// <summary>A Plato string literal's characters (verbatim, no escape processing in the front end) as the
+        /// inside of a C++ string literal: the backslash and the quote escaped, control characters and every
+        /// non-ASCII character written as three-digit octal escapes of their UTF-8 bytes (an octal escape ends
+        /// after three digits, so a following digit cannot join it), and the question mark escaped so no trigraph forms.</summary>
         private static string EscapeCppString(string s)
-            => s.Replace("\\", "\\\\").Replace("\"", "\\\"");
+        {
+            var sb = new System.Text.StringBuilder(s.Length + 2);
+            foreach (var rune in s.EnumerateRunes())
+            {
+                var c = rune.Value < 0x80 ? (char)rune.Value : (char)0;
+                switch (c)
+                {
+                    case '\\': sb.Append("\\\\"); break;
+                    case '"': sb.Append("\\\""); break;
+                    case '\n': sb.Append("\\n"); break;
+                    case '\r': sb.Append("\\r"); break;
+                    case '\t': sb.Append("\\t"); break;
+                    case '?': sb.Append("\\?"); break;
+                    default:
+                        if (rune.Value >= 0x20 && rune.Value < 0x7F)
+                            sb.Append(c);
+                        else
+                            foreach (var b in System.Text.Encoding.UTF8.GetBytes(rune.ToString()))
+                                sb.Append('\\').Append(System.Convert.ToString(b, 8).PadLeft(3, '0'));
+                        break;
+                }
+            }
+            return sb.ToString();
+        }
 
         // ---- Functions ----------------------------------------------------------
 

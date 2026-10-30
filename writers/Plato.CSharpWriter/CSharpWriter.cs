@@ -815,6 +815,8 @@ namespace Ara3D.Geometry.CSharpWriter
                 }
                 case float f:
                     return LiteralString((double)f);
+                case string s:
+                    return StringLiteral(s);
                 case long l:
                     return IntegerLiteral(l, Profile.IntegerBits);
                 case int i:
@@ -822,6 +824,34 @@ namespace Ara3D.Geometry.CSharpWriter
                 default:
                     return value.ToLiteralString();
             }
+        }
+
+        /// <summary>A Plato string literal as C# source. The value is the characters between the quotes,
+        /// verbatim (the front end does no escape processing), so this escapes the backslash and the quote,
+        /// writes control characters as n, r, t or uXXXX escapes, and writes every non-ASCII character as a
+        /// uXXXX escape: the generated file is then pure ASCII and means the same in any encoding.</summary>
+        public static string StringLiteral(string value)
+        {
+            var sb = new System.Text.StringBuilder(value.Length + 2);
+            sb.Append('"');
+            foreach (var c in value)
+            {
+                switch (c)
+                {
+                    case '\\': sb.Append("\\\\"); break;
+                    case '"': sb.Append("\\\""); break;
+                    case '\n': sb.Append("\\n"); break;
+                    case '\r': sb.Append("\\r"); break;
+                    case '\t': sb.Append("\\t"); break;
+                    default:
+                        if (c < 0x20 || c >= 0x7F)
+                            sb.Append("\\u").Append(((int)c).ToString("X4"));
+                        else
+                            sb.Append(c);
+                        break;
+                }
+            }
+            return sb.Append('"').ToString();
         }
 
         // The host contract: what the handwritten Plato.Intrinsics runtime implements for a
