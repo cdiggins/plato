@@ -682,7 +682,7 @@ namespace plato
         return std::string(buf, r.ptr);
     }
 
-    // Shortest round-trip digits, laid out as .NET does: plain below 1e15 and from 1e-4, otherwise d.dddE+XX.
+    // Shortest round-trip digits, laid out as .NET writes "R" (checked on .NET 8, 9 and 10): plain from 1e-4 up to below 1e17, otherwise d.dddE+XX.
     inline std::string ToString(double v)
     {
         if (std::isnan(v)) return "NaN";
@@ -707,7 +707,7 @@ namespace plato
         int e = 0;
         while (p < end) { e = e * 10 + (*p - '0'); ++p; }
         if (eneg) e = -e;
-        if (e >= 15 || e < -4)
+        if (e >= 17 || e < -4)
         {
             out.push_back(digits[0]);
             if (digits.size() > 1)
@@ -748,6 +748,10 @@ namespace plato
     inline std::string ToString(bool v) { return v ? "True" : "False"; }   // C# bool.ToString
     inline std::string ToString(char v) { return std::string(1, v); }
     inline std::string ToString(const std::string& v) { return v; }
+
+    // NumberToShortestString: the shortest text that reads back to the same double through NumberFromText, the
+    // layout .NET writes ("0.1", "1E+15", "1E-05", "-0"); NaN, Infinity and -Infinity are not numbers to IsNumberText.
+    inline std::string NumberToShortestString(double x) { return ToString(x); }
 
     // ---- String helpers (std::string replaces the fixed-capacity GPU String) ----
 

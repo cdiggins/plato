@@ -92,4 +92,35 @@ library TextLaws
     // A text of letters, the runner's String, is never an integer.
     Law_ParseIntegerRejectsLetters(s: String): Boolean
         => s.Count == 0 || !ParseInteger(s).Ok;
+
+    //==
+    // NumberToShortestString and the round trip.
+
+    // The round trip: reading the shortest text of a finite Number gives back that Number
+    // exactly, sign of zero included (1 / x tells 0 from -0). The runner draws Numbers from
+    // [-10, 10] and a few special values.
+    Law_ParseNumberRoundTripsNumberToShortestString(x: Number): Boolean
+        => ParseNumber(NumberToShortestString(x)).Ok
+        && ParseNumber(NumberToShortestString(x)).Value == x
+        && 1.0 / ParseNumber(NumberToShortestString(x)).Value == 1.0 / x;
+
+    // The same round trip for values the generator does not draw: tiny, huge, repeating, and
+    // sums that are not exactly their decimal.
+    Law_ParseNumberRoundTripsHardNumbers(): Boolean
+        => RoundTrips(0.1 + 0.2) && RoundTrips(1.0 / 3.0) && RoundTrips(5e-324) && RoundTrips(-2.5e-300)
+        && RoundTrips(1.7976931348623157e308) && RoundTrips(123456789.123456789) && RoundTrips(9007199254740993.0)
+        && RoundTrips(1e15) && RoundTrips(1e-5) && RoundTrips(4.35) && RoundTrips(-1e22);
+
+    RoundTrips(x: Number): Boolean
+        => ParseNumber(NumberToShortestString(x)).Value == x && ParseNumber(NumberToShortestString(x)).Ok;
+
+    // Two-line witness: the layout of the text, and that the non-finite values are not numbers.
+    Law_NumberToShortestStringWitness(): Boolean
+        => NumberToShortestString(0.5) == "0.5" && NumberToShortestString(100.0) == "100" && NumberToShortestString(1e16) == "10000000000000000"
+        && NumberToShortestString(1e17) == "1E+17" && NumberToShortestString(1e-5) == "1E-05" && NumberToShortestString(-1.5) == "-1.5" && NumberToShortestString(0.1) == "0.1";
+
+    Law_NonFiniteNumbersHaveTextThatIsNotANumber(): Boolean
+        => NumberToShortestString(0.0 / 0.0) == "NaN" && NumberToShortestString(1.0 / 0.0) == "Infinity"
+        && NumberToShortestString(-1.0 / 0.0) == "-Infinity"
+        && !ParseNumber("NaN").Ok && !ParseNumber("Infinity").Ok && !ParseNumber("-Infinity").Ok;
 }

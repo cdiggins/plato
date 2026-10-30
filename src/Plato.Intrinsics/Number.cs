@@ -129,6 +129,13 @@ namespace Ara3D.Geometry
         public Boolean IsInfinite { [MethodImpl(AggressiveInlining)] get => NumberValue.IsInfinity(Value); }
         public Integer ToInteger { [MethodImpl(AggressiveInlining)] get => (IntegerValue)Value; }
 
+        /// <summary>The shortest text that reads back to this exact Number through <c>NumberFromText</c>,
+        /// bit for bit: the invariant-culture <c>"R"</c> form, which is the shortest round-trippable
+        /// text since .NET Core 3.0 (<c>0.1</c>, <c>1000000000000000</c>, <c>1E+17</c>, <c>1E-05</c>, <c>-0</c>):
+        /// plain digits from 1E-04 up to below 1E+17, scientific outside. NaN and the infinities are <c>NaN</c>, <c>Infinity</c> and <c>-Infinity</c>,
+        /// which <c>IsNumberText</c> rejects. (<c>NumberToShortestString</c> in the contract.)</summary>
+        public String NumberToShortestString() => Value.ToString("R", System.Globalization.CultureInfo.InvariantCulture);
+
         [MethodImpl(AggressiveInlining)] public Number Round(Integer digits) => NumberMath.Round(Value, (int)digits.Value);
         [MethodImpl(AggressiveInlining)] public Number Pow(Number power) => NumberMath.Pow(Value, power.Value);
         [MethodImpl(AggressiveInlining)] public Number FusedMultiplyAdd(Number y, Number z) => NumberMath.FusedMultiplyAdd(Value, y.Value, z.Value);

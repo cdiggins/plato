@@ -102,6 +102,11 @@ public sealed class Numbers
         return long.TryParse(t, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out value);
     }
 
+    /// <summary>The shortest round-trip text of a Number under this profile, in the invariant culture:
+    /// binary32 writes the float's digits.</summary>
+    public string ToShortestString(double x)
+        => Is32 ? ((float)x).ToString("R", CultureInfo.InvariantCulture) : x.ToString("R", CultureInfo.InvariantCulture);
+
     public long IntegerMinValue => _int32 ? int.MinValue : long.MinValue;
     public long IntegerMaxValue => _int32 ? int.MaxValue : long.MaxValue;
 }

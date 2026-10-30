@@ -123,6 +123,56 @@ public static class TextIntrinsicsTests
         Assert.That(S(text).IntegerFromText().Value, Is.EqualTo((IntegerValue)0));
     }
 
+    [TestCase(0.5, "0.5")]
+    [TestCase(100.0, "100")]
+    [TestCase(1e15, "1000000000000000")]
+    [TestCase(1e16, "10000000000000000")]
+    [TestCase(1e17, "1E+17")]
+    [TestCase(123456789012345.0, "123456789012345")]
+    [TestCase(1e-5, "1E-05")]
+    [TestCase(0.0001, "0.0001")]
+    [TestCase(-1.2345e-7, "-1.2345E-07")]
+    [TestCase(double.NaN, "NaN")]
+    [TestCase(double.PositiveInfinity, "Infinity")]
+    [TestCase(double.NegativeInfinity, "-Infinity")]
+    public static void ShortestStringLayout(double x, string expected)
+    {
+        if (PlatoNumberProfile.Precision != 53)
+            Assert.Ignore("the layout cases are binary64 digits");
+        Assert.That(((Number)(NumberValue)x).NumberToShortestString().Value, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public static void NegativeZeroHasTheTextMinusZero()
+    {
+        var negativeZero = (Number)NumberValue.NegativeZero;
+        Assert.That(negativeZero.NumberToShortestString().Value, Is.EqualTo("-0"));
+        Assert.That(NumberValue.IsNegative(negativeZero.NumberToShortestString().NumberFromText().Value), Is.True);
+    }
+
+    [Test]
+    public static void ShortestStringRoundTripsBitForBit()
+    {
+        var random = new Random(12345);
+        var values = new List<NumberValue> { 0.1f, 0.1f + 0.2f, 1f / 3f, NumberValue.Epsilon, NumberValue.MaxValue, NumberValue.MinValue, -1e22f, 4.35f, 1e15f, 1e-5f };
+        for (var i = 0; i < 20000; i++)
+        {
+            var bits = new byte[8];
+            random.NextBytes(bits);
+            var d = BitConverter.ToDouble(bits, 0);
+            if (!double.IsFinite(d))
+                continue;
+            values.Add((NumberValue)d);
+            values.Add((NumberValue)(random.NextDouble() * 20.0 - 10.0));
+        }
+        foreach (var x in values.Where(v => NumberValue.IsFinite(v)))
+        {
+            var text = ((Number)x).NumberToShortestString();
+            Assert.That(text.IsNumberText().Value, Is.True, text.Value);
+            Assert.That(BitConverter.DoubleToInt64Bits(text.NumberFromText().Value), Is.EqualTo(BitConverter.DoubleToInt64Bits(x)), text.Value);
+        }
+    }
+
     [Test]
     public static void IntegerOverflowFollowsTheProfileWidth()
     {

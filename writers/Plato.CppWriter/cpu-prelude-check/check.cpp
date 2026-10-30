@@ -69,7 +69,7 @@ int main()
 
     // ToString
     CHECK(ToString(1.5) == "1.5" && ToString(100.0) == "100" && ToString(0.1) == "0.1");
-    CHECK(ToString(1e15) == "1E+15" && ToString(123456789012345.0) == "123456789012345");
+    CHECK(ToString(1e15) == "1000000000000000" && ToString(1e16) == "10000000000000000" && ToString(1e17) == "1E+17" && ToString(123456789012345.0) == "123456789012345");
     CHECK(ToString(0.0001) == "0.0001" && ToString(0.00001) == "1E-05");
     CHECK(ToString(-1.2345e-7) == "-1.2345E-07" && ToString(1.2345678901234568e17) == "1.2345678901234568E+17");
     CHECK(ToString(1.0 / 3.0) == "0.3333333333333333");
@@ -94,6 +94,14 @@ int main()
     CHECK(!IsIntegerText("") && !IsIntegerText("+") && !IsIntegerText("-") && !IsIntegerText("1.0") && !IsIntegerText("1e3") && !IsIntegerText(" 1") && !IsIntegerText("1 ")
         && !IsIntegerText("2147483648") && !IsIntegerText("-2147483649") && !IsIntegerText("99999999999999999999") && !IsIntegerText("--1") && !IsIntegerText("0x10"));
     CHECK(IntegerFromText("-12") == -12 && IntegerFromText("1.0") == 0 && IntegerFromText("2147483647") == INT32_MAX && IntegerFromText("-2147483648") == INT32_MIN && IntegerFromText("2147483648") == 0 && IntegerFromText("+7") == 7);
+
+    CHECK(NumberToShortestString(0.5) == "0.5" && NumberToShortestString(1e-5) == "1E-05" && NumberToShortestString(-0.0) == "-0" && NumberToShortestString(1e300) == "1E+300" && NumberToShortestString(1e15) == "1000000000000000");
+    for (double x : { 0.1, 0.1 + 0.2, 1.0 / 3.0, -2.5e-300, 5e-324, 1.7976931348623157e308, 123456789.123456789, 9007199254740993.0, -0.0, 1e15, 1e-5, 4.35, 100.0 })
+    {
+        double back = NumberFromText(NumberToShortestString(x));
+        CHECK(std::memcmp(&back, &x, sizeof x) == 0);
+    }
+    CHECK(!IsNumberText(NumberToShortestString(std::nan(""))) && !IsNumberText(NumberToShortestString(HUGE_VAL)) && !IsNumberText(NumberToShortestString(-HUGE_VAL)));
 
     // Json: Array<double> and a nested object
     arena_reset();
