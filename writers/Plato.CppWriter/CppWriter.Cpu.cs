@@ -86,6 +86,147 @@ namespace Ara3D.Geometry.CppWriter
         private string FieldCppOrNull(CppField f)
             => f.CppOverride ?? CppTypeNameOrNull(f.Type);
 
+        // ---- generic record types (TKT-1097 B1b) ----------------------------------
+        //
+        // Rule: a generic concrete type is ONE C++ template struct, emitted once with its type
+        // parameters (template<class T> struct Counted { T Value; WorkBudget Work; };). An instance is
+        // spelled Counted<Vector3D> in signatures, locals and constructor calls; List<T> and Buffer<T> are
+        // the prelude's PlatoList/PlatoBuffer aliases. Because C++17 does not deduce aggregate template
+        // arguments, each template gets a deduction guide from its fields so the body writer's bare
+        // Counted{ a, b } still compiles.
+
+        /// <summary>Type parameters in scope while a generic struct's fields are being spelled; null elsewhere.</summary>
+        private HashSet<string> _typeParamScope;
+
+        private sealed class ScopeGuard : IDisposable
+        {
+            private readonly CppWriter _w;
+            private readonly HashSet<string> _prev;
+            public ScopeGuard(CppWriter w, HashSet<string> next) { _w = w; _prev = w._typeParamScope; w._typeParamScope = next; }
+            public void Dispose() => _w._typeParamScope = _prev;
+        }
+
+        private IDisposable ParamScope(ConcreteType c)
+            => new ScopeGuard(this, c == null || c.TypeDef.TypeParameters.Count == 0
+                ? null
+                : new HashSet<string>(c.TypeDef.TypeParameters.Select(p => p.Name)));
+
+        private string FieldCppIn(ConcreteType c, CppField f)
+        {
+            using (ParamScope(c))
+                return FieldCppOrNull(f);
+        }
+
+        private static IReadOnlyList<string> GenericParamNames(ConcreteType c)
+            => c == null ? Array.Empty<string>() : c.TypeDef.TypeParameters.Select(p => p.Name).ToList();
+
+        private static string TemplatePrefix(ConcreteType c)
+        {
+            var ps = GenericParamNames(c);
+            return ps.Count == 0 ? "" : $"template <{ps.Select(p => "class " + p).JoinStringsWithComma()}> ";
+        }
+
+        /// <summary>The struct's own name as a type: Counted&lt;T&gt; inside its template, Name otherwise.</summary>
+        private static string SelfTypeName(string name, ConcreteType c)
+        {
+            var ps = GenericParamNames(c);
+            return ps.Count == 0 ? name : $"{name}<{ps.JoinStringsWithComma()}>";
+        }
+
+        // ---- type variables as template parameters ------------------------------------
+        //
+        // A generic function ($T, or the zonked _T0, or the T of a generic type such as Array<T>) is a
+        // function template: every type variable the signature or body names becomes a template parameter
+        // (T of the generic type keeps its name, $T/_T0 become TV0, TV1, ...). A call site resolves against
+        // the template by matching its argument types to the parameter types (FindCpu).
+
+        private Dictionary<string, string> _tvMap;
+        private List<string> _tvOrder;
+        private HashSet<string> _tvFixed;
+        private ConcreteType _tvOwner;
+
+        private void BeginCpuTemplateVars(ConcreteType ct)
+        {
+            if (!IsCpu)
+                return;
+            _tvMap = new Dictionary<string, string>();
+            _tvOrder = new List<string>();
+            _tvFixed = new HashSet<string>(GenericParamNames(ct));
+            _tvOwner = ct;
+        }
+
+        private void EndCpuTemplateVars()
+        {
+            _tvMap = null;
+            _tvOrder = null;
+            _tvFixed = null;
+            _tvOwner = null;
+        }
+
+        /// <summary>Array2D written without arguments inside Array2D's own member functions means Array2D&lt;T&gt;.</summary>
+        private string OwnerSelfName(TypeInstance ti)
+        {
+            if (_tvOwner == null || ti.Args.Count != 0 || ti.Name != _tvOwner.TypeDef.Name || _tvOwner.TypeDef.TypeParameters.Count == 0)
+                return null;
+            var ps = GenericParamNames(_tvOwner);
+            foreach (var p in ps)
+                if (!_tvMap.ContainsKey(p))
+                {
+                    _tvMap[p] = p;
+                    _tvOrder.Add(p);
+                }
+            return $"{ti.Name}<{ps.JoinStringsWithComma()}>";
+        }
+
+        private List<string> CpuTemplateVarsInUse() => _tvOrder == null ? new List<string>() : _tvOrder.ToList();
+
+        private static bool IsTypeVariableName(string n)
+            => n.StartsWith("$") || (n.Length > 2 && n[0] == '_' && n[1] == 'T' && n.Skip(2).All(char.IsDigit));
+
+        private string TemplateVarFor(TypeInstance ti)
+        {
+            if (_tvMap == null || ti.Args.Count != 0)
+                return null;
+            var n = ti.Name;
+            var isVar = ti.Def.Kind == Ara3D.Geometry.AST.TypeKind.TypeVariable || IsTypeVariableName(n);
+            var isOwnerParam = ti.Def.Kind == Ara3D.Geometry.AST.TypeKind.TypeParameter && _tvFixed.Contains(n);
+            if (!isVar && !isOwnerParam)
+                return null;
+            if (!_tvMap.TryGetValue(n, out var cpp))
+            {
+                cpp = isOwnerParam ? n : "TV" + _tvMap.Count;
+                _tvMap[n] = cpp;
+                _tvOrder.Add(cpp);
+            }
+            return cpp;
+        }
+
+        private bool IsIgnoredType(string name)
+            => IgnoredTypes.Contains(name) && !(IsCpu && (name == "Array2D" || name == "Array3D"));
+
+        private bool IsExcludedTupleOrFunction(string name)
+            => IsCpu
+                ? name.StartsWith("Function") && name.Length > 8 && char.IsDigit(name[name.Length - 1])
+                : IsTupleOrFunctionType(name);
+
+        /// <summary>Counted&lt;Vector3D&gt;, List&lt;T&gt; and friends; null when this is not a generic instance or an argument is not representable.</summary>
+        private string CpuGenericInstanceName(TypeInstance ti)
+        {
+            var name = ti.Name;
+            var tv = TemplateVarFor(ti) ?? OwnerSelfName(ti);
+            if (tv != null)
+                return tv;
+            if (_typeParamScope != null && ti.Def.Kind == Ara3D.Geometry.AST.TypeKind.TypeParameter && ti.Args.Count == 0 && _typeParamScope.Contains(name))
+                return name;
+            var isBuilder = (name == "List" || name == "Buffer") && ti.Args.Count == 1;
+            if (!isBuilder && !(ti.Def.TypeParameters.Count > 0 && StructNames.Contains(name)))
+                return null;
+            if (ti.Args.Count == 0 || (!isBuilder && ti.Args.Count != ti.Def.TypeParameters.Count))
+                return null;
+            var args = ti.Args.Select(CppNameForInstance).ToList();
+            return args.Any(a => a == null) ? null : $"{name}<{args.JoinStringsWithComma()}>";
+        }
+
         private string CpuDefaultValueExpr(string cppType)
         {
             switch (cppType)
@@ -271,6 +412,47 @@ namespace Ara3D.Geometry.CppWriter
             return handled;
         }
 
+        /// <summary>
+        /// The IIndexable members of a type whose only field is an Array&lt;E&gt; (VectorN): the same set as the fixed-size
+        /// generator, with the length read from the array instead of fixed.
+        /// </summary>
+        private HashSet<string> EmitCpuDynamicArrayMembers(string name, string field, string arrayType, HashSet<string> handled)
+        {
+            var elem = arrayType.Substring("Array<".Length, arrayType.Length - "Array<".Length - 1);
+            AddGenerated("At", new[] { name, "int32_t" }, $"PLATO_FN {elem} At({name} self, int32_t i)", $" {{ return At(self.{field}, i); }}");
+            handled.Add("At");
+            AddGenerated("Count", new[] { name }, $"PLATO_FN int32_t ToCount({name} self)", $" {{ return self.{field}.count; }}");
+            handled.Add("Count");
+            AddGenerated("NumComponents", new[] { name }, $"PLATO_FN int32_t NumComponents({name} self)", $" {{ return self.{field}.count; }}");
+            handled.Add("NumComponents");
+            AddGenerated("Components", new[] { name }, $"PLATO_FN {arrayType} Components({name} self)", $" {{ return self.{field}; }}");
+            handled.Add("Components");
+            AddGenerated("CreateFromComponents", new[] { name, arrayType },
+                $"PLATO_FN {name} CreateFromComponents({name} _, {arrayType} c)", $" {{ return {name}{{ c }}; }}");
+            handled.Add("CreateFromComponents");
+            AddTemplate($"template <typename F> PLATO_FN {name} MapComponents({name} x, F f)",
+                $" {{ int32_t n = x.{field}.count; {elem}* p = arena_alloc<{elem}>(n); for (int32_t i = 0; i < n; i++) p[i] = f(x.{field}.data[i]); return {name}{{ make_array(p, n) }}; }}");
+            handled.Add("MapComponents");
+            AddTemplate($"template <typename F> PLATO_FN {name} ZipComponents({name} a, {name} b, F f)",
+                $" {{ int32_t n = a.{field}.count < b.{field}.count ? a.{field}.count : b.{field}.count; {elem}* p = arena_alloc<{elem}>(n); for (int32_t i = 0; i < n; i++) p[i] = f(a.{field}.data[i], b.{field}.data[i]); return {name}{{ make_array(p, n) }}; }}");
+            AddTemplate($"template <typename F> PLATO_FN {name} ZipComponents({name} a, {name} b, {name} c, F f)",
+                $" {{ int32_t n = a.{field}.count; if (b.{field}.count < n) n = b.{field}.count; if (c.{field}.count < n) n = c.{field}.count; {elem}* p = arena_alloc<{elem}>(n); for (int32_t i = 0; i < n; i++) p[i] = f(a.{field}.data[i], b.{field}.data[i], c.{field}.data[i]); return {name}{{ make_array(p, n) }}; }}");
+            handled.Add("ZipComponents");
+            AddTemplate($"template <typename F> PLATO_FN bool AllZipComponents({name} a, {name} b, F f)",
+                $" {{ int32_t n = a.{field}.count < b.{field}.count ? a.{field}.count : b.{field}.count; for (int32_t i = 0; i < n; i++) if (!f(a.{field}.data[i], b.{field}.data[i])) return false; return true; }}");
+            handled.Add("AllZipComponents");
+            AddTemplate($"template <typename F> PLATO_FN bool AnyZipComponents({name} a, {name} b, F f)",
+                $" {{ int32_t n = a.{field}.count < b.{field}.count ? a.{field}.count : b.{field}.count; for (int32_t i = 0; i < n; i++) if (f(a.{field}.data[i], b.{field}.data[i])) return true; return false; }}");
+            handled.Add("AnyZipComponents");
+            AddTemplate($"template <typename F> PLATO_FN bool AllComponents({name} x, F f)",
+                $" {{ for (int32_t i = 0; i < x.{field}.count; i++) if (!f(x.{field}.data[i])) return false; return true; }}");
+            handled.Add("AllComponents");
+            AddTemplate($"template <typename F> PLATO_FN bool AnyComponent({name} x, F f)",
+                $" {{ for (int32_t i = 0; i < x.{field}.count; i++) if (f(x.{field}.data[i])) return true; return false; }}");
+            handled.Add("AnyComponent");
+            return handled;
+        }
+
         // ---- top level -----------------------------------------------------------
 
         private CppWriter WriteAllCpu()
@@ -308,24 +490,35 @@ namespace Ara3D.Geometry.CppWriter
         private string BuildCpuTypesHeader()
         {
             var sb = new StringBuilder();
-            sb.Append(Banner).Append("#pragma once\n#include \"plato_cpu.hpp\"\n#include <cstring>\n\nnamespace plato {\n\n");
+            sb.Append(Banner).Append("#pragma once\n#include \"plato_cpu.hpp\"\n#include <cstring>\n#include <utility>\n\nnamespace plato {\n\n");
             foreach (var s in CpuStructs())
-                sb.Append($"struct {s.Name};\n");
+                sb.Append($"{TemplatePrefix(s.Type)}struct {s.Name};\n");
             sb.Append('\n');
 
             foreach (var s in CpuStructs())
             {
-                sb.Append($"struct {s.Name}\n{{\n");
+                sb.Append($"{TemplatePrefix(s.Type)}struct {s.Name}\n{{\n");
                 if (s.Type != null && s.Type.TypeDef.IsSum)
                     foreach (var cs in s.Type.TypeDef.Cases)
                         sb.Append($"    static constexpr int32_t {cs.TagConstName} = {cs.Tag};\n");
-                foreach (var f in s.Fields)
-                    sb.Append($"    {CppTypeName(f)} {EscapeName(f.Name)};\n");
+                using (ParamScope(s.Type))
+                    foreach (var f in s.Fields)
+                        sb.Append($"    {CppTypeName(f)} {EscapeName(f.Name)};\n");
                 // A one-field wrapper unwraps implicitly, as the C# struct's implicit operator does
                 // (a typed index passes where the intrinsic wants an int32_t).
-                if (s.Name != "Angle" && s.Fields.Count == 1 && !(s.Type != null && s.Type.TypeDef.IsSum))
+                if (s.Name.StartsWith("Tuple") && s.Name.Length > 5 && char.IsDigit(s.Name[s.Name.Length - 1]) && GenericParamNames(s.Type).Count == s.Fields.Count && s.Fields.Count >= 2)
+                {
+                    // (a, b) converts to any record built from its components, as the C# implicit conversion does.
+                    var ps = GenericParamNames(s.Type);
+                    var decl = ps.Select(p => $"std::declval<{p}>()").JoinStringsWithComma();
+                    var vals = s.Fields.Select(f => EscapeName(f.Name)).JoinStringsWithComma();
+                    sb.Append($"    template <class R, class = decltype(R{{ {decl} }})> operator R() const {{ return R{{ {vals} }}; }}\n");
+                }
+                if (s.Name != "Angle" && s.Fields.Count == 1 && !(s.Type != null && s.Type.TypeDef.IsSum) && GenericParamNames(s.Type).Count == 0)
                     sb.Append($"    operator {CppTypeName(s.Fields[0])}() const {{ return {EscapeName(s.Fields[0].Name)}; }}\n");
-                sb.Append("};\n\n");
+                sb.Append("};\n");
+                AppendDeductionGuide(sb, s);
+                sb.Append("\n");
             }
 
             sb.Append(@"// Structural equality and hash helpers (arrays compare element-wise).
@@ -364,17 +557,65 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                     cond = s.Fields.Count == 0 ? "true"
                         : s.Fields.Select(f => $"eq_(a.{EscapeName(f.Name)}, b.{EscapeName(f.Name)})").JoinStrings(" && ");
                 }
-                sb.Append($"inline bool operator==(const {n}& a, const {n}& b) {{ return {cond}; }}\n");
-                sb.Append($"inline bool operator!=(const {n}& a, const {n}& b) {{ return !(a == b); }}\n");
+                var tn = SelfTypeName(n, s.Type);
+                var tp = TemplatePrefix(s.Type);
+                sb.Append($"{tp}inline bool operator==(const {tn}& a, const {tn}& b) {{ return {cond}; }}\n");
+                sb.Append($"{tp}inline bool operator!=(const {tn}& a, const {tn}& b) {{ return !(a == b); }}\n");
+                if (tp.Length > 0)
+                    sb.Append($"{tp}inline int32_t hash_(const {tn}& a) {{ {GenericHashBody(s)} }}\n");
             }
             sb.Append("\n// JSON (definitions in plato_json.cpp)\n");
-            foreach (var s in CpuStructs())
+            foreach (var s in CpuStructs().Where(s => GenericParamNames(s.Type).Count == 0))
             {
                 sb.Append($"void from_json(const Json& j, {s.Name}& v);\n");
                 sb.Append($"Json to_json(const {s.Name}& v);\n");
             }
+            // A template's JSON is defined here: it can only be instantiated where it is visible.
+            foreach (var s in CpuStructs().Where(s => GenericParamNames(s.Type).Count > 0))
+            {
+                var tn = SelfTypeName(s.Name, s.Type);
+                var tp = TemplatePrefix(s.Type);
+                sb.Append($"{tp}inline void from_json(const Json& j, {tn}& v)\n{{\n");
+                foreach (var f in s.Fields)
+                    sb.Append($"    from_json(j[\"{f.Name}\"], v.{EscapeName(f.Name)});\n");
+                sb.Append("}\n");
+                sb.Append($"{tp}inline Json to_json(const {tn}& v)\n{{\n    Json j = Json::Object();\n");
+                foreach (var f in s.Fields)
+                    sb.Append($"    j.set(\"{f.Name}\", to_json(v.{EscapeName(f.Name)}));\n");
+                sb.Append("    return j;\n}\n");
+            }
             sb.Append("\n} // namespace plato\n");
             return sb.ToString();
+        }
+
+        /// <summary>template &lt;class T&gt; Counted(T, WorkBudget) -&gt; Counted&lt;T&gt;; so Counted{ v, w } deduces its arguments (C++17 has no aggregate deduction).</summary>
+        private void AppendDeductionGuide(StringBuilder sb, (string Name, List<CppField> Fields, ConcreteType Type) s)
+        {
+            var ps = GenericParamNames(s.Type);
+            if (ps.Count == 0 || s.Fields.Count == 0)
+                return;
+            string[] types;
+            using (ParamScope(s.Type))
+                types = s.Fields.Select(f => FieldCppOrNull(f)).ToArray();
+            // Every parameter must appear in some field type, or it cannot be deduced.
+            if (!ps.All(p => types.Any(t => System.Text.RegularExpressions.Regex.IsMatch(t, @"\b" + p + @"\b"))))
+                return;
+            sb.Append($"{TemplatePrefix(s.Type)}{s.Name}({types.JoinStringsWithComma()}) -> {SelfTypeName(s.Name, s.Type)};\n");
+        }
+
+        /// <summary>Hash of a generic instance: scalar, string and array-count fields only (equal values hash equal; fields of a type parameter are left out).</summary>
+        private string GenericHashBody((string Name, List<CppField> Fields, ConcreteType Type) s)
+        {
+            var ps = GenericParamNames(s.Type);
+            var sb = new StringBuilder("int32_t h = 17;");
+            using (ParamScope(s.Type))
+                foreach (var f in s.Fields)
+                {
+                    var t = FieldCppOrNull(f);
+                    if (t != null && !ps.Any(p => System.Text.RegularExpressions.Regex.IsMatch(t, @"\b" + p + @"\b")))
+                        sb.Append($" h = mix_(h, hash_(a.{EscapeName(f.Name)}));");
+                }
+            return sb.Append(" return h;").ToString();
         }
 
         private string CppTypeName(CppField f)
@@ -426,7 +667,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
             sb.Append(Banner).Append("// Same encoding as plato-brep generated/Ara3D.StepBrep/Intrinsics/PlatoJson.cs: one object per struct, field names as keys;\n");
             sb.Append("// a closed sum writes its Kind and every flattened Case_Field.\n");
             sb.Append("#include \"plato_types.hpp\"\n\nnamespace plato {\n\n");
-            foreach (var s in CpuStructs())
+            foreach (var s in CpuStructs().Where(s => GenericParamNames(s.Type).Count == 0))
             {
                 sb.Append($"void from_json(const Json& j, {s.Name}& v)\n{{\n");
                 foreach (var f in s.Fields)
@@ -456,7 +697,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
             AddGenerated("NumComponents", new[] { "Angle" }, "PLATO_FN int32_t NumComponents(Angle self)", " { return 1; }");
             AddGenerated("Components", new[] { "Angle" }, "PLATO_FN double Components(Angle self)", " { return self.Radians; }");
 
-            foreach (var s in CpuStructs())
+            foreach (var s in CpuStructs().Where(s => GenericParamNames(s.Type).Count == 0))
             {
                 var n = s.Name;
                 AddGenerated("Equals", new[] { n, n }, $"PLATO_FN bool Equals(const {n}& a, const {n}& b)", " { return a == b; }");
@@ -545,13 +786,46 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 if (match)
                     return e;
             }
+            foreach (var e in byName[c.Name])
+            {
+                if (!Ok(e) || e.TemplateVars == null)
+                    continue;
+                if (UnifiesWithTemplate(e, c))
+                    return e;
+            }
             return null;
+        }
+
+        /// <summary>A call's argument types against a function template's parameter types, with each type variable bound once.</summary>
+        private static bool UnifiesWithTemplate(Emitted e, CallSite c)
+        {
+            var open = e.Key.IndexOf('(');
+            if (open < 0 || !e.Key.EndsWith(")"))
+                return false;
+            var inner = e.Key.Substring(open + 1, e.Key.Length - open - 2);
+            var vars = System.Text.RegularExpressions.Regex.Matches(inner, @"\b(?:" + string.Join("|", e.TemplateVars.Select(System.Text.RegularExpressions.Regex.Escape)) + @")\b");
+            var pattern = new StringBuilder("^");
+            var bound = new HashSet<string>();
+            var last = 0;
+            foreach (System.Text.RegularExpressions.Match m in vars)
+            {
+                pattern.Append(System.Text.RegularExpressions.Regex.Escape(inner.Substring(last, m.Index - last)));
+                pattern.Append(bound.Add(m.Value) ? $"(?<{m.Value}>[^,]+?(?:<.*>)?)" : $"\\k<{m.Value}>");
+                last = m.Index + m.Length;
+            }
+            pattern.Append(System.Text.RegularExpressions.Regex.Escape(inner.Substring(last))).Append('$');
+            var callTypes = string.Join(", ", c.Types.Select(t => t ?? "?"));
+            return System.Text.RegularExpressions.Regex.IsMatch(callTypes, pattern.ToString());
         }
 
         /// <summary>A call the prelude answers: higher-order array helpers, and any array method no Plato function of that name shadows.</summary>
         private bool PreludeAnswers(CallSite c, ILookup<string, Emitted> byName)
         {
             if (UntrackedHofNames.Contains(c.Name) || IsPreambleArrayMethod(c))
+                return true;
+            // The prelude's PlatoList / PlatoBuffer define Count, At, Add, AddRange, Set, Freeze, EmptyList.
+            if (c.Types.Count > 0 && c.Types[0] != null && (c.Types[0].StartsWith("List<") || c.Types[0].StartsWith("Buffer<"))
+                && (PreludeNames.Contains(c.Name) || PreludeNames.Contains("To" + c.Name)))
                 return true;
             // Any other array-first call is answered only when the prelude really defines that name;
             // otherwise a library function (PlainLoop(Array<UvCoordinate>)) that was never emitted would pass.

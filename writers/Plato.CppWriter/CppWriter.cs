@@ -153,6 +153,7 @@ namespace Ara3D.Geometry.CppWriter
             public bool IsTemplate => Prototype.StartsWith("template"); // the definition goes in the header
             public string PruneReason;
             public bool Provided;       // the prelude defines it; nothing is written
+            public List<string> TemplateVars;  // type variables ($T, _T0) emitted as template parameters; null when none
             public bool Pruned;         // dropped because a callee was skipped
             public string Name => Key.StartsWith("template") ? Key : Key.Substring(0, Math.Max(0, Key.IndexOf('(')));
         }
@@ -272,9 +273,15 @@ namespace Ara3D.Geometry.CppWriter
             if (ti.Name == "Array" || ti.Name == "IArray")
             {
                 if (ti.Args.Count != 1)
-                    return null;
+                    return IsCpu ? CpuGenericInstanceName(ti) : null;
                 var elem = CppNameForInstance(ti.Args[0]);
                 return elem == null ? null : $"Array<{elem}>";
+            }
+            if (IsCpu)
+            {
+                var generic = CpuGenericInstanceName(ti);
+                if (generic != null)
+                    return generic;
             }
             return CppNameFor(ti.Name);
         }
@@ -601,10 +608,10 @@ namespace Ara3D.Geometry.CppWriter
                             && !IsNativeVectorName(c.TypeDef.Name)
                             && !PreambleTypes.Contains(c.TypeDef.Name)
                             && c.TypeDef.Name != "Angle"
-                            && !IgnoredTypes.Contains(c.TypeDef.Name)
-                            && !IsTupleOrFunctionType(c.TypeDef.Name)
+                            && !IsIgnoredType(c.TypeDef.Name)
+                            && !IsExcludedTupleOrFunction(c.TypeDef.Name)
                             && !c.TypeDef.Name.StartsWith("Function")
-                            && c.TypeDef.TypeParameters.Count == 0
+                            && (IsCpu || c.TypeDef.TypeParameters.Count == 0)
                             && StructFieldsOf(c).Count > 0)
                 .ToList();
 
@@ -617,7 +624,7 @@ namespace Ara3D.Geometry.CppWriter
                 changed = false;
                 foreach (var c in candidates.ToList())
                 {
-                    if (StructFieldsOf(c).Any(f => FieldCppOrNull(f) == null))
+                    if (StructFieldsOf(c).Any(f => FieldCppIn(c, f) == null))
                     {
                         Skipped.Add($"type {c.TypeDef.Name}: field type not representable in {Dialect.DisplayName()}");
                         StructNames.Remove(c.TypeDef.Name);
@@ -1259,7 +1266,7 @@ namespace Ara3D.Geometry.CppWriter
             foreach (var ct in Compilation.ConcreteTypes)
             {
                 var name = ct.TypeDef.Name;
-                if (IgnoredTypes.Contains(name) || IsTupleOrFunctionType(name) || name.StartsWith("Function"))
+                if (IsIgnoredType(name) || IsExcludedTupleOrFunction(name) || name.StartsWith("Function"))
                     continue;
                 // Cpu: library functions whose receiver is a concrete Array<X> (PlainLoop(Array<UvCoordinate>))
                 // belong to the generic Array type; the ones over a type variable skip with a reason.
@@ -1315,6 +1322,8 @@ namespace Ara3D.Geometry.CppWriter
             var fieldCppTypes = ct.TypeDef.Fields.Select(f => CppTypeNameOrNull(f.Type)).ToList();
             if (fields.Count == 0 || fieldCppTypes.Any(t => t == null))
                 return handled;
+            if (IsCpu && fieldCppTypes.Count == 1 && fieldCppTypes[0].StartsWith("Array<"))
+                return EmitCpuDynamicArrayMembers(name, EscapeName(fields[0]), fieldCppTypes[0], handled); // VectorN: a dynamic Array field
             var elem = fieldCppTypes[0];
             if (fieldCppTypes.Any(t => t != elem))
                 return handled; // heterogeneous: not an array
@@ -1454,7 +1463,7 @@ namespace Ara3D.Geometry.CppWriter
             Add($"generated.{name}", key, sig, sig + bodyWithBraces, null);
         }
 
-        private void Add(string label, string key, string prototype, string definition, List<CallSite> callees)
+        private void Add(string label, string key, string prototype, string definition, List<CallSite> callees, List<string> templateVars = null)
         {
             if (IsCpu)
             {
@@ -1468,6 +1477,7 @@ namespace Ara3D.Geometry.CppWriter
                 Prototype = prototype,
                 Definition = definition,
                 Callees = callees ?? new List<CallSite>(),
+                TemplateVars = templateVars != null && templateVars.Count > 0 ? templateVars : null,
             });
         }
 
@@ -1475,6 +1485,7 @@ namespace Ara3D.Geometry.CppWriter
         {
             var owner = ct.TypeDef.Name;
             var label = $"{owner}.{fi.Name}";
+            BeginCpuTemplateVars(ct);
             try
             {
                 if (fi.ParameterNames.Count == 0)
@@ -1541,6 +1552,7 @@ namespace Ara3D.Geometry.CppWriter
 
                 string definition;
                 List<CallSite> callees = null;
+                List<string> typeVars = null;
                 if (tir == null)
                 {
                     if (IsCpu)
@@ -1561,15 +1573,26 @@ namespace Ara3D.Geometry.CppWriter
                 else
                 {
                     var bodyWriter = new TirCppBodyWriter(this, tir, ret, retPlato);
-                    definition = sig + bodyWriter;
+                    var bodyText = bodyWriter.ToString();
                     callees = bodyWriter.Callees;
+                    // The body can name more type variables than the signature; the header lists them all.
+                    typeVars = CpuTemplateVarsInUse();
+                    if (typeVars.Count > 0)
+                        sig = $"{TemplateHeader(typeVars.Concat(templateNames).ToList())}PLATO_FN {ret} {FunctionName(fi.Name)}({parameters})";
+                    definition = sig + bodyText;
                 }
+                if (tir == null)
+                    typeVars = null;
 
-                Add(label, SignatureKey(fi.Name, paramTypes), sig, definition, callees);
+                Add(label, SignatureKey(fi.Name, paramTypes), sig, definition, callees, typeVars);
             }
             catch (CppUnsupportedException e)
             {
                 Skipped.Add($"{label}: {e.Message} [{fi.Name}({string.Join(", ", fi.ParameterTypes.Select(t => t?.ToString()))})]");
+            }
+            finally
+            {
+                EndCpuTemplateVars();
             }
         }
 
