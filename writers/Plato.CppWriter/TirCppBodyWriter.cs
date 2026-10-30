@@ -676,6 +676,23 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 return;
             }
 
+            // Marker nodes the shared literal/component unrollers produce; rendered the way the C# writer does.
+            case TirBooleanChain bc:
+                for (var bi = 0; bi < bc.Terms.Count; bi++)
+                {
+                    if (bi > 0)
+                        Write($" {bc.Op} ");
+                    Write("(");
+                    WriteNode(bc.Terms[bi]);
+                    Write(")");
+                }
+                return;
+
+            case TirComponentAccess ca when ca.CastTo == null:
+                WriteNode(ca.Receiver);
+                Write($".{ca.FieldName}");
+                return;
+
             case TirUnresolved u:
                 throw new CppUnsupportedException($"unresolved call '{u.Original?.Name}'");
 

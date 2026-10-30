@@ -404,7 +404,7 @@ public partial class TirCppBodyWriter
             default:
                 throw new CppUnsupportedException($"unknown lowered loop kind '{ll.Kind}'");
         }
-        if (TirLoopLowerer.ProducesArray(ll.Kind))
+        if (TirLoopLowerer.ProducesArray(ll.Kind) || ll.Kind == "FlatMap")
             WriteLine($"auto {t} = plato::make_array({(ll.Kind == "FlatMap" ? $"_fa{k}" : a)}, {arrayCount});");
         if (lam != null)
             foreach (var p in lam.Parameters)
