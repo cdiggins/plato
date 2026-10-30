@@ -114,10 +114,10 @@ public sealed class HostIntrinsics
         Add("Or(Boolean, Boolean)", (_, a) => Boxes.Of(B(a[0]) || B(a[1])));
         Add("Not(Boolean)", (_, a) => Boxes.Of(!B(a[0])));
 
-        // Character and String: the C# runtime orders strings with string.CompareTo (the current
-        // culture) and characters by code point.
+        // Character and String: strings are ordered ordinally (UTF-16 code units, as string.CompareOrdinal), never by the
+        // current culture; characters by code point.
         Add("LessThanOrEquals(Character, Character)", (_, a) => Boxes.Of((char)a[0] <= (char)a[1]));
-        Add("LessThanOrEquals(String, String)", (_, a) => Boxes.Of(string.Compare((string)a[0], (string)a[1]) <= 0));
+        Add("LessThanOrEquals(String, String)", (_, a) => Boxes.Of(string.CompareOrdinal((string)a[0], (string)a[1]) <= 0));
         Add("Equals(String, String)", (_, a) => Boxes.Of(string.Equals((string)a[0], (string)a[1], StringComparison.Ordinal)));
         Add("Equals(Character, Character)", (_, a) => Boxes.Of((char)a[0] == (char)a[1]));
         Add("Count(String)", (_, a) => Boxes.Of((long)((string)a[0]).Length));

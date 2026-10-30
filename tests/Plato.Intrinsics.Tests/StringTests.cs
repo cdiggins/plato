@@ -57,10 +57,16 @@ public static class StringTests
     }
 
     [Test]
-    public static void OrderingFollowsStringCompareTo()
+    public static void OrderingIsOrdinalWhateverTheCurrentCulture()
     {
+        var saved = System.Globalization.CultureInfo.CurrentCulture;
+        System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("en-US");
         Assert.Multiple(() =>
         {
+            Assert.That(S("a") < S("B"), Is.False);
+            Assert.That(S("B") < S("a"));
+            Assert.That(S("a") >= S("B"));
+            Assert.That(S("Z") < S("_") && S("_") < S("a"));
             Assert.That(S("apple") < S("banana"));
             Assert.That(S("banana") > S("apple"));
             Assert.That(S("apple") <= S("apple"));
@@ -68,6 +74,7 @@ public static class StringTests
             Assert.That(S("") < S("a"));
             Assert.That(S("abc") < S("abcd"));
         });
+        System.Globalization.CultureInfo.CurrentCulture = saved;
     }
 
     [Test]

@@ -151,4 +151,38 @@ library TextLaws
         => NumberToShortestString(0.0 / 0.0) == "NaN" && NumberToShortestString(1.0 / 0.0) == "Infinity"
         && NumberToShortestString(-1.0 / 0.0) == "-Infinity"
         && !ParseNumber("NaN").Ok && !ParseNumber("Infinity").Ok && !ParseNumber("-Infinity").Ok;
+
+    //==
+    // String order is ordinal: UTF-16 code units (bytes in the C++ prelude), never the culture's collation.
+
+    // Upper case precedes lower case, a prefix precedes its extension, and the empty String precedes all.
+    Law_StringOrderIsOrdinalWitness(): Boolean
+        => !("a" < "B") && "B" < "a" && "a" > "B" && !("a" <= "B") && "B" <= "a"
+        && "ab" < "abc" && !("abc" < "ab") && "abc" > "ab" && "" < "a" && !("a" < "")
+        && "a" <= "a" && "a" >= "a" && !("a" < "a") && !("a" > "a")
+        && "Z" < "a" && "_" < "a" && "A" < "_" && "é" > "z";
+
+    // Codes 60 to 109 cover the upper-case letters, the punctuation between the cases and the first lower-case letters.
+    Code(n: Integer): Integer
+        => n.Abs % 50 + 60;
+
+    TwoCharacters(a: Integer, b: Integer): String
+        => FromCharacters([Code(a).ToCharacter, Code(b).ToCharacter]);
+
+    // The order of two-character Strings is the lexicographic order of their character codes.
+    Law_StringOrderIsLexicographicOverCharacterCodes(a: Integer, b: Integer, c: Integer, d: Integer): Boolean
+        => (TwoCharacters(a, b) < TwoCharacters(c, d)) == (Code(a) < Code(c) || (Code(a) == Code(c) && Code(b) < Code(d)))
+        && (TwoCharacters(a, b) <= TwoCharacters(c, d)) == (Code(a) < Code(c) || (Code(a) == Code(c) && Code(b) <= Code(d)))
+        && (TwoCharacters(a, b) > TwoCharacters(c, d)) == (Code(a) > Code(c) || (Code(a) == Code(c) && Code(b) > Code(d)))
+        && (TwoCharacters(a, b) >= TwoCharacters(c, d)) == (Code(a) > Code(c) || (Code(a) == Code(c) && Code(b) >= Code(d)));
+
+    // A prefix precedes its extension, for the runner's Strings and a character after it.
+    Law_PrefixPrecedesExtension(s: String, a: Integer): Boolean
+        => s < FromCharacters(MapRange(s.Count + 1, i => i < s.Count ? s.At(i) : Code(a).ToCharacter))
+        && !(FromCharacters(MapRange(s.Count + 1, i => i < s.Count ? s.At(i) : Code(a).ToCharacter)) <= s);
+
+    // Totality: of two Strings exactly one of <, == and > holds, and <= is < or ==.
+    Law_StringOrderIsTotal(s: String, t: String): Boolean
+        => ((s < t ? 1 : 0) + (s == t ? 1 : 0) + (s > t ? 1 : 0)) == 1
+        && (s <= t) == (s < t || s == t) && (s >= t) == (s > t || s == t);
 }

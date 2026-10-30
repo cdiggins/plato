@@ -468,7 +468,7 @@ namespace plato
     inline bool Or(bool a, bool b) { return a || b; }
     inline bool Not(bool a) { return !a; }
     inline bool LessThanOrEquals(char a, char b) { return a <= b; }   // C# compares UTF-16 code units; ordinal here
-    inline bool LessThanOrEquals(const std::string& a, const std::string& b) { return a.compare(b) <= 0; }   // C# is culture-sensitive; ordinal here
+    inline bool LessThanOrEquals(const std::string& a, const std::string& b) { return a.compare(b) <= 0; }   // byte-wise (char_traits<char>::compare orders as unsigned char); C# CompareOrdinal orders UTF-16 code units, the same for ASCII
 
     inline double Floor(double x) { return std::floor(x); }
     inline double Sqrt(double x) { return std::sqrt(x); }
