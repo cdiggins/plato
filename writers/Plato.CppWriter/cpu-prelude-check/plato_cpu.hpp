@@ -25,6 +25,11 @@ namespace plato
 {
     using String = std::string;
 
+    // A function value: a lambda or functor with one operator(). A record is not one. It tells apart the
+    // function-typed and the interface-typed overload of one name (Deform(self, mapping), Deform(self, deformation)).
+    template <class T, class = void> struct is_function_value : std::false_type {};
+    template <class T> struct is_function_value<T, std::void_t<decltype(&T::operator())>> : std::true_type {};
+
     // ---- Arena: thread-local bump allocator, 16-byte aligned, freed only by arena_reset ----
     // Destructors never run: a non-trivial element type (a record holding a std::string) is
     // default-constructed on allocation and its heap memory, if any, is not returned on reset.

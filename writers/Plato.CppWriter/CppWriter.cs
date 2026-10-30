@@ -1553,8 +1553,8 @@ namespace Ara3D.Geometry.CppWriter
                 var templateNames = new List<string>();
                 var paramTypes = IsCpu
                     ? CpuParameterTypes(useZonked
-                        ? tir.ZonkedParameterTypes.Select(t => (PlatoTypeName(t), (Func<string>)(() => CppTypeName(t)), IsInterfaceParameter(TypeInstance.Create(t)))).ToList()
-                        : fi.ParameterTypes.Select(t => (t?.Name, (Func<string>)(() => CppTypeName(t)), IsInterfaceParameter(t))).ToList(), templateNames, ct)
+                        ? tir.ZonkedParameterTypes.Select(t => (PlatoTypeName(t), (Func<string>)(() => CppTypeName(t)), IsInterfaceParameter(TypeInstance.Create(t)), TypeInstance.Create(t))).ToList()
+                        : fi.ParameterTypes.Select(t => (t?.Name, (Func<string>)(() => CppTypeName(t)), IsInterfaceParameter(t), t)).ToList(), templateNames, ct)
                     : useZonked
                         ? tir.ZonkedParameterTypes.Select(CppTypeName).ToList()
                         : fi.ParameterTypes.Select(CppTypeName).ToList();

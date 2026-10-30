@@ -255,10 +255,10 @@ namespace Ara3D.Geometry.CppWriter
         /// Parameter types for a Cpu function. A function-typed parameter becomes a template parameter
         /// (F0, F1, ...), so the body writer can pass lambdas at call sites with no std::function.
         /// </summary>
-        private List<string> CpuParameterTypes(List<(string Plato, Func<string> Cpp, bool Interface)> ps, List<string> templateNames, ConcreteType owner)
+        private List<string> CpuParameterTypes(List<(string Plato, Func<string> Cpp, bool Interface, TypeInstance Type)> ps, List<string> templateNames, ConcreteType owner)
         {
             var result = new List<string>();
-            foreach (var (plato, cpp, isInterface) in ps)
+            foreach (var (plato, cpp, isInterface, paramType) in ps)
             {
                 if (plato != null && plato.StartsWith("Function") && plato.Length > 8 && char.IsDigit(plato[plato.Length - 1]))
                 {
@@ -270,6 +270,7 @@ namespace Ara3D.Geometry.CppWriter
                 {
                     // The receiver of an interface member: one concrete overload per implementing type
                     // (Plato's own dispatch), so overloads of one name over different interfaces never collide.
+                    BindInterfaceTypeArguments(owner, paramType);
                     result.Add(self);
                 }
                 else if (isInterface && _tvMap != null)
@@ -287,6 +288,29 @@ namespace Ara3D.Geometry.CppWriter
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// The receiver of <c>First(self: IIndexable&lt;$T&gt;): $T</c> on Array&lt;T&gt;: the interface's type variable
+        /// is the owner's own argument for that interface (T), not a template parameter of its own.
+        /// </summary>
+        private void BindInterfaceTypeArguments(ConcreteType owner, TypeInstance iface)
+        {
+            if (owner == null || iface == null || _tvMap == null || iface.Args.Count == 0)
+                return;
+            var impl = owner.AllInterfaces.FirstOrDefault(i => i.Name == iface.Name && i.TypeExpression.TypeArgs.Count == iface.Args.Count);
+            if (impl == null)
+                return;
+            for (var k = 0; k < iface.Args.Count; k++)
+            {
+                var arg = iface.Args[k];
+                if (arg.Args.Count != 0 || !(arg.Def.Kind == Ara3D.Geometry.AST.TypeKind.TypeVariable || IsTypeVariableName(arg.Name)) || _tvMap.ContainsKey(arg.Name))
+                    continue;
+                var bound = CppTypeName(impl.TypeExpression.TypeArgs[k]);
+                if (bound == null)
+                    continue;
+                _tvMap[arg.Name] = bound;
+            }
         }
 
         /// <summary>The owner as a C++ type when it implements the named interface; null otherwise.</summary>
@@ -960,9 +984,77 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
             }
         }
 
+        /// <summary>
+        /// Two overloads that differ only in a function-typed parameter (a template parameter F0) and an interface-typed
+        /// one (TV0): Deform(self, mapping) and Deform(self, deformation). As templates they redeclare each other, so each
+        /// gets an enable_if on its return type: F0 must be a function value, TV0 must not be one.
+        /// </summary>
+        private void ConstrainFunctionInterfaceOverloads()
+        {
+            var rx = new System.Text.RegularExpressions.Regex(@"\b(?:F|TV)\d+\b");
+            var groups = _emitted.Where(e => !e.Provided && e.Label != "generated.template" && e.IsTemplate && e.Key.EndsWith(")"))
+                .GroupBy(e => rx.Replace(e.Key, "@")).Where(g => g.Count() > 1);
+            foreach (var g in groups)
+            {
+                var withF = g.Where(e => System.Text.RegularExpressions.Regex.IsMatch(e.Key, @"\bF\d+\b")).ToList();
+                var withTv = g.Where(e => !System.Text.RegularExpressions.Regex.IsMatch(e.Key, @"\bF\d+\b") && System.Text.RegularExpressions.Regex.IsMatch(e.Key, @"\bTV\d+\b")).ToList();
+                if (withF.Count == 0 || withTv.Count == 0)
+                    continue;
+                var fParams = KeyParameters(withF[0].Key);
+                foreach (var e in withF)
+                    ConstrainReturn(e, KeyParameters(e.Key).Where(p => IsTemplateParamType(p)).Select(p => $"is_function_value<{p}>::value"));
+                foreach (var e in withTv)
+                {
+                    var ps = KeyParameters(e.Key);
+                    var conds = new List<string>();
+                    for (var i = 0; i < ps.Count && i < fParams.Count; i++)
+                        if (IsTemplateParamType(fParams[i]) && System.Text.RegularExpressions.Regex.IsMatch(ps[i], @"^TV\d+$"))
+                            conds.Add($"!is_function_value<{ps[i]}>::value");
+                    ConstrainReturn(e, conds);
+                }
+            }
+        }
+
+        private static List<string> KeyParameters(string key)
+        {
+            var open = key.IndexOf('(');
+            var inner = key.Substring(open + 1, key.Length - open - 2);
+            var result = new List<string>();
+            var depth = 0;
+            var start = 0;
+            for (var i = 0; i < inner.Length; i++)
+            {
+                if (inner[i] == '<') depth++;
+                else if (inner[i] == '>') depth--;
+                else if (inner[i] == ',' && depth == 0)
+                {
+                    result.Add(inner.Substring(start, i - start).Trim());
+                    start = i + 1;
+                }
+            }
+            if (inner.Length > 0)
+                result.Add(inner.Substring(start).Trim());
+            return result;
+        }
+
+        /// <summary>template&lt;..&gt; R Name(..) becomes template&lt;..&gt; std::enable_if_t&lt;cond, R&gt; Name(..) in the prototype and the definition.</summary>
+        private void ConstrainReturn(Emitted e, IEnumerable<string> conditions)
+        {
+            var cond = string.Join(" && ", conditions);
+            if (cond.Length == 0)
+                return;
+            var cppName = FunctionName(e.Name);
+            var rx = new System.Text.RegularExpressions.Regex(@"^(template ?<[^>]*> )(.*?) " + System.Text.RegularExpressions.Regex.Escape(cppName) + @"\(");
+            string Rewrite(string text)
+                => rx.Replace(text, m => $"{m.Groups[1].Value}std::enable_if_t<{cond}, {m.Groups[2].Value}> {cppName}(", 1);
+            e.Prototype = Rewrite(e.Prototype);
+            e.Definition = Rewrite(e.Definition);
+        }
+
         private void PruneCpu()
         {
             EmitTupleConversions();
+            ConstrainFunctionInterfaceOverloads();
             var byKey = new Dictionary<string, Emitted>();
             foreach (var e in _emitted)
                 if (!byKey.ContainsKey(e.Key))
