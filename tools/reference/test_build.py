@@ -81,5 +81,89 @@ type Pair<T> { A: T; B: T; }
         self.assertNotEqual(build.digest('// requires x > 0'), build.digest('// requires x >= 0'))
 
 
+class NamePageTests(unittest.TestCase):
+    def test_reordering_declarations_keeps_name_page_names(self):
+        one = 'type Alpha { X: Integer; }\ntype Beta { Y: Integer; }\n'
+        two = 'type Beta { Y: Integer; }\ntype Alpha { X: Integer; }\n'
+        names = lambda text: sorted(build.by_name(build.slices(text)))
+        self.assertEqual(names(one), names(two))
+
+    def test_reordering_declarations_keeps_generated_paths(self):
+        # Page paths come only from the lower-cased name, never from position.
+        for text in ('type Alpha { X: Integer; }\ntype Beta { Y: Integer; }\n',
+                     'type Beta { Y: Integer; }\ntype Alpha { X: Integer; }\n'):
+            paths = sorted(f'{name.lower()}.md' for name in build.by_name(build.slices(text)))
+            self.assertEqual(paths, ['alpha.md', 'beta.md'])
+
+    def test_overloads_share_one_name(self):
+        text = 'library L {\n    F(x: Integer): Integer => x;\n    F(x: Number): Number => x;\n}\n'
+        grouped = build.by_name(build.slices(text))
+        self.assertEqual(list(grouped), ['F'])
+        self.assertEqual(len(grouped['F']), 2)
+
+    def test_case_only_collision_fails_naming_file_and_names(self):
+        with self.assertRaisesRegex(ValueError, r'a\.plato.*Foo.*FOO'):
+            build.check_names('a.plato', ['Foo', 'FOO'])
+
+    def test_reserved_names_fail(self):
+        for name in ('Readme', 'Index', 'CON', 'Nul', 'Com1', 'LPT9'):
+            with self.assertRaisesRegex(ValueError, 'reserved'):
+                build.check_names('a.plato', [name])
+
+    def test_ordinary_names_pass(self):
+        build.check_names('a.plato', ['Vector', 'Vec3', 'Console'])
+
+    def test_dangling_alias_fails(self):
+        original = build.ALIASES
+        with tempfile.TemporaryDirectory() as folder:
+            build.ALIASES = Path(folder) / 'aliases.json'
+            try:
+                build.ALIASES.write_text('{"docs/reference/api/x/old/001-a": "docs/reference/api/x/new/a"}')
+                with self.assertRaisesRegex(ValueError, 'alias targets'):
+                    build.load_aliases({})
+                page = build.ROOT / 'docs/reference/api/x/new/a.md'
+                self.assertEqual(len(build.load_aliases({page: ''})), 1)
+            finally:
+                build.ALIASES = original
+
+
+class FixtureCheckTests(unittest.TestCase):
+    def tree(self, folder, page, fixture):
+        docs = Path(folder)
+        (docs / 'cookbook').mkdir(parents=True)
+        (docs / 'implementation/examples/cookbook-r').mkdir(parents=True)
+        (docs / 'cookbook/r.md').write_text(page, encoding='utf-8')
+        (docs / 'implementation/examples/cookbook-r/main.plato').write_bytes(fixture.encode('utf-8'))
+        return docs
+
+    def test_copied_fence_passes_despite_line_endings_and_trailing_space(self):
+        with tempfile.TemporaryDirectory() as folder:
+            docs = self.tree(folder, '# R\n\n```plato\nF(x: Integer): Integer => x;  \n```\n',
+                             'library L {\r\n}\r\nF(x: Integer): Integer => x;\r\n')
+            self.assertEqual(build.fixture_violations(docs), [])
+
+    def test_altered_fence_fails_with_page_and_line(self):
+        with tempfile.TemporaryDirectory() as folder:
+            docs = self.tree(folder, '# R\n\n```plato\nF(x: Integer): Integer => x + 1;\n```\n',
+                             'F(x: Integer): Integer => x;\n')
+            problems = build.fixture_violations(docs)
+            self.assertEqual(len(problems), 1)
+            self.assertIn('cookbook/r.md:3', problems[0])
+
+    def test_unchecked_fence_and_other_languages_are_exempt(self):
+        with tempfile.TemporaryDirectory() as folder:
+            docs = self.tree(folder, '# R\n\n```plato unchecked\nanything\n```\n\n```csharp\nvar x;\n```\n', '')
+            self.assertEqual(build.fixture_violations(docs), [])
+
+    def test_start_pages_are_checked_only_when_tour_exists(self):
+        with tempfile.TemporaryDirectory() as folder:
+            docs = Path(folder)
+            (docs / 'start').mkdir()
+            (docs / 'start/a.md').write_text('# A\n\n```plato\nnot a fixture\n```\n', encoding='utf-8')
+            self.assertEqual(build.fixture_violations(docs), [])
+            (docs / 'implementation/examples/tour').mkdir(parents=True)
+            self.assertEqual(len(build.fixture_violations(docs)), 1)
+
+
 if __name__ == '__main__':
     unittest.main()

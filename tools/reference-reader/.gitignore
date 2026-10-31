@@ -2,3 +2,5 @@ node_modules/
 dist/
 public/reference.json
 public/brand/
+public/plato-reference.txt
+public/llms.txt
