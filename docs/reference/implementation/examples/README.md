@@ -1,5 +1,7 @@
 # Runnable language examples
 
+How groups are laid out, how a group names its inputs, and how pages use fixtures are set in the [reference contract](../../../../tools/reference/CONTRACT.md#example-fixtures).
+
 These fixtures are source companions to the language reference. The `prelude` folder declares the primitive names and the small intrinsic surface the core fixtures use. Compile the prelude together with exactly one example group. The groups are isolated so a declaration in one group cannot change resolution in another.
 
 ```powershell

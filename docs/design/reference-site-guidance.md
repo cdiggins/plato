@@ -63,9 +63,10 @@ reports for it.
   and by prose. Most visits are a lookup, not a read.
 - **Versioned with a visible pin.** The reader always knows which language version a page
   describes, can switch versions, and finds old versions still online.
-- **Honest about status.** Each page carries a status: stable, experimental, or frozen. This
-  extends the evidence labels in the reference README (Specified, Implemented, Tested, Inferred,
-  Unresolved, Proved) rather than replacing them.
+- **Honest about status.** Each page carries a status, so a junior developer knows what to
+  avoid and a researcher knows what is settled. The status names and their meaning are set in the
+  [reference contract](../../tools/reference/CONTRACT.md#status). Status sits beside the evidence
+  labels in the reference README, which qualify individual claims.
 - **One register.** Short sentences, no marketing. The Tour uses plain words; the Reference uses
   full precision. The [brand voice](../brand/README.md) governs tone.
 - **Compare-to pages.** "If you know Python" and "If you know C#" tables map familiar constructs

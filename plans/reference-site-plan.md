@@ -30,7 +30,9 @@ Much of the target has a foundation already. The plan extends it rather than rep
 
 ## Wave 0: before any builder starts
 
-These steps are serial and belong to the owner or the supervising session.
+These steps are serial and belong to the owner or the supervising session. Items 2 to 4 are
+settled in [`tools/reference/CONTRACT.md`](../tools/reference/CONTRACT.md#reference-site-decisions);
+the recommendations below are kept for the reasoning, and the contract wins where they differ.
 
 1. **Land the in-flight reference work.** The working tree carries a large uncommitted change
    across `docs/reference/` and `tools/reference-reader/`, plus untracked `start/`, cheatsheet,
@@ -53,8 +55,8 @@ All chunks below can run at once. The agent type is `platonic:builder` unless no
 
 | Chunk | Goal | File fence | Done when |
 |---|---|---|---|
-| **A. Builder outputs** | Name-derived API URLs with redirects; a public symbol index JSON; a plain-text export of the reference; `llms.txt` | `tools/reference/build.py`, `tools/reference/test_build.py`, regenerated `docs/reference/api/**` | `build.py --check` passes, and a test shows reordering declarations does not change a symbol's URL |
-| **B. Example checker** | Run every fixture group found on disk instead of a fixed list; keep refusing an empty group | `tools/reference/check_examples.py` | Adding a fixture folder makes it checked with no code change |
+| **A. Builder outputs** | Name-derived API URLs and the frozen alias table; a public symbol index JSON; a plain-text export of the reference; `llms.txt`; the check that tour and cookbook fences come from fixtures | `tools/reference/build.py`, `tools/reference/test_build.py`, regenerated `docs/reference/api/**` | `build.py --check` passes, and a test shows reordering declarations does not change a symbol's URL |
+| **B. Example checker** | Run every fixture group found on disk instead of a fixed list; honour `inputs.txt`; move `builders` to it; keep refusing an empty group | `tools/reference/check_examples.py` | Adding a fixture folder makes it checked with no code change |
 | **C. Tour** | Split `start/` into one-idea pages, each with an editable example and an exercise; link the cheatsheet and glossary | `docs/reference/start/**`, `docs/reference/implementation/examples/tour/**` | Every tour example is a checked fixture |
 | **D. Compare-to pages** | "If you know Python" and "If you know C#" mapping tables | `docs/reference/compare/**` | Each Plato cell links its reference page |
 | **E. Cookbook seed** | A first small set of complete problem pages for scientists and engineers, chosen from what the stdlib supports today | `docs/reference/cookbook/**`, `docs/reference/implementation/examples/cookbook/**` | Each recipe's program is a checked fixture with its output shown |
