@@ -1,62 +1,63 @@
 # Plato reference
 
-Plato is a programming language for immutable data and numerical algorithms.
-This site teaches the language, catalogs the libraries, and records the evidence an
-implementer needs for a compatible toolchain.
+Plato is a small language for immutable data and numerical algorithms: you write a
+function once, state its laws beside it, and the toolchain checks both.
 
-Each later page stands on its own. A link names a prerequisite or the source of a rule.
+Here is a complete program. It defines a type, three functions, and three laws about them.
 
-## Start
+```plato
+type TourPoint { X: Integer; Y: Integer; }
 
-- [What is Plato](start/what-is-plato.md)
-- [Quick tour](start/tour.md): one-idea pages, each with a checked example and an exercise
-- [If you know Python or C#](compare/README.md): familiar constructs mapped onto Plato, with what is missing and what is new
-- [Getting started](start/getting-started.md)
+library TourProducts {
+    TourMakePoint(x: Integer, y: Integer): TourPoint => (x, y);
+    TourSwap(p: TourPoint): TourPoint => (p.Y, p.X);
+    TourSum(p: TourPoint): Integer => p.X + p.Y;
 
-## Where to look
+    Law_ReferenceTourFields(): Boolean => TourMakePoint(3, 7).Y == 7;
+    Law_ReferenceTourSwap(): Boolean => TourMakePoint(3, 7).TourSwap.X == 7;
+    Law_ReferenceTourConstructor(): Boolean => TourPoint(3, 7).X == 3;
+}
+```
 
-The [language](language/README.md) says what programs mean.
+This is [`products.plato`](implementation/examples/tour/products.plato), and the law runner
+checks it: each `Law_` function must return `true`. The
+[products page](start/tour/products.md) explains it line by line.
 
-The [library guide](library/README.md) covers mathematical objects, units, coordinate
-systems, preconditions, and operations.
+## The five doors
 
-The API catalog keeps exact declarations, comments, and bodies, one page per declared name.
-Each page carries a status of Supported, Experimental or Legacy, set by its tier:
-
-- [Foundation](api/foundation/README.md) is the scalar, algebra, and collection vocabulary.
-- [Geometry](api/geometry/README.md) is spatial objects and geometric algorithms.
-- [Graphics](api/graphics/README.md) is images, cameras, scenes, and rendering vocabulary.
-- [Future](api/future/README.md) is aspirational vocabulary. The default shipping gates exclude it.
-- [Legacy](api/legacy/README.md) is the older library, compiled separately from the forward vocabulary.
-
-The [cookbook](cookbook/README.md) has problem-shaped recipes for scientists and engineers, each a
-complete program checked by the law runner.
-
-The [design door](design/README.md) explains why Plato is the way it is: the authority of each
-source, a bibliography, and the alternatives that were rejected.
-
-The [implementation guide](implementation/README.md) connects that meaning to the compiler,
-the interpreter, and the C# runtime. Read the
-[discrepancies](implementation/discrepancies.md) before implementing a disputed boundary.
-
-The [formal model](formal/README.md) states definitions, theorem statements, proofs, and
-the limits of those proofs.
-
-Evidence is extracted from source. The [grammar evidence](evidence/grammar-source.md) and
-[operator tables](evidence/operator-source.md) keep accepted syntax, including forms the
-checked language does not implement. The [source-note register](evidence/source-notes.md)
-collects unresolved markers and does not treat them as language features. The
-[dated integration record](implementation/verification-2026-10-25.md) states which checks
-were run, which failures were investigated, and what verification is still open.
-
-Review is separate from the language that exists. The
-[language improvement register](review/language-improvements.md) records proposals. The
-[documentation issue register](review/documentation-issues.md) identifies confusing claims
-in older documents and source comments, their consequences, and proposed corrections.
+- **Tour** is for anyone new to Plato. [The quick tour](start/tour.md) is a short walk
+  through the language, one idea per page, each with a checked example and an exercise.
+  If you know another language, start from [Python](compare/python.md) or
+  [C#](compare/csharp.md), or see [all comparisons](compare/README.md). Also see
+  [What is Plato](start/what-is-plato.md) and [Getting started](start/getting-started.md).
+- **Reference** is for everyone who needs an exact answer. The [language](language/README.md)
+  says what programs mean, and the [library guide](library/README.md) covers mathematical
+  objects, units, coordinate systems, and operations. The API catalog has one page per
+  declared name, set by tier:
+  [Foundation](api/foundation/README.md) (scalars, algebra, collections),
+  [Geometry](api/geometry/README.md) (spatial objects and algorithms),
+  [Graphics](api/graphics/README.md) (images, cameras, scenes),
+  [Future](api/future/README.md) (aspirational, outside the default gates), and
+  [Legacy](api/legacy/README.md) (the older library, compiled separately).
+- **Cookbook** is for scientists and engineers. The [cookbook](cookbook/README.md) holds
+  problem-shaped recipes, each a complete program checked by the law runner.
+- **Design** is for researchers and implementers. The [design door](design/README.md)
+  explains why Plato is the way it is, with a bibliography and the rejected alternatives.
+  Behind it sit the [implementation guide](implementation/README.md) (read the
+  [discrepancies](implementation/discrepancies.md) before implementing a disputed
+  boundary), the [formal model](formal/README.md), the
+  [grammar](evidence/grammar-source.md) and [operator](evidence/operator-source.md) evidence,
+  the [source-note register](evidence/source-notes.md), the
+  [dated integration record](implementation/verification-2026-10-25.md), the
+  [language improvement register](review/language-improvements.md), and the
+  [documentation issue register](review/documentation-issues.md).
+- **Playground** is for everyone who wants to try an example. It is a route of the reader,
+  not a Markdown page, so this page does not link to it. Open it from the reader's header.
 
 ## Authority and evidence
 
-This reference teaches the language and describes the implementation.
+This reference teaches the language and describes the implementation. The
+[design door](design/README.md) holds the longer account of each source's authority.
 [SEMANTICS.md](../SEMANTICS.md) is the normative language document.
 [CONVENTIONS.md](../../stdlib/CONVENTIONS.md) is the normative source for library domain
 conventions. A conflict with either document is evidence to investigate, not permission
@@ -87,8 +88,7 @@ When a precise rule is missing, record the obligation. Do not invent the rule fr
 Chapter layout follows the [Rust Reference](https://doc.rust-lang.org/reference/). The
 [Haskell Report](https://www.haskell.org/onlinereport/) is a comparison for algebraic data
 types and type classes. Plato is eager, so that report's non-strict evaluation does not
-apply. The two links compare organization and type structure. They do not state where
-Plato came from.
+apply.
 
 ## Build and browse
 
