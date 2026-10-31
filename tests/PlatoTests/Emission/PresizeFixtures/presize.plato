@@ -59,6 +59,19 @@ library PresizeProbe
         return xs.Freeze();
     }
 
+    // A Buffer filled slot by slot; --concrete-arrays freezes it to its own array.
+    Built(n: Integer): Array<Integer>
+    {
+        var b = new Buffer<Integer>(n);
+        var i = 0;
+        while (i < n)
+        {
+            b = b.Set(i, i);
+            i = i + 1;
+        }
+        return b.Freeze();
+    }
+
     // The bound changes inside the loop: not stated, nothing is presized.
     Moving(n: Integer): Array<Integer>
     {

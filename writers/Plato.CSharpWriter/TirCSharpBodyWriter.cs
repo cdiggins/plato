@@ -932,6 +932,16 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             return;
         }
 
+        // --concrete-arrays: freezing a builder hands over its backing T[] itself when that array is
+        // exactly full (always for a Buffer), so the value is an exact T[] for the helper's reads.
+        if (_tw.Writer.ConcreteArrays && name == "Freeze" && args.Count == 1
+            && TirRewrite.StripCoerce(args[0])?.Type?.Name is "List" or "Buffer")
+        {
+            WritePostfixReceiver(args[0]);
+            Write(".FreezeExact()");
+            return;
+        }
+
         // Plato's `Count(xs: Array<$T>): Integer` maps onto the runtime list interface, whose
         // Count is a BCL `int`. Under the WRAPPER-scalar recipe Integer and int are different
         // types, so any no-arg Plato member chained off the count (`xs.Count.Range`,

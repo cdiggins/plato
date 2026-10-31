@@ -120,6 +120,21 @@ namespace Ara3D.Geometry
             _items = null;
             return r;
         }
+
+        /// <summary>
+        /// Consume, as <see cref="Freeze"/>, but when the backing array holds exactly the
+        /// elements added (a list created with the right capacity, or one that happened to
+        /// fill its last doubling) the array itself is the result, so a reader that tests for
+        /// <c>T[]</c> (--concrete-arrays) finds one. Otherwise the same zero-copy view.
+        /// </summary>
+        public IReadOnlyList<T> FreezeExact()
+        {
+            CheckNotFrozen();
+            _frozen = true;
+            IReadOnlyList<T> r = _count == _items.Length ? _items : new FrozenArray<T>(_items, _count);
+            _items = null;
+            return r;
+        }
     }
 
     /// <summary>

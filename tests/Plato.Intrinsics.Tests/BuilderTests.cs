@@ -21,6 +21,29 @@ public static class BuilderTests
         => Assert.That(new PlatoList<int>().Count.Value, Is.EqualTo(0));
 
     [Test]
+    public static void FreezeExactIsTheArrayItselfOnlyWhenTheListIsFull()
+    {
+        var full = new PlatoList<int>(3).Add(1).Add(2).Add(3).FreezeExact();
+        Assert.That(full, Is.InstanceOf<int[]>());
+        Assert.That(full, Is.EqualTo(new[] { 1, 2, 3 }));
+        var partial = new PlatoList<int>(5).Add(1).Add(2).FreezeExact();
+        Assert.That(partial, Is.Not.InstanceOf<int[]>());
+        Assert.That(partial, Is.EqualTo(new[] { 1, 2 }));
+        Assert.That(new PlatoList<int>().FreezeExact(), Is.Empty);
+    }
+
+    [Test]
+    public static void FreezeExactInvalidatesTheBuilder()
+    {
+        var xs = new PlatoList<int>(1).Add(1);
+        xs.FreezeExact();
+        Assert.Throws<InvalidOperationException>(() => xs.Add(2));
+        var b = new PlatoBuffer<int>(2);
+        Assert.That(b.Set(0, 7).Set(1, 8).FreezeExact(), Is.InstanceOf<int[]>().And.EqualTo(new[] { 7, 8 }));
+        Assert.Throws<InvalidOperationException>(() => b.Set(0, 1));
+    }
+
+    [Test]
     public static void ACapacityIsAHintTheListStartsEmptyAndStillGrows()
     {
         var xs = new PlatoList<int>(3);
