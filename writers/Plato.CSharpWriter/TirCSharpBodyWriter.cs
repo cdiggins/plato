@@ -254,9 +254,13 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
         if (!isBlock)
         {
-            Write(" => ");
-            WriteNode(body);
-            Write(";");
+            // --cache-constants writes a closed nullary body once, as a cached field.
+            if (isProp || !TryWriteCachedConstant(body))
+            {
+                Write(" => ");
+                WriteNode(body);
+                Write(";");
+            }
         }
         else
         {
@@ -981,6 +985,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             return;
         }
 
+        if (TryWritePrimitiveCompare(call))
+            return;
         // --concrete-arrays: freezing a builder hands over its backing T[] itself when that array is
         // exactly full (always for a Buffer), so the value is an exact T[] for the helper's reads.
         if (_tw.Writer.ConcreteArrays && name == "Freeze" && args.Count == 1

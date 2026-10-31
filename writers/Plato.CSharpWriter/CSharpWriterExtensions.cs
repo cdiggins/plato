@@ -49,6 +49,8 @@ namespace Ara3D.Geometry.CSharpWriter
             writer.ShareCalls = loopOptimizations?.ShareCalls ?? false;
             writer.LowerScalars = loopOptimizations?.LowerScalars ?? false;
             writer.HoistInvariants = loopOptimizations?.HoistInvariants ?? false;
+            writer.CacheConstants = loopOptimizations?.CacheConstants ?? false;
+            writer.PrimitiveCompare = loopOptimizations?.PrimitiveCompare ?? false;
             if (statementInlining != null)
             {
                 writer.InlineStatements = true;

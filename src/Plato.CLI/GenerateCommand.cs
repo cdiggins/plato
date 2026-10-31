@@ -47,7 +47,13 @@ internal static class GenerateCommand
 
         var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
             args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"), LowerScalars: lowerScalars,
-            HoistInvariants: args.Contains("--hoist-invariants"));
+            HoistInvariants: args.Contains("--hoist-invariants"), CacheConstants: args.Contains("--cache-constants"),
+            PrimitiveCompare: args.Contains("--primitive-compare"));
+        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare) && (typeScript || rust || glsl || cpp || cuda))
+        {
+            Console.Error.WriteLine("--cache-constants and --primitive-compare apply to C# generation only.");
+            return 1;
+        }
         if (loopOptimizations.HoistInvariants && (!loops || typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--hoist-invariants requires C# generation with --loops.");

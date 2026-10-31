@@ -491,6 +491,14 @@ namespace Ara3D.Geometry.CSharpWriter
         // callback is computed once ahead of the loop (see TirLoopInvariantHoister). The counts
         // are diagnostics for the generation log; default (false) output is unchanged.
         public bool HoistInvariants { get; set; }
+
+        // --cache-constants: a nullary static whose body is a closed expression returns a static
+        // readonly field of a lazily initialised holder class (TirCSharpBodyWriter.Constants.cs).
+        public bool CacheConstants { get; set; }
+
+        // --primitive-compare: a Number or Integer comparison call is written on the operands'
+        // .Value (TirCSharpBodyWriter.PrimitiveCompare.cs), with the wrapper's exact semantics.
+        public bool PrimitiveCompare { get; set; }
         public int HoistedInvariants;
         public int HoistExposingInlines;
         public int HoistedLoops;

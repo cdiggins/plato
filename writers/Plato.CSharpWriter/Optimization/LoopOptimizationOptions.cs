@@ -7,4 +7,5 @@ namespace Ara3D.Geometry.CSharpWriter;
 // LowerScalars (--lower-scalars, TKT-1129) is emission-time and needs no other flag: inside a body,
 // Number, Integer and Boolean are the primitives they wrap (CSharpWriter.LowerScalars).
 public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool ExactOutputAllocation = false, bool ConcreteArrays = false, bool LeanInlining = false, bool Presize = false, bool InPlace = false, bool ShareCalls = false, bool LowerScalars = false,
-    bool HoistInvariants = false);
+    bool HoistInvariants = false,
+    bool CacheConstants = false, bool PrimitiveCompare = false);

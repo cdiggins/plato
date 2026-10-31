@@ -1,0 +1,28 @@
+// Fixture for SmallSwitchTests (TKT-1095): one probe per emission switch.
+
+library SmallSwitchProbe
+{
+    // --cache-constants: two closed constants, the second reading the first, and a literal.
+    QuarterSquare(): Number => (1.0 + 0.25 * 0.25) * 0.5;
+    TwiceQuarterSquare(): Number => QuarterSquare() * 2.0;
+    PlainHalf(): Number => 0.5;
+    ProbeHalfUnit(_: Number): Number => (1.0 + 0.25 * 0.25) * 0.5;
+    UsesConstants(x: Number): Number => x * TwiceQuarterSquare() + PlainHalf();
+
+    // --primitive-compare: each comparison on Number and on Integer, and one across a conversion.
+    NumberLess(a: Number, b: Number): Boolean => a < b;
+    NumberLessOrEqual(a: Number, b: Number): Boolean => a <= b;
+    NumberGreater(a: Number, b: Number): Boolean => a > b;
+    NumberGreaterOrEqual(a: Number, b: Number): Boolean => a >= b;
+    NumberSame(a: Number, b: Number): Boolean => a == b;
+    NumberDifferent(a: Number, b: Number): Boolean => a != b;
+    IntegerLess(a: Integer, b: Integer): Boolean => a < b;
+    IntegerLessOrEqual(a: Integer, b: Integer): Boolean => a <= b;
+    IntegerGreater(a: Integer, b: Integer): Boolean => a > b;
+    IntegerGreaterOrEqual(a: Integer, b: Integer): Boolean => a >= b;
+    IntegerSame(a: Integer, b: Integer): Boolean => a == b;
+    IntegerDifferent(a: Integer, b: Integer): Boolean => a != b;
+    MixedLess(a: Integer, b: Number): Boolean => a < b;
+    // An Integer operand that C# sees as int (the list's Count) is cast to the wrapper first.
+    IndexInRange(xs: IIndexable<$T>, i: Integer): Boolean => i >= 0 && i < xs.Count;
+}

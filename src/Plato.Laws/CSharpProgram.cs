@@ -77,6 +77,8 @@ public sealed class CSharpProgram
         writer.ShareCalls = loopOptimizations?.ShareCalls ?? false;
         writer.LowerScalars = loopOptimizations?.LowerScalars ?? false;
         writer.HoistInvariants = loopOptimizations?.HoistInvariants ?? false;
+        writer.CacheConstants = loopOptimizations?.CacheConstants ?? false;
+        writer.PrimitiveCompare = loopOptimizations?.PrimitiveCompare ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 
