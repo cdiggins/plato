@@ -69,13 +69,21 @@ public partial class TirCSharpBodyWriter
             case TirTempRef tr when _primitiveTemps.ContainsKey(tr.Name):
                 Write(tr.Name);
                 return;
-            case TirCall call when ScalarLowering.Lookup(call, out _) is { } op:
+            case TirCall call when LoweredOperation(call) is { } op:
                 WriteOperation(op, call.Args);
                 return;
-            case TirCall { Name: "Count", Args.Count: 1 } count when TirRewrite.StripCoerce(count.Args[0])?.Type?.Name == "Array":
+            case TirCall { Name: "Count", Args.Count: 1 } count when TirRewrite.IsListType(TirRewrite.StripCoerce(count.Args[0])?.Type):
                 // The runtime list's Count is already the int the Integer wrapper would hold.
                 WritePostfixReceiver(count.Args[0]);
                 Write(".Count");
+                return;
+            case TirCall external when !BindsToGeneratedCode(external) && ScalarOf(external.Type) is { } externalScalar:
+                // A call on a list, an interface or a type variable may bind outside the generated
+                // code (Ara3D.Collections' IsEmpty on a list is a C# bool): the explicit conversion
+                // is the identity on a primitive and the wrapper's own operator otherwise.
+                Write($"(({PrimitiveType(externalScalar)})(");
+                WriteNode(external);
+                Write("))");
                 return;
             case TirCoerce c when ScalarOf(c.ToType) is { } to:
             {
@@ -140,6 +148,49 @@ public partial class TirCSharpBodyWriter
         if (parens) Write(")");
         Write(".Value");
     }
+
+    /// <summary>The intrinsic a call lowers to, or null: the table's row, unless the call is an
+    /// Integer operation over constants alone, which C# would fold at compile time and reject
+    /// where the runtime wraps or throws (CS0220 on an overflow, CS0020 on a division by zero;
+    /// the capacity laws probe exactly those). Such a call keeps the wrapper spelling.</summary>
+    private ScalarLowering.Op? LoweredOperation(TirCall call)
+    {
+        var op = ScalarLowering.Lookup(call, out var scalar);
+        return op != null && scalar == "Integer" && IsConstant(call) ? null : op;
+    }
+
+    /// <summary>Whether a scalar node is a C# constant expression once lowered: literals under
+    /// lowered operations, conversions and conditionals alone.</summary>
+    private bool IsConstant(TirNode n)
+        => n switch
+        {
+            TirLiteral => true,
+            TirCoerce c => IsConstant(c.Inner),
+            TirConditional cond => IsConstant(cond.Condition) && IsConstant(cond.IfTrue) && IsConstant(cond.IfFalse),
+            TirCall call => ScalarLowering.Lookup(call, out _) != null && call.Args.All(IsConstant),
+            _ => false,
+        };
+
+    /// <summary>Whether a call's C# binds to code this writer emits or to the wrapper structs, so
+    /// its scalar result is the wrapper: a nullary constant, a static on a type, or a receiver of
+    /// a concrete generated or scalar type (Self standing for the enclosing type). A receiver that
+    /// is a list, an interface or a type variable may bind to the runtime or to Ara3D.Collections.</summary>
+    private bool BindsToGeneratedCode(TirCall call)
+    {
+        if (call.Args.Count == 0)
+            return true;
+        var receiver = TirRewrite.StripCoerce(call.Args[0]);
+        if (receiver is TirTypeRef)
+            return true;
+        var name = receiver?.Type?.Def?.Name ?? receiver?.Type?.Name;
+        if (name == "Self")
+            name = _tw.TypeDef?.Name;
+        return name != null && _tw.Writer.IsConcreteTypeName(name);
+    }
+
+    /// <summary>Whether a scalar let lowers to a primitive local: a constant value stays a wrapper
+    /// local, since an unread primitive constant is CS0219 and a constant folds either way.</summary>
+    private bool LowersLet(TirNode value) => !IsConstant(value);
 
     /// <summary>Writes an intrinsic's C# spelling with its operands as primitives, streaming the
     /// format's literal text and each <c>{i}</c> operand in order.</summary>
@@ -224,7 +275,7 @@ public partial class TirCSharpBodyWriter
             case TirTempRef tr when _primitiveTemps.TryGetValue(tr.Name, out var ts):
                 WriteWrapped(ts, () => WritePrimitive(tr));
                 return true;
-            case TirCall call when ScalarLowering.Lookup(call, out _) is { } op:
+            case TirCall call when LoweredOperation(call) is { } op:
                 WriteWrapped(op.Result, () => WriteOperation(op, call.Args));
                 return true;
             case TirBooleanChain bc:
@@ -245,7 +296,7 @@ public partial class TirCSharpBodyWriter
                 Write(" = ");
                 WritePrimitive(asg.RValue);
                 return true;
-            case TirLet let when ScalarOf(let, let.Def, let.Value) is { } ls:
+            case TirLet let when ScalarOf(let, let.Def, let.Value) is { } ls && LowersLet(let.Value):
                 WritePrimitiveLet(let.Def, ls, let.Value);
                 return true;
         }

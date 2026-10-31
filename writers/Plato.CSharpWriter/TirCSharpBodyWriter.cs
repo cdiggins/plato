@@ -296,7 +296,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 WriteLine($"; goto {exitRegion.Result.Name}_exit;");
                 return;
             case TirInlineBinding binding:
-                if (Lower && ScalarOf(binding, binding.Def, binding.Value) is { } bindingScalar)
+                if (Lower && ScalarOf(binding, binding.Def, binding.Value) is { } bindingScalar && LowersLet(binding.Value))
                 {
                     WritePrimitiveLet(binding.Def, bindingScalar, binding.Value);
                     WriteLine(";");
@@ -332,7 +332,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirLet let:
-                if (Lower && ScalarOf(let, let.Def, let.Value) is { } letScalar)
+                if (Lower && ScalarOf(let, let.Def, let.Value) is { } letScalar && LowersLet(let.Value))
                 {
                     WritePrimitiveLet(let.Def, letScalar, let.Value);
                     WriteLine(";");
