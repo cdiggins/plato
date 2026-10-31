@@ -166,7 +166,7 @@ public static partial class TirInliner
         // parameter and return is Number, Integer or Boolean may expand — the derived scalar
         // helpers (GreaterThanOrEquals, LessThan, Abs, Min, Max, Square) whose arithmetic the
         // scalar lowering wants in the caller's body. Everything else stays a call.
-        if (!host.InlineCalls && !HasAllScalarSignature(host, calleeTir))
+        if (!host.InlineCalls && !HasAllScalarSignature(host, calleeTir, call, callerTir, ownerTypeName, receiverTypeName))
             return Refuse(InlineRefusal.NotScalarBody);
 
         // RECURSION, two shapes. Directly: the callee IS the function being inlined into.
@@ -677,19 +677,31 @@ public static partial class TirInliner
         => name != null && host.IsScalarPrimitiveName(name)
            && name != "Character" && name != "String";
 
-    /// <summary>The scalar-only gate: every parameter type (zonked, falling back to the declared
-    /// type when the zonked list is missing or shorter) and the return type of
-    /// <paramref name="calleeTir"/> is Number, Integer or Boolean. A nullary body passes on its
-    /// return type alone.</summary>
-    private static bool HasAllScalarSignature(ITirInlineHost host, TirFunction calleeTir)
+    /// <summary>The scalar-only gate: every parameter and the return of the callee AT THIS CALL is
+    /// Number, Integer or Boolean. The stdlib's derived helpers are generic over IOrderable and
+    /// IEquatable (<c>GreaterThanOrEquals(a: IOrderable, b: IOrderable)</c>), so the specialized
+    /// body's declared types still name the interface: a parameter is read as the inliner resolves
+    /// it (<see cref="ResolvedParamTypeName"/>), falling back to the caller's argument type, and
+    /// the return as the zonked return, falling back to the call's own type. A nullary body
+    /// (<paramref name="call"/> null) passes on its return type alone.</summary>
+    private static bool HasAllScalarSignature(ITirInlineHost host, TirFunction calleeTir, TirCall call = null,
+        TirFunction callerTir = null, string ownerTypeName = null, string receiverTypeName = null)
     {
         var paramDefs = calleeTir?.Parameters;
         if (paramDefs == null)
             return false;
         for (var i = 0; i < paramDefs.Count; i++)
-            if (!IsLoweringScalarName(host, ZonkedParamTypeName(calleeTir, i) ?? paramDefs[i]?.Type?.Name))
+        {
+            var name = ResolvedParamTypeName(host, calleeTir, paramDefs, i, receiverTypeName);
+            if (!IsLoweringScalarName(host, name) && call != null && i < call.Args.Count)
+                name = TrustedTypeName(callerTir, call.Args[i], host, ownerTypeName);
+            if (!IsLoweringScalarName(host, name))
                 return false;
-        return IsLoweringScalarName(host, (calleeTir.ZonkedReturnType ?? calleeTir.ReturnType)?.Name);
+        }
+        var ret = (calleeTir.ZonkedReturnType ?? calleeTir.ReturnType)?.Name;
+        if (!IsLoweringScalarName(host, ret) && call != null)
+            ret = call.Type?.Name;
+        return IsLoweringScalarName(host, ret);
     }
 
     private static string ZonkedParamTypeName(TirFunction calleeTir, int i)

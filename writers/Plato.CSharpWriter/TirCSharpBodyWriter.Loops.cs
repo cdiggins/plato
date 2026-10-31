@@ -81,8 +81,14 @@ public partial class TirCSharpBodyWriter
             {
                 if (TirRewrite.IsStatementNode(lam.Body))
                 {
-                    Write($"_callback{k}");
-                    if (primitive) Write(".Value");
+                    // The callback's result local: a primitive when its region declared it so.
+                    var held = _primitiveTemps.TryGetValue($"_callback{k}", out var callbackScalar);
+                    if (held == primitive)
+                        Write($"_callback{k}");
+                    else if (held)
+                        WriteWrapped(callbackScalar, () => Write($"_callback{k}"));
+                    else
+                        Write($"_callback{k}.Value");
                     return;
                 }
                 _lambdaDepth++;
@@ -129,7 +135,8 @@ public partial class TirCSharpBodyWriter
                     WriteNode(stages[st]);
                     WriteLine($"({prev.Wrapped});");
                 }
-                prev = e;
+                // A stage result a region declared as a primitive is one for the next stage too.
+                prev = _primitiveTemps.TryGetValue(e, out var stageScalar) ? new Operand($"new {stageScalar}({e})", e) : e;
             }
             return prev;
         }
@@ -207,6 +214,9 @@ public partial class TirCSharpBodyWriter
             case "Any":
                 var isAll = ll.Kind == "All";
                 WriteLine($"var {t} = {(isAll ? "true" : "false")};");
+                // The flag is a C# bool; lowered, the rest of the body reads it as one.
+                if (Lower)
+                    _primitiveTemps[t] = "Boolean";
                 WriteLine($"var {n} = {count0};");
                 For(n, () =>
                 {

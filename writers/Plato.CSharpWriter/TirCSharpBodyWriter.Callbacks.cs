@@ -9,7 +9,12 @@ public partial class TirCSharpBodyWriter
     {
         _lambdaDepth++;
         if (TirRewrite.IsStatementNode(lambda.Body))
+        {
             WriteStatement(new TirInlineRegion(result, TirInlineCloner.RedirectReturns(lambda.Body, result)));
+            // The loop emitters read the result by name: record a primitive result under it too.
+            if (_primitiveLocals.TryGetValue(result, out var scalar))
+                _primitiveTemps[result.Name] = scalar;
+        }
         else
         {
             Write($"{CSharpTypeName(result.Type)} {result.Name} = ");
