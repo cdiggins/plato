@@ -24,6 +24,13 @@ internal sealed class EmittedLibrary
     /// or, when its receiver is an array, in Extensions.g.cs.</summary>
     public static EmittedLibrary Build(string fixtureFolder, string fixtureFile, Func<string, bool> keepMethod,
         string[] methodFiles, params string[] recordFiles)
+        => Build(fixtureFolder, fixtureFile, keepMethod, methodFiles, null, null, recordFiles);
+
+    /// <summary>As above, with <paramref name="configure"/> applied to the writer before it writes
+    /// (a switch under test) and <paramref name="extraSource"/>, if any, compiled in with the output (the
+    /// operators of a scalar that the test assembly does not carry).</summary>
+    public static EmittedLibrary Build(string fixtureFolder, string fixtureFile, Func<string, bool> keepMethod,
+        string[] methodFiles, Action<CSharpWriter> configure, string extraSource, params string[] recordFiles)
     {
         var foundation = Path.Combine(CheckerTestSupport.FindForwardStdLib(), "foundation");
         var fixture = Path.Combine(CheckerTestSupport.FindFolder("PlatoTests"), "Emission", fixtureFolder, fixtureFile);
@@ -31,11 +38,13 @@ internal sealed class EmittedLibrary
             .Append(CheckerTestSupport.ParseFile(fixture));
         var compilation = new Ara3D.Geometry.Compiler.Compilation(Ara3D.Logging.Logger.Null, asts.ToList());
         var writer = new CSharpWriter(compilation, "unused-emitted-library") { ExtensionStyle = true };
+        configure?.Invoke(writer);
         writer.WriteAll();
         Assert.That(writer.Files.Keys, Is.SupersetOf(methodFiles.Concat(recordFiles)), "emitted files");
         var sources = recordFiles.Select(f => writer.Files[f].ToString())
             .Concat(methodFiles.Select(f => KeepMethods(writer.Files[f].ToString(), keepMethod)))
             .Prepend("global using System; global using System.Collections.Generic;")
+            .Concat(extraSource == null ? Array.Empty<string>() : new[] { extraSource })
             .ToArray();
         var assembly = CSharpTestCompilation.CompileAndLoad(sources, LanguageVersion.CSharp12, OptimizationLevel.Release);
         return new EmittedLibrary(string.Join(Environment.NewLine, sources), assembly);

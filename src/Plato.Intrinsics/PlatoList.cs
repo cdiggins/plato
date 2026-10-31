@@ -31,6 +31,15 @@ namespace Ara3D.Geometry
         public PlatoList()
             => _items = Array.Empty<T>();
 
+        /// <summary>An empty builder with room for <paramref name="capacity"/> elements, so that
+        /// appending that many never copies the backing array. A hint: a capacity of zero or less
+        /// is the empty builder, and the builder still grows past it.</summary>
+        public PlatoList(Integer capacity)
+        {
+            int n = capacity;
+            _items = n <= 0 ? Array.Empty<T>() : new T[n];
+        }
+
         [MethodImpl(AggressiveInlining)]
         private void CheckNotFrozen()
         {

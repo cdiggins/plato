@@ -45,10 +45,15 @@ internal static class GenerateCommand
         var loops = args.Contains("--loops");
 
         var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
-            args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"));
+            args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"));
         if (loopOptimizations.ConcreteArrays && (typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--concrete-arrays applies to C# generation only.");
+            return 1;
+        }
+        if (loopOptimizations.Presize && (typeScript || rust || glsl || cpp || cuda))
+        {
+            Console.Error.WriteLine("--presize applies to C# generation only.");
             return 1;
         }
         var profileArg = args.Where(a => a.StartsWith("--profile="))

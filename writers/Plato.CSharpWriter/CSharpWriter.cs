@@ -250,6 +250,8 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("optimize-arrays / materialize (layer 9)");
             tir = TirLoopLowerer.Rewrite(tir, this);
             Phase("loops / lower (layer 10)");
+            tir = TirPresize.Rewrite(tir, this);
+            Phase("presize / counted List fills");
             sb?.AppendLine();
             return tir;
         }
@@ -449,6 +451,10 @@ namespace Ara3D.Geometry.CSharpWriter
         // IReadOnlyList calls. Signatures and stored types are unchanged. Default (false) output
         // is unchanged.
         public bool ConcreteArrays { get; set; }
+
+        // When true (--presize, TKT-1131), a `new List<T>()` that a counted loop fills once per pass
+        // is written `new List<T>(count)` (see TirPresize). Default (false) output is unchanged.
+        public bool Presize { get; set; }
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at

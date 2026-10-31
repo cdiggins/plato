@@ -44,6 +44,7 @@ namespace Ara3D.Geometry.CSharpWriter
             writer.ExactOutputAllocation = loopOptimizations?.ExactOutputAllocation ?? false;
             writer.LeanInlining = loopOptimizations?.LeanInlining ?? false;
             writer.ConcreteArrays = loopOptimizations?.ConcreteArrays ?? false;
+            writer.Presize = loopOptimizations?.Presize ?? false;
             if (statementInlining != null)
             {
                 writer.InlineStatements = true;

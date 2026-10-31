@@ -71,6 +71,7 @@ public sealed class CSharpProgram
         writer.ExactOutputAllocation = loopOptimizations?.ExactOutputAllocation ?? false;
         writer.LeanInlining = loopOptimizations?.LeanInlining ?? false;
         writer.ConcreteArrays = loopOptimizations?.ConcreteArrays ?? false;
+        writer.Presize = loopOptimizations?.Presize ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 

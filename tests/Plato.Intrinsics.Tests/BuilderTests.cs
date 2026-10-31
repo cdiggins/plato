@@ -21,6 +21,23 @@ public static class BuilderTests
         => Assert.That(new PlatoList<int>().Count.Value, Is.EqualTo(0));
 
     [Test]
+    public static void ACapacityIsAHintTheListStartsEmptyAndStillGrows()
+    {
+        var xs = new PlatoList<int>(3);
+        Assert.That(xs.Count.Value, Is.EqualTo(0));
+        for (var i = 0; i < 10; i++)
+            xs = xs.Add(i);
+        Assert.That(xs.Freeze(), Is.EqualTo(new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
+    }
+
+    [Test]
+    public static void ANegativeOrZeroCapacityIsTheEmptyList()
+    {
+        Assert.That(new PlatoList<int>(0).Count.Value, Is.EqualTo(0));
+        Assert.That(new PlatoList<int>(-5).Add(7).Freeze(), Is.EqualTo(new[] { 7 }));
+    }
+
+    [Test]
     public static void AddReturnsTheBuilderSoCallsChain()
     {
         var xs = new PlatoList<int>().Add(1).Add(2).Add(3);
