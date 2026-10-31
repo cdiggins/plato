@@ -22,8 +22,9 @@ Do not use non-C# writers as semantic evidence. Do not claim a clean-room spec i
 
 ## Reader data
 
-`tools/reference/build.py` writes `tools/reference-reader/public/reference.json` before reader build.
-Top-level object: `{schemaVersion: 1, sourceRevision: string, pages: Page[], symbols, aliases}`.
+This section describes reader data v1, `reference.json`, which is retired: the builder no longer
+writes it and the reader reads "Reader data v2" below. The page record and link rules here still
+apply to v2's page files. Its top-level object was `{schemaVersion: 1, sourceRevision: string, pages: Page[], symbols, aliases}`.
 `symbols` maps a declared name to `[{id, title}]`, one entry per name page.
 `aliases` maps a retired page id to its replacement page id, copied from
 `docs/reference/api/aliases.json`; the reader resolves an unknown route through it before
@@ -104,10 +105,8 @@ labels in the reference README, which qualify individual claims, not pages.
 
 ## Reader data v2
 
-Wave 2 of the reference site plan moves the reader to data it loads in pieces. The builder
-writes these beside `reference.json` in `tools/reference-reader/public/`, all ignored by git.
-`reference.json` (v1) remains until the reader no longer reads it; then the builder stops
-writing it.
+The reader loads its data in pieces. The builder writes these in
+`tools/reference-reader/public/`, all ignored by git.
 
 - `reference-index.json`: `{schemaVersion: 2, sourceRevision, pages, symbols, aliases}`.
   `pages` is `[{id, path, title, group, door, status}]` in reader order, without Markdown.
@@ -116,7 +115,9 @@ writing it.
   reference; `cookbook` the cookbook; everything else the design door. `status` is the tier
   status for API pages and tier library guides, otherwise null. `symbols` maps a name to
   `[{id, title, declarations}]`, where `declarations` lists each overload's first line.
-  `aliases` is as in v1.
+  `aliases` is as in v1. `order` is the page's position among the links of its folder's index
+page (`x.md` beside folder `x/`, or `x/README.md`), or null when that page does not link it; the
+reader orders sibling pages by it before its own rules.
 - `pages/<page id>.json`: `{id, markdown, rawMarkdown}` for one page, fetched when it opens.
 - `search.json`: `{schemaVersion: 2, pages: [{id, text}]}`, the raw Markdown of every page,
   fetched on the first body search.
@@ -128,6 +129,11 @@ writing it.
 - Routes: `#/playground` lists the example groups, `#/playground/<group>` opens one, and
   `#/playground/<group>~<payload>` opens it with a shared edit. The payload is opaque to the
   reader shell; the playground module encodes and decodes it.
+- Payload: one version character, then base64url without padding. `z` is deflate-raw, `p` is
+  uncompressed. The bytes are UTF-8 JSON mapping each edited file's path to its full edited
+  source; unedited files are left out. A payload that is malformed, too large, or names a file
+  the group lacks is rejected with a message. `src/playground/share.js` holds the limits.
+- The `navigate` prop takes a full hash route beginning `#/`.
 - The reader shell parses these routes, loads `examples.json` on first entry, and renders the
   default export of `tools/reference-reader/src/playground/Playground.jsx` with the props its
   header comment lists. The playground module owns everything inside that component.
