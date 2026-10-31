@@ -12,7 +12,7 @@ using Ara3D.Utils;
 namespace Ara3D.Geometry.CLI
 {
     // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|cpu64i32|gpu32]
-    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--concrete-arrays] [--lean-inlining] [--presize] [--in-place] [--share-calls] [--lower-scalars] [--filter=<text>[,<text>...]] [--laws-from=<file>]
+    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--concrete-arrays] [--lean-inlining] [--presize] [--in-place] [--share-calls] [--lower-scalars] [--hoist-invariants] [--cache-constants] [--primitive-compare] [--filter=<text>[,<text>...]] [--laws-from=<file>]
     //                [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N]
     //                [--budget=<seconds per law>] [--abandon=<seconds>] [--witness-budget=<seconds per witness>]
     //                [--parallel=N] [--call=<Name>]
@@ -78,7 +78,8 @@ namespace Ara3D.Geometry.CLI
             // run through the same emission a consumer gets.
             var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
                 args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"),
-                LowerScalars: args.Contains("--lower-scalars"));
+                LowerScalars: args.Contains("--lower-scalars"), HoistInvariants: args.Contains("--hoist-invariants"),
+                CacheConstants: args.Contains("--cache-constants"), PrimitiveCompare: args.Contains("--primitive-compare"));
             var backendName = args.Contains("--differential")
                 ? LawBackends.DifferentialName
                 : Flags(args, "--backend=").LastOrDefault() ?? LawBackends.InterpreterName;
