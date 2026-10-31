@@ -15,11 +15,14 @@ import '@fontsource/ibm-plex-sans/600.css';
 import '@fontsource/ibm-plex-mono/400.css';
 import './style.css';
 
+/** Where the site is served from: "/" in development, the Pages subfolder in a `--base` build. */
+const BASE = import.meta.env.BASE_URL;
+
 /** The root spiral from docs/assets/icon, copied beside tokens.css by the builder. */
 function Mark({ className, size }) {
   return <picture className={className}>
-    <source srcSet="/brand/root-spiral-light.svg" media="(prefers-color-scheme: light)" />
-    <img src="/brand/root-spiral.svg" alt="" width={size} height={size} />
+    <source srcSet={`${BASE}brand/root-spiral-light.svg`} media="(prefers-color-scheme: light)" />
+    <img src={`${BASE}brand/root-spiral.svg`} alt="" width={size} height={size} />
   </picture>;
 }
 
@@ -183,7 +186,7 @@ function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeHeading, setActiveHeading] = useState(route.heading ?? '');
   useEffect(() => {
-    fetch('/reference.json').then(response => {
+    fetch(`${BASE}reference.json`).then(response => {
       if (!response.ok) throw new Error(`Reference data returned ${response.status}. Run the reference builder first.`);
       return response.json();
     }).then(value => {

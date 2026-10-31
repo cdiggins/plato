@@ -42,6 +42,29 @@
       ],
       "cwd": "demos/typescript/geometry-samples",
       "port": 5173
+    },
+    {
+      "name": "reference-reader",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/reference-reader/node_modules/vite/bin/vite.js",
+        "tools/reference-reader",
+        "--host", "127.0.0.1", "--port", "5391", "--strictPort"
+      ],
+      "port": 5391,
+      "url": "http://127.0.0.1:5391"
+    },
+    {
+      "name": "reference-reader-pages",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/reference-reader/node_modules/vite/bin/vite.js",
+        "preview", "tools/reference-reader",
+        "--base=/plato/reference/",
+        "--host", "127.0.0.1", "--port", "5392", "--strictPort"
+      ],
+      "port": 5392,
+      "url": "http://127.0.0.1:5392"
     }
   ]
 }

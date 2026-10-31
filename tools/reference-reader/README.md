@@ -24,6 +24,11 @@ npm --prefix tools/reference-reader run preview
 
 The small pure navigation/search helpers can be checked with `npm --prefix tools/reference-reader test`.
 
+The [Pages workflow](../../.github/workflows/pages.yml) publishes the same production build under
+the site's `reference/` folder, passing Vite's `--base` flag so that the data file, the brand folder
+and the bundle resolve there. The reader reads that base at runtime, so nothing in the source names
+the folder.
+
 The `predev` and `prebuild` scripts regenerate the reference data automatically, so Python 3.10
 or later is also required. A failed source/link check stops the build instead of silently using
 stale reader data. The initial explicit generator command is useful for seeing documentation
