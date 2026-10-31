@@ -1,0 +1,75 @@
+// Fixture of the --share-calls tests (TKT-1136): each function is one case of the rule in
+// writers/Plato.CSharpWriter/Optimization/TirSharedCalls.cs, and each law states the value the
+// plain reading gives. The tests count the calls of Cost and Row that remain in the compiled body.
+type SharedRow = Good(Value: Integer) | Bad(Code: Integer, About: Integer);
+
+library SharedProbe
+{
+    Cost(n: Integer): Integer => n * n + 1;
+
+    Row(n: Integer): SharedRow => n > 0 ? SharedRow.Good(n) : SharedRow.Bad(n, 1);
+
+    Make(n: Integer): Array<Integer> => n.MapRange(i => i + n);
+
+    //== Shared: evaluated once
+
+    // A match names its scrutinee in a test and in a field read.
+    MatchOnCall(n: Integer): Integer
+        => match (Row(n)) {
+            Good(v) => v + 1;
+            Bad(c, a) => c + a;
+        };
+
+    // The same call twice.
+    Twice(n: Integer): Integer => Cost(n) + Cost(n);
+
+    // The call is in the condition and in a branch: the condition is always evaluated.
+    InConditionAndBranch(n: Integer): Integer
+        => Cost(n) > 10 ? Cost(n) : Cost(n) + 1;
+
+    // The shared call has an argument that is a call: the largest is bound, the inner one stays inside it.
+    Nested(n: Integer): Integer => Cost(Cost(n)) + Cost(Cost(n));
+
+    // The inner call is also named alone: two locals, the inner one first.
+    NestedAndInner(n: Integer): Integer => Cost(Cost(n)) + Cost(Cost(n)) + Cost(n);
+
+    // Two different shared calls in one expression.
+    TwoKinds(n: Integer): Integer => Cost(n) + Cost(n + 1) + Cost(n) + Cost(n + 1);
+
+    // A statement of a block.
+    InBlock(n: Integer): Integer
+    {
+        var a = Cost(n) + Cost(n);
+        var b = a + Cost(n);
+        return a + b;
+    }
+
+    //== Not shared: the expression stays as written
+
+    // Only the branches name the call, so nothing is evaluated on every path.
+    OnlyInBranches(n: Integer): Integer
+        => n > 3 ? Cost(n) : Cost(n) + 1;
+
+    // Different arguments.
+    Different(n: Integer): Integer => Cost(n) + Cost(n + 1);
+
+    // An array result is left to the loop passes.
+    ArrayResult(n: Integer): Integer => Make(n).Count + Make(n)[0];
+
+    // A lambda body is another expression.
+    InLambda(n: Integer): Array<Integer> => n.MapRange(i => Cost(i) + Cost(i));
+
+    //== Laws: the value the plain reading gives
+
+    Law_MatchOnCall(): Boolean => MatchOnCall(4).Equals(5) && MatchOnCall(0 - 2).Equals(0 - 1);
+    Law_Twice(): Boolean => Twice(3).Equals(20);
+    Law_InConditionAndBranch(): Boolean => InConditionAndBranch(3).Equals(11) && InConditionAndBranch(4).Equals(17);
+    Law_Nested(): Boolean => Nested(1).Equals(10);
+    Law_NestedAndInner(): Boolean => NestedAndInner(1).Equals(12);
+    Law_TwoKinds(): Boolean => TwoKinds(2).Equals(30);
+    Law_InBlock(): Boolean => InBlock(2).Equals(25);
+    Law_OnlyInBranches(): Boolean => OnlyInBranches(4).Equals(17) && OnlyInBranches(2).Equals(6);
+    Law_Different(): Boolean => Different(2).Equals(15);
+    Law_ArrayResult(): Boolean => ArrayResult(3).Equals(6);
+    Law_InLambda(): Boolean => InLambda(3).Equals([2, 4, 10]);
+}

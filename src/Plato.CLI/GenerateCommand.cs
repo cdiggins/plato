@@ -45,7 +45,7 @@ internal static class GenerateCommand
         var loops = args.Contains("--loops");
 
         var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
-            args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"));
+            args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"));
         if (loopOptimizations.ConcreteArrays && (typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--concrete-arrays applies to C# generation only.");

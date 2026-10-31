@@ -46,6 +46,7 @@ namespace Ara3D.Geometry.CSharpWriter
             writer.ConcreteArrays = loopOptimizations?.ConcreteArrays ?? false;
             writer.Presize = loopOptimizations?.Presize ?? false;
             writer.InPlaceUpdates = loopOptimizations?.InPlace ?? false;
+            writer.ShareCalls = loopOptimizations?.ShareCalls ?? false;
             if (statementInlining != null)
             {
                 writer.InlineStatements = true;

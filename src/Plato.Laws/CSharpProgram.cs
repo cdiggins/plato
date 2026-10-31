@@ -73,6 +73,7 @@ public sealed class CSharpProgram
         writer.ConcreteArrays = loopOptimizations?.ConcreteArrays ?? false;
         writer.Presize = loopOptimizations?.Presize ?? false;
         writer.InPlaceUpdates = loopOptimizations?.InPlace ?? false;
+        writer.ShareCalls = loopOptimizations?.ShareCalls ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 

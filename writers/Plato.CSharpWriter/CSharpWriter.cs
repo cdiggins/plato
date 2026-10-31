@@ -248,6 +248,8 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("fuse-consumers / independent reductions");
             tir = TirArrayMaterializer.Rewrite(tir, this);
             Phase("optimize-arrays / materialize (layer 9)");
+            tir = TirSharedCalls.Rewrite(tir, this);
+            Phase("share-calls / a call a statement repeats (TKT-1136)");
             tir = TirLoopLowerer.Rewrite(tir, this);
             Phase("loops / lower (layer 10)");
             tir = TirPresize.Rewrite(tir, this);
@@ -462,6 +464,11 @@ namespace Ara3D.Geometry.CSharpWriter
         // emitted as a write into the array's own storage (see TirInPlaceUpdates). Default (false)
         // output is unchanged.
         public bool InPlaceUpdates { get; set; }
+
+        // When true (--share-calls, TKT-1136), a method call that one statement evaluates more than once
+        // (a match on a call lowers to a test and a field read per case, each naming the call) is
+        // evaluated once into a local (see TirSharedCalls). Default (false) output is unchanged.
+        public bool ShareCalls { get; set; }
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at
