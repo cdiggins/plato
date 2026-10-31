@@ -135,6 +135,36 @@ int main()
     Json round = to_json(pts);
     CHECK(json_dump(round) == "[{\"X\":1,\"Y\":2},{\"X\":3,\"Y\":-4.5}]");
 
+    // Bytes (TKT-1143): a view of bytes; the expected values are what the C# runtime gives.
+    {
+        const unsigned char sample[] = { 'x', 'x', '1', '.', '5', 'E', '1', 'y', 'y' };
+        Bytes all = make_bytes(sample, 9);
+        Bytes num = SubBytes(all, 2, 5);
+        CHECK(ToCount(all) == 9 && ToCount(num) == 5 && At(num, 0) == '1' && At(num, 4) == '1');
+        CHECK(num.data == sample + 2);   // a slice is a view of the same bytes
+        CHECK(NumberFromBytes(num) == 15.0 && std::isnan(NumberFromBytes(all)) && std::isnan(NumberFromBytes(SubBytes(all, 2, 4))));
+        CHECK(ToCount(SubBytes(all, -1, 3)) == 2 && ToCount(SubBytes(all, 8, 9)) == 1 && ToCount(SubBytes(all, 9, 1)) == 0 && ToCount(SubBytes(all, 0, 0)) == 0);
+        CHECK(ToCount(SubBytes(SubBytes(all, 2, 5), 1, 9)) == 4);
+        auto num_of = [](const char* t) { return NumberFromBytes(make_bytes(t, static_cast<int32_t>(std::strlen(t)))); };
+        CHECK(num_of("1.") == 1.0 && num_of("-0.5E-3") == -0.0005 && num_of(".5") == 0.5 && num_of("+2") == 2.0 && num_of("1.E-06") == 1e-6);
+        CHECK(std::signbit(num_of("-0")) && !std::signbit(num_of("0")) && num_of("1e-400") == 0.0 && num_of("9007199254740993") == 9007199254740992.0);
+        CHECK(std::isnan(num_of("")) && std::isnan(num_of(".")) && std::isnan(num_of("1e")) && std::isnan(num_of("NaN")) && std::isnan(num_of("0x10"))
+              && std::isnan(num_of(" 1")) && std::isnan(num_of("1e999")) && std::isnan(num_of("--1")) && std::isnan(num_of("1.5.2")));
+        auto bytes_of = [](const char* t) { return make_bytes(t, static_cast<int32_t>(std::strlen(t))); };
+        CHECK(Hash(bytes_of("")) == static_cast<int32_t>(2166136261u) && Hash(bytes_of("a")) == static_cast<int32_t>(0xE40C292Cu)
+              && Hash(bytes_of("foo")) == static_cast<int32_t>(0xA9F37ED7u) && Hash(bytes_of("foobar")) == static_cast<int32_t>(0xBF9CF968u));
+        CHECK(Hash(SubBytes(bytes_of("zzfoobarzz"), 2, 6)) == Hash(bytes_of("foobar")));
+        CHECK(bytes_of("abc") == bytes_of("abc") && !(bytes_of("abc") == bytes_of("abd")) && bytes_of("") == Bytes{});
+        CHECK(LessThanOrEquals(bytes_of("ab"), bytes_of("abc")) && !LessThanOrEquals(bytes_of("abc"), bytes_of("ab")) && LessThanOrEquals(bytes_of("B"), bytes_of("a")));
+        const unsigned char high[] = { 255 }, low[] = { 1 };
+        CHECK(!LessThanOrEquals(make_bytes(high, 1), make_bytes(low, 1)) && LessThanOrEquals(make_bytes(low, 1), make_bytes(high, 1)));   // unsigned order
+        arena_reset();
+        Bytes made = FromIntegers(make_array<int32_t>(97, 98, 256 + 99, -1));
+        CHECK(ToCount(made) == 4 && At(made, 0) == 97 && At(made, 2) == 99 && At(made, 3) == 255);
+        CHECK(ToCount(FromIntegers(make_array_empty<int32_t>())) == 0);
+        arena_reset();
+    }
+
     std::printf(failures == 0 ? "OK\n" : "%d FAILURES\n", failures);
     return failures == 0 ? 0 : 1;
 }

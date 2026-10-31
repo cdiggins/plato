@@ -185,6 +185,20 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `LessThanOrEquals(a: Character, b: Character): Boolean`
 - `LessThanOrEquals(a: String, b: String): Boolean`
 
+**Bytes** (7, TKT-1143)
+
+An immutable view of a byte array (the array, a start and a count); C# `Bytes` over `byte[]`, C++ `plato::Bytes`
+(a pointer and a count), the interpreter's `PlatoBytes`. Equals, Compare and LessThan come from the ordinal
+order; ToBytes, ToText, Slice, ParseNumber and ParseInteger are Plato (`foundation/bytes.library.plato`).
+
+- `Count(b: Bytes): Integer`
+- `At(b: Bytes, n: Integer): Integer`
+- `SubBytes(b: Bytes, start: Integer, count: Integer): Bytes`
+- `FromIntegers(xs: Array<Integer>): Bytes`
+- `LessThanOrEquals(a: Bytes, b: Bytes): Boolean`
+- `Hash(b: Bytes): Integer`
+- `NumberFromBytes(b: Bytes): Number`
+
 **Array** (5)
 
 - `Count(xs: Array<$T>): Integer`

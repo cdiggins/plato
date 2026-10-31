@@ -549,10 +549,9 @@ namespace plato
     // optional exponent; at least one digit before the exponent) and read by std::from_chars, which is correctly
     // rounded and locale-free. A value that overflows to infinity is not a number; an underflow is read by strtod,
     // which rounds a subnormal or zero correctly. The same grammar and results as the C# runtime's TextForms.
-    inline bool IsRealForm(const std::string& t)
+    inline bool IsRealForm(const char* t, size_t n)
     {
         size_t i = 0;
-        const size_t n = t.size();
         auto digit = [&](size_t k) { return k < n && t[k] >= '0' && t[k] <= '9'; };
         if (i < n && (t[i] == '+' || t[i] == '-')) ++i;
         int digits = 0;
@@ -573,13 +572,14 @@ namespace plato
         }
         return i == n;
     }
+    inline bool IsRealForm(const std::string& t) { return IsRealForm(t.data(), t.size()); }
 
-    inline bool TryParseNumber(const std::string& t, double& value)
+    inline bool TryParseNumber(const char* t, size_t n, double& value)
     {
         value = 0.0;
-        if (!IsRealForm(t)) return false;
-        const char* first = t.data();
-        const char* last = first + t.size();
+        if (!IsRealForm(t, n)) return false;
+        const char* first = t;
+        const char* last = t + n;
         const bool negative = *first == '-';
         if (*first == '+' || *first == '-') ++first;
         double v = 0.0;
@@ -594,6 +594,7 @@ namespace plato
         value = negative ? -v : v;
         return true;
     }
+    inline bool TryParseNumber(const std::string& t, double& value) { return TryParseNumber(t.data(), t.size(), value); }
 
     inline bool IsNumberText(const std::string& t) { double v; return TryParseNumber(t, v); }
     inline double NumberFromText(const std::string& t) { double v; return TryParseNumber(t, v) ? v : 0.0; }
@@ -624,6 +625,63 @@ namespace plato
 
     inline bool IsIntegerText(const std::string& t) { int32_t v; return TryParseInteger(t, v); }
     inline int32_t IntegerFromText(const std::string& t) { int32_t v; return TryParseInteger(t, v) ? v : 0; }
+
+    // ---- Bytes: a view of bytes, the span of the Bytes primitive (TKT-1143) ----
+    // A pointer and a count. The host owns the bytes a Bytes views and must keep them alive while it does (a file
+    // read into a buffer, wrapped with make_bytes); FromIntegers allocates in the arena, as Array does. SubBytes
+    // makes another view of the same bytes and never copies. The order is ordinal on unsigned bytes, as in C#.
+    struct Bytes
+    {
+        const uint8_t* data = nullptr;
+        int32_t count = 0;
+    };
+
+    inline Bytes make_bytes(const void* data, int32_t count) { return Bytes{ static_cast<const uint8_t*>(data), count < 0 ? 0 : count }; }
+    inline int32_t ToCount(Bytes b) { return b.count; }
+    inline int32_t At(Bytes b, int32_t i) { PLATO_ASSERT(i >= 0 && i < b.count); return static_cast<int32_t>(b.data[i]); }
+
+    // SubBytes: the bytes at start .. start + count - 1 that exist; clamped at both ends, never fails, never copies.
+    inline Bytes SubBytes(Bytes b, int32_t start, int32_t count)
+    {
+        int64_t first = start;
+        int64_t n = count;
+        if (first < 0) { n += first; first = 0; }
+        if (n <= 0 || first >= b.count) return Bytes{};
+        if (n > b.count - first) n = b.count - first;
+        return Bytes{ b.data + first, static_cast<int32_t>(n) };
+    }
+
+    // FromIntegers: the integers in order, each reduced to its low 8 bits, in the arena.
+    inline Bytes FromIntegers(Array<int32_t> xs)
+    {
+        if (xs.count <= 0) return Bytes{};
+        uint8_t* p = arena_alloc<uint8_t>(xs.count);
+        for (int32_t i = 0; i < xs.count; i++) p[i] = static_cast<uint8_t>(xs.data[i]);
+        return Bytes{ p, xs.count };
+    }
+
+    inline int32_t CompareBytes_(Bytes a, Bytes b)
+    {
+        const int32_t n = a.count < b.count ? a.count : b.count;
+        const int c = n > 0 ? std::memcmp(a.data, b.data, static_cast<size_t>(n)) : 0;   // memcmp compares unsigned bytes
+        return c != 0 ? (c < 0 ? -1 : 1) : (a.count < b.count ? -1 : (a.count > b.count ? 1 : 0));
+    }
+    inline bool operator==(Bytes a, Bytes b) { return a.count == b.count && (a.count == 0 || std::memcmp(a.data, b.data, static_cast<size_t>(a.count)) == 0); }
+    inline bool operator!=(Bytes a, Bytes b) { return !(a == b); }
+    inline bool LessThanOrEquals(Bytes a, Bytes b) { return CompareBytes_(a, b) <= 0; }
+
+    // Hash: 32-bit FNV-1a; the bits are read as the signed Integer of this dialect, as C# does under cpu64i32.
+    inline int32_t Hash(Bytes b)
+    {
+        uint32_t h = 2166136261u;
+        for (int32_t i = 0; i < b.count; i++) h = (h ^ b.data[i]) * 16777619u;
+        return static_cast<int32_t>(h);
+    }
+
+    // NumberFromBytes: the correctly rounded Number the bytes spell, or NaN when they are not in the P21 real forms
+    // or the value overflows to infinity. The form is the one IsRealForm checks, over bytes.
+    inline bool TryParseNumberBytes(Bytes t, double& value) { return TryParseNumber(reinterpret_cast<const char*>(t.data), static_cast<size_t>(t.count), value); }
+    inline double NumberFromBytes(Bytes b) { double v; return TryParseNumberBytes(b, v) ? v : std::numeric_limits<double>::quiet_NaN(); }
 
     // ---- Helpers the body writer emits (names as in the GPU prelude, on double) ----
 

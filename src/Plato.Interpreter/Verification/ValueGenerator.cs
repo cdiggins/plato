@@ -148,7 +148,7 @@ public sealed class ValueGenerator
         if (depth > MaxDepth) { reason = $"nesting deeper than {MaxDepth} in {t}"; return false; }
         switch (t.Def.Name)
         {
-            case "Number": case "Integer": case "Boolean": case "Character": case "String":
+            case "Number": case "Integer": case "Boolean": case "Character": case "String": case "Bytes":
                 return true;
             case "Array":
                 return t.TypeArgs.Count == 1 && CanGenerate(t.TypeArgs[0], depth + 1, inProgress, out reason);
@@ -231,6 +231,12 @@ public sealed class ValueGenerator
             case "Integer": return (long)rng.Next(-8, 9);
             case "Boolean": return rng.Next(2) == 0;
             case "Character": return (char)('a' + rng.Next(26));
+            case "Bytes":
+            {
+                var bytes = new byte[rng.Next(0, 6)];
+                for (var i = 0; i < bytes.Length; i++) bytes[i] = (byte)('a' + rng.Next(26));
+                return new PlatoBytes(bytes, 0, bytes.Length);
+            }
             case "String":
             {
                 var len = rng.Next(0, 6);

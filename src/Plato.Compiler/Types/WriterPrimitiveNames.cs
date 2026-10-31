@@ -39,7 +39,7 @@ namespace Ara3D.Geometry.Compiler.Types
         /// </summary>
         public static readonly IReadOnlyCollection<string> All = new HashSet<string>
         {
-            "Number", "Boolean", "Integer", "Character", "String", "Type",
+            "Number", "Boolean", "Integer", "Character", "String", "Bytes", "Type",
             "Function0", "Function1", "Function2", "Function3", "Function4",
             "Function5", "Function6", "Function7", "Function8", "Function9",
         };

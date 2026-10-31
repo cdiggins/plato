@@ -643,6 +643,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 { "Number.IsInfinite", true },
                 { "Number.ToInteger", true },
                 { "String.Count", true },
+                { "Bytes.Count", true },
 
                 // plato-383: String wraps a REFERENCE, so its storage is a private field behind a
                 // null-normalizing property (`default(String)` reads as the empty string). Value is
@@ -734,6 +735,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 case "Integer": return "int";
                 case "Character": return "char";
                 case "String": return "string";
+                case "Bytes": return "Bytes";
                 case "Type": return "System.Type";
             }
             if (Compiler.Analysis.Linter.IsFunctionTypeName(name))
@@ -767,6 +769,12 @@ namespace Ara3D.Geometry.CSharpWriter
             "Matrix4x4",
             "Quaternion",
         };
+
+        /// <summary>Primitives whose runtime type is a handwritten view struct under the Plato name itself (Bytes:
+        /// a byte array with a start and a count): not a wrapper over a BCL value, as the five scalars are, and
+        /// not field-less, as Type and the functions are. The handwritten half supplies GetHashCode, ToString,
+        /// the order operators and <c>SequenceEquals</c>; the generated half the Plato-Boolean equality over it.</summary>
+        public static readonly HashSet<string> ViewPrimitives = new HashSet<string> { "Bytes" };
 
         /// <summary>Whether the handwritten runtime — not the writer — supplies this type's
         /// bodiless members and operators. True for every primitive and for

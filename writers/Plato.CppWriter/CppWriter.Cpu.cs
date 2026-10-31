@@ -62,7 +62,8 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>Owners whose bodiless functions the prelude defines under the same names (plato-brep Intrinsics/*.cs).</summary>
         private static readonly HashSet<string> CpuPreludeOwners = new HashSet<string>
         {
-            "Number", "Integer", "Boolean", "Character", "String",
+            "Number", "Integer", "Boolean", "Character", "String", "Bytes",
+
         };
 
         // ---- fields -------------------------------------------------------------
@@ -618,6 +619,7 @@ inline int32_t hash_(double x) { uint64_t u; std::memcpy(&u, &x, sizeof u); retu
 inline int32_t hash_(int32_t x) { return x; }
 inline int32_t hash_(bool x) { return x ? 1 : 0; }
 inline int32_t hash_(char x) { return (int32_t)(unsigned char)x; }
+inline int32_t hash_(const Bytes& b) { return Hash(b); }
 inline int32_t hash_(const String& s) { int32_t h = 17; for (char c : s) h = mix_(h, (int32_t)(unsigned char)c); return h; }
 template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
 

@@ -102,7 +102,7 @@ namespace Ara3D.Geometry.CppWriter
             => name != null
                && (NativePrimitives.ContainsKey(name)
                    || IsNativeVectorName(name)
-                   || PreambleTypes.Contains(name)
+                   || IsPreambleType(name)
                    || StructNames.Contains(name)
                    || _fixedArrays.ContainsKey(name));
 
@@ -197,6 +197,9 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>
         /// Types declared in the preamble (not Plato field structs). Representable in signatures.
         /// </summary>
+        /// <summary>Whether the name is a preamble type of this dialect: the shared ones, and Bytes (TKT-1143), a struct of the Cpu prelude only.</summary>
+        public bool IsPreambleType(string name) => PreambleTypes.Contains(name) || (IsCpu && name == "Bytes");
+
         public static HashSet<string> PreambleTypes = new HashSet<string>()
         {
             "String",
@@ -298,7 +301,7 @@ namespace Ara3D.Geometry.CppWriter
                 return prim;
             if (!IsCpu && NativeVectors.TryGetValue(name, out var vec))
                 return vec;
-            if (PreambleTypes.Contains(name))
+            if (IsPreambleType(name))
                 return name;
             if (StructNames.Contains(name))
                 return name;
@@ -610,7 +613,7 @@ namespace Ara3D.Geometry.CppWriter
             var candidates = Compilation.ConcreteTypes
                 .Where(c => !NativePrimitives.ContainsKey(c.TypeDef.Name)
                             && !IsNativeVectorName(c.TypeDef.Name)
-                            && !PreambleTypes.Contains(c.TypeDef.Name)
+                            && !IsPreambleType(c.TypeDef.Name)
                             && c.TypeDef.Name != "Angle"
                             && !IsIgnoredType(c.TypeDef.Name)
                             && !IsExcludedTupleOrFunction(c.TypeDef.Name)
@@ -1331,7 +1334,7 @@ namespace Ara3D.Geometry.CppWriter
                                 || isBuilderOrTuple
                                 || NativePrimitives.ContainsKey(name)
                                 || IsNativeVectorName(name)
-                                || PreambleTypes.Contains(name)
+                                || IsPreambleType(name)
                                 || StructNames.Contains(name);
                 if (!supported)
                     continue;

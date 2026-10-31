@@ -32,7 +32,7 @@
       "test": "ForwardStdLibLintTests.ForwardStdLibLintRatchetDoesNotRegress"
     },
     "intrinsics": {
-      "ceiling": 76,
+      "ceiling": 83,
       "unit": "bodiless declarations in stdlib/foundation/intrinsics.library.plato",
       "test": "IntrinsicContractSizeTests.IntrinsicContractDoesNotGrow"
     }

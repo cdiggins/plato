@@ -115,6 +115,12 @@ public sealed class HostValues
                 if (target != null && (target.IsPrimitive || target == typeof(string)))
                     return Convert.ChangeType(v, target, CultureInfo.InvariantCulture);
                 return Wrap(target != null && target.Namespace == Namespace && WrapperScalars.Contains(target.Name) ? target : WrapperOf(v), v);
+            case PlatoBytes pb:
+            {
+                // The generated program carries the runtime's Bytes struct: a view is rebuilt over a copy of the bytes.
+                var bytes = _assembly.GetType($"{Namespace}.Bytes") ?? throw new ValueConversionException("the program has no Bytes type");
+                return bytes.GetMethod("Wrap", new[] { typeof(byte[]) }).Invoke(null, new object[] { pb.Span.ToArray() });
+            }
             case PlatoArray xs:
             {
                 var elem = target != null && target.IsGenericType && target.GetGenericTypeDefinition() == typeof(IReadOnlyList<>)
@@ -204,6 +210,11 @@ public sealed class HostValues
                 PropertyInfo p => ToPlato(p.GetValue(host), depth + 1),
                 _ => host,
             };
+        }
+        if (t.Namespace == Namespace && t.Name == "Bytes" && t.GetMethod("ToArray", Type.EmptyTypes) is MethodInfo toArray)
+        {
+            var raw = (byte[])toArray.Invoke(host, null);
+            return new PlatoBytes(raw, 0, raw.Length);
         }
         if (host is IEnumerable items && host is not string && ElementTypeOf(t) is Type elem)
         {
