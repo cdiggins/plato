@@ -197,5 +197,139 @@ class ReaderDataTests(unittest.TestCase):
         self.assertEqual(files['search.json']['pages'][0]['text'], 'r')
         self.assertIn('groups', files['examples.json'])
 
+SAMPLE = '''// A file header, not a summary.
+library Demo
+{
+    // Distance between a and b.
+    // Requires finite inputs; NaN propagates.
+    Gap(a: Number, b: Number): Number
+        => (a - b).Abs;
+
+    Gap(a: Integer, b: Integer): Integer => a - b;
+
+    // Section heading below, not a summary of Tricky.
+    //==
+    Tricky(first: Number, second: Number,
+        third: Number): Number { return first; }
+
+    NoComment(x: Number): Number => x;
+
+    // Summary of Law_Uses.
+    Law_Uses(x: Number): Boolean
+        => x.Gap(1.0) == 0.0;
+
+    // Gap(1, 2) is only mentioned in this comment.
+    Law_Mentions(x: Number): Boolean => x == x;
+}
+interface IShape { }
+// A circle.
+type Circle implements IShape, IValue<Number> { R: Number; }
+type Axis = X | Y;
+'''
+
+
+class NamePageFactTests(unittest.TestCase):
+    def members(self):
+        found = {}
+        for member in build.members_of(SAMPLE):
+            found.setdefault(member.name, member)     # the first overload
+        return found
+
+    def page(self, name):
+        members = [m for m in build.members_of(SAMPLE) if m.name == name]
+        group = [(m.name, m.start, m.end, m.kind) for m in members]
+        child = build.DOCS / 'api/foundation/demo' / f'{name.lower()}.md'
+        return build.name_page(
+            stem='demo', name=name, tier='foundation', source_name='demo.plato',
+            source_path=build.ROOT / 'stdlib/foundation/demo.plato', source=SAMPLE, child=child,
+            parent=build.DOCS / 'api/foundation/demo.md', status_line='**Status:** x', group=group,
+            members=members, laws=[], concepts=[], authors=[], see_also=lambda page: [])
+
+    def test_summary_is_the_comment_above_the_first_overload_as_written(self):
+        found = self.members()
+        self.assertEqual(found['Gap'].summary, ['Distance between a and b.', 'Requires finite inputs; NaN propagates.'])
+        self.assertEqual(found['Circle'].summary, ['A circle.'])
+
+    def test_summary_is_absent_not_invented(self):
+        found = self.members()
+        self.assertIsNone(found['NoComment'].summary)
+        self.assertIsNone(found['Tricky'].summary)      # a banner line is not a summary
+        self.assertIsNone(found['IShape'].summary)      # the line above is blank-separated
+        self.assertIn('The source gives no summary for this name.', self.page('NoComment'))
+        self.assertNotIn('Distance between', self.page('NoComment'))
+
+    def test_signature_stops_at_arrow_brace_or_semicolon_and_keeps_every_line(self):
+        found = self.members()
+        self.assertEqual(found['Tricky'].signature, 'Tricky(first: Number, second: Number,\n    third: Number): Number')
+        self.assertEqual(found['Gap'].signature, 'Gap(a: Number, b: Number): Number')
+        self.assertEqual(found['Axis'].signature, 'type Axis = X | Y')
+        self.assertEqual(found['Circle'].signature, 'type Circle implements IShape, IValue<Number>')
+
+    def test_page_lists_every_overload_in_one_fence(self):
+        self.assertIn('```plato\nGap(a: Number, b: Number): Number\nGap(a: Integer, b: Integer): Integer\n```',
+                      self.page('Gap'))
+
+    def test_notes_quote_limits_with_their_line(self):
+        self.assertEqual(self.members()['Gap'].notes, [])    # quoted once as the summary, not again
+        found = build.members_of('library L\n{\n    F(x: Number): Number\n'
+                                 '        => x; // result is in radians\n    // ordinary remark\n}\n')
+        self.assertEqual(found[0].notes, [(4, 'result is in radians')])
+
+    def test_law_that_calls_the_name_is_found_and_a_comment_mention_is_not(self):
+        laws = [{'name': m.name, 'refs': m.refs} for m in build.members_of(SAMPLE) if m.name.startswith('Law_')]
+        self.assertEqual([law['name'] for law in build.laws_naming('Gap', laws)], ['Law_Uses'])
+        self.assertEqual(build.laws_naming('Abs', laws), [])
+        self.assertIn('x.Gap(1.0) == 0.0', self.members()['Law_Uses'].body)
+
+    def test_member_use_counts_as_naming(self):
+        refs = build.law_references('f.Eval + f.Progress(t)')
+        self.assertEqual(sorted(refs), ['Eval', 'Progress'])
+
+    def test_implements_and_implementers_link_both_ways(self):
+        index, implementers = {}, {}
+        for member in build.members_of(SAMPLE):
+            if member.kind in ('type', 'interface'):
+                child = build.DOCS / 'api/foundation/demo' / f'{member.name.lower()}.md'
+                index.setdefault(member.name, []).append(
+                    {'tier': 'foundation', 'stem': 'demo', 'child': child, 'interface': member.kind == 'interface'})
+                for base in member.implements:
+                    implementers.setdefault(('foundation', base), []).append(
+                        {'name': member.name, 'stem': 'demo', 'child': child})
+        members = {m.name: [m] for m in build.members_of(SAMPLE)}
+        circle = build.DOCS / 'api/foundation/demo/circle.md'
+        ishape = build.DOCS / 'api/foundation/demo/ishape.md'
+        forward = '\n'.join(build.concept_lines({'type'}, members['Circle'], 'foundation', index, implementers, circle))
+        self.assertIn('[IShape](ishape.md)', forward)
+        self.assertIn('`IValue`', forward)      # declared nowhere in the index: named, not linked
+        backward = '\n'.join(build.concept_lines({'interface'}, members['IShape'], 'foundation',
+                                                 index, implementers, ishape))
+        self.assertIn('[Circle](circle.md)', backward)
+
+
+class BacklinkTests(unittest.TestCase):
+    PAGES = [{'path': build.DOCS / 'start/a.md', 'title': 'Links', 'targets': {build.DOCS / 'api/x/f/gap.md'},
+              'code': frozenset()},
+             {'path': build.DOCS / 'start/b.md', 'title': 'Mentions', 'targets': set(),
+              'code': frozenset({'Gap', 'Common'})},
+             {'path': build.DOCS / 'start/c.md', 'title': 'Unrelated', 'targets': {build.DOCS / 'api/x/f/other.md'},
+              'code': frozenset({'Other'})}]
+
+    def titles(self, name, unique, linked, pages=None):
+        return [page['title'] for page in build.used_by(name, unique, pages or self.PAGES, linked)]
+
+    def test_a_link_to_the_name_page_or_its_file_page_counts(self):
+        self.assertEqual(self.titles('Gap', False, {build.DOCS / 'api/x/f/gap.md'}), ['Links'])
+        self.assertEqual(self.titles('Gap', False, {build.DOCS / 'api/x/f/gap.md', build.DOCS / 'api/x/f/other.md'}),
+                         ['Links', 'Unrelated'])
+
+    def test_a_code_mention_counts_only_when_the_name_is_unique(self):
+        self.assertEqual(self.titles('Gap', True, set()), ['Mentions'])
+        self.assertEqual(self.titles('Gap', False, set()), [])
+        self.assertEqual(self.titles('Missing', True, set()), [])
+
+    def test_a_page_with_no_link_and_no_code_mention_is_not_a_backlink(self):
+        self.assertEqual(self.titles('Gap', True, set(), [dict(self.PAGES[0], targets=set())]), [])
+
+
 if __name__ == '__main__':
     unittest.main()

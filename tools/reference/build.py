@@ -5,6 +5,13 @@ This is a lexical catalog, not a second Plato parser or semantic checker. Every
 normalized source character belongs to an ordered slice. UTF-8 BOMs are removed
 and CRLF becomes LF so fingerprints are stable across checkouts. Code fences
 omit boundary newlines; linked source files retain the original bytes.
+
+Each API name page follows docs/design/reference-site-guidance.md: status, the
+summary comment, every overload's signature, the declared laws that name the symbol,
+the interfaces it relates to, comment lines that state a precondition or cost, the
+authored pages that use it, and the source slices. The generator composes nothing:
+a section shows source text or is absent. Version history is omitted because no
+language release exists to record it.
 """
 from __future__ import annotations
 
@@ -17,6 +24,7 @@ import re
 import subprocess
 import sys
 import time
+from bisect import bisect_right
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import quote, unquote
@@ -180,6 +188,321 @@ def by_name(parts):
     return grouped
 
 
+# ---------------------------------------------------------------------------
+# Name-page facts. Everything here reads source text and invents nothing.
+
+LAWS_DOC = ROOT / 'stdlib/VERIFICATION.md'
+LAW_SOURCES = ROOT / 'stdlib/tests'
+NOTE_WORDS = re.compile(
+    r'\b(precondition|requires?|required|must|assum\w*|toleran\w*|epsilon|precision|accura\w*|exact\w*|'
+    r'approximat\w*|units?|radians?|degrees?|metres?|meters?|frame|degenerate|NaN|infinit\w*|'
+    r'undefined|overflow|alloc\w*|cost\w*|complexity|expensive)\b', re.IGNORECASE)
+BANNER = re.compile(r'//\s*[=\-_*#~]{2,}\s*')
+
+
+class Member:
+    """Facts about one slice, read from the source text."""
+
+    def __init__(self, name: str, kind: str, start: int, end: int, line: int, signature: str,
+                 summary: list[str] | None):
+        self.name, self.kind, self.start, self.end = name, kind, start, end
+        self.line = line                # line of the declaration itself, 1-based
+        self.signature = signature      # declaration up to `=>`, `{` or `;`, multi-line kept whole
+        self.summary = summary          # comment lines directly above, or None
+        self.notes: list[tuple[int, str]] = []
+        self.implements: list[str] = []
+        self.inherits: list[str] = []
+        self.body = ''                  # a Law_ function's full text, its comment included
+        self.refs: frozenset = frozenset()  # names a Law_ function calls or uses as members
+
+
+def find_declaration(masked: str, nesting: list[int], name: str, kind: str, start: int, end: int):
+    """Offset of the first character of this slice's declaration, or None."""
+    if kind == 'function':
+        pattern = re.compile(rf'(?m)^[ \t]*({re.escape(name)})[ \t]*\(')
+        for found in pattern.finditer(masked, start, end):
+            if nesting[found.start(1)] == 1 and is_signature(masked, found.start(1), end):
+                return found.start(1)
+        return None
+    pattern = re.compile(rf'(?m)^[ \t]*((?:unique\s+)?{kind}\s+{re.escape(name)}\b)')
+    found = pattern.search(masked, start, end)
+    return found.start(1) if found else None
+
+
+def signature_end(masked: str, position: int, limit: int) -> int:
+    """End of a declaration header: the first `=>`, `{` or `;` outside parentheses."""
+    depth = 0
+    for index in range(position, limit):
+        char = masked[index]
+        if char == '(':
+            depth += 1
+        elif char == ')':
+            depth -= 1
+        elif depth <= 0 and (char in ';{' or (char == '=' and masked[index + 1:index + 2] == '>')):
+            return index
+    return limit
+
+
+def body_end(masked: str, position: int, limit: int) -> int:
+    """End of a declaration whose header ends at `position`: its `}` block or its `;`."""
+    block = masked[position:position + 1] == '{'
+    depth = 0
+    for index in range(position, limit):
+        char = masked[index]
+        if char in '({[':
+            depth += 1
+        elif char in ')}]':
+            depth -= 1
+            if block and depth == 0:
+                return index + 1
+        elif char == ';' and depth == 0 and not block:
+            return index + 1
+    return limit
+
+
+def dedent(text: str, indent: int) -> str:
+    lines = [line[indent:] if not line[:indent].strip() else line for line in text.rstrip().split('\n')]
+    return '\n'.join(line.rstrip() for line in lines)
+
+
+def comment_text(line: str) -> str:
+    return re.sub(r'^//+ ?', '', line.strip()).rstrip()
+
+
+def comment_block_above(lines: list[str], index: int) -> tuple[int, list[str]]:
+    """The contiguous `//` lines directly above the 0-based line `index`.
+
+    A banner line (`//==`) ends the block and is not part of it. Returns the index of
+    the block's first line and its texts in source order; no texts when there is none.
+    """
+    first, texts = index, []
+    cursor = index - 1
+    while cursor >= 0 and lines[cursor].strip().startswith('//') and not BANNER.fullmatch(lines[cursor].strip()):
+        texts.append(comment_text(lines[cursor]))
+        first = cursor
+        cursor -= 1
+    texts.reverse()
+    while texts and not texts[0]:
+        texts.pop(0)
+    while texts and not texts[-1]:
+        texts.pop()
+    return first, texts
+
+
+def list_names(clause: str) -> list[str]:
+    """Names in `A, B<T>, C`; type arguments are dropped."""
+    names, depth, word = [], 0, ''
+    for char in clause + ',':
+        if char == ',' and depth == 0:
+            token = re.match(r'\s*(\w+)', word)
+            if token:
+                names.append(token[1])
+            word = ''
+            continue
+        depth += (char == '<') - (char == '>')
+        if depth == 0 and char != '>':
+            word += char
+    return names
+
+
+def clause_names(signature: str, keyword: str) -> list[str]:
+    found = re.search(rf'\b{keyword}\b([\s\S]*?)(?=\b(?:implements|inherits)\b|$)', signature)
+    return list_names(found[1]) if found else []
+
+
+def law_references(masked_body: str) -> frozenset:
+    """Names called as `Name(` or used as a member `.Name` in comment-free code."""
+    return frozenset(re.findall(r'(\w+)\s*\(', masked_body) + re.findall(r'\.\s*(\w+)', masked_body))
+
+
+def members_of(source: str) -> list[Member]:
+    """Per slice: declaration line, signature, summary comment, notes and relations."""
+    masked = mask_source(source)
+    nesting = depths(masked)
+    lines, masked_lines = source.split('\n'), masked.split('\n')
+    starts = [0] + [i + 1 for i, char in enumerate(source) if char == '\n']
+    line_of = lambda offset: bisect_right(starts, offset)
+    result = []
+    for name, start, end, kind in slices(source):
+        position = find_declaration(masked, nesting, name, kind, start, end)
+        if position is None:
+            raise ValueError(f'cannot locate the declaration of {name!r} ({kind}) near line {line_of(start)}')
+        header_end = signature_end(masked, position, end)
+        line = line_of(position)
+        indent = position - starts[line - 1]
+        signature = dedent(source[position:header_end], indent).lstrip()
+        first, summary = comment_block_above(lines, line - 1)
+        member = Member(name, kind, start, end, line, signature, summary or None)
+        # Notes come from comments in the slice after the leading comment this page
+        # quotes as the summary. A type's slice begins at its declaration, and a slice
+        # may end with the next declaration's comment; that tail is left out.
+        begin = line_of(start) if kind == 'function' and start > 0 else line
+        last = line_of(end - 1) if end > start else line
+        while last > line and not lines[last - 1].strip():
+            last -= 1
+        while last > line and lines[last - 1].strip().startswith('//'):
+            last -= 1
+        quoted = set(range(first + 1, line)) if summary else set()
+        for number in range(begin, last + 1):
+            raw = lines[number - 1]
+            trailing = raw[len(masked_lines[number - 1].rstrip()):].strip()
+            if raw.strip().startswith('//'):
+                text = comment_text(raw)
+            else:
+                text = comment_text(trailing) if trailing.startswith('//') else ''
+            if text and number not in quoted and not BANNER.fullmatch(raw.strip()) and NOTE_WORDS.search(text):
+                member.notes.append((number, text))
+        if kind != 'function':
+            member.implements = clause_names(signature, 'implements')
+            member.inherits = clause_names(signature, 'inherits')
+        elif name.startswith('Law_'):
+            finish = body_end(masked, header_end, end)
+            top = starts[first] if summary else starts[line - 1]
+            member.body = dedent(source[top:finish], indent)
+            member.refs = law_references(masked[position:finish])
+        result.append(member)
+    return result
+
+
+def quote_prose(text: str) -> str:
+    """Escape Markdown outside backtick spans so a source comment renders as written."""
+    parts = re.split(r'(`[^`]*`)', text)
+    return ''.join(part if part.startswith('`') and len(part) > 1
+                   else re.sub(r'([\\*_\[\]<])', r'\\\1', part) for part in parts)
+
+
+def authored_pages() -> list[dict]:
+    """Pages under docs/reference outside api/ and evidence/: title, link targets, code identifiers."""
+    pages = []
+    for path in sorted(DOCS.rglob('*.md')):
+        if path.relative_to(DOCS).parts[0] in ('api', 'evidence') or path.name == 'PROGRESS.md':
+            continue
+        text = read(path)
+        title = re.search(r'^# (.+)$', text, re.MULTILINE)
+        fence = r'^```[^\n]*\n([\s\S]*?)^```[ \t]*$'
+        code = re.findall(fence, text, flags=re.MULTILINE)
+        code += re.findall(r'`([^`\n]+)`', re.sub(fence, '', text, flags=re.MULTILINE))
+        pages.append({'path': path, 'title': title[1] if title else path.stem,
+                      'targets': {target for _, target, _ in local_links(path, text)},
+                      'code': frozenset(re.findall(r'[A-Za-z_]\w*', '\n'.join(code)))})
+    return pages
+
+
+def used_by(name: str, unique: bool, pages: list[dict], linked: set[Path]) -> list[dict]:
+    """Authored pages that link any of `linked`, or name `name` in code when the name is unique."""
+    return [page for page in pages if page['targets'] & linked or (unique and name in page['code'])]
+
+
+def load_laws(tier: str, sources: list[tuple[str, Path]]) -> list[dict]:
+    """Declared laws visible to a tier: `stdlib/tests`, plus laws in the tier's own sources."""
+    paths = [path for t, path in sources if t == tier]
+    if tier != 'legacy':
+        paths += sorted(LAW_SOURCES.glob('*.plato'))
+    laws = []
+    for path in paths:
+        for member in members_of_cached(path):
+            if member.kind == 'function' and member.name.startswith('Law_'):
+                laws.append({'name': member.name, 'path': path, 'line': member.line,
+                             'body': member.body, 'refs': member.refs})
+    return laws
+
+
+@lru_cache(maxsize=None)
+def members_of_cached(path: Path) -> tuple[Member, ...]:
+    return tuple(members_of(read(path)))
+
+
+def laws_naming(name: str, laws: list[dict]) -> list[dict]:
+    return [law for law in laws if name in law['refs'] and law['name'] != name]
+
+
+def fence(code: str) -> list[str]:
+    return ['```plato', code, '```', '']
+
+
+def name_page(*, stem: str, name: str, tier: str, source_name: str, source_path: Path, source: str,
+              child: Path, parent: Path, status_line: str, group: list, members: list[Member],
+              laws: list[dict], concepts: list[str], authors: list[dict], see_also) -> str:
+    """One name page, in the order the site guidance sets. Empty sections are omitted."""
+    body = [GENERATED, f'# {stem}: {name}', '', status_line, '']
+    first = members[0]
+    body += ['## Summary', '']
+    if first.summary:
+        body += [f'> {quote_prose(text)}'.rstrip() if text else '>' for text in first.summary]
+    else:
+        body += ['The source gives no summary for this name.']
+    body += ['', '## Signature', '']
+    signatures = [m.signature for m in members]
+    body += fence(('\n\n' if any('\n' in s for s in signatures) else '\n').join(signatures))
+    body += ['## Laws', '']
+    if laws:
+        body += ['These are declared laws. Whether each one passes is recorded by the law runner '
+                 f'([stdlib/VERIFICATION.md]({relative_link(child, LAWS_DOC)})), not by this page.', '']
+        for law in laws:
+            link = relative_link(child, law['path'])
+            where = law['path'].relative_to(ROOT).as_posix()
+            body += [f'### {law["name"]}', '', f'[{where}, line {law["line"]}]({link}#L{law["line"]})', '',
+                     *fence(law['body'])]
+    else:
+        body += ['No declared law names this symbol.', '']
+    if concepts:
+        body += ['## Concepts', '', *concepts]
+    notes = [(m, number, text) for m in members for number, text in m.notes]
+    if notes:
+        body += ['## Notes from the source', '',
+                 'Comment lines in this name\'s slices that state a limit, quoted as written.', '']
+        link = relative_link(child, source_path)
+        body += [f'- [Line {number}]({link}#L{number}): {quote_prose(text)}' for _, number, text in notes]
+        body.append('')
+    if authors:
+        body += ['## Used by', '']
+        body += [f'- [{quote_prose(page["title"])}]({relative_link(child, page["path"])})' for page in authors]
+        body.append('')
+    count = len(group)
+    body += ['## Source', '',
+             f'**File:** [{stem}]({relative_link(child, parent)}). Kind: {group[0][3]}. '
+             f'{count} declaration{"s" if count != 1 else ""} in source order.', '',
+             'Copied from source, comments included. A comment records intent. The body is the algorithm. '
+             'Neither is a proof that the result is correct. Names resolve in the whole compilation.', '']
+    for _, start, end, kind in group:
+        line = source.count('\n', 0, start) + 1
+        body += [f'### Line {line}', '',
+                 f'**Source:** [{source_name}, line {line}]({relative_link(child, source_path)}#L{line}).', '',
+                 *fence(source[start:end].rstrip('\n'))]
+    body += see_also(child)
+    return '\n'.join(body)
+
+
+def concept_lines(kinds: set, members: list[Member], tier: str, index: dict, implementers: dict,
+                  child: Path) -> list[str]:
+    """Interfaces a type implements, or what an interface inherits and who implements it."""
+    def link(target: str) -> str:
+        pages = [entry for entry in index.get(target, ()) if entry['interface']]
+        # Same tier first; the shipping tiers and future compile together, legacy alone.
+        pages = ([e for e in pages if e['tier'] == tier]
+                 or [e for e in pages if e['tier'] != 'legacy'] or pages)
+        if not pages:
+            return f'`{target}`'
+        return ', '.join(f'[{target}]({relative_link(child, e["child"])})' if len(pages) == 1
+                         else f'[{e["stem"]}: {target}]({relative_link(child, e["child"])})' for e in pages)
+    lines = []
+    if kinds & {'type', 'primitive', 'concept'}:
+        names = [n for m in members if m.kind != 'function' for n in m.implements]
+        lines += ['Implements: ' + ', '.join(link(n) for n in names) + '.' if names
+                  else 'Its declaration lists no implemented interface.', '']
+    if 'interface' in kinds:
+        names = [n for m in members if m.kind == 'interface' for n in m.inherits]
+        lines += ['Inherits: ' + ', '.join(link(n) for n in names) + '.' if names
+                  else 'It inherits no interface.', '']
+        found = implementers.get((tier, members[0].name), [])
+        if found:
+            lines += ['Implemented in this tier by: ' + ', '.join(
+                f'[{e["name"]}]({relative_link(child, e["child"])})' for e in found) + '.', '']
+        else:
+            lines += ['No type in this tier lists it in `implements`.', '']
+    return lines
+
+
 def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
     outputs, inputs = {}, {}
     teaching = {}
@@ -193,24 +516,39 @@ def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
     sources += [('legacy', path) for path in sorted((ROOT / 'legacy/stdlib-legacy').glob('*.plato'))]
     if not sources or any(not any(t == tier for t, _ in sources) for tier in (*TIERS, 'legacy')):
         raise ValueError('a source tier is empty; refusing vacuous reference coverage')
-    catalog = []
-    symbols = []
+    # First pass: read every file, so a page can link names declared in any other file.
+    files, index, implementers = [], {}, {}
     for tier, source_path in sources:
         source = read(source_path)
-        source_name = source_path.relative_to(ROOT).as_posix()
-        inputs[source_name] = digest(source)
         stem = source_path.stem
         parent = DOCS / 'api' / tier / f'{stem}.md'
+        parts = slices(source)
+        grouped = by_name(parts)
+        check_names(source_path.relative_to(ROOT).as_posix(), list(grouped))
+        by_start = {m.start: m for m in members_of_cached(source_path)}
+        files.append((tier, source_path, source, stem, parent, grouped, by_start))
+        for name, group in grouped.items():
+            child = parent.with_suffix('') / f'{name.lower()}.md'
+            kinds = {part[3] for part in group}
+            index.setdefault(name, []).append({'tier': tier, 'stem': stem, 'child': child,
+                                               'interface': 'interface' in kinds})
+            for part in group:
+                for base in by_start[part[1]].implements:
+                    implementers.setdefault((tier, base), []).append({'name': name, 'stem': stem, 'child': child})
+    authors = authored_pages()
+    laws = {tier: load_laws(tier, sources) for tier in (*TIERS, 'legacy')}
+    catalog = []
+    symbols = []
+    for tier, source_path, source, stem, parent, grouped, by_start in files:
+        source_name = source_path.relative_to(ROOT).as_posix()
+        inputs[source_name] = digest(source)
         guides = teaching.get(source_path.resolve(), {DOCS / 'library/README.md': 'Library guide'})
         def see_also(page):
             links = [f'[{title}]({relative_link(page, guide)})' for guide, title in guides.items()]
             return [f'See also: {", ".join(links)}.', ''] if links else []
         status, meaning = STATUS[tier]
         status_line = f'**Status:** {status} (tier `{tier}`). {meaning}'
-        parts = slices(source)
         masked = mask_source(source)
-        grouped = by_name(parts)
-        check_names(source_name, list(grouped))
         lines = [GENERATED, f'# {stem}', '', status_line, '',
                  f'**Source:** [{source_name}]({relative_link(parent, source_path)}).', '',
                  'Declarations and bodies from that file. A signature with no body is a host obligation.',
@@ -219,23 +557,21 @@ def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
         entries = []
         for name, group in grouped.items():
             child = parent.with_suffix('') / f'{name.lower()}.md'
-            count = len(group)
-            body = [GENERATED, f'# {stem}: {name}', '', status_line, '',
-                    f'**File:** [{stem}]({relative_link(child, parent)}). Kind: {group[0][3]}. '
-                    f'{count} declaration{"s" if count != 1 else ""} in source order.', '',
-                    'Copied from source, comments included. A comment records intent. The body is the algorithm. '
-                    'Neither is a proof that the result is correct. Names resolve in the whole compilation.', '']
+            members = [by_start[part[1]] for part in group]
             declarations = []
-            for _, start, end, kind in group:
+            for (_, start, end, kind), member in zip(group, members):
                 line = source.count('\n', 0, start) + 1
                 declarations.append({'line': line, 'declaration': declaration_line(source, masked, start, end)})
-                body += [f'## Line {line}', '',
-                         f'**Source:** [{source_name}, line {line}]({relative_link(child, source_path)}#L{line}).', '',
-                         '```plato', source[start:end].rstrip('\n'), '```', '']
                 entries.append({'name': name, 'kind': kind, 'start': start, 'end': end, 'line': line,
                                 'page': child.relative_to(ROOT).as_posix()})
-            body += see_also(child)
-            outputs[child] = '\n'.join(body)
+            linked = {child, parent}
+            unique = len(index[name]) == 1
+            outputs[child] = name_page(
+                stem=stem, name=name, tier=tier, source_name=source_name, source_path=source_path,
+                source=source, child=child, parent=parent, status_line=status_line, group=group,
+                members=members, laws=laws_naming(name, laws[tier]),
+                concepts=concept_lines({m.kind for m in members}, members, tier, index, implementers, child),
+                authors=used_by(name, unique, authors, linked), see_also=see_also)
             lines.append(f'- [{name}]({relative_link(parent, child)})')
             symbols.append({'name': name, 'kind': group[0][3], 'tier': tier, 'status': status,
                             'source': source_name, 'line': declarations[0]['line'],
