@@ -63,7 +63,7 @@ public static class ScalarLoweringTests
     [Test]
     public static void ALetIsAPrimitiveLocalAndTheReturnWrapsOnce()
     {
-        Assert.That(Lowered.Value, Does.Contain("var s = (a.Value + b.Value);"));
+        Assert.That(Lowered.Value, Does.Contain("NumberValue s = (a.Value + b.Value);"));
         Assert.That(Lowered.Value, Does.Contain("return Unsafe.BitCast<NumberValue, Number>((s * 0.5D));"));
         Assert.That(Lowered.Value, Does.Not.Contain(".Add("));
     }
