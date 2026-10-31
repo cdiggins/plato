@@ -79,6 +79,7 @@ public sealed class CSharpProgram
         writer.BindScrutinees = loopOptimizations?.BindScrutinees ?? false;
         writer.ShareCallsWide = loopOptimizations?.ShareCallsWide ?? false;
         writer.LowerScalars = loopOptimizations?.LowerScalars ?? false;
+        writer.ClosureFree = loopOptimizations?.ClosureFree ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 

@@ -51,6 +51,7 @@ namespace Ara3D.Geometry.CSharpWriter
             writer.BindScrutinees = loopOptimizations?.BindScrutinees ?? false;
             writer.ShareCallsWide = loopOptimizations?.ShareCallsWide ?? false;
             writer.LowerScalars = loopOptimizations?.LowerScalars ?? false;
+            writer.ClosureFree = loopOptimizations?.ClosureFree ?? false;
             if (statementInlining != null)
             {
                 writer.InlineStatements = true;

@@ -340,6 +340,9 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         // its receiver by name. Every bodied (function, concrete type) has a fully-ground TIR
         // under the shipping recipes (legacy fallback bodies: 0); a null here is a regression.
         var isMember = !isStatic && TypeDef != null;
+        // --closure-free: a copy-shaped Array function is one call to the block-copy helper.
+        if (isStatic && Writer.ClosureFree && ClosureFreeArrays.TryBody(f) is { } copyBody)
+            return WriteBodyText(copyBody + Environment.NewLine);
         var tir = isMember
             ? Writer.TryGetGroundTir(f.Function.Implementation, TypeDef)
             : Writer.TryGetStaticTir(f.Function.Implementation);

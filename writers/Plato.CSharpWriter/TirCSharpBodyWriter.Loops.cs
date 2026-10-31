@@ -263,6 +263,61 @@ public partial class TirCSharpBodyWriter
                 WriteLine($"IReadOnlyList<{elem}> {t} = {list};");
                 break;
             }
+            case "Sort":
+            case "SortIdx":
+            {
+                // SortedIndices (Sorting library) inlined: the bottom-up merge sort over an index
+                // permutation, the same comparisons in the same order, with the comparator written in
+                // the merge instead of called through a delegate. The left run wins ties (stable).
+                var from = $"_x{k}";
+                var into = $"_y{k}";
+                var width = $"_w{k}";
+                var lo = $"_lo{k}";
+                var mid = $"_mid{k}";
+                var hi = $"_hi{k}";
+                var left = $"_p{k}";
+                var right = $"_q{k}";
+                var at = $"_o{k}";
+                var takeLeft = $"_left{k}";
+                WriteLine($"var {n} = {srcCounts[0]};");
+                WriteLine($"var {from} = new int[{n}];");
+                WriteLine($"var {into} = new int[{n}];");
+                For(n, () => WriteLine($"{from}[{i}] = {i};"));
+                WriteLine($"for (var {width} = 1; {width} < {n}; {width} *= 2)");
+                WriteStartBlock();
+                WriteLine($"for (var {lo} = 0; {lo} < {n}; {lo} += {width} * 2)");
+                WriteStartBlock();
+                WriteLine($"var {mid} = System.Math.Min({lo} + {width}, {n});");
+                WriteLine($"var {hi} = System.Math.Min({lo} + {width} * 2, {n});");
+                WriteLine($"var {left} = {lo};");
+                WriteLine($"var {right} = {mid};");
+                WriteLine($"for (var {at} = {lo}; {at} < {hi}; {at}++)");
+                WriteStartBlock();
+                WriteLine($"bool {takeLeft};");
+                WriteLine($"if ({left} >= {mid})");
+                WriteLine($"    {takeLeft} = false;");
+                WriteLine($"else if ({right} >= {hi})");
+                WriteLine($"    {takeLeft} = true;");
+                WriteLine("else");
+                WriteStartBlock();
+                var pair = new[] { (Operand)Src(0, $"{from}[{left}]"), Src(0, $"{from}[{right}]") };
+                DeclareParams(pair);
+                Write($"{takeLeft} = ");
+                WriteBoolTest(() => WriteFnValue(false, pair), () => WriteFnValue(true, pair));
+                WriteLine(";");
+                WriteEndBlock();
+                WriteLine($"{into}[{at}] = {takeLeft} ? {from}[{left}++] : {from}[{right}++];");
+                WriteEndBlock();
+                WriteEndBlock();
+                WriteLine($"var _swap{k} = {from}; {from} = {into}; {into} = _swap{k};");
+                WriteEndBlock();
+                WriteLine($"var {a} = new {elem}[{n}];");
+                if (ll.Kind == "Sort")
+                    For(n, () => WriteLine($"{a}[{i}] = {Src(0, $"{from}[{i}]")};"));
+                else
+                    For(n, () => WriteLine($"{a}[{i}] = (Integer){from}[{i}];"));
+                break;
+            }
             case "Reverse":
                 WriteLine($"var {n} = {srcCounts[0]};");
                 WriteLine($"var {a} = new {elem}[{n}];");
