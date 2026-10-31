@@ -9,6 +9,11 @@ library SmallSwitchProbe
     ProbeHalfUnit(_: Number): Number => (1.0 + 0.25 * 0.25) * 0.5;
     UsesConstants(x: Number): Number => x * TwiceQuarterSquare() + PlainHalf();
 
+    // --cache-constants on a closed call that is not a whole body: (QuarterSquare() + PlainHalf())
+    // names no parameter, so it is cached once per member however often and wherever it appears.
+    Shifted(x: Number): Number => x * (QuarterSquare() + PlainHalf()) + (QuarterSquare() + PlainHalf());
+    ShiftedAll(xs: Array<Number>): Array<Number> => xs.Map(x => x + (QuarterSquare() + PlainHalf()));
+
     // --primitive-compare: each comparison on Number and on Integer, and one across a conversion.
     NumberLess(a: Number, b: Number): Boolean => a < b;
     NumberLessOrEqual(a: Number, b: Number): Boolean => a <= b;

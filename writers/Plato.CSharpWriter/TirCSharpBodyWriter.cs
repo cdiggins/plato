@@ -271,6 +271,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             Write(" } ");
 
         WriteLine();
+        WriteDeferredConstants();
     }
 
     // --- statements ----------------------------------------------------------
@@ -887,6 +888,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     {
         // Under scalar lowering every scalar-returning-wrapper call site already carries an explicit
         // disambiguating TirCoerce (inserted by TirScalarLowerer), so no float-land wrapping here.
+        if (TryWriteCachedClosedCall(call))
+            return;
         WriteCallCore(call);
     }
 

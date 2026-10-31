@@ -495,6 +495,9 @@ namespace Ara3D.Geometry.CSharpWriter
         // --cache-constants: a nullary static whose body is a closed expression returns a static
         // readonly field of a lazily initialised holder class (TirCSharpBodyWriter.Constants.cs).
         public bool CacheConstants { get; set; }
+        // Counts for the generation log: holder classes written for closed sub-expressions, and their sites.
+        public int CachedConstantHolders;
+        public int CachedConstantSites;
 
         // --primitive-compare: a Number or Integer comparison call is written on the operands'
         // .Value (TirCSharpBodyWriter.PrimitiveCompare.cs), with the wrapper's exact semantics.

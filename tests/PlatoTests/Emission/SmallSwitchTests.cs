@@ -35,7 +35,7 @@ public static class SmallSwitchTests
                 .OfType<MethodDeclarationSyntax>().Single(m => m.Identifier.Text == name).ToString();
     }
 
-    private static readonly string[] Probes = { "QuarterSquare", "TwiceQuarterSquare", "PlainHalf", "UsesConstants" };
+    private static readonly string[] Probes = { "QuarterSquare", "TwiceQuarterSquare", "PlainHalf", "UsesConstants", "Shifted", "ShiftedAll" };
     private static readonly Dictionary<string, Build> Builds = new();
 
     // --primitive-compare probes: compiled only when the switch is on, since the wrapper methods
@@ -113,13 +113,17 @@ public static class SmallSwitchTests
     private static string KeepMethods(string source, Func<string, bool> keep)
     {
         var root = CSharpSyntaxTree.ParseText(source).GetRoot();
+        // A closed-sub-expression holder (_Const<n>) stays only when a kept method reads it.
+        var keptText = string.Join(" ", root.DescendantNodes().OfType<MethodDeclarationSyntax>()
+            .Where(m => keep(m.Identifier.Text)).Select(m => m.ToString()));
         var drop = root.DescendantNodes().OfType<MethodDeclarationSyntax>()
             .Where(m => !keep(m.Identifier.Text)
                 // IndexInRange is emitted per IIndexable implementor; only the list one is compiled.
                 || m.Identifier.Text == "IndexInRange" && !m.ParameterList.ToString().Contains("IReadOnlyList"))
             .Cast<SyntaxNode>()
             .Concat(root.DescendantNodes().OfType<ClassDeclarationSyntax>()
-                .Where(c => c.Identifier.Text.StartsWith("_Const_") && !keep(c.Identifier.Text["_Const_".Length..])));
+                .Where(c => c.Identifier.Text.StartsWith("_Const_") && !keep(c.Identifier.Text["_Const_".Length..])
+                    || Regex.IsMatch(c.Identifier.Text, @"^_Const\d+$") && !keptText.Contains(c.Identifier.Text + ".Value")));
         return root.RemoveNodes(drop, SyntaxRemoveOptions.KeepNoTrivia)!.ToFullString();
     }
 
@@ -211,5 +215,31 @@ public static class SmallSwitchTests
                 Assert.That((bool)(Boolean)method.Invoke(null, new object[] { (Integer)a, (Integer)b })!,
                     Is.EqualTo(Expected(c, a, b)), $"Integer{c}({a}, {b})");
         }
+    }
+
+    [Test]
+    public static void CacheConstantsCachesAClosedCallThatIsNotAWholeBody()
+    {
+        var off = Emit("loops");
+        var on = Emit("loops+cache");
+        Assert.That(off.Body("Shifted"), Does.Not.Contain("_Const"));
+        Assert.That(off.Body("ShiftedAll"), Does.Not.Contain("_Const"));
+        // Both occurrences in Shifted read one holder; the loop body in ShiftedAll reads one too.
+        var shifted = Regex.Matches(on.Body("Shifted"), @"_Const\d+\.Value").Select(m => m.Value).ToList();
+        Assert.That(shifted, Has.Count.EqualTo(2));
+        Assert.That(shifted.Distinct().Count(), Is.EqualTo(1));
+        Assert.That(on.Body("ShiftedAll"), Does.Match(@"_Const\d+\.Value"));
+        // The parameter-dependent part stays a call.
+        Assert.That(on.Body("Shifted"), Does.Contain("x"));
+
+        foreach (var x in new[] { 0.0, -0.0, 1.5, double.NaN, double.PositiveInfinity, 1e308 })
+        {
+            var args = new object[] { (Number)x };
+            Assert.That(Bits(on.Method("Shifted").Invoke(null, args)), Is.EqualTo(Bits(off.Method("Shifted").Invoke(null, args))), $"x={x}");
+        }
+        var xs = Numbers(0, 1.5, -2, double.NaN, -0.0);
+        long[] Run(Build b) => ((IReadOnlyList<Number>)b.Method("ShiftedAll").Invoke(null, new object[] { xs })!)
+            .Select(n => BitConverter.DoubleToInt64Bits((double)n.Value)).ToArray();
+        Assert.That(Run(on), Is.EqualTo(Run(off)));
     }
 }
