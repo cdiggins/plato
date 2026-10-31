@@ -162,7 +162,7 @@ library BytesLaws
 
     // Accepted forms and their values, including those the P21 text uses: a trailing point,
     // a leading point, an explicit plus, an exponent with a sign, and the signed zero.
-    Law_ParseNumberAcceptedForms(): Boolean
+    Law_BytesParseNumberAcceptedForms(): Boolean
         => ParseNumber("1.".ToBytes).Value == 1.0 && ParseNumber("1.".ToBytes).Ok
         && ParseNumber("-0.5E-3".ToBytes).Value == -0.0005 && ParseNumber("-0.5E-3".ToBytes).Ok
         && ParseNumber(".5".ToBytes).Value == 0.5 && ParseNumber(".5".ToBytes).Ok
@@ -175,7 +175,7 @@ library BytesLaws
 
     // Everything else is rejected with value 0: no digits, a bare exponent, words, hex, spaces,
     // a comma, two signs, two points, and a value that rounds to infinity.
-    Law_ParseNumberRejectedForms(): Boolean
+    Law_BytesParseNumberRejectedForms(): Boolean
         => !ParseNumber("".ToBytes).Ok && !ParseNumber(".".ToBytes).Ok && !ParseNumber("1e".ToBytes).Ok
         && !ParseNumber("e5".ToBytes).Ok && !ParseNumber("+".ToBytes).Ok && !ParseNumber("-".ToBytes).Ok
         && !ParseNumber("NaN".ToBytes).Ok && !ParseNumber("Infinity".ToBytes).Ok && !ParseNumber("0x10".ToBytes).Ok
@@ -186,7 +186,7 @@ library BytesLaws
 
     // The correctly rounded values of the hard cases: a tie between two doubles rounds to even,
     // an underflow is zero, 0.1 is the double nearest to a tenth.
-    Law_ParseNumberIsCorrectlyRounded(): Boolean
+    Law_BytesParseNumberIsCorrectlyRounded(): Boolean
         => ParseNumber("0.1".ToBytes).Value == 0.1 && ParseNumber("9007199254740993".ToBytes).Value == 9007199254740992.0
         && ParseNumber("9007199254740995".ToBytes).Value == 9007199254740996.0
         && ParseNumber("1e-400".ToBytes).Value == 0.0 && ParseNumber("1e-400".ToBytes).Ok;
@@ -227,7 +227,7 @@ library BytesLaws
     // Integers.
 
     // Accepted forms: a sign is optional, leading zeros are digits, negative zero is zero.
-    Law_ParseIntegerAcceptedForms(): Boolean
+    Law_BytesParseIntegerAcceptedForms(): Boolean
         => ParseInteger("-12".ToBytes).Value == -12 && ParseInteger("-12".ToBytes).Ok
         && ParseInteger("+7".ToBytes).Value == 7 && ParseInteger("+7".ToBytes).Ok
         && ParseInteger("007".ToBytes).Value == 7 && ParseInteger("0".ToBytes).Ok
@@ -236,7 +236,7 @@ library BytesLaws
         && ParseInteger("-2147483647".ToBytes).Value == -2147483647 && ParseInteger("-2147483647".ToBytes).Ok;
 
     // Rejected forms have value 0: no digits, a point, an exponent, a space, a letter.
-    Law_ParseIntegerRejectedForms(): Boolean
+    Law_BytesParseIntegerRejectedForms(): Boolean
         => !ParseInteger("".ToBytes).Ok && !ParseInteger("+".ToBytes).Ok && !ParseInteger("-".ToBytes).Ok
         && !ParseInteger("1.0".ToBytes).Ok && !ParseInteger("1e3".ToBytes).Ok && !ParseInteger(" 1".ToBytes).Ok
         && !ParseInteger("1 ".ToBytes).Ok && !ParseInteger("--1".ToBytes).Ok && !ParseInteger("1a".ToBytes).Ok
