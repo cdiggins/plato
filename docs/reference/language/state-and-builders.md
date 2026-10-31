@@ -74,3 +74,50 @@ stateDiagram-v2
 This discipline is not a proved static ownership system. Lint rules reject some storage shapes, and the runtime checks invalidation after `Freeze`. Aliasing and capture are not comprehensively excluded by a static affine checker. A program that breaks the intended discipline can get farther than a fully linear type system would permit.
 
 [Rust ownership](https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html) also limits aliasing so mutation stays safe. Rust's compile-time borrowing rules are stronger than Plato's present builder checks.
+
+## Grammar
+
+Locals, loops and builders use these rules from [PlatoGrammar.cs](../evidence/grammar-source.md#platogrammarcs):
+
+```text
+public Rule WhileStatement => Node(Keyword("while") + AdvanceOnFail + ParenthesizedExpression + Statement);
+public Rule ForStatement => Node(Keyword("for") + AdvanceOnFail + Sym("(") + ForLoopInit + EOS +
+                                 ForLoopInvariant + EOS + ForLoopVariant + Sym(")") + Statement);
+public Rule VarDecl => Node(TypeExpr + ListOfAtLeastOne(VarWithInitialization));
+public Rule UniqueKeyword => Node(Keyword("unique"));
+```
+
+The grammar accepts `foreach`, `break`, `continue`, `++` and compound assignment. The checked
+language does not support them; see [discrepancies](../implementation/discrepancies.md).
+
+## Meaning
+
+A `var` local can be rebound, and an intrinsic builder is updated by rebinding the value
+each operation returns. [SEMANTICS section 3](../../SEMANTICS.md) is the authority.
+
+## Common mistake
+
+A beginner writes `i += 1` in a `for` loop, as in C:
+
+```plato
+library Build4 {
+  Total(n: Integer): Integer {
+    var t = 0;
+    for (var i = 0; i < n; i += 1) { t = t + i; }
+    return t;
+  }
+  Law_T(): Boolean => Total(4) == 6;
+}
+```
+
+The language has no compound assignment, but the compiler gives no diagnostic.
+`lint --strict` reports no finding, and `run --laws` reports `0 laws`: `Law_T` is not found
+in the compiled program. The only symptom is a function that is missing. With the update
+written `i = i + 1`, the same program runs `Law_T` and it passes.
+
+`i++` is also accepted without a diagnostic, and a loop that depends on it did not finish in
+the interpreter. Treat a missing function or a run that never ends as the sign of an
+unsupported update.
+
+A related slip is not reported either: `xs.Add(i);` without rebinding is accepted. Write
+`xs = xs.Add(i);` so the program does not depend on how one backend treats the builder.

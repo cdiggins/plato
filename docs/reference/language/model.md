@@ -64,6 +64,55 @@ actual receiver types. The C# path specializes typed bodies where required. Thes
 are different implementations, intended to preserve the same language behavior.
 Agreement is tested. It is not assumed as a theorem.
 
+## Grammar
+
+The top level has three declaration forms. These are the rules from [PlatoGrammar.cs](../evidence/grammar-source.md#platogrammarcs), copied unchanged:
+
+```text
+public Rule Type => Node(UniqueKeyword.Optional() + (PrimitiveKeyword | Keyword("type")) + AdvanceOnFail + Identifier + TypeParameterList + ConstraintList + ImplementsList + SealedList +
+                         (SumTypeBody | Braced(FieldDeclaration.ZeroOrMore(), AdvanceOnFail)));
+public Rule Concept => Node((Keyword("concept") | Keyword("interface")) + AdvanceOnFail + Identifier + TypeParameterList + ConstraintList + InheritsList +
+                            Braced(MethodDeclaration.ZeroOrMore(), AdvanceOnFail));
+public Rule Library =>
+    Node(Keyword("library") + AdvanceOnFail + Identifier + Braced(MethodDeclaration.ZeroOrMore(), AdvanceOnFail));
+public Rule TopLevelDeclaration => Node(Library | Concept | Type);
+```
+
+The chapter is mostly about scope and purity, so these are the only productions it needs.
+The reading grammar in [Grammar and front-end construction](../implementation/grammar.md)
+shows the same rules in EBNF. The parser accepts more than the checked language does; see
+[Diagnostics and unsupported forms](diagnostics.md).
+
+## Meaning
+
+All declarations in a compilation share one global scope, and a library name groups
+functions without qualifying them. Values are immutable and typing is nominal.
+[SEMANTICS section 1](../../SEMANTICS.md) is the authority.
+
+## Common mistake
+
+A beginner who knows C# writes `Samples.ValueAt(x)` and expects the library name to
+select the function. This program is rejected when it runs:
+
+```plato
+type Sample { Time: Number; Value: Number; }
+library Samples { ValueAt(s: Sample): Integer => 2; }
+library Laws { Law_Qualified(): Boolean => Samples.ValueAt(Sample(1, 2)) == 2; }
+```
+
+`plato run <folders> --laws` reports:
+
+```text
+error      Laws.Law_Qualified  case 1:   cannot resolve 'ValueAt' for (Samples, $Ret0) (in Law_Qualified)
+```
+
+`Samples.ValueAt(s)` is the call `ValueAt(Samples, s)`: `Samples` is read as the first
+argument, not as a scope. Drop the library name and call the function on its argument,
+`ValueAt(Sample(1, 2))` or `Sample(1, 2).ValueAt`.
+
+`plato lint --strict` accepts the same program with no finding. The error appears only
+when something runs the call, and its text does not say that library names cannot qualify.
+
 ## Evidence and authority
 
 [SEMANTICS](../../SEMANTICS.md) specifies the rules above. Input handling is in

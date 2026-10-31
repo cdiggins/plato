@@ -92,3 +92,48 @@ complete object-safety model.
 
 [Generic bounds](generics.md) says what the compiler can infer from a capability
 promise.
+
+## Grammar
+
+Interface and implementation clauses come from these rules in [PlatoGrammar.cs](../evidence/grammar-source.md#platogrammarcs):
+
+```text
+public Rule Concept => Node((Keyword("concept") | Keyword("interface")) + AdvanceOnFail + Identifier + TypeParameterList + ConstraintList + InheritsList +
+                            Braced(MethodDeclaration.ZeroOrMore(), AdvanceOnFail));
+public Rule ImplementsList => Node(Optional(Keyword("implements") + AdvanceOnFail + List(TypeExpr)));
+public Rule InheritsList => Node(Optional(Keyword("inherits") + AdvanceOnFail + List(TypeExpr)));
+```
+
+`Self` is a type name the checker resolves, not a grammar production.
+
+## Meaning
+
+An interface lists functions a type must have. `implements` is a promise, and a
+library function supplies each member. [SEMANTICS section 4](../../SEMANTICS.md) is the
+authority. As the chapter explains above, a missing member is a linter finding, not a
+compile error.
+
+## Common mistake
+
+A beginner declares `implements` and forgets the function:
+
+```plato
+interface IBlended { Blend(a: Self, b: Self, t: Integer): Self; }
+type Signal implements IBlended { Value: Integer; }
+```
+
+`plato lint --strict` reports a finding, not a compile error:
+
+```text
+interfaces\i.plato(2): LINT001: type 'Signal' implements 'IBlended' but no implementation was found for 'Blend(Signal, Signal, Integer):Signal'; the generated member will throw NotImplementedException
+```
+
+The program compiles and the missing member throws when it is called. Supply it, and the
+finding goes away:
+
+```plato
+library Signals { Blend(a: Signal, b: Signal, t: Integer): Signal => Signal(a.Value + t); }
+```
+
+The message names the exact signature to write, which is the helpful part. The cost is
+that only the linter notices.

@@ -43,3 +43,47 @@ A valid rewrite preserves values, faults, divergence, and the evaluation order t
 Match lowering builds a conditional chain from a reusable subject subtree and payload projections. It does not insert a dedicated subject local. A nontrivial subject can therefore be evaluated more than once. Bind it first when its cost or its faults matter. Whether the source language should guarantee exactly one evaluation is an explicit specification issue.
 
 The interpreter can memoize an expensive call, and it has configurable depth and time limits. Those are execution controls, not a proof that a function terminates. A timeout is an execution error. It does not show that the function diverges. A host C# exception can report a bounds error or an unmet runtime obligation. Plato has no source-level exception handlers.
+
+## Grammar
+
+This chapter has no single grammar fragment: it describes how expressions run, not a
+declaration form. The form it discusses most is the conditional. Its rule from [PlatoGrammar.cs](../evidence/grammar-source.md#platogrammarcs) is:
+
+```text
+public Rule TernaryOperation => Node(Sym("?") + AdvanceOnFail + Expression + Sym(":") + Expression);
+```
+
+[Expressions](expressions.md) and [Functions](functions.md) carry the rest.
+
+## Meaning
+
+Arguments evaluate in source order and only the selected branch of a conditional runs.
+Plato is eager by default, but the language does not promise that unnecessary pure
+work is performed. The accepted decision on
+[mixed evaluation](../../../tracker/decisions/2026-10-25-mixed-evaluation-preserves-required-results.md)
+lets the compiler skip pure computation, including faults confined to it, as long as every
+defined successful result and all required work are preserved. It does not let an
+optimizer drop work the program requested, and it does not decide whether skipping
+nonterminating work is allowed. That decision records a direction, not a finished
+implementation. [SEMANTICS section 6](../../SEMANTICS.md) holds the conditional and
+short-circuit rules.
+
+## Common mistake
+
+A beginner uses a number as a condition, as in C. This program is rejected when it runs:
+
+```plato
+library Choose { Pick(n: Integer): Integer => n ? 1 : 2; }
+library Laws { Law_Pick(): Boolean => Pick(1) == 1; }
+```
+
+`plato run <folders> --laws` reports:
+
+```text
+error      Laws.Law_Pick  case 1:   a conditional's condition is not a Boolean: 1 (in Pick < Law_Pick)
+```
+
+Compare to produce a Boolean: `n.Equals(0) ? 2 : 1`.
+
+`plato lint --strict` accepts the same program with no finding, so a lint-only run does
+not catch it.

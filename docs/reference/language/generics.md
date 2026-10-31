@@ -105,3 +105,57 @@ redispatches an interface operation. Some emitted generic declarations, and some
 generic structs, remain generic C#. Monomorphization does not promise that every
 output file is free of generic syntax. The interpreter runs an unspecialized
 generic body and uses the value's type at a dispatch point.
+
+## Grammar
+
+Type parameters, bounds and signature variables come from these rules in [PlatoGrammar.cs](../evidence/grammar-source.md#platogrammarcs):
+
+```text
+public Rule TypeParameter => Node(Identifier);
+public Rule TypeParameterList => Node(AngleBracketedList(TypeParameter).Optional());
+public Rule Constraint => Node((TypeVar | Identifier) + TypeAnnotation);
+public Rule ConstraintList => Node(Optional(Keyword("where") + AdvanceOnFail + List(Constraint)));
+public Rule TypeVar => Node('$' + Identifier);
+public Rule MethodDeclaration =>
+    Node(Identifier + FunctionParameterList + AdvanceOnFail + TypeAnnotation + ConstraintList + FunctionBody);
+```
+
+The grammar accepts any type name in a parameter type, including a bare `T`. The checked
+language does not: see the mistake below.
+
+## Meaning
+
+A declaration's `<T>` names a parameter inside that declaration. A library signature
+spells its own variables `$T`, and each call infers them afresh. `where` asks the
+argument to implement an interface. [SEMANTICS section 5](../../SEMANTICS.md) is the authority.
+
+## Common mistake
+
+A beginner writes the declaration's parameter name in a library signature:
+
+```plato
+type Pair<T> { First: T; Second: T; }
+library Pairs { Swap(p: Pair<T>): Pair<T> => (p.Second, p.First); }
+```
+
+The compiler rejects it, and `plato lint --strict` stops with "Compilation was not
+completed". The message, with the machine-specific path trimmed:
+
+```text
+Symbol resolution error: Could not find type T; a type variable in a signature is spelled $T
+generics\g.plato(67..68)
+library Pairs { Swap(p: Pair<T>): Pair<T> => (p.Second, p.First); }
+                             ^
+Found 2 symbol resolution errors
+Halting further computation
+Compilation was not completed; cannot lint
+```
+
+The tool prints one such error per use of `T`, and the two error messages differ: only
+the one quoted carries the hint, which names `$T`. Write `Swap(p: Pair<$T>): Pair<$T>`.
+
+A violated bound is not reported by the same tool. Given `type Box<T> where T: IScalable`
+and `Wrap(n: Plain): Box<Plain>` where `Plain` does not implement `IScalable`, both
+`lint --strict` and `run --laws` accept the program and a law over `Wrap` passes. The
+section above names CHK309 for this case, but the checker for that code is not called from
+the command-line tool in the build used here.
