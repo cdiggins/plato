@@ -1,0 +1,182 @@
+// Fixture of the --in-place tests (TKT-1132): each function is one case of the liveness rule of
+// writers/Plato.CSharpWriter/Optimization/README.md, and each law states the result the immutable
+// meaning requires. A wrong proof changes a result, so the laws fail in the compiled arm.
+type InPlaceHolder
+{
+    Items: Array<Integer>;
+}
+
+library InPlaceProbe
+{
+    // A checksum that depends on every element and its position.
+    Digest(xs: Array<Integer>): Integer
+        => xs.Reduce(0, (acc, x) => acc * 31 + x);
+
+    //== In place
+
+    // The array is threaded through the loop: each pass writes the next version.
+    Threaded(n: Integer): Array<Integer>
+    {
+        var xs = n.MapRange(i => 0);
+        var k = 0;
+        while (k < n)
+        {
+            xs = xs.SetAt(k, k * k);
+            k = k + 1;
+        }
+        return xs;
+    }
+
+    // The receiver of each update is a new array nothing else names.
+    Chained(n: Integer): Array<Integer>
+        => n.MapRange(i => i).SetAt(0, 7).SetAt(1, 8);
+
+    // Each array is dead once the next is made from it.
+    HandOff(n: Integer): Array<Integer>
+    {
+        var a = n.MapRange(i => i);
+        var b = a.SetAt(0, 7);
+        var c = b.SetAt(1, 8);
+        return c;
+    }
+
+    // Two arrays, each threaded through the same loop and each read by the other.
+    Alternating(n: Integer): Array<Integer>
+    {
+        var a = n.MapRange(i => 0);
+        var b = n.MapRange(i => 1);
+        var k = 0;
+        while (k < n)
+        {
+            a = a.SetAt(k, b[k] + k);
+            b = b.SetAt(k, a[k] * 2);
+            k = k + 1;
+        }
+        return a.Concatenate(b);
+    }
+
+    // The array lives in one pass of the loop, so the next pass makes a new one.
+    PerIteration(n: Integer): Integer
+    {
+        var total = 0;
+        var k = 0;
+        while (k < n)
+        {
+            var row = n.MapRange(i => k);
+            var changed = row.SetAt(0, 100);
+            total = total + changed[0] + changed.Count;
+            k = k + 1;
+        }
+        return total;
+    }
+
+    //== Copied: the old value is used again
+
+    // The old array is read after the update.
+    LaterUse(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i);
+        var b = a.SetAt(0, 7);
+        return a[0] + b[0] + a.Count;
+    }
+
+    // Another name holds the same array.
+    Aliased(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i);
+        var b = a;
+        var c = a.SetAt(0, 9);
+        return b[0] + c[0];
+    }
+
+    // A closure that is passed on reads the array.
+    Probe(f: Function1<Integer, Integer>): Integer => f(0);
+
+    Captured(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i);
+        var b = a.SetAt(0, 5);
+        return Probe(j => a[j]) + b[0];
+    }
+
+    // The array was given away before it was updated.
+    Escaped(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i);
+        var kept = [a];
+        a = a.SetAt(0, 9);
+        return kept[0][0] + a[0];
+    }
+
+    // Each pass updates the same array and keeps its own result.
+    NotThreaded(n: Integer): Array<Integer>
+    {
+        var a = n.MapRange(i => i);
+        var last = a;
+        var k = 0;
+        while (k < n)
+        {
+            last = a.SetAt(k, 100 + k);
+            k = k + 1;
+        }
+        return last;
+    }
+
+    //== Copied: the array is not made in this body
+
+    // A parameter belongs to the caller.
+    OfParameter(a: Array<Integer>): Array<Integer>
+        => a.SetAt(0, 1);
+
+    Same(a: Array<Integer>): Array<Integer> => a;
+
+    // A call may return its argument, so its result is not known to be new.
+    OfCall(a: Array<Integer>): Array<Integer>
+    {
+        var b = Same(a);
+        return b.SetAt(0, 8);
+    }
+
+    // An array held by a record belongs to whoever holds the record.
+    OfField(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i);
+        var h = new InPlaceHolder(a);
+        var c = h.Items.SetAt(0, 3);
+        return a[0] + c[0];
+    }
+
+    //== Laws: the result the immutable meaning gives
+
+    Law_Threaded(): Boolean => Digest(Threaded(5)).Equals(Digest([0, 1, 4, 9, 16]));
+    Law_Chained(): Boolean => Digest(Chained(4)).Equals(Digest([7, 8, 2, 3]));
+    Law_HandOff(): Boolean => Digest(HandOff(4)).Equals(Digest([7, 8, 2, 3]));
+    Law_Alternating(): Boolean => Digest(Alternating(4)).Equals(Digest([1, 2, 3, 4, 2, 4, 6, 8]));
+    Law_PerIteration(): Boolean => PerIteration(3).Equals(309);
+    Law_LaterUse(): Boolean => LaterUse(4).Equals(11);
+    Law_Aliased(): Boolean => Aliased(4).Equals(9);
+    Law_Captured(): Boolean => Captured(4).Equals(5);
+    Law_Escaped(): Boolean => Escaped(4).Equals(9);
+    Law_NotThreaded(): Boolean => Digest(NotThreaded(4)).Equals(Digest([0, 1, 2, 103]));
+    Law_OfParameter(): Boolean
+    {
+        var p = [5, 6, 7];
+        var q = OfParameter(p);
+        return Digest(p).Equals(Digest([5, 6, 7])) && Digest(q).Equals(Digest([1, 6, 7]));
+    }
+    Law_OfCall(): Boolean
+    {
+        var p = [5, 6, 7];
+        var q = OfCall(p);
+        return Digest(p).Equals(Digest([5, 6, 7])) && Digest(q).Equals(Digest([8, 6, 7]));
+    }
+    Law_OfField(): Boolean => OfField(4).Equals(3);
+
+    // Out of range changes nothing, in place or copied.
+    Law_OutOfRange(): Boolean
+    {
+        var a = [1, 2, 3];
+        var b = a.SetAt(3, 9).SetAt(0 - 1, 9);
+        return Digest(b).Equals(Digest([1, 2, 3]));
+    }
+}

@@ -209,6 +209,13 @@ library Primitives
     Prepend(self: Array<$T>, value: $T): Array<$T>
         => MapRange(self.Count + 1, i => i == 0 ? value : self[i - 1]);
 
+    // The array with the element at index replaced by value; self unchanged
+    // (as a value) when index is out of range. The source is immutable and this
+    // builds a new array; the C# writer's --in-place pass writes into self's
+    // storage instead where it proves self is not used afterwards (TKT-1132).
+    SetAt(self: Array<$T>, index: Integer, value: $T): Array<$T>
+        => MapRange(self.Count, i => i == index ? value : self[i]);
+
     // The two arrays joined end to end.
     // (https://en.wikipedia.org/wiki/Concatenation)
     Concatenate(xs: Array<$T>, ys: Array<$T>): Array<$T>

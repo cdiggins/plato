@@ -252,6 +252,8 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("loops / lower (layer 10)");
             tir = TirPresize.Rewrite(tir, this);
             Phase("presize / counted List fills");
+            tir = TirInPlaceUpdates.Rewrite(tir, this);
+            Phase("in-place / last-use array updates (TKT-1132)");
             sb?.AppendLine();
             return tir;
         }
@@ -455,6 +457,11 @@ namespace Ara3D.Geometry.CSharpWriter
         // When true (--presize, TKT-1131), a `new List<T>()` that a counted loop fills once per pass
         // is written `new List<T>(count)` (see TirPresize). Default (false) output is unchanged.
         public bool Presize { get; set; }
+
+        // When true (--in-place, TKT-1132), a SetAt on an array that nothing can observe afterwards is
+        // emitted as a write into the array's own storage (see TirInPlaceUpdates). Default (false)
+        // output is unchanged.
+        public bool InPlaceUpdates { get; set; }
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at

@@ -14,6 +14,40 @@ namespace Ara3D.Geometry
         // a nested ReadOnlyList in generic inference (`caps.Concatenate(walls)`).
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<T> MakeArray<T>(params T[] args) => args;
 
+        /// <summary>
+        /// <c>SetAt</c> on an array the writer's --in-place pass proved unshared and not read again as
+        /// the old value (TKT-1132): the element is written into the array itself and the same array is
+        /// returned. An index outside the array writes nothing, as the Plato body of <c>SetAt</c>
+        /// returns an equal array. Only a <c>T[]</c> is written; any other list (a list the lowered
+        /// FlatMap built, a view) is copied, so the call is correct on every value it can meet and the
+        /// proof only decides whether the copy is saved.
+        /// </summary>
+        public static IReadOnlyList<T> SetAtInPlace<T>(IReadOnlyList<T> xs, Integer index, T value)
+        {
+            long at = index;
+            // An array of a derived reference type typed as T[] would throw on the store.
+            if (xs is T[] items && (typeof(T).IsValueType || items.GetType() == typeof(T[])))
+            {
+                if ((ulong)at < (ulong)items.Length)
+                    items[at] = value;
+                return items;
+            }
+            return SetAtCopy(xs, at, value);
+        }
+
+        private static IReadOnlyList<T> SetAtCopy<T>(IReadOnlyList<T> xs, long at, T value)
+        {
+            var count = xs.Count;
+            if (count <= 0)
+                return System.Array.Empty<T>();
+            var copy = new T[count];
+            for (var i = 0; i < count; i++)
+                copy[i] = xs[i];
+            if ((ulong)at < (ulong)count)
+                copy[at] = value;
+            return copy;
+        }
+
         // Plato arrays are values: two arrays are equal when their elements are, as the
         // interpreter compares them (ValueEquality). A generated Equals compares an array field
         // through this, not IReadOnlyList's Equals, which is reference equality (TKT-355: a

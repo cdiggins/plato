@@ -72,6 +72,7 @@ public sealed class CSharpProgram
         writer.LeanInlining = loopOptimizations?.LeanInlining ?? false;
         writer.ConcreteArrays = loopOptimizations?.ConcreteArrays ?? false;
         writer.Presize = loopOptimizations?.Presize ?? false;
+        writer.InPlaceUpdates = loopOptimizations?.InPlace ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 
