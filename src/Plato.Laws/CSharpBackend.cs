@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.CSharpWriter;
 using Ara3D.Geometry.Interpreter;
 
 namespace Ara3D.Geometry.Laws;
@@ -35,8 +36,8 @@ public sealed class CSharpBackend : ILawBackend
 
     /// <summary>Emits and compiles the interpreter's compilation under its Number profile;
     /// <paramref name="lowerLoops"/> is the writer's <c>--loops</c>.</summary>
-    public static CSharpBackend Build(Interpreter.Interpreter interp, bool lowerLoops = false, bool fuse = false)
-        => new(CSharpProgram.Build(interp.Compilation, interp.Profile, lowerLoops, fuse), interp);
+    public static CSharpBackend Build(Interpreter.Interpreter interp, bool lowerLoops = false, bool fuse = false, LoopOptimizationOptions loopOptimizations = null)
+        => new(CSharpProgram.Build(interp.Compilation, interp.Profile, lowerLoops, fuse, loopOptimizations), interp);
 
     /// <summary>Wraps an already compiled program, so a warm host compiles once per source generation.</summary>
     public static CSharpBackend Over(CSharpProgram program, Interpreter.Interpreter interp)

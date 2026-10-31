@@ -250,6 +250,8 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("optimize-arrays / materialize (layer 9)");
             tir = TirLoopLowerer.Rewrite(tir, this);
             Phase("loops / lower (layer 10)");
+            tir = TirInPlaceUpdates.Rewrite(tir, this);
+            Phase("in-place / last-use array updates (TKT-1132)");
             sb?.AppendLine();
             return tir;
         }
@@ -442,6 +444,11 @@ namespace Ara3D.Geometry.CSharpWriter
         // one-line forwarding members (see LeanInliningPass); the handwritten intrinsics keep theirs.
         // Default (false) output is unchanged.
         public bool LeanInlining { get; set; }
+
+        // When true (--in-place, TKT-1132), a SetAt on an array that nothing can observe afterwards is
+        // emitted as a write into the array's own storage (see TirInPlaceUpdates). Default (false)
+        // output is unchanged.
+        public bool InPlaceUpdates { get; set; }
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at

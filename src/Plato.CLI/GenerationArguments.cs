@@ -8,7 +8,7 @@ internal static class GenerationArguments
         "--typescript", "--rust", "--glsl", "--cpp", "--cuda",
         "--optimize", "--optimize-arrays", "--inline", "--static-abstract",
         "--loops", "--fuse", "--inline-report", "--fuse-consumers", "--exact-output",
-        "--lean-inlining"
+        "--lean-inlining", "--in-place"
     };
 
     private static readonly HashSet<string> ValueOptions = new(StringComparer.Ordinal)

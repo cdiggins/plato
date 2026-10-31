@@ -70,6 +70,7 @@ public sealed class CSharpProgram
         writer.FuseConsumers = loopOptimizations?.FuseConsumers ?? false;
         writer.ExactOutputAllocation = loopOptimizations?.ExactOutputAllocation ?? false;
         writer.LeanInlining = loopOptimizations?.LeanInlining ?? false;
+        writer.InPlaceUpdates = loopOptimizations?.InPlace ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 

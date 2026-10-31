@@ -665,6 +665,21 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write(tr.Name);
                 return;
 
+            case TirInPlaceSet ips:
+            {
+                // The element type is named so the value converts to it at the call, as a literal's
+                // MakeArray<T> does; a type variable the signature does not declare falls back to inference.
+                var elemName = ips.Type != null && ips.Type.TypeArgs.Count == 1 ? CSharpTypeName(ips.Type.TypeArgs[0]) : null;
+                Write(elemName != null ? $"Intrinsics.SetAtInPlace<{elemName}>(" : "Intrinsics.SetAtInPlace(");
+                WriteNode(ips.Array);
+                Write(", ");
+                WriteIndexArgument(ips.Index);
+                Write(", ");
+                WriteNode(ips.Value);
+                Write(")");
+                return;
+            }
+
             case TirBooleanChain bc:
                 for (var i = 0; i < bc.Terms.Count; i++)
                 {
