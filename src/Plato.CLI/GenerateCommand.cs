@@ -46,7 +46,8 @@ internal static class GenerateCommand
         var lowerScalars = args.Contains("--lower-scalars");
 
         var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
-            args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"), LowerScalars: lowerScalars);
+            args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"), LowerScalars: lowerScalars,
+            SinkBindings: args.Contains("--sink-bindings"), BindScrutinees: args.Contains("--bind-scrutinee"), ShareCallsWide: args.Contains("--share-calls-wide"));
         if (loopOptimizations.ConcreteArrays && (typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--concrete-arrays applies to C# generation only.");
@@ -216,6 +217,12 @@ internal static class GenerateCommand
             logger.Log("Writing C# Files");
             var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract, profile, fuse, statementInlining, loopOptimizations);
             logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
+            if (loopOptimizations.Elaboration.Any || loopOptimizations.ShareCallsWide)
+            {
+                var elaboration = output.ElaborationStats;
+                var rewrites = output.RewriteStats;
+                logger.Log($"Decoder-wave rewrites: scrutinees bound {elaboration.BoundScrutinees}, bindings sunk {elaboration.SunkBindings} at elaboration and {rewrites.SunkAfterInlining} after inlining, calls shared across statements {rewrites.SharedAcrossStatements}, in lambda bodies {rewrites.SharedInLambdas}");
+            }
             if (output.DegradedBodies.Count > 0)
             {
                 logger.Log($"DEGRADED bodies (no ground TIR, emitted as throwing stubs): {output.DegradedBodies.Count}");

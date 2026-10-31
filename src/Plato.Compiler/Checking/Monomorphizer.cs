@@ -34,9 +34,15 @@ namespace Ara3D.Geometry.Compiler.Checking
         private TypeSubstitution _sub = TypeSubstitution.Empty;
         private MonomorphizeStats _stats = new MonomorphizeStats();
 
-        public Monomorphizer(Compilation compilation)
+        private readonly ElaborationOptions _elaboration;
+
+        /// <summary>What the elaboration rewrites changed in <see cref="ElaborateAll"/>.</summary>
+        public ElaborationStats ElaborationStats { get; } = new ElaborationStats();
+
+        public Monomorphizer(Compilation compilation, ElaborationOptions elaboration = null)
         {
             Compilation = compilation;
+            _elaboration = elaboration ?? new ElaborationOptions();
             RedispatchResolver = DefaultRedispatch;
         }
 
@@ -49,7 +55,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         {
             var tirByOriginal = new Dictionary<FunctionDef, TirFunction>();
             var checker = new TypeChecker(Compilation);
-            var elaborator = new Elaborator(Compilation);
+            var elaborator = new Elaborator(Compilation, _elaboration, ElaborationStats);
             foreach (var result in checker.CheckAll())
                 if (result?.Function != null)
                     tirByOriginal[result.Function] = elaborator.Elaborate(result);

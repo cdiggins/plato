@@ -25,8 +25,17 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         private TypeCheckResult _result;
 
-        public Elaborator(Compilation compilation)
-            => Compilation = compilation;
+        public ElaborationOptions Options { get; }
+
+        /// <summary>What the optimizing rewrites of <see cref="Options"/> changed so far.</summary>
+        public ElaborationStats Stats { get; }
+
+        // The match scrutinees worth binding once (TKT-1138), by identity: the node a match's tag
+        // tests and field reads all hold.
+        private readonly HashSet<TirNode> _scrutinees = new HashSet<TirNode>(ReferenceEqualityComparer.Instance);
+
+        public Elaborator(Compilation compilation, ElaborationOptions options = null, ElaborationStats stats = null)
+            => (Compilation, Options, Stats) = (compilation, options ?? new ElaborationOptions(), stats ?? new ElaborationStats());
 
         /// <summary>Elaborate one solved function into TIR. Reuses the normalized body the solver
         /// checked, so the recorded call decisions line up by identity. The function's declared
@@ -38,7 +47,15 @@ namespace Ara3D.Geometry.Compiler.Checking
         {
             _result = result;
             var f = result.Normalized ?? result.Function;
+            _scrutinees.Clear();
             var body = ElaborateStatement(f?.Body);
+            if (Options.BindMatchScrutinees)
+                body = new TirScrutineeBinding(_scrutinees, Stats).Body(body);
+            if (Options.SinkBindings)
+            {
+                body = TirSinkBindings.Rewrite(body, out var sunk);
+                Stats.SunkBindings += sunk;
+            }
             var zonkedParams = f?.Parameters?.Select(p => result.Solver.Zonk(p.Type)).ToList();
             var zonkedReturn = f != null ? result.Solver.Zonk(f.ReturnType) : null;
             return new TirFunction(f, f?.Parameters, f?.ReturnType, body, zonkedParams, zonkedReturn);
@@ -66,6 +83,8 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return new TirUnresolved(me, "match subject is not a sum type");
 
             var subject = ElaborateExpr(me.Scrutinee);
+            if (Options.BindMatchScrutinees && subject != null && !TirScrutineeBinding.IsTrivial(subject))
+                _scrutinees.Add(subject);
             var sum = me.SumType;
             var boolType = Compilation?.GetTypeDef("Boolean")?.ToTypeExpression();
 
