@@ -59,12 +59,47 @@ All chunks below can run at once. The agent type is `platonic:builder` unless no
 | **B. Example checker** | Run every fixture group found on disk instead of a fixed list; honour `inputs.txt`; move `builders` to it; keep refusing an empty group | `tools/reference/check_examples.py` | Adding a fixture folder makes it checked with no code change |
 | **C. Tour** | Split `start/` into one-idea pages, each with an editable example and an exercise; link the cheatsheet and glossary | `docs/reference/start/**`, `docs/reference/implementation/examples/tour/**` | Every tour example is a checked fixture |
 | **D. Compare-to pages** | "If you know Python" and "If you know C#" mapping tables | `docs/reference/compare/**` | Each Plato cell links its reference page |
-| **E. Cookbook seed** | A first small set of complete problem pages for scientists and engineers, chosen from what the stdlib supports today | `docs/reference/cookbook/**`, `docs/reference/implementation/examples/cookbook/**` | Each recipe's program is a checked fixture with its output shown |
+| **E. Cookbook seed** | A first small set of complete problem pages for scientists and engineers, chosen from what the stdlib supports today | `docs/reference/cookbook/**`, `docs/reference/implementation/examples/cookbook-*/**` | Each recipe's program is a checked fixture with its output shown |
 | **F. Construct pages** | Give each `language/` chapter a grammar fragment, a plain semantics statement, a common mistake, and the diagnostic it produces | `docs/reference/language/**` | Each quoted diagnostic matches `language/diagnostics.md` and the compiler |
 | **G. Design door** | A door page over `formal/`, `evidence/`, `implementation/`, and `review/`; a bibliography; a rejected-alternatives page drawn from `tracker/decisions/` | `docs/reference/design/**` | No rule is restated, and every claim links its authority |
 | **S. Playground spike** | Find out whether the interpreter can run in the browser as a WebAssembly build of the .NET interpreter, or needs a service, and at what cost. Agent type `general-purpose` with the `investigate` skill; throwaway work outside the repo | A dated report under `docs/reports/` only | The report gives a recommendation, its confidence, and what would change it |
 
 Chunks C and E depend on Wave 0 item 4. Chunk A depends on Wave 0 items 2 and 3.
+
+### Wave 1 build record
+
+Contracts: `tools/reference/CONTRACT.md`, "Reference site decisions" (commit `40b74c18`).
+Baseline gates: `python tools/reference/build.py --check` passes;
+`python -m unittest tools/reference/test_build.py` passes; `check_examples.py` passes every group.
+
+Rules every Wave 1 builder follows:
+
+- Link API material only through file pages, `api/<tier>/<stem>.md`. Those paths survive chunk A;
+  the numbered pages do not.
+- Run `python tools/reference/build.py --check` only. Running the builder without `--check`
+  writes generated files outside every fence except A's.
+- Run examples with the command-line tool the supervisor built from the committed code, never
+  a fresh .NET build: the working tree holds unrelated uncommitted compiler edits.
+  The tool is `C:/Users/cdigg/git/plato-wave-cli/src/Plato.CLI/bin/Release/net8.0/Plato.CLI.dll`,
+  a clean worktree of `40b74c18` removed when the wave ends; pass it to `check_examples.py --cli`.
+- Shared indexes stay with the supervisor: `docs/README.md`, `docs/reference/README.md`,
+  `docs/reference/implementation/examples/README.md`, and the reader's navigation. A builder
+  reports the line it would add.
+- A check failing in a file outside the builder's fence is reported, not fixed.
+
+| Id | One-sentence commit | Owner | Fence (writes only) | Depends on | Test command | Expected (h) | Actual (h) | Resources |
+|---|---|---|---|---|---|---|---|---|
+| A | API pages move to one order-independent page per name, with aliases, a symbol index, a text export and `llms.txt` | builder | `tools/reference/build.py`, `tools/reference/test_build.py`, `tools/reference/rewrite_links.py` (new), `docs/reference/api/**`, `docs/reference/evidence/**` (regenerated), `tools/reference-reader/.gitignore` | Wave 0 | `python -m unittest tools/reference/test_build.py` and `build.py --check` | 2 | | none |
+| B | The example checker runs every group on disk and honours `inputs.txt` | builder | `tools/reference/check_examples.py`, `tools/reference/test_check_examples.py` (new), `docs/reference/implementation/examples/builders/inputs.txt` (new) | Wave 0 | `python -m unittest tools/reference/test_check_examples.py` | 1 | | CLI |
+| C | The tour becomes one-idea pages with checked examples and exercises | builder | `docs/reference/start/**`, `docs/reference/implementation/examples/tour/**` | Wave 0 | `check_examples.py --group tour` (after B: discovered) and `build.py --check` | 2 | | CLI |
+| D | "If you know Python" and "If you know C#" pages | builder | `docs/reference/compare/**` | - | `build.py --check` | 1 | | none |
+| E | First cookbook recipes, each a checked program | builder | `docs/reference/cookbook/**`, `docs/reference/implementation/examples/cookbook-*/**` | Wave 0 | each recipe's group run with the law runner, and `build.py --check` | 2 | | CLI |
+| F | Language chapters gain grammar, semantics, a common mistake and its diagnostic | builder | `docs/reference/language/**` | - | `build.py --check` | 2 | | none |
+| G | A design door page, a bibliography and a rejected-alternatives page | builder | `docs/reference/design/**` | - | `build.py --check` | 1 | | none |
+| S | Playground feasibility report | general-purpose | `docs/reports/playground-feasibility-2026-10-31.md` | - | none | 1 | | scratch only |
+
+Merge check: `python tools/reference/build.py --check` plus the chunk's own test command;
+budget 120 seconds (measured at a few seconds, no `gate.toml` scope exists).
 
 ## Wave 2: chunks that need Wave 1
 

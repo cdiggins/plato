@@ -19,7 +19,7 @@ See [Products and construction](../language/products.md).
 
 `Number` is a primitive scalar from the foundation library.
 See [Numbers](../language/numbers.md) and the
-[Number API page](../api/foundation/primitives/001-number.md).
+[primitives API page](../api/foundation/primitives.md).
 
 `library Measurements { ... }` groups functions. See
 [Functions and lambdas](../language/functions.md).
