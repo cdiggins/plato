@@ -118,6 +118,14 @@ export function parseHash(hash) {
     : { id: decode(value.slice(0, at)), heading: decode(value.slice(at + 1)) };
 }
 
+// A retired page id resolves to its replacement when the replacement exists; any other id is
+// returned unchanged, so an unknown page still reports as missing.
+export function resolveAlias(pages, aliases, id) {
+  if (!id || pages.some(page => page.id === id)) return id;
+  const target = aliases?.[id];
+  return target && pages.some(page => page.id === target) ? target : id;
+}
+
 export function routeFor(pageId, heading) {
   return `#/${pageId}${heading ? `@${heading}` : ''}`;
 }

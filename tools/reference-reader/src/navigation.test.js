@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   adjacentPages, buildPageTree, crumbTarget, extractHeadings, groupAncestors, humanizeSegment,
-  parseHash, routeFor, searchPages, searchPagesDetailed, slugifyHeading, stripLeadingTitle,
+  parseHash, resolveAlias, routeFor, searchPages, searchPagesDetailed, slugifyHeading, stripLeadingTitle,
 } from './navigation.js';
 
 const pages = [
@@ -70,4 +70,18 @@ test('breadcrumb targets resolve section indexes', () => {
   assert.equal(crumbTarget(pages, ['language'], 0), 'docs/reference/language/model');
   assert.equal(crumbTarget(pages, ['start'], 0), 'docs/reference/start/what-is-plato');
   assert.equal(crumbTarget(pages, ['api', 'foundation'], 1), 'docs/reference/api/foundation/numbers.library');
+});
+
+test('retired page ids resolve through aliases only to existing pages', () => {
+  const aliases = {
+    'docs/reference/api/foundation/numbers.library/000-old': 'docs/reference/api/foundation/numbers.library/001-add',
+    'docs/reference/api/foundation/numbers.library/000-gone': 'docs/reference/api/foundation/numbers.library/missing',
+  };
+  assert.equal(resolveAlias(pages, aliases, 'docs/reference/api/foundation/numbers.library/000-old'),
+    'docs/reference/api/foundation/numbers.library/001-add');
+  assert.equal(resolveAlias(pages, aliases, 'docs/reference/api/foundation/numbers.library/000-gone'),
+    'docs/reference/api/foundation/numbers.library/000-gone');
+  assert.equal(resolveAlias(pages, aliases, 'docs/reference/start/tour'), 'docs/reference/start/tour');
+  assert.equal(resolveAlias(pages, undefined, 'docs/reference/nowhere'), 'docs/reference/nowhere');
+  assert.equal(resolveAlias(pages, aliases, null), null);
 });

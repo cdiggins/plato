@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { highlightCode, languageLabel } from './highlight.js';
 import {
   adjacentPages, buildPageTree, crumbTarget, extractHeadings, githubBlobUrl, groupAncestors,
-  humanizeSegment, parseHash, resolveSymbol, routeFor, searchPagesDetailed, slugifyHeading,
+  humanizeSegment, parseHash, resolveAlias, resolveSymbol, routeFor, searchPagesDetailed, slugifyHeading,
   stripLeadingTitle,
 } from './navigation.js';
 import '@fontsource/spectral/600.css';
@@ -196,6 +196,10 @@ function App() {
   }, []);
   const pages = data?.pages ?? [];
   const symbols = data?.symbols ?? {};
+  const aliasTarget = data ? resolveAlias(pages, data.aliases, route.id) : route.id;
+  useEffect(() => {
+    if (aliasTarget !== route.id) location.replace(routeFor(aliasTarget, route.heading));
+  }, [aliasTarget, route.id, route.heading]);
   const tree = useMemo(() => buildPageTree(pages), [pages]);
   const filtered = useMemo(() => query.trim() ? searchPagesDetailed(pages, query) : null, [pages, query]);
   const homeId = pages.find(page => page.id === 'docs/reference/README')?.id
@@ -253,7 +257,7 @@ function App() {
   if (!data && !loadError) return <div className="center-state"><span className="loader" />Loading the Plato reference</div>;
   if (loadError) return <div className="center-state error-state"><Mark className="mark" size={48} /><h1>Reference data unavailable</h1><p>{loadError}</p><code>python tools/reference/build.py</code></div>;
   if (pages.length === 0) return <div className="center-state error-state"><Mark className="mark" size={48} /><h1>No reference pages found</h1><p>The generated reference data is valid but contains no pages.</p></div>;
-  if (route.id && !pages.some(candidate => candidate.id === route.id)) return <div className="center-state error-state"><Mark className="mark" size={48} /><h1>Page not found</h1><p>The reference has no page with this address.</p><button className="button" onClick={() => navigate(homeId ?? '')}>Return to the reference</button></div>;
+  if (route.id && aliasTarget === route.id && !pages.some(candidate => candidate.id === route.id)) return <div className="center-state error-state"><Mark className="mark" size={48} /><h1>Page not found</h1><p>The reference has no page with this address.</p><button className="button" onClick={() => navigate(homeId ?? '')}>Return to the reference</button></div>;
 
   const kicker = page.group.length ? page.group.map(humanizeSegment).join(' / ') : 'Home';
   const sourceHref = githubBlobUrl(data.sourceRevision, page.path);
