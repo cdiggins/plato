@@ -372,6 +372,14 @@ spellings, `a && b` and `And(a, b)`. A guard therefore protects the operand on i
 xs.Count == 2 && xs[1] == 0
 ```
 
+Every engine reads that conditional, so every engine follows the rule: the interpreter evaluates one
+arm, the C# writer prints a `?:` (or an `if` block, when the loop lowerer puts a loop in the right
+operand: the loop sits inside the arm) and the C++ writer prints a `?:`, with or without `--loops`,
+`--fuse`, `--fuse-consumers`, `--share-calls`, `--lean-inlining` and `--lower-scalars`. Rust and
+TypeScript print the native `&&` and `||`. Tests: `ShortCircuitTests` and `ShortCircuitProgramTests`
+(Plato.Interpreter.Tests, laws interpreted and compiled with and without the writer switches, and
+the emitted C#), `ShortCircuitEmissionTests` (Plato.CppWriter.Tests).
+
 Plato values are pure, so the rule changes only a program whose skipped operand would have thrown
 or not terminated. An `And` or `Or` a library defines for its own type is an ordinary call and
 evaluates both arguments, as does an `And` reached through a type variable that only becomes
