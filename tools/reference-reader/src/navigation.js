@@ -1,10 +1,13 @@
 /** Preferred root section order for teaching, not filesystem order. */
 export const SECTION_ORDER = [
-  'start', 'language', 'library', 'api', 'implementation', 'formal', 'evidence', 'review',
+  'start', 'compare', 'language', 'library', 'api', 'cookbook', 'design', 'formal', 'implementation', 'evidence', 'review',
 ];
 
 export const SECTION_LABELS = {
   start: 'Start',
+  compare: 'Compare',
+  cookbook: 'Cookbook',
+  design: 'Design',
   language: 'Language',
   library: 'Library',
   api: 'API catalog',
@@ -118,6 +121,81 @@ export function parseHash(hash) {
     : { id: decode(value.slice(0, at)), heading: decode(value.slice(at + 1)) };
 }
 
+const PLAYGROUND = 'playground';
+
+/**
+ * Parse a hash into a page route or a playground route. The playground payload is the raw text
+ * after the first `~`; only the playground module decodes it.
+ */
+export function parseRoute(hash) {
+  const value = hash.replace(/^#\/?/, '');
+  if (value === PLAYGROUND || value.startsWith(`${PLAYGROUND}/`)) {
+    const rest = value.slice(PLAYGROUND.length + 1);
+    const tilde = rest.indexOf('~');
+    const name = tilde < 0 ? rest : rest.slice(0, tilde);
+    const payload = tilde < 0 ? '' : rest.slice(tilde + 1);
+    let group = name;
+    try { group = decodeURIComponent(name); } catch { /* keep the raw text */ }
+    return { kind: 'playground', group: group || null, payload: payload || null };
+  }
+  return { kind: 'page', ...parseHash(hash) };
+}
+
+/** The hash for a playground group, with an optional opaque payload. */
+export function playgroundRoute(group, payload) {
+  if (!group) return `#/${PLAYGROUND}`;
+  return `#/${PLAYGROUND}/${encodeURIComponent(group)}${payload ? `~${payload}` : ''}`;
+}
+
+/** The example group a `plato` fence on this page belongs to, or null (contract: Playground). */
+export function playgroundGroupFor(pageId) {
+  const root = 'docs/reference/';
+  if (!pageId?.startsWith(root)) return null;
+  const rest = pageId.slice(root.length);
+  if (rest === 'start/tour' || rest.startsWith('start/tour/')) return 'tour';
+  const recipe = /^cookbook\/([^/]+)$/.exec(rest)?.[1];
+  return recipe && recipe !== 'README' ? `cookbook-${recipe}` : null;
+}
+
+/** The URL of one page's data file; every path segment is encoded. */
+export function pageDataUrl(base, id) {
+  return `${base}pages/${id.split('/').map(encodeURIComponent).join('/')}.json`;
+}
+
+/** The five doors in header order. `landing` is a page id, or null for the playground route. */
+export const DOORS = [
+  { key: 'tour', label: 'Tour', landing: 'docs/reference/start/tour' },
+  { key: 'reference', label: 'Reference', landing: 'docs/reference/language/README' },
+  { key: 'cookbook', label: 'Cookbook', landing: 'docs/reference/cookbook/README' },
+  { key: 'design', label: 'Design', landing: 'docs/reference/design/README' },
+  { key: 'playground', label: 'Playground', landing: null },
+];
+
+export function doorRoute(door) {
+  return door.landing ? routeFor(door.landing) : playgroundRoute();
+}
+
+/** The door a route sits in, or null on the home page. */
+export function currentDoor(route, page) {
+  if (route.kind === 'playground') return 'playground';
+  return page && page.door !== 'home' ? page.door : null;
+}
+
+/** What each status means, from the reference contract's Status table. */
+export const STATUS_MEANING = {
+  Supported: 'In a shipping tier. The lint, type-check and code-generation gates cover it. No release promises its signature yet.',
+  Experimental: 'Aspirational vocabulary. It parses and type-checks; it is not linted or converted to C#.',
+  Legacy: 'The older library, compiled separately. It is writable, but new vocabulary does not go there.',
+};
+
+export function shortRevision(revision) {
+  return String(revision ?? '').slice(0, 7);
+}
+
+export function commitUrl(revision) {
+  return `https://github.com/cdiggins/plato/commit/${encodeURIComponent(revision)}`;
+}
+
 // A retired page id resolves to its replacement when the replacement exists; any other id is
 // returned unchanged, so an unknown page still reports as missing.
 export function resolveAlias(pages, aliases, id) {
@@ -222,26 +300,114 @@ export function buildPageTree(pages) {
   return finalize(root);
 }
 
-export function sortedChildEntries(node) {
-  return [...node.children.entries()];
+/**
+ * One folder's rows in display order. A section with a teaching order interleaves folders and
+ * pages by it (a folder that the order does not list stays first); other folders list their
+ * sub-folders, then their pages.
+ */
+export function treeEntries(node) {
+  const entries = [
+    ...[...node.children.values()].map(child => ({ kind: 'folder', key: child.name, child })),
+    ...node.pages.map(page => ({ kind: 'page', key: pageStem(page), page })),
+  ];
+  const order = SECTION_PAGE_ORDERS[node.path[0]];
+  if (!order) return entries;
+  const rank = entry => {
+    const index = order.indexOf(entry.key);
+    return index >= 0 ? index : entry.kind === 'folder' ? -1 : order.length + 1;
+  };
+  return entries.map((entry, position) => ({ entry, position }))
+    .sort((a, b) => rank(a.entry) - rank(b.entry) || a.position - b.position)
+    .map(item => item.entry);
 }
 
-export function searchPages(pages, query) {
-  return searchPagesDetailed(pages, query).map(result => result.page);
+/** The page tree grouped under each door, in header order; doors without pages are omitted. */
+export function buildDoorTrees(pages) {
+  return DOORS.filter(door => door.key !== 'playground').map(door => ({
+    door,
+    tree: buildPageTree(pages.filter(page => page.door === door.key)),
+  })).filter(item => item.tree.children.size || item.tree.pages.length);
 }
 
-export function searchPagesDetailed(pages, query) {
-  const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+function flattenTree(node, out = []) {
+  for (const entry of treeEntries(node)) {
+    if (entry.kind === 'page') { out.push(entry.page); continue; }
+    if (entry.child.indexPage) out.push(entry.child.indexPage);
+    flattenTree(entry.child, out);
+  }
+  return out;
+}
+
+const norm = text => text.toLocaleLowerCase().replace(/\s+/g, ' ').trim();
+
+/** Lower-cased page text for body search, keyed by page id. Build it once per search.json. */
+export function buildSearchIndex(entries) {
+  return new Map(entries.map(entry => [entry.id, { text: entry.text, lower: entry.text.toLocaleLowerCase() }]));
+}
+
+/**
+ * Pages matching every term in the title or, once an index is given, the body. A title match
+ * outranks a body match, and a query equal to a title (or its part after the colon) ranks first.
+ */
+export function searchPagesDetailed(pages, query, index = null) {
+  const terms = norm(query).split(' ').filter(Boolean);
   if (!terms.length) return [];
-  return pages.map((page, index) => {
+  const whole = terms.join(' ');
+  const results = [];
+  pages.forEach((page, position) => {
     const title = page.title.toLocaleLowerCase();
-    const body = page.markdown.toLocaleLowerCase();
-    const score = terms.reduce((sum, term) => sum + (title.includes(term) ? 4 : 0) + (body.includes(term) ? 1 : 0), 0);
-    const matchesEveryTerm = terms.every(term => title.includes(term) || body.includes(term));
-    const snippet = matchesEveryTerm ? makeSnippet(page.markdown, terms) : '';
-    return { page, score, index, matchesEveryTerm, snippet };
-  }).filter(result => result.matchesEveryTerm)
-    .sort((a, b) => b.score - a.score || a.page.title.localeCompare(b.page.title) || a.index - b.index);
+    const body = index?.get(page.id);
+    let score = 0;
+    for (const term of terms) {
+      const inTitle = title.includes(term);
+      const inBody = body ? body.lower.includes(term) : false;
+      if (!inTitle && !inBody) return;
+      score += (inTitle ? 4 : 0) + (inBody ? 1 : 0);
+    }
+    if (title === whole || title.endsWith(`: ${whole}`)) score += 100;
+    results.push({ page, score, position, snippet: body ? makeSnippet(body.text, terms) : '' });
+  });
+  return results.sort((a, b) => b.score - a.score || a.page.title.localeCompare(b.page.title) || a.position - b.position);
+}
+
+export function searchPages(pages, query, index = null) {
+  return searchPagesDetailed(pages, query, index).map(result => result.page);
+}
+
+/** Every symbol page as a row with its name and normalised declarations, for repeated queries. */
+export function buildSymbolIndex(symbols) {
+  const rows = [];
+  for (const [name, entries] of Object.entries(symbols ?? {})) {
+    for (const entry of entries) {
+      rows.push({ name, lower: name.toLocaleLowerCase(), entry, declarations: entry.declarations ?? [], normalised: (entry.declarations ?? []).map(norm) });
+    }
+  }
+  return rows;
+}
+
+/**
+ * Symbols whose name matches (exact, then prefix, then substring, ignoring case) or whose
+ * declarations contain the query as a whitespace-normalised substring, in that order.
+ */
+export function searchSymbols(rows, query, limit = 30) {
+  const q = norm(query);
+  if (!q) return { total: 0, results: [] };
+  const found = [];
+  for (const row of rows) {
+    let rank = -1;
+    let declaration = row.declarations[0] ?? '';
+    if (row.lower === q) rank = 0;
+    else if (row.lower.startsWith(q)) rank = 1;
+    else if (row.lower.includes(q)) rank = 2;
+    else {
+      const at = row.normalised.findIndex(text => text.includes(q));
+      if (at >= 0) { rank = 3; declaration = row.declarations[at]; }
+    }
+    if (rank < 0) continue;
+    found.push({ name: row.name, entry: row.entry, rank, declaration, order: rank * 100 + symbolRank(row.entry, row.name) });
+  }
+  found.sort((a, b) => a.order - b.order || a.name.localeCompare(b.name) || a.entry.id.localeCompare(b.entry.id));
+  return { total: found.length, results: found.slice(0, limit) };
 }
 
 function makeSnippet(markdown, terms) {
@@ -308,19 +474,17 @@ export function groupAncestors(page) {
   return (page?.group ?? []).map((_, index, group) => group.slice(0, index + 1).join('/'));
 }
 
-/** Sequential neighbors for guide chapters (start, language, library, implementation). */
+/**
+ * Neighbours in reading order inside the page's door. The API catalog has none: its pages are
+ * reached from the symbol index, not read in sequence.
+ */
 export function adjacentPages(pages, page) {
-  if (!page) return { previous: null, next: null };
-  const section = page.group?.[0];
-  if (!['start', 'language', 'library', 'implementation'].includes(section)) {
-    return { previous: null, next: null };
-  }
-  const siblings = pages
-    .filter(candidate => (candidate.group?.[0] === section) && (candidate.group?.length === page.group.length))
-    .sort((a, b) => comparePages(a, b, page.group));
-  const index = siblings.findIndex(candidate => candidate.id === page.id);
-  if (index < 0) return { previous: null, next: null };
-  return { previous: siblings[index - 1] ?? null, next: siblings[index + 1] ?? null };
+  const none = { previous: null, next: null };
+  if (!page || page.door === 'home' || page.group?.[0] === 'api') return none;
+  const sequence = flattenTree(buildPageTree(pages.filter(candidate => candidate.door === page.door && candidate.group?.[0] !== 'api')));
+  const index = sequence.findIndex(candidate => candidate.id === page.id);
+  if (index < 0) return none;
+  return { previous: sequence[index - 1] ?? null, next: sequence[index + 1] ?? null };
 }
 
 /** Resolve a breadcrumb segment to a page id when possible. */
