@@ -235,6 +235,9 @@ const SECTION_PAGE_ORDERS = {
 };
 
 function comparePages(a, b, groupPath) {
+  // `order` is the position of a page among its folder index's links (reader data v2).
+  const ao = a.order ?? Infinity, bo = b.order ?? Infinity;
+  if (ao !== bo) return ao - bo;
   const order = SECTION_PAGE_ORDERS[groupPath[0]];
   if (order) {
     const delta = orderIndex(order, pageStem(a)) - orderIndex(order, pageStem(b));
@@ -389,6 +392,11 @@ export function buildSymbolIndex(symbols) {
  * Symbols whose name matches (exact, then prefix, then substring, ignoring case) or whose
  * declarations contain the query as a whitespace-normalised substring, in that order.
  */
+/** True when a query reads as a signature shape rather than a name, such as `Vector3D): Number`. */
+export function looksLikeSignature(query) {
+  return /[():,]/.test(query ?? '');
+}
+
 export function searchSymbols(rows, query, limit = 30) {
   const q = norm(query);
   if (!q) return { total: 0, results: [] };

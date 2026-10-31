@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   encodePayload, decodePayload, editedFiles, isEdited, currentSources, groupTitle, groupPage,
-  MAX_PAYLOAD_CHARS, PayloadError,
+  MAX_PAYLOAD_CHARS, PayloadError, orderedFiles,
 } from './share.js';
 
 const group = { inputs: [], laws: [], files: [{ path: 'a/x.plato', source: 'one' }, { path: 'a/y.plato', source: 'two' }] };
@@ -57,4 +57,9 @@ test('group titles and pages', () => {
   assert.equal(groupPage('tour'), '#/docs/reference/start/tour');
   assert.equal(groupPage('cookbook-fit-line'), '#/docs/reference/cookbook/fit-line');
   assert.equal(groupPage('loops'), '#/docs/reference/implementation/examples/README');
+});
+
+test('examples come before exercise answers', () => {
+  const files = [{ path: 'g/b-answer.plato' }, { path: 'g/b.plato' }, { path: 'g/a-answer.plato' }, { path: 'g/a.plato' }];
+  assert.deepEqual(orderedFiles(files).map(f => f.path), ['g/a.plato', 'g/b.plato', 'g/a-answer.plato', 'g/b-answer.plato']);
 });

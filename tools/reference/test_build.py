@@ -331,5 +331,30 @@ class BacklinkTests(unittest.TestCase):
         self.assertEqual(self.titles('Gap', True, set(), [dict(self.PAGES[0], targets=set())]), [])
 
 
+
+class DeclarationAndOrderTests(unittest.TestCase):
+    def test_first_member_declaration_skips_the_library_header(self):
+        source = '// File header.\nlibrary Algebra\n{\n    // Unit?\n    IsUnit(x: Number): Boolean => x == 1;\n}\n'
+        masked = build.mask_source(source)
+        self.assertEqual(build.declaration_line(source, masked, 0, len(source), 'function'),
+                         'IsUnit(x: Number): Boolean => x == 1;')
+        self.assertEqual(build.declaration_line(source, masked, 0, len(source), 'library'), 'library Algebra')
+
+    def test_index_page_link_order_becomes_page_order(self):
+        with tempfile.TemporaryDirectory() as folder:
+            docs = Path(folder) / 'docs/reference'
+            (docs / 'start/tour').mkdir(parents=True)
+            (docs / 'start/tour.md').write_text('# Tour\n\n1. [B](tour/b.md)\n2. [A](tour/a.md)\n', encoding='utf-8')
+            for name in ('a', 'b', 'c'):
+                (docs / f'start/tour/{name}.md').write_text(f'# {name}\n', encoding='utf-8')
+            saved = (build.ROOT, build.DOCS)
+            build.ROOT, build.DOCS = Path(folder), docs
+            try:
+                pages = [{'id': f'docs/reference/start/tour/{n}', 'group': ['start', 'tour']} for n in 'abc']
+                self.assertEqual(build.index_orders(pages),
+                                 {'docs/reference/start/tour/b': 0, 'docs/reference/start/tour/a': 1})
+            finally:
+                build.ROOT, build.DOCS = saved
+
 if __name__ == '__main__':
     unittest.main()

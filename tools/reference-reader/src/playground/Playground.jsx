@@ -13,7 +13,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { highlightCode } from '../highlight.js';
 import {
   PayloadError, currentSources, decodePayload, editedFiles, encodePayload, fileName,
-  groupPage, groupTitle, isEdited,
+  groupPage, groupTitle, isEdited, orderedFiles,
 } from './share.js';
 import './playground.css';
 
@@ -53,7 +53,8 @@ function download(name, text) {
   URL.revokeObjectURL(url);
 }
 
-function GroupView({ name, entry, payload }) {
+function GroupView({ name, entry: original, payload }) {
+  const entry = useMemo(() => ({ ...original, files: orderedFiles(original.files) }), [original]);
   const [edits, setEdits] = useState({});
   const [active, setActive] = useState(0);
   const [error, setError] = useState(null);
@@ -65,7 +66,13 @@ function GroupView({ name, entry, payload }) {
     setStatus('');
     if (!payload) { setEdits({}); setError(null); return undefined; }
     decodePayload(payload, entry).then(
-      decoded => { if (!cancelled) { setEdits(decoded); setError(null); } },
+      decoded => {
+        if (cancelled) return;
+        setEdits(decoded);
+        setError(null);
+        const first = entry.files.findIndex(f => f.path in decoded);
+        if (first >= 0) setActive(first);
+      },
       failure => {
         if (cancelled) return;
         setEdits({});

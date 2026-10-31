@@ -169,13 +169,19 @@ def check_names(source_name: str, names: list[str]) -> None:
         seen[low] = name
 
 
-def declaration_line(source: str, masked: str, start: int, end: int) -> str:
+HEADER = re.compile(r'^(?:unique\s+)?(?:library|type|interface|concept|primitive)\b')
+
+
+def declaration_line(source: str, masked: str, start: int, end: int, kind: str = '') -> str:
     """Return the first code line of a slice, skipping comments.
 
     Best effort: a signature that spans lines is reported by its first line only.
     """
     for raw, mask in zip(source[start:end].split('\n'), masked[start:end].split('\n')):
-        if mask.strip():
+        code = mask.strip()
+        # The first slice of a file starts at offset 0, so it carries the file's library
+        # header and brace; a member's declaration is the first line after them.
+        if code and code != '{' and not (kind == 'function' and HEADER.match(code)):
             return raw.strip()
     return ''
 
@@ -561,7 +567,7 @@ def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
             declarations = []
             for (_, start, end, kind), member in zip(group, members):
                 line = source.count('\n', 0, start) + 1
-                declarations.append({'line': line, 'declaration': declaration_line(source, masked, start, end)})
+                declarations.append({'line': line, 'declaration': declaration_line(source, masked, start, end, kind)})
                 entries.append({'name': name, 'kind': kind, 'start': start, 'end': end, 'line': line,
                                 'page': child.relative_to(ROOT).as_posix()})
             linked = {child, parent}
@@ -806,6 +812,29 @@ def example_groups() -> dict:
     return groups
 
 
+def index_orders(pages: list[dict]) -> dict[str, int]:
+    """Each page's position among the links of its folder's index page, when it has one.
+
+    A folder `x/` is indexed by its sibling page `x.md` or by `x/README.md`; pages it does not
+    link get no position and fall back to the reader's own ordering.
+    """
+    ids = {p['id'] for p in pages}
+    orders = {}
+    for folder in {tuple(p['group']) for p in pages if p['group']}:
+        base = DOCS.joinpath(*folder)
+        for index in (base.with_suffix('.md'), base / 'README.md'):
+            if not index.exists():
+                continue
+            position = 0
+            for _, target, _ in local_links(index, read(index)):
+                page_id = target.relative_to(ROOT).with_suffix('').as_posix() if target.is_relative_to(ROOT) else ''
+                if page_id in ids and target.parent == base and page_id not in orders:
+                    orders[page_id] = position
+                    position += 1
+            break
+    return orders
+
+
 def split_bundle(bundle: dict, symbol_records: list[dict]) -> dict[str, object]:
     """Reader data v2: a small index, one file per page, a lazily loaded search text, examples.
 
@@ -816,13 +845,14 @@ def split_bundle(bundle: dict, symbol_records: list[dict]) -> dict[str, object]:
     symbols = {name: [dict(entry, declarations=declarations.get(entry['id'], []))
                       for entry in entries] for name, entries in bundle['symbols'].items()}
     index_pages, files, search = [], {}, []
+    orders = index_orders(bundle['pages'])
     for page in bundle['pages']:
         index_pages.append({'id': page['id'], 'path': page['path'], 'title': page['title'],
                             'group': page['group'], 'door': page_door(page['group']),
-                            'status': page_status(page['group'])})
+                            'status': page_status(page['group']), 'order': orders.get(page['id'])})
         files[f"pages/{page['id']}.json"] = {'id': page['id'], 'markdown': page['markdown'],
                                              'rawMarkdown': page['rawMarkdown']}
-        search.append({'id': page['id'], 'text': page['rawMarkdown']})
+        search.append({'id': page['id'], 'text': re.sub(r'<!--.*?-->', '', page['rawMarkdown'], flags=re.S)})
     files['reference-index.json'] = {'schemaVersion': 2, 'sourceRevision': bundle['sourceRevision'],
                                      'pages': index_pages, 'symbols': symbols,
                                      'aliases': bundle['aliases']}
@@ -924,7 +954,7 @@ def build(check: bool = False) -> dict:
     # --check validates tracked freshness without touching the reader's output.
     if not check:
         OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-        OUTPUT.write_text(json.dumps(bundle, ensure_ascii=False), encoding='utf-8')
+        OUTPUT.unlink(missing_ok=True)  # reader data v1; the reader reads v2 only
         brand.write(OUTPUT.parent / 'brand')
         full, llms = text_exports(bundle)
         (PUBLIC / 'plato-reference.txt').write_text(full, encoding='utf-8', newline='\n')

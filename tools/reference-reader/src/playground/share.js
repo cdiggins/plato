@@ -112,6 +112,12 @@ export function editedFiles(group, sources) {
 export const isEdited = (group, sources) => Object.keys(editedFiles(group, sources)).length > 0;
 
 /** `tour` becomes Tour, `cookbook-fit-line` becomes "Cookbook: fit line". */
+/** Example files before exercise answers (`*-answer.plato`), each in name order. */
+export function orderedFiles(files) {
+  const answer = f => /-answer\.plato$/.test(f.path) ? 1 : 0;
+  return [...files].sort((a, b) => answer(a) - answer(b) || a.path.localeCompare(b.path));
+}
+
 export function groupTitle(name) {
   const cookbook = /^cookbook-(.+)$/.exec(name);
   const words = (cookbook ? cookbook[1] : name).replace(/-/g, ' ');

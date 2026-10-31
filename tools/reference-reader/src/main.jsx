@@ -8,7 +8,7 @@ import {
   DOORS, STATUS_MEANING, adjacentPages, buildDoorTrees, buildSearchIndex, buildSymbolIndex, commitUrl,
   crumbTarget, currentDoor, doorRoute, extractHeadings, githubBlobUrl, groupAncestors, humanizeSegment,
   pageDataUrl, parseRoute, playgroundGroupFor, playgroundRoute, resolveAlias, resolveSymbol, routeFor,
-  searchPagesDetailed, searchSymbols, shortRevision, slugifyHeading, stripLeadingTitle, treeEntries,
+  looksLikeSignature, searchPagesDetailed, searchSymbols, shortRevision, slugifyHeading, stripLeadingTitle, treeEntries,
 } from './navigation.js';
 import '@fontsource/spectral/600.css';
 import '@fontsource/ibm-plex-sans/400.css';
@@ -256,7 +256,7 @@ function SearchResults({ pageResults, symbolResults, textState, query, openPage,
     {pageResults.length === 0 && textState.status !== 'loading' && <p className="empty-search">No pages match “{query}”.</p>}
   </section>;
   // A symbol named exactly as typed comes first; otherwise pages do.
-  return symbolResults.results[0]?.rank === 0 ? <>{symbols}{pages}</> : <>{pages}{symbols}</>;
+  return symbolResults.results[0]?.rank === 0 || looksLikeSignature(query) ? <>{symbols}{pages}</> : <>{pages}{symbols}</>;
 }
 
 function App() {

@@ -5,6 +5,7 @@ import {
   currentDoor, doorRoute, extractHeadings, groupAncestors, humanizeSegment, pageDataUrl, parseHash, parseRoute,
   playgroundGroupFor, playgroundRoute, resolveAlias, routeFor, searchPages, searchPagesDetailed, searchSymbols,
   shortRevision, slugifyHeading, stripLeadingTitle, treeEntries,
+  looksLikeSignature,
 } from './navigation.js';
 
 const page = (id, title, group, door, status = null) => ({ id, path: `${id}.md`, title, group, door, status });
@@ -174,4 +175,19 @@ test('retired page ids resolve through aliases only to existing pages', () => {
   assert.equal(resolveAlias(pages, aliases, `${root}/start/tour`), `${root}/start/tour`);
   assert.equal(resolveAlias(pages, undefined, 'docs/reference/nowhere'), 'docs/reference/nowhere');
   assert.equal(resolveAlias(pages, aliases, null), null);
+});
+
+test('a signature-shaped query is recognised', () => {
+  assert.equal(looksLikeSignature('Vector3D): Number'), true);
+  assert.equal(looksLikeSignature('Length'), false);
+});
+
+test('pages with an index order sort by it before their titles', () => {
+  const tree = buildPageTree([
+    { id: 'docs/reference/start/tour/b', title: 'Alpha', group: ['start', 'tour'], order: 1 },
+    { id: 'docs/reference/start/tour/a', title: 'Zulu', group: ['start', 'tour'], order: 0 },
+    { id: 'docs/reference/start/tour/c', title: 'Beta', group: ['start', 'tour'] },
+  ]);
+  const pages = tree.children.get('start').children.get('tour').pages.map(p => p.id.split('/').pop());
+  assert.deepEqual(pages, ['a', 'b', 'c']);
 });
