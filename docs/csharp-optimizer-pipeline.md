@@ -543,6 +543,39 @@ An intrinsic that has no row in `ScalarLowering.cs` stays a call on the wrapper 
 `Boolean` row. The interpreter arm of `plato run` ignores the flag, and the differential backend compares
 the interpreter with the lowered compiled arm.
 
+## 7c. Emission shape switches (`--in-params`, `--switch-match`)
+
+Two printing switches, both off by default and independent of every pass above. With a switch off the output
+is byte-identical to the build without it (plato-brep regenerates the same 1,742 files). Both are C#-only, and
+`plato run --backend=csharp` takes them for the compiled law arm.
+
+| Switch | Code | Pinned by |
+|---|---|---|
+| `--in-params` (`CSharpWriter.InParameters`, TKT-1066) | `Optimization/LargeStructPassing.cs`, hooks in `TirCSharpBodyWriter.cs`, `ExtensionStyleWriter.cs`, `CSharpFunctionInfo.cs`; helper `RefAccess.g.cs` | `tests/PlatoTests/Optimization/InParamsTests.cs` |
+| `--switch-match` (`CSharpWriter.SwitchMatch`, TKT-1148) | `TirCSharpBodyWriter.MatchSwitch.cs` | `tests/PlatoTests/Emission/SwitchMatchTests.cs` |
+
+**`--in-params`.** A generated struct is large when its flattened fields (a sum's `Kind` plus every case's
+fields side by side, natural alignment) take at least 256 bytes. The threshold is the first one the
+2026-10-27 spike measured (plato-brep `docs/plans/surface-in-spike-2026-10-27.md`: `BrepSurface` 744 bytes
+and `BrepCurve` 616 gained 1.18 to 1.25x; `in` alone was about 8% slower, so the pieces ship together). Below
+it a copy is a few register moves and an `in` costs an extra indirection per field read; the spike did not
+measure thresholds below 256. Under the switch: a large parameter of an extension method, its `this` receiver
+included, is `in T`, unless a lambda captures it or the body assigns it; an element read `xs[i]` of a large
+element type used as a receiver, an argument or a `var` initialiser is `RefAccess.RefAt(xs, i)`, a `ref readonly`
+accessor over the backing `T[]` that copies for any other list; an expression-bodied extension whose body is
+one such read returns `ref readonly T`; a `var` initialised by either is a `ref readonly var` unless captured or
+assigned. A method group cannot convert to a delegate with an `in` parameter or a `ref` return, so an
+eta-expanded reference over a large type stays a lambda. An element read through an interface-typed list
+(`IReadOnlyList<T>`) keeps its copy, since C# has no ref-returning indexer on the interface.
+
+**`--switch-match`.** The Elaborator lowers `match` to a chain of `x.IsCase() ? a : x.IsOther() ? b : ... : z`
+(`ElaborateMatch`), so reaching the nth case costs n tests. With the switch on, a chain of at least three tests
+on one subject (the same parameter, variable or equal pure call, compared structurally) is printed as
+`(x.Kind switch { T.Kind_A => a, T.Kind_B => b, _ => z })`. C# compiles the dense constants to an IL `switch` and
+the JIT makes a jump table. The subject is written once, so it is evaluated once. A generic sum prints the tag
+number, since its tag constants live on the instantiated struct. Shorter chains and chains that mix other
+conditions keep the ternary form (the tail after the last tag test is the default arm).
+
 ## 8. Worked example
 
 Consider `Example` from section 4, with `Map` a bodiless signature in a self-contained test corpus,
