@@ -1,0 +1,22 @@
+library CookbookSampleStatistics {
+    // Summary of a sample with at least two values: mean, sample variance
+    // (divide by n - 1), and extremes. Skewness and kurtosis are not computed.
+    Summarize(xs: Array<Number>): SummaryStatistics {
+        var n = xs.Count.ToNumber;
+        var mean = xs.SumOf / n;
+        var variance = xs.Map(x => (x - mean).Square).SumOf / (n - 1.0);
+        var low = xs.Reduce(xs[0], (a, x) => a.Lesser(x));
+        var high = xs.Reduce(xs[0], (a, x) => a.Greater(x));
+        return new SummaryStatistics(xs.Count, xs.SumOf, mean, variance, variance.Sqrt, low, high, 0.0, 0.0);
+    }
+
+    Sample(): Array<Number> => [2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0];
+
+    Law_ReferenceSampleMean(): Boolean => Summarize(Sample()).Mean.AlmostEqual(5.0, 1e-12);
+    Law_ReferenceSampleVariance(): Boolean => Summarize(Sample()).Variance.AlmostEqual(32.0 / 7.0, 1e-12);
+    Law_ReferenceSamplePopulationVariance(): Boolean
+        => Summarize(Sample()).PopulationVariance.AlmostEqual(4.0, 1e-12);
+    Law_ReferenceSampleRange(): Boolean => Summarize(Sample()).ValueRange.AlmostEqual(7.0, 1e-12);
+    Law_ReferenceSampleStandardError(): Boolean
+        => Summarize(Sample()).StandardErrorOfMean.AlmostEqual((32.0 / 7.0).Sqrt / 8.0.Sqrt, 1e-12);
+}

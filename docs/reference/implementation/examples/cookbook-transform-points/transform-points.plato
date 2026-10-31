@@ -1,0 +1,19 @@
+library CookbookTransformPoints {
+    // Rotate every point a quarter turn about the origin, then shift it by (10, 5).
+    // The pose becomes one affine map, which rotates and then translates.
+    Move(points: Array<Point2D>): Array<Point2D> {
+        var pose = new Pose2D(new Point2D(10.0, 5.0), new Rotation2D(90.0.Degrees));
+        var map = pose.AffineTransform2D;
+        return points.Map(p => p.Transform(map));
+    }
+
+    Corners(): Array<Point2D>
+        => [new Point2D(0.0, 0.0), new Point2D(1.0, 0.0), new Point2D(1.0, 2.0)];
+
+    Law_ReferenceMoveOrigin(): Boolean
+        => Move(Corners())[0].X.AlmostEqual(10.0, 1e-9) && Move(Corners())[0].Y.AlmostEqual(5.0, 1e-9);
+    Law_ReferenceMoveFirstAxisPoint(): Boolean
+        => Move(Corners())[1].X.AlmostEqual(10.0, 1e-9) && Move(Corners())[1].Y.AlmostEqual(6.0, 1e-9);
+    Law_ReferenceMoveThirdPoint(): Boolean
+        => Move(Corners())[2].X.AlmostEqual(8.0, 1e-9) && Move(Corners())[2].Y.AlmostEqual(6.0, 1e-9);
+}
