@@ -103,6 +103,50 @@ Rules every Wave 1 builder follows:
 Merge check: `python tools/reference/build.py --check` plus the chunk's own test command;
 budget 120 seconds (measured at a few seconds, no `gate.toml` scope exists).
 
+### Wave 1 record
+
+Outcome: builders complete; spike S pending at the time of writing (see its row).
+Gates: `build.py --check` passes; `test_build.py` and `test_check_examples.py` pass;
+`check_examples.py` passes every group, the original five plus `tour` and five `cookbook-*`
+groups; the reader's unit tests pass and its production build succeeds. Not run: the reader in a
+browser, and the C# backend for the new groups.
+Commits: A `57890158` (tooling) then a series of batched name-page commits ending `0de7a7c6`;
+B `0a77d148`; C `b6756dd7`; D `f245b40c`; E `31b0a4ab`; F1 `8104fa1d`; F2 `a29ce9a7`;
+G `9cabb043`; supervisor `e6759c6a` (shared indexes, cheat sheet) and `30ffe015` (register).
+Every commit stays inside its fence.
+Findings:
+- A stale, empty `.git/index.lock` blocked B and D for several minutes; the supervisor removed it
+  after confirming no git process held it, and committed B and D for them.
+- The commit guard demands one claim per path, so A split its generated output into many
+  batched commits; only its tooling commit and the final one are self-consistent. A
+  folder-level claim would avoid this for generated output.
+- Chunk A could not regenerate cleanly while others ran `--check`: builders saw a transient
+  syntax error in `build.py` and a stale `aliases.json`, and checked their links by script.
+- The command line does not print checker diagnostics, so the language chapters' "Common
+  mistake" sections record what users actually see. Registered in
+  `docs/reference/review/language-improvements.md`.
+- The cheat sheet showed an if-then-else expression and `+=`; both corrected and run.
+- The cookbook exposed library gaps: no least-squares fit, sample mean or sum, no derivative on
+  the dense polynomial, no unit constructors for common non-SI units, and `Pose2D.Transform`
+  not resolving in the interpreter.
+- The reader data bundle grew with the per-name pages; the reader still loads it whole. Chunk I
+  should load pages on demand.
+Timing: the builders ran concurrently and all returned within the Wave 1 session; chunk A took
+longest, mostly in batched commits.
+
+Merge check: `python tools/reference/build.py --check` plus each chunk's test; budget 120 seconds.
+
+| Merge | Chunk | Commit | Check took (s) | Result | Note |
+|---|---|---|---|---|---|
+| 1 | G | `9cabb043` | n/a | pass by script | `--check` blocked by A mid-edit |
+| 2 | C | `b6756dd7` | n/a | laws pass | `--check` blocked by A mid-edit |
+| 3 | B | `0a77d148` | under 1 | pass | committed by supervisor |
+| 4 | D | `f245b40c` | n/a | pass by script | committed by supervisor |
+| 5 | E | `31b0a4ab` | about 10 | pass | |
+| 6 | F1 | `8104fa1d` | about 10 | pass | |
+| 7 | F2 | `a29ce9a7` | about 10 | pass | |
+| 8 | A | `0de7a7c6` | about 11 | pass | whole wave re-checked here, examples about 40 |
+
 ## Wave 2: chunks that need Wave 1
 
 | Chunk | Depends on | Goal | File fence |
