@@ -1,0 +1,51 @@
+// Fixture of the --closure-free tests (TKT-1149). Each law states, as literals, the value the plain reading of the
+// stdlib gives; the tests run it interpreted, compiled with the flag off, and compiled with it on.
+type SortRow { Key: Integer; Tag: Integer; }
+
+library ClosureFreeProbe
+{
+    Xs(): Array<Integer> => [10, 20, 30, 40];
+
+    // The first element of each row's key, in a fixed order with ties: keys 2 1 2 1 0 2 1, tags 0 to 6.
+    Rows(): Array<SortRow> => [SortRow(2, 0), SortRow(1, 1), SortRow(2, 2), SortRow(1, 3), SortRow(0, 4), SortRow(2, 5), SortRow(1, 6)];
+
+    //== Probes: one call site each
+
+    SortedIndicesOf(rows: Array<SortRow>): Array<Integer> => rows.SortedIndices((a, b) => a.Key <= b.Key);
+    SortedTags(rows: Array<SortRow>): Array<Integer> => rows.Sort((a, b) => a.Key <= b.Key).Map(r => r.Tag);
+    SortedByModulus(xs: Array<Integer>, k: Integer): Array<Integer> => xs.Sort((a, b) => a % k <= b % k);
+    SortedBy(xs: Array<Integer>, atMost: Function2<Integer, Integer, Boolean>): Array<Integer> => xs.Sort(atMost);
+    Descending(xs: Array<Integer>): Array<Integer> => SortedBy(xs, (a, b) => a >= b);
+
+    //== Laws: copy-shaped functions
+
+    Law_Append(): Boolean => Xs().Append(50).Equals([10, 20, 30, 40, 50]) && Xs().Take(0).Append(1).Equals([1]);
+    Law_Prepend(): Boolean => Xs().Prepend(0).Equals([0, 10, 20, 30, 40]) && Xs().Take(0).Prepend(1).Equals([1]);
+    Law_Concatenate(): Boolean
+        => Xs().Concatenate([1, 2]).Equals([10, 20, 30, 40, 1, 2])
+        && Xs().Take(0).Concatenate(Xs()).Equals(Xs())
+        && Xs().Concatenate(Xs().Take(0)).Equals(Xs())
+        && Xs().Take(0).Concatenate(Xs().Take(0)).Count.Equals(0);
+    Law_Take(): Boolean
+        => Xs().Take(2).Equals([10, 20]) && Xs().Take(0).Count.Equals(0) && Xs().Take(0 - 1).Count.Equals(0) && Xs().Take(4).Equals(Xs());
+    Law_Skip(): Boolean
+        => Xs().Skip(1).Equals([20, 30, 40]) && Xs().Skip(4).Count.Equals(0) && Xs().Skip(0).Equals(Xs());
+    Law_TakeLast(): Boolean
+        => Xs().TakeLast(2).Equals([30, 40]) && Xs().TakeLast(0).Count.Equals(0) && Xs().TakeLast(4).Equals(Xs());
+    Law_SubArray(): Boolean
+        => Xs().SubArray(1, 2).Equals([20, 30]) && Xs().SubArray(3, 1).Equals([40]) && Xs().SubArray(2, 0).Count.Equals(0);
+    Law_Slice(): Boolean
+        => Xs().Slice(1, 3).Equals([20, 30]) && Xs().Slice(0, 4).Equals(Xs()) && Xs().Slice(2, 2).Count.Equals(0);
+    Law_SetAt(): Boolean
+        => Xs().SetAt(2, 99).Equals([10, 20, 99, 40]) && Xs().SetAt(9, 99).Equals(Xs()) && Xs().SetAt(0 - 1, 99).Equals(Xs());
+
+    //== Laws: sorting
+
+    Law_SortedIndicesIsStable(): Boolean => SortedIndicesOf(Rows()).Equals([4, 1, 3, 6, 0, 2, 5]);
+    Law_SortIsStable(): Boolean => SortedTags(Rows()).Equals([4, 1, 3, 6, 0, 2, 5]);
+    Law_SortWithACapturedValue(): Boolean => SortedByModulus([5, 3, 8, 1, 9, 2], 3).Equals([3, 9, 1, 5, 8, 2]);
+    Law_SortThroughAFunctionValue(): Boolean => Descending([3, 1, 2, 3]).Equals([3, 3, 2, 1]);
+    Law_SortOfNothingAndOfOne(): Boolean
+        => SortedIndicesOf(Rows().Take(0)).Count.Equals(0) && SortedIndicesOf(Rows().Take(1)).Equals([0])
+        && SortedByModulus(Xs().Take(0), 3).Count.Equals(0);
+}

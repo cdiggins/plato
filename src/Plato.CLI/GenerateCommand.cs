@@ -46,7 +46,7 @@ internal static class GenerateCommand
         var lowerScalars = args.Contains("--lower-scalars");
 
         var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
-            args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"), LowerScalars: lowerScalars);
+            args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"), LowerScalars: lowerScalars, ClosureFree: args.Contains("--closure-free"));
         if (loopOptimizations.ConcreteArrays && (typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--concrete-arrays applies to C# generation only.");
@@ -74,6 +74,11 @@ internal static class GenerateCommand
             && (!loops || typeScript || rust || glsl || (cpp && !cpu) || cuda))
         {
             Console.Error.WriteLine("--fuse-consumers and --exact-output require C# generation with --loops.");
+            return 1;
+        }
+        if (loopOptimizations.ClosureFree && (typeScript || rust || glsl || cpp || cuda))
+        {
+            Console.Error.WriteLine("--closure-free applies to C# generation only.");
             return 1;
         }
         if (lowerScalars && (typeScript || rust || glsl || cpp || cuda))

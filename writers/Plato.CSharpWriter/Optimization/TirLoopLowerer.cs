@@ -14,11 +14,18 @@ public static partial class TirLoopLowerer
     // programs emitted at once (the warm law server) must not reset each other's names.
     [System.ThreadStatic] public static int NextId;
 
+    // Whether a Sorting.Sort or SortedIndices call is lowered to a merge-sort loop with its comparator
+    // inlined (--closure-free, TKT-1149). Set for the duration of one Rewrite, per thread.
+    [System.ThreadStatic] private static bool _sortLoops;
+
     public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
     {
         if (!writer.LowerLoops || tir?.Body == null)
             return tir;
-        return RewriteScoped(tir);
+        var previous = _sortLoops;
+        _sortLoops = writer.ClosureFree;
+        try { return RewriteScoped(tir); }
+        finally { _sortLoops = previous; }
     }
 
     /// <summary>Whether a call is a single-source consumer whose receiver chain the lowerer walks
@@ -77,6 +84,10 @@ public static partial class TirLoopLowerer
             case "Zip" when c.Args.Count == 4 && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && IsListTyped(c.Args[2]) && ResultIsList(c) && FnOk(c.Args[3], 3):
                 kind = "Zip3"; sources = new List<TirNode> { c.Args[0], c.Args[1], c.Args[2] }; fn = c.Args[3];
                 break;
+            case "Sort" or "SortedIndices" when _sortLoops && c.Args.Count == 2 && c.Callee?.OwnerType?.Name == "Sorting"
+                && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 2):
+                kind = c.Name == "Sort" ? "Sort" : "SortIdx"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
+                break;
             case "Reduce" when c.Args.Count == 3 && IsListTyped(c.Args[0]) && FnOk(c.Args[2], 2):
                 kind = "Reduce"; sources = new List<TirNode> { c.Args[0] }; seed = c.Args[1]; fn = c.Args[2];
                 break;
@@ -115,6 +126,14 @@ public static partial class TirLoopLowerer
             // The function yields a list per element; the result element type is its element type.
             elem = new[] { TirRewrite.ListElementType(FnReturnType(fn)), TirRewrite.ListElementType(c.Type) }
                 .FirstOrDefault(IsRenderableConcrete);
+            if (elem == null)
+                return null;
+        }
+        else if (kind is "Sort" or "SortIdx")
+        {
+            // The comparator returns Boolean, so the element type is the call's own: the source's
+            // for Sort, Integer for SortedIndices.
+            elem = IsRenderableConcrete(TirRewrite.ListElementType(c.Type)) ? TirRewrite.ListElementType(c.Type) : null;
             if (elem == null)
                 return null;
         }
@@ -184,7 +203,7 @@ public static partial class TirLoopLowerer
     private static readonly HashSet<string> ArrayResultKinds = new HashSet<string>
     {
         "Map", "MapIdx", "MapRange", "Zip2", "Zip3", "Reverse", "WithNext",
-        "MapPairs", "MapTriplets", "MapQuartets",
+        "MapPairs", "MapTriplets", "MapQuartets", "Sort", "SortIdx",
     };
 
     /// <summary>Whether a type expression names a concrete, renderable C# type — not a solver

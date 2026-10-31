@@ -6,4 +6,6 @@ namespace Ara3D.Geometry.CSharpWriter;
 // T[] directly when the runtime value is one.
 // LowerScalars (--lower-scalars, TKT-1129) is emission-time and needs no other flag: inside a body,
 // Number, Integer and Boolean are the primitives they wrap (CSharpWriter.LowerScalars).
-public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool ExactOutputAllocation = false, bool ConcreteArrays = false, bool LeanInlining = false, bool Presize = false, bool InPlace = false, bool ShareCalls = false, bool LowerScalars = false);
+// ClosureFree (--closure-free, TKT-1149) writes the copy-shaped Array functions as block copies and lowers a
+// Sort or SortedIndices call to a merge-sort loop with its comparator inlined (CSharpWriter.ClosureFree).
+public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool ExactOutputAllocation = false, bool ConcreteArrays = false, bool LeanInlining = false, bool Presize = false, bool InPlace = false, bool ShareCalls = false, bool LowerScalars = false, bool ClosureFree = false);

@@ -485,6 +485,12 @@ namespace Ara3D.Geometry.CSharpWriter
         // evaluated once into a local (see TirSharedCalls). Default (false) output is unchanged.
         public bool ShareCalls { get; set; }
 
+        // When true (--closure-free, TKT-1149), the copy-shaped Array functions (Append, Concatenate,
+        // Take, Skip, ...) are written as block copies into a presized array (ClosureFreeArrays.g.cs),
+        // and a Sort or SortedIndices call is lowered to a merge-sort loop with its comparator inlined
+        // (TirLoopLowerer, kinds Sort and SortIdx; needs --loops). Default (false) output is unchanged.
+        public bool ClosureFree { get; set; }
+
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at
         // the call site (parameters replaced by argument nodes), iteratively, before the
@@ -871,6 +877,15 @@ namespace Ara3D.Geometry.CSharpWriter
 
             if (ConcreteArrays)
                 WriteFile($"{ConcreteArrayAccessClass}.g.cs", WriteConcreteArrayAccess);
+
+            if (ClosureFree)
+                WriteFile($"{ClosureFreeArrays.ClassName}.g.cs", () =>
+                {
+                    WriteLine(GeneratedCodeAttributes);
+                    foreach (var line in ClosureFreeArrays.Source)
+                        WriteLine(line);
+                    return this;
+                });
 
             FlushTirDumps();
             return this;

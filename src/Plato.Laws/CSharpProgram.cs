@@ -76,6 +76,7 @@ public sealed class CSharpProgram
         writer.InPlaceUpdates = loopOptimizations?.InPlace ?? false;
         writer.ShareCalls = loopOptimizations?.ShareCalls ?? false;
         writer.LowerScalars = loopOptimizations?.LowerScalars ?? false;
+        writer.ClosureFree = loopOptimizations?.ClosureFree ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 
