@@ -166,6 +166,33 @@ its last (`30e64636`).
 
 H, I, and J touch disjoint files and run together.
 
+### Wave 2 build record
+
+Contracts: `tools/reference/CONTRACT.md` revision 4, "Reader data v2" and "Playground"; the
+builder writes the v2 data, and `src/playground/Playground.jsx` is a stub with the agreed props.
+Baseline gates: `build.py --check`, `test_build.py`, `test_check_examples.py`, every example
+group, and the reader's unit tests and production build pass.
+
+Rules every Wave 2 builder follows, in addition to the Wave 1 rules:
+
+- Only chunk H runs `python tools/reference/build.py` without `--check`. Others regenerate reader
+  data only by asking the supervisor. While H is mid-edit, a `--check` failure in
+  `docs/reference/api/**` or `build.py` is H's, not yours.
+- Only chunk I runs the reader's production build. Chunk K runs `node --test` only.
+- No builder starts a dev server or preview; the supervisor checks the reader in a browser.
+- `npm` scripts fail on this machine because `python` is not on their shell's path; run
+  `node` and the Vite binary directly, as the reader README's commands do.
+
+| Id | One-sentence commit | Owner | Fence (writes only) | Depends on | Test command | Expected (h) | Actual (h) | Resources |
+|---|---|---|---|---|---|---|---|---|
+| H | Symbol pages lead with signature and summary, then laws, tests, concepts, notes the source states, and backlinks | builder | `tools/reference/build.py`, `tools/reference/test_build.py`, `docs/reference/api/**` | contract | `python -m unittest tools/reference/test_build.py`, `build.py --check` | 2 | | none |
+| I | The reader loads v2 data in pieces, navigates by door, badges status, searches symbols and signatures, and hosts the playground route | builder | `tools/reference-reader/src/**` except `src/playground/**`; `tools/reference-reader/index.html` | contract | `node --test` in the reader, then its Vite build | 2 | | reader build |
+| J | The reference home becomes one sentence, one checked program, and the five doors | builder | `docs/reference/README.md` | - | `build.py --check` | 1 | | none |
+| K | The playground shows each example group's files and laws, with editing, sharing and an honest not-re-run label | builder | `tools/reference-reader/src/playground/**` | contract | `node --test` in the reader | 2 | | none |
+
+Merge check: `build.py --check`, the builder and checker unit tests, and the reader's unit tests;
+budget 300 seconds while the machine is shared.
+
 ## Wave 3: review and gate
 
 1. A `platonic:reviewer` subagent reads the integrated diff against the guidance with fresh

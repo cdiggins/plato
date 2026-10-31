@@ -165,5 +165,37 @@ class FixtureCheckTests(unittest.TestCase):
             self.assertEqual(len(build.fixture_violations(docs)), 1)
 
 
+
+class ReaderDataTests(unittest.TestCase):
+    def test_doors_and_status_follow_the_folder(self):
+        self.assertEqual(build.page_door([]), 'home')
+        self.assertEqual(build.page_door(['start', 'tour']), 'tour')
+        self.assertEqual(build.page_door(['compare']), 'tour')
+        self.assertEqual(build.page_door(['api', 'foundation', 'x']), 'reference')
+        self.assertEqual(build.page_door(['cookbook']), 'cookbook')
+        self.assertEqual(build.page_door(['formal']), 'design')
+        self.assertEqual(build.page_status(['api', 'future', 'x']), 'Experimental')
+        self.assertEqual(build.page_status(['library', 'legacy']), 'Legacy')
+        self.assertEqual(build.page_status(['library']), None)
+        self.assertEqual(build.page_status(['language']), None)
+
+    def test_split_keeps_every_page_and_attaches_declarations(self):
+        bundle = {'sourceRevision': 'abc', 'aliases': {'old': 'new'},
+                  'pages': [{'id': 'docs/reference/api/foundation/f/abs', 'path': 'p.md', 'title': 'f: Abs',
+                             'group': ['api', 'foundation', 'f'], 'markdown': 'm', 'rawMarkdown': 'r'}],
+                  'symbols': {'Abs': [{'id': 'docs/reference/api/foundation/f/abs', 'title': 'f: Abs'}]}}
+        records = [{'page': 'docs/reference/api/foundation/f/abs',
+                    'declarations': [{'line': 1, 'declaration': 'Abs(x: Number): Number'}]}]
+        files = build.split_bundle(bundle, records)
+        index = files['reference-index.json']
+        self.assertEqual(index['schemaVersion'], 2)
+        self.assertEqual(index['pages'][0]['door'], 'reference')
+        self.assertEqual(index['pages'][0]['status'], 'Supported')
+        self.assertNotIn('markdown', index['pages'][0])
+        self.assertEqual(index['symbols']['Abs'][0]['declarations'], ['Abs(x: Number): Number'])
+        self.assertEqual(files['pages/docs/reference/api/foundation/f/abs.json']['markdown'], 'm')
+        self.assertEqual(files['search.json']['pages'][0]['text'], 'r')
+        self.assertIn('groups', files['examples.json'])
+
 if __name__ == '__main__':
     unittest.main()

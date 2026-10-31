@@ -1,4 +1,4 @@
-# Reference integration contract — revision 3
+# Reference integration contract — revision 4
 
 The supervisor owns `tools/reference/`, tracker, shared indexes and all generated Markdown.
 Language author owns `docs/reference/language/` and `docs/reference/implementation/` only.
@@ -101,3 +101,39 @@ labels in the reference README, which qualify individual claims, not pages.
   and the page links that file. The builder rejects a fence it cannot find in the group.
 - A runnable example that no group holds is tagged `plato unchecked` and says so in its prose.
   The fence check exempts that tag.
+
+## Reader data v2
+
+Wave 2 of the reference site plan moves the reader to data it loads in pieces. The builder
+writes these beside `reference.json` in `tools/reference-reader/public/`, all ignored by git.
+`reference.json` (v1) remains until the reader no longer reads it; then the builder stops
+writing it.
+
+- `reference-index.json`: `{schemaVersion: 2, sourceRevision, pages, symbols, aliases}`.
+  `pages` is `[{id, path, title, group, door, status}]` in reader order, without Markdown.
+  `door` is one of `home`, `tour`, `reference`, `cookbook`, `design`, from the first folder below
+  `docs/reference`: `start` and `compare` are the tour; `language`, `library` and `api` the
+  reference; `cookbook` the cookbook; everything else the design door. `status` is the tier
+  status for API pages and tier library guides, otherwise null. `symbols` maps a name to
+  `[{id, title, declarations}]`, where `declarations` lists each overload's first line.
+  `aliases` is as in v1.
+- `pages/<page id>.json`: `{id, markdown, rawMarkdown}` for one page, fetched when it opens.
+- `search.json`: `{schemaVersion: 2, pages: [{id, text}]}`, the raw Markdown of every page,
+  fetched on the first body search.
+- `examples.json`: `{schemaVersion: 2, groups}`, where each fixture group is
+  `{inputs, files: [{path, source}], laws}`.
+
+## Playground
+
+- Routes: `#/playground` lists the example groups, `#/playground/<group>` opens one, and
+  `#/playground/<group>~<payload>` opens it with a shared edit. The payload is opaque to the
+  reader shell; the playground module encodes and decodes it.
+- The reader shell parses these routes, loads `examples.json` on first entry, and renders the
+  default export of `tools/reference-reader/src/playground/Playground.jsx` with the props its
+  header comment lists. The playground module owns everything inside that component.
+- A `plato` fence on a tour page links to `#/playground/tour`, and on a cookbook page
+  `cookbook/<recipe>.md` to `#/playground/cookbook-<recipe>`.
+- Nothing runs in the browser yet. The playground shows each group's files and the laws that
+  state its results, says those were checked when the site was built, and labels an edited
+  program as not re-run. The [playground feasibility report](../../docs/reports/playground-feasibility-2026-10-31.md)
+  records why.

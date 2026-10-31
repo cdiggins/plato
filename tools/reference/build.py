@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import json
 import posixpath
+import shutil
 import re
 import subprocess
 import sys
@@ -434,6 +435,66 @@ def text_exports(bundle: dict) -> tuple[str, str]:
     return '\n'.join(full) + '\n', '\n'.join(llms)
 
 
+DOORS = {'start': 'tour', 'compare': 'tour', 'language': 'reference', 'library': 'reference',
+         'api': 'reference', 'cookbook': 'cookbook', 'design': 'design', 'formal': 'design',
+         'evidence': 'design', 'implementation': 'design', 'review': 'design'}
+TIER_STATUS = {'foundation': 'Supported', 'geometry': 'Supported', 'graphics': 'Supported',
+               'future': 'Experimental', 'legacy': 'Legacy'}
+EXAMPLES = DOCS / 'implementation/examples'
+
+
+def page_door(group: list[str]) -> str:
+    """The site door a page belongs to (reader contract v2); the reference home is 'home'."""
+    return DOORS.get(group[0], 'design') if group else 'home'
+
+
+def page_status(group: list[str]) -> str | None:
+    """Tier status for API pages and tier library guides; None for every other page."""
+    if len(group) >= 2 and group[0] in ('api', 'library'):
+        return TIER_STATUS.get(group[1])
+    return None
+
+
+def example_groups() -> dict:
+    """Every fixture group with its inputs, source files and declared reference laws."""
+    groups = {}
+    for folder in sorted(p for p in EXAMPLES.iterdir() if p.is_dir() and p.name != 'prelude'):
+        listed = folder / 'inputs.txt'
+        inputs = ([line.strip() for line in read(listed).splitlines()
+                   if line.strip() and not line.strip().startswith('#')]
+                  if listed.exists() else [(EXAMPLES / 'prelude').relative_to(ROOT).as_posix()])
+        files = [{'path': f.relative_to(ROOT).as_posix(), 'source': read(f)}
+                 for f in sorted(folder.glob('*.plato'))]
+        laws = sorted({m for f in files for m in re.findall(r'\b(Law_Reference\w*)\s*\(', f['source'])})
+        groups[folder.name] = {'inputs': inputs, 'files': files, 'laws': laws}
+    return groups
+
+
+def split_bundle(bundle: dict, symbol_records: list[dict]) -> dict[str, object]:
+    """Reader data v2: a small index, one file per page, a lazily loaded search text, examples.
+
+    Keys are paths relative to the reader's public folder; values are JSON-serialisable.
+    """
+    declarations = {r['page']: [d['declaration'] for d in r.get('declarations', [])]
+                    for r in symbol_records}
+    symbols = {name: [dict(entry, declarations=declarations.get(entry['id'], []))
+                      for entry in entries] for name, entries in bundle['symbols'].items()}
+    index_pages, files, search = [], {}, []
+    for page in bundle['pages']:
+        index_pages.append({'id': page['id'], 'path': page['path'], 'title': page['title'],
+                            'group': page['group'], 'door': page_door(page['group']),
+                            'status': page_status(page['group'])})
+        files[f"pages/{page['id']}.json"] = {'id': page['id'], 'markdown': page['markdown'],
+                                             'rawMarkdown': page['rawMarkdown']}
+        search.append({'id': page['id'], 'text': page['rawMarkdown']})
+    files['reference-index.json'] = {'schemaVersion': 2, 'sourceRevision': bundle['sourceRevision'],
+                                     'pages': index_pages, 'symbols': symbols,
+                                     'aliases': bundle['aliases']}
+    files['search.json'] = {'schemaVersion': 2, 'pages': search}
+    files['examples.json'] = {'schemaVersion': 2, 'groups': example_groups()}
+    return files
+
+
 def reader_bundle(pages: dict[Path, str], aliases: dict[str, str] | None = None) -> dict:
     revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     result = []
@@ -532,6 +593,12 @@ def build(check: bool = False) -> dict:
         full, llms = text_exports(bundle)
         (PUBLIC / 'plato-reference.txt').write_text(full, encoding='utf-8', newline='\n')
         (PUBLIC / 'llms.txt').write_text(llms, encoding='utf-8', newline='\n')
+        records = json.loads(outputs[DOCS / 'api/symbols.json'])['symbols']
+        shutil.rmtree(PUBLIC / 'pages', ignore_errors=True)
+        for name, value in split_bundle(bundle, records).items():
+            target = PUBLIC / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(json.dumps(value, ensure_ascii=False), encoding='utf-8')
     return {'pages': len(pages), 'sources': len(inputs), 'check': check}
 
 
