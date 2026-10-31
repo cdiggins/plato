@@ -57,6 +57,9 @@ moves to [`archive/`](archive).
 - [Mixed evaluation and required results](../tracker/decisions/2026-10-25-mixed-evaluation-preserves-required-results.md)
   — accepted language-design direction for eager, on-demand and deferred computation, including
   omission of unnecessary faults; implementation and unresolved fault/termination details remain tracked.
+- [Reference site guidance](design/reference-site-guidance.md)
+  — target structure, page contents, and qualities for the public language reference; the
+  execution plan is [`plans/reference-site-plan.md`](../plans/reference-site-plan.md).
 - [Checked optimizer transformations](design/checked-optimizer-pipeline.md)
   — rule-specific validation and parallel implementation plan, including migration to the accepted
   evaluation contract without treating current compiler behavior as already verified.
