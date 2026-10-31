@@ -2,7 +2,7 @@
 // # Bytes
 //
 // What is built on the Bytes kernel of `intrinsics.library.plato` (Count, At, SubBytes,
-// FromIntegers, LessThanOrEquals, Hash, NumberFromBytes): conversion to and from a
+// FromIntegers, LessThanOrEquals, Hash, NumberFromBytes, ToText): conversion to and from a
 // String, the endpoint form of Slice, and the one-pass reads of a number from a range.
 // Equals, Compare and LessThan come from the ordinal order (`core.library.plato`).
 
@@ -14,11 +14,6 @@ library BytesText
     // Witness: "ab".ToBytes.Count == 2 and "ab".ToBytes.At(1) == 98.
     ToBytes(s: String): Bytes
         => FromIntegers(MapRange(s.Count, i => s.At(i).ToInteger));
-
-    // The String of the bytes, one character per byte. Inverts ToBytes for Latin-1 text.
-    // Witness: "ab".ToBytes.ToText == "ab".
-    ToText(b: Bytes): String
-        => FromCharacters(MapRange(b.Count, i => b.At(i).ToCharacter));
 
     // The bytes from index `from` up to but not including `exclusiveTo`, as a view of the
     // same array: the endpoint form every Slice has (`SubBytes` is the count form).

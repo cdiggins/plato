@@ -683,6 +683,10 @@ namespace plato
     inline bool TryParseNumberBytes(Bytes t, double& value) { return TryParseNumber(reinterpret_cast<const char*>(t.data), static_cast<size_t>(t.count), value); }
     inline double NumberFromBytes(Bytes b) { double v; return TryParseNumberBytes(b, v) ? v : std::numeric_limits<double>::quiet_NaN(); }
 
+    // ToText: the String of the bytes. A String here is a byte string (FromCharacters copies the characters as bytes),
+    // so a direct copy is the Latin-1 text of the bytes and ToBytes inverts it.
+    inline std::string ToText(Bytes b) { return b.count > 0 ? std::string(reinterpret_cast<const char*>(b.data), static_cast<size_t>(b.count)) : std::string(); }
+
     // ---- Helpers the body writer emits (names as in the GPU prelude, on double) ----
 
     inline double min_(double a, double b) { return a < b ? a : b; }

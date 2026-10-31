@@ -236,13 +236,15 @@ library Intrinsics
     // before its extension, and `Equals`, `Compare` and `LessThan` come from it
     // (core.library.plato). Everything else is in `bytes.library.plato`.
     //
-    // Why these seven (intrinsic ceiling 76 to 83, TKT-1143): Count, At, SubBytes and
+    // Why these seven (intrinsic ceiling 76 to 84, TKT-1143): Count, At, SubBytes and
     // FromIntegers are the irreducible kernel, as for Array. LessThanOrEquals is
     // operator-named, so the C# writer synthesizes the wrapper from the runtime's
     // operators, and the host does it with one vectorized compare. NumberFromBytes is a
     // correctly rounded decimal-to-binary conversion (see NumberFromText). Hash is
     // expressible over At, but its 32-bit multiply-and-wrap needs a 0xFFFFFFFF mask that
-    // a 32-bit Integer cannot spell, so a Plato body would differ between profiles.
+    // a 32-bit Integer cannot spell, so a Plato body would differ between profiles. ToText
+    // (the eighth) is expressible over At, but only as a closure call per byte and a
+    // character array before the string; one allocation and one copy needs the host.
 
     // The number of bytes in the view.
     Count(b: Bytes): Integer;
@@ -283,6 +285,16 @@ library Intrinsics
     // validity is `not IsNaN`. Bit-identical to NumberFromText of the same characters.
     // Witness: NumberFromBytes("-0.5E-3".ToBytes) == -0.0005 and NumberFromBytes("1e".ToBytes).IsNaN.
     NumberFromBytes(b: Bytes): Number;
+
+    // The String of the bytes, one character per byte (Latin-1): a byte 128 to 255 is the
+    // character of that code, and ToBytes inverts it. One allocation and one copy; the
+    // Plato spelling (MapRange, then FromCharacters) costs a delegate call per byte and a
+    // character array first, and the STEP parser converts every string, binary and
+    // enumeration value this way (TKT-1143, P7 of the decoder wave). In the C++ Cpu
+    // dialect a String is a byte string (FromCharacters copies the characters as bytes),
+    // so the copy is direct and the bytes round-trip.
+    // Witness: "ab".ToBytes.ToText == "ab"; FromIntegers([233]).ToText.At(0).ToInteger == 233.
+    ToText(b: Bytes): String;
 
     //==
     // Array — the five-function kernel.
