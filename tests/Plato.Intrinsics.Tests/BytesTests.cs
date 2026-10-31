@@ -18,6 +18,21 @@ public static class BytesTests
     private static Bytes B(string s) => Bytes.Wrap(Encoding.Latin1.GetBytes(s));
 
     [Test]
+    public static void ToTextIsLatin1ForEveryByteAndOnlyTheViewedRange()
+    {
+        var all = new byte[256];
+        for (var i = 0; i < 256; i++)
+            all[i] = (byte)i;
+        var text = Bytes.Wrap(all).ToText().Value;
+        Assert.That(text.Length, Is.EqualTo(256));
+        for (var i = 0; i < 256; i++)
+            Assert.That((int)text[i], Is.EqualTo(i));
+        Assert.That(Encoding.Latin1.GetBytes(text), Is.EqualTo(all));
+        Assert.That(B("zzfoobarzz").SubBytes(2, 6).ToText().Value, Is.EqualTo("foobar"));
+        Assert.That(default(Bytes).ToText().Value, Is.EqualTo(""));
+    }
+
+    [Test]
     public static void WrapDoesNotCopyAndSliceSharesTheArray()
     {
         var array = Encoding.ASCII.GetBytes("xx1.5E1yy");

@@ -160,6 +160,7 @@ public sealed class HostIntrinsics
             return new PlatoBytes(bytes, 0, bytes.Length);
         });
         Add("Hash(Bytes)", (_, a) => Boxes.Of(n.I((long)((PlatoBytes)a[0]).Fnv1a())));
+        Add("ToText(Bytes)", (_, a) => System.Text.Encoding.Latin1.GetString(((PlatoBytes)a[0]).Span));
         Add("NumberFromBytes(Bytes)", (_, a) => n.TryParseNumber(((PlatoBytes)a[0]).Span, out var v) ? v : double.NaN);
         Add("ToInteger(Character)", (_, a) => Boxes.Of((long)(char)a[0]));
         Add("ToCharacter(Integer)", (_, a) => (char)L(a[0]));

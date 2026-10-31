@@ -36,6 +36,18 @@ library BytesLaws
         && FromIntegers([233]).ToText.At(0).ToInteger == 233 && FromIntegers([233]).ToText.ToBytes == FromIntegers([233])
         && "ab".ToBytes.ToText == "ab";
 
+    // Every byte value 0 to 255 is one character of that code, alone and in one string, and the bytes come back.
+    Law_ToTextCoversTheFullByteRange(): Boolean
+        => 256.Range.All(i => FromIntegers([i]).ToText.Count == 1 && FromIntegers([i]).ToText.At(0).ToInteger == i)
+        && FromIntegers(MapRange(256, i => i)).ToText.Count == 256
+        && 256.Range.All(i => FromIntegers(MapRange(256, k => k)).ToText.At(i).ToInteger == i)
+        && FromIntegers(MapRange(256, i => i)).ToText.ToBytes == FromIntegers(MapRange(256, i => i));
+
+    // The text of a slice is the characters of its range only, whatever surrounds it, and the empty view gives "".
+    Law_ToTextOfASliceSeesOnlyTheSlice(s: String, start: Integer, count: Integer): Boolean
+        => Padded(s).SubBytes(2, s.Count).SubBytes(start, count).ToText == Substring(s, start, count)
+        && FromIntegers([]).ToText == "";
+
     // FromIntegers keeps the low 8 bits of each integer, so a byte is always 0 to 255.
     Law_FromIntegersKeepsTheLowEightBits(): Boolean
         => FromIntegers([256 + 65]).At(0) == 65 && FromIntegers([-1]).At(0) == 255

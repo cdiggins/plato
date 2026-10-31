@@ -198,6 +198,7 @@ order; ToBytes, ToText, Slice, ParseNumber and ParseInteger are Plato (`foundati
 - `LessThanOrEquals(a: Bytes, b: Bytes): Boolean`
 - `Hash(b: Bytes): Integer`
 - `NumberFromBytes(b: Bytes): Number`
+- `ToText(b: Bytes): String`
 
 **Array** (5)
 

@@ -40,8 +40,11 @@ namespace PlatoTests
         //   is operator-named, so the C# writer wraps the runtime's operator (Equals, Compare and LessThan are
         //   derived from it); NumberFromBytes is a correctly rounded decimal-to-binary conversion; and Hash is
         //   expressible over At but needs a 0xFFFFFFFF mask for FNV-1a that a 32-bit Integer cannot spell, so a
-        //   Plato body would differ between profiles. ToBytes, ToText, Slice, ParseNumber and ParseInteger are
+        //   Plato body would differ between profiles. ToBytes, Slice, ParseNumber and ParseInteger are
         //   Plato (bytes.library.plato).
+        //   TKT-1143, P7 (83 to 84): ToText, Bytes to String in one allocation and one copy. Expressible over At,
+        //   but as a closure call per byte and a character array first; the STEP parser converts every string,
+        //   binary and enumeration value (5.6% inclusive on PAM.STEP). The owner's request for Bytes authorizes it.
         private static readonly int MaxIntrinsics = CheckerTestSupport.RatchetCeiling("intrinsics");
 
         /// <summary>A bodiless signature: `Name(params): ReturnType;` at library-member indent,

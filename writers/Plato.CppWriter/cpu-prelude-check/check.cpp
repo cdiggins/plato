@@ -154,6 +154,13 @@ int main()
         CHECK(Hash(bytes_of("")) == static_cast<int32_t>(2166136261u) && Hash(bytes_of("a")) == static_cast<int32_t>(0xE40C292Cu)
               && Hash(bytes_of("foo")) == static_cast<int32_t>(0xA9F37ED7u) && Hash(bytes_of("foobar")) == static_cast<int32_t>(0xBF9CF968u));
         CHECK(Hash(SubBytes(bytes_of("zzfoobarzz"), 2, 6)) == Hash(bytes_of("foobar")));
+        {   // ToText: every byte value, 0 to 255, is one character of that code, and a view gives the text of its range
+            uint8_t all256[256]; for (int i = 0; i < 256; i++) all256[i] = static_cast<uint8_t>(i);
+            std::string t = ToText(make_bytes(all256, 256));
+            bool ok = t.size() == 256;
+            for (int i = 0; ok && i < 256; i++) ok = static_cast<uint8_t>(t[static_cast<size_t>(i)]) == i;
+            CHECK(ok && ToText(Bytes{}) == "" && ToText(SubBytes(bytes_of("zzfoobarzz"), 2, 6)) == "foobar");
+        }
         CHECK(bytes_of("abc") == bytes_of("abc") && !(bytes_of("abc") == bytes_of("abd")) && bytes_of("") == Bytes{});
         CHECK(LessThanOrEquals(bytes_of("ab"), bytes_of("abc")) && !LessThanOrEquals(bytes_of("abc"), bytes_of("ab")) && LessThanOrEquals(bytes_of("B"), bytes_of("a")));
         const unsigned char high[] = { 255 }, low[] = { 1 };

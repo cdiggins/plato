@@ -13,7 +13,7 @@ namespace Ara3D.Geometry
     /// it is alive (the view is immutable only as far as nobody writes the array).
     /// The Plato-visible members are the intrinsics of <c>stdlib/foundation/intrinsics.library.plato</c>:
     /// <c>Count</c>, <c>At</c>, <c>SubBytes</c>, <c>FromIntegers</c> (<see cref="BytesIntrinsics"/>), the
-    /// comparison operators, <c>Hash</c> and <c>NumberFromBytes</c>.
+    /// comparison operators, <c>Hash</c>, <c>NumberFromBytes</c> and <c>ToText</c>.
     /// </summary>
     public readonly partial struct Bytes
     {
@@ -142,6 +142,11 @@ namespace Ara3D.Geometry
         /// the bytes are not in the P21 real forms or the value rounds to infinity. (<c>NumberFromBytes</c> in the contract.)</summary>
         public Number NumberFromBytes()
             => ByteForms.TryParseNumber(AsSpan(), out var v) ? v : NumberValue.NaN;
+
+        /// <summary>The String of the bytes, one character per byte (Latin-1), in one allocation and one copy.
+        /// (<c>ToText</c> on Bytes in the contract.)</summary>
+        public String ToText()
+            => _count == 0 ? new String(string.Empty) : new String(System.Text.Encoding.Latin1.GetString(_array, _start, _count));
 
         public override string ToString()
             => System.Text.Encoding.Latin1.GetString(AsSpan());
