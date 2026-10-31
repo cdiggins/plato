@@ -54,7 +54,7 @@ public sealed partial class Interpreter
     private readonly Dictionary<string, TypeExpression> _primitiveTypes = new Dictionary<string, TypeExpression>();
     private int _depth;
 
-    public Interpreter(Compilation compilation, NumberProfile profile = null)
+    public Interpreter(Compilation compilation, NumberProfile profile = null, ElaborationOptions elaboration = null)
     {
         Compilation = compilation ?? throw new ArgumentNullException(nameof(compilation));
         if (!compilation.CompletedCompilation)
@@ -63,7 +63,7 @@ public sealed partial class Interpreter
         Numbers = new Numbers(Profile);
         Host = new HostIntrinsics(Numbers);
         _checker = new TypeChecker(compilation);
-        _elaborator = new Elaborator(compilation);
+        _elaborator = new Elaborator(compilation, elaboration);
         _groups = compilation.FunctionDefinitions
             .GroupBy(f => f.Name, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);

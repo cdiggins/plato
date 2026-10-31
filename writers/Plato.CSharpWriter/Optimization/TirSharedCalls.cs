@@ -37,7 +37,11 @@ public static class TirSharedCalls
     {
         if (!writer.ShareCalls || tir?.Body == null)
             return tir;
-        var body = new Sharing(tir).Body(tir.Body);
+        var sharing = new Sharing(tir, writer.ShareCallsWide, writer.RewriteStats);
+        var body = tir.Body;
+        if (writer.ShareCallsWide)
+            body = sharing.Lambdas(sharing.Statements(body));
+        body = sharing.Body(body);
         return ReferenceEquals(body, tir.Body)
             ? tir
             : new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,
@@ -50,8 +54,15 @@ public static class TirSharedCalls
         private readonly Dictionary<object, int> _ids = new(ReferenceEqualityComparer.Instance);
         private int _next;
 
-        public Sharing(TirFunction function)
+        private readonly bool _wide;
+        private readonly WriterRewriteStats _stats;
+        private readonly HashSet<object> _parameters;
+
+        public Sharing(TirFunction function, bool wide = false, WriterRewriteStats stats = null)
         {
+            _wide = wide;
+            _stats = stats ?? new WriterRewriteStats();
+            _parameters = function.Parameters.Cast<object>().ToHashSet(ReferenceEqualityComparer.Instance);
             _names = function.AllNodes.Select(n => n switch
             {
                 TirVariable v => v.Def?.Name, TirParameter p => p.Def?.Name,
@@ -200,11 +211,16 @@ public static class TirSharedCalls
 
         /// <summary>Structural identity of a candidate, or null when something below it is not known to be pure
         /// and repeatable.</summary>
-        private string Key(TirCall call)
+        private string Key(TirCall call, HashSet<object> defs = null)
         {
             var sb = new StringBuilder();
-            return Write(call, sb) ? sb.ToString() : null;
+            _keyDefs = defs;
+            try { return Write(call, sb) ? sb.ToString() : null; }
+            finally { _keyDefs = null; }
         }
+
+        // The definitions the key being written reads, collected for the scope check of wide sharing.
+        private HashSet<object> _keyDefs;
 
         private int Id(object o)
         {
@@ -218,9 +234,11 @@ public static class TirSharedCalls
             switch (n)
             {
                 case TirParameter p when p.Def != null && !IsUnique(p.Type):
+                    _keyDefs?.Add(p.Def);
                     sb.Append("P").Append(Id(p.Def));
                     return true;
                 case TirVariable v when v.Def != null && !IsUnique(v.Type):
+                    _keyDefs?.Add(v.Def);
                     sb.Append("V").Append(Id(v.Def));
                     return true;
                 case TirLiteral l:
@@ -254,9 +272,141 @@ public static class TirSharedCalls
                     var inner = c.Args[0] != null && Write(c.Args[0], sb);
                     sb.Append(')');
                     return inner;
+                case TirCall c when _wide && c.Callee == null && c.EmissionKind == EmissionKind.StaticMethod
+                                    && c.Name != null && !IsUnique(c.Type) && !c.Args.Any(a => a == null || IsUnique(a.Type)):
+                    // A sum case written as a factory (Kind.EdgeLoop): a pure value, compared by name and payload.
+                    sb.Append("S").Append(c.Name).Append(':').Append(c.Type).Append('(');
+                    foreach (var a in c.Args)
+                    {
+                        if (!Write(a, sb))
+                            return false;
+                        sb.Append(',');
+                    }
+                    sb.Append(')');
+                    return true;
                 default:
                     return false;
             }
         }
+
+        // --- --share-calls-wide: across the statements of a block, and inside lambda bodies ---------
+
+        /// <summary>The block's statements with a call that one of them evaluates on every path, and that a
+        /// later statement (or a lambda or branch of its own) names again, bound once before the first.</summary>
+        public TirNode Statements(TirNode body)
+        {
+            if (body is not TirBlock block || body.Descendants().Any(n => n is TirAssign or TirLoop))
+                return body;
+            return Block(block, new HashSet<object>(_parameters, ReferenceEqualityComparer.Instance));
+        }
+
+        private TirNode Block(TirBlock block, HashSet<object> outer)
+        {
+            var available = new HashSet<object>(outer, ReferenceEqualityComparer.Instance);
+            var list = block.Statements.ToList();
+            for (var a = 0; a < list.Count; a++)
+            {
+                // The binding a round inserts is list[a]; it may itself hold a shared call.
+                while (SharedBefore(list, a, available))
+                {
+                }
+                list[a] = Nested(list[a], available);
+                if (list[a] is TirLet l && l.Def != null)
+                    available.Add(l.Def);
+                else if (list[a] is TirInlineBinding b)
+                    available.Add(b.Def);
+            }
+            return new TirBlock(list, block.Origin);
+        }
+
+        private TirNode Nested(TirNode statement, HashSet<object> available)
+        {
+            TirNode Branch(TirNode s) => s is TirBlock b ? Block(b, available) : s;
+            return statement switch
+            {
+                TirBlock b => Block(b, available),
+                TirIf i => new TirIf(i.Condition, Branch(i.IfTrue), Branch(i.IfFalse), i.Origin),
+                _ => statement
+            };
+        }
+
+        private static IEnumerable<TirNode> OwnExpressions(TirNode statement)
+            => statement switch
+            {
+                TirLet l => new[] { l.Value },
+                TirReturn r => new[] { r.Value },
+                TirIf i => new[] { i.Condition },
+                TirInlineBinding b => new[] { b.Value },
+                _ => Enumerable.Empty<TirNode>()
+            };
+
+        /// <summary>Binds one call that statement <paramref name="a"/> evaluates on every path and that the
+        /// statements from <paramref name="a"/> on name at least twice, in a local inserted at
+        /// <paramref name="a"/>; false when there is none.</summary>
+        private bool SharedBefore(List<TirNode> list, int a, HashSet<object> available)
+        {
+            var sites = new Dictionary<string, Site>();
+            var samples = new Dictionary<string, TirCall>();
+            var order = 0;
+            foreach (var expression in OwnExpressions(list[a]))
+                Collect(expression, true, sites, samples, ref order);
+            foreach (var key in sites.Where(s => s.Value.Strict >= 1).OrderByDescending(s => s.Value.Size)
+                         .ThenBy(s => s.Value.First).Select(s => s.Key).ToList())
+            {
+                var sample = samples[key];
+                var defs = new HashSet<object>(ReferenceEqualityComparer.Instance);
+                Key(sample, defs);
+                if (!defs.All(available.Contains))
+                    continue;
+                var total = 0;
+                for (var k = a; k < list.Count; k++)
+                    total += CountAll(list[k], key);
+                // Repeats inside the one expression are the single-statement pass's; this binds the others.
+                if (total < 2 || sites[key].Count == total)
+                    continue;
+                var def = Fresh(sample.Type);
+                var reference = new TirVariable(def, def.Type, sample.Origin);
+                for (var k = a; k < list.Count; k++)
+                    list[k] = ReplaceEverywhere(list[k], key, reference);
+                list.Insert(a, new TirInlineBinding(def, sample));
+                _stats.SharedAcrossStatements++;
+                return true;
+            }
+            return false;
+        }
+
+        private int CountAll(TirNode root, string key)
+        {
+            var count = 0;
+            void Walk(TirNode n)
+            {
+                if (n == null)
+                    return;
+                if (n is TirCall c && IsCandidate(c) && Key(c) == key)
+                    count++;
+                foreach (var child in n.Children)
+                    Walk(child);
+            }
+            Walk(root);
+            return count;
+        }
+
+        private TirNode ReplaceEverywhere(TirNode root, string key, TirNode reference)
+            => TirRewrite.Rewrite(root, n => n is TirCall c && IsCandidate(c) && Key(c) == key ? reference : n);
+
+        /// <summary>Each lambda body as its own expression: a call the body repeats is bound once inside it
+        /// (an expression body becomes a block body when it needs a local).</summary>
+        public TirNode Lambdas(TirNode body)
+            => body == null ? null : TirRewrite.Rewrite(body, n =>
+            {
+                if (n is not TirLambda lambda || lambda.Body == null)
+                    return n;
+                var rewritten = Body(lambda.Body);
+                if (ReferenceEquals(rewritten, lambda.Body))
+                    return n;
+                _stats.SharedInLambdas += rewritten.Descendants().Count(d => d is TirInlineBinding b && b.Def.Name.StartsWith("_shared"))
+                    - lambda.Body.Descendants().Count(d => d is TirInlineBinding b && b.Def.Name.StartsWith("_shared"));
+                return new TirLambda(lambda.Parameters, rewritten, lambda.Type, lambda.Origin);
+            });
     }
 }

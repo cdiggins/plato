@@ -250,6 +250,8 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("fuse-consumers / independent reductions");
             tir = TirArrayMaterializer.Rewrite(tir, this);
             Phase("optimize-arrays / materialize (layer 9)");
+            tir = TirSinkBindingsPass.Rewrite(tir, this);
+            Phase("sink-bindings / a local only one arm reads (TKT-1142)");
             tir = TirSharedCalls.Rewrite(tir, this);
             Phase("share-calls / a call a statement repeats (TKT-1136)");
             tir = TirLoopLowerer.Rewrite(tir, this);
@@ -284,7 +286,7 @@ namespace Ara3D.Geometry.CSharpWriter
         // Lazily built the first time a TIR is requested (UseTir only): the shared checker-run
         // lookups (see TirEmitSource). Never built on the default-off path.
         private TirEmitSource _tirSource;
-        private TirEmitSource TirSource => _tirSource ?? (_tirSource = new TirEmitSource(Compilation));
+        private TirEmitSource TirSource => _tirSource ?? (_tirSource = new TirEmitSource(Compilation, new Compiler.Checking.ElaborationOptions(BindScrutinees, SinkBindings)));
 
         /// <summary>The fully-ground monomorphized TIR body for a (source function, concrete type),
         /// or null when none exists (non-ground / unresolved / not bodied).</summary>
@@ -484,6 +486,25 @@ namespace Ara3D.Geometry.CSharpWriter
         // (a match on a call lowers to a test and a field read per case, each naming the call) is
         // evaluated once into a local (see TirSharedCalls). Default (false) output is unchanged.
         public bool ShareCalls { get; set; }
+
+        // --sink-bindings (TKT-1142): a local that one arm of a conditional reads is evaluated on that arm
+        // (TirSinkBindings), in the elaborated TIR and again after inlining. Default (false) output is unchanged.
+        public bool SinkBindings { get; set; }
+
+        // --bind-scrutinee (TKT-1138): a match on a non-trivial expression evaluates it once, bound by the
+        // elaborator (TirScrutineeBinding). Default (false) output is unchanged.
+        public bool BindScrutinees { get; set; }
+
+        // --share-calls-wide (TKT-1142): --share-calls also shares a call across the statements of a block
+        // and inside lambda bodies. Default (false) output is unchanged.
+        public bool ShareCallsWide { get; set; }
+
+        /// <summary>The sites the optimizing rewrites changed, for reports (the elaboration counts are filled
+        /// when the first body is requested).</summary>
+        public WriterRewriteStats RewriteStats { get; } = new WriterRewriteStats();
+
+        /// <summary>What the elaborator's rewrites changed in the bodies requested so far.</summary>
+        public Compiler.Checking.ElaborationStats ElaborationStats => TirSource.ElaborationStats;
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at

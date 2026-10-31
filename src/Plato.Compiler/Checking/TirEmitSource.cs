@@ -28,10 +28,14 @@ namespace Ara3D.Geometry.Compiler.Checking
             = new Dictionary<(FunctionDef, string), TirFunction>();
         private readonly Dictionary<FunctionDef, TirFunction> _elaborated;
 
-        public TirEmitSource(Compilation compilation)
+        /// <summary>What the elaboration rewrites changed in the bodies this source holds.</summary>
+        public ElaborationStats ElaborationStats { get; }
+
+        public TirEmitSource(Compilation compilation, ElaborationOptions elaboration = null)
         {
             // One checker+elaborator run feeds both maps; MonomorphizeAll is total (never throws).
-            var mono = new Monomorphizer(compilation);
+            var mono = new Monomorphizer(compilation, elaboration);
+            ElaborationStats = mono.ElaborationStats;
             var elaborated = mono.ElaborateAll();
             _elaborated = elaborated;
 
