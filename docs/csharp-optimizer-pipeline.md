@@ -31,6 +31,7 @@ Plato source
   -> 3. TirArrayMaterializer.Rewrite                     --optimize-arrays
   -> 4. TirLoopLowerer.Rewrite                           --loops
   -> 5. TirInPlaceUpdates.Rewrite                        --in-place
+  -> 6. TirLoopInvariantHoister.Rewrite                --loops --hoist-invariants
   -> TirCSharpBodyWriter                                 always on; prints the final tree as C#
        scalar lowering (not a TIR pass)                 --lower-scalars
        TirExactOutput specialization                    --loops --exact-output
@@ -79,6 +80,13 @@ producer spelling. See [consumer fusion](optimizer/consumer-fusion.md) for the e
 boundary. `ExactOutputAllocation` specializes canonical FlatMap loop emission when a raw
 literal callback proves output width, guarded by a runtime array source and capacity check.
 See [exact allocation](optimizer/exact-output.md) for callback preservation and fallback.
+`HoistInvariants` (`--hoist-invariants`, TKT-1092, also default-off and requiring `--loops`)
+computes, once per loop and only when the loop runs at least once, each largest subexpression of a
+lowered loop's expression-bodied callback that names no callback parameter or body-bound local, that
+every iteration evaluates unconditionally, and that is not a cheap projection. A small forwarding
+callee is expanded in the callback only when its body holds such an expression. The `Sort` and `SortIdx`
+loops of `--closure-free` are left alone (their comparator is written outside the guarded loop). The rules and their
+limits are in [TirLoopInvariantHoister](../writers/Plato.CSharpWriter/Optimization/TirLoopInvariantHoister.cs).
 
 `--lean-inlining` (`CSharpWriter.LeanInlining`, `LoopOptimizationOptions.LeanInlining`, default off, no CLI
 check ties it to `--loops`) is a step at the end of `WriteAll`, not a TIR pass and not part of

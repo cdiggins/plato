@@ -82,6 +82,9 @@ public sealed class CSharpProgram
         writer.ClosureFree = loopOptimizations?.ClosureFree ?? false;
         writer.InParameters = loopOptimizations?.InParameters ?? false;
         writer.SwitchMatch = loopOptimizations?.SwitchMatch ?? false;
+        writer.HoistInvariants = loopOptimizations?.HoistInvariants ?? false;
+        writer.CacheConstants = loopOptimizations?.CacheConstants ?? false;
+        writer.PrimitiveCompare = loopOptimizations?.PrimitiveCompare ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 

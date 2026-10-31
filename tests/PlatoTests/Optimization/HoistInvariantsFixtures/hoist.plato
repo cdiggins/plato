@@ -1,0 +1,21 @@
+library HoistProbe
+{
+    // value(a) names no element and every iteration evaluates it: computed once, ahead of the loop.
+    Invariant(xs: Array<Number>, a: Number, value: Function1<Number, Number>, f: Function2<Number, Number, Number>): Array<Number>
+        => xs.Map(x => f(x, value(a)));
+
+    // ys.At(k) and value(a) name no element but sit in conditional arms: they stay under the condition.
+    Guarded(xs: Array<Number>, ys: Array<Number>, k: Integer, a: Number, value: Function1<Number, Number>, keep: Function1<Number, Boolean>): Array<Number>
+        => xs.Map(x => keep(x) ? ys.At(k) : value(a));
+
+    // value(f(x, a)) names the element: it stays in the loop.
+    Dependent(xs: Array<Number>, a: Number, value: Function1<Number, Number>, f: Function2<Number, Number, Number>): Array<Number>
+        => xs.Map(x => value(f(x, a)));
+
+    // A forwarding callee: expanded in the loop only because its body holds the invariant value(a).
+    Scaled(x: Number, a: Number, value: Function1<Number, Number>, f: Function2<Number, Number, Number>): Number
+        => f(x, value(a));
+
+    Exposed(xs: Array<Number>, a: Number, value: Function1<Number, Number>, f: Function2<Number, Number, Number>): Array<Number>
+        => xs.Map(x => x.Scaled(a, value, f));
+}

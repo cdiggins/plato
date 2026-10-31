@@ -265,6 +265,8 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("presize / counted List fills");
             tir = TirInPlaceUpdates.Rewrite(tir, this);
             Phase("in-place / last-use array updates (TKT-1132)");
+            tir = TirLoopInvariantHoister.Rewrite(tir, this, fi?.OwnerType?.Name);
+            Phase("hoist-invariants / loop-invariant callback work");
             sb?.AppendLine();
             return tir;
         }
@@ -539,6 +541,25 @@ namespace Ara3D.Geometry.CSharpWriter
         // and a Sort or SortedIndices call is lowered to a merge-sort loop with its comparator inlined
         // (TirLoopLowerer, kinds Sort and SortIdx; needs --loops). Default (false) output is unchanged.
         public bool ClosureFree { get; set; }
+
+        // When true (--hoist-invariants, requires --loops), invariant work in a lowered loop's
+        // callback is computed once ahead of the loop (see TirLoopInvariantHoister). The counts
+        // are diagnostics for the generation log; default (false) output is unchanged.
+        public bool HoistInvariants { get; set; }
+
+        // --cache-constants: a nullary static whose body is a closed expression returns a static
+        // readonly field of a lazily initialised holder class (TirCSharpBodyWriter.Constants.cs).
+        public bool CacheConstants { get; set; }
+        // Counts for the generation log: holder classes written for closed sub-expressions, and their sites.
+        public int CachedConstantHolders;
+        public int CachedConstantSites;
+
+        // --primitive-compare: a Number or Integer comparison call is written on the operands'
+        // .Value (TirCSharpBodyWriter.PrimitiveCompare.cs), with the wrapper's exact semantics.
+        public bool PrimitiveCompare { get; set; }
+        public int HoistedInvariants;
+        public int HoistExposingInlines;
+        public int HoistedLoops;
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at

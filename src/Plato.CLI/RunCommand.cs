@@ -12,7 +12,7 @@ using Ara3D.Utils;
 namespace Ara3D.Geometry.CLI
 {
     // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|cpu64i32|gpu32]
-    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--concrete-arrays] [--lean-inlining] [--presize] [--in-place] [--share-calls] [--lower-scalars] [--sink-bindings] [--bind-scrutinee] [--share-calls-wide] [--closure-free] [--in-params] [--switch-match] [--filter=<text>[,<text>...]] [--laws-from=<file>]
+    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--concrete-arrays] [--lean-inlining] [--presize] [--in-place] [--share-calls] [--lower-scalars] [--sink-bindings] [--bind-scrutinee] [--share-calls-wide] [--closure-free] [--in-params] [--switch-match] [--hoist-invariants] [--cache-constants] [--primitive-compare] [--filter=<text>[,<text>...]] [--laws-from=<file>]
     //                [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N]
     //                [--budget=<seconds per law>] [--abandon=<seconds>] [--witness-budget=<seconds per witness>]
     //                [--parallel=N] [--call=<Name>]
@@ -80,7 +80,9 @@ namespace Ara3D.Geometry.CLI
                 args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"),
                 LowerScalars: args.Contains("--lower-scalars"),
                 SinkBindings: args.Contains("--sink-bindings"), BindScrutinees: args.Contains("--bind-scrutinee"), ShareCallsWide: args.Contains("--share-calls-wide"),
-                ClosureFree: args.Contains("--closure-free"))
+                ClosureFree: args.Contains("--closure-free"),
+                HoistInvariants: args.Contains("--hoist-invariants"),
+                CacheConstants: args.Contains("--cache-constants"), PrimitiveCompare: args.Contains("--primitive-compare"))
             {
                 InParameters = args.Contains("--in-params"),
                 SwitchMatch = args.Contains("--switch-match"),

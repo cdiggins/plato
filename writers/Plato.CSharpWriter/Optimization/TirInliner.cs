@@ -90,7 +90,7 @@ public static partial class TirInliner
             body = TirRewrite.Rewrite(body, n =>
                 etaDepth == 0 && n is TirCall call
                 && TryInlineCall(call, tir, host, ownerTypeName, lambdaDepth > 0, callerNames,
-                    inlinedPairs, passPairs, out var inlined)
+                    inlinedPairs, passPairs, forHoisting: false, out var inlined)
                     ? Bump(count, inlined)
                     : n,
                 enter: n => { if (n is TirLambda l) { lambdaDepth++; if (IsEtaShaped(l)) etaDepth++; } },
@@ -121,7 +121,7 @@ public static partial class TirInliner
     private static bool TryInlineCall(TirCall call, TirFunction callerTir, ITirInlineHost host,
         string ownerTypeName, bool insideLambda, HashSet<string> callerNames,
         HashSet<(object Callee, string ReceiverType)> inlinedPairs, List<(object, string)> passPairs,
-        out TirNode inlined)
+        bool forHoisting, out TirNode inlined)
     {
         inlined = null;
 
@@ -166,7 +166,8 @@ public static partial class TirInliner
         // parameter and return is Number, Integer or Boolean may expand — the derived scalar
         // helpers (GreaterThanOrEquals, LessThan, Abs, Min, Max, Square) whose arithmetic the
         // scalar lowering wants in the caller's body. Everything else stays a call.
-        if (!host.InlineCalls && !HasAllScalarSignature(host, calleeTir, call, callerTir, ownerTypeName, receiverTypeName))
+        // The hoister (--hoist-invariants) expands forwarding calls independent of --inline (forHoisting).
+        if (!forHoisting && !host.InlineCalls && !HasAllScalarSignature(host, calleeTir, call, callerTir, ownerTypeName, receiverTypeName))
             return Refuse(InlineRefusal.NotScalarBody);
 
         // RECURSION, two shapes. Directly: the callee IS the function being inlined into.

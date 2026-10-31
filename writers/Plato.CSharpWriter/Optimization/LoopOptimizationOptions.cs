@@ -13,7 +13,9 @@ namespace Ara3D.Geometry.CSharpWriter;
 // TKT-1142) extends --share-calls across the statements of a block and into lambda bodies and
 // needs --share-calls.
 public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool ExactOutputAllocation = false, bool ConcreteArrays = false, bool LeanInlining = false, bool Presize = false, bool InPlace = false, bool ShareCalls = false, bool LowerScalars = false,
-    bool SinkBindings = false, bool BindScrutinees = false, bool ShareCallsWide = false, bool ClosureFree = false)
+    bool SinkBindings = false, bool BindScrutinees = false, bool ShareCallsWide = false, bool ClosureFree = false,
+    bool HoistInvariants = false,
+    bool CacheConstants = false, bool PrimitiveCompare = false)
 {
     /// <summary>The elaboration rewrites these switches ask for (the interpreter and the writer elaborate alike).</summary>
     public Ara3D.Geometry.Compiler.Checking.ElaborationOptions Elaboration
