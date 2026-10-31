@@ -83,18 +83,20 @@ Rules every Wave 1 builder follows:
   The tool is `C:/Users/cdigg/git/plato-wave-cli/src/Plato.CLI/bin/Release/net8.0/Plato.CLI.dll`,
   a clean worktree of `40b74c18` removed when the wave ends; pass it to `check_examples.py --cli`.
 - Shared indexes stay with the supervisor: `docs/README.md`, `docs/reference/README.md`,
-  `docs/reference/implementation/examples/README.md`, and the reader's navigation. A builder
+  `docs/reference/implementation/examples/README.md`, `docs/reference/language/{README,diagnostics,cheatsheet,glossary}.md`,
+  `tools/reference/README.md`, `tools/reference/CONTRACT.md`, and the reader. A builder
   reports the line it would add.
 - A check failing in a file outside the builder's fence is reported, not fixed.
 
 | Id | One-sentence commit | Owner | Fence (writes only) | Depends on | Test command | Expected (h) | Actual (h) | Resources |
 |---|---|---|---|---|---|---|---|---|
-| A | API pages move to one order-independent page per name, with aliases, a symbol index, a text export and `llms.txt` | builder | `tools/reference/build.py`, `tools/reference/test_build.py`, `tools/reference/rewrite_links.py` (new), `docs/reference/api/**`, `docs/reference/evidence/**` (regenerated), `tools/reference-reader/.gitignore` | Wave 0 | `python -m unittest tools/reference/test_build.py` and `build.py --check` | 2 | | none |
+| A | API pages move to one order-independent page per name, with aliases, a symbol index, a text export and `llms.txt` | builder | `tools/reference/build.py`, `tools/reference/test_build.py`, `docs/reference/api/**`, `docs/reference/evidence/**` (regenerated), `tools/reference-reader/.gitignore` | Wave 0 | `python -m unittest tools/reference/test_build.py` and `build.py --check` | 2 | | none |
 | B | The example checker runs every group on disk and honours `inputs.txt` | builder | `tools/reference/check_examples.py`, `tools/reference/test_check_examples.py` (new), `docs/reference/implementation/examples/builders/inputs.txt` (new) | Wave 0 | `python -m unittest tools/reference/test_check_examples.py` | 1 | | CLI |
 | C | The tour becomes one-idea pages with checked examples and exercises | builder | `docs/reference/start/**`, `docs/reference/implementation/examples/tour/**` | Wave 0 | `check_examples.py --group tour` (after B: discovered) and `build.py --check` | 2 | | CLI |
 | D | "If you know Python" and "If you know C#" pages | builder | `docs/reference/compare/**` | - | `build.py --check` | 1 | | none |
 | E | First cookbook recipes, each a checked program | builder | `docs/reference/cookbook/**`, `docs/reference/implementation/examples/cookbook-*/**` | Wave 0 | each recipe's group run with the law runner, and `build.py --check` | 2 | | CLI |
-| F | Language chapters gain grammar, semantics, a common mistake and its diagnostic | builder | `docs/reference/language/**` | - | `build.py --check` | 2 | | none |
+| F1 | Language chapters gain grammar, meaning, a common mistake and its diagnostic: first half | builder | `docs/reference/language/{syntax,expressions,functions,products,sums,equality,numbers}.md` | - | `build.py --check` | 2 | | CLI, scratch files |
+| F2 | The same for the second half | builder | `docs/reference/language/{model,evaluation,generics,interfaces,state-and-builders}.md` | - | `build.py --check` | 2 | | CLI, scratch files |
 | G | A design door page, a bibliography and a rejected-alternatives page | builder | `docs/reference/design/**` | - | `build.py --check` | 1 | | none |
 | S | Playground feasibility report | general-purpose | `docs/reports/playground-feasibility-2026-10-31.md` | - | none | 1 | | scratch only |
 
