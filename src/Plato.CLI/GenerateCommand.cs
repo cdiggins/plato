@@ -43,6 +43,7 @@ internal static class GenerateCommand
         var staticAbstract = args.Contains("--static-abstract");
 
         var loops = args.Contains("--loops");
+        var lowerScalars = args.Contains("--lower-scalars");
 
         var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"));
         var profileArg = args.Where(a => a.StartsWith("--profile="))
@@ -62,6 +63,11 @@ internal static class GenerateCommand
             && (!loops || typeScript || rust || glsl || (cpp && !cpu) || cuda))
         {
             Console.Error.WriteLine("--fuse-consumers and --exact-output require C# generation with --loops.");
+            return 1;
+        }
+        if (lowerScalars && (typeScript || rust || glsl || cpp || cuda))
+        {
+            Console.Error.WriteLine("--lower-scalars requires C# generation.");
             return 1;
         }
 
@@ -197,7 +203,7 @@ internal static class GenerateCommand
         else
         {
             logger.Log("Writing C# Files");
-            var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract, profile, fuse, statementInlining, loopOptimizations);
+            var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract, profile, fuse, statementInlining, loopOptimizations, lowerScalars: lowerScalars);
             logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
             if (output.DegradedBodies.Count > 0)
             {

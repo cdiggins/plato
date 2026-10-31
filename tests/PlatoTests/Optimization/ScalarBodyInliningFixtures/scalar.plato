@@ -1,0 +1,23 @@
+// Fixture for ScalarBodyInliningTests: a self-contained program whose scalar helpers mirror the
+// stdlib's derived ones (GreaterThanOrEquals over the LessThanOrEquals intrinsic), beside bodies
+// with a non-scalar parameter or return that scalar-only inlining must leave alone.
+type Integer { }
+type Boolean { }
+type Number { }
+type Object { }
+type Pair { A: Integer; B: Integer; }
+library Intrinsics {
+    Add(a: Integer, b: Integer): Integer;
+    LessThanOrEquals(a: Integer, b: Integer): Boolean;
+}
+library ScalarProbe {
+    // All-scalar: expands in scalar-only mode.
+    GreaterThanOrEquals(a: Integer, b: Integer): Boolean => b.LessThanOrEquals(a);
+    Entry(a: Integer, b: Integer): Boolean => a.GreaterThanOrEquals(b);
+    // Non-scalar parameter: stays a call in scalar-only mode.
+    Sum(p: Pair): Integer => p.A.Add(p.B);
+    PairEntry(p: Pair): Integer => p.Sum;
+    // Non-scalar return: stays a call in scalar-only mode.
+    PairOf(a: Integer): Pair => Pair(a, a);
+    ReturnEntry(a: Integer): Pair => a.PairOf;
+}

@@ -62,11 +62,12 @@ public sealed class CSharpProgram
     /// <summary>Emits and compiles; throws <see cref="InvalidOperationException"/> listing the
     /// first C# errors when the generated program does not compile. <paramref name="lowerLoops"/>
     /// is the CLI's <c>--loops</c> (TKT-505): a differential run then checks the lowered loops
-    /// against the interpreter.</summary>
-    public static CSharpProgram Build(PlatoCompilation comp, NumberProfile profile, bool lowerLoops = false, bool fuse = false, LoopOptimizationOptions loopOptimizations = null)
+    /// against the interpreter. <paramref name="lowerScalars"/> is the CLI's <c>--lower-scalars</c>
+    /// (TKT-1129).</summary>
+    public static CSharpProgram Build(PlatoCompilation comp, NumberProfile profile, bool lowerLoops = false, bool fuse = false, LoopOptimizationOptions loopOptimizations = null, bool lowerScalars = false)
     {
         var sw = Stopwatch.StartNew();
-        var writer = new CSharpWriter.CSharpWriter(comp, "unused-in-memory") { ExtensionStyle = true, Profile = profile, LowerLoops = lowerLoops, FuseCombinators = fuse };
+        var writer = new CSharpWriter.CSharpWriter(comp, "unused-in-memory") { ExtensionStyle = true, Profile = profile, LowerLoops = lowerLoops, FuseCombinators = fuse, LowerScalars = lowerScalars };
         writer.FuseConsumers = loopOptimizations?.FuseConsumers ?? false;
         writer.ExactOutputAllocation = loopOptimizations?.ExactOutputAllocation ?? false;
         writer.WriteAll();

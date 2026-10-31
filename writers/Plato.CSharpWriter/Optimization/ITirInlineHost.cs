@@ -13,6 +13,18 @@ public interface ITirInlineHost
 {
     bool InlineCalls { get; }
 
+    /// <summary>
+    /// When true the inliner runs even if <see cref="InlineCalls"/> is false, but in that case it
+    /// expands only callees whose every parameter type and return type is a Plato scalar that
+    /// lowers to a primitive: Number, Integer or Boolean (<see cref="IsScalarPrimitiveName"/>
+    /// minus Character and String, which never lower). The scalar-lowering pass needs the
+    /// stdlib's derived scalar helpers (GreaterThanOrEquals, LessThan, Abs, Min, Max, Square)
+    /// expanded so their arithmetic lowers with the caller's; nothing else is touched.
+    /// Every other inlining rule (expression bodies, cheap-argument discipline,
+    /// self-containment, budgets) still applies.
+    /// </summary>
+    bool InlineScalarBodies { get; }
+
     /// <summary>Optional diagnostic aggregator; null means off.</summary>
     InlineReport InlineReport { get; }
 

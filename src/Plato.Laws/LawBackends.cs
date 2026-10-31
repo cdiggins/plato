@@ -36,12 +36,13 @@ public static class LawBackends
 
     /// <summary>A backend over the interpreter's compilation and profile; the C# one emits and
     /// compiles here, which takes seconds for a large program. <paramref name="lowerLoops"/> is
-    /// the writer's <c>--loops</c> for the compiled arm.</summary>
-    public static ILawBackend Create(LawBackendKind kind, Interpreter.Interpreter interp, bool lowerLoops = false, bool fuse = false)
+    /// the writer's <c>--loops</c> for the compiled arm; <paramref name="lowerScalars"/> is its
+    /// <c>--lower-scalars</c> (TKT-1129).</summary>
+    public static ILawBackend Create(LawBackendKind kind, Interpreter.Interpreter interp, bool lowerLoops = false, bool fuse = false, bool lowerScalars = false)
         => kind switch
         {
-            LawBackendKind.CSharp => CSharpBackend.Build(interp, lowerLoops, fuse),
-            LawBackendKind.Differential => new DifferentialBackend(new InterpreterBackend(interp), CSharpBackend.Build(interp, lowerLoops, fuse)),
+            LawBackendKind.CSharp => CSharpBackend.Build(interp, lowerLoops, fuse, lowerScalars),
+            LawBackendKind.Differential => new DifferentialBackend(new InterpreterBackend(interp), CSharpBackend.Build(interp, lowerLoops, fuse, lowerScalars)),
             _ => new InterpreterBackend(interp),
         };
 }

@@ -86,6 +86,9 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>When true, run shared <see cref="TirInliner"/> before body emit (CLI <c>--inline</c>).</summary>
         public bool InlineCalls { get; set; }
 
+        /// <summary>Always false: the C++ writer has no scalar lowering, so it never asks for scalar-only inlining.</summary>
+        public bool InlineScalarBodies => false;
+
         /// <summary>Optional inliner diagnostics; null means off.</summary>
         public InlineReport InlineReport { get; set; }
 

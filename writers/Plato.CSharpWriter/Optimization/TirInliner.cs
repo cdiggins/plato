@@ -34,6 +34,12 @@ namespace Ara3D.Geometry.CSharpWriter;
 ///   * a size budget per callee body and iteration to a fixpoint under a pass cap (inlining
 ///     exposes further calls — MULTI-LEVEL; the cap bounds growth and terminates recursion).
 ///
+/// Scalar-only mode (<see cref="ITirInlineHost.InlineScalarBodies"/> without
+/// <see cref="ITirInlineHost.InlineCalls"/>): the same pass under the same rules, plus one gate —
+/// only a callee whose parameters and return are all Number, Integer or Boolean expands
+/// (refusal <see cref="InlineRefusal.NotScalarBody"/>). The scalar lowering asks for it so the
+/// stdlib's derived scalar helpers lower inside the caller's body (plato-brep TKT-1129).
+///
 /// Exposing Map/MapComponents calls hidden inside small library functions to the later passes is
 /// the point of the exercise. Refusal reasons: InlineReport.cs.
 /// </summary>
@@ -51,7 +57,10 @@ public static partial class TirInliner
     public static TirFunction Inline(TirFunction tir, ITirInlineHost host, string ownerTypeName, out int inlinedCalls)
     {
         inlinedCalls = 0;
-        if (!host.InlineCalls || tir?.Body == null)
+        // Two switches: the general inliner (--inline) and the scalar-only mode the scalar
+        // lowering asks for (InlineScalarBodies), which expands only all-scalar callees so their
+        // arithmetic lowers with the caller's; see the gate in TryInlineCall.
+        if (!(host.InlineCalls || host.InlineScalarBodies) || tir?.Body == null)
             return tir;
 
         var body = tir.Body;
@@ -135,12 +144,12 @@ public static partial class TirInliner
         // self-containment rules — there are no parameters to substitute.
         if (call.Args.Count == 0)
         {
-            if (TryInlineNullary(call, host, insideLambda, out inlined))
+            if (TryInlineNullary(call, host, insideLambda, out inlined, out var nullaryRefusal))
             {
                 report?.RecordSite(ownerTypeName, callerTir?.Original, call, "expression expanded");
                 return true;
             }
-            return Refuse(InlineRefusal.NullaryRefused);
+            return Refuse(nullaryRefusal);
         }
 
         // The callee's body, specialized for the receiver's solved concrete type. The receiver
@@ -152,6 +161,13 @@ public static partial class TirInliner
         var calleeBody = calleeTir?.Body;
         if (calleeBody == null)
             return Refuse(InlineRefusal.NoGroundTir);
+
+        // SCALAR-ONLY mode (InlineScalarBodies without InlineCalls): only a callee whose every
+        // parameter and return is Number, Integer or Boolean may expand — the derived scalar
+        // helpers (GreaterThanOrEquals, LessThan, Abs, Min, Max, Square) whose arithmetic the
+        // scalar lowering wants in the caller's body. Everything else stays a call.
+        if (!host.InlineCalls && !HasAllScalarSignature(host, calleeTir))
+            return Refuse(InlineRefusal.NotScalarBody);
 
         // RECURSION, two shapes. Directly: the callee IS the function being inlined into.
         // Indirectly: this (callee, receiver type) pair already inlined on an earlier pass, so the
@@ -653,6 +669,29 @@ public static partial class TirInliner
         return n?.Type?.Name;
     }
 
+    /// <summary>Whether <paramref name="name"/> is one of the three Plato scalars the scalar
+    /// lowering computes as primitives: Number, Integer or Boolean. Character and String are
+    /// scalar wrappers too (<see cref="ITirInlineHost.IsScalarPrimitiveName"/>) but never lower,
+    /// so a body over them gains nothing from scalar-only inlining.</summary>
+    private static bool IsLoweringScalarName(ITirInlineHost host, string name)
+        => name != null && host.IsScalarPrimitiveName(name)
+           && name != "Character" && name != "String";
+
+    /// <summary>The scalar-only gate: every parameter type (zonked, falling back to the declared
+    /// type when the zonked list is missing or shorter) and the return type of
+    /// <paramref name="calleeTir"/> is Number, Integer or Boolean. A nullary body passes on its
+    /// return type alone.</summary>
+    private static bool HasAllScalarSignature(ITirInlineHost host, TirFunction calleeTir)
+    {
+        var paramDefs = calleeTir?.Parameters;
+        if (paramDefs == null)
+            return false;
+        for (var i = 0; i < paramDefs.Count; i++)
+            if (!IsLoweringScalarName(host, ZonkedParamTypeName(calleeTir, i) ?? paramDefs[i]?.Type?.Name))
+                return false;
+        return IsLoweringScalarName(host, (calleeTir.ZonkedReturnType ?? calleeTir.ReturnType)?.Name);
+    }
+
     private static string ZonkedParamTypeName(TirFunction calleeTir, int i)
         => calleeTir.ZonkedParameterTypes != null && i < calleeTir.ZonkedParameterTypes.Count
             ? calleeTir.ZonkedParameterTypes[i]?.Name
@@ -692,13 +731,22 @@ public static partial class TirInliner
     /// <summary>A nullary call (emitted as <c>Constants.X</c>): inline the static TIR body when
     /// it is a self-contained ground expression within budget whose value type matches the
     /// declared return type. No parameters, no Self to rebind.</summary>
-    private static bool TryInlineNullary(TirCall call, ITirInlineHost host, bool insideLambda, out TirNode inlined)
+    private static bool TryInlineNullary(TirCall call, ITirInlineHost host, bool insideLambda,
+        out TirNode inlined, out InlineRefusal refusal)
     {
         inlined = null;
+        refusal = InlineRefusal.NullaryRefused;
         var calleeTir = host.TryGetStaticTir(call.Callee);
         var body = calleeTir?.Body;
         if (body == null || (calleeTir.Parameters?.Count ?? 0) != 0)
             return false;
+        // Scalar-only mode: a nullary constant expands only when its value is Number, Integer
+        // or Boolean (the same gate as TryInlineCall, with no parameters to check).
+        if (!host.InlineCalls && !HasAllScalarSignature(host, calleeTir))
+        {
+            refusal = InlineRefusal.NotScalarBody;
+            return false;
+        }
         if (TirRewrite.IsStatementNode(body))
             return false;
         var bodyTypeName = body.Type?.Name;

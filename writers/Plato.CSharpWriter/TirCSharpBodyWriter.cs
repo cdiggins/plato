@@ -277,16 +277,31 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         switch (n)
         {
             case TirInlineRegion region:
-                WriteLine($"{CSharpTypeName(region.Type)} {region.Result.Name};");
+                if (Lower && ScalarOf(region, region.Result, null) is { } regionScalar)
+                {
+                    WriteLine($"{PrimitiveType(regionScalar)} {region.Result.Name};");
+                    _primitiveLocals[region.Result] = regionScalar;
+                }
+                else
+                    WriteLine($"{CSharpTypeName(region.Type)} {region.Result.Name};");
                 WriteStatement(region.Body);
                 WriteLine($"{region.ExitLabel}: ;");
                 return;
             case TirInlineExit exitRegion:
                 Write($"{exitRegion.Result.Name} = ");
-                WriteNode(exitRegion.Value);
+                if (_primitiveLocals.ContainsKey(exitRegion.Result))
+                    WritePrimitive(exitRegion.Value);
+                else
+                    WriteNode(exitRegion.Value);
                 WriteLine($"; goto {exitRegion.Result.Name}_exit;");
                 return;
             case TirInlineBinding binding:
+                if (Lower && ScalarOf(binding, binding.Def, binding.Value) is { } bindingScalar)
+                {
+                    WritePrimitiveLet(binding.Def, bindingScalar, binding.Value);
+                    WriteLine(";");
+                    return;
+                }
                 Write(CSharpTypeName(binding.Type));
                 Write($" {CSharpTypeWriter.Identifier(binding.Def.Name)} = ");
                 WriteNode(binding.Value);
@@ -317,6 +332,12 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirLet let:
+                if (Lower && ScalarOf(let, let.Def, let.Value) is { } letScalar)
+                {
+                    WritePrimitiveLet(let.Def, letScalar, let.Value);
+                    WriteLine(";");
+                    return;
+                }
                 Write("var ");
                 Write(LocalName(let.Def));
                 Write(" = ");
@@ -326,7 +347,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
             case TirIf iff:
                 Write("if (");
-                WriteNode(iff.Condition);
+                WriteCondition(iff.Condition);
                 WriteLine(")");
                 WriteStatement(iff.IfTrue);
                 if (iff.IfFalse != null)
@@ -342,7 +363,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
             case TirLoop l:
                 Write("while (");
-                WriteNode(l.Condition);
+                WriteCondition(l.Condition);
                 WriteLine(")");
                 WriteStartBlock();
                 WriteStatement(l.Body);
@@ -377,8 +398,16 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         var def = type?.Def;
         var typedIndex = def != null && type.Name != "Integer" && !def.IsSum
             && def.Fields.Count == 1 && def.Fields[0].Type?.Name == "Integer";
-        if (typedIndex)
+        if (typedIndex && Lower)
+        {
+            // Lowered: the index's one Integer field, then its value; no conversion operator runs.
+            WritePostfixReceiver(index);
+            Write($".{CSharpTypeWriter.Identifier(def.Fields[0].Name)}.Value");
+        }
+        else if (typedIndex)
             WriteScalarCast("Integer", index, NeedsReceiverParentheses(index));
+        else if (Lower && ScalarOf(type) == "Integer")
+            WritePrimitive(index);
         else
             WriteNode(index);
     }
@@ -467,6 +496,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
     private void WriteNode(TirNode n)
     {
+        if (Lower && TryWriteLowered(n))
+            return;
         switch (n)
         {
             case null:

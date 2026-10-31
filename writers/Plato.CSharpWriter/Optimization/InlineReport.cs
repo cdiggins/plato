@@ -24,6 +24,7 @@ public enum InlineRefusal
     ArityMismatch,       // parameter count != argument count
     NullaryRefused,      // a nullary (Constants.X) call that failed the static-body rules
     SelfRecursive,       // callee resolves to the function being inlined into (would never settle)
+    NotScalarBody,       // scalar-only mode: a parameter or the return is not Number/Integer/Boolean
     UnknownCallable,
     MutableCapture,
     CallableSignatureMismatch,
@@ -57,6 +58,15 @@ public sealed class InlineReport
         _byReason.TryGetValue(reason, out var r);
         _byReason[reason] = r + 1;
     }
+
+    /// <summary>How many calls were refused for <paramref name="reason"/> (all callers and callees).</summary>
+    public int RefusalCount(InlineRefusal reason)
+        => _byReason.TryGetValue(reason, out var n) ? n : 0;
+
+    /// <summary>How many calls from <paramref name="caller"/> to <paramref name="callee"/> were
+    /// refused for <paramref name="reason"/>.</summary>
+    public int RefusalCount(string caller, string callee, InlineRefusal reason)
+        => _refusals.TryGetValue((caller ?? "?", callee ?? "?", reason), out var n) ? n : 0;
 
     public string ToTable()
     {

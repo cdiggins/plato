@@ -438,6 +438,19 @@ namespace Ara3D.Geometry.CSharpWriter
         public bool FuseConsumers { get; set; }
         public bool ExactOutputAllocation { get; set; }
 
+        // When true (--lower-scalars), every emitted body computes Number, Integer and Boolean values
+        // as the primitives they wrap: scalar lets and loop locals are primitives, scalar intrinsics
+        // are C# operators on them, and a value is wrapped once where a wrapper is required (a call
+        // argument, a return, a field). Signatures, fields, interfaces and generic arguments keep
+        // the wrapper structs, so the unit types and the C# compiler's checks survive (the 2026-08-01
+        // decision stands). The reason is the JIT's per-method locals cap: in a large lowered body
+        // the hundreds of inlined wrapper calls exhaust it and the rest stay real calls (TKT-1129 in
+        // plato-brep). Small Plato bodies whose signature is all scalars (GreaterThan, Abs, Min) are
+        // inlined first so their arithmetic lowers too (TirInliner, InlineScalarBodies). Default
+        // (false) output is unchanged. See ScalarLowering.cs and docs/csharp-optimizer-pipeline.md.
+        public bool LowerScalars { get; set; }
+        public bool InlineScalarBodies => LowerScalars;
+
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at
         // the call site (parameters replaced by argument nodes), iteratively, before the

@@ -56,9 +56,9 @@ public partial class TirCSharpBodyWriter
         }
 
         _lambdaDepth++;
-        Write("if ((bool)(");
-        WriteNode(conditional.Condition);
-        WriteLine("))");
+        Write("if (");
+        WriteBoolTest(conditional.Condition);
+        WriteLine(")");
         WriteArm(conditional.IfTrue);
         WriteLine("else");
         WriteArm(conditional.IfFalse);

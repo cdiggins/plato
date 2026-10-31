@@ -8,9 +8,9 @@ public partial class TirCSharpBodyWriter
         WriteStartBlock();
         foreach (var statement in loop.Test.Statements)
             WriteStatement(statement);
-        Write("if (!(bool)(");
-        WriteNode(loop.Test.Value);
-        WriteLine(")) break;");
+        Write("if (!");
+        WriteBoolTest(loop.Test.Value);
+        WriteLine(") break;");
         WriteStatement(loop.Body);
         WriteEndBlock();
     }
