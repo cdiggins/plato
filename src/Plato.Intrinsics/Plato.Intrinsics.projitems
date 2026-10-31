@@ -23,6 +23,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ArrayIntrinsics.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Boolean.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bytes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Character.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GridExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Integer.cs" />

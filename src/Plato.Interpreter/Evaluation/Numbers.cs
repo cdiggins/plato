@@ -71,6 +71,22 @@ public sealed class Numbers
 
     /// <summary>The Number a P21 real-form text spells under this profile (binary32 parses as a float,
     /// so the double holds that float exactly); false when the form is wrong or the value is infinite.</summary>
+    /// <summary>The correctly rounded value of a real-form byte range (sign, digits with an optional point, optional exponent), false when the form is wrong or the value rounds to infinity; the invariant culture, no allocation.</summary>
+    public bool TryParseNumber(ReadOnlySpan<byte> t, out double value)
+    {
+        value = 0;
+        if (!TextForms.IsRealForm(t))
+            return false;
+        if (Is32)
+        {
+            if (!float.TryParse(t, NumberStyles.Float, CultureInfo.InvariantCulture, out var f) || !float.IsFinite(f))
+                return false;
+            value = f;
+            return true;
+        }
+        return double.TryParse(t, NumberStyles.Float, CultureInfo.InvariantCulture, out value) && double.IsFinite(value);
+    }
+
     public bool TryParseNumber(string t, out double value)
     {
         value = 0;
@@ -117,6 +133,37 @@ public sealed class Numbers
 internal static class TextForms
 {
     private static bool IsDigit(char c) => c >= '0' && c <= '9';
+
+    /// <summary>The real form over bytes: the same grammar as the string overload.</summary>
+    internal static bool IsRealForm(ReadOnlySpan<byte> t)
+    {
+        var i = 0;
+        var n = t.Length;
+        if (i < n && (t[i] == (byte)'+' || t[i] == (byte)'-'))
+            i++;
+        var digits = 0;
+        while (i < n && IsDigit(t[i])) { i++; digits++; }
+        if (i < n && t[i] == (byte)'.')
+        {
+            i++;
+            while (i < n && IsDigit(t[i])) { i++; digits++; }
+        }
+        if (digits == 0)
+            return false;
+        if (i < n && (t[i] == (byte)'e' || t[i] == (byte)'E'))
+        {
+            i++;
+            if (i < n && (t[i] == (byte)'+' || t[i] == (byte)'-'))
+                i++;
+            var exponentDigits = 0;
+            while (i < n && IsDigit(t[i])) { i++; exponentDigits++; }
+            if (exponentDigits == 0)
+                return false;
+        }
+        return i == n;
+    }
+
+    private static bool IsDigit(byte c) => c >= (byte)'0' && c <= (byte)'9';
 
     /// <summary>Sign and at least one digit; nothing else.</summary>
     internal static bool IsIntegerForm(string t)

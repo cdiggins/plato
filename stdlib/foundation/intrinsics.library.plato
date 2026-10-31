@@ -8,7 +8,7 @@
 // for a new backend (C++, GLSL, Rust) it is the porting checklist.
 //
 // **Rule: a bodiless intrinsic may mention only `primitive` types** (Number,
-// Integer, Boolean, Character, String, Array, Buffer, List, Function0-9,
+// Integer, Boolean, Character, String, Bytes, Array, Buffer, List, Function0-9,
 // Type — see `primitives.plato`).
 //
 // **Admission rule (plato-378): an intrinsic must not be expressible in Plato
@@ -224,6 +224,65 @@ library Intrinsics
     // algorithm (Ryu or Grisu with a fallback) and every runtime must pick the same digits.
     // Witness: NumberToShortestString(0.5) == "0.5" and NumberToShortestString(1e-5) == "1E-05".
     NumberToShortestString(x: Number): String;
+
+    //==
+    // Bytes
+    //
+    // An immutable view of a byte array: the array, a start and a count. Text whose
+    // characters are bytes (the STEP front end reads ASCII) without the UTF-16 copy and
+    // the per-character wrapper call of a String. The host wraps a byte array without
+    // copying it (C#: `Bytes.Wrap(byte[])`; the interpreter and C++ the same). Slicing
+    // never copies. Bytes is IOrderable: the order is ordinal, byte by byte, with a prefix
+    // before its extension, and `Equals`, `Compare` and `LessThan` come from it
+    // (core.library.plato). Everything else is in `bytes.library.plato`.
+    //
+    // Why these seven (intrinsic ceiling 76 to 83, TKT-1143): Count, At, SubBytes and
+    // FromIntegers are the irreducible kernel, as for Array. LessThanOrEquals is
+    // operator-named, so the C# writer synthesizes the wrapper from the runtime's
+    // operators, and the host does it with one vectorized compare. NumberFromBytes is a
+    // correctly rounded decimal-to-binary conversion (see NumberFromText). Hash is
+    // expressible over At, but its 32-bit multiply-and-wrap needs a 0xFFFFFFFF mask that
+    // a 32-bit Integer cannot spell, so a Plato body would differ between profiles.
+
+    // The number of bytes in the view.
+    Count(b: Bytes): Integer;
+
+    // The byte at index n, 0 to 255. Precondition: 0 <= n < Count; outside it the call
+    // faults (the C# runtime throws, the interpreter an evaluation error, the C++ prelude
+    // asserts). A view never reads the bytes of the array outside its own range.
+    // Witness: "abc".ToBytes.At(1) == 98.
+    At(b: Bytes, n: Integer): Integer;
+
+    // The bytes at the indices start to start + count - 1 that exist, as a view of the
+    // same array: never a copy. The range is clamped to the view at both ends, as for
+    // Substring, so a negative start, a count past the end and a count of zero or less
+    // never fail and the last two give the empty view.
+    // Witness: SubBytes("abcd".ToBytes, 1, 2) == "bc".ToBytes; SubBytes("abcd".ToBytes, 3, 9) == "d".ToBytes.
+    SubBytes(b: Bytes, start: Integer, count: Integer): Bytes;
+
+    // The only constructor of a Bytes that is not a host wrap: a new byte array holding
+    // the integers in order, each reduced to its low 8 bits. The empty array gives the
+    // empty view. Witness: FromIntegers([97, 98]) == "ab".ToBytes.
+    FromIntegers(xs: Array<Integer>): Bytes;
+
+    // Whether Bytes order a before or equal to b: ordinal on the byte values, a prefix
+    // before its extension. Operator-named, see above.
+    LessThanOrEquals(a: Bytes, b: Bytes): Boolean;
+
+    // The 32-bit FNV-1a hash of the bytes: start at 2166136261; for each byte, xor it into
+    // the hash and multiply by 16777619 modulo 2^32. The value is the unsigned result
+    // (0 to 4294967295) in a 64-bit Integer, and the same 32 bits read as signed in a
+    // 32-bit one. The empty view hashes to 2166136261. Equal views hash equal whatever
+    // their array or start. Witness: Hash("a".ToBytes) == 3826002220 (0xE40C292C).
+    Hash(b: Bytes): Integer;
+
+    // The correctly rounded Number the bytes spell, parsed in one pass with no culture,
+    // in the forms of NumberFromText (sign, digits, optional point and digits, optional
+    // exponent): "1.", ".5", "+2", "-0.5E-3" are numbers. NaN when the bytes are not in
+    // those forms or the value rounds to infinity; no other input gives NaN, so the
+    // validity is `not IsNaN`. Bit-identical to NumberFromText of the same characters.
+    // Witness: NumberFromBytes("-0.5E-3".ToBytes) == -0.0005 and NumberFromBytes("1e".ToBytes).IsNaN.
+    NumberFromBytes(b: Bytes): Number;
 
     //==
     // Array — the five-function kernel.

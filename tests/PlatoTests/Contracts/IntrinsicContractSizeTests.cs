@@ -33,7 +33,15 @@ namespace PlatoTests
     {
         // Measured 2026-07-31 after plato-378: 65 (was 141).
         //   Number 26, Integer 18, Array 5, Boolean 3, Character/String 2, List 7, Buffer 4.
-        // A ceiling to LOWER, never to raise without a stated reason.
+        // A ceiling to LOWER, never to raise without a stated reason. The reasons so far:
+        //   TKT-1125 (75 to 76): Cbrt, a correctly rounded host function that Pow(x, 1/3) is not.
+        //   TKT-1143 (76 to 83): Bytes, the byte-sequence primitive the STEP front end reads (the owner asked for
+        //   the type). Seven: Count, At, SubBytes and FromIntegers are its kernel, as for Array; LessThanOrEquals
+        //   is operator-named, so the C# writer wraps the runtime's operator (Equals, Compare and LessThan are
+        //   derived from it); NumberFromBytes is a correctly rounded decimal-to-binary conversion; and Hash is
+        //   expressible over At but needs a 0xFFFFFFFF mask for FNV-1a that a 32-bit Integer cannot spell, so a
+        //   Plato body would differ between profiles. ToBytes, ToText, Slice, ParseNumber and ParseInteger are
+        //   Plato (bytes.library.plato).
         private static readonly int MaxIntrinsics = CheckerTestSupport.RatchetCeiling("intrinsics");
 
         /// <summary>A bodiless signature: `Name(params): ReturnType;` at library-member indent,

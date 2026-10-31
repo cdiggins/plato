@@ -1,0 +1,94 @@
+//==
+// # Bytes
+//
+// What is built on the Bytes kernel of `intrinsics.library.plato` (Count, At, SubBytes,
+// FromIntegers, LessThanOrEquals, Hash, NumberFromBytes): conversion to and from a
+// String, the endpoint form of Slice, and the one-pass reads of a number from a range.
+// Equals, Compare and LessThan come from the ordinal order (`core.library.plato`).
+
+library BytesText
+{
+    // The bytes of a String, one per character: Latin-1, so a character above 255 keeps
+    // its low 8 bits. Copies, once, and allocates the array; it is for constants and
+    // tests, and a host that has bytes wraps them instead.
+    // Witness: "ab".ToBytes.Count == 2 and "ab".ToBytes.At(1) == 98.
+    ToBytes(s: String): Bytes
+        => FromIntegers(MapRange(s.Count, i => s.At(i).ToInteger));
+
+    // The String of the bytes, one character per byte. Inverts ToBytes for Latin-1 text.
+    // Witness: "ab".ToBytes.ToText == "ab".
+    ToText(b: Bytes): String
+        => FromCharacters(MapRange(b.Count, i => b.At(i).ToCharacter));
+
+    // The bytes from index `from` up to but not including `exclusiveTo`, as a view of the
+    // same array: the endpoint form every Slice has (`SubBytes` is the count form).
+    // Clamped like SubBytes. Witness: Slice("abcd".ToBytes, 1, 3) == "bc".ToBytes.
+    Slice(b: Bytes, from: Integer, exclusiveTo: Integer): Bytes
+        => b.SubBytes(from, exclusiveTo - from);
+
+    // Reads a real number from the bytes in one pass, in the forms of NumberFromBytes.
+    // Anything else, and a value that rounds to infinity, has Ok false and Value 0.
+    // Correctly rounded, bit-identical to ParseNumber of the same characters.
+    // Witness: ParseNumber("-0.5E-3".ToBytes) is (-0.0005, true); of "1e", (0, false).
+    ParseNumber(b: Bytes): NumberParse
+    {
+        var v = b.NumberFromBytes;
+        return v.IsNaN ? NumberParse(0.0, false) : NumberParse(v, true);
+    }
+
+    // Reads an integer from the bytes in one pass: an optional sign and one or more
+    // decimal digits. Anything else, and a value outside Integer's range under the
+    // profile, has Ok false and Value 0; overflow is reported, never wrapped. The digits
+    // accumulate as a negative number so that the most negative Integer is reachable
+    // without a wider type, and the limit is tested before each step.
+    // Witness: ParseInteger("-12".ToBytes) is (-12, true); of "1.0", (0, false).
+    ParseInteger(b: Bytes): IntegerParse
+    {
+        var n = b.Count;
+        var i = 0;
+        var negative = false;
+        if (n > 0)
+        {
+            var first = b.At(0);
+            if (first == 45)
+            {
+                negative = true;
+                i = 1;
+            }
+            else if (first == 43)
+            {
+                i = 1;
+            }
+        }
+        var ok = i < n;
+        var limit = Integer.MinValue / 10;
+        var limitDigit = limit * 10 - Integer.MinValue;
+        var acc = 0;
+        while (i < n)
+        {
+            var d = b.At(i) - 48;
+            if (d < 0 || d > 9)
+            {
+                ok = false;
+                i = n;
+            }
+            else if (acc < limit || (acc == limit && d > limitDigit))
+            {
+                ok = false;
+                i = n;
+            }
+            else
+            {
+                acc = acc * 10 - d;
+                i = i + 1;
+            }
+        }
+        if (!ok)
+            return IntegerParse(0, false);
+        if (negative)
+            return IntegerParse(acc, true);
+        if (acc == Integer.MinValue)
+            return IntegerParse(0, false);
+        return IntegerParse(0 - acc, true);
+    }
+}

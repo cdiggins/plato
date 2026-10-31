@@ -238,6 +238,17 @@ namespace Ara3D.Geometry.CSharpWriter
             // a Value, so the same scaffolding would name a member that does not exist (measured:
             // `Value` binding to the concept of that name instead, CS0305 + CS1061). They get the
             // field-less shape â€” every value of such a type is interchangeable here.
+            // A view primitive (Bytes) is neither a wrapper of a BCL value nor field-less: its handwritten half
+            // owns GetHashCode and ToString and offers SequenceEquals, and the generated half only spells the
+            // Plato-Boolean equality members over it, so one struct has exactly one of each.
+            else if (CSharpWriter.ViewPrimitives.Contains(SimpleName))
+            {
+                TypeWriter.WriteLine($"{Attr} public {boolT} Equals({Name} other) => SequenceEquals(other);");
+                TypeWriter.WriteLine($"{Attr} public {boolT} NotEquals({Name} other) => !SequenceEquals(other);");
+                TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? SequenceEquals(other) : false;");
+                TypeWriter.WriteLine($"{Attr} public static {boolT} operator==({Name} a, {Name} b) => a.SequenceEquals(b);");
+                TypeWriter.WriteLine($"{Attr} public static {boolT} operator!=({Name} a, {Name} b) => !a.SequenceEquals(b);");
+            }
             else if (!CSharpWriter.ScalarPrimitives.ContainsKey(SimpleName))
             {
                 TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name};");
@@ -805,7 +816,11 @@ namespace Ara3D.Geometry.CSharpWriter
                     tw.WriteLine(GetExtensionMethod(fi));
             }
 
-            if (CSharpWriter.PrimitiveTypes.TryGetValue(Name, out var primType))
+            // A view primitive's runtime type is its own name, so a forwarder for a function with a body would
+            // be a second extension beside the one its library class already declares (CS0121). A bodiless
+            // (intrinsic) function still gets the forwarder, which binds to the handwritten instance member.
+            if (CSharpWriter.PrimitiveTypes.TryGetValue(Name, out var primType)
+                && !(CSharpWriter.ViewPrimitives.Contains(Name) && f.Implementation.Body != null))
             {
                 // HACK:
                 if (fi.Name == "Multiply" && fi.ParameterTypes[1] == "_T0")

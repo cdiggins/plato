@@ -50,7 +50,7 @@ namespace PlatoTests
         /// </summary>
         internal static readonly IReadOnlyList<string> V2StructNames = new[]
         {
-            "Boolean", "Character", "Integer", "Number", "String",
+            "Boolean", "Bytes", "Character", "Integer", "Number", "String",
         };
 
         internal static IReadOnlyList<Type> V2PrimitiveStructs()

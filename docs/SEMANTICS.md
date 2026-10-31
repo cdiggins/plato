@@ -48,7 +48,9 @@ code is **monomorphized**: the compiler stamps a concrete copy per implementing 
 no runtime dispatch, no boxing, and no abstraction penalty.
 
 Scalars: `Number` (the floating scalar), `Integer`, `Boolean`, plus minimal
-`String`/`Character`. Literals: `0` is `Integer`, `0.0` is `Number`, `true`/`false` are `Boolean`.
+`String`/`Character`, and `Bytes`, an immutable view of a byte array (text whose characters are bytes: slicing makes a view
+and never copies, order and equality are ordinal on unsigned bytes, `Hash` is 32-bit FNV-1a; `foundation/bytes.library.plato`).
+Literals: `0` is `Integer`, `0.0` is `Number`, `true`/`false` are `Boolean`.
 Semantically distinct quantities get distinct types (`Angle` is not `Number`; `Point2D` minus
 `Point2D` is `Vector2D`) — this is convention enforced by the stdlib's type definitions, not
 special compiler machinery.

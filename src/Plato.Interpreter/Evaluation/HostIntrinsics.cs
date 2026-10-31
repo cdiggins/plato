@@ -144,6 +144,23 @@ public sealed class HostIntrinsics
         Add("IsIntegerText(String)", (_, a) => Boxes.Of(n.TryParseInteger((string)a[0], out var ignored)));
         Add("IntegerFromText(String)", (_, a) => Boxes.Of(n.TryParseInteger((string)a[0], out var v) ? v : 0L));
         Add("NumberToShortestString(Number)", (_, a) => n.ToShortestString(D(a[0])));
+
+        // Bytes: a view of a byte array (PlatoBytes). Ordinal order, byte by byte.
+        Add("LessThanOrEquals(Bytes, Bytes)", (_, a) => Boxes.Of(((PlatoBytes)a[0]).Span.SequenceCompareTo(((PlatoBytes)a[1]).Span) <= 0));
+        Add("Equals(Bytes, Bytes)", (_, a) => Boxes.Of(((PlatoBytes)a[0]).Equals((PlatoBytes)a[1])));
+        Add("Count(Bytes)", (_, a) => Boxes.Of((long)((PlatoBytes)a[0]).Count));
+        Add("At(Bytes, Integer)", (_, a) => Boxes.Of((long)((PlatoBytes)a[0]).At(L(a[1]))));
+        Add("SubBytes(Bytes, Integer, Integer)", (_, a) => ((PlatoBytes)a[0]).Sub(L(a[1]), L(a[2])));
+        Add("FromIntegers(Array)", (_, a) =>
+        {
+            var xs = (PlatoArray)a[0];
+            var bytes = new byte[xs.Count];
+            for (var i = 0; i < bytes.Length; i++)
+                bytes[i] = (byte)L(xs[i]);
+            return new PlatoBytes(bytes, 0, bytes.Length);
+        });
+        Add("Hash(Bytes)", (_, a) => Boxes.Of(n.I((long)((PlatoBytes)a[0]).Fnv1a())));
+        Add("NumberFromBytes(Bytes)", (_, a) => n.TryParseNumber(((PlatoBytes)a[0]).Span, out var v) ? v : double.NaN);
         Add("ToInteger(Character)", (_, a) => Boxes.Of((long)(char)a[0]));
         Add("ToCharacter(Integer)", (_, a) => (char)L(a[0]));
         Add("FromCharacters(Array)", (_, a) =>

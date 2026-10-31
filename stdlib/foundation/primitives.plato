@@ -47,6 +47,14 @@ primitive String
     implements IValue, IOrderable, ICountable
 { }
 
+// An immutable sequence of bytes: a view of a byte array with a start and a count.
+// Text whose characters are bytes (a STEP file is ASCII) without the UTF-16 copy a
+// String costs. Slicing makes a view and never copies. Ordered ordinally, byte by byte.
+// (https://en.wikipedia.org/wiki/Byte)
+primitive Bytes
+    implements IValue, IOrderable, ICountable
+{ }
+
 // ## Type tokens
 
 // A type reified as a value. Carries no members of its own; it exists so a static

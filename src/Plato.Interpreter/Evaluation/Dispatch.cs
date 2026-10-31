@@ -22,6 +22,7 @@ public sealed partial class Interpreter
             case bool: return PrimitiveType("Boolean");
             case char: return PrimitiveType("Character");
             case string: return PrimitiveType("String");
+            case PlatoBytes: return PrimitiveType("Bytes");
             case PlatoRecord r: return r.Type;
             case PlatoSum s: return s.Type;
             case TypeToken t: return t.Type;
@@ -657,6 +658,7 @@ public sealed partial class Interpreter
             case "Boolean": return false;
             case "Character": return '\0';
             case "String": return "";
+            case "Bytes": return PlatoBytes.Empty;
             case "Array": return new PlatoArray(HostIntrinsics.ElementTypeOf(type, 0), Array.Empty<object>());
             case "List": return new PlatoBuilder(HostIntrinsics.ElementTypeOf(type, 0), false, 0);
             case "Buffer": return new PlatoBuilder(HostIntrinsics.ElementTypeOf(type, 0), true, 0);
