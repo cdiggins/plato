@@ -29,7 +29,7 @@ public partial class TirCSharpBodyWriter
             // A count source (MapRange, or the index source of a fused chain) is an Integer: lowered,
             // the bare int, so the Max and the loop bound below convert nothing.
             if (Lower && (ll.Kind == "MapRange" || (s == 0 && ll.IndexSource)))
-                WritePrimitive(ll.Sources[s]);
+                WriteAsInt(() => WritePrimitive(ll.Sources[s]));
             else
                 WriteNode(ll.Sources[s]);
             WriteLine(";");

@@ -1,0 +1,85 @@
+// Fixture for ScalarLoweringTests (plato-brep TKT-1129): a self-contained program over the three
+// lowered scalars. It declares the intrinsics it uses (bodiless, as intrinsics.library.plato does)
+// because the emission tests compile without the stdlib. Each probe is one intrinsic, a let, or a
+// conditional, so the emitted C# of each is a short line the shape tests can quote, and the
+// semantic tests run both spellings (--lower-scalars on and off) over the awkward inputs.
+type Number { }
+type Integer { }
+type Boolean { }
+type Object { }
+
+library Intrinsics {
+    Add(a: Number, b: Number): Number;
+    Subtract(a: Number, b: Number): Number;
+    Multiply(a: Number, b: Number): Number;
+    Divide(a: Number, b: Number): Number;
+    Modulo(a: Number, b: Number): Number;
+    Negative(n: Number): Number;
+    LessThanOrEquals(a: Number, b: Number): Boolean;
+    Equals(a: Number, b: Number): Boolean;
+    Floor(self: Number): Number;
+    Sqrt(self: Number): Number;
+    ToInteger(self: Number): Integer;
+    Add(a: Integer, b: Integer): Integer;
+    Subtract(a: Integer, b: Integer): Integer;
+    Multiply(a: Integer, b: Integer): Integer;
+    Divide(a: Integer, b: Integer): Integer;
+    Modulo(a: Integer, b: Integer): Integer;
+    Negative(n: Integer): Integer;
+    LessThanOrEquals(a: Integer, b: Integer): Boolean;
+    Equals(a: Integer, b: Integer): Boolean;
+    ToNumber(self: Integer): Number;
+    And(a: Boolean, b: Boolean): Boolean;
+    Or(a: Boolean, b: Boolean): Boolean;
+    Not(b: Boolean): Boolean;
+}
+
+library ScalarProbe {
+    // The shape probes.
+    Scale(a: Number, b: Number): Number => a * b;
+    Mid(a: Number, b: Number): Number { var s = a + b; return s * 0.5; }
+    Pick(a: Integer, b: Integer): Integer => a <= b ? a : b;
+    // Mirrors the stdlib's derived helper (core.library.plato): all-scalar, so scalar-only
+    // inlining expands it into AtLeast before lowering.
+    GreaterThanOrEquals(a: Integer, b: Integer): Boolean => b <= a;
+    AtLeast(a: Integer, b: Integer): Boolean => a.GreaterThanOrEquals(b);
+
+    // Number intrinsics, one each.
+    NumAdd(a: Number, b: Number): Number => a + b;
+    NumSubtract(a: Number, b: Number): Number => a - b;
+    NumMultiply(a: Number, b: Number): Number => a * b;
+    NumDivide(a: Number, b: Number): Number => a / b;
+    NumModulo(a: Number, b: Number): Number => a % b;
+    NumNegative(a: Number): Number => -a;
+    NumLessThanOrEquals(a: Number, b: Number): Boolean => a <= b;
+    NumEquals(a: Number, b: Number): Boolean => a.Equals(b);
+    NumNotEquals(a: Number, b: Number): Boolean => !a.Equals(b);
+    NumFloor(a: Number): Number => a.Floor;
+    NumToInteger(a: Number): Integer => a.ToInteger;
+    NumSqrt(a: Number): Number => a.Sqrt;
+
+    // Integer intrinsics, one each.
+    IntAdd(a: Integer, b: Integer): Integer => a + b;
+    IntSubtract(a: Integer, b: Integer): Integer => a - b;
+    IntMultiply(a: Integer, b: Integer): Integer => a * b;
+    IntDivide(a: Integer, b: Integer): Integer => a / b;
+    IntModulo(a: Integer, b: Integer): Integer => a % b;
+    IntNegative(a: Integer): Integer => -a;
+    IntEquals(a: Integer, b: Integer): Boolean => a.Equals(b);
+    IntLessThanOrEquals(a: Integer, b: Integer): Boolean => a <= b;
+    IntToNumber(a: Integer): Number => a.ToNumber;
+
+    // Boolean: the three intrinsics by name, the short-circuit operators, and a conditional.
+    BoolAnd(a: Boolean, b: Boolean): Boolean => a.And(b);
+    BoolOr(a: Boolean, b: Boolean): Boolean => a.Or(b);
+    BoolNot(a: Boolean): Boolean => !a;
+    BoolBoth(a: Boolean, b: Boolean): Boolean => a && b;
+    BoolEither(a: Boolean, b: Boolean): Boolean => a || b;
+    BoolPick(c: Boolean, a: Boolean, b: Boolean): Boolean => c ? a : b;
+
+    // Lets and nested conditionals.
+    NumLet(a: Number, b: Number): Number { var s = a + b; var d = a - b; return s * d; }
+    IntLet(a: Integer, b: Integer): Integer { var q = a / b; var r = a % b; return q * b + r; }
+    NumNested(a: Number, b: Number, c: Number): Number => a <= b ? (b <= c ? b : c) : (a <= c ? a : c);
+    IntNested(a: Integer, b: Integer): Integer => a <= b ? (a.Equals(b) ? 0 : -1) : 1;
+}

@@ -40,10 +40,15 @@ public partial class TirCSharpBodyWriter
     private static string ScalarOf(TirNode node, VariableDef def, TirNode value)
         => ScalarOf(node?.Type) ?? ScalarOf(value?.Type) ?? ScalarOf(def?.Type);
 
-    /// <summary>Writes <c>new Wrapper(</c> the primitive <c>)</c>: the one wrap of a lowered value.</summary>
+    /// <summary>The one wrap of a lowered value, as <c>Unsafe.BitCast&lt;primitive, Wrapper&gt;(...)</c>.
+    /// The wrapper is a single-field struct over the primitive, so the reinterpretation is the value
+    /// the constructor would build; the JIT expands BitCast in its importer, so the wrap costs no
+    /// call whatever the enclosing method's locals count, where the constructor and the implicit
+    /// operator become real calls past the cap (measured on .NET 8.0.30, TKT-1129: 20 wraps in a
+    /// 700-local method, 40 calls for either of those and none for BitCast).</summary>
     private void WriteWrapped(string scalar, Action primitive)
     {
-        Write($"new {scalar}(");
+        Write($"Unsafe.BitCast<{PrimitiveType(scalar)}, {scalar}>(");
         primitive();
         Write(")");
     }
@@ -56,7 +61,11 @@ public partial class TirCSharpBodyWriter
             case TirLiteral lit when ScalarLowering.IsLoweredScalarName(lit.LiteralType.ToString()):
             {
                 // A negative literal binds looser than a member access, so it keeps its parentheses.
+                // Under a 64-bit Integer profile an integer literal is spelled as a long, so a local
+                // declared from it has the Integer's own primitive type.
                 var text = _tw.Writer.LiteralString(lit.Value);
+                if (lit.LiteralType == Ara3D.Geometry.AST.LiteralTypesEnum.Integer && PrimitiveType("Integer") == "long" && char.IsDigit(text[text.Length - 1]))
+                    text += "L";
                 Write(text.StartsWith("-") ? $"({text})" : text);
                 return;
             }
@@ -186,6 +195,17 @@ public partial class TirCSharpBodyWriter
         if (name == "Self")
             name = _tw.TypeDef?.Name;
         return name != null && _tw.Writer.IsConcreteTypeName(name);
+    }
+
+    /// <summary>Writes a lowered Integer primitive where C# wants an <c>int</c> (an indexer, an
+    /// array length): bare under a 32-bit Integer, else the checked narrowing the wrapper's own
+    /// conversion to int performs.</summary>
+    private void WriteAsInt(Action primitive)
+    {
+        var narrow = PrimitiveType("Integer") != "int";
+        if (narrow) Write("checked((int)(");
+        primitive();
+        if (narrow) Write("))");
     }
 
     /// <summary>Whether a scalar let lowers to a primitive local: a constant value stays a wrapper

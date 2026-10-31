@@ -401,13 +401,16 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (typedIndex && Lower)
         {
             // Lowered: the index's one Integer field, then its value; no conversion operator runs.
-            WritePostfixReceiver(index);
-            Write($".{CSharpTypeWriter.Identifier(def.Fields[0].Name)}.Value");
+            WriteAsInt(() =>
+            {
+                WritePostfixReceiver(index);
+                Write($".{CSharpTypeWriter.Identifier(def.Fields[0].Name)}.Value");
+            });
         }
         else if (typedIndex)
             WriteScalarCast("Integer", index, NeedsReceiverParentheses(index));
         else if (Lower && ScalarOf(type) == "Integer")
-            WritePrimitive(index);
+            WriteAsInt(() => WritePrimitive(index));
         else
             WriteNode(index);
     }
