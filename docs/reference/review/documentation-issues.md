@@ -1,10 +1,10 @@
 # Documentation defects and improvement register
 
-This register records confusing or conflicting documentation discovered during the reference
+This register lists confusing or conflicting documentation found during the reference
 audit. [docs-525](../../../tracker/issues/docs-525.md) tracks correction of the original sources.
-These are source-inspection findings, not newly executed algorithm reproductions. The linked
-original document is the place to correct the claim; this register makes the required work visible.
-The new reference explains the boundary rather than silently resolving disputed semantics.
+These are source-inspection findings, not newly executed algorithm reproductions. Correct the
+claim in the linked original document; this register makes the required work visible.
+The new reference explains the boundary. It does not silently resolve a disputed semantic question.
 
 ## Language and compiler documentation
 
@@ -74,8 +74,6 @@ with the library review. It does not claim that correcting a comment fixes the a
   distinctions, evaluation counts, order and divergence. State numerical profile assumptions.
 - Keep a reproducible pinned theorem-checker command alongside formal sources, and make its
   verification status independent of Markdown generation and example execution.
-
-## Related work
 
 The [Rust Reference](https://doc.rust-lang.org/reference/) is a useful example of focused
 construct-level specification. [Software Foundations](https://softwarefoundations.cis.upenn.edu/)

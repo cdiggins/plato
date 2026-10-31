@@ -30,7 +30,7 @@ A value is either an integer or a Boolean. Evaluation returns an outcome:
 | `fault` | Evaluation reached a modeled runtime failure. |
 | `typeError` | Evaluation encountered the wrong kind of value for an operation. |
 
-The distinction lets us state something meaningful: a well-typed expression can fault, but cannot produce a runtime `typeError`. For example, adding an integer and a Boolean is a syntax tree in this model, but typing rejects it.
+A well-typed expression can fault. It cannot produce a runtime `typeError`. Adding an integer and a Boolean is a syntax tree in this model, but typing rejects it.
 
 ```mermaid
 flowchart TD
@@ -43,12 +43,10 @@ flowchart TD
 
 The diagram assumes the proved connection between inference and typing; evaluation itself also accepts untyped trees and can report `typeError` on them.
 
-## Essential exclusions
+Safety is a substantive theorem here for the same reason as in [Software Foundations' typed arithmetic](https://softwarefoundations.cis.upenn.edu/plf-current/Types.html): ill-typed syntax is representable. This core uses signed integer literals and addition instead of natural-number constructors, and neither model by itself establishes the behavior of a production language implementation.
+
+## Exclusions
 
 There are no variables, binding environments, functions, recursion, loops, arrays, records, sums, interfaces, generics, conversions, overload resolution, affine builders, or floating-point operations. Every expression is a finite tree and every recursive evaluator call visits a strict subtree. Lean checks termination of the evaluator definition. There is no divergence outcome because this core cannot express divergence.
 
 The integers are Lean `Int`: unbounded mathematical integers. Plato's numeric profiles use machine integers with runtime behavior specified elsewhere. Consequently these proofs say nothing about overflow, checked conversion, or profile equivalence. A real arithmetic model must choose those behaviors explicitly.
-
-## Related work
-
-[Software Foundations' typed arithmetic](https://softwarefoundations.cis.upenn.edu/plf-current/Types.html) similarly makes ill-typed syntax representable so that safety is a substantive theorem. Its arithmetic uses natural-number constructors; this core instead has signed integer literals and addition. Neither model by itself establishes the behavior of a production language implementation.

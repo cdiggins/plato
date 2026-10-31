@@ -1,23 +1,26 @@
 # Procedural noise and cellular lattices
 
-Read [noise types](../../api/geometry/noise.types.md), [noise bodies](../../api/geometry/noise.library.md), [lattice types](../../api/geometry/lattices.types.md) and [lattice bodies](../../api/geometry/lattices.library.md). Both families build large spatial structure from compact parameters, but their meanings differ.
+Noise and lattices both build a large spatial pattern from a short parameter list. A noise value is a field sample at a point. A lattice stores nodes, struts, and how those cells repeat in space.
 
 ## Noise is a deterministic field
 
-A noise value is evaluated at a point. The reference lattice hashing combines integer coordinates with a seed; no mutable generator state advances during evaluation. Equal inputs within one implementation select equal results. The source explicitly excludes exact hash constants from its cross-version contract.
+Evaluation hashes integer coordinates with a seed. No mutable generator advances between calls. Equal inputs inside one implementation return equal results. The source leaves the exact hash constants out of its cross-version contract.
 
-Frequency scales input coordinates: increasing it makes features smaller in world space. Basis families differ: value noise blends values, gradient families blend directional contributions, Worley forms measure nearby feature points, and Gabor forms use localized oscillatory kernels. Fractal combinations layer octaves with changing frequency and amplitude; turbulence or ridged transformations change the resulting distribution. Do not infer one common exact value range for every modifier merely from a base-family range.
+`Frequency` scales the input coordinates. Raising it makes features smaller in world space. Value noise blends stored values. Gradient families blend directional contributions. Worley noise measures nearby feature points. Gabor noise uses localized oscillatory kernels. Fractal noise layers octaves and changes frequency and amplitude between them. Turbulence and ridged variants change the distribution of the result. A range quoted for a base family does not transfer to every modifier.
 
-Domain warping changes the point where another field is sampled. Curl noise derives a vector-valued flow interpretation; its numerical derivative construction and step are part of the implementation, not an automatic proof of zero divergence in floating point. Noise gradients and warped distance values do not automatically retain signed-distance bounds.
+Domain warping evaluates another field at a moved point. Curl noise builds a vector field from a numerical derivative, and that step is part of the implementation. It is not a proof that the floating-point result has zero divergence. A noise gradient or a warped distance does not keep signed-distance bounds on its own.
 
 ## Lattices store connectivity and placement
 
-A unit cell contains normalized node coordinates and struts naming node pairs. Tiling supplies world placement and repeated connectivity; shared boundary struts need a consistent emitting-cell rule so the same physical edge is not duplicated. Cell size, repeat extents and strut thickness must be meaningful for the constructor's contract.
+A unit cell stores normalized node coordinates and struts that name pairs of nodes. Tiling places that cell in the world and repeats the connectivity. Shared boundary struts need one emitting-cell rule, or the same physical edge is stored twice. Cell size, repeat extents, and strut thickness have to satisfy the constructor you are calling.
 
-`StrutSdf3D` describes distance-like geometry around a strut list. Graded structures vary radius through a field. TPMS families use periodic implicit equations; a named minimal-surface family and a finite trigonometric field do not prove that an arbitrary thickened, sampled or graded construction is an exact minimal surface or exact SDF. A network and a sheet choose different regions around the field.
+`StrutSdf3D` is distance-like geometry around a list of struts. A graded structure varies the radius through a field. A TPMS family uses a periodic implicit equation. Naming a minimal surface, or evaluating a finite trigonometric field, does not make an arbitrary thickened, sampled, or graded solid an exact minimal surface or an exact signed distance. A network and a sheet keep different regions of that field.
 
-Example: doubling the world cell size doubles strut spacing. Doubling only a noise frequency halves its feature scale. These parameters act on opposite sides of a domain mapping; do not treat both as a generic “detail” knob.
+Doubling the world cell size doubles strut spacing. Doubling only a noise frequency halves the feature scale. The two parameters sit on opposite sides of the domain mapping. They are not one "detail" control.
 
-## Related work
+## Where to look
 
-[PBRT's textures and sampling chapters](https://pbr-book.org/4ed/contents) offer related procedural-field ideas. [CGAL's geometry packages](https://doc.cgal.org/latest/Manual/packages.html) provide a contrast between implicit geometry and explicit connectivity. Plato's field construction is not a claim of manufacturing validation, structural strength or certified minimal-surface accuracy.
+- [Noise types](../../api/geometry/noise.types.md) and [noise bodies](../../api/geometry/noise.library.md)
+- [Lattice types](../../api/geometry/lattices.types.md) and [lattice bodies](../../api/geometry/lattices.library.md)
+
+[PBRT's textures and sampling chapters](https://pbr-book.org/4ed/contents) discuss procedural fields, and [CGAL's geometry packages](https://doc.cgal.org/latest/Manual/packages.html) separate implicit geometry from explicit connectivity. Building one of these fields is not a manufacturing check, a strength check, or a certificate that a surface is minimal.

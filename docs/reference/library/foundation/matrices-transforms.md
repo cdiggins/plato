@@ -1,25 +1,28 @@
 # Matrices, rotations and transforms
 
-Read [matrix types](../../api/foundation/matrices.types.md), [interfaces](../../api/foundation/matrices.concepts.md), [matrix bodies](../../api/foundation/matrices.library.md), [matrix operations](../../api/foundation/matrices-ops.library.md), [rotation types](../../api/foundation/rotations.types.md), [rotation operations](../../api/foundation/rotations-ops.library.md), [transform types](../../api/foundation/transforms.types.md), [interfaces](../../api/foundation/transforms.concepts.md) and [transform bodies](../../api/foundation/transforms.library.md).
+Plato uses row vectors: `v' = v M`.
 
 ## Rows and application order
 
-Plato uses row vectors: `v' = v M`. The element at zero-based `(r,c)` is component `c` of stored row `r`; named `Row1` is row index zero. Matrix composition applies left to right: `v(A B)=(v A) B`. An affine homogeneous matrix represents translation in addition to a linear transformation; a vector and a point differ in how translation applies.
+The element at zero-based `(r,c)` is component `c` of stored row `r`. Named `Row1` is row index zero. Matrix composition applies left to right: `v(A B)=(v A) B`. An affine homogeneous matrix represents translation in addition to a linear transformation. A vector and a point differ in how translation applies. Layout and the world frame are specified by the [global conventions](../../../../stdlib/CONVENTIONS.md). [System.Numerics.Matrix4x4](https://learn.microsoft.com/en-us/dotnet/api/system.numerics.matrix4x4) is the intended matrix-layout and row-vector interoperation model.
 
-Quaternions introduce an intentional order difference: their Hamilton product `a.Multiply(b)` applies `b` first. `Concatenate(a,b)` applies `a` first. `Compose(first,second)` is the library's representation-independent “first, then second” spelling. Never transfer multiplication order solely from matrices to quaternions.
+Quaternions introduce an intentional order difference. Their Hamilton product `a.Multiply(b)` applies `b` first. `Concatenate(a,b)` applies `a` first. `Compose(first,second)` is the library's representation-independent "first, then second" spelling. Never transfer multiplication order solely from matrices to quaternions.
 
-The transform interfaces define a hierarchy: a rotation is rigid; a rigid map preserves distances and angles; an affine map preserves lines and parallelism but may shear or scale. Converting a general matrix to a pose requires the stated rigidity precondition. A singular matrix has no inverse. A negative determinant reverses orientation and face winding.
+The transform interfaces define a hierarchy. A rotation is rigid. A rigid map preserves distances and angles. An affine map preserves lines and parallelism but may shear or scale. Converting a general matrix to a pose requires the stated rigidity precondition. A singular matrix has no inverse. A negative determinant reverses orientation and face winding. Formulas written for column vectors, including [PBRT's transformation chapter](https://www.pbr-book.org/4ed/Geometry_and_Transformations/Transformations), must be transposed, and the composition order reconsidered, before use in Plato.
 
-## Placement is not Euler naming
+## Euler angles and placement
 
-World space is right-handed and Z-up. Euler names are separately specified: yaw is about Y, pitch about X, roll about Z; `RotationOrder` lists first-applied fixed-world axes first. Do not reinterpret yaw as “rotation around the world up axis” merely because another engine does so.
+World space is right-handed and Z-up. Euler names are separately specified: yaw is about Y, pitch about X, and roll about Z. `RotationOrder` lists first-applied fixed-world axes first. Do not reinterpret yaw as "rotation around the world up axis" merely because another engine does so.
 
-`IAffine2D/3D`, `IRigid2D/3D` and `IRotational3D` identify faithful conversions to common representations. They allow composition across representations without inventing a sampling resolution. Arbitrary point deformations are broader; see [fields and deformations](../geometry/fields.md).
+`IAffine2D/3D`, `IRigid2D/3D`, and `IRotational3D` identify faithful conversions to common representations. They allow composition across representations without inventing a sampling resolution. Arbitrary point deformations are broader. See [fields and deformations](../geometry/fields.md).
 
 ## Numerical and interface limits
 
-Dense, sparse, symmetric and banded records have distinct layout contracts. Read the relevant declaration before constructing storage. The [generic numeric helpers](../../api/foundation/numeric-structures.library.md) explicitly note a generic transpose construction gap: element access alone cannot manufacture an arbitrary implementing matrix. Concrete overloads must be inspected independently.
+Dense, sparse, symmetric, and banded records have distinct layout contracts. Read the relevant declaration before constructing storage. The generic numeric helpers explicitly note a generic transpose construction gap: element access alone cannot manufacture an arbitrary implementing matrix. Concrete overloads must be inspected independently.
 
-## Related work
+## Where to look
 
-[System.Numerics.Matrix4x4](https://learn.microsoft.com/en-us/dotnet/api/system.numerics.matrix4x4) is the intended matrix-layout and row-vector interoperation model. [PBRT's transformation chapter](https://www.pbr-book.org/4ed/Geometry_and_Transformations/Transformations) is useful mathematics, but formulas written for column vectors must be transposed and composition order reconsidered before use in Plato.
+- [Matrix types](../../api/foundation/matrices.types.md), [matrix interfaces](../../api/foundation/matrices.concepts.md), [matrix bodies](../../api/foundation/matrices.library.md), and [matrix operations](../../api/foundation/matrices-ops.library.md)
+- [Rotation types](../../api/foundation/rotations.types.md) and [rotation operations](../../api/foundation/rotations-ops.library.md)
+- [Transform types](../../api/foundation/transforms.types.md), [transform interfaces](../../api/foundation/transforms.concepts.md), and [transform bodies](../../api/foundation/transforms.library.md)
+- [Generic numeric helpers](../../api/foundation/numeric-structures.library.md)

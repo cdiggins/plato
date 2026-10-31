@@ -33,10 +33,18 @@ errors before dependency installation.
 
 - `src/navigation.js` parses hash routes, derives heading slugs, builds the hierarchical folder tree, and searches page titles and Markdown bodies.
 - `src/main.jsx` owns route state, the expandable navigation, Markdown rendering, Mermaid rendering, and raw Markdown download.
-- `src/style.css` contains the responsive dark navigation and light reading surface. Add future playgrounds as separate reader panels that consume the same page record shape.
+- `src/style.css` lays out the navigation and the reading surface. Every colour, font, spacing step and radius in it is a custom property from the [brand tokens](../../docs/brand/tokens.json); the builder writes them to `public/brand/tokens.css` and copies the mark beside it, so the stylesheet never restates a brand value. Dark is the default theme; the light theme applies when the viewer prefers it and in print. Add future playgrounds as separate reader panels that consume the same page record shape.
 
 Routes use `#/PAGE_ID` and `#/PAGE_ID@HEADING_SLUG`. The source revision and page path come from the generator's data. The reader currently offers search over titles and page bodies, page-level active navigation, a static heading outline, and browser-native history through the hash.
 
+## Reader features
+
+- Teaching-order navigation (Start → Language → Library → API → …) with human section labels.
+- Syntax coloring for `plato` and `csharp` fences, with Copy and a language label.
+- Symbol links from the builder's API index for known type and function names in code and inline `` `code` ``.
+- Clickable breadcrumbs, source path → GitHub, and Previous/Next on guide chapters.
+- Search results include a short body snippet.
+
 ## Limits
 
-Search is a simple in-memory term match and does not rank exact phrases or highlight matches. The heading outline is derived from Markdown heading lines, so unusual heading syntax may not be reflected there even though Markdown renders it. Reader assets are bundled locally; no remote fonts, scripts, or runtime data services are used.
+Search is a simple in-memory term match and does not rank exact phrases. Symbol links prefer pages titled for the name and foundation over legacy; ambiguous prose identifiers stay plain text. The heading outline is derived from Markdown heading lines, so unusual heading syntax may not be reflected there even though Markdown renders it. Reader assets are bundled locally, including the three brand typefaces from their `@fontsource` packages; no remote fonts, scripts, or runtime data services are used. There is no theme switch in the page; the theme follows the viewer's system preference.

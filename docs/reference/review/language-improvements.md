@@ -1,10 +1,17 @@
 # Possible language improvements
 
-This is a running design register requested during the reference audit. An entry is a candidate,
+This register lists design candidates from the reference audit. An entry is a candidate,
 not part of Plato's accepted semantics and not authorization to change the compiler.
 [plato-524](../../../tracker/issues/plato-524.md) tracks triage. The
 [discrepancy register](../implementation/discrepancies.md) separately records conflicting claims
 and implementation defects; correcting a stale document does not require redesigning the language.
+
+The [Rust ownership chapter](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html)
+is useful when comparing static guarantees with Plato's runtime-checked affine builders.
+[Software Foundations](https://softwarefoundations.cis.upenn.edu/)
+shows how preservation and progress obligations can be stated for a small calculus.
+Neither comparison establishes a theorem about the full Plato compiler. The candidates below
+must be tested against Plato's own scientific-library needs and existing decisions.
 
 ## Validate invariant-bearing values at construction
 
@@ -118,12 +125,3 @@ or bind the subject once during lowering if single evaluation is intended.
 change or fresh local, and compatibility tests. The audit observation is not itself a new rule.
 **Evidence.** `ElaborateMatch` in the [elaborator](../../../src/Plato.Compiler/Checking/Elaborator.cs).
 **State:** captured for triage; settle and reproduce observable behavior before changing lowering.
-
-## Related work
-
-The [Rust ownership chapter](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html)
-is useful when comparing static guarantees with Plato's runtime-checked affine builders.
-[Software Foundations](https://softwarefoundations.cis.upenn.edu/)
-shows how preservation and progress obligations can be stated for a small calculus.
-Neither comparison establishes a theorem about the full Plato compiler. Design candidates above
-must be tested against Plato's own scientific-library needs and existing decisions.

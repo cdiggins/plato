@@ -1,6 +1,9 @@
 # Reading and writing source
 
-A Plato file is a sequence of declarations, with whitespace and `//` comments between tokens. Names are case-sensitive. Follow the library's naming convention: types and functions use descriptive PascalCase names, parameters and locals use camelCase. Convention is not a separate type rule.
+A Plato file is a sequence of declarations, with whitespace and `//` comments
+between tokens. Names are case-sensitive. The library convention uses descriptive
+PascalCase for types and functions, and camelCase for parameters and locals. That
+convention is not a type rule.
 
 ```plato
 // A position and its timestamp.
@@ -14,7 +17,10 @@ library Observations {
 }
 ```
 
-A colon introduces a type annotation. Semicolons terminate field declarations, expression bodies, and statements. Braces group declaration bodies or statement blocks. Commas separate arguments, fields in tuple expressions, generic parameters, and bounds.
+A colon introduces a type annotation. A semicolon terminates a field declaration,
+an expression body, or a statement. Braces group a declaration body or a statement
+block. Commas separate arguments, fields in a tuple expression, generic parameters,
+and bounds.
 
 ## Signature shape
 
@@ -24,9 +30,15 @@ Name(parameter: Type, ...): ResultType { statements }
 Name(parameter: Type, ...): ResultType;
 ```
 
-The `where` clause is optional. The last form has no body and creates a runtime obligation; ordinary library functions need bodies. Function parameters and return types are explicit. Local and lambda types are normally inferred.
+The `where` clause is optional. The last form has no body. It creates a runtime
+obligation. An ordinary library function needs a body. Function parameters and
+return types are explicit. The compiler normally infers the types of locals and of
+lambda parameters.
 
-A type expression is a named type, an application such as `Array<Point2D>`, or a signature variable such as `$T`. Declaration parameters use bare `T` in their own declaration; free generic variables in library signatures use `$T`. See [generics](generics.md).
+A type expression is a named type, an application such as `Array<Point2D>`, or a
+signature variable such as `$T`. A declaration parameter uses bare `T` inside its
+own declaration. A free generic variable in a library signature uses `$T`. See
+[generics](generics.md).
 
 ## Literals
 
@@ -40,14 +52,26 @@ A type expression is a named type, an application such as `Array<Point2D>`, or a
 | `[1, 2, 3]` | Immutable array expression |
 | `(1.0, 2.0)` | Tuple expression |
 
-A minus sign is an operator applied to a literal, not part of the unsigned token. Profile choice affects the representable value of numeric literals. Prefer ordinary decimal syntax shown here. The tokenizer also recognizes C#-like suffixes, hexadecimal, binary, and escape spellings; recognizing a token is not a guarantee of portable checked semantics for every spelling. The [grammar audit](../implementation/grammar.md) identifies that boundary.
+A minus sign is an operator applied to a literal, not part of the unsigned token.
+The numeric profile changes which values a numeric literal can represent. Prefer
+the ordinary decimal syntax in the table. The tokenizer also recognizes C#-like
+suffixes, hexadecimal, binary, and escape spellings. Recognizing a token does not
+guarantee portable checked semantics for every spelling. The
+[grammar audit](../implementation/grammar.md) identifies that boundary.
 
 ## Parentheses and access
 
-`(e)` groups one expression. `(e0, e1)` constructs a tuple. `a.F(b)` means `F(a, b)`; `a.F` means `F(a)` when it names a no-extra-argument member. `a[i]` means `At(a, i)`. These forms are elaborated into ordinary calls rather than separate object-oriented dispatch operations.
+`(e)` groups one expression. `(e0, e1)` constructs a tuple. `a.F(b)` means `F(a, b)`.
+`a.F` means `F(a)` when the member takes no extra argument. `a[i]` means `At(a, i)`.
+The compiler elaborates these forms into ordinary calls. They are not a separate
+object-oriented dispatch.
 
-The grammar accepts more C#-shaped forms than the checked language supports. Never infer support from a successful parse alone. [Unsupported forms](diagnostics.md) and [the grammar](../implementation/grammar.md) give the supported subset and source evidence.
+Type annotations are postfix (`x: Number`). A body may be an expression. A member
+call is receiver-first syntax for a free function. The punctuation resembles the
+[C# expression grammar](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/expressions).
+C# casts, visibility modifiers, and exception syntax are not Plato syntax.
 
-## Related work
-
-The punctuation resembles the [C# expression grammar](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/expressions), but type annotations are postfix (`x: Number`), bodies may be expression-based, and a member call is receiver-first free-function syntax. C# casts, visibility modifiers, and exception syntax cannot be imported by analogy.
+The grammar accepts more C#-shaped forms than the checked language supports. A
+successful parse does not mean the form is supported.
+[Unsupported forms](diagnostics.md) and [the grammar](../implementation/grammar.md)
+give the supported subset and the source evidence.

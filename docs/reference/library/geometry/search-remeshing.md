@@ -1,23 +1,26 @@
 # Spatial search and mesh reconstruction
 
-Read [spatial interfaces](../../api/geometry/spatial.concepts.md), [spatial records](../../api/geometry/spatial-structures.types.md), [spatial bodies](../../api/geometry/spatial-structures.library.md), [remeshing records](../../api/geometry/remeshing.types.md) and [remeshing bodies](../../api/geometry/remeshing.library.md). These are two algorithm families: locating candidates and rebuilding geometry.
+Spatial search and remeshing are different jobs. Search returns candidate indices. Remeshing returns a new mesh.
 
-## Broad phase selects candidates
+## A leaf box is not a surface hit
 
-BVHs, kd-trees, quadtrees, octrees and spatial hashes partition or enclose data for faster rejection. A BVH stores bounding nodes and a permutation of primitive indices; it need not store the primitives themselves. `CandidatesInBounds` can return false positives because an intersecting leaf is reported as a whole. Test the actual primitive in a narrow phase.
+A BVH, kd-tree, quadtree, octree, or spatial hash partitions or encloses data so queries can reject most of it. A BVH stores bounding nodes and a permutation of primitive indices. It does not have to store the primitives. `CandidatesInBounds` can return false positives, because an intersecting leaf is reported whole. Test the primitive itself in a narrow phase.
 
-The BVH ray query reports entry into a leaf box, **not a confirmed surface intersection**. Its surface-related fields use empty/synthetic values. Do not display that position or normal as a geometric hit without a primitive test. A nearest-neighbor result similarly needs the declared metric and search contract; a result record alone does not establish an optimal search implementation.
+The BVH ray query reports where the ray enters a leaf box. That is not a confirmed surface intersection. The surface fields on that hit are empty or synthetic. The position and the normal are not a geometric surface hit until a primitive test says so. A nearest-neighbor result likewise depends on the metric and the search contract the operation declares. The result record does not mean the search was an optimal implementation.
 
-Stored indices are meaningful relative to the source collection used to build the structure. Reordering or replacing geometry without rebuilding or updating bounds can invalidate queries. Empty trees and negative child references need explicit handling before node access.
+Stored indices refer to the collection used to build the structure. Reordering or replacing that geometry without rebuilding, or without updating bounds, invalidates later queries. An empty tree, or a negative child reference, has to be handled before you index a node.
 
-## Remeshing rebuilds a value
+## Remeshing returns a new mesh
 
-The reference remeshing design makes decisions against one unchanged input mesh and produces a new mesh. Splitting, collapsing, flipping, welding, subdivision, smoothing and decimation therefore must coordinate index remaps and conflict choices; they are not arbitrary in-place edits.
+The reference remeshing design reads one unchanged input mesh and produces a new mesh. Splitting, collapsing, flipping, welding, subdivision, smoothing, and decimation have to agree on index remaps and on which change wins. They are not free in-place edits of the input.
 
-An edge collapse needs topology assumptions such as a link condition. Smoothing can shrink geometry or move a boundary. Subdivision refines a control mesh; it does not automatically preserve an analytic surface. Quadric error measures are local approximation criteria, not a certified maximum Hausdorff-distance bound.
+An edge collapse needs topology assumptions such as a link condition. Smoothing can shrink the shape or move a boundary. Subdivision refines a control mesh. It does not automatically stay on an analytic surface. A quadric error is a local approximation criterion. It is not a certified maximum Hausdorff distance.
 
-The source explicitly builds topology by scanning corners against corners because no concrete keyed-container path is available there. That preprocessing is quadratic in corner count and can dominate every pass. Do not promise interactive processing of large scientific meshes based solely on the existence of a remeshing function.
+The source builds topology by scanning corners against corners, because no concrete keyed container is available there. That preprocessing is quadratic in the corner count and can dominate every pass. A remeshing function on its own is not a reason to expect interactive processing of a large mesh.
 
-## Related work
+## Where to look
 
-[CGAL's spatial-searching, acceleration and mesh-processing packages](https://doc.cgal.org/latest/Manual/packages.html) distinguish queries, predicates and reconstruction algorithms. Plato has related vocabulary, but performance and robustness must come from its own bodies and tests. [PBRT's acceleration structures](https://pbr-book.org/4ed/contents) illustrate the same separation between a box candidate and a true shape hit.
+- [Spatial interfaces](../../api/geometry/spatial.concepts.md), [spatial records](../../api/geometry/spatial-structures.types.md), and [spatial bodies](../../api/geometry/spatial-structures.library.md)
+- [Remeshing records](../../api/geometry/remeshing.types.md) and [remeshing bodies](../../api/geometry/remeshing.library.md)
+
+[CGAL's spatial-searching, acceleration, and mesh-processing packages](https://doc.cgal.org/latest/Manual/packages.html) separate queries, predicates, and reconstruction. Performance and robustness here have to come from these bodies and their tests. [PBRT's acceleration structures](https://pbr-book.org/4ed/contents) make the same split between a box candidate and a hit on the shape.

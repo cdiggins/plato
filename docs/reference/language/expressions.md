@@ -1,10 +1,10 @@
 # Expressions, operators, and conversions
 
-An expression computes a value. Literals, names, calls, field access, tuple and array construction, conditionals, lambdas, and `match` are expression forms. Their types are checked before execution; C#'s ability to compile a similar-looking expression is not a separate language rule.
+An **expression** computes a value. Literals, names, calls, field access, tuple and array construction, conditionals, lambdas, and `match` are expression forms. The checker types an expression before the interpreter evaluates it. Similar C# syntax is not a Plato rule.
 
 ## Operator names
 
-Operators are syntax for named functions. Overloads therefore use the same global resolution machinery as ordinary calls.
+An **operator** is syntax for a named function. The resolver uses the same overload machinery as an ordinary call.
 
 | Syntax | Function name |
 |---|---|
@@ -17,36 +17,38 @@ Operators are syntax for named functions. Overloads therefore use the same globa
 | `a && b`, `a \|\| b` | `And`, `Or`, with Boolean short circuiting |
 | `-a`, `!a`, `~a` | `Negative`, `Not`, `Complement` |
 
-An operator spelling does not create the corresponding overload. `Point2D + Point2D` is legal only if the program supplies a matching operation. Units, geometry, and dimensional meaning come from declared types and functions.
+The spelling does not create the overload. `Point2D + Point2D` is legal only when the program supplies a matching operation. Units and dimensional meaning come from the declared types and functions.
 
 ## Precedence and associativity
 
-Highest to lowest binary groups are multiplication/division/remainder; addition/subtraction; comparisons; equality; bitwise `&`; bitwise `^`; bitwise `|`; Boolean `&&`; Boolean `||`. Binary operators in the supported table are left-associative. Thus `a - b + c` means `(a - b) + c`, while `a + b * c` means `a + (b * c)`.
+From highest to lowest, the binary groups are multiplication, division, and remainder; addition and subtraction; comparisons; equality; bitwise `&`; bitwise `^`; bitwise `|`; Boolean `&&`; Boolean `||`. Binary operators in that table associate to the left. `a - b + c` means `(a - b) + c`. `a + b * c` means `a + (b * c)`.
 
-Member access, calls, and indexing bind more tightly than unary operators; unary operators bind more tightly than binary operators. The conditional `condition ? yes : no` selects one branch. Parenthesize complex conditions and nested conditionals for clarity. Shift precedences appear in the operator implementation but shifts do not have a complete ordinary operator-name mapping; they are not thereby supported language operations.
+Member access, calls, and indexing bind more tightly than unary operators. Unary operators bind more tightly than binary operators. The conditional `condition ? yes : no` selects one branch. Parenthesize a complex condition or a nested conditional.
 
-[Operators](../../../src/Plato.AST/Operators.cs) is the exact mapping and precedence authority; [AstNodeFactory](../../../src/Plato.AST/AstNodeFactory.cs) rebalances the parser's recursive tree. Do not take the raw parse tree's recursion direction as the language's associativity.
+Shift precedences appear in the operator implementation, but shifts do not have a complete ordinary operator-name mapping. They are not thereby supported language operations.
+
+[Operators](../../../src/Plato.AST/Operators.cs) is the mapping and precedence authority. [AstNodeFactory](../../../src/Plato.AST/AstNodeFactory.cs) rebalances the parser's recursive tree, and associativity follows that tree. The raw parse recursion is not the language's associativity.
+
+[C# operator precedence](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/) is familiar background for this grouping. Plato's operator set is the table above. Compound assignment, `++`, and `--` are [unsupported forms](diagnostics.md).
 
 ## Conditions and arrays
 
-A condition has type `Boolean`. Both branches of `c ? a : b` must unify to a single result type; it is not an invitation to return unrelated values because the host has an object base type. Use a sum to represent alternatives with different payload types.
+A condition has type `Boolean`. Both branches of `c ? a : b` must unify to one result type. Unrelated branch types are not allowed merely because the host has an object base type. Alternatives with different payload types are a [sum](sums.md).
 
-`[e0, e1, ...]` constructs `Array<T>` by unifying element types. Empty arrays need enough context to determine their element type. Indexing `xs[i]` is `At(xs, i)` and follows that function's partiality and bounds behavior. It does not promise Python-style negative indices, slicing, or multidimensional storage.
+`[e0, e1, ...]` constructs `Array<T>` by unifying the element types. An empty array needs enough context to determine the element type. `xs[i]` is `At(xs, i)` and follows that function's partiality and bounds behavior. This does not promise Python-style negative indices, slicing, or multidimensional storage.
 
 ## Conversions
 
-A one-argument function named after its result type defines a conversion:
+A one-argument function named after its result type is a **conversion**:
 
 ```plato
 Number(x: Integer): Number => ...;
 ```
 
-This is a signature illustration; the actual primitive operation belongs to the intrinsic contract. A user conversion can have an ordinary body. The resolver may insert conversions at argument and return boundaries. They are less preferred than exact, generic, and interface matches. Tuple-to-product construction is another explicit compatibility path.
+The signature above is an illustration. The primitive operation belongs to the intrinsic contract. A user conversion can have an ordinary body. The resolver may insert a conversion at an argument boundary or a return boundary. An exact match, a generic match, or an interface match is preferred over a conversion. Tuple-to-product construction is a separate compatibility path; see [products](products.md).
 
-A conversion has behavior: it can round, overflow, or fault. It is not mathematical equality. The elaborator records an inserted conversion as `TirCoerce`, including source and target types and the chosen conversion function. Writers should consume that decision rather than invent a different cast during printing.
+A conversion can round, overflow, or fault. It is not mathematical equality. The elaborator records an inserted conversion as `TirCoerce`, with the source type, the target type, and the chosen conversion function. A writer should consume that decision rather than print a different cast.
 
-No general promise is made that arbitrary chains of user conversions are searched transitively. For predictable code, make an intermediate conversion explicit and inspect [Solver.Coercion](../../../src/Plato.Compiler/Checking/Solver.Coercion.cs) and the compilation relation mechanism when implementing compatibility.
+There is no general promise that arbitrary chains of user conversions are searched transitively. Write an intermediate conversion explicitly. [Solver.Coercion](../../../src/Plato.Compiler/Checking/Solver.Coercion.cs) and the compilation relation mechanism are the implementation of that compatibility.
 
-## Related work
-
-[C# operator precedence](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/) is familiar background for the grouping, but Plato's operator set and desugaring table are authoritative. In particular, compound assignment and increment/decrement are not imported from C#. Conversions resemble C# user-defined conversion operators in the generated surface; the resolver chooses them according to Plato's own cost model.
+In the generated C# surface, a conversion resembles a user-defined conversion operator. The resolver chooses it by Plato's cost model.

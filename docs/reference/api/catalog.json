@@ -4675,7 +4675,7 @@
     },
     {
       "source": "stdlib/foundation/intrinsics.library.plato",
-      "sha256": "8654f13a218c2e07b9f3285953517c9fa4b4fd709698e6db085901ee244e2885",
+      "sha256": "91a8f05a3598bd96d127e1979be26dfacc4a6f47ad2087418396d8363ef76d94",
       "tier": "foundation",
       "page": "docs/reference/api/foundation/intrinsics.library.md",
       "entries": [
@@ -4683,521 +4683,609 @@
           "name": "Add",
           "kind": "function",
           "start": 0,
-          "end": 2357,
+          "end": 2351,
           "line": 1,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Subtract",
           "kind": "function",
-          "start": 2357,
-          "end": 2401,
+          "start": 2351,
+          "end": 2395,
           "line": 48,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Multiply",
           "kind": "function",
-          "start": 2401,
-          "end": 2445,
+          "start": 2395,
+          "end": 2439,
           "line": 49,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Divide",
           "kind": "function",
-          "start": 2445,
-          "end": 2487,
+          "start": 2439,
+          "end": 2481,
           "line": 50,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Modulo",
           "kind": "function",
-          "start": 2487,
-          "end": 2529,
+          "start": 2481,
+          "end": 2523,
           "line": 51,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Negative",
           "kind": "function",
-          "start": 2529,
-          "end": 2562,
+          "start": 2523,
+          "end": 2556,
           "line": 52,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "LessThanOrEquals",
           "kind": "function",
-          "start": 2562,
-          "end": 2891,
+          "start": 2556,
+          "end": 2885,
           "line": 53,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Equals",
           "kind": "function",
-          "start": 2891,
-          "end": 2934,
+          "start": 2885,
+          "end": 2928,
           "line": 59,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Hash",
           "kind": "function",
-          "start": 2934,
-          "end": 3026,
+          "start": 2928,
+          "end": 3020,
           "line": 60,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Floor",
           "kind": "function",
-          "start": 3026,
-          "end": 3249,
+          "start": 3020,
+          "end": 3243,
           "line": 63,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Round",
           "kind": "function",
-          "start": 3249,
-          "end": 3299,
+          "start": 3243,
+          "end": 3293,
           "line": 68,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Sqrt",
           "kind": "function",
-          "start": 3299,
-          "end": 3564,
+          "start": 3293,
+          "end": 3558,
           "line": 69,
+          "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
+        },
+        {
+          "name": "Cbrt",
+          "kind": "function",
+          "start": 3558,
+          "end": 3708,
+          "line": 74,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Exp",
           "kind": "function",
-          "start": 3564,
-          "end": 3595,
-          "line": 74,
+          "start": 3708,
+          "end": 3739,
+          "line": 76,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "NaturalLog",
           "kind": "function",
-          "start": 3595,
-          "end": 3633,
-          "line": 75,
+          "start": 3739,
+          "end": 3777,
+          "line": 77,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Pow",
           "kind": "function",
-          "start": 3633,
-          "end": 3679,
-          "line": 76,
+          "start": 3777,
+          "end": 3823,
+          "line": 78,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "FusedMultiplyAdd",
           "kind": "function",
-          "start": 3679,
-          "end": 3745,
-          "line": 77,
+          "start": 3823,
+          "end": 3889,
+          "line": 79,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Sin",
           "kind": "function",
-          "start": 3745,
-          "end": 4111,
-          "line": 78,
+          "start": 3889,
+          "end": 4255,
+          "line": 80,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Cos",
           "kind": "function",
-          "start": 4111,
-          "end": 4142,
-          "line": 85,
+          "start": 4255,
+          "end": 4286,
+          "line": 87,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Atan2Radians",
           "kind": "function",
-          "start": 4142,
-          "end": 4193,
-          "line": 86,
+          "start": 4286,
+          "end": 4337,
+          "line": 88,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "MinValue",
           "kind": "function",
-          "start": 4193,
-          "end": 4359,
-          "line": 87,
+          "start": 4337,
+          "end": 4503,
+          "line": 89,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "MaxValue",
           "kind": "function",
-          "start": 4359,
-          "end": 4392,
-          "line": 91,
+          "start": 4503,
+          "end": 4536,
+          "line": 93,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Epsilon",
           "kind": "function",
-          "start": 4392,
-          "end": 4424,
-          "line": 92,
+          "start": 4536,
+          "end": 4568,
+          "line": 94,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Pi",
           "kind": "function",
-          "start": 4424,
-          "end": 4451,
-          "line": 93,
+          "start": 4568,
+          "end": 4595,
+          "line": 95,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "IsNaN",
           "kind": "function",
-          "start": 4451,
-          "end": 4556,
-          "line": 94,
+          "start": 4595,
+          "end": 4700,
+          "line": 96,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "IsInfinite",
           "kind": "function",
-          "start": 4556,
-          "end": 4595,
-          "line": 97,
+          "start": 4700,
+          "end": 4739,
+          "line": 99,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "ToInteger",
           "kind": "function",
-          "start": 4595,
-          "end": 4634,
-          "line": 98,
+          "start": 4739,
+          "end": 4778,
+          "line": 100,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Add",
           "kind": "function",
-          "start": 4634,
-          "end": 4828,
-          "line": 100,
+          "start": 4778,
+          "end": 4972,
+          "line": 102,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Subtract",
           "kind": "function",
-          "start": 4828,
-          "end": 4875,
-          "line": 108,
+          "start": 4972,
+          "end": 5019,
+          "line": 110,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Multiply",
           "kind": "function",
-          "start": 4875,
-          "end": 4922,
-          "line": 109,
+          "start": 5019,
+          "end": 5066,
+          "line": 111,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Divide",
           "kind": "function",
-          "start": 4922,
-          "end": 4967,
-          "line": 110,
+          "start": 5066,
+          "end": 5111,
+          "line": 112,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Modulo",
           "kind": "function",
-          "start": 4967,
-          "end": 5012,
-          "line": 111,
+          "start": 5111,
+          "end": 5156,
+          "line": 113,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Negative",
           "kind": "function",
-          "start": 5012,
-          "end": 5047,
-          "line": 112,
+          "start": 5156,
+          "end": 5191,
+          "line": 114,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "LessThanOrEquals",
           "kind": "function",
-          "start": 5047,
-          "end": 5103,
-          "line": 113,
+          "start": 5191,
+          "end": 5247,
+          "line": 115,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Equals",
           "kind": "function",
-          "start": 5103,
-          "end": 5148,
-          "line": 115,
+          "start": 5247,
+          "end": 5292,
+          "line": 117,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Hash",
           "kind": "function",
-          "start": 5148,
-          "end": 5182,
-          "line": 116,
+          "start": 5292,
+          "end": 5326,
+          "line": 118,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "BitwiseAnd",
           "kind": "function",
-          "start": 5182,
-          "end": 5232,
-          "line": 117,
+          "start": 5326,
+          "end": 5376,
+          "line": 119,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "BitwiseOr",
           "kind": "function",
-          "start": 5232,
-          "end": 5280,
-          "line": 119,
+          "start": 5376,
+          "end": 5424,
+          "line": 121,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "BitwiseXor",
           "kind": "function",
-          "start": 5280,
-          "end": 5329,
-          "line": 120,
+          "start": 5424,
+          "end": 5473,
+          "line": 122,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "BitwiseNot",
           "kind": "function",
-          "start": 5329,
-          "end": 5366,
-          "line": 121,
+          "start": 5473,
+          "end": 5510,
+          "line": 123,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "ShiftLeft",
           "kind": "function",
-          "start": 5366,
-          "end": 5417,
-          "line": 122,
+          "start": 5510,
+          "end": 5561,
+          "line": 124,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "ShiftRight",
           "kind": "function",
-          "start": 5417,
-          "end": 5469,
-          "line": 123,
+          "start": 5561,
+          "end": 5613,
+          "line": 125,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "MinValue",
           "kind": "function",
-          "start": 5469,
-          "end": 5505,
-          "line": 124,
+          "start": 5613,
+          "end": 5649,
+          "line": 126,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "MaxValue",
           "kind": "function",
-          "start": 5505,
-          "end": 5540,
-          "line": 126,
+          "start": 5649,
+          "end": 5684,
+          "line": 128,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "ToNumber",
           "kind": "function",
-          "start": 5540,
-          "end": 5578,
-          "line": 127,
+          "start": 5684,
+          "end": 5722,
+          "line": 129,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "And",
           "kind": "function",
-          "start": 5578,
-          "end": 5844,
-          "line": 129,
+          "start": 5722,
+          "end": 5988,
+          "line": 131,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Or",
           "kind": "function",
-          "start": 5844,
-          "end": 5885,
-          "line": 138,
+          "start": 5988,
+          "end": 6029,
+          "line": 140,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "Not",
           "kind": "function",
-          "start": 5885,
-          "end": 5915,
-          "line": 139,
+          "start": 6029,
+          "end": 6059,
+          "line": 141,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "LessThanOrEquals",
           "kind": "function",
-          "start": 5915,
-          "end": 6309,
-          "line": 140,
+          "start": 6059,
+          "end": 6614,
+          "line": 142,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "LessThanOrEquals",
           "kind": "function",
-          "start": 6309,
-          "end": 6362,
-          "line": 150,
+          "start": 6614,
+          "end": 6667,
+          "line": 154,
           "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
-          "name": "Count",
+          "name": "FromCharacters",
           "kind": "function",
-          "start": 6362,
-          "end": 7244,
-          "line": 151,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 6667,
+          "end": 7049,
+          "line": 155,
+          "page": "docs/reference/api/foundation/intrinsics.library/001-add.md"
         },
         {
           "name": "At",
           "kind": "function",
-          "start": 7244,
-          "end": 7283,
+          "start": 7049,
+          "end": 7534,
+          "line": 161,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
+        },
+        {
+          "name": "ToInteger",
+          "kind": "function",
+          "start": 7534,
+          "end": 7667,
           "line": 168,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
+        },
+        {
+          "name": "ToCharacter",
+          "kind": "function",
+          "start": 7667,
+          "end": 8075,
+          "line": 171,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
+        },
+        {
+          "name": "Substring",
+          "kind": "function",
+          "start": 8075,
+          "end": 8725,
+          "line": 177,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
+        },
+        {
+          "name": "IsNumberText",
+          "kind": "function",
+          "start": 8725,
+          "end": 9375,
+          "line": 186,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
+        },
+        {
+          "name": "NumberFromText",
+          "kind": "function",
+          "start": 9375,
+          "end": 9935,
+          "line": 195,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
+        },
+        {
+          "name": "IsIntegerText",
+          "kind": "function",
+          "start": 9935,
+          "end": 10461,
+          "line": 203,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
+        },
+        {
+          "name": "IntegerFromText",
+          "kind": "function",
+          "start": 10461,
+          "end": 10864,
+          "line": 211,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
+        },
+        {
+          "name": "NumberToShortestString",
+          "kind": "function",
+          "start": 10864,
+          "end": 11653,
+          "line": 217,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
+        },
+        {
+          "name": "Count",
+          "kind": "function",
+          "start": 11653,
+          "end": 12535,
+          "line": 227,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
+        },
+        {
+          "name": "At",
+          "kind": "function",
+          "start": 12535,
+          "end": 12574,
+          "line": 244,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "MapRange",
           "kind": "function",
-          "start": 7283,
-          "end": 7347,
-          "line": 169,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 12574,
+          "end": 12638,
+          "line": 245,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "Reduce",
           "kind": "function",
-          "start": 7347,
-          "end": 7413,
-          "line": 170,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 12638,
+          "end": 12704,
+          "line": 246,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "FlatMap",
           "kind": "function",
-          "start": 7413,
-          "end": 7485,
-          "line": 171,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 12704,
+          "end": 12776,
+          "line": 247,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "Count",
           "kind": "function",
-          "start": 7485,
-          "end": 8175,
-          "line": 172,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 12776,
+          "end": 13466,
+          "line": 248,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "At",
           "kind": "function",
-          "start": 8175,
-          "end": 8281,
-          "line": 186,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 13466,
+          "end": 13572,
+          "line": 262,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "Add",
           "kind": "function",
-          "start": 8281,
-          "end": 8396,
-          "line": 189,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 13572,
+          "end": 13687,
+          "line": 265,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "AddRange",
           "kind": "function",
-          "start": 8396,
-          "end": 8561,
-          "line": 192,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 13687,
+          "end": 13852,
+          "line": 268,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "Set",
           "kind": "function",
-          "start": 8561,
-          "end": 8730,
-          "line": 196,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 13852,
+          "end": 14021,
+          "line": 272,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "Freeze",
           "kind": "function",
-          "start": 8730,
-          "end": 8918,
-          "line": 200,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 14021,
+          "end": 14209,
+          "line": 276,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "EmptyList",
           "kind": "function",
-          "start": 8918,
-          "end": 9176,
-          "line": 204,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 14209,
+          "end": 14467,
+          "line": 280,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "Count",
           "kind": "function",
-          "start": 9176,
-          "end": 9329,
-          "line": 209,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 14467,
+          "end": 14620,
+          "line": 285,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "At",
           "kind": "function",
-          "start": 9329,
-          "end": 9442,
-          "line": 215,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 14620,
+          "end": 14733,
+          "line": 291,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "Set",
           "kind": "function",
-          "start": 9442,
-          "end": 9606,
-          "line": 218,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 14733,
+          "end": 14897,
+          "line": 294,
+          "page": "docs/reference/api/foundation/intrinsics.library/002-at.md"
         },
         {
           "name": "Freeze",
           "kind": "function",
-          "start": 9606,
-          "end": 11578,
-          "line": 222,
-          "page": "docs/reference/api/foundation/intrinsics.library/002-count.md"
+          "start": 14897,
+          "end": 16869,
+          "line": 298,
+          "page": "docs/reference/api/foundation/intrinsics.library/003-freeze.md"
         }
       ]
     },
@@ -8915,7 +9003,7 @@
     },
     {
       "source": "stdlib/foundation/primitives.library.plato",
-      "sha256": "911f2822036e345d21c55b8ee77638c0b4f79cf367b8674f44faea151c117b08",
+      "sha256": "e611a0074395259bb9b68bf685e6fb3f20fb5d36f4b0d88ac66856c6b4bd8e7d",
       "tier": "foundation",
       "page": "docs/reference/api/foundation/primitives.library.md",
       "entries": [
@@ -9315,223 +9403,223 @@
           "name": "Abs",
           "kind": "function",
           "start": 15486,
-          "end": 16971,
+          "end": 16972,
           "line": 364,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Sign",
           "kind": "function",
-          "start": 16971,
-          "end": 17151,
+          "start": 16972,
+          "end": 17152,
           "line": 395,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "CopySign",
           "kind": "function",
-          "start": 17151,
-          "end": 17384,
+          "start": 17152,
+          "end": 17385,
           "line": 400,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Min",
           "kind": "function",
-          "start": 17384,
-          "end": 17505,
+          "start": 17385,
+          "end": 17506,
           "line": 405,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Max",
           "kind": "function",
-          "start": 17505,
-          "end": 17627,
+          "start": 17506,
+          "end": 17628,
           "line": 409,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Square",
           "kind": "function",
-          "start": 17627,
-          "end": 17761,
+          "start": 17628,
+          "end": 17762,
           "line": 413,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Reciprocal",
           "kind": "function",
-          "start": 17761,
-          "end": 17973,
+          "start": 17762,
+          "end": 17974,
           "line": 420,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Cbrt",
           "kind": "function",
-          "start": 17973,
-          "end": 18241,
+          "start": 17974,
+          "end": 18242,
           "line": 425,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Ceiling",
           "kind": "function",
-          "start": 18241,
-          "end": 18466,
+          "start": 18242,
+          "end": 18467,
           "line": 431,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Truncate",
           "kind": "function",
-          "start": 18466,
-          "end": 18599,
+          "start": 18467,
+          "end": 18600,
           "line": 440,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Log",
           "kind": "function",
-          "start": 18599,
-          "end": 18830,
+          "start": 18600,
+          "end": 18831,
           "line": 444,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Log2",
           "kind": "function",
-          "start": 18830,
-          "end": 18934,
+          "start": 18831,
+          "end": 18935,
           "line": 453,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Log10",
           "kind": "function",
-          "start": 18934,
-          "end": 19040,
+          "start": 18935,
+          "end": 19041,
           "line": 457,
           "page": "docs/reference/api/foundation/primitives.library/003-abs.md"
         },
         {
           "name": "Tan",
           "kind": "function",
-          "start": 19040,
-          "end": 19352,
+          "start": 19041,
+          "end": 19353,
           "line": 461,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "Sinh",
           "kind": "function",
-          "start": 19352,
-          "end": 19508,
+          "start": 19353,
+          "end": 19509,
           "line": 471,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "Cosh",
           "kind": "function",
-          "start": 19508,
-          "end": 19613,
+          "start": 19509,
+          "end": 19614,
           "line": 475,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "Tanh",
           "kind": "function",
-          "start": 19613,
-          "end": 19710,
+          "start": 19614,
+          "end": 19711,
           "line": 479,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "AcosRadians",
           "kind": "function",
-          "start": 19710,
-          "end": 19887,
+          "start": 19711,
+          "end": 19888,
           "line": 483,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "AsinRadians",
           "kind": "function",
-          "start": 19887,
-          "end": 20062,
+          "start": 19888,
+          "end": 20063,
           "line": 487,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "AtanRadians",
           "kind": "function",
-          "start": 20062,
-          "end": 20183,
+          "start": 20063,
+          "end": 20184,
           "line": 491,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "AcoshRadians",
           "kind": "function",
-          "start": 20183,
-          "end": 20340,
+          "start": 20184,
+          "end": 20341,
           "line": 495,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "AsinhRadians",
           "kind": "function",
-          "start": 20340,
-          "end": 20499,
+          "start": 20341,
+          "end": 20500,
           "line": 499,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "AtanhRadians",
           "kind": "function",
-          "start": 20499,
-          "end": 20660,
+          "start": 20500,
+          "end": 20661,
           "line": 503,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "Zero",
           "kind": "function",
-          "start": 20660,
-          "end": 20935,
+          "start": 20661,
+          "end": 20936,
           "line": 507,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "One",
           "kind": "function",
-          "start": 20935,
-          "end": 21015,
+          "start": 20936,
+          "end": 21016,
           "line": 517,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "Tau",
           "kind": "function",
-          "start": 21015,
-          "end": 21152,
+          "start": 21016,
+          "end": 21153,
           "line": 521,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "E",
           "kind": "function",
-          "start": 21152,
-          "end": 21321,
+          "start": 21153,
+          "end": 21322,
           "line": 525,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         },
         {
           "name": "IsFinite",
           "kind": "function",
-          "start": 21321,
-          "end": 21497,
+          "start": 21322,
+          "end": 21498,
           "line": 530,
           "page": "docs/reference/api/foundation/primitives.library/004-tan.md"
         }
@@ -12790,6 +12878,54 @@
           "end": 5652,
           "line": 181,
           "page": "docs/reference/api/foundation/statistics.types/002-correlationcoefficient.md"
+        }
+      ]
+    },
+    {
+      "source": "stdlib/foundation/text.library.plato",
+      "sha256": "bd1b80a39917b50a545fd40e2bedd3bbdd66e9aaef113f05468efc6683bfc907",
+      "tier": "foundation",
+      "page": "docs/reference/api/foundation/text.library.md",
+      "entries": [
+        {
+          "name": "ParseNumber",
+          "kind": "function",
+          "start": 0,
+          "end": 781,
+          "line": 1,
+          "page": "docs/reference/api/foundation/text.library/001-parsenumber.md"
+        },
+        {
+          "name": "ParseInteger",
+          "kind": "function",
+          "start": 781,
+          "end": 1195,
+          "line": 17,
+          "page": "docs/reference/api/foundation/text.library/001-parsenumber.md"
+        }
+      ]
+    },
+    {
+      "source": "stdlib/foundation/text.types.plato",
+      "sha256": "fb31e0ce7ae7cb9734f0e56dbcd14eb78e06aa5ca67f2f287b2c704b3b963e38",
+      "tier": "foundation",
+      "page": "docs/reference/api/foundation/text.types.md",
+      "entries": [
+        {
+          "name": "NumberParse",
+          "kind": "type",
+          "start": 0,
+          "end": 617,
+          "line": 1,
+          "page": "docs/reference/api/foundation/text.types/001-numberparse.md"
+        },
+        {
+          "name": "IntegerParse",
+          "kind": "type",
+          "start": 617,
+          "end": 979,
+          "line": 22,
+          "page": "docs/reference/api/foundation/text.types/001-numberparse.md"
         }
       ]
     },

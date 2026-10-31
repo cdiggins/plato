@@ -1,25 +1,31 @@
 # Surfaces and differential geometry
 
-Read [surface and solid interfaces](../../api/geometry/surfaces-solids.concepts.md), [surface records](../../api/geometry/surfaces.types.md), [surface bodies](../../api/geometry/surfaces.library.md), [analytic surface records](../../api/geometry/surfaces-shapes.types.md) with [bodies](../../api/geometry/surfaces-shapes.library.md), and [differential-geometry records](../../api/geometry/differential-geometry.types.md).
+A parametric surface maps a UV coordinate to a 3D point. The preferred domain is usually the unit square. In the surface evaluators, U is the first direction, also called the profile or column direction, and V is the second, also called the sweep or row direction. `ClosedU` and `ClosedV` say whether that parameter seams shut. A mesh sampler has to honor them, or it leaves a gap or writes the seam twice.
 
-## Two parameters create a surface
+## A surface takes two parameters
 
-A parametric surface maps a UV coordinate to a 3D point. The preferred domain is usually the unit square. U is the first/profile/column direction and V the second/sweep/row direction in the surface evaluator convention. `ClosedU` and `ClosedV` state seam connectivity; a mesh sampler must use them to avoid an unintended gap or duplicate seam strip.
+These UV coordinates parameterize the geometry. Texture UVs also follow the top-left image origin, where V increases downward. A parameterized surface need not be a single-valued height field. A closed seam does not make a watertight volume.
 
-The UV labels here parameterize geometry. Texture UVs additionally use the [top-left origin convention](../../../../stdlib/CONVENTIONS.md#uv-origin--top-left-v-increases-downward). A parameterized surface need not be a single-valued height field, and a closed seam does not establish a closed watertight volume.
-
-Where derivatives exist, let `Su` and `Sv` be partial derivatives of position. The cross product `Su x Sv` supplies an oriented normal when nonzero. Its magnitude is the local area scale; normalize only if nondegenerate. A singular parameterization can have zero cross product even when the geometric surface itself is meaningful.
+Where the derivatives exist, `Su` and `Sv` are the partial derivatives of position. The cross product `Su x Sv` is an oriented normal when it is nonzero. Its magnitude is the local area scale. Normalize it only when it is nondegenerate. A singular parameterization can have a zero cross product on a surface that is still geometrically fine.
 
 ## Frames, curvature and jets
 
-A jet stores position and derivatives at a parameter value. Fundamental forms, a shape operator and principal curvatures describe local differential geometry; they are not interchangeable with sampled positions alone. Curvature uses reciprocal world-length units. A Frenet frame needs derivative and curvature assumptions; it is undefined at some straight or stationary configurations. A rotation-minimizing frame instead transports orientation along a curve and requires path-dependent information.
+A jet stores position and derivatives at one parameter value. Fundamental forms, a shape operator, and principal curvatures describe the surface locally. Sampled positions do not replace them. Curvature uses reciprocal world-length units. A Frenet frame needs derivative and curvature assumptions, and it is undefined on some straight or stationary configurations. A rotation-minimizing frame carries orientation along a curve, and that orientation depends on the path.
 
-## Approximation must remain visible
+## Sweeps and offsets approximate
 
-`SweptSurface` and `TubeSurface` currently use a deterministic fixed-up frame, while their intended description calls for a rotation-minimizing frame. The result may twist differently along a path. `OffsetSurface` estimates the base normal with central differences, because the base interface does not require analytic derivatives. A differentiable base does **not** make a finite difference an exact derivative; the source header's “exact” wording is too strong mathematically. Its step, boundary behavior and stability need numerical evaluation.
+`SweptSurface` and `TubeSurface` use a deterministic fixed-up frame. Their type descriptions call for a rotation-minimizing frame. The evaluated surface can twist relative to that intended frame along the path.
 
-Trimmed surfaces, subdivision schemes and elaborate named analytic surfaces each require the concrete source contract. A type carrying a subdivision or trim description is not a proof of a robust tessellator for every singularity and self-intersection.
+`OffsetSurface` estimates the base normal with central differences, because the base interface does not require analytic derivatives. The header calls that difference exact when the base is differentiable. A finite difference is not an analytic derivative. Near the boundary the samples are clamped, so the difference becomes one-sided. The step, the boundary, and the stability still need numerical evaluation.
 
-## Related work
+A trimmed surface, a subdivision scheme, or a named analytic surface follows the contract in its own source. A type that stores a subdivision or a trim is not a tessellator that handles every singularity and self-intersection.
 
-[CGAL's surface and geometry packages](https://doc.cgal.org/latest/Manual/packages.html) distinguish smooth geometry from meshes. [PBRT's shape chapters](https://pbr-book.org/4ed/contents) explain parameter derivatives and normals in rendering. Plato's stored differential records do not by themselves provide automatic differentiation or the robustness of either implementation.
+## Where to look
+
+- [Surface and solid interfaces](../../api/geometry/surfaces-solids.concepts.md)
+- [Surface records](../../api/geometry/surfaces.types.md) and [surface bodies](../../api/geometry/surfaces.library.md)
+- [Analytic surface records](../../api/geometry/surfaces-shapes.types.md) and [bodies](../../api/geometry/surfaces-shapes.library.md)
+- [Differential-geometry records](../../api/geometry/differential-geometry.types.md)
+- [UV origin convention](../../../../stdlib/CONVENTIONS.md#uv-origin--top-left-v-increases-downward)
+
+[CGAL's surface and geometry packages](https://doc.cgal.org/latest/Manual/packages.html) separate smooth geometry from meshes, and [PBRT's shape chapters](https://pbr-book.org/4ed/contents) cover parameter derivatives and normals in rendering. A stored differential record here is not automatic differentiation, and it does not carry either library's robustness.

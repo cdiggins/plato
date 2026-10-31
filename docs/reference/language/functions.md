@@ -1,62 +1,96 @@
 # Functions, receivers, and lambdas
 
-A function declares ordered parameters, a result type, and a computation. Parameters and results are explicit; locals and lambda parameters are normally inferred. An expression body returns its expression:
+A function has ordered parameters, a result type, and a computation. Parameters and
+the result type are explicit. The compiler normally infers locals and lambda
+parameters. An expression body returns its expression:
 
 ```plato
 Square(x: Number): Number => x * x;
 ```
 
-Functions live inside `library` or `interface` declarations. A block body supports local steps and explicit `return`; see [locals](state-and-builders.md). A declaration ending immediately in `;` has no body and asks the runtime to supply the operation. The library's intrinsic contract restricts where such declarations belong and which primitive types they may mention.
+Functions live in a `library` or an `interface`. A block body supports local steps
+and an explicit `return`. See [locals](state-and-builders.md). A declaration that ends
+immediately in `;` has no body. It asks the runtime to supply the operation. The
+library's intrinsic contract says where such a declaration may appear and which
+primitive types it may mention.
 
 ## One call, several spellings
 
-The first parameter is the receiver. These denote the same receiver-first call:
+The first parameter is the receiver. These two spellings are the same call:
 
 ```plato
 Lerp(a, b, t)
 a.Lerp(b, t)
 ```
 
-Likewise, `Square(x)` and `x.Square` are source-level uniform access. A stored field and a computed no-extra-argument member share this convenient spelling. Generated C# uses methods for ordinary computed members, so the second spelling becomes `x.Square()` in host code. Stored product fields remain fields, and handwritten intrinsic members can retain properties. Do not copy one C# spelling mechanically to every source access.
+`Square(x)` and `x.Square` are source-level uniform access. A stored field and a
+computed member with no extra argument share that spelling. The C# writer emits a
+method for an ordinary computed member, so the second spelling is `x.Square()` in
+host code. A stored product field stays a field. A handwritten intrinsic member can
+remain a property. Do not copy one C# spelling mechanically onto every source access.
+[C# extension methods](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#extension-methods)
+use a similar receiver spelling. In Plato, a receiver-first call is a uniform
+source-language rule. It is not a C#-specific method-lookup category.
 
-A first parameter named `_` indicates a type-based operation:
+A first parameter named `_` marks a type-based operation:
 
 ```plato
 Origin(_: Point2D): Point2D => (0.0, 0.0);
 ```
 
-Call it as `Point2D.Origin`. The receiver's type matters; its value is unused. A type name in this position is a type token, not an ordinary default instance whose fields may be read.
+Call it as `Point2D.Origin`. The receiver's type matters. Its value is unused. A
+type name in that position is a type token, not a default instance whose fields can
+be read.
 
-All libraries contribute to global function groups by name. Overload resolution uses parameter types, generic bindings, capabilities, and conversions. There are no library-qualified namespaces separating otherwise identical names. See [resolution](../implementation/type-checking.md).
+Every library contributes to one global function group per name. Overload resolution
+uses parameter types, generic bindings, capabilities, and conversions. Library names
+do not separate otherwise identical functions. See
+[resolution](../implementation/type-checking.md).
 
 ## Higher-order functions
-
-A higher-order function accepts another function. Mapping a numeric array can be written:
 
 ```plato
 xs.Map(x => x * x)
 ```
 
-The target `Map` signature determines `x`'s type and the result element type. For two parameters use `(a, b) => expression`. Function type `Function2<A, B, R>` means arguments `A`, `B`, result `R`; `Function0<R>` has no arguments.
+`Map` takes a function. The target signature determines the type of `x` and the
+element type of the result. For two parameters, write `(a, b) => expression`.
+The function type `Function2<A, B, R>` has arguments `A` and `B` and result `R`.
+`Function0<R>` has no arguments.
 
-The grammar allows expression and block lambda bodies. The checked reference idiom uses lambdas as arguments to higher-order functions, with parameter types inferred from the target signature. The implementation also has `TirLambda` and `TirInvoke` nodes, but this does not establish arbitrary unrestricted first-class function storage, generic local function declarations, or higher-rank polymorphism as specified features.
+The grammar allows an expression lambda and a block lambda. The checked idiom passes
+a lambda to a higher-order function and infers the parameter types from the target
+signature. The implementation also has `TirLambda` and `TirInvoke` nodes. Having those nodes
+does not establish arbitrary unrestricted first-class function storage, generic
+local function declarations, or higher-rank polymorphism as specified features.
 
 ## Named function arguments and eta expansion
 
-Where a function value is expected, a named function group can be expanded into a lambda:
+Where a function value is expected, a named function group can expand into a lambda:
 
 ```text
 Square  becomes  x => Square(x)
 ```
 
-This is **eta expansion**: introducing parameters and forwarding them. The normalizer only performs this transformation when the function group has a consistent nonzero arity. Mixed-arity or nullary groups have special fallback handling; write an explicit lambda when selection is unclear.
+This is **eta expansion**: the normalizer introduces parameters and forwards them.
+It does so only when the function group has a consistent nonzero arity. A
+mixed-arity group or a nullary group has special fallback handling. Write an
+explicit lambda when the selection is unclear. The transformation is in
+[Normalizer](../../../src/Plato.Compiler/Checking/Normalizer.cs).
 
-A lambda can capture an outer ordinary value. The interpreter creates a closure over a snapshot of the environment at creation, so later local rebinding does not change the captured binding. C# emission hoists captured locals into copies to reproduce this value-at-creation behavior. Capturing unique builders is forbidden by the builder discipline; it would create another path to mutable storage.
+A lambda can capture an outer ordinary value. The interpreter builds a closure over
+a snapshot of the environment at creation, so later local rebinding does not change
+the captured binding. The C# writer hoists captured locals into copies to reproduce
+that value-at-creation behavior. The builder discipline forbids capturing a unique
+builder, because that capture would be another path to mutable storage.
+[TirLambdaCaptureRewriter](../../../src/Plato.Compiler/Checking/TirLambdaCaptureRewriter.cs)
+handles the emitted capture. The
+[Interpreter](../../../src/Plato.Interpreter/Evaluation/Interpreter.cs) evaluates
+function values.
 
-## Scientific reading example
+## When the lambda runs
 
-For `samples.Map(x => x * scale)`, `scale` comes from the enclosing function and `x` is each array element. The function is not executed when its syntax is declared; `Map` invokes it while producing results. Array combinator evaluation contracts still matter: an eager map is not a lazy mathematical sequence.
-
-## Evidence and related work
-
-[Normalizer](../../../src/Plato.Compiler/Checking/Normalizer.cs) performs residual eta expansion. [TirLambdaCaptureRewriter](../../../src/Plato.Compiler/Checking/TirLambdaCaptureRewriter.cs) handles emitted capture concerns. [Interpreter](../../../src/Plato.Interpreter/Evaluation/Interpreter.cs) evaluates function values. [C# extension methods](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#extension-methods) offer superficially similar receiver syntax, but Plato makes receiver-first calls a uniform source-language rule rather than a C#-specific method lookup category.
+In `samples.Map(x => x * scale)`, `scale` comes from the enclosing function and `x`
+is each array element. Writing the lambda does not run it. `Map` calls it while
+producing results. How an array combinator evaluates its function is a separate
+contract. See [Evaluation, order, and faults](evaluation.md).

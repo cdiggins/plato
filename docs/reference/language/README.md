@@ -1,10 +1,44 @@
 # Language reference
 
-Plato describes immutable data and numerical algorithms. A scientist can give lengths, angles, positions, transformations, and algorithms distinct types, then run the same checked program in the interpreter or generate C# libraries. A **type** describes values; a **function** computes a result from arguments; an **interface** describes capabilities a type promises.
+The language reference says what a Plato program means. A **type** describes values.
+A **function** returns a result computed from its arguments. An **interface** is a
+set of capabilities a type promises. [What is Plato](../start/what-is-plato.md)
+introduces the language for a new reader. [SEMANTICS](../../SEMANTICS.md) is the
+normative source.
 
-This reference teaches the language and records implementation evidence. [SEMANTICS](../../SEMANTICS.md) remains the normative source. Pages distinguish a specified rule from an implemented mechanism and an unresolved conflict. These documents deliberately omit gate tallies and directory inventories; use the repository's gate logs for measurements.
+A page separates a specified rule, an implemented mechanism, and an unresolved
+conflict. These chapters omit gate tallies and directory inventories. The
+[reference home](../README.md#authority-and-evidence) says where measurements live.
 
-Start with the [program model](model.md), then [syntax](syntax.md) and [functions](functions.md). Read topics independently when needed:
+## A small complete example
+
+```plato
+type Measurement { Value: Number; Uncertainty: Number; }
+
+library Measurements {
+    Scaled(m: Measurement, factor: Number): Measurement
+        => (m.Value * factor, m.Uncertainty * factor.Abs);
+}
+```
+
+`Measurement` is a product: every value has both fields. `Scaled` multiplies the
+measured value and scales the uncertainty by a nonnegative magnitude. The compiler
+converts the returned tuple to the declared product by field order. The example
+assumes the foundation declarations and the arithmetic library are included in the
+compilation. A source file alone does not implicitly import a prelude.
+
+## How to read examples
+
+A `plato` fence shows source syntax. A `csharp` fence shows a host-language mapping
+and is labelled when the mapping is schematic. A short snippet is a fragment unless
+the page calls it a complete input. An inference rule uses `Γ ⊢ e : T`, read "in
+environment Γ, expression e has type T." A mathematical page defines any further
+notation before it uses that notation.
+
+## Where to look
+
+Start with the [program model](model.md), then [syntax](syntax.md) and
+[functions](functions.md). Read any other chapter on its own when you need it:
 
 - [Products and construction](products.md): records, fields, tuples, defaults, sealed construction.
 - [Sums and matching](sums.md): alternatives with payloads and exhaustive case analysis.
@@ -18,21 +52,11 @@ Start with the [program model](model.md), then [syntax](syntax.md) and [function
 - [Equality and ordering](equality.md): structural comparison, NaN, and hashing.
 - [Diagnostics and unsupported forms](diagnostics.md): the difference between parsing and support.
 
-For implementers, continue to [the implementation guide](../implementation/README.md), [the source grammar](../implementation/grammar.md), and [known discrepancies](../implementation/discrepancies.md). The [formal model](../formal/README.md) gives deliberately bounded theorems rather than a claim that the whole compiler has been proved correct.
+The [glossary](glossary.md) and [cheat sheet](cheatsheet.md) are short reminders.
+New readers may want the [Quick tour](../start/tour.md) before these chapters.
 
-## A small complete example
-
-```plato
-type Measurement { Value: Number; Uncertainty: Number; }
-
-library Measurements {
-    Scaled(m: Measurement, factor: Number): Measurement
-        => (m.Value * factor, m.Uncertainty * factor.Abs);
-}
-```
-
-`Measurement` is a product: both fields exist in every value. The function multiplies the measured value and scales uncertainty by a nonnegative magnitude. The return tuple is converted to the declared product by field order. This example assumes the foundation declarations and arithmetic library are included in the compilation. A source file alone does not implicitly import a prelude.
-
-## How to read examples
-
-`plato` fences use source syntax; `csharp` fences show host-language mappings and are labelled when schematic. Small snippets are fragments unless described as a complete input. Inference rules use `Γ ⊢ e : T`, read “in environment Γ, expression e has type T.” Each mathematical page defines additional notation before using it.
+Implementers continue to the [implementation guide](../implementation/README.md),
+the [source grammar](../implementation/grammar.md), and
+[known discrepancies](../implementation/discrepancies.md). The
+[formal model](../formal/README.md) states a small set of theorems and the limits
+of those theorems.

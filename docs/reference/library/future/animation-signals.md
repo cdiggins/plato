@@ -1,23 +1,30 @@
 # Animation, signals and optimization vocabulary
 
-Read [keyframes and tracks](../../api/future/keyframes.types.md), [skeletal animation](../../api/future/skeletal-animation.types.md), [signal records](../../api/future/signals.types.md), and [optimization records](../../api/future/optimization.types.md). These families are grouped here because they primarily describe data/control choices; declaring them does not establish a complete evaluator or solver catalog.
+This vocabulary is in the `future` tier, which is not part of the default library. The families below mostly describe data and control choices. Declaring them does not supply a complete evaluator or solver catalog.
 
 ## Tracks and skeletal placement
 
-A keyframe couples a time with a value. Tangent-bearing keys additionally describe interpolation controls. Interpolation between keys, extrapolation outside the track, playback direction and blending need explicit choices. An easing of a single tween is not a complete track evaluator.
+A keyframe pairs a time with a value. A key that carries tangents also describes interpolation controls. Interpolation between keys, extrapolation outside the track, playback direction, and blending are separate choices. An easing on a single tween is not a track evaluator.
 
-A skeleton is a forest of bones addressed by typed indices. A negative parent denotes no parent. Poses are local to the parent; root poses are relative to the model. Computing global bone transforms must respect [transform composition](../foundation/matrices-transforms.md) and acyclic parent references. Skin weights, bind poses, sockets, morph targets, IK chains and retarget maps retain different information; an IK target record is not a solved joint configuration.
+A skeleton is a forest of bones addressed by typed indices. A negative parent means no parent. A pose is local to the parent. A root pose is relative to the model. A global bone transform has to follow transform composition and has to stay on acyclic parent references. Skin weights, bind poses, sockets, morph targets, IK chains, and retarget maps keep different information. An IK target record is not a solved joint configuration.
 
 ## Sampled signals
 
-Uniform scalar sample `i` occurs at `i/SampleRate`; spectrum bin `k` is at `k*BinWidth`, with bin zero at DC. A spectrum, complex spectrum and spectrogram have different stored information. Dropping complex phase can prevent reconstruction even if magnitudes are unchanged.
+Uniform scalar sample `i` is at time `i/SampleRate`. Spectrum bin `k` is at frequency `k*BinWidth`, and bin zero is DC. A spectrum, a complex spectrum, and a spectrogram store different information. Dropping complex phase can make reconstruction impossible even when the magnitudes are unchanged.
 
-Window functions, FIR/IIR/biquad selectors, rate-conversion controls and envelopes describe intended processing. An anti-aliasing filter is needed before downsampling when the signal exceeds the target bandwidth; storing a new sample rate does not perform that filtering. Noise color and waveform names need actual generators before their spectral properties are established.
+Window functions, FIR, IIR, and biquad selectors, rate-conversion controls, and envelopes describe intended processing. Downsampling a signal that exceeds the target bandwidth needs an anti-aliasing filter first. Storing a new sample rate does not apply that filter. A noise-color name or a waveform name needs a generator before its spectral properties are real.
 
-## Optimization descriptions
+## An optimization record is not a solved minimum
 
-An optimization problem separates objective, constraints, algorithm controls, stopping criteria and result. Iteration limits and convergence reasons must be interpreted exactly, including any “no limit” sentinel. A returned result is not necessarily a successful minimum; a stopping tolerance is not proof of global optimality. Root brackets need a meaningful domain and sign/continuity assumptions. A declared L-BFGS, simplex, evolutionary or swarm parameter record is not evidence of an implemented solver.
+An optimization problem separates the objective, the constraints, the algorithm controls, the stopping criteria, and the result. Read iteration limits and convergence reasons exactly, including any "no limit" sentinel. A returned result is not necessarily a successful minimum. A stopping tolerance is not global optimality. A root bracket needs a meaningful domain and the sign or continuity assumptions the method uses. A declared L-BFGS, simplex, evolutionary, or swarm parameter record is not an implemented solver.
 
-## Related work
+## Where to look
 
-[glTF 2.0 animation and skinning](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html) are related representations for sampled channels, skeletons and weights. Plato's exploratory track/IK/blending vocabulary is broader in some directions and must be mapped explicitly; its declarations do not claim a glTF animation runtime.
+- [Keyframes and tracks](../../api/future/keyframes.types.md)
+- [Skeletal animation](../../api/future/skeletal-animation.types.md)
+- [Signal records](../../api/future/signals.types.md)
+- [Optimization records](../../api/future/optimization.types.md)
+- [Transform composition](../foundation/matrices-transforms.md)
+- [Aspirational library domains](domains.md)
+
+[glTF 2.0 animation and skinning](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html) describe sampled channels, skeletons, and weights. The track, IK, and blending vocabulary here has to be mapped explicitly, and the declarations are not a glTF animation runtime.

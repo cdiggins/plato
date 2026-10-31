@@ -14,10 +14,14 @@ import json
 import posixpath
 import re
 import subprocess
+import sys
 import time
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import quote, unquote
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import brand  # noqa: E402  (test_build.py loads this file by path)
 
 ROOT = Path(__file__).resolve().parents[2]
 DOCS = ROOT / 'docs/reference'
@@ -151,22 +155,19 @@ def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
         inputs[source_name] = digest(source)
         stem = source_path.stem
         parent = DOCS / 'api' / tier / f'{stem}.md'
-        guides = teaching.get(source_path.resolve(), {DOCS / 'library/README.md': 'Standard-library guide'})
-        def context_links(page):
-            return ['## Teaching context and related work', ''] + [
-                f'- [{title}]({relative_link(page, guide)})' for guide, title in guides.items()] + ['']
-        kind_label = {'future': 'Aspirational vocabulary; not shipped by default.',
-                      'legacy': 'Legacy vocabulary; compile separately from the forward library.'}.get(
-                          tier, 'Forward shipping tier; presence here is not proof of executable coverage.')
+        guides = teaching.get(source_path.resolve(), {DOCS / 'library/README.md': 'Library guide'})
+        def see_also(page):
+            links = [f'[{title}]({relative_link(page, guide)})' for guide, title in guides.items()]
+            return [f'See also: {", ".join(links)}.', ''] if links else []
+        kind_label = {'future': 'Aspirational vocabulary. It is not part of the default library.',
+                      'legacy': 'Older library. Compile it separately from the forward library.'}.get(tier, '')
+        tier_line = f'**Tier:** `{tier}`.' + (f' {kind_label}' if kind_label else '')
         parts = slices(source)
-        lines = [GENERATED, f'# {stem}', '', f'**Tier:** `{tier}`. {kind_label}', '',
+        lines = [GENERATED, f'# {stem}', '', tier_line, '',
                  f'**Source:** [{source_name}]({relative_link(parent, source_path)}).', '',
-                 'Read each declaration or function below for its original comments, signature, and body.',
-                 'The slices cover normalized source text; UTF-8 BOMs are removed and CRLF becomes LF.',
-                 'Code fences omit boundary newlines; the linked source retains original bytes.',
-                 'The first and last library slices retain the block braces.',
-                 'A signature without a body is an obligation, not an implemented algorithm.', '',
-                 *context_links(parent), '## Declarations and functions', '']
+                 'Declarations and bodies from that file. A signature with no body is a host obligation.',
+                 'Names resolve in the whole compilation, not on this page alone.', '',
+                 *see_also(parent), '## Declarations', '']
         entries = []
         # Keep pages small without generating a filesystem entry for every tiny
         # accessor. Boundaries always fall BETWEEN complete source declarations.
@@ -184,22 +185,16 @@ def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
             line = source.count('\n', 0, start) + 1
             snippet = source[start:end]
             original_link = relative_link(child, source_path) + f'#L{line}'
-            body = [GENERATED, f'# {stem}: {name}', '', f'**Tier:** `{tier}`.', '',
-                    f'**Context:** [{stem}]({relative_link(child, parent)}).', '',
-                    f'**Evidence:** [{source_name}, starting at line {line}]({original_link}).', '',
-                    'This is source evidence, including authored comments and any preconditions or TODOs.',
-                    'It is a lexical slice, not a standalone compilation unit. Names resolve in the complete tier union.',
-                    'A comment states author intent; a body states an algorithm. Neither establishes that its laws hold.', '',
-                    '## Members in this source section', '', names, '',
-                    '## Declarations and implementations', '', '```plato', snippet.rstrip('\n'), '```', '',
-                    '## Reading this entry', '',
-                    'Parameters before the colon are input values; the type after the parameter list is the result.',
-                    'The first parameter also supplies the dot-call receiver. Type parameters on a declaration are',
-                    'bare names; free signature variables use `$`. Read the tier and domain guides for units, frames,',
-                    'invariants, and the difference between a required interface member and a provided body.', '',
-                    *context_links(child)]
+            body = [GENERATED, f'# {stem}: {name}', '',
+                    f'**Tier:** `{tier}`. **File:** [{stem}]({relative_link(child, parent)}). '
+                    f'**Source:** [{source_name}, line {line}]({original_link}).', '',
+                    'Copied from source, comments included. A comment records intent. The body is the algorithm. '
+                    'Neither is a proof that the result is correct. Names resolve in the whole compilation.', '',
+                    f'This slice: {names}.', '',
+                    '```plato', snippet.rstrip('\n'), '```', '',
+                    *see_also(child)]
             outputs[child] = '\n'.join(body)
-            lines.append(f'- [{names} — source section {number}]({relative_link(parent, child)})')
+            lines.append(f'- [{names} (section {number})]({relative_link(parent, child)})')
             for member_name, member_start, member_end, member_kind in group:
                 entries.append({'name': member_name, 'kind': member_kind, 'start': member_start,
                                 'end': member_end, 'line': source.count('\n', 0, member_start) + 1,
@@ -212,8 +207,8 @@ def generated_api() -> tuple[dict[Path, str], dict[str, str]]:
     for tier in (*TIERS, 'legacy'):
         target = DOCS / 'api' / tier / 'README.md'
         rows = [GENERATED, f'# {tier.capitalize()} API', '',
-                'This source-derived catalog retains declarations, documentation comments, and implementations.',
-                'Source presence is not an execution guarantee. Read the domain guides before using an algorithm.', '']
+                'Declarations, comments, and bodies copied from source. '
+                'For what the names mean, start with the library guide.', '']
         for item in catalog:
             if item['tier'] == tier:
                 path = ROOT / item['page']
@@ -232,11 +227,19 @@ def evidence_appendices() -> tuple[dict[Path, str], dict[str, str]]:
         'operator-source': ['src/Plato.AST/Operators.cs'],
     }.items():
         page = DOCS / 'evidence' / f'{stem}.md'
-        parts = [GENERATED, f'# {stem.replace("-", " ").title()}', '',
-                 'Implementation source evidence with UTF-8 BOMs removed and CRLF normalized to LF.',
-                 'Code fences omit boundary newlines; linked sources retain original bytes.',
-                 'The parser accepts more forms than the checked language;',
-                 'a grammar production alone does not promise evaluation or C# emission.', '']
+        titles = {
+            'grammar-source': (
+                'Grammar source',
+                'The parser sources. The parser accepts forms the type checker rejects. '
+                'A production does not mean the form runs, or that C# is emitted.',
+            ),
+            'operator-source': (
+                'Operator source',
+                'The operator table the compiler uses for precedence and associativity.',
+            ),
+        }
+        title, blurb = titles[stem]
+        parts = [GENERATED, f'# {title}', '', blurb, '']
         for filename in files:
             path = ROOT / filename
             content = read(path)
@@ -247,9 +250,10 @@ def evidence_appendices() -> tuple[dict[Path, str], dict[str, str]]:
     # Open questions must be discoverable without trusting a manual status tally.
     page = DOCS / 'evidence/source-notes.md'
     parts = [GENERATED, '# Source TODOs and unresolved notes', '',
-             'This is a lexical inventory of TODO, FIXME, HACK and not-implemented markers in the',
-             'forward library, checker, interpreter and C# runtime. It may include historical comments;',
-             'absence of a marker does not establish correctness. Tracker issues carry triage and lifecycle.', '']
+             'TODO, FIXME, HACK, and NotImplementedException markers in the forward library, '
+             'the checker, the interpreter, and the C# runtime.',
+             'Some are historical. A file with no marker is not certified correct. '
+             'Triage lives in the tracker.', '']
     candidates = list((ROOT / 'stdlib').rglob('*.plato'))
     for directory in ('src/Plato.Compiler/Checking', 'src/Plato.Interpreter', 'src/Plato.Intrinsics'):
         candidates += [p for p in (ROOT / directory).rglob('*.cs') if not {'obj', 'bin', 'bonepile'} & set(p.parts)]
@@ -292,9 +296,28 @@ def resolve_target(parent: Path, name: str) -> Path:
     return (parent / name).resolve()
 
 
+def symbol_names_for_page(title: str, markdown: str, page_id: str) -> list[str]:
+    """Collect linkable declaration names from an API page title (`stem: Name`).
+
+    Member lists are ignored: they often mention related types and would create
+    false cross-links (for example Measurement appearing on an unrelated page).
+    """
+    del markdown, page_id  # title is the authoritative symbol owner
+    names: list[str] = []
+    titled = re.fullmatch(r'[\w.-]+:\s+(.+)$', title.strip())
+    if not titled:
+        return names
+    for part in re.split(r'\s*,\s*', titled.group(1)):
+        token = part.strip()
+        if re.fullmatch(r'[A-Za-z_][\w]*', token):
+            names.append(token)
+    return names
+
+
 def reader_bundle(pages: dict[Path, str]) -> dict:
     revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     result = []
+    symbols: dict[str, list[dict[str, str]]] = {}
     checked = set(pages)
     for path, markdown in sorted(pages.items(), key=lambda item: (item[0] != DOCS / 'README.md', item[0])):
         raw_markdown = markdown
@@ -327,10 +350,15 @@ def reader_bundle(pages: dict[Path, str]) -> dict:
             new = old[:old.index('](') + 2] + href + ')'
             markdown = markdown[:match.start()] + new + markdown[match.end():]
         rel = path.relative_to(ROOT).as_posix()
-        result.append({'id': rel[:-3], 'path': rel, 'title': title[1],
-                       'group': list(path.relative_to(DOCS).parts[:-1]), 'markdown': markdown,
-                       'rawMarkdown': raw_markdown})
-    return {'schemaVersion': 1, 'sourceRevision': revision, 'pages': result}
+        page_id = rel[:-3]
+        page = {'id': page_id, 'path': rel, 'title': title[1],
+                'group': list(path.relative_to(DOCS).parts[:-1]), 'markdown': markdown,
+                'rawMarkdown': raw_markdown}
+        result.append(page)
+        if '/api/' in page_id:
+            for name in symbol_names_for_page(title[1], raw_markdown, page_id):
+                symbols.setdefault(name, []).append({'id': page_id, 'title': title[1]})
+    return {'schemaVersion': 1, 'sourceRevision': revision, 'pages': result, 'symbols': symbols}
 
 
 def build(check: bool = False) -> dict:
@@ -374,6 +402,7 @@ def build(check: bool = False) -> dict:
     if not check:
         OUTPUT.parent.mkdir(parents=True, exist_ok=True)
         OUTPUT.write_text(json.dumps(bundle, ensure_ascii=False), encoding='utf-8')
+        brand.write(OUTPUT.parent / 'brand')
     return {'pages': len(pages), 'sources': len(inputs), 'check': check}
 
 

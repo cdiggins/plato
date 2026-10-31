@@ -1,8 +1,8 @@
 # Diagnostics and unsupported forms
 
-A parser recognizes text. A binder resolves names. A checker validates types and obligations. An elaborator produces executable typed nodes. A writer may still fail to lower a body. Success at an earlier stage does not establish success at the next.
+The parser recognizes text. The binder resolves names. The checker validates types and obligations. The elaborator produces executable typed nodes. A writer can still fail to lower a body. Success at an earlier stage does not establish success at the next.
 
-The grammar deliberately recognizes C#-like forms that are outside the supported language. The implementation is not required to give every unsupported form the same diagnostic: some AST translations throw or produce fallback nodes. An agent implementing the language should reject unsupported forms deliberately and retain source locations.
+The grammar recognizes some C#-like forms that sit outside the supported language. The implementation does not have to diagnose every unsupported form the same way. Some AST translations throw, and some produce a fallback node. An implementer should reject an unsupported form deliberately and keep its source location.
 
 ## Supported versus merely parsed
 
@@ -19,9 +19,13 @@ The grammar deliberately recognizes C#-like forms that are outside the supported
 | Local function declarations, arbitrary object initializers | Parser recognition is not a portability guarantee |
 | `unique` on arbitrary user types | Hard-rejected; intrinsic List/Buffer only |
 
-`typeof`, `nameof`, cast syntax, interpolated strings, numeric suffixes, and other parser affordances need a specific checked end-to-end contract before being treated as reference-language forms. This guide does not silently promote them because their grammar rules exist.
+`typeof`, `nameof`, cast syntax, interpolated strings, numeric suffixes, and other parser affordances need a checked end-to-end contract before they count as reference-language forms. A grammar rule on its own does not promote them.
+
+Familiar punctuation is easier to read. It does not import C# behavior. The [C# specification](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/expressions) states the rules for C#. The table above is Plato's supported subset.
 
 ## Diagnostic families
+
+The checker, the elaborator, and the linter report the codes below. The table is a reader's map, not an exhaustive frozen list. A diagnostic's source and its tests define the exact trigger.
 
 | Code | Meaning and consequence |
 |---|---|
@@ -34,7 +38,7 @@ The grammar deliberately recognizes C#-like forms that are outside the supported
 | CHK204 | Informational unresolved polymorphic tie deferred to specialization |
 | CHK205 | A known bound does not license an operation on a generic parameter |
 | CHK206 | A function call's inferred type violates a declared function bound |
-| CHK300–CHK307 | Sum and match well-formedness, including optional generic-sum restriction |
+| CHK300-CHK307 | Sum and match well-formedness, including optional generic-sum restriction |
 | CHK308 | Stored existential interface has no usable object-safe view |
 | CHK309 | Constructed type argument violates a declaration bound |
 | CHK310 | A bound names something other than an interface |
@@ -43,12 +47,8 @@ The grammar deliberately recognizes C#-like forms that are outside the supported
 | LINT001 | Missing interface member; can lead to runtime throwing implementations |
 | LINT006/LINT007 | Builder storage violates field/container restrictions |
 
-This is a reader's map, not an exhaustive frozen list. The diagnostic's source and tests define its exact trigger. [Solver](../../../src/Plato.Compiler/Checking/Solver.cs), [SumTypeChecker](../../../src/Plato.Compiler/Checking/SumTypeChecker.cs), [TypeConstraintChecker](../../../src/Plato.Compiler/Checking/TypeConstraintChecker.cs), and [Linter](../../../src/Plato.Compiler/Analysis/Linter.cs) are the authorities.
+[Solver](../../../src/Plato.Compiler/Checking/Solver.cs), [SumTypeChecker](../../../src/Plato.Compiler/Checking/SumTypeChecker.cs), [TypeConstraintChecker](../../../src/Plato.Compiler/Checking/TypeConstraintChecker.cs), and [Linter](../../../src/Plato.Compiler/Analysis/Linter.cs) are the authorities for these codes.
 
 ## Avoiding false success
 
-A successful lint invocation without strict mode may still report findings. A code-generation process can exit successfully while printing `DEGRADED bodies` and emitting throwing stubs. Inspect diagnostics and emitted-body health, then compile and exercise the relevant C# or interpreter path. Use [verification guidance](../implementation/verification.md) rather than taking one exit code as complete evidence.
-
-## Related work
-
-Language standards commonly separate lexical syntax, static semantics, and runtime behavior. The [C# specification](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/expressions) describes these distinctions for C#; Plato's much smaller supported subset must be specified on its own. Familiar syntax should make code easier to read, not act as a promise of inherited C# behavior.
+A lint run that is not in strict mode can still report findings. Code generation can exit successfully, print `DEGRADED bodies`, and emit throwing stubs. Inspect the diagnostics and the emitted bodies, then compile and exercise the relevant C# or interpreter path. [Verification](../implementation/verification.md) is the guide for that evidence. One exit code is not complete evidence.

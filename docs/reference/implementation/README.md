@@ -1,6 +1,8 @@
 # Implementing Plato
 
-A compatible implementation needs more than the parser grammar. It must bind one global program, derive data operations, solve types and overloads, preserve conversion and evaluation behavior, and supply runtime primitives. These pages describe the current C# and interpreter paths as implementation evidence; proof-of-concept writers are intentionally excluded as semantic sources.
+These pages are for someone implementing or debugging the compiler, the interpreter, or the C# writer. A page says what that stage does, what it must not invent, and which source file is the authority.
+
+A compatible implementation binds one global program, derives data operations, solves types and overloads, preserves conversion and evaluation behavior, and supplies runtime primitives. The current C# path and the interpreter are the evidence. Proof-of-concept writers are excluded as semantic sources.
 
 Read the [language guide](../language/README.md) for source meaning, then follow:
 
@@ -14,11 +16,11 @@ Read the [language guide](../language/README.md) for source meaning, then follow
 
 ## Reimplementation contract
 
-A reimplementation can intentionally reject the grammar's unsupported forms. It must not silently select different arithmetic, insert extra conversions, treat every interface occurrence as a runtime object type, or substitute an arbitrary overload merely because the emitted C# compiles.
+A reimplementation can reject forms the grammar recognizes and the later stages do not support. It must not silently select different arithmetic, insert extra conversions, treat every interface occurrence as a runtime object type, or substitute an arbitrary overload because the emitted C# compiles.
 
-For a source fixture, record the intended outcome at every stage: parse, resolve, check, elaborate, execute, emit, compile, execute generated code. Keep source locations through all stages. Distinguish a source error from a missing host intrinsic or an unsupported lowering. A degraded throwing stub is useful diagnostic output, not an implementation of the source function.
+For a source fixture, record the intended outcome at every stage: parse, resolve, check, elaborate, execute, emit, compile, execute generated code. Keep source locations through all of those stages. A source error, a missing host intrinsic, and an unsupported lowering are different results. A degraded throwing stub is diagnostic output. It is not an implementation of the source function.
 
-This reference is substantially more detailed than a syntax tour, but it is not a completed independent language standard. The [discrepancy register](discrepancies.md) names the remaining boundaries, including existential storage, incomplete foreach desugaring, permissive generic fallbacks, and match-subject evaluation. A clean-room implementation must settle those explicitly or reproduce the chosen behavior with conformance fixtures.
+The account goes past a syntax tour. It is not a completed independent language standard. The [discrepancy register](discrepancies.md) names the remaining boundaries, including existential storage, incomplete foreach desugaring, permissive generic fallbacks, and match-subject evaluation. A clean-room implementation must settle those explicitly or reproduce the chosen behavior with conformance fixtures.
 
 ## Source map
 
@@ -32,4 +34,4 @@ This reference is substantially more detailed than a syntax tour, but it is not 
 | C# writer | [CSharpWriter](../../../writers/Plato.CSharpWriter/CSharpWriter.cs), [TirCSharpBodyWriter](../../../writers/Plato.CSharpWriter/TirCSharpBodyWriter.cs) |
 | Runtime | [Intrinsics contract](../../plato-intrinsics-surface.md) |
 
-Legacy comments mentioning a shadow TIR or an optional old C# body writer are not the current architecture. Follow actual call sites and tests.
+Legacy comments that mention a shadow TIR, or an optional old C# body writer, are not the current architecture. Follow the call sites and the tests.
