@@ -1,0 +1,11 @@
+type TourPoint { X: Integer; Y: Integer; }
+
+library TourProducts {
+    TourMakePoint(x: Integer, y: Integer): TourPoint => (x, y);
+    TourSwap(p: TourPoint): TourPoint => (p.Y, p.X);
+    TourSum(p: TourPoint): Integer => p.X + p.Y;
+
+    Law_ReferenceTourFields(): Boolean => TourMakePoint(3, 7).Y == 7;
+    Law_ReferenceTourSwap(): Boolean => TourMakePoint(3, 7).TourSwap.X == 7;
+    Law_ReferenceTourConstructor(): Boolean => TourPoint(3, 7).X == 3;
+}

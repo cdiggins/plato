@@ -1,0 +1,11 @@
+type TourChoice<T> = TourSome(Value: T) | TourNone;
+
+library TourSums {
+    TourValueOr(c: TourChoice<$T>, fallback: $T): $T
+        => match (c) { TourSome(value) => value; TourNone => fallback; };
+    TourFound(x: Integer): TourChoice<Integer> => TourChoice.TourSome(x);
+    TourMissing(_: Integer): TourChoice<Integer> => TourChoice.TourNone;
+
+    Law_ReferenceTourSomeCase(): Boolean => TourFound(7).TourValueOr(3) == 7;
+    Law_ReferenceTourNoneCase(): Boolean => Integer.TourMissing.TourValueOr(3) == 3;
+}

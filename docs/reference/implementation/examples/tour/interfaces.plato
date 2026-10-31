@@ -1,0 +1,13 @@
+interface TourScalable {
+    TourScale(a: Self, k: Number): Self;
+}
+
+type TourVec implements TourScalable { X: Number; Y: Number; }
+
+library TourInterfaces {
+    TourScale(a: TourVec, k: Number): TourVec => TourVec(a.X * k, a.Y * k);
+    TourDoubled(a: TourScalable): TourScalable => a.TourScale(2.0);
+
+    Law_ReferenceTourDoubled(): Boolean => TourDoubled(TourVec(1.5, 4.0)).X == 3.0;
+    Law_ReferenceTourDoubledY(): Boolean => TourVec(1.5, 4.0).TourDoubled.Y == 8.0;
+}

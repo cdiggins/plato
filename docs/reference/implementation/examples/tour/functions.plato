@@ -1,0 +1,10 @@
+library TourFunctions {
+    TourDouble(x: Integer): Integer => x * 2;
+    TourAdd(a: Integer, b: Integer): Integer => a + b;
+    TourApplyTwice(f: Function1<Integer, Integer>, x: Integer): Integer => f(f(x));
+
+    Law_ReferenceTourDouble(): Boolean => TourDouble(21) == 42;
+    Law_ReferenceTourMemberForm(): Boolean => 21.TourDouble == TourDouble(21);
+    Law_ReferenceTourMemberArgs(): Boolean => 3.TourAdd(4) == TourAdd(3, 4);
+    Law_ReferenceTourLambda(): Boolean => TourApplyTwice(n => n + 10, 1) == 21;
+}

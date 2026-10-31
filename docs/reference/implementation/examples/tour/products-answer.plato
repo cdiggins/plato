@@ -1,0 +1,4 @@
+library TourProductsAnswer {
+    TourFlip(p: TourPoint): TourPoint => TourPoint(0 - p.X, 0 - p.Y);
+    Law_ReferenceTourExerciseFlip(): Boolean => TourPoint(3, 7).TourFlip.X == 0 - 3;
+}

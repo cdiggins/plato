@@ -1,50 +1,23 @@
 # Quick tour
 
-This tour is one small complete program. Each idea links to the chapter that owns it.
+A walk through the language in one sitting. Each page teaches one idea with a working
+example, shows what it produces, and ends with a small exercise and its answer. Every
+example is a real file in the [tour examples](../implementation/examples/tour/functions.plato)
+that the law runner checks, and each page shows the whole file.
+
 For tools and install steps, see [Getting started](getting-started.md).
 
-## A measured value
+## The pages, in order
 
-```plato
-type Measurement { Value: Number; Uncertainty: Number; }
+1. [Functions and member forms](tour/functions.md): `Name(a, b)` and `a.Name(b)`, lambdas.
+2. [Products: values with named fields](tour/products.md): `type`, construction, field access.
+3. [Immutability and local variables](tour/immutability.md): new values instead of changes, `var` in a loop.
+4. [Interfaces: what a type can do](tour/interfaces.md): `interface`, `implements`, `Self`.
+5. [Generics: one function for many types](tour/generics.md): `Pair<T>` and `$T`.
+6. [Sums and match: one of several cases](tour/sums.md): alternatives and exhaustive `match`.
+7. [Numbers: Number and Integer](tour/numbers.md): the two scalar kinds and conversion.
 
-library Measurements {
-    Scaled(m: Measurement, factor: Number): Measurement
-        => (m.Value * factor, m.Uncertainty * factor.Abs);
-}
-```
-
-`type Measurement { ... }` declares a **product**. Every value has both fields.
-See [Products and construction](../language/products.md).
-
-`Number` is a primitive scalar from the foundation library.
-See [Numbers](../language/numbers.md) and the
-[primitives API page](../api/foundation/primitives.md).
-
-`library Measurements { ... }` groups functions. See
-[Functions and lambdas](../language/functions.md).
-
-`Scaled(...) : Measurement => ...` is an expression-bodied function. The return
-tuple becomes a `Measurement` by field order.
-
-`m.Value` and `factor.Abs` are member forms of ordinary functions. See
-[Reading and writing source](../language/syntax.md).
-
-## Rules in the example
-
-Values are immutable. Local `var` bindings exist for algorithms, but published
-library types do not expose mutation. See
-[Locals, loops, and builders](../language/state-and-builders.md).
-
-A type describes shape and capability. An interface names what a type promises.
-A generic carries that promise into a reusable function. See
-[Interfaces](../language/interfaces.md) and
-[Generics and bounds](../language/generics.md).
-
-A sum holds alternatives. When a value is one of several cases, match on it
-exhaustively. See [Sums and matching](../language/sums.md).
-
-## Where to look
+## Where to go next
 
 - [Language reference](../language/README.md): the chapter list.
 - [Language cheat sheet](../language/cheatsheet.md): shapes at a glance.

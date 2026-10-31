@@ -13,7 +13,7 @@ compiler does.
 
 ## Where to look
 
-1. [Quick tour](tour.md): one annotated program and the ideas it uses.
+1. [Quick tour](tour.md): seven short pages, each with an example and an exercise.
 2. [Language reference](../language/README.md): what programs mean.
 3. [Getting started](getting-started.md): build the tools and open this reader.
 

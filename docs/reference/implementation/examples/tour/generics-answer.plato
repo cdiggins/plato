@@ -1,0 +1,4 @@
+library TourGenericsAnswer {
+    TourRightOf(p: TourPair<$T>): $T => p.Right;
+    Law_ReferenceTourExerciseRight(): Boolean => TourRightOf(TourPair(1, 2)) == 2;
+}
