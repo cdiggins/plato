@@ -30,6 +30,7 @@ Plato source
   -> 2b. TirMultiConsumerFusion.Rewrite                  --loops --fuse-consumers
   -> 3. TirArrayMaterializer.Rewrite                     --optimize-arrays
   -> 4. TirLoopLowerer.Rewrite                           --loops
+  -> 5. TirInPlaceUpdates.Rewrite                        --in-place
   -> TirCSharpBodyWriter                                 always on; prints the final tree as C#
        TirExactOutput specialization                    --loops --exact-output
 ```
@@ -389,6 +390,18 @@ These rules follow the receiver expression only, not a local variable's earlier 
 `.Count` and the indexer or walks indices directly, then writes a `T[]`, accumulates a scalar, or
 appends to a `List<T>`. Calls inside callback expressions can remain; refused sites use their ordinary
 library or intrinsic implementation.
+
+## 7a. Pass 5: `TirInPlaceUpdates` (`--in-place`, TKT-1132)
+
+Runs after the loop lowerer. Turns `SetAt(array, index, value)` (foundation `Primitives`) into
+`Intrinsics.SetAtInPlace(array, index, value)` where the old array provably has no later use in the body:
+the receiver is a new array made in this body (a literal, a lowered loop's result, a `MapRange`/`Map`/
+`Append`/`Prepend`/`Concatenate`/`Repeat` or `SetAt` result, or a local holding only such values), nothing
+else holds it, and the update is its last use or is assigned back to the same variable. The rule, clause by
+clause, and the limits (parameters, record fields and other calls' results are copied) are in
+[the optimization README](../writers/Plato.CSharpWriter/Optimization/README.md#in-place-array-updates---in-place-tkt-1132).
+**Runtime intrinsic:** `Intrinsics.SetAtInPlace` writes only into a `T[]` and copies any other list; the
+interpreter copies. The flag needs no other flag.
 
 ## 8. Worked example
 
