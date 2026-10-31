@@ -9,9 +9,9 @@ dotnet src/Plato.CLI/bin/Release/net8.0/Plato.CLI.dll lint docs/reference/implem
 dotnet src/Plato.CLI/bin/Release/net8.0/Plato.CLI.dll run docs/reference/implementation/examples/prelude docs/reference/implementation/examples/products --laws
 ```
 
-Replace `products` with `sums`, `functions`, or `loops`. A `Law_*` function exposes the expected outcome to the law runner. These minimal intrinsic declarations are test inputs. They are not proposed additions to the standard library's intrinsic kernel. The [2026-10-25 integration record](../verification-2026-10-25.md) lists which of these examples were actually run. This page does not assert that an example passed unless that record includes it.
+Replace `products` with any group's folder name. A `Law_*` function exposes the expected outcome to the law runner. These minimal intrinsic declarations are test inputs. They are not proposed additions to the standard library's intrinsic kernel. The [2026-10-25 integration record](../verification-2026-10-25.md) lists which of these examples were actually run. This page does not assert that an example passed unless that record includes it.
 
-The `builders` group requires the real `stdlib/foundation` input. Compile it with foundation alone, without this minimal prelude, so the compilation has the real List and Buffer declarations and the intrinsic contracts.
+Every folder here except `prelude` is a fixture group, and `tools/reference/check_examples.py` runs each one. A group compiles with `prelude` unless it holds an `inputs.txt` listing repo-relative input folders, one per line. The `builders`, `tour` and `cookbook-*` groups use it to compile against the real `stdlib` tiers instead of this minimal prelude.
 
 - [Prelude](prelude/core.plato): primitive identities and arithmetic signatures.
 - [Products](products/products.plato): nominal records, tuple construction, sealed construction.
@@ -19,3 +19,5 @@ The `builders` group requires the real `stdlib/foundation` input. Compile it wit
 - [Functions](functions/functions.plato): lambda application, named function forwarding, bounded calls.
 - [Loops](loops/loops.plato): while, local assignment, and exact small arithmetic.
 - [Builders](builders/builders.plato): List construction and consumption through Freeze.
+- [Tour](tour/): the checked examples and exercise answers behind the [tour](../../start/tour.md).
+- `cookbook-<recipe>`: one group per [cookbook](../../cookbook/README.md) recipe.

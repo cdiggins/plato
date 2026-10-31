@@ -11,12 +11,12 @@ that owns the rule.
 | Interface | A named set of capabilities a type promises. See [Interfaces](interfaces.md). |
 | Library | A named group of functions and related declarations. See [Functions](functions.md). |
 | Self | Inside an interface, the type that implements it. See [Interfaces](interfaces.md). |
-| Signature variable | A generic placeholder written `$T` in some contexts. See [Generics](generics.md). |
+| Signature variable | A type placeholder in a library signature, written `$T` and inferred afresh at each call. See [Generics](generics.md). |
 | Specified | A normative document or decision states the rule. |
 | Implemented | Named source code implements the behavior. This is not a proof for every input. |
 | Unresolved | Sources disagree, or no settled specification exists. |
 | Proved | A theorem holds in the stated formal model, and only there. |
-| plato fence | A Markdown code block tagged `plato`. It shows source syntax. |
+| plato fence | A Markdown code block tagged `plato`. It shows source syntax. On tour and cookbook pages it is copied from a checked example; one tagged `plato unchecked` is not checked. |
 | csharp fence | A Markdown code block tagged `csharp`. It shows a host mapping. |
 
 Authority labels are defined on the [reference home](../README.md#authority-and-evidence).

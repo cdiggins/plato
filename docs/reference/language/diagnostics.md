@@ -49,6 +49,31 @@ The checker, the elaborator, and the linter report the codes below. The table is
 
 [Solver](../../../src/Plato.Compiler/Checking/Solver.cs), [SumTypeChecker](../../../src/Plato.Compiler/Checking/SumTypeChecker.cs), [TypeConstraintChecker](../../../src/Plato.Compiler/Checking/TypeConstraintChecker.cs), and [Linter](../../../src/Plato.Compiler/Analysis/Linter.cs) are the authorities for these codes.
 
+## What the command line shows
+
+The table above names what the checker can report. The command-line `lint` and `run` commands
+do not print those `CHK` codes. Inferred from source: the checker's findings reach a user
+through the navigation server's `plato_check` tool instead. The language chapters' "Common mistake" sections record what each
+command actually printed for a real wrong program. Status: observed for the checked build that
+produced those sections.
+
+From the command line, a mistake usually shows up in one of these forms:
+
+| Form | What it usually means |
+|---|---|
+| `Parse error at line L, column C (furthest grammar failure)` | The text is not in the grammar. The named rule can be an enclosing one, such as `Library`, with no useful position. |
+| `RESOLVE <file>:<line>: Could not find symbol <name>` | A misspelt or missing name. Several near-duplicate lines can follow one mistake. |
+| `Could not find type T; a type variable in a signature is spelled $T` | A library signature used `T` where it needs `$T`. |
+| `cannot resolve '<f>' for (<types>)` | No overload fits, a constructor got the wrong field count, or a library name was used to qualify a call. Shown only when a law reaches the call. |
+| `a conditional's condition is not a Boolean` | A non-Boolean condition. Shown only at run time. |
+| `LINT001: type '<T>' implements '<I>' but no implementation was found for ...` | A missing interface member. |
+| `Operation `+=` is not a valid operator name` | Compound assignment. The function is dropped, and the command can still exit successfully. |
+
+Some mistakes print nothing at all: a `match` with a missing case, `++`, and a type argument that
+violates its bound were all accepted by `lint --strict` and `run`. Inferred: the sum, bound and
+existential checkers have no caller on the command-line path. The
+[language improvement register](../review/language-improvements.md) tracks these gaps.
+
 ## Avoiding false success
 
 A lint run that is not in strict mode can still report findings. Code generation can exit successfully, print `DEGRADED bodies`, and emit throwing stubs. Inspect the diagnostics and the emitted bodies, then compile and exercise the relevant C# or interpreter path. [Verification](../implementation/verification.md) is the guide for that evidence. One exit code is not complete evidence.

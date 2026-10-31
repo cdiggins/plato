@@ -23,7 +23,13 @@ Do not use non-C# writers as semantic evidence. Do not claim a clean-room spec i
 ## Reader data
 
 `tools/reference/build.py` writes `tools/reference-reader/public/reference.json` before reader build.
-Top-level object: `{schemaVersion: 1, sourceRevision: string, pages: Page[]}`.
+Top-level object: `{schemaVersion: 1, sourceRevision: string, pages: Page[], symbols, aliases}`.
+`symbols` maps a declared name to `[{id, title}]`, one entry per name page.
+`aliases` maps a retired page id to its replacement page id, copied from
+`docs/reference/api/aliases.json`; the reader resolves an unknown route through it before
+reporting a missing page.
+Beside the bundle the builder writes `plato-reference.txt` (every page, in reader order, under
+`=== PAGE <id> ===`) and `llms.txt`. All three are ignored by git.
 Page: `{id: string, path: string, title: string, group: string[], markdown: string}`.
 `rawMarkdown` is an optional string preserving original relative links for downloads.
 `id` is the repo-relative Markdown path without `.md`, e.g. `docs/reference/language/model`.
@@ -93,4 +99,5 @@ labels in the reference README, which qualify individual claims, not pages.
   so recipes cannot change each other's name resolution.
 - Every `plato` fence on a tour or cookbook page is copied verbatim from a file in its group,
   and the page links that file. The builder rejects a fence it cannot find in the group.
-- A runnable example that no group holds is labelled unchecked on its page.
+- A runnable example that no group holds is tagged `plato unchecked` and says so in its prose.
+  The fence check exempts that tag.

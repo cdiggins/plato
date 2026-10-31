@@ -9,7 +9,8 @@ Each later page stands on its own. A link names a prerequisite or the source of 
 ## Start
 
 - [What is Plato](start/what-is-plato.md)
-- [Quick tour](start/tour.md)
+- [Quick tour](start/tour.md): one-idea pages, each with a checked example and an exercise
+- [If you know Python or C#](compare/README.md): familiar constructs mapped onto Plato, with what is missing and what is new
 - [Getting started](start/getting-started.md)
 
 ## Where to look
@@ -19,13 +20,20 @@ The [language](language/README.md) says what programs mean.
 The [library guide](library/README.md) covers mathematical objects, units, coordinate
 systems, preconditions, and operations.
 
-The API catalog keeps exact declarations, comments, and bodies:
+The API catalog keeps exact declarations, comments, and bodies, one page per declared name.
+Each page carries a status of Supported, Experimental or Legacy, set by its tier:
 
 - [Foundation](api/foundation/README.md) is the scalar, algebra, and collection vocabulary.
 - [Geometry](api/geometry/README.md) is spatial objects and geometric algorithms.
 - [Graphics](api/graphics/README.md) is images, cameras, scenes, and rendering vocabulary.
 - [Future](api/future/README.md) is aspirational vocabulary. The default shipping gates exclude it.
 - [Legacy](api/legacy/README.md) is the older library, compiled separately from the forward vocabulary.
+
+The [cookbook](cookbook/README.md) has problem-shaped recipes for scientists and engineers, each a
+complete program checked by the law runner.
+
+The [design door](design/README.md) explains why Plato is the way it is: the authority of each
+source, a bibliography, and the alternatives that were rejected.
 
 The [implementation guide](implementation/README.md) connects that meaning to the compiler,
 the interpreter, and the C# runtime. Read the
