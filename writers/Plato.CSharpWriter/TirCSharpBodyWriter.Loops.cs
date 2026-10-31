@@ -331,11 +331,9 @@ public partial class TirCSharpBodyWriter
         }
         WriteLine($"if ({count} > 0)");
         WriteStartBlock();
-        PushLocalScope(ll.Hoisted);
         foreach (var let in ll.Hoisted)
             WriteStatement(let);
         loop();
-        PopLocalScope();
         WriteEndBlock();
     }
 }
