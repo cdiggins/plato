@@ -488,6 +488,11 @@ namespace Ara3D.Geometry.CSharpWriter
         // parameters, ref readonly element reads and table accessors (see LargeStructPassing).
         // Extension style only. Default (false) output is unchanged.
         public bool InParameters { get; set; }
+
+        // When true (--switch-match, TKT-1148), a chain of three or more tag tests on one sum value
+        // (what a match lowers to) is a C# switch expression on its Kind (see
+        // TirCSharpBodyWriter.MatchSwitch.cs). Default (false) output is unchanged.
+        public bool SwitchMatch { get; set; }
         private LargeStructPassing _largeStructs;
         public LargeStructPassing LargeStructs
             => InParameters && ExtensionPlans != null ? _largeStructs ??= new LargeStructPassing(this) : null;

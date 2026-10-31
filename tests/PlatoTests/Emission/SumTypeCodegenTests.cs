@@ -38,7 +38,7 @@ namespace PlatoTests
         // namespace the header `using` needs, Intrinsics.CombineHashCodes, ArrayEquals and ArrayHash, and trivial stand-ins
         // for the payload structs the pathsegment fixture references (a real Point2D so projections
         // are observable; empty Vector2/Angle, which the match never reads).
-        private const string Prelude = @"
+        internal const string Prelude = @"
 namespace Ara3D.Collections { }
 namespace Ara3D.Geometry
 {

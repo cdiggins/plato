@@ -642,6 +642,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
             case TirConditional cond:
             {
+                if (TryWriteTagSwitch(cond, WriteNode))
+                    return;
                 // A conditional (or assignment) used as the condition must keep its parentheses:
                 // `?:` is right-associative, so `(a ? b : false) ? x : y` written bare parses as
                 // `a ? b : (false ? x : y)` and compiles with a different meaning (plato-454).

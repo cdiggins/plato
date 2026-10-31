@@ -11,4 +11,7 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     // --in-params (TKT-1066): large readonly structs pass by reference (see LargeStructPassing).
     // Independent of --loops.
     public bool InParameters { get; init; }
+
+    // --switch-match (TKT-1148): a tag-test chain is a switch expression on the tag.
+    public bool SwitchMatch { get; init; }
 }

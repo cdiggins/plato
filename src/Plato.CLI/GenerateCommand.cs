@@ -49,6 +49,7 @@ internal static class GenerateCommand
             args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"), LowerScalars: lowerScalars)
         {
             InParameters = args.Contains("--in-params"),
+            SwitchMatch = args.Contains("--switch-match"),
         };
         if (loopOptimizations.ConcreteArrays && (typeScript || rust || glsl || cpp || cuda))
         {

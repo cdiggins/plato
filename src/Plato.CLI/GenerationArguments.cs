@@ -9,7 +9,7 @@ internal static class GenerationArguments
         "--optimize", "--optimize-arrays", "--inline", "--static-abstract",
         "--loops", "--fuse", "--inline-report", "--fuse-consumers", "--exact-output",
         "--lean-inlining",
-        "--concrete-arrays", "--presize", "--in-place", "--share-calls", "--lower-scalars", "--in-params"
+        "--concrete-arrays", "--presize", "--in-place", "--share-calls", "--lower-scalars", "--in-params", "--switch-match"
     };
 
     private static readonly HashSet<string> ValueOptions = new(StringComparer.Ordinal)
