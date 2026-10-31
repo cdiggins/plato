@@ -288,6 +288,11 @@ public partial class TirCSharpBodyWriter
     {
         switch (n)
         {
+            case TirLiteral lit when ScalarLowering.IsLoweredScalarName(lit.LiteralType.ToString()):
+                // A literal is wrapped like any other lowered value: the conversion operator the
+                // wrapper spelling calls is a call the JIT refuses past its locals cap too.
+                WriteWrapped(lit.LiteralType.ToString(), () => WritePrimitive(lit));
+                return true;
             case TirParameter p when p.Def != null && _primitiveParams.TryGetValue(p.Def, out var ps):
                 WriteWrapped(ps, () => WritePrimitive(p));
                 return true;
