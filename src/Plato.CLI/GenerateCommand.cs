@@ -48,7 +48,11 @@ internal static class GenerateCommand
         var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
             args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"), LowerScalars: lowerScalars,
             SinkBindings: args.Contains("--sink-bindings"), BindScrutinees: args.Contains("--bind-scrutinee"), ShareCallsWide: args.Contains("--share-calls-wide"),
-            ClosureFree: args.Contains("--closure-free"));
+            ClosureFree: args.Contains("--closure-free"))
+        {
+            InParameters = args.Contains("--in-params"),
+            SwitchMatch = args.Contains("--switch-match"),
+        };
         if (loopOptimizations.ConcreteArrays && (typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--concrete-arrays applies to C# generation only.");

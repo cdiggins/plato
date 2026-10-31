@@ -18,4 +18,11 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     /// <summary>The elaboration rewrites these switches ask for (the interpreter and the writer elaborate alike).</summary>
     public Ara3D.Geometry.Compiler.Checking.ElaborationOptions Elaboration
         => new(BindScrutinees, SinkBindings);
+
+    // --in-params (TKT-1066): large readonly structs pass by reference (see LargeStructPassing).
+    // Independent of --loops.
+    public bool InParameters { get; init; }
+
+    // --switch-match (TKT-1148): a tag-test chain is a switch expression on the tag.
+    public bool SwitchMatch { get; init; }
 }

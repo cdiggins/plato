@@ -486,6 +486,18 @@ namespace Ara3D.Geometry.CSharpWriter
         // (a match on a call lowers to a test and a field read per case, each naming the call) is
         // evaluated once into a local (see TirSharedCalls). Default (false) output is unchanged.
         public bool ShareCalls { get; set; }
+        // When true (--in-params, TKT-1066), large readonly structs pass by reference: `in`
+        // parameters, ref readonly element reads and table accessors (see LargeStructPassing).
+        // Extension style only. Default (false) output is unchanged.
+        public bool InParameters { get; set; }
+
+        // When true (--switch-match, TKT-1148), a chain of three or more tag tests on one sum value
+        // (what a match lowers to) is a C# switch expression on its Kind (see
+        // TirCSharpBodyWriter.MatchSwitch.cs). Default (false) output is unchanged.
+        public bool SwitchMatch { get; set; }
+        private LargeStructPassing _largeStructs;
+        public LargeStructPassing LargeStructs
+            => InParameters && ExtensionPlans != null ? _largeStructs ??= new LargeStructPassing(this) : null;
 
         // --sink-bindings (TKT-1142): a local that one arm of a conditional reads is evaluated on that arm
         // (TirSinkBindings), in the elaborated TIR and again after inlining. Default (false) output is unchanged.
@@ -915,6 +927,9 @@ namespace Ara3D.Geometry.CSharpWriter
                         WriteLine(line);
                     return this;
                 });
+
+            if (LargeStructs != null)
+                WriteFile(LargeStructPassing.HelperFile, () => { LargeStructPassing.WriteHelper(this); return this; });
 
             FlushTirDumps();
             return this;

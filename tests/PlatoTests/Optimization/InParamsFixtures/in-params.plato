@@ -1,0 +1,75 @@
+// --in-params (TKT-1066): a 320-byte struct (forty Numbers under cpu64), a small one, and a table of
+// the large one, with every shape the switch rewrites and every shape it must leave alone.
+type InWide
+{
+    A0: Number; A1: Number; A2: Number; A3: Number; A4: Number; A5: Number; A6: Number; A7: Number;
+    A8: Number; A9: Number; A10: Number; A11: Number; A12: Number; A13: Number; A14: Number; A15: Number;
+    A16: Number; A17: Number; A18: Number; A19: Number; A20: Number; A21: Number; A22: Number; A23: Number;
+    A24: Number; A25: Number; A26: Number; A27: Number; A28: Number; A29: Number; A30: Number; A31: Number;
+    A32: Number; A33: Number; A34: Number; A35: Number; A36: Number; A37: Number; A38: Number; A39: Number;
+}
+
+type InNarrow
+{
+    X: Number;
+    Y: Number;
+}
+
+type InTable
+{
+    Rows: Array<InWide>;
+}
+
+library InParamsProbe
+{
+    // A table accessor: returns ref readonly.
+    RowAt(t: InTable, i: Integer): InWide
+        => t.Rows[i];
+
+    // An `in` receiver.
+    Total(w: InWide): Number
+        => w.A0 + w.A39;
+
+    // `in` for the large parameter only.
+    Scaled(w: InWide, n: InNarrow, k: Number): Number
+        => w.A1 * k + n.X;
+
+    // A lambda captures w: it stays by value.
+    Shifted(w: InWide, xs: Array<Number>): Array<Number>
+        => xs.Map(x => x + w.A2);
+
+    // The receiver comes from the ref readonly accessor.
+    RowTotal(t: InTable, i: Integer): Number
+        => t.RowAt(i).Total;
+
+    // A local bound to the accessor is a ref readonly local.
+    LocalTotal(t: InTable, i: Integer): Number
+    {
+        var w = t.RowAt(i);
+        return w.Total + w.A3;
+    }
+
+    // A local a lambda captures stays a copy.
+    CapturedLocal(t: InTable, i: Integer, xs: Array<Number>): Array<Number>
+    {
+        var w = t.RowAt(i);
+        return xs.Map(x => x + w.A4);
+    }
+
+    // Element reads as receiver, argument and local.
+    DirectTotal(t: InTable, i: Integer): Number
+        => t.Rows[i].Total;
+
+    DirectArgument(t: InTable, i: Integer, n: InNarrow): Number
+        => Scaled(t.Rows[i], n, 2.0);
+
+    DirectLocal(t: InTable, i: Integer): Number
+    {
+        var w = t.Rows[i];
+        return w.A5 + w.Total;
+    }
+
+    // A lambda over the table's elements.
+    Totals(t: InTable): Array<Number>
+        => t.Rows.Map(w => w.Total);
+}

@@ -119,6 +119,8 @@ public partial class TirCSharpBodyWriter
                 return;
             }
             case TirConditional cond:
+                if (TryWriteTagSwitch(cond, WritePrimitive))
+                    return;
                 Write("(");
                 WriteCondition(cond.Condition);
                 Write(" ? ");
@@ -312,6 +314,8 @@ public partial class TirCSharpBodyWriter
                 WriteWrapped(to, () => WritePrimitive(c));
                 return true;
             case TirConditional cond:
+                if (TryWriteTagSwitch(cond, WriteNode))
+                    return true;
                 WriteCondition(cond.Condition);
                 Write(" ? ");
                 WriteNode(cond.IfTrue);

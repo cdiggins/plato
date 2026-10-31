@@ -80,6 +80,8 @@ public sealed class CSharpProgram
         writer.ShareCallsWide = loopOptimizations?.ShareCallsWide ?? false;
         writer.LowerScalars = loopOptimizations?.LowerScalars ?? false;
         writer.ClosureFree = loopOptimizations?.ClosureFree ?? false;
+        writer.InParameters = loopOptimizations?.InParameters ?? false;
+        writer.SwitchMatch = loopOptimizations?.SwitchMatch ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 
