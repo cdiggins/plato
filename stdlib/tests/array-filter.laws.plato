@@ -1,0 +1,60 @@
+// Law library for the Array filter (Filter in stdlib/foundation/primitives.library.plato).
+//
+// Same harness and conventions as foundation.laws.plato: Law_-prefixed Boolean
+// functions, invoked with seeded pseudorandom instances. Filter is total over any
+// array and any predicate, so every law holds for ANY array the runner produces.
+// The predicates are fixed lambdas because the runner cannot generate a function.
+library ArrayFilterLaws
+{
+    // Filter is the FlatMap idiom it stands for, element by element: this is the
+    // equivalence the C# writer's lowering of the idiom preserves.
+    Law_FilterIsTheFlatMapIdiom(xs: Array<Number>): Boolean
+    {
+        var kept = xs.Filter(x => x <= 0.5);
+        var idiom = xs.FlatMap(x => x <= 0.5 ? [x] : [x].Take(0));
+        return kept.SameElements(idiom);
+    }
+
+    // Everything Filter returns satisfies the predicate.
+    Law_FilterKeepsOnlyWhatSatisfies(xs: Array<Number>): Boolean
+        => xs.Filter(x => x <= 0.5).All(x => x <= 0.5);
+
+    // Filter drops exactly the elements that fail the predicate: kept and dropped
+    // together are the whole input.
+    Law_FilterAndItsComplementPartitionTheInput(xs: Array<Number>): Boolean
+        => xs.Filter(x => x <= 0.5).Count + xs.Filter(x => !(x <= 0.5)).Count == xs.Count;
+
+    // Filter never reorders: the kept elements are a subsequence of the input, which
+    // for an ascending run means they stay ascending. Sorting first makes the
+    // pseudorandom input an ascending one.
+    Law_FilterKeepsSourceOrder(xs: Array<Number>): Boolean
+    {
+        var ascending = xs.Sort((a, b) => a <= b);
+        return ascending.Filter(x => x <= 0.5).StepsAscend;
+    }
+
+    // A predicate that accepts everything returns the input.
+    Law_FilterKeepingEverythingIsTheInput(xs: Array<Number>): Boolean
+        => xs.Filter(x => true).SameElements(xs);
+
+    // A predicate that accepts nothing returns the empty array.
+    Law_FilterKeepingNothingIsEmpty(xs: Array<Number>): Boolean
+        => xs.Filter(x => false).Count == 0;
+
+    // The predicate is called once per element, in index order: a Reduce over the
+    // same predicate counts the kept elements the same way.
+    Law_FilterCountIsTheCountOfKept(xs: Array<Number>): Boolean
+        => xs.Filter(x => x <= 0.5).Count == xs.Reduce(0, (n, x) => x <= 0.5 ? n + 1 : n);
+
+    //==
+    // Helpers. No Law_ prefix, so the runner ignores them.
+
+    // True when both arrays have the same length and equal elements at every index.
+    SameElements(a: Array<Number>, b: Array<Number>): Boolean
+        => a.Count == b.Count && a.Count.MapRange(i => a[i] == b[i]).All(t => t);
+
+    // True when every adjacent pair is in ascending order (vacuously true for
+    // fewer than two elements).
+    StepsAscend(s: Array<Number>): Boolean
+        => (s.Count - 1).Greater(0).MapRange(i => s[i] <= s[i + 1]).All(b => b);
+}

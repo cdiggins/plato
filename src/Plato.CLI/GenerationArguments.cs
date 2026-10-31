@@ -8,8 +8,8 @@ internal static class GenerationArguments
         "--typescript", "--rust", "--glsl", "--cpp", "--cuda",
         "--optimize", "--optimize-arrays", "--inline", "--static-abstract",
         "--loops", "--fuse", "--inline-report", "--fuse-consumers", "--exact-output",
-        "--lower-scalars",
-        "--lean-inlining"
+        "--lean-inlining",
+        "--concrete-arrays", "--presize", "--in-place", "--share-calls", "--lower-scalars"
     };
 
     private static readonly HashSet<string> ValueOptions = new(StringComparer.Ordinal)

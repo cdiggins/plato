@@ -44,13 +44,13 @@ public partial class TirCSharpBodyWriter
         WriteStartBlock();
         WriteLine($"var {array} = new {elem}[(int){size}];");
         WriteLine($"var {offset} = 0;");
-        WriteItems($"{array}[{offset}++] = {part}[{j}];");
+        WriteItems($"{array}[{offset}++] = {ListAt(part, j)};");
         WriteLine($"{loop.TempName} = {array};");
         WriteEndBlock();
         WriteLine("else");
         WriteStartBlock();
         WriteLine($"var {list} = new System.Collections.Generic.List<{elem}>();");
-        WriteItems($"{list}.Add({part}[{j}]);");
+        WriteItems($"{list}.Add({ListAt(part, j)});");
         WriteLine($"{loop.TempName} = {list};");
         WriteEndBlock();
         return true;
@@ -59,14 +59,14 @@ public partial class TirCSharpBodyWriter
         {
             WriteLine($"for (var {i} = 0; {i} < {n}; {i}++)");
             WriteStartBlock();
-            WriteLine($"var {_loopParamNames[lambda.Parameters[0]]} = {source}[{i}];");
+            WriteLine($"var {_loopParamNames[lambda.Parameters[0]]} = {(IsInterfaceList(loop.Sources[0]) ? ListAt(source, i) : $"{source}[{i}]")};");
             // Retain the literal's complete eager evaluation and conversion context.
             Write($"IReadOnlyList<{elem}> {part} = ");
             _lambdaDepth++;
             WriteNode(lambda.Body);
             _lambdaDepth--;
             WriteLine(";");
-            WriteLine($"for (var {j} = 0; {j} < {part}.Count; {j}++)");
+            WriteLine($"for (var {j} = 0; {j} < {ListCount(part)}; {j}++)");
             WriteStartBlock();
             WriteLine(append);
             WriteEndBlock();

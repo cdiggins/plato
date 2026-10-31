@@ -250,8 +250,14 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("fuse-consumers / independent reductions");
             tir = TirArrayMaterializer.Rewrite(tir, this);
             Phase("optimize-arrays / materialize (layer 9)");
+            tir = TirSharedCalls.Rewrite(tir, this);
+            Phase("share-calls / a call a statement repeats (TKT-1136)");
             tir = TirLoopLowerer.Rewrite(tir, this);
             Phase("loops / lower (layer 10)");
+            tir = TirPresize.Rewrite(tir, this);
+            Phase("presize / counted List fills");
+            tir = TirInPlaceUpdates.Rewrite(tir, this);
+            Phase("in-place / last-use array updates (TKT-1132)");
             sb?.AppendLine();
             return tir;
         }
@@ -457,6 +463,27 @@ namespace Ara3D.Geometry.CSharpWriter
         // one-line forwarding members (see LeanInliningPass); the handwritten intrinsics keep theirs.
         // Default (false) output is unchanged.
         public bool LeanInlining { get; set; }
+
+        // When true (--concrete-arrays, TKT-1093), every Count and single-index read of an
+        // Array-typed (IReadOnlyList) value goes through ConcreteArrayAccess.g.cs, which tests
+        // for an exact T[] and reads it directly; the JIT cannot devirtualize the array's
+        // IReadOnlyList calls. Signatures and stored types are unchanged. Default (false) output
+        // is unchanged.
+        public bool ConcreteArrays { get; set; }
+
+        // When true (--presize, TKT-1131), a `new List<T>()` that a counted loop fills once per pass
+        // is written `new List<T>(count)` (see TirPresize). Default (false) output is unchanged.
+        public bool Presize { get; set; }
+
+        // When true (--in-place, TKT-1132), a SetAt on an array that nothing can observe afterwards is
+        // emitted as a write into the array's own storage (see TirInPlaceUpdates). Default (false)
+        // output is unchanged.
+        public bool InPlaceUpdates { get; set; }
+
+        // When true (--share-calls, TKT-1136), a method call that one statement evaluates more than once
+        // (a match on a call lowers to a test and a field read per case, each naming the call) is
+        // evaluated once into a local (see TirSharedCalls). Default (false) output is unchanged.
+        public bool ShareCalls { get; set; }
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at
@@ -775,6 +802,37 @@ namespace Ara3D.Geometry.CSharpWriter
             return this;
         }
 
+        /// <summary>The class --concrete-arrays reads arrays through (TKT-1093).</summary>
+        public const string ConcreteArrayAccessClass = "ConcreteArrayAccess";
+
+        // Written only under --concrete-arrays, so the default output has no such file. A T[] test
+        // is `GetType() == typeof(T[])`: exact, so a covariant Derived[] behind IReadOnlyList<Base>
+        // keeps the interface path, and a JIT intrinsic the JIT folds when it knows the type. The
+        // explicit range test sends a bad index to the interface, which throws what it always threw.
+        private CSharpWriter WriteConcreteArrayAccess()
+        {
+            WriteLine($"{GeneratedCodeAttributes}");
+            WriteLine($"public static class {ConcreteArrayAccessClass}");
+            WriteStartBlock();
+            WriteLine("[MethodImpl(AggressiveInlining)]");
+            WriteLine("public static int Count<T>(IReadOnlyList<T> xs)");
+            WriteLine("    => xs.GetType() == typeof(T[]) ? Unsafe.As<T[]>(xs).Length : xs.Count;");
+            WriteLine();
+            WriteLine("[MethodImpl(AggressiveInlining)]");
+            WriteLine("public static T At<T>(IReadOnlyList<T> xs, int i)");
+            WriteStartBlock();
+            WriteLine("if (xs.GetType() == typeof(T[]))");
+            WriteStartBlock();
+            WriteLine("var a = Unsafe.As<T[]>(xs);");
+            WriteLine("if ((uint)i < (uint)a.Length)");
+            WriteLine("    return a[i];");
+            WriteEndBlock();
+            WriteLine("return xs[i];");
+            WriteEndBlock();
+            WriteEndBlock();
+            return this;
+        }
+
         public CSharpWriter WriteAll()
         {
             // The lambda-capture hoist names (`_var{N}`) and the inliner's collision-rename
@@ -810,6 +868,9 @@ namespace Ara3D.Geometry.CSharpWriter
 
             if (LeanInlining)
                 LeanInliningPass.Apply(Files);
+
+            if (ConcreteArrays)
+                WriteFile($"{ConcreteArrayAccessClass}.g.cs", WriteConcreteArrayAccess);
 
             FlushTirDumps();
             return this;

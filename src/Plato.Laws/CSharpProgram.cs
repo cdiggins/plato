@@ -62,15 +62,20 @@ public sealed class CSharpProgram
     /// <summary>Emits and compiles; throws <see cref="InvalidOperationException"/> listing the
     /// first C# errors when the generated program does not compile. <paramref name="lowerLoops"/>
     /// is the CLI's <c>--loops</c> (TKT-505): a differential run then checks the lowered loops
-    /// against the interpreter. <paramref name="lowerScalars"/> is the CLI's <c>--lower-scalars</c>
-    /// (TKT-1129).</summary>
-    public static CSharpProgram Build(PlatoCompilation comp, NumberProfile profile, bool lowerLoops = false, bool fuse = false, LoopOptimizationOptions loopOptimizations = null, bool lowerScalars = false)
+    /// against the interpreter. <paramref name="loopOptimizations"/> carries the other writer switches,
+    /// <c>--lower-scalars</c> (TKT-1129) among them.</summary>
+    public static CSharpProgram Build(PlatoCompilation comp, NumberProfile profile, bool lowerLoops = false, bool fuse = false, LoopOptimizationOptions loopOptimizations = null)
     {
         var sw = Stopwatch.StartNew();
-        var writer = new CSharpWriter.CSharpWriter(comp, "unused-in-memory") { ExtensionStyle = true, Profile = profile, LowerLoops = lowerLoops, FuseCombinators = fuse, LowerScalars = lowerScalars };
+        var writer = new CSharpWriter.CSharpWriter(comp, "unused-in-memory") { ExtensionStyle = true, Profile = profile, LowerLoops = lowerLoops, FuseCombinators = fuse };
         writer.FuseConsumers = loopOptimizations?.FuseConsumers ?? false;
         writer.ExactOutputAllocation = loopOptimizations?.ExactOutputAllocation ?? false;
         writer.LeanInlining = loopOptimizations?.LeanInlining ?? false;
+        writer.ConcreteArrays = loopOptimizations?.ConcreteArrays ?? false;
+        writer.Presize = loopOptimizations?.Presize ?? false;
+        writer.InPlaceUpdates = loopOptimizations?.InPlace ?? false;
+        writer.ShareCalls = loopOptimizations?.ShareCalls ?? false;
+        writer.LowerScalars = loopOptimizations?.LowerScalars ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 

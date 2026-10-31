@@ -30,6 +30,7 @@ Plato source
   -> 2b. TirMultiConsumerFusion.Rewrite                  --loops --fuse-consumers
   -> 3. TirArrayMaterializer.Rewrite                     --optimize-arrays
   -> 4. TirLoopLowerer.Rewrite                           --loops
+  -> 5. TirInPlaceUpdates.Rewrite                        --in-place
   -> TirCSharpBodyWriter                                 always on; prints the final tree as C#
        scalar lowering (not a TIR pass)                 --lower-scalars
        TirExactOutput specialization                    --loops --exact-output
@@ -62,13 +63,13 @@ The flags are parsed in
 `src/Plato.CLI/Program.cs` and stored on `CSharpWriter` as `InlineCalls`, `FuseCombinators`, `Optimize`,
 `OptimizeArrays` and `LowerLoops`. The compiled law backend in `src/Plato.Laws/CSharpProgram.cs` accepts
 `LowerLoops`, `FuseCombinators` and `LowerScalars`; `plato run --backend=csharp --loops --fuse` enables the
-first two and `--lower-scalars` the third (section 7a).
+first two and `--lower-scalars` the third (section 7b).
 `--fuse` can rewrite expressions without `--loops`. Conversely, `--loops` consumes supported
 `Map`/`MapRange` producer chains even without `--fuse` (section 7).
 
 `--lower-scalars` is a C#-only generation switch, off by default. The CLI rejects it with any other
 target (`GenerateCommand.cs`) and does not require `--loops`: scalar lets and intrinsics lower in every
-body, and the loop hooks apply when `--loops` produced loops (section 7a).
+body, and the loop hooks apply when `--loops` produced loops (section 7b).
 
 `LoopOptimizationOptions` carries the additional default-off options through `ToCSharp`
 and the compiled-law `CSharpProgram.Build` API. These options are generation CLI flags;
@@ -82,7 +83,7 @@ See [exact allocation](optimizer/exact-output.md) for callback preservation and 
 `--lean-inlining` (`CSharpWriter.LeanInlining`, `LoopOptimizationOptions.LeanInlining`, default off, no CLI
 check ties it to `--loops`) is a step at the end of `WriteAll`, not a TIR pass and not part of
 `RunOptimizerPasses`. The writer marks every generated member `[MethodImpl(AggressiveInlining)]`, and
-forcing all of them inline fills the JIT's per-method locals budget (the cap of section 7a), after which the
+forcing all of them inline fills the JIT's per-method locals budget (the cap of section 7b), after which the
 JIT refuses to inline even the small Number, Integer and Boolean wrappers. `LeanInliningPass`
 (`writers/Plato.CSharpWriter/Optimization/LeanInliningPass.cs`) reads the emitted C# and removes the
 attribute from every member that is not a one-line forwarding member: a member access or call chain over
@@ -232,7 +233,7 @@ lambda-free callees with cheap arguments. A callee that calls itself is detected
 even when `--inline` is off, expanding only a callee whose every parameter type and return type is
 `Number`, `Integer` or `Boolean`; any other callee is refused as `NotScalarBody`. A nullary constant expands
 only when its value type is one of the three. Character and String are scalar wrappers but never lower
-(section 7a), so a body over them is not expanded in this mode. Every other rule above applies unchanged:
+(section 7b), so a body over them is not expanded in this mode. Every other rule above applies unchanged:
 expression bodies only, the cheap-argument discipline, self-containment, the body budget, the pass cap.
 With `--inline` also on, the scalar gate is off and the general rules govern. The reason for the mode is
 that the stdlib's derived scalar helpers (`GreaterThanOrEquals`, `LessThan`, `Abs`, `Min`, `Max`,
@@ -433,7 +434,19 @@ These rules follow the receiver expression only, not a local variable's earlier 
 appends to a `List<T>`. Calls inside callback expressions can remain; refused sites use their ordinary
 library or intrinsic implementation.
 
-## 7a. Scalar lowering at emission (`--lower-scalars`)
+## 7a. Pass 5: `TirInPlaceUpdates` (`--in-place`, TKT-1132)
+
+Runs after the loop lowerer. Turns `SetAt(array, index, value)` (foundation `Primitives`) into
+`Intrinsics.SetAtInPlace(array, index, value)` where the old array provably has no later use in the body:
+the receiver is a new array made in this body (a literal, a lowered loop's result, a `MapRange`/`Map`/
+`Append`/`Prepend`/`Concatenate`/`Repeat` or `SetAt` result, or a local holding only such values), nothing
+else holds it, and the update is its last use or is assigned back to the same variable. The rule, clause by
+clause, and the limits (parameters, record fields and other calls' results are copied) are in
+[the optimization README](../writers/Plato.CSharpWriter/Optimization/README.md#in-place-array-updates---in-place-tkt-1132).
+**Runtime intrinsic:** `Intrinsics.SetAtInPlace` writes only into a `T[]` and copies any other list; the
+interpreter copies. The flag needs no other flag.
+
+## 7b. Scalar lowering at emission (`--lower-scalars`)
 
 | | |
 |---|---|

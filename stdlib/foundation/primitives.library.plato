@@ -209,10 +209,34 @@ library Primitives
     Prepend(self: Array<$T>, value: $T): Array<$T>
         => MapRange(self.Count + 1, i => i == 0 ? value : self[i - 1]);
 
+    // The array with the element at index replaced by value; self unchanged
+    // (as a value) when index is out of range. The source is immutable and this
+    // builds a new array; the C# writer's --in-place pass writes into self's
+    // storage instead where it proves self is not used afterwards (TKT-1132).
+    SetAt(self: Array<$T>, index: Integer, value: $T): Array<$T>
+        => MapRange(self.Count, i => i == index ? value : self[i]);
+
     // The two arrays joined end to end.
     // (https://en.wikipedia.org/wiki/Concatenation)
     Concatenate(xs: Array<$T>, ys: Array<$T>): Array<$T>
         => MapRange(xs.Count + ys.Count, i => i < xs.Count ? xs[i] : ys[i - xs.Count]);
+
+    //==
+    // # Array — filtering
+    //
+    // FlatMap is the only length-varying producer, so a filter is a FlatMap whose
+    // callback returns one element or none. The empty result is spelled
+    // `[x].Take(0)`, the idiom the C# writer's FlatMap lowering recognises: inside
+    // a concrete caller's loop the kept element is appended to the result list
+    // and nothing is built for the dropped one
+    // (docs/csharp-optimizer-pipeline.md, section 7). A call to Filter itself is
+    // an ordinary generic call until the writer expands it at the call site.
+
+    // The elements that satisfy the predicate, in their original order
+    // (https://en.wikipedia.org/wiki/Filter_(higher-order_function)). The
+    // predicate is called once per element, in index order.
+    Filter(xs: Array<$T>, keep: Function1<$T, Boolean>): Array<$T>
+        => xs.FlatMap(x => keep(x) ? [x] : [x].Take(0));
 
     //==
     // # Array — predicates

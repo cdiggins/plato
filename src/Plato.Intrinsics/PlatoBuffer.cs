@@ -85,5 +85,18 @@ namespace Ara3D.Geometry
             _items = null;
             return r;
         }
+
+        /// <summary>
+        /// Consume, as <see cref="Freeze"/>, but the result is the backing array itself (every
+        /// slot is an element), so a reader that tests for <c>T[]</c> (--concrete-arrays) finds one.
+        /// </summary>
+        public IReadOnlyList<T> FreezeExact()
+        {
+            CheckNotFrozen();
+            _frozen = true;
+            var r = _items;
+            _items = null;
+            return r;
+        }
     }
 }

@@ -20,11 +20,14 @@ public partial class TirCSharpBodyWriter
             : ll.Type != null && ll.Type.TypeArgs.Count == 1 ? _tw.ToCSharpType(ll.Type.TypeArgs[0]) : null;
         var srcNames = new List<string>();
         var srcCounts = new List<string>();
+        // Under --concrete-arrays a source list's reads go through ConcreteArrayAccess.
+        var srcLists = new List<bool>();
         for (var s = 0; s < ll.Sources.Count; s++)
         {
             var name = ll.Sources.Count == 1 ? $"_s{k}" : $"_s{k}{(char)('a' + s)}";
             srcNames.Add(name);
-            srcCounts.Add($"{name}.Count");
+            srcLists.Add(!ll.IndexSource && IsInterfaceList(ll.Sources[s]));
+            srcCounts.Add(srcLists[s] ? ListCount(name) : $"{name}.Count");
             Write($"var {name} = ");
             // A count source (MapRange, or the index source of a fused chain) is an Integer: lowered,
             // the bare int, so the Max and the loop bound below convert nothing.
@@ -117,10 +120,11 @@ public partial class TirCSharpBodyWriter
             if (stages[st] is TirLambda sl)
                 foreach (var p in sl.Parameters)
                     _loopParamNames[p] = $"{CSharpTypeWriter.Identifier(p.Name)}_{k}s{st}";
+        string Src(int s, string index) => srcLists[s] ? ListAt(srcNames[s], index) : $"{srcNames[s]}[{index}]";
         var count0 = ll.IndexSource ? $"System.Math.Max(0, (int){srcNames[0]})" : srcCounts[0];
         Operand Elem()
         {
-            var prev = ll.IndexSource ? index : (Operand)$"{srcNames[0]}[{i}]";
+            var prev = ll.IndexSource ? index : (Operand)Src(0, i);
             for (var st = 0; st < stages.Count; st++)
             {
                 var e = $"_e{k}_{st}";
@@ -176,7 +180,7 @@ public partial class TirCSharpBodyWriter
                 WriteLine($"var {a} = new {elem}[{n}];");
                 For(n, () =>
                 {
-                    var elems = srcNames.Select(sn => (Operand)$"{sn}[{i}]").ToArray();
+                    var elems = srcNames.Select((_, s) => (Operand)Src(s, i)).ToArray();
                     DeclareParams(elems);
                     Write($"{a}[{i}] = ");
                     WriteFnValue(false, elems);
@@ -251,9 +255,9 @@ public partial class TirCSharpBodyWriter
                     Write($"var {part} = ");
                     WriteFnValue(false, e);
                     WriteLine(";");
-                    WriteLine($"for (var {j} = 0; {j} < {part}.Count; {j}++)");
+                    WriteLine($"for (var {j} = 0; {j} < {ListCount(part)}; {j}++)");
                     WriteStartBlock();
-                    WriteLine($"{list}.Add({part}[{j}]);");
+                    WriteLine($"{list}.Add({ListAt(part, j)});");
                     WriteEndBlock();
                 });
                 WriteLine($"IReadOnlyList<{elem}> {t} = {list};");
@@ -262,7 +266,7 @@ public partial class TirCSharpBodyWriter
             case "Reverse":
                 WriteLine($"var {n} = {srcCounts[0]};");
                 WriteLine($"var {a} = new {elem}[{n}];");
-                For(n, () => WriteLine($"{a}[{i}] = {srcNames[0]}[{n} - 1 - {i}];"));
+                For(n, () => WriteLine($"{a}[{i}] = {Src(0, $"{n} - 1 - {i}")};"));
                 break;
             case "WithNext":
             {
@@ -273,9 +277,9 @@ public partial class TirCSharpBodyWriter
                 WriteLine($"var {a} = new {elem}[_m{k}];");
                 For($"_m{k}", () =>
                 {
-                    DeclareParams($"{srcNames[0]}[{i}]", $"{srcNames[0]}[({i} + 1) % {n}]");
+                    DeclareParams(Src(0, i), Src(0, $"({i} + 1) % {n}"));
                     Write($"{a}[{i}] = ");
-                    WriteFnValue(false, $"{srcNames[0]}[{i}]", $"{srcNames[0]}[({i} + 1) % {n}]");
+                    WriteFnValue(false, Src(0, i), Src(0, $"({i} + 1) % {n}"));
                     WriteLine(";");
                 });
                 break;
@@ -290,7 +294,7 @@ public partial class TirCSharpBodyWriter
                 For(n, () =>
                 {
                     var elems = Enumerable.Range(0, stride)
-                        .Select(o => (Operand)(o == 0 ? $"{srcNames[0]}[{i} * {stride}]" : $"{srcNames[0]}[{i} * {stride} + {o}]"))
+                        .Select(o => (Operand)(o == 0 ? Src(0, $"{i} * {stride}") : Src(0, $"{i} * {stride} + {o}")))
                         .ToArray();
                     DeclareParams(elems);
                     Write($"{a}[{i}] = ");

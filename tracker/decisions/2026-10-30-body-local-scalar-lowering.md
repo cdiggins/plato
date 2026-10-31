@@ -109,4 +109,4 @@ unchecked integer arithmetic, a truncating `ToInteger`, non-short-circuit `&` an
   both switches the witnesses reach zero.
 - **The measurement belongs to a report.** Whether the switch removes the refused calls in a given consumer is
   a dated result with its inputs, kept in the consumer's plans and not here.
-- See also the [optimizer pipeline reference](../../docs/csharp-optimizer-pipeline.md#7a-scalar-lowering-at-emission---lower-scalars).
+- See also the [optimizer pipeline reference](../../docs/csharp-optimizer-pipeline.md#7b-scalar-lowering-at-emission---lower-scalars).

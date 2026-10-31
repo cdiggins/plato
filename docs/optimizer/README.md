@@ -27,7 +27,7 @@ precedence over both documents.
 | [Materialization](materialization.md) | Mark selected array construction boundaries with eager helper names | `--optimize-arrays`; runtime incompatibility documented |
 | [Loop lowering and emission](loops.md) | Turn recognized dynamic combinators into local loops | `--loops` |
 | [Exact output allocation](exact-output.md) | Allocate fixed-width FlatMap results directly for runtime array sources | `--loops --exact-output` |
-| [Scalar lowering](../csharp-optimizer-pipeline.md#7a-scalar-lowering-at-emission---lower-scalars) | Compute Number, Integer and Boolean values as C# primitives inside a body, so wrapper calls cannot exhaust the JIT's inlining budget; signatures keep the wrappers | `--lower-scalars` |
+| [Scalar lowering](../csharp-optimizer-pipeline.md#7b-scalar-lowering-at-emission---lower-scalars) | Compute Number, Integer and Boolean values as C# primitives inside a body, so wrapper calls cannot exhaust the JIT's inlining budget; signatures keep the wrappers | `--lower-scalars` |
 | [Rewrite infrastructure](rewrite-infrastructure.md) | Rebuild typed trees and substitute parameters consistently | Used by passes |
 
 `CSharpWriter.RunOptimizerPasses` schedules inlining, fusion, component expansion,

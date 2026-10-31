@@ -31,6 +31,15 @@ namespace Ara3D.Geometry
         public PlatoList()
             => _items = Array.Empty<T>();
 
+        /// <summary>An empty builder with room for <paramref name="capacity"/> elements, so that
+        /// appending that many never copies the backing array. A hint: a capacity of zero or less
+        /// is the empty builder, and the builder still grows past it.</summary>
+        public PlatoList(Integer capacity)
+        {
+            int n = capacity;
+            _items = n <= 0 ? Array.Empty<T>() : new T[n];
+        }
+
         [MethodImpl(AggressiveInlining)]
         private void CheckNotFrozen()
         {
@@ -108,6 +117,21 @@ namespace Ara3D.Geometry
             CheckNotFrozen();
             _frozen = true;
             var r = new FrozenArray<T>(_items, _count);
+            _items = null;
+            return r;
+        }
+
+        /// <summary>
+        /// Consume, as <see cref="Freeze"/>, but when the backing array holds exactly the
+        /// elements added (a list created with the right capacity, or one that happened to
+        /// fill its last doubling) the array itself is the result, so a reader that tests for
+        /// <c>T[]</c> (--concrete-arrays) finds one. Otherwise the same zero-copy view.
+        /// </summary>
+        public IReadOnlyList<T> FreezeExact()
+        {
+            CheckNotFrozen();
+            _frozen = true;
+            IReadOnlyList<T> r = _count == _items.Length ? _items : new FrozenArray<T>(_items, _count);
             _items = null;
             return r;
         }

@@ -8,7 +8,7 @@ using PlatoCompilation = Ara3D.Geometry.Compiler.Compilation;
 namespace PlatoTests;
 
 /// <summary>
-/// Pins <see cref="CSharpWriter.LowerScalars"/> (plato-brep TKT-1129, section 7a of
+/// Pins <see cref="CSharpWriter.LowerScalars"/> (plato-brep TKT-1129, section 7b of
 /// docs/csharp-optimizer-pipeline.md). The fixture under <c>ScalarLoweringFixtures</c> is a
 /// self-contained program over Number, Integer and Boolean. Group A reads the emitted
 /// <c>ScalarProbe.g.cs</c>: with the flag on a scalar intrinsic is a C# operator over the wrapped

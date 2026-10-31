@@ -699,6 +699,21 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write(tr.Name);
                 return;
 
+            case TirInPlaceSet ips:
+            {
+                // The element type is named so the value converts to it at the call, as a literal's
+                // MakeArray<T> does; a type variable the signature does not declare falls back to inference.
+                var elemName = ips.Type != null && ips.Type.TypeArgs.Count == 1 ? CSharpTypeName(ips.Type.TypeArgs[0]) : null;
+                Write(elemName != null ? $"Intrinsics.SetAtInPlace<{elemName}>(" : "Intrinsics.SetAtInPlace(");
+                WriteNode(ips.Array);
+                Write(", ");
+                WriteIndexArgument(ips.Index);
+                Write(", ");
+                WriteNode(ips.Value);
+                Write(")");
+                return;
+            }
+
             case TirBooleanChain bc:
                 for (var i = 0; i < bc.Terms.Count; i++)
                 {
@@ -952,6 +967,30 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (TryWriteTypeRefInstanceCall(call))
             return;
 
+        // `==` and `!=` on arrays compare values (the interpreter's ValueEquality), but the runtime
+        // array is an IReadOnlyList, whose Equals is reference equality and which has no NotEquals
+        // (TKT-1040). Intrinsics.ArrayEquals compares counts, then each element with its own
+        // equality and a nested array element-wise, as a generated record does for an array field.
+        if ((name == "Equals" || name == "NotEquals") && args.Count == 2
+            && TirRewrite.StripCoerce(args[0])?.Type?.Name == "Array"
+            && TirRewrite.StripCoerce(args[1])?.Type?.Name == "Array")
+        {
+            Write(name == "Equals" ? "((Boolean)Intrinsics.ArrayEquals(" : "((Boolean)!Intrinsics.ArrayEquals(");
+            WriteArgs(args);
+            Write("))");
+            return;
+        }
+
+        // --concrete-arrays: freezing a builder hands over its backing T[] itself when that array is
+        // exactly full (always for a Buffer), so the value is an exact T[] for the helper's reads.
+        if (_tw.Writer.ConcreteArrays && name == "Freeze" && args.Count == 1
+            && TirRewrite.StripCoerce(args[0])?.Type?.Name is "List" or "Buffer")
+        {
+            WritePostfixReceiver(args[0]);
+            Write(".FreezeExact()");
+            return;
+        }
+
         // Plato's `Count(xs: Array<$T>): Integer` maps onto the runtime list interface, whose
         // Count is a BCL `int`. Under the WRAPPER-scalar recipe Integer and int are different
         // types, so any no-arg Plato member chained off the count (`xs.Count.Range`,
@@ -960,6 +999,13 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (name == "Count" && args.Count == 1
             && TirRewrite.StripCoerce(args[0])?.Type?.Name == "Array")
         {
+            if (_tw.Writer.ConcreteArrays && IsInterfaceList(args[0]))
+            {
+                Write($"((Integer){CSharpWriter.ConcreteArrayAccessClass}.Count(");
+                WriteNode(args[0]);
+                Write("))");
+                return;
+            }
             Write("((Integer)");
             WritePostfixReceiver(args[0]);
             Write(".Count)");
@@ -979,6 +1025,15 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 WritePostfixReceiver(args[0]);
                 Write(".At(");
                 WriteArgs(args.Skip(1));
+                Write(")");
+                return;
+            }
+            if (_tw.Writer.ConcreteArrays && args.Count == 2 && IsInterfaceList(args[0]))
+            {
+                Write($"{CSharpWriter.ConcreteArrayAccessClass}.At(");
+                WriteNode(args[0]);
+                Write(", ");
+                WriteIndexArgument(args[1]);
                 Write(")");
                 return;
             }

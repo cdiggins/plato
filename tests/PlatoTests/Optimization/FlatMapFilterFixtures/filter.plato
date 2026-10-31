@@ -33,4 +33,43 @@ library FlatMapProbe
 
     F1Delegate(xs: Array<Number>, callback: Function1<Number, Array<Number>>): Array<Number>
         => xs.FlatMap(callback);
+
+    // Empty arms that Take(0) spells over a receiver that cannot fault: skipped.
+    F3EmptyArm(xs: Array<Number>, keep: Function1<Number, Boolean>, value: Function1<Number, Number>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [value(x)] : [x].Take(0));
+
+    F3EmptyFirst(xs: Array<Number>, keep: Function1<Number, Boolean>, value: Function1<Number, Number>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [x, x].Take(0) : [value(x)]);
+
+    F3Fields(us: Array<ProbeUv>, keep: Function1<Number, Boolean>): Array<ProbeUv>
+        => us.FlatMap(u => keep(u.U) ? [u] : [ProbeUv(u.V, u.U)].Take(0));
+
+    // An empty arm beside an arm that is not a singleton.
+    F3Mixed(xs: Array<Number>, keep: Function1<Number, Boolean>, fallback: Function1<Number, Array<Number>>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? fallback(x) : [x, x].Take(0));
+
+    // Receivers that may fault: evaluated when their arm is selected.
+    F3Index(xs: Array<Number>, ys: Array<Number>, keep: Function1<Integer, Boolean>): Array<Number>
+        => xs.Count.Range.FlatMap(k => keep(k) ? [xs[k]] : [ys[k]].Take(0));
+
+    F3Call(xs: Array<Number>, keep: Function1<Number, Boolean>, reject: Function1<Number, Array<Number>>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [x] : reject(x).Take(0));
+
+    // A count that is not the literal 0: the arm is copied.
+    F3Count(xs: Array<Number>, keep: Function1<Number, Boolean>, count: Integer): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [x] : [x, x].Take(count));
+
+    // A parameter receiver: --fuse rewrites the call to a MapRange, which this lowering does not recognise.
+    F3Parameter(xs: Array<Number>, keep: Function1<Number, Boolean>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [x] : xs.Take(0));
+
+    // The named filter and the idiom it stands for.
+    F4Filter(xs: Array<Number>, keep: Function1<Number, Boolean>): Array<Number>
+        => xs.Filter(keep);
+
+    F4Lambda(xs: Array<Number>, keep: Function1<Number, Boolean>): Array<Number>
+        => xs.Filter(x => keep(x));
+
+    F4Idiom(xs: Array<Number>, keep: Function1<Number, Boolean>): Array<Number>
+        => xs.FlatMap(x => keep(x) ? [x] : [x].Take(0));
 }

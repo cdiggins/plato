@@ -89,12 +89,39 @@ public static class TirFusion
                 return FuseMapIntoConsumer(c, ctx, paramIndex: 0) ?? TirLiteralUnroller.UnrollAllAnyOverArray(c, ctx);
             case "FlatMap":
                 return FuseMapIntoConsumer(c, ctx, paramIndex: 0);
+            case "Filter":
+                return FilterToFlatMap(c, ctx);
             default:
                 return null;
         }
     }
 
     // ---- rules -----------------------------------------------------------------------------
+
+    /// <summary><c>xs.Filter(keep)</c> → <c>xs.FlatMap(x => keep(x) ? [x] : [x].Take(0))</c>, the body
+    /// stdlib/foundation/primitives.library.plato gives Filter. Only the stdlib Primitives.Filter, and
+    /// only when <c>keep</c> is a lambda or a leaf, so the rewrite calls it exactly where the body would.</summary>
+    public static TirNode FilterToFlatMap(TirCall c, FusionContext ctx)
+    {
+        if (c.Args.Count != 2 || !ctx.IsStandard(c.Callee, "Filter") || !TirRewrite.IsListType(c.Type)
+            || !(TirRewrite.IsCheap(c.Args[1]) || TirRewrite.StripCoerce(c.Args[1]) is TirLambda))
+            return null;
+        var take = ctx.Standard("Take");
+        var element = TirRewrite.ListElementType(c.Type);
+        if (take == null || element == null || ctx.BooleanType == null)
+            return null;
+        var x = new ParameterDef(null, $"_f{TirFusion.NextId++}", element, 0);
+        TirNode Ref() => new TirParameter(x, element, c.Origin);
+        TirNode keep = new TirInvoke(c.Args[1], new[] { Ref() }, ctx.BooleanType, c.Origin);
+        if (TirRewrite.StripCoerce(c.Args[1]) is TirLambda && keep is TirInvoke invoke
+            && TirRewrite.TryBetaReduce(invoke, out var reduced))
+            keep = reduced;
+        var one = new TirArray(new[] { Ref() }, c.Type, c.Origin);
+        var none = new TirCall(take, EmissionKind.InstanceMethod,
+            new[] { c.Type, ctx.IntegerType }, c.Type, new TirNode[] { new TirArray(new[] { Ref() }, c.Type, c.Origin), ctx.Integer(0, c.Origin) }, c.Type, c.Origin);
+        var body = new TirConditional(keep, one, none, c.Type, c.Origin);
+        return ctx.Call("FlatMap", new[] { c.Args[0], ctx.Lambda(new[] { x }, body, c.Type) }, c.Type, c.Origin);
+    }
 
     /// <summary><c>n.Range</c> → <c>n.MapRange(i => i)</c>: the canonical producer every consumer
     /// and the lowerer understand.</summary>
@@ -285,6 +312,13 @@ public sealed class FusionContext
 
     public TirLiteral Integer(long value, Symbol origin)
         => new TirLiteral(value, LiteralTypesEnum.Integer, IntegerType, origin);
+
+    public FunctionDef Standard(string name)
+        => _writer.Compilation.LibraryDefinitionsByName.TryGetValue("Primitives", out var library)
+            ? library.Functions.FirstOrDefault(f => f.Name == name && f.Body != null) : null;
+
+    public bool IsStandard(FunctionDef function, string name)
+        => function != null && ReferenceEquals(function, Standard(name));
 
     public TirLiteral Boolean(bool value, Symbol origin)
         => new TirLiteral(value, LiteralTypesEnum.Boolean, BooleanType, origin);

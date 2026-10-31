@@ -27,9 +27,10 @@ public partial class TirCSharpBodyWriter
             }
             WriteLine(";");
         }
-        WriteLine($"for (var {index} = 0; {index} < {source}.Count; {index}++)");
+        var isList = IsInterfaceList(pair.Source);
+        WriteLine($"for (var {index} = 0; {index} < {(isList ? ListCount(source) : $"{source}.Count")}; {index}++)");
         WriteStartBlock();
-        WriteLine($"var {element} = {source}[{index}];");
+        WriteLine($"var {element} = {(isList ? ListAt(source, index) : $"{source}[{index}]")};");
         WriteReductionStep(pair.First, element);
         WriteReductionStep(pair.Second, element);
         WriteEndBlock();

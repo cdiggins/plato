@@ -1,0 +1,89 @@
+library PresizeProbe
+{
+    // A counted fill: one Add per pass of a loop that counts up to a stated bound.
+    Counted(n: Integer): Array<Integer>
+    {
+        var xs = new List<Integer>();
+        var i = 0;
+        while (i < n)
+        {
+            xs = xs.Add(i * 2);
+            i = i + 1;
+        }
+        return xs.Freeze();
+    }
+
+    // The bound is the input's own count, the counter starts above zero.
+    FromOne(src: Array<Integer>): Array<Integer>
+    {
+        var xs = new List<Integer>();
+        var i = 1;
+        while (i < src.Count)
+        {
+            xs = xs.Add(src[i]);
+            i = i + 1;
+        }
+        return xs.Freeze();
+    }
+
+    // The Add is conditional: the count is not stated, nothing is presized.
+    Filtered(n: Integer): Array<Integer>
+    {
+        var xs = new List<Integer>();
+        var i = 0;
+        while (i < n)
+        {
+            if (i % 3 == 0)
+            {
+                xs = xs.Add(i);
+            }
+            i = i + 1;
+        }
+        return xs.Freeze();
+    }
+
+    // An append of an input array right after the builder is made.
+    Appended(a: Array<Integer>, b: Array<Integer>): Array<Integer>
+    {
+        var xs = new List<Integer>();
+        xs = xs.AddRange(a);
+        xs = xs.AddRange(b);
+        return xs.Freeze();
+    }
+
+    // The source states the capacity itself.
+    Stated(n: Integer): Array<Integer>
+    {
+        var xs = new List<Integer>(n);
+        xs = xs.Add(1);
+        return xs.Freeze();
+    }
+
+    // A Buffer filled slot by slot; --concrete-arrays freezes it to its own array.
+    Built(n: Integer): Array<Integer>
+    {
+        var b = new Buffer<Integer>(n);
+        var i = 0;
+        while (i < n)
+        {
+            b = b.Set(i, i);
+            i = i + 1;
+        }
+        return b.Freeze();
+    }
+
+    // The bound changes inside the loop: not stated, nothing is presized.
+    Moving(n: Integer): Array<Integer>
+    {
+        var xs = new List<Integer>();
+        var i = 0;
+        var m = n;
+        while (i < m)
+        {
+            xs = xs.Add(i);
+            m = m - 1;
+            i = i + 1;
+        }
+        return xs.Freeze();
+    }
+}

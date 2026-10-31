@@ -1,6 +1,7 @@
 // Parses law-run options and reports execution results for the selected backend.
 using System.Diagnostics;
 using Ara3D.Geometry.Compiler;
+using Ara3D.Geometry.CSharpWriter;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.Interpreter;
 using Ara3D.Geometry.Laws;
@@ -11,7 +12,7 @@ using Ara3D.Utils;
 namespace Ara3D.Geometry.CLI
 {
     // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|cpu64i32|gpu32]
-    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--lower-scalars] [--filter=<text>[,<text>...]] [--laws-from=<file>]
+    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--concrete-arrays] [--lean-inlining] [--presize] [--in-place] [--share-calls] [--lower-scalars] [--filter=<text>[,<text>...]] [--laws-from=<file>]
     //                [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N]
     //                [--budget=<seconds per law>] [--abandon=<seconds>] [--witness-budget=<seconds per witness>]
     //                [--parallel=N] [--call=<Name>]
@@ -73,8 +74,11 @@ namespace Ara3D.Geometry.CLI
             var lowerLoops = args.Contains("--loops");
             // --fuse: the compiled arm is written with combinator fusion on (TKT-506).
             var fuse = args.Contains("--fuse");
-            // --lower-scalars: the compiled arm is written with body-local scalar lowering on (TKT-1129).
-            var lowerScalars = args.Contains("--lower-scalars");
+            // The other writer switches of the regeneration, for the compiled arm: the laws then
+            // run through the same emission a consumer gets.
+            var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
+                args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"),
+                LowerScalars: args.Contains("--lower-scalars"));
             var backendName = args.Contains("--differential")
                 ? LawBackends.DifferentialName
                 : Flags(args, "--backend=").LastOrDefault() ?? LawBackends.InterpreterName;
@@ -106,7 +110,7 @@ namespace Ara3D.Geometry.CLI
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             if (folders.Count == 0 || (!laws && calls.Count == 0))
             {
-                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|cpu64i32|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--lower-scalars] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
+                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|cpu64i32|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--lean-inlining] [--in-place] [--share-calls] [--lower-scalars] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
                 return 1;
             }
 
@@ -151,7 +155,7 @@ namespace Ara3D.Geometry.CLI
                 foreach (var name in calls)
                     exit |= Call(interp, name);
                 if (laws)
-                    exit |= Laws(interp, backendKind.Value, lowerLoops, fuse, lowerScalars, options, timer, compiled, reportPath, baseline);
+                    exit |= Laws(interp, backendKind.Value, lowerLoops, fuse, loopOptimizations, options, timer, compiled, reportPath, baseline);
             }, 512 * 1024 * 1024);
             thread.Start();
             thread.Join();
@@ -185,11 +189,11 @@ namespace Ara3D.Geometry.CLI
         /// <summary>Runs the selected laws on the backend and prints them as they finish. Exit 1
         /// when one fails or errors, or, with a baseline, only when a law the baseline records as
         /// passing no longer passes.</summary>
-        private static int Laws(Interpreter.Interpreter interp, LawBackendKind kind, bool lowerLoops, bool fuse, bool lowerScalars, LawRunOptions options, Stopwatch timer, TimeSpan compiled,
+        private static int Laws(Interpreter.Interpreter interp, LawBackendKind kind, bool lowerLoops, bool fuse, LoopOptimizationOptions loopOptimizations, LawRunOptions options, Stopwatch timer, TimeSpan compiled,
             string reportPath, IReadOnlyList<LawVerdict> baseline)
         {
             ILawBackend backend;
-            try { backend = LawBackends.Create(kind, interp, lowerLoops, fuse, lowerScalars); }
+            try { backend = LawBackends.Create(kind, interp, lowerLoops, fuse, loopOptimizations); }
             catch (InvalidOperationException e)
             {
                 Console.Error.WriteLine(e.Message);
