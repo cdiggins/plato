@@ -24,15 +24,20 @@ Plato source
   -> parse, resolve, type check, monomorphize           (src/Plato.Compiler)
   -> elaborate to TIR; Boolean && and || become
      conditionals (TirShortCircuit)                      always on, in the compiler
-  -> 1. TirInliner.Inline                                --inline
+  -> 1. TirInliner.Inline                                --inline (or --lower-scalars: scalar callees only)
   -> 1b. TirFusion.Rewrite (uses TirLiteralUnroller)      --fuse
   -> 2. TirComponentUnroller.UnrollFunction              --optimize
   -> 2b. TirMultiConsumerFusion.Rewrite                  --loops --fuse-consumers
   -> 3. TirArrayMaterializer.Rewrite                     --optimize-arrays
   -> 4. TirLoopLowerer.Rewrite                           --loops
   -> TirCSharpBodyWriter                                 always on; prints the final tree as C#
+       scalar lowering (not a TIR pass)                 --lower-scalars
        TirExactOutput specialization                    --loops --exact-output
 ```
+
+Scalar lowering is part of emission, after loop lowering, like `TirExactOutput`: it rewrites no tree, so
+`RunOptimizerPasses` does not list it and `--dump-tir` shows no stage for it. The only part of
+`--lower-scalars` that runs inside the pass sequence is the scalar-only mode of pass 1 (section 4).
 
 Emission preserves the callee selected by the checker. For supported concrete, non-generic
 receivers, a bodied library method that collides with a record field is emitted in a separately
@@ -56,18 +61,40 @@ the CLI rejects incompatible combinations. Both are independently disabled by de
 The flags are parsed in
 `src/Plato.CLI/Program.cs` and stored on `CSharpWriter` as `InlineCalls`, `FuseCombinators`, `Optimize`,
 `OptimizeArrays` and `LowerLoops`. The compiled law backend in `src/Plato.Laws/CSharpProgram.cs` accepts
-both `LowerLoops` and `FuseCombinators`; `plato run --backend=csharp --loops --fuse` enables them.
+`LowerLoops`, `FuseCombinators` and `LowerScalars`; `plato run --backend=csharp --loops --fuse` enables the
+first two and `--lower-scalars` the third (section 7a).
 `--fuse` can rewrite expressions without `--loops`. Conversely, `--loops` consumes supported
 `Map`/`MapRange` producer chains even without `--fuse` (section 7).
 
+`--lower-scalars` is a C#-only generation switch, off by default. The CLI rejects it with any other
+target (`GenerateCommand.cs`) and does not require `--loops`: scalar lets and intrinsics lower in every
+body, and the loop hooks apply when `--loops` produced loops (section 7a).
+
 `LoopOptimizationOptions` carries the additional default-off options through `ToCSharp`
-and the compiled-law `CSharpProgram.Build` API. These two options are generation CLI flags;
+and the compiled-law `CSharpProgram.Build` API. These options are generation CLI flags;
 they are not currently exposed by `plato run`. `FuseConsumers` combines only contiguous
 independent Number folds over a completed owned local array, before materialization changes
 producer spelling. See [consumer fusion](optimizer/consumer-fusion.md) for the exact legality
 boundary. `ExactOutputAllocation` specializes canonical FlatMap loop emission when a raw
 literal callback proves output width, guarded by a runtime array source and capacity check.
 See [exact allocation](optimizer/exact-output.md) for callback preservation and fallback.
+
+`--lean-inlining` (`CSharpWriter.LeanInlining`, `LoopOptimizationOptions.LeanInlining`, default off, no CLI
+check ties it to `--loops`) is a step at the end of `WriteAll`, not a TIR pass and not part of
+`RunOptimizerPasses`. The writer marks every generated member `[MethodImpl(AggressiveInlining)]`, and
+forcing all of them inline fills the JIT's per-method locals budget (the cap of section 7a), after which the
+JIT refuses to inline even the small Number, Integer and Boolean wrappers. `LeanInliningPass`
+(`writers/Plato.CSharpWriter/Optimization/LeanInliningPass.cs`) reads the emitted C# and removes the
+attribute from every member that is not a one-line forwarding member: a member access or call chain over
+plain names (`a.Name(b)`, `new T(a, b)`, `self.Field`) or one binary operator over two plain names. The
+handwritten intrinsics are copied, not written, so they keep theirs. The pass only removes an attribute, so
+it cannot change meaning. Pinned by `tests/PlatoTests/Optimization/LeanInliningTests.cs` (which members keep
+the attribute, and that nothing else changes) and `tests/Plato.Interpreter.Tests/LeanInliningProgramTests.cs`
+(a lean program compiles and runs on the C# backend). The relation to `--lower-scalars`, from the witness
+bodies of plato-brep TKT-1129: the two switches act on the same budget from two sides and are independent.
+With lowering alone some witness bodies kept wrapper calls, because the budget lowering freed let the JIT
+inline more generated callees into them; with both switches the witnesses reach zero. The figures belong to
+the plato-brep report, not to this page.
 
 Dumping and ordinary emission share the same scheduling sequence; diagnostics observe
 each phase without running a separate copy of the pipeline.
@@ -191,6 +218,7 @@ generation so output is deterministic.
 | `ArityMismatch` | parameter count != argument count |
 | `NullaryRefused` | a nullary (`Constants.X`) call that failed the static-body rules |
 | `SelfRecursive` | callee resolves to the function being inlined into (would never settle) |
+| `NotScalarBody` | scalar-only mode: a parameter or the return type of the callee is not Number, Integer or Boolean |
 
 The reasons trace to four rules in the file header, all of which keep substitution from changing meaning or
 duplicating work: expression bodies only; a parameter used more than once accepts only a cheap argument
@@ -198,6 +226,21 @@ duplicating work: expression bodies only; a parameter used more than once accept
 not consumed in the callee (it would lose its delegate typing); a call under a lambda inlines only
 lambda-free callees with cheap arguments. A callee that calls itself is detected by remembering the
 (callee, receiver type) pairs inlined in earlier passes.
+
+**Scalar-only mode.** The pass has a second entry condition. `--lower-scalars` sets
+`CSharpWriter.InlineScalarBodies` (a read-only property equal to `LowerScalars`), and the pass then runs
+even when `--inline` is off, expanding only a callee whose every parameter type and return type is
+`Number`, `Integer` or `Boolean`; any other callee is refused as `NotScalarBody`. A nullary constant expands
+only when its value type is one of the three. Character and String are scalar wrappers but never lower
+(section 7a), so a body over them is not expanded in this mode. Every other rule above applies unchanged:
+expression bodies only, the cheap-argument discipline, self-containment, the body budget, the pass cap.
+With `--inline` also on, the scalar gate is off and the general rules govern. The reason for the mode is
+that the stdlib's derived scalar helpers (`GreaterThanOrEquals`, `LessThan`, `Abs`, `Min`, `Max`,
+`Square`; `stdlib/foundation/core.library.plato`, `primitives.library.plato`) are Plato bodies over the
+`LessThanOrEquals` intrinsic and the arithmetic operators, so their arithmetic lowers only when they are
+expanded into the caller first. The C++ writer's host reports `InlineScalarBodies` as false.
+`ITirInlineHost.InlineScalarBodies` and `HasAllScalarSignature` in `TirInliner.cs` are the definitions;
+`tests/PlatoTests/Optimization/ScalarBodyInliningTests.cs` pins the mode.
 
 **Runtime intrinsic:** none. The pass only moves Plato bodies.
 
@@ -390,6 +433,103 @@ These rules follow the receiver expression only, not a local variable's earlier 
 appends to a `List<T>`. Calls inside callback expressions can remain; refused sites use their ordinary
 library or intrinsic implementation.
 
+## 7a. Scalar lowering at emission (`--lower-scalars`)
+
+| | |
+|---|---|
+| Code | `writers/Plato.CSharpWriter/ScalarLowering.cs` (the table of scalar intrinsics and their C# spellings), `TirCSharpBodyWriter.Scalars.cs` (the renderings and the three maps of primitive-held names); hooks in `TirCSharpBodyWriter.cs`, `.Loops.cs`, `.MultiConsumer.cs`, `.ControlFlow.cs`, `.FlatMap.cs` |
+| Flag | `--lower-scalars` (`CSharpWriter.LowerScalars`, default off); `plato run --backend=csharp --lower-scalars` (or `--backend=differential`) for the compiled law arm |
+| Consumes / produces | the final tree after pass 4 / the same tree printed with Number, Integer and Boolean values held as C# primitives inside the body; no tree is rewritten |
+| Pinned by | `tests/PlatoTests/Emission/ScalarLoweringTests.cs` (emitted shape, and both spellings of each intrinsic run over the awkward inputs), `tests/PlatoTests/Optimization/ScalarBodyInliningTests.cs` (the scalar-only inliner) |
+
+**Why.** Plato's scalars compile to single-field readonly structs: `Number` over a machine float,
+`Integer` over an int, `Boolean` over a bool. Their arithmetic costs nothing only while the JIT inlines each
+one-line wrapper method. RyuJIT stops inlining into a method once the locals counted after inlining reach
+about 512, and `AggressiveInlining` does not lift that cap. Loop lowering and fusion put nested producers
+into one method, so a large lowered body can reach the cap, after which the remaining wrapper calls stay
+real calls. Body-local lowering removes the wrapper calls from the body text instead of relying on the
+JIT to remove them. The evidence is plato-brep TKT-1129 and its investigation
+`docs/plans/scalar-erasure-2026-10-30.md` in the plato-brep repository. The decision record is
+[body-local scalar lowering](../tracker/decisions/2026-10-30-body-local-scalar-lowering.md).
+
+**What stays a wrapper.** Signatures, fields, interfaces, generic arguments and every call boundary keep the
+wrapper structs, so unit types and interface conformance are still checked by the C# compiler. Only the
+inside of a body changes. This is not the whole-program erasure that
+[2026-08-01](../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md) retired.
+`Character` and `String` never lower.
+
+**Rules.** Every scalar-typed node has two renderings. `WriteNode` writes the wrapper the node's Plato
+type names, as before. `WritePrimitive` writes the primitive the wrapper holds:
+
+- A scalar intrinsic (`Add`, `Multiply`, `LessThanOrEquals`, `Equals`, `Not`, `Floor`, `Sqrt`,
+  `ToInteger`, ...) is a C# operator or a `NumberMath` call over its operands' primitives. The rows are
+  in `ScalarLowering.cs` and mirror `src/Plato.Intrinsics/Number.cs`, `Integer.cs` and `Boolean.cs`; a change
+  to a runtime operator changes its row. `NumberMath` and `NumberValue` are the profile aliases of
+  `src/Plato.Intrinsics/NumberProfile.cs` (`System.Math` and `double` under cpu64, `MathF` and `float` under
+  gpu32), so the lowered body follows `--profile`.
+- A literal is bare; under a 64-bit Integer profile an Integer literal carries an `L` suffix, so a local
+  declared from it has the Integer's own primitive type. A scalar local, inline binding, reduce accumulator, or scalar parameter of an inlined
+  loop lambda (the loop index among them) is declared as a primitive and read by name.
+- A scalar-to-scalar conversion is a cast of the primitive; `Array.Count` is the list's `Count`.
+- Any other scalar-valued node (a field read, a call to a generated method, a handwritten intrinsic with no
+  one-expression spelling such as `Hash` or `Round`) is written as a wrapper and read through `.Value`.
+- Where a wrapper is required (a call argument, a return, a field, an array element, a delegate result) the
+  value is wrapped once, as `Unsafe.BitCast<NumberValue, Number>(...)` (primitive and wrapper as the case
+  may be). The wrapper is a single-field sequential struct over the primitive, so the reinterpretation is the
+  value the constructor would build. The constructor and the implicit operator each become a real call once
+  the enclosing method is past the JIT's locals cap, while the JIT expands `Unsafe.BitCast` in its importer and
+  emits no instruction for it.
+- Where C# wants a condition (`if`, `while`, a conditional, a loop test, an `All` or `Any` guard) the Boolean
+  is written as a primitive instead of through the wrapper's `operator true`. Where C# wants an `int` (an
+  indexer, an array length) a lowered Integer is bare under a 32-bit Integer profile and is
+  `checked((int)(...))` under a 64-bit one, the narrowing the wrapper's implicit operator to `int` performs.
+- Two cases keep the wrapper spelling so the C# compiler does not change meaning. An Integer operation, or
+  a let, over constants alone (C# would fold it at compile time and reject an overflow or a division by zero
+  where the runtime wraps or throws). A scalar-valued call whose receiver is a list, an interface or a type
+  variable, which may bind to the runtime or to Ara3D.Collections rather than to generated code: it is
+  written as an explicit conversion to the primitive, `((NumberValue)(...))`.
+
+The lowered spelling computes what the wrapper does. `Number` equality is `double.Equals`, so two NaNs are
+equal, while `LessThanOrEquals` is the IEEE `<=`. Integer arithmetic is unchecked. `ToInteger` is the
+truncating cast. `And` and `Or` evaluate both operands (`&` and `|`); Plato's `&&` and `||` are already
+conditionals (section 3) and a `TirBooleanChain` keeps its own `&&` or `||`.
+
+**Example** (illustrative, with descriptive names, for `--loops --lower-scalars` over
+`SumSquares(xs: Array<Number>): Number => xs.Reduce(0.0, (acc, x) => acc + x * x)`). Without the flag:
+
+```csharp
+Number total = 0.0;
+var count = xs.Count;
+for (var index = 0; index < count; index++)
+{
+    var acc = total;
+    var x = xs[index];
+    total = acc.Add(x.Multiply(x));
+}
+return total;
+```
+
+With the flag the accumulator and the scalar parameters are primitives, the element is read once through
+`.Value`, and the result is wrapped once at the return (profile cpu64):
+
+```csharp
+var total = 0.0;
+var count = xs.Count;
+for (var index = 0; index < count; index++)
+{
+    var acc = total;
+    var x = xs[index].Value;
+    total = (acc + (x * x));
+}
+return Unsafe.BitCast<NumberValue, Number>(total);
+```
+
+**Boundaries.** Lowering rewrites no tree, changes no signature and adds no pass to `RunOptimizerPasses`.
+An intrinsic that has no row in `ScalarLowering.cs` stays a call on the wrapper and is read through
+`.Value`; for instance `LessThanOrEquals` and `Equals` are the only comparison rows, and `Equals` has no
+`Boolean` row. The interpreter arm of `plato run` ignores the flag, and the differential backend compares
+the interpreter with the lowered compiled arm.
+
 ## 8. Worked example
 
 Consider `Example` from section 4, with `Map` a bodiless signature in a self-contained test corpus,
@@ -456,6 +596,10 @@ elaborated tree, so a call written as a library method (`Scale`) appears as itse
   remain calls. Statement inlining is experimental and requires an explicit policy; the existing
   expression inliner still refuses statement callees.
 - **`--optimize-arrays` against the live runtime** (section 6).
+- **Scalar lowering is local to a body.** A value crosses every call boundary as a wrapper, so a chain of
+  small generated methods still pays for the wrappers at each boundary unless the inliner (pass 1)
+  expanded it. Only the three arithmetic scalars lower, and an intrinsic without a row in
+  `ScalarLowering.cs` is read through `.Value`.
 
 ## 11. Where each fact lives
 
@@ -467,3 +611,6 @@ elaborated tree, so a call written as a library method (`Scale`) appears as itse
 | What a pass consumes and produces | the header of its own file; each refers here for the order |
 | The array runtime | `src/Plato.Intrinsics/ArrayIntrinsics.cs`, `stdlib/foundation/intrinsics.library.plato` |
 | Language semantics of `&&` and `||` | `docs/SEMANTICS.md` section 6 |
+| Which scalar intrinsics lower, and to what C# | `writers/Plato.CSharpWriter/ScalarLowering.cs` (rows mirror `src/Plato.Intrinsics/Number.cs`, `Integer.cs`, `Boolean.cs`) |
+| Why lowering is body-local | `tracker/decisions/2026-10-30-body-local-scalar-lowering.md` |
+| Which members keep `AggressiveInlining` under `--lean-inlining` | `writers/Plato.CSharpWriter/Optimization/LeanInliningPass.cs` |

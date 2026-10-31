@@ -95,3 +95,4 @@ the same bytes without an emitter mode.
   rather than asking the emitter for primitives.
 - **Boxing becomes the cost to watch.** With wrappers, an interface-typed value used outside a
   constrained generic can box. That is the wrapper penalty worth measuring, not scalar arithmetic.
+- See also [2026-10-30-body-local-scalar-lowering.md](2026-10-30-body-local-scalar-lowering.md), which keeps this decision and lowers scalars inside a body only.

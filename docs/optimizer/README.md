@@ -19,7 +19,7 @@ precedence over both documents.
 
 | Component | Core idea | Activation |
 |---|---|---|
-| [Inlining](inlining.md) | Substitute a resolved function body to expose hidden operations | `--inline` |
+| [Inlining](inlining.md) | Substitute a resolved function body to expose hidden operations | `--inline`; scalar callees only under `--lower-scalars` |
 | [Fusion](fusion.md) | Compose adjacent producers or put a producer inside its consumer | `--fuse` |
 | [Literal expansion](literal-expansion.md) | Evaluate the structure of a small, statically bounded traversal at compile time | Part of `--fuse` |
 | [Component expansion](component-expansion.md) | Replace fixed-size collection plumbing with field expressions | `--optimize` |
@@ -27,11 +27,14 @@ precedence over both documents.
 | [Materialization](materialization.md) | Mark selected array construction boundaries with eager helper names | `--optimize-arrays`; runtime incompatibility documented |
 | [Loop lowering and emission](loops.md) | Turn recognized dynamic combinators into local loops | `--loops` |
 | [Exact output allocation](exact-output.md) | Allocate fixed-width FlatMap results directly for runtime array sources | `--loops --exact-output` |
+| [Scalar lowering](../csharp-optimizer-pipeline.md#7a-scalar-lowering-at-emission---lower-scalars) | Compute Number, Integer and Boolean values as C# primitives inside a body, so wrapper calls cannot exhaust the JIT's inlining budget; signatures keep the wrappers | `--lower-scalars` |
 | [Rewrite infrastructure](rewrite-infrastructure.md) | Rebuild typed trees and substitute parameters consistently | Used by passes |
 
 `CSharpWriter.RunOptimizerPasses` schedules inlining, fusion, component expansion,
 multiple-consumer fusion, materialization and loop lowering in that order. Exact output
-allocation specializes loop emission. Both new options default to off. Literal expansion belongs to fusion, rather
+allocation specializes loop emission. Scalar lowering is likewise part of emission rather than a TIR pass: it
+runs after loop lowering, and the only piece of it inside the pass sequence is a scalar-only mode of the inliner.
+All three options default to off. Literal expansion belongs to fusion, rather
 than being an independently scheduled pass. The [generated source map](source-map.md) gives
 Greenhouse-extracted public symbols and source links, including marker nodes and host contracts.
 

@@ -103,7 +103,7 @@ dotnet run --project src\Plato.CLI -c Release -- ^
   `--scalar=…` is a **hard error**: scalars are always wrapper structs
   ([decision](../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md)).
   Optional: `--optimize` (component unrolling), `--optimize-arrays`, `--inline`, `--fuse`, `--loops`,
-  `--static-abstract`, and the diagnostics-only `--dump-tir=<dir>` / `--inline-report`.
+  `--lower-scalars` (scalars as primitives inside bodies; signatures keep the wrappers), `--lean-inlining` (`AggressiveInlining` only on one-line forwarding members), `--static-abstract`, and the diagnostics-only `--dump-tir=<dir>` / `--inline-report`.
   See the [optimizer pipeline](csharp-optimizer-pipeline.md) for pass order and flag interactions.
   `--out=<folder>` frees every positional argument to be an input root, which is how several tiers
   are compiled as one program.

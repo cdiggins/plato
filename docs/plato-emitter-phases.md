@@ -31,7 +31,7 @@ nothing), applied in this fixed order after layer 5/6:
 | 8 | Unrolled | `TirComponentUnroller.UnrollFunction` | `--optimize` | `TirComponentAccess`, `TirConstructorCall`, `TirBooleanChain` |
 | 9 | Materialized | `TirArrayMaterializer.Rewrite` | `--optimize-arrays` | `Map`/`MapRange` → `MapEager`/`MapRangeEager` |
 | 10 | Loop-lowered | `TirLoopLowerer.Rewrite` | `--loops` | `TirLoweredLoop` + `TirTempRef` |
-| 11 | C# text | `TirCSharpBodyWriter` | — | the `.g.cs` body string |
+| 11 | C# text | `TirCSharpBodyWriter` | `--lower-scalars`, `--lean-inlining` (optional; neither is a TIR pass) | the `.g.cs` body string, with scalars held as primitives inside bodies under the first and `AggressiveInlining` kept only on one-line forwarding members under the second |
 
 `--inline`=7, `--optimize`=8, `--optimize-arrays`=9, `--loops`=10 are independent of the shape
 axes (`--csharp-style`, `--scalar`). "Non-optimized" emits straight from 5/6;

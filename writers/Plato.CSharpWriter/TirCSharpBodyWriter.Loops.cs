@@ -189,7 +189,7 @@ public partial class TirCSharpBodyWriter
                 // Lowered, a scalar accumulator is the primitive for the whole loop, wrapped
                 // where the rest of the body reads the temp.
                 var accScalar = Lower ? ScalarOf(ll.Type) : null;
-                var acc = accScalar != null ? "var" : TirLoopLowerer.IsRenderableConcrete(ll.Type) ? _tw.ToCSharpType(ll.Type) : "var";
+                var acc = accScalar != null ? PrimitiveType(accScalar) : TirLoopLowerer.IsRenderableConcrete(ll.Type) ? _tw.ToCSharpType(ll.Type) : "var";
                 Write($"{acc} {t} = ");
                 if (accScalar != null)
                 {

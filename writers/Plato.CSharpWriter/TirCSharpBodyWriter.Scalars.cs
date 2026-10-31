@@ -269,10 +269,12 @@ public partial class TirCSharpBodyWriter
 
     private void WriteBoolTest(TirNode n) => WriteBoolTest(() => WriteNode(n), () => WritePrimitive(n));
 
-    /// <summary>Declares a scalar let as a primitive local (<c>var x = ...</c>, no terminator).</summary>
+    /// <summary>Declares a scalar let as a primitive local (<c>double x = ...</c>, no terminator).
+    /// The type is spelled, not inferred: a runtime list's Count is an int whatever the Integer
+    /// profile, and an accumulator declared from it would not take a long.</summary>
     private void WritePrimitiveLet(VariableDef def, string scalar, TirNode value)
     {
-        Write($"var {LocalName(def)} = ");
+        Write($"{PrimitiveType(scalar)} {LocalName(def)} = ");
         WritePrimitive(value);
         _primitiveLocals[def] = scalar;
     }
