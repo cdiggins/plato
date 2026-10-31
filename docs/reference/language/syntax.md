@@ -75,3 +75,63 @@ The grammar accepts more C#-shaped forms than the checked language supports. A
 successful parse does not mean the form is supported.
 [Unsupported forms](diagnostics.md) and [the grammar](../implementation/grammar.md)
 give the supported subset and the source evidence.
+
+## Grammar
+
+The declaration and function productions, copied from [PlatoGrammar.cs](../evidence/grammar-source.md). The parser accepts some forms that the checker rejects; see [unsupported forms](diagnostics.md) and the [discrepancy register](../implementation/discrepancies.md).
+
+```text
+public Rule File => Node(WS + TopLevelDeclaration.ZeroOrMore() + AdvanceOnFail + EndOfInput);
+public Rule TopLevelDeclaration => Node(Library | Concept | Type);
+public Rule Library =>
+    Node(Keyword("library") + AdvanceOnFail + Identifier + Braced(MethodDeclaration.ZeroOrMore(), AdvanceOnFail));
+public Rule MethodDeclaration =>
+    Node(Identifier + FunctionParameterList + AdvanceOnFail + TypeAnnotation + ConstraintList + FunctionBody);
+public Rule FunctionParameter => Node(Identifier + TypeAnnotation);
+public Rule FunctionParameterList => Node(ParenthesizedList(FunctionParameter));
+public Rule TypeAnnotation => Node(Sym(":") + AdvanceOnFail + TypeExpr);
+public Rule FunctionBody => Node(ExpressionBody | CompoundStatement | EOS);
+public Rule ExpressionBody => Node(Sym("=>") + AdvanceOnFail + Expression + EOS);
+public Rule EOS => Named(Sym(";"));
+public Rule Comment => Named(CppStyleComment);
+```
+
+## Meaning
+
+A file is a list of `library`, `interface` (or `concept`) and `type` declarations. A function is a name, a parenthesised
+parameter list, a mandatory `: Type` result annotation, an optional `where` clause, and a body. The body is
+`=> expression;`, a braced block, or a bare `;`. The normative statement is
+[SEMANTICS section 3](../../SEMANTICS.md#3-library--functions); this chapter does not restate it.
+
+## Common mistake
+
+The result annotation is not optional. A beginner from C#, Python or TypeScript often leaves it out and writes the
+body straight after the parameters. The program is rejected at parse time, so nothing is checked or run.
+
+```plato
+library Bad {
+    Square(x: Integer) => x * x;
+}
+```
+
+The reference tool reports:
+
+```text
+Error at (0,14,0,33) while parsing MethodDeclaration, expected Rule failed TypeAnnotation ::= (Symbol(':')+_RECOVER_+TypeExpr+WS)
+Parse error at line 1, column 46 (furthest grammar failure)
+Parsing failed for one of the input files, halting
+```
+
+Name the result type:
+
+```plato
+library Good {
+    Square(x: Integer): Integer => x * x;
+}
+```
+
+Two more near-misses give weaker messages. A parameter with no type (`Square(x): Integer => x * x;`) and an expression
+body with no closing `;` (`Square(x: Integer): Integer => x * x }`) are both rejected, but the text names the whole
+`Library` or `File` rule (`expected Rule failed __ ::= '}'` and `expected Rule failed EndOfInput ::= _END_`) and, for the
+second, a position of `(0,0,0,0)`, not the missing token. Read the reported line and column, not the rule name. Both are
+candidates for the language-improvements list.

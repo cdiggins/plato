@@ -94,3 +94,68 @@ In `samples.Map(x => x * scale)`, `scale` comes from the enclosing function and 
 is each array element. Writing the lambda does not run it. `Map` calls it while
 producing results. How an array combinator evaluates its function is a separate
 contract. See [Evaluation, order, and faults](evaluation.md).
+
+## Grammar
+
+The function, call and lambda productions, copied from [PlatoGrammar.cs](../evidence/grammar-source.md). `FunctionArgKeyword` (`ref`, `out`, `in`, `params`) is also parsed in an argument but is not a Plato feature.
+
+```text
+public Rule MethodDeclaration =>
+    Node(Identifier + FunctionParameterList + AdvanceOnFail + TypeAnnotation + ConstraintList + FunctionBody);
+public Rule FunctionParameter => Node(Identifier + TypeAnnotation);
+public Rule FunctionParameterList => Node(ParenthesizedList(FunctionParameter));
+public Rule FunctionBody => Node(ExpressionBody | CompoundStatement | EOS);
+public Rule ConstraintList => Node(Optional(Keyword("where") + AdvanceOnFail + List(Constraint)));
+public Rule Constraint => Node((TypeVar | Identifier) + TypeAnnotation);
+public Rule FunctionArgs => Node(ParenthesizedList(FunctionArg));
+public Rule FunctionArg => Node(FunctionArgKeyword.ZeroOrMore() + Expression);
+public Rule MemberAccess => Node(Sym(".") + Identifier);
+public Rule LambdaParameters => Node(LambdaParameter | ParenthesizedList(LambdaParameter));
+public Rule LambdaBody => Node(CompoundStatement | Expression);
+public Rule LambdaExpr => Node(LambdaParameters + Sym("=>") + AdvanceOnFail + LambdaBody);
+```
+
+## Meaning
+
+A function is a named, typed body. `Square(x)` and `x.Square` are the same call spelled two ways, and all overloads of a name
+share one global group. The authority is
+[SEMANTICS section 3](../../SEMANTICS.md#3-library--functions) for declarations and
+[section 6](../../SEMANTICS.md#6-expressions-construction-conversions-operators) for the call forms.
+
+## Common mistake
+
+A misspelled name is the usual first error:
+
+```plato
+library Bad {
+    Square(x: Integer): Integer => x * x;
+    Use(y: Integer): Integer => Squar(y);
+}
+```
+
+This program is rejected. Name resolution stops the build and the reference tool prints (the file name is trimmed to the
+scratch file the program was saved in):
+
+```text
+Halted after 4 symbol resolution error(s); see SymbolFactory.Errors for the details
+RESOLVE b.plato:1: Could not find symbol Squar
+RESOLVE b.plato:1: Could not find function (AstIdentifier=Squar)
+RESOLVE b.plato:1: Exception occurred System.Exception: Could not find function (AstIdentifier=Squar)
+RESOLVE b.plato:1: Unexpected missing body
+Compilation was not completed
+```
+
+Four lines carry one fact, and the last ("Unexpected missing body") is only a consequence. The message does not suggest
+`Square`. Fix the spelling:
+
+```plato
+library Good {
+    Square(x: Integer): Integer => x * x;
+    Use(y: Integer): Integer => Square(y);
+}
+```
+
+A call with the wrong argument count, such as `Square(1, 2)`, passes the parser and the resolver and fails only when a
+`Law_` function reaches it, with `cannot resolve 'Square' for (Integer, Integer) (in Use < Law_U)`. A function no law
+reaches is not elaborated, so `lint --strict` and `run --laws` stay silent about it; the type checker would report
+CHK201, which these commands do not print.

@@ -29,3 +29,54 @@ An ordering comparison such as `LessThanOrEquals` keeps ordinary floating compar
 Equal values must receive compatible hashes under the implementation's hash contract. Unequal values may share a hash. A product combines its field hashes. An array hashes its elements. A sum accounts for the selected value. A `Number` hash follows the selected machine profile. The exact hash integers are host and implementation details. Do not persist an exact hash as a stable identifier or as a numerical fingerprint across runtime versions.
 
 Structural equality can inspect every element of a collection. It is not necessarily constant time. Replacing collection equality with reference equality changes the meaning, including when many runs happen to share a backing array.
+
+## Grammar
+
+Equality has no production of its own. `==` and `!=` are two entries in the shared binary operator list, copied from [PlatoTokenGrammar.cs](../evidence/grammar-source.md) and [PlatoGrammar.cs](../evidence/grammar-source.md). `Equals` and `NotEquals` are then ordinary function names; see [expressions](expressions.md).
+
+```text
+public Rule BinaryOperator => Node(Symbols(
+    "and", "or", "+", "-", "*", "/", "%", "<<", "&&", "||", "&", "|", "^",
+    "+=", "-=", "*=", "/=", "%=", ">>>=", ">>=", "<<=", "&&=", "||=", "&=", "|=", "^=",
+    "=", "<", ">", "<=", ">=", "==", "!="
+));
+public Rule BinaryOperation => Node(Not("=>") + BinaryOperator + AdvanceOnFail + Expression);
+```
+
+## Meaning
+
+`a == b` calls `Equals(a, b)`. Two values of a nominal type are equal when their fields (or active case and payload) are
+equal. Equality, ordering and hashing are separate operations. The authority is
+[SEMANTICS section 6](../../SEMANTICS.md#6-expressions-construction-conversions-operators).
+
+## Common mistake
+
+The mistake is to compare values of two different types, here a record and a whole number:
+
+```plato
+type Reading {
+    Estimate: Integer;
+    Uncertainty: Integer;
+}
+
+library Bad {
+    Same(r: Reading, n: Integer): Boolean => r == n;
+}
+```
+
+This program is rejected by the type rules, which find no `Equals(Reading, Integer)`. The reference tool does not say so.
+`lint --strict` accepts the file, and `run --laws` reports a failing law with an empty message:
+
+```text
+fail       Bad.Law_Same  case 1:
+```
+
+There is no CHK201, no mention of `Equals`, and no hint that the two types differ. Compare like with like:
+
+```plato
+library Good {
+    Same(r: Reading, n: Integer): Boolean => r.Estimate == n;
+}
+```
+
+A second trap is `Number`: NaN equals NaN under the wrapper's `Equals`, as the section above says, so `x == x` is not a NaN test.

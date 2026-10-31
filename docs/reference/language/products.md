@@ -99,3 +99,57 @@ source function names.
 The boundary is Plato source checking. Generated C# constructors remain public, so
 a host program can bypass the discipline. A sealed type is not a security boundary.
 It is not a machine-checked refinement type inside an arbitrary C# program.
+
+## Grammar
+
+The product declaration productions, copied from [PlatoGrammar.cs](../evidence/grammar-source.md). The same `Type` rule also accepts the sum form; see [sums](sums.md). `unique` is rejected for arbitrary user types ([unsupported forms](diagnostics.md)).
+
+```text
+public Rule Type => Node(UniqueKeyword.Optional() + (PrimitiveKeyword | Keyword("type")) + AdvanceOnFail + Identifier + TypeParameterList + ConstraintList + ImplementsList + SealedList +
+                         (SumTypeBody | Braced(FieldDeclaration.ZeroOrMore(), AdvanceOnFail)));
+public Rule FieldDeclaration => Node(Identifier + Sym(":") + TypeExpr + EOS);
+public Rule SealedList => Node(Optional(Keyword("sealed") + AdvanceOnFail + Keyword("by") + List(Identifier)));
+public Rule ImplementsList => Node(Optional(Keyword("implements") + AdvanceOnFail + List(TypeExpr)));
+public Rule UniqueKeyword => Node(Keyword("unique"));
+public Rule PrimitiveKeyword => Node(Keyword("primitive"));
+```
+
+## Meaning
+
+A product groups named fields that all exist at once. The compiler derives a constructor in declaration order and a
+read function for each field. Two products with the same fields are still different types. The authority is
+[SEMANTICS section 2](../../SEMANTICS.md#2-type--products-and-sums).
+
+## Common mistake
+
+The constructor takes every field, in order. A beginner builds a record with fewer arguments:
+
+```plato
+type Reading {
+    Estimate: Number;
+    Uncertainty: Number;
+}
+
+library Bad {
+    Make(x: Number): Reading => Reading(x);
+}
+```
+
+This program is rejected. The file parses and `lint --strict` accepts it, so the rejection comes only when a law reaches
+`Make`:
+
+```text
+error      Bad.Law_M  case 1:   cannot resolve 'Reading' for (Number) (in Make < Law_M)
+```
+
+The message does not say that `Reading` takes two arguments or which is missing. Pass every field:
+
+```plato
+library Good {
+    Make(x: Number): Reading => Reading(x, 0.0);
+}
+```
+
+A misspelt field, `r.Estimat`, stops the build with the same four-line `RESOLVE ... Could not find symbol Estimat`
+output shown in [functions](functions.md). As there, the message does not suggest `Estimate`; that is a candidate for the
+language-improvements list.

@@ -112,3 +112,63 @@ wildcard or default. The sources are
 [sum emission tests](../../../tests/PlatoTests/Emission/SumTypeCodegenTests.cs),
 and the
 [generic interpreter tests](../../../tests/Plato.Interpreter.Tests/GenericSumTests.cs).
+
+## Grammar
+
+The sum and `match` productions, copied from [PlatoGrammar.cs](../evidence/grammar-source.md). The `Type` rule that holds `SumTypeBody` is shown in [products](products.md). A match arm starts with an `Identifier`, so a wildcard such as `_` parses; the checker, not the parser, rejects it.
+
+```text
+public Rule SumTypeBody => Node(Sym("=") + AdvanceOnFail + CaseDeclaration + (Sym("|") + CaseDeclaration).ZeroOrMore() + EOS);
+public Rule CaseDeclaration => Node(Identifier + FunctionParameterList.Optional());
+public Rule MatchExpression => Node(Keyword("match") + AdvanceOnFail + ParenthesizedExpression +
+                                    Braced(MatchArm.ZeroOrMore(), AdvanceOnFail));
+public Rule MatchArm => Node(Identifier + MatchArmBinders.Optional() + Sym("=>") + AdvanceOnFail + Expression + EOS);
+public Rule MatchArmBinders => Node(ParenthesizedList(Identifier));
+```
+
+## Meaning
+
+A sum value is exactly one of its declared cases, and `match` must name every case once, with one binder per payload field.
+There is no default arm. The authority is
+[SEMANTICS section 2](../../SEMANTICS.md#sum-types) and
+[section 7](../../SEMANTICS.md#7-match).
+
+## Common mistake
+
+The common mistake is to forget a case, or to reach for a wildcard arm as in Rust or C#:
+
+```plato
+type Result = Good(Value: Integer) | Bad(Reason: String) | Missing;
+
+library Bad2 {
+    Or(r: Result, d: Integer): Integer =>
+        match (r) { Good(v) => v; Bad(why) => d; };
+}
+```
+
+This program is rejected: the match does not list `Missing`. The checker reports CHK300; the message template in
+[SumTypeChecker.cs](../../../src/Plato.Compiler/Checking/SumTypeChecker.cs) is:
+
+```text
+non-exhaustive match on sum type 'Result': missing case(s) Missing -- add an arm for each (v1 has no default arm)
+```
+
+That text is taken from the source, not from a run. The reference command-line tool does not print it: `lint --strict`
+and `run --laws` both succeed on this program, and a law that matches `Missing` passes because the last listed arm answers
+for the unlisted case. A program that works only by that accident is wrong. This is the most serious gap found in this
+pass: the check exists, but the two commands this reference tells readers to run never show it. Use `plato_check`.
+
+Replacing the missing arm with `_ => d` fails differently. It parses, and `run --laws` reports at run time:
+
+```text
+error      Bad2.Law_O  case 1:   projection 'Good_Value' on a Result.Missing value (in Or < Law_O)
+```
+
+The intended wildcard diagnostic (CHK307) is not shown either. List every case:
+
+```plato
+library Good2 {
+    Or(r: Result, d: Integer): Integer =>
+        match (r) { Good(v) => v; Bad(why) => d; Missing => d; };
+}
+```
