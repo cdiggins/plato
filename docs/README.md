@@ -69,6 +69,10 @@ moves to [`archive/`](archive).
 Frozen at the moment they were written. Read them for the analysis, never for current state: a
 report is stale by construction. Never edit one to bring it up to date — write a new one.
 
+- [`Playground feasibility (2026-10-31)`](reports/playground-feasibility-2026-10-31.md)
+  — whether the reference can run Plato in the browser: .NET WebAssembly runs small programs,
+  parsing speed and stack depth block foundation-sized ones; recommends checked, precomputed
+  examples first.
 - [`Interpreter turnaround and first law results (2026-10-17)`](reports/interpreter-turnaround-2026-10-17.md)
   — edit-to-verdict times for the interpreter and the generate-build-run path on the STEP design
   folder, the law classification, and the interpreter defects found.

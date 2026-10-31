@@ -105,7 +105,10 @@ budget 120 seconds (measured at a few seconds, no `gate.toml` scope exists).
 
 ### Wave 1 record
 
-Outcome: builders complete; spike S pending at the time of writing (see its row).
+Outcome: success. Spike S reported in `0e7cffc1`: [Playground feasibility (2026-10-31)](../docs/reports/playground-feasibility-2026-10-31.md).
+It recommends shipping the Playground door as editable examples with precomputed, checked
+results, and .NET WebAssembly as the later path to real execution once parsing speed and stack
+depth are fixed; that decides chunk K's first step.
 Gates: `build.py --check` passes; `test_build.py` and `test_check_examples.py` pass;
 `check_examples.py` passes every group, the original five plus `tour` and five `cookbook-*`
 groups; the reader's unit tests pass and its production build succeeds. Not run: the reader in a
@@ -146,6 +149,11 @@ Merge check: `python tools/reference/build.py --check` plus each chunk's test; b
 | 6 | F1 | `8104fa1d` | about 10 | pass | |
 | 7 | F2 | `a29ce9a7` | about 10 | pass | |
 | 8 | A | `0de7a7c6` | about 11 | pass | whole wave re-checked here, examples about 40 |
+| 9 | S | `0e7cffc1` | n/a | report only | |
+
+After the wave: the docs were published to GitHub Pages; the reader now redirects retired API
+routes (`2baf9ec9`), and `aliases.json` was corrected to point at each slice's first name, not
+its last (`30e64636`).
 
 ## Wave 2: chunks that need Wave 1
 
