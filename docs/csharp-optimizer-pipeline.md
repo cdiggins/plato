@@ -543,6 +543,10 @@ An intrinsic that has no row in `ScalarLowering.cs` stays a call on the wrapper 
 `Boolean` row. The interpreter arm of `plato run` ignores the flag, and the differential backend compares
 the interpreter with the lowered compiled arm.
 
+## 7c. Closure-free arrays (`--closure-free`, TKT-1149)
+
+C#-only, off by default, a stand-alone switch (the Sort lowering needs `--loops`; the copy functions do not). Two parts, both described in `writers/Plato.CSharpWriter/Optimization/README.md`: the extensions of `Append`, `Prepend`, `SetAt`, `Concatenate`, `Take`, `Skip`, `TakeLast`, `SubArray` and `Slice` become one call to the generated `ClosureFreeArrays` (an allocation and `Array.Copy` in place of a closure and a `Func` per element), and `TirLoopLowerer` lowers a `Sorting.Sort` or `SortedIndices` call with a concrete element type to the library's merge sort with the comparator lambda inlined (kinds `Sort` and `SortIdx`). Values, order, stability and the fault of a window outside the source are the Plato bodies'; the interpreter and the C++ backend are unchanged.
+
 ## 8. Worked example
 
 Consider `Example` from section 4, with `Map` a bodiless signature in a self-contained test corpus,
