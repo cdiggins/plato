@@ -210,6 +210,11 @@ namespace Ara3D.Geometry.CSharpWriter
         /// records each phase that changed the tree (see the field comment).</summary>
         public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi)
         {
+            // TKT-1137: temporaries are numbered per emitted body. Every body-emit site runs the
+            // passes and then the body writer back to back with nothing in between, so the
+            // counters restart here and stay unique within the one body that uses them; editing
+            // one function then cannot renumber another's temporaries.
+            ResetTemporaryCounters();
             StringBuilder sb = null;
             string prev = null;
             if (TirDumpDir != null)
@@ -262,6 +267,17 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("in-place / last-use array updates (TKT-1132)");
             sb?.AppendLine();
             return tir;
+        }
+
+        /// <summary>Restarts the counters behind every generated temporary name (`_var`, `_f`/`_r`,
+        /// `_lp`/`_n`/`_i`/..., the inliner's `{p}_{N}`). They are per thread, so two programs
+        /// emitted at once do not disturb each other.</summary>
+        internal static void ResetTemporaryCounters()
+        {
+            SymbolRewriter.NextId = 0;
+            TirInliner.NextRenameId = 0;
+            TirFusion.NextId = 0;
+            TirLoopLowerer.NextId = 0;
         }
 
         private static string SanitizeFileName(string s)
@@ -886,11 +902,8 @@ namespace Ara3D.Geometry.CSharpWriter
             // names (`{p}_{N}`) draw from process-global counters; reset them per generation so
             // two WriteAll runs in one process produce identical output (a fresh CLI process
             // always started at 0, so file output is unchanged).
-            SymbolRewriter.NextId = 0;
-            TirInliner.NextRenameId = 0;
+            ResetTemporaryCounters();
             RemainingStatementGrowth = StatementModuleNodeBudget;
-            TirFusion.NextId = 0;
-            TirLoopLowerer.NextId = 0;
 
             WriteFile("NumberProfile.g.cs", WriteNumberProfileCheck);
             if (ExtensionStyle)
