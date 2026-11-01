@@ -60,7 +60,7 @@ public static class InParamsTests
 
     // Partial structs cannot extend the runtime in another assembly: the generated Number.Add and
     // Number.Multiply bodies become test-local extension methods (as in MultiConsumerFusionTests).
-    private static string NumberOperatorAdapters(CSharpWriter writer)
+    internal static string NumberOperatorAdapters(CSharpWriter writer)
     {
         var methods = CSharpSyntaxTree.ParseText(writer.Files["_Number.g.cs"].ToString()).GetRoot()
             .DescendantNodes().OfType<MethodDeclarationSyntax>()

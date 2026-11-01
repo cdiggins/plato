@@ -247,6 +247,8 @@ namespace Ara3D.Geometry.CSharpWriter
             }
             tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
             Phase("inline (layer 7)");
+            tir = TirCallbackSpecializer.Rewrite(tir, this, fi?.OwnerType?.Name);
+            Phase("specialize-callbacks / clone the callee per lambda shape");
             tir = TirFusion.Rewrite(tir, this);
             Phase("fuse / combinator fusion (layer 7b)");
             tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
@@ -565,6 +567,15 @@ namespace Ara3D.Geometry.CSharpWriter
         // --primitive-compare: a Number or Integer comparison call is written on the operands'
         // .Value (TirCSharpBodyWriter.PrimitiveCompare.cs), with the wrapper's exact semantics.
         public bool PrimitiveCompare { get; set; }
+
+        // --specialize-callbacks (plato-brep lambda removal L2): a call passing a lambda literal to a
+        // function-typed parameter calls a clone of the callee with the lambda body substituted and
+        // its captures as extra parameters (TirCallbackSpecializer); the clones are written to
+        // CallbackSpecializations.g.cs. Extension style only. Default (false) output is unchanged.
+        public bool SpecializeCallbacks { get; set; }
+        public CallbackSpecializations Specializations { get; } = new CallbackSpecializations();
+        // The nesting depth of the clone whose body is being optimized (0 for an ordinary body).
+        public int SpecializationDepth;
         public int HoistedInvariants;
         public int HoistExposingInlines;
         public int HoistedLoops;
@@ -955,6 +966,9 @@ namespace Ara3D.Geometry.CSharpWriter
             if (ExtensionStyle)
                 ExtensionStyleWriter.WriteLibraryFiles(this);
 
+            if (SpecializeCallbacks && ExtensionStyle)
+                CallbackSpecializationWriter.WriteFile(this);
+
             if (LeanInlining)
                 LeanInliningPass.Apply(Files);
 
@@ -1136,10 +1150,10 @@ namespace Ara3D.Geometry.CSharpWriter
         private const string IndexableInterfaceName = "IIndexable";
 
         // A receiver typed by the one-dimensional IIndexable<T> interface itself.
-        private static bool IsIndexableReceiver(TypeExpression pt)
+        internal static bool IsIndexableReceiver(TypeExpression pt)
             => pt?.Def != null && pt.Def.IsInterface() && pt.Def.Name == IndexableInterfaceName;
 
-        private static bool IsListExtensionReceiver(TypeExpression pt)
+        internal static bool IsListExtensionReceiver(TypeExpression pt)
             => pt?.Def != null
                && (pt.Def.IsInterface()
                    ? pt.Def.Name.StartsWith("IArray") && !pt.Def.Name.StartsWith("IArrayLike")
@@ -1151,7 +1165,7 @@ namespace Ara3D.Geometry.CSharpWriter
         // here as an extension method on that class, like an array receiver; before this it was
         // dropped without a word (builders TKT-347 and compiler-416; functions TKT-353,
         // MinimizeOverDomain in the STEP mesher's B-spline inverse).
-        private static bool IsRuntimeClassExtensionReceiver(TypeExpression pt)
+        internal static bool IsRuntimeClassExtensionReceiver(TypeExpression pt)
             => pt?.Def != null
                && ((pt.Def.IsUnique && (pt.Def.Name == "List" || pt.Def.Name == "Buffer"))
                    || Compiler.Analysis.Linter.IsFunctionTypeName(pt.Def.Name));

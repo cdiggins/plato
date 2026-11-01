@@ -1,0 +1,37 @@
+// --specialize-callbacks: callees that take a callback, in the shapes the switch rewrites and the one it refuses.
+library CallbackProbe
+{
+    // A statement body: the inliner refuses it, so without the switch the lambda survives as a delegate.
+    Iterate(x: Number, f: Function1<Number, Number>): Number {
+        var once = f(x);
+        var twice = f(once);
+        return twice + once;
+    }
+
+    // Forwards its callback to another statement-body callee: specialized at two depths.
+    IterateTwice(x: Number, f: Function1<Number, Number>): Number {
+        var once = x.Iterate(f);
+        return once.Iterate(f);
+    }
+
+    // The callback is the receiver.
+    Apply(f: Function1<Number, Number>, x: Number): Number {
+        var y = f(x);
+        return y + y;
+    }
+
+    // Stores the callback in a local: refused, the lambda stays.
+    Stored(x: Number, f: Function1<Number, Number>): Number {
+        var g = f;
+        return g(x);
+    }
+
+    // A capturing lambda: k and x arrive as extra parameters of the clone.
+    Scaled(x: Number, k: Number): Number => x.Iterate(a => a * k + x);
+    // The same shape through the forwarding callee: the inner clone is the one Scaled uses.
+    ScaledTwice(x: Number, k: Number): Number => x.IterateTwice(a => a * k + x);
+    // A lambda without captures.
+    Doubled(x: Number): Number => x.Iterate(a => a + a);
+    Applied(x: Number, k: Number): Number => Apply(a => a * k, x);
+    StoredDoubled(x: Number): Number => x.Stored(a => a + a);
+}

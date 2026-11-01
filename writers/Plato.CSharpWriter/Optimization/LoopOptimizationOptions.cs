@@ -31,4 +31,7 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     // --lower-more (lambda removal L3): with --loops, MakeArray2D, MakeArray3D, CartesianProduct and
     // Filter call sites are lowered to loops with the callback inline too (TirLoopLowerer).
     public bool LowerMore { get; init; }
+    // --specialize-callbacks (plato-brep lambda removal L2): a lambda literal passed to a function-typed
+    // parameter calls a clone of the callee with the lambda body substituted (TirCallbackSpecializer).
+    public bool SpecializeCallbacks { get; init; }
 }

@@ -55,15 +55,17 @@ internal static class GenerateCommand
             InParameters = args.Contains("--in-params"),
             SwitchMatch = args.Contains("--switch-match"),
             LowerMore = args.Contains("--lower-more"),
+            SpecializeCallbacks = args.Contains("--specialize-callbacks"),
         };
         if (loopOptimizations.LowerMore && (!loops || typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--lower-more requires C# generation with --loops.");
             return 1;
         }
-        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare) && (typeScript || rust || glsl || cpp || cuda))
+        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks)
+            && (typeScript || rust || glsl || cpp || cuda))
         {
-            Console.Error.WriteLine("--cache-constants and --primitive-compare apply to C# generation only.");
+            Console.Error.WriteLine("--cache-constants, --primitive-compare and --specialize-callbacks apply to C# generation only.");
             return 1;
         }
         if (loopOptimizations.HoistInvariants && (!loops || typeScript || rust || glsl || cpp || cuda))
@@ -253,6 +255,11 @@ internal static class GenerateCommand
             }
             if (loopOptimizations.HoistInvariants)
                 logger.Log($"Loop invariants hoisted: {output.HoistedInvariants} in {output.HoistedLoops} loops ({output.HoistExposingInlines} forwarding calls expanded)");
+            if (loopOptimizations.SpecializeCallbacks)
+            {
+                var s = output.Specializations;
+                logger.Log($"Callbacks specialized: {s.SitesSpecialized} sites into {s.Clones.Count} clones; refused: {string.Join(", ", s.Refusals.Select(r => $"{r.Key} {r.Value}"))}");
+            }
             if (output.DegradedBodies.Count > 0)
             {
                 logger.Log($"DEGRADED bodies (no ground TIR, emitted as throwing stubs): {output.DegradedBodies.Count}");
