@@ -1,0 +1,28 @@
+// Probes for --lower-more (lambda removal L3): MakeArray2D, MakeArray3D, CartesianProduct and
+// Filter call sites lowered to loops with the callback inline.
+library LowerMoreProbe
+{
+    // A grid: nested loops over one presized element array, then the Array2D record.
+    Grid(cols: Integer, rows: Integer, f: Function2<Integer, Integer, Number>): Array2D<Number>
+        => cols.MakeArray2D(rows, (c, r) => f(c, r));
+
+    // A volume: three nested loops, then the Array3D record.
+    Volume(cols: Integer, rows: Integer, layers: Integer, f: Function3<Integer, Integer, Integer, Number>): Array3D<Number>
+        => cols.MakeArray3D(rows, layers, (c, r, l) => f(c, r, l));
+
+    // The grid of a function over two lists.
+    Product(xs: Array<Number>, ys: Array<Number>, f: Function2<Number, Number, Number>): Array2D<Number>
+        => xs.CartesianProduct(ys, (x, y) => f(x, y));
+
+    // The kept elements, presized to the source and trimmed once.
+    Kept(xs: Array<Number>, keep: Function1<Number, Boolean>): Array<Number>
+        => xs.Filter(x => keep(x));
+
+    // value(a) names no cell: under --hoist-invariants it is computed once, ahead of the loop nest.
+    Hoisted(cols: Integer, rows: Integer, a: Number, value: Function1<Number, Number>, f: Function2<Integer, Integer, Number>): Array2D<Number>
+        => cols.MakeArray2D(rows, (c, r) => f(c, r).Multiply(value(a)));
+
+    // The element type is a type variable: not a C# type, so the call is left as it is.
+    GenericGrid(cols: Integer, rows: Integer, f: Function2<Integer, Integer, $T>): Array2D<$T>
+        => cols.MakeArray2D(rows, (c, r) => f(c, r));
+}

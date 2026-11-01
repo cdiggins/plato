@@ -71,6 +71,32 @@ Rebuilding constructor markers while lowering their arguments preserves their re
 type. Losing it changes receiver-aware field emission after inlining. Array count and
 index access use the same parenthesized receiver rendering as ordinary member calls.
 
+### `--lower-more`: the grid builders and Filter (lambda removal L3)
+
+`--lower-more` (requires `--loops`, C# only, default off) extends the recognizer to four calls of the
+stdlib's `Primitives` library whose callback `--loops` alone cannot reach: `MakeArray2D` and
+`MakeArray3D` (their bodies wrap `f` in a second lambda for a `MapRange`, so the plain lowering keeps
+the outer delegate), `CartesianProduct` (the same through `MakeArray2D`), and `Filter` (an ordinary
+generic call until the inliner expands it). The lowered forms, printed by `WriteLoweredLoop` for the
+kinds `Make2D`, `Make3D`, `Cartesian` and `Filter`:
+
+- a grid is one element array `new T[cols * rows]` (times `layers` for a volume) filled row-major by
+  nested loops (layer, row, column) with the callback's parameters bound to the loop counters and a
+  running element index, then the `Array2D<T>` or `Array3D<T>` record constructed once from it. A
+  non-positive extent means no cell; the record keeps the extents as given;
+- `Filter` fills an array presized to the source's count, appending each element the predicate
+  accepts, and trims it with one `System.Array.Resize` when fewer passed. The receiver may be a
+  fused producer chain, as for `Map` and `Reduce`.
+
+The switch keeps every existing refusal: the element type (and, for a grid, the record type) must be
+a concrete C# type, the callback a literal lambda or a `Function{N}` reference of the arity, and the
+callee the `Primitives` function (a same-named library function is left alone). The hoister sees
+the new loops as any lambda-callback loop; its locals sit inside `if (n > 0)` around the loop nest.
+`--presize` does not touch them (they allocate once). Off, the output is byte-identical.
+[LowerMoreTests](../../tests/PlatoTests/Optimization/LowerMoreTests.cs) compiles and executes each
+kind on and off (same values, same callback order, including zero and negative extents), the hoist
+interaction, the type-variable refusal and the switch-off text.
+
 ## Usage, tests and effectiveness
 
 Enable `--loops`; use `--dump-tir` to distinguish a lowered marker from a surviving runtime call.

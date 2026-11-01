@@ -52,6 +52,7 @@ namespace Ara3D.Geometry.CSharpWriter
             writer.ShareCallsWide = loopOptimizations?.ShareCallsWide ?? false;
             writer.LowerScalars = loopOptimizations?.LowerScalars ?? false;
             writer.ClosureFree = loopOptimizations?.ClosureFree ?? false;
+            writer.LowerMore = loopOptimizations?.LowerMore ?? false;
             writer.InParameters = loopOptimizations?.InParameters ?? false;
             writer.SwitchMatch = loopOptimizations?.SwitchMatch ?? false;
             writer.HoistInvariants = loopOptimizations?.HoistInvariants ?? false;

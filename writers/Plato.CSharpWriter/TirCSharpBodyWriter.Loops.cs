@@ -31,7 +31,7 @@ public partial class TirCSharpBodyWriter
             Write($"var {name} = ");
             // A count source (MapRange, or the index source of a fused chain) is an Integer: lowered,
             // the bare int, so the Max and the loop bound below convert nothing.
-            if (Lower && (ll.Kind == "MapRange" || (s == 0 && ll.IndexSource)))
+            if (Lower && (ll.Kind is "MapRange" or "Make2D" or "Make3D" || (s == 0 && ll.IndexSource)))
                 WriteAsInt(() => WritePrimitive(ll.Sources[s]));
             else
                 WriteNode(ll.Sources[s]);
@@ -357,6 +357,88 @@ public partial class TirCSharpBodyWriter
                     WriteFnValue(false, elems);
                     WriteLine(";");
                 });
+                break;
+            }
+            case "Filter":
+            {
+                // --lower-more: the kept elements go into an array presized to the source's count
+                // (every element may pass); a shorter result is trimmed once at the end, so the
+                // common case allocates once and never grows a list.
+                var m = $"_m{k}";
+                WriteLine($"var {n} = {count0};");
+                WriteLine($"var {a} = new {elem}[{n}];");
+                WriteLine($"var {m} = 0;");
+                For(n, () =>
+                {
+                    var e = Elem();
+                    DeclareParams(e);
+                    Write("if (");
+                    WriteBoolTest(() => WriteFnValue(false, e), () => WriteFnValue(true, e));
+                    WriteLine(")");
+                    WriteStartBlock();
+                    WriteLine($"{a}[{m}++] = {e.Wrapped};");
+                    WriteEndBlock();
+                });
+                WriteLine($"if ({m} != {n}) System.Array.Resize(ref {a}, {m});");
+                break;
+            }
+            case "Make2D":
+            case "Make3D":
+            case "Cartesian":
+            {
+                // --lower-more: one element array for the whole grid, filled row-major by nested
+                // loops (layer, row, column) with the callback inline, then the Array2D/Array3D
+                // record built once. The extents of MakeArray2D/3D are the call's Integer arguments;
+                // CartesianProduct's are its two lists' counts. The element index is a running
+                // counter, so no division or remainder is computed per cell. The hoisted-invariant
+                // guard wraps the loop nest: a grid with no cell evaluates nothing.
+                var grid = _tw.ToCSharpType(ll.Type);
+                var cartesian = ll.Kind == "Cartesian";
+                var cols = $"_cols{k}";
+                var rows = $"_rows{k}";
+                var layers = $"_layers{k}";
+                var col = $"_col{k}";
+                var row = $"_row{k}";
+                var layer = $"_layer{k}";
+                WriteLine($"var {cols} = {(cartesian ? srcCounts[0] : $"(int){srcNames[0]}")};");
+                WriteLine($"var {rows} = {(cartesian ? srcCounts[1] : $"(int){srcNames[1]}")};");
+                if (ll.Kind == "Make3D")
+                    WriteLine($"var {layers} = (int){srcNames[2]};");
+                // A non-positive extent is the empty grid (the eager MapRange has no cell for a
+                // count of zero or less); the record still records the extents as given.
+                WriteLine(ll.Kind == "Make3D"
+                    ? $"var {n} = {cols} > 0 && {rows} > 0 && {layers} > 0 ? {cols} * {rows} * {layers} : 0;"
+                    : $"var {n} = {cols} > 0 && {rows} > 0 ? {cols} * {rows} : 0;");
+                WriteLine($"var {a} = new {elem}[{n}];");
+                WriteHoistedGuard(ll, n, () =>
+                {
+                    WriteLine($"var {i} = 0;");
+                    if (ll.Kind == "Make3D")
+                    {
+                        WriteLine($"for (var {layer} = 0; {layer} < {layers}; {layer}++)");
+                        WriteStartBlock();
+                    }
+                    WriteLine($"for (var {row} = 0; {row} < {rows}; {row}++)");
+                    WriteStartBlock();
+                    WriteLine($"for (var {col} = 0; {col} < {cols}; {col}++)");
+                    WriteStartBlock();
+                    var elems = cartesian
+                        ? new[] { (Operand)Src(0, col), Src(1, row) }
+                        : ll.Kind == "Make3D"
+                            ? new[] { new Operand($"((Integer){col})", col), new Operand($"((Integer){row})", row), new Operand($"((Integer){layer})", layer) }
+                            : new[] { new Operand($"((Integer){col})", col), new Operand($"((Integer){row})", row) };
+                    DeclareParams(elems);
+                    Write($"{a}[{i}++] = ");
+                    WriteFnValue(false, elems);
+                    WriteLine(";");
+                    WriteEndBlock();
+                    WriteEndBlock();
+                    if (ll.Kind == "Make3D")
+                        WriteEndBlock();
+                });
+                WriteLine(ll.Kind == "Make3D"
+                    ? $"{grid} {t} = new {grid}({a}, (Integer){cols}, (Integer){rows}, (Integer){layers});"
+                    : $"{grid} {t} = new {grid}({a}, (Integer){cols}, (Integer){rows});");
                 break;
             }
             default:

@@ -18,20 +18,26 @@ public static partial class TirLoopLowerer
     // inlined (--closure-free, TKT-1149). Set for the duration of one Rewrite, per thread.
     [System.ThreadStatic] private static bool _sortLoops;
 
+    // Whether MakeArray2D, MakeArray3D, CartesianProduct and Filter calls are lowered too
+    // (--lower-more, lambda removal L3). Set for the duration of one Rewrite, per thread.
+    [System.ThreadStatic] private static bool _lowerMore;
+
     public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
     {
         if (!writer.LowerLoops || tir?.Body == null)
             return tir;
-        var previous = _sortLoops;
+        var previousSort = _sortLoops;
+        var previousMore = _lowerMore;
         _sortLoops = writer.ClosureFree;
+        _lowerMore = writer.LowerMore;
         try { return RewriteScoped(tir); }
-        finally { _sortLoops = previous; }
+        finally { _sortLoops = previousSort; _lowerMore = previousMore; }
     }
 
     /// <summary>Whether a call is a single-source consumer whose receiver chain the lowerer walks
     /// inside its own loop (see <see cref="TirLoweredLoop.SourceStages"/>).</summary>
     private static bool IsChainConsumer(TirCall c)
-        => c.Name != null && c.Args.Count >= 2 && IndexSourceKinds.Contains(c.Name == "MapEager" ? "Map" : c.Name)
+        => c.Name != null && c.Args.Count >= 2 && IsIndexSourceKind(c.Name == "MapEager" ? "Map" : c.Name)
            && IsListTyped(c.Args[0]) && IsProducer(c.Args[0]);
 
     /// <summary>Whether a node is a Map over a list or a MapRange, with an inlinable function.</summary>
@@ -112,6 +118,22 @@ public static partial class TirLoopLowerer
             case "MapQuartets" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 4):
                 kind = "MapQuartets"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
                 break;
+            // --lower-more (lambda removal L3): the Primitives library's grid builders and Filter.
+            // MakeArray2D wraps f in a second lambda for its MapRange, so the plain lowering never
+            // reaches f; here the call itself becomes nested loops over one presized element array.
+            case "MakeArray2D" when _lowerMore && c.Args.Count == 3 && IsPrimitives(c) && c.Type?.Name == "Array2D" && FnOk(c.Args[2], 2):
+                kind = "Make2D"; sources = new List<TirNode> { c.Args[0], c.Args[1] }; fn = c.Args[2];
+                break;
+            case "MakeArray3D" when _lowerMore && c.Args.Count == 4 && IsPrimitives(c) && c.Type?.Name == "Array3D" && FnOk(c.Args[3], 3):
+                kind = "Make3D"; sources = new List<TirNode> { c.Args[0], c.Args[1], c.Args[2] }; fn = c.Args[3];
+                break;
+            case "CartesianProduct" when _lowerMore && c.Args.Count == 3 && IsPrimitives(c) && c.Type?.Name == "Array2D"
+                && IsListTyped(c.Args[0]) && IsListTyped(c.Args[1]) && FnOk(c.Args[2], 2):
+                kind = "Cartesian"; sources = new List<TirNode> { c.Args[0], c.Args[1] }; fn = c.Args[2];
+                break;
+            case "Filter" when _lowerMore && c.Args.Count == 2 && IsPrimitives(c) && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 1):
+                kind = "Filter"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
+                break;
             default:
                 return null;
         }
@@ -126,6 +148,26 @@ public static partial class TirLoopLowerer
             // The function yields a list per element; the result element type is its element type.
             elem = new[] { TirRewrite.ListElementType(FnReturnType(fn)), TirRewrite.ListElementType(c.Type) }
                 .FirstOrDefault(IsRenderableConcrete);
+            if (elem == null)
+                return null;
+        }
+        else if (kind == "Filter")
+        {
+            // The predicate returns Boolean; the kept elements have the call's own element type
+            // (the source's, which the result repeats).
+            elem = new[] { TirRewrite.ListElementType(c.Type), TirRewrite.ListElementType(TirRewrite.StripCoerce(sources[0])?.Type) }
+                .FirstOrDefault(IsRenderableConcrete);
+            if (elem == null)
+                return null;
+        }
+        else if (GridResultKinds.Contains(kind))
+        {
+            // The grid record (Array2D<T>, Array3D<T>) is constructed by name, so the record type
+            // must be renderable as well as its element type; the producing function's return type
+            // is preferred for the element, the record's type argument the fallback.
+            if (!IsRenderableConcrete(c.Type) || c.Type.TypeArgs.Count != 1)
+                return null;
+            elem = new[] { FnReturnType(fn), c.Type.TypeArgs[0] }.FirstOrDefault(IsRenderableConcrete);
             if (elem == null)
                 return null;
         }
@@ -164,7 +206,7 @@ public static partial class TirLoopLowerer
         // element, and a MapRange base makes the index itself the element. No intermediate array.
         var stages = new List<TirNode>();
         var indexSource = false;
-        if (IndexSourceKinds.Contains(kind) && sources.Count == 1)
+        if (IsIndexSourceKind(kind) && sources.Count == 1)
         {
             var src = TirRewrite.StripCoerce(sources[0]);
             while (src is TirCall sc && sc.Name == "Map" && sc.Args.Count == 2 && IsListTyped(sc.Args[0]) && FnOk(sc.Args[1], 1))
@@ -197,14 +239,26 @@ public static partial class TirLoopLowerer
         "Map", "MapIdx", "Reduce", "All", "Any", "FlatMap",
     };
 
-    /// <summary>Whether a lowered kind fills an array (as against a fold, All or Any).</summary>
+    // Filter joins the chain consumers only under --lower-more, so that without the switch the
+    // scope walker treats a Filter call's receiver exactly as before.
+    private static bool IsIndexSourceKind(string kind)
+        => IndexSourceKinds.Contains(kind) || (_lowerMore && kind == "Filter");
+
+    /// <summary>Whether the call is to the standard Primitives library's function of that name.</summary>
+    private static bool IsPrimitives(TirCall c) => c.Callee?.OwnerType?.Name == "Primitives";
+
+    /// <summary>Whether a lowered kind fills an array (as against a fold, All or Any, or a grid record).</summary>
     public static bool ProducesArray(string kind) => ArrayResultKinds.Contains(kind);
 
     private static readonly HashSet<string> ArrayResultKinds = new HashSet<string>
     {
         "Map", "MapIdx", "MapRange", "Zip2", "Zip3", "Reverse", "WithNext",
-        "MapPairs", "MapTriplets", "MapQuartets", "Sort", "SortIdx",
+        "MapPairs", "MapTriplets", "MapQuartets", "Sort", "SortIdx", "Filter",
     };
+
+    /// <summary>The --lower-more kinds whose result is an Array2D or Array3D record built from one
+    /// element array (Make2D, Make3D, Cartesian).</summary>
+    private static readonly HashSet<string> GridResultKinds = new HashSet<string> { "Make2D", "Make3D", "Cartesian" };
 
     /// <summary>Whether a type expression names a concrete, renderable C# type — not a solver
     /// type variable (name-mangled with '$', or flagged <see cref="TypeExpression.IsTypeVariable"/>).

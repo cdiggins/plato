@@ -542,6 +542,14 @@ namespace Ara3D.Geometry.CSharpWriter
         // (TirLoopLowerer, kinds Sort and SortIdx; needs --loops). Default (false) output is unchanged.
         public bool ClosureFree { get; set; }
 
+        // When true (--lower-more, lambda removal L3; needs --loops), a MakeArray2D, MakeArray3D,
+        // CartesianProduct or Filter call site is lowered to loops with its callback inline, the
+        // way --loops lowers Map, MapRange, Reduce, All, Any, FlatMap and Zip (TirLoopLowerer,
+        // kinds Make2D, Make3D, Cartesian and Filter). The grid is one presized element array
+        // filled by nested loops and the Array2D/Array3D record built once. Default (false)
+        // output is unchanged.
+        public bool LowerMore { get; set; }
+
         // When true (--hoist-invariants, requires --loops), invariant work in a lowered loop's
         // callback is computed once ahead of the loop (see TirLoopInvariantHoister). The counts
         // are diagnostics for the generation log; default (false) output is unchanged.
