@@ -671,6 +671,9 @@ namespace Ara3D.Geometry.CSharpWriter
         // TirStorageResolver covers the body with a storage plan and StorageChecker verifies it before anything
         // prints; a violation discards the plan for that body and counts a refusal. Default (false) output is unchanged.
         public bool OwnedArrays { get; set; }
+        // --stack-arrays (TKT-1152 chunk C6): the resolver may give a bounded owned array a hoisted stackalloc slot.
+        // Requires OwnedArrays. Default (false) output is unchanged.
+        public bool StackArrays { get; set; }
         // Tests only: a checker violation throws instead of counting a refusal.
         public bool OwnedArraysStrict { get; set; }
         public int StorageBodiesChecked;
@@ -686,7 +689,15 @@ namespace Ara3D.Geometry.CSharpWriter
         /// itself when the flag is off or the checker refused the plan.</summary>
         /// <summary>The resolver <see cref="ResolveStorage"/> runs when <see cref="StorageResolver"/> is null.</summary>
         public TirStorageScope DefaultStorageResolver(TirNode body, FunctionDef owner)
-            => TirStorageResolver.Resolve(body, owner, _storageIdentity ??= new TirArrayIdentity(Compilation));
+            => TirStorageResolver.Resolve(body, owner, _storageIdentity ??= new TirArrayIdentity(Compilation),
+                StackArrays ? StorageTarget : null);
+
+        /// <summary>The C# storage target of this writer's compilation (type sizes, call graph), made on first use.</summary>
+        internal CSharpStorageTarget StorageTarget => _storageTarget ??= new CSharpStorageTarget(this);
+
+        // --stack-arrays counts, over every body the resolver covered: slots placed, and the slots refused by reason.
+        public int StackSlotsPlaced;
+        public readonly SortedDictionary<string, int> StackRefusals = new SortedDictionary<string, int>(System.StringComparer.Ordinal);
 
         public TirNode ResolveStorage(TirFunction tir, TirNode body)
         {
@@ -694,9 +705,20 @@ namespace Ara3D.Geometry.CSharpWriter
                 return body;
             var scope = (StorageResolver ?? DefaultStorageResolver)(body, tir?.Original);
             StorageBodiesChecked++;
-            var violations = StorageChecker.Check(scope, _storageTarget ??= new CSharpStorageTarget(this));
+            var violations = StorageChecker.Check(scope, StorageTarget);
             if (violations.Count == 0)
+            {
+                StackSlotsPlaced += scope.Plan.Slots.Count;
+                foreach (var refusal in scope.Plan.Refusals)
+                {
+                    var at = refusal.IndexOf(TirStorageResolver.StackRefusal.Prefix, System.StringComparison.Ordinal);
+                    if (at < 0)
+                        continue;
+                    var reason = refusal.Substring(at + TirStorageResolver.StackRefusal.Prefix.Length);
+                    StackRefusals[reason] = StackRefusals.TryGetValue(reason, out var n) ? n + 1 : 1;
+                }
                 return scope;
+            }
             var name = $"{tir?.Original?.OwnerType?.Name}.{tir?.Original?.Name}";
             var text = $"{name}: {string.Join(", ", violations.Select(v => v.Rule))}";
             if (OwnedArraysStrict)
@@ -1086,6 +1108,8 @@ namespace Ara3D.Geometry.CSharpWriter
             // always started at 0, so file output is unchanged).
             if (SpanParams && !OwnedArrays)
                 throw new InvalidOperationException("--span-params requires --owned-arrays.");
+            if (StackArrays && !OwnedArrays)
+                throw new InvalidOperationException("--stack-arrays requires --owned-arrays.");
             ResetTemporaryCounters();
             _optimized.Clear();
             TwinSites.Clear();

@@ -37,6 +37,7 @@ Plato source
   -> (body writer entry, after its own TirLambdaCaptureRewriter.Rewrite)
      7. TirStorageResolver.Resolve                       --owned-arrays (section 7f)
      8. StorageChecker.Check                             --owned-arrays; a violation discards 7 for that body
+        (7 gives a Heap temporary a stackalloc slot under --stack-arrays, section 7h)
   -> TirCSharpBodyWriter                                 always on; prints the final tree as C#
        scalar lowering (not a TIR pass)                 --lower-scalars
        TirExactOutput specialization                    --loops --exact-output
@@ -780,6 +781,54 @@ unchanged (plan open question 1, default: accepted). Tests:
 `OwnedArrayFixtures/owned.plato` with Roslyn under the nineteen pinned flags plus `--owned-arrays`, and compares
 values with the flag off; `tests/Plato.Interpreter.Tests/OwnedArrayProgramTests.cs` runs the fixture's laws in the
 interpreter and compiled, flag off and on.
+
+## 7h. Stack slots (`--stack-arrays`, TKT-1152 chunk C6)
+
+A C#-only switch, off by default, that requires `--owned-arrays` (the writer throws without it, and the CLI table enables
+it only with it). Off, the output is byte-identical. On, `TirStorageResolver` upgrades a Heap lowered-loop temporary to
+`ArrayStorage.Stack` (a `System.Span<T>` over a hoisted `stackalloc` slot) when all of these hold, each with a refusal
+reason on `StoragePlan.Refusals` (`TirStorageResolver.StackRefusal`) and a count on the writer (`StackSlotsPlaced`,
+`StackRefusals`):
+
+- the loop is a `MapRange`, `Map`, `MapIdx` or `Reverse` (the kinds that fill a fresh `T[n]` in one pass) and
+  `CountBounds.OfLoop` states its count: a constant, or an expression over parameters and unassigned variables (unknown
+  counts stay Heap);
+- the element is unmanaged (`StructLayouts.IsUnmanaged`), and a constant count is at most the slot capacity
+  `min(16, 256 / sizeof(T))`; a guarded count is tested at run time against that capacity, and past it the array is a
+  new heap array;
+- every use of the temporary, and of each single-declaration local that aliases it, is a `Count`/`At` receiver or a lowered
+  loop's source, in the loop pass that allocates it (so the span never outlives the pass that reuses the slot), and no
+  printed lambda names it;
+- every loop around the allocation is a lowered loop (a `while` loop, a guarded loop or a printed lambda is a loop
+  the plan cannot name);
+- the body's slots total at most 1 KiB, and the body is not on a call cycle.
+
+A slot is declared as `System.Span<T> _slot<id> = stackalloc T[capacity];` before the outermost loop around the
+allocation (at the allocation when no loop surrounds it), never `var` (over a `stackalloc`, `var` is a pointer in unsafe
+code, and `CSharpProgram` compiles with `allowUnsafe`). The allocation prints as
+`System.Span<T> _a<id> = _n<id> <= capacity ? _slot<id>.Slice(0, _n<id>) : new T[_n<id>];`. The count is the loop's
+own, already clamped to zero or more, so a count of zero or less is an empty slice. Every element is written before it is
+read, in index order, so a reused slot needs no clearing and a callback that faults mid-fill faults at the same element as
+before. A local that aliases a Stack temporary is declared `System.Span<T>`.
+
+**Call cycles.** `CSharpStorageTarget.OnCallCycle(function, body)` walks calls from the body about to be written (so what
+the optimiser inlined is included) to the elaborated bodies of the callees, lambdas included, and reports a cycle when it
+reaches a function with the same owner type, name and arity as the body's own. Functions are matched by that key and not
+by reference because the monomorphizer's body names a copy of its function. A call through a bodiless concept member is not
+followed, and a callee whose body cannot be elaborated is a leaf (`UnanalysedCallees`); a stack overflow cannot be caught, so
+a recursive body gets no slot.
+
+**JIT inlining.** A method with a `stackalloc` is not inlined by the JIT. The slot is declared at the allocation's outermost
+loop, not at the top of the body, so a branch that does not allocate does not pay for it, but every slot-bearing method
+loses inlining; C9 measures that.
+
+`StorageChecker.AllocationFrames` gives the resolver the loops around each allocation by the same traversal that later
+checks the slot (rules S5 and S7). Tests: `tests/PlatoTests/Emission/StackArrayEmissionTests.cs` (the fixture
+`OwnedArrayFixtures/stack.plato` compiled with Roslyn under the nineteen pinned flags plus `--owned-arrays
+--stack-arrays`, strict, and run: a constant count, counts under, at and past the capacity, zero and negative counts, a slot
+reused by twenty passes, a fault mid-fill, ten windows past the budget, self- and mutual recursion, an array passed on,
+returned, captured or assigned again) and `tests/Plato.Interpreter.Tests/StackArrayProgramTests.cs` (the same laws
+interpreted and compiled with and without the switch, equal verdicts).
 
 ## 8. Worked example
 

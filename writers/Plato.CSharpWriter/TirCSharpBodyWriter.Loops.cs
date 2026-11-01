@@ -10,9 +10,43 @@ public partial class TirCSharpBodyWriter
 {
     // --- loop lowering emission (--loops; see TirLoopLowerer) --------------------------------
 
+    // --stack-arrays: the slots the plan declares before this loop (the outermost loop around an allocation), each a
+    // Span<T> spelled out over a stackalloc, never `var` (over a stackalloc `var` is a pointer in unsafe code).
+    private void DeclareStackSlots(int loopId)
+    {
+        if (_plan == null)
+            return;
+        foreach (var slot in _plan.Slots)
+            if (slot.Loop == loopId)
+                WriteStackSlot(slot);
+    }
+
+    private void WriteStackSlot(StackSlot slot)
+    {
+        var element = _tw.ToCSharpType(slot.Element);
+        WriteLine($"System.Span<{element}> {slot.Name} = stackalloc {element}[{slot.Capacity}];");
+    }
+
+    // The array an array-producing loop fills. A Stack temporary takes a slice of its hoisted slot when the count fits and
+    // a new heap array when it does not; the count is the loop's own, already clamped to zero or more, so a count of zero
+    // is an empty slice. Every element is written before it is read, so a slot reused by the next pass needs no clearing.
+    private void WriteNewArray(TirLoweredLoop ll, string a, string elem, string n)
+    {
+        if (_plan?.OfTemp(ll.TempName) != ArrayStorage.Stack)
+        {
+            WriteLine($"var {a} = new {elem}[{n}];");
+            return;
+        }
+        var slot = _plan.Slots.First(s => s.Temp == ll.TempName);
+        if (slot.Loop == null)
+            WriteStackSlot(slot);
+        WriteLine($"System.Span<{elem}> {a} = {n} <= {slot.Capacity} ? {slot.Name}.Slice(0, {n}) : new {elem}[{n}];");
+    }
+
     private void WriteLoweredLoop(TirLoweredLoop ll)
     {
         var k = ll.Id;
+        DeclareStackSlots(k);
         // Prefer the lowerer's authoritative result-element type (taken from the producing
         // function's own type); fall back to the call's zonked IArray<T> argument.
         var elem = ll.ElemType?.Name != null
@@ -155,7 +189,7 @@ public partial class TirCSharpBodyWriter
         {
             case "Map" or "MapIdx":
                 WriteLine($"var {n} = {count0};");
-                WriteLine($"var {a} = new {elem}[{n}];");
+                WriteNewArray(ll, a, elem, n);
                 For(n, () =>
                 {
                     var e = Elem();
@@ -170,7 +204,7 @@ public partial class TirCSharpBodyWriter
                 // A count of zero or less is the empty array, as the eager intrinsic and the
                 // interpreter have it; `new T[n]` would throw on a negative n (TKT-505).
                 WriteLine($"var {n} = System.Math.Max(0, (int){srcNames[0]});");
-                WriteLine($"var {a} = new {elem}[{n}];");
+                WriteNewArray(ll, a, elem, n);
                 For(n, () =>
                 {
                     DeclareParams(index);
@@ -326,7 +360,7 @@ public partial class TirCSharpBodyWriter
             }
             case "Reverse":
                 WriteLine($"var {n} = {srcCounts[0]};");
-                WriteLine($"var {a} = new {elem}[{n}];");
+                WriteNewArray(ll, a, elem, n);
                 For(n, () => WriteLine($"{a}[{i}] = {Src(0, $"{n} - 1 - {i}")};"));
                 break;
             case "WithNext":
@@ -456,7 +490,12 @@ public partial class TirCSharpBodyWriter
             // owns it (--owned-arrays), the array itself, which every consumer of another storage reaches
             // through a TirRepresent.
             _tempElementTypes[t] = elem;
-            WriteLine(_plan?.OfTemp(t) == ArrayStorage.Heap ? $"{elem}[] {t} = {a};" : $"IReadOnlyList<{elem}> {t} = {a};");
+            WriteLine(_plan?.OfTemp(t) switch
+            {
+                ArrayStorage.Heap => $"{elem}[] {t} = {a};",
+                ArrayStorage.Stack => $"System.Span<{elem}> {t} = {a};",
+                _ => $"IReadOnlyList<{elem}> {t} = {a};",
+            });
         }
         if (lam != null)
             foreach (var p in lam.Parameters)

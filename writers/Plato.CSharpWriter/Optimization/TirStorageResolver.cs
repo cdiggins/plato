@@ -27,6 +27,11 @@ public static class TirStorageResolver
     /// <summary>Resolves <paramref name="body"/> with Heap storage for the owned lowered-loop temporaries.
     /// Returns the very same body inside the scope when no temporary qualifies.</summary>
     public static TirStorageScope Resolve(TirNode body, FunctionDef owner, TirArrayIdentity identity)
+        => Resolve(body, owner, identity, null);
+
+    /// <summary>As above; with a <paramref name="stack"/> target (--stack-arrays) an owned temporary whose count is
+    /// bounded and whose every use only reads it takes a hoisted <c>stackalloc</c> slot instead (<see cref="AssignStack"/>).</summary>
+    public static TirStorageScope Resolve(TirNode body, FunctionDef owner, TirArrayIdentity identity, IStorageTarget stack)
     {
         var plan = new StoragePlan(owner);
         var ownership = TirOwnership.Analyze(body, identity);
@@ -58,9 +63,156 @@ public static class TirStorageResolver
             else
                 plan.Refuse(def.Name, refusal);
         }
+        if (stack != null)
+            AssignStack(body, owner, plan, ownership, stack);
         var resolved = new Converter(plan, identity).Walk(body, false);
         return new TirStorageScope(resolved, plan);
     }
+
+    // --- Stack (--stack-arrays) -----------------------------------------------------------------
+
+    /// <summary>The loop kinds that fill a fresh <c>T[n]</c> in one pass and whose count <see cref="CountBounds"/> can state.</summary>
+    private static readonly HashSet<string> StackKinds = new() { "MapRange", "Map", "MapIdx", "Reverse" };
+
+    /// <summary>Reasons a slot is refused, as they appear on <see cref="StoragePlan.Refusals"/> (after <see cref="Prefix"/>)
+    /// and in the writer's counts. No number appears in one, so the counts group.</summary>
+    public static class StackRefusal
+    {
+        public const string Prefix = "stack: ";
+        public const string Kind = "loop kind not stackable";
+        public const string CountUnknown = "count unknown";
+        public const string CountEmpty = "constant count is zero or less";
+        public const string CountTooLarge = "constant count above the slot capacity";
+        public const string ElementUnknown = "element type unknown";
+        public const string Managed = "element not unmanaged";
+        public const string Captured = "captured by a closure";
+        public const string Escapes = "used where a span cannot go";
+        public const string Lifetime = "used outside the pass that allocates it";
+        public const string Frames = "under a loop the plan cannot name";
+        public const string Budget = "body slot budget exceeded";
+        public const string Cycle = "body on a call cycle";
+    }
+
+    /// <summary>
+    /// Upgrades a Heap lowered-loop temporary to <see cref="ArrayStorage.Stack"/>, with one <see cref="StackSlot"/> per
+    /// allocation site, when: its loop kind fills a fresh array of a count <see cref="CountBounds"/> states (constant, or
+    /// an expression the printer's run-time guard tests against the capacity: past it the array is a heap array);
+    /// its element is unmanaged and the capacity <see cref="StorageChecker.SlotCapacityLimit"/> holds the constant count;
+    /// every use only observes it (<c>Count</c>, <c>At</c>, a lowered loop's source) or binds it to a single-declaration
+    /// local of which the same holds; no closure names it; every use sits in the loop pass that allocated it; every
+    /// loop around the allocation is one the plan names (the slot is declared before the outermost); the body's slots
+    /// total at most 1 KiB; and the body is not on a call cycle. A local that aliases a Stack temporary is Stack.
+    /// </summary>
+    private static void AssignStack(TirNode body, FunctionDef owner, StoragePlan plan, TirOwnership ownership, IStorageTarget target)
+    {
+        var loops = body.Descendants().OfType<TirLoweredLoop>()
+            .Where(l => TirLoopLowerer.ProducesArray(l.Kind) && plan.OfTemp(l.TempName) == ArrayStorage.Heap).ToList();
+        if (loops.Count == 0)
+            return;
+        var declarations = body.Descendants().Select(Declaration).Where(d => d.Def != null).ToList();
+        var frames = StorageChecker.AllocationFrames(body, target);
+        bool? cycle = null;
+        var bytes = 0;
+        foreach (var loop in loops)
+        {
+            var reason = StackRefusalOf(loop, plan, ownership, declarations, frames, target, body, owner, ref cycle, bytes,
+                out var element, out var capacity, out var aliases);
+            if (reason != null)
+            {
+                plan.Refuse(loop.TempName, StackRefusal.Prefix + reason);
+                continue;
+            }
+            var around = frames[loop.TempName];
+            plan.AssignTemp(loop.TempName, ArrayStorage.Stack);
+            foreach (var alias in aliases)
+                plan.Assign(alias, ArrayStorage.Stack);
+            plan.AddSlot(new StackSlot($"_slot{loop.Id}", element, capacity, loop.TempName, around.Length == 0 ? null : around[0]));
+            bytes += capacity * target.SizeOf(element);
+        }
+    }
+
+    private static string StackRefusalOf(TirLoweredLoop loop, StoragePlan plan, TirOwnership ownership,
+        List<(VariableDef Def, TirNode Value)> declarations, IReadOnlyDictionary<string, int?[]> frames, IStorageTarget target,
+        TirNode body, FunctionDef owner, ref bool? cycle, int bytes, out TypeExpression element, out int capacity,
+        out List<VariableDef> aliases)
+    {
+        (capacity, aliases) = (0, new List<VariableDef>());
+        element = loop.ElemType ?? (loop.Type != null && loop.Type.TypeArgs.Count == 1 ? loop.Type.TypeArgs[0] : null);
+        if (!StackKinds.Contains(loop.Kind))
+            return StackRefusal.Kind;
+        var bound = CountBounds.OfLoop(loop, body);
+        if (bound.IsUnknown)
+            return StackRefusal.CountUnknown;
+        if (element == null)
+            return StackRefusal.ElementUnknown;
+        var size = target.SizeOf(element);
+        if (!target.IsUnmanaged(element) || size <= 0)
+            return StackRefusal.Managed;
+        var limit = StorageChecker.SlotCapacityLimit(size);
+        if (bound.IsConstant)
+        {
+            if (bound.Constant <= 0)
+                return StackRefusal.CountEmpty;
+            if (bound.Constant > limit)
+                return StackRefusal.CountTooLarge;
+        }
+        capacity = bound.IsConstant ? bound.Constant.Value : limit;
+        if (!frames.TryGetValue(loop.TempName, out var around) || around.Contains(null))
+            return StackRefusal.Frames;
+        var facts = ownership.OfTemp(loop.TempName);
+        if (facts == null || facts.Captured)
+            return StackRefusal.Captured;
+        var uses = StackUses(facts, null, loop.TempName, plan, ownership, declarations, aliases);
+        if (uses != null)
+            return uses;
+        if (bytes + capacity * size > StorageChecker.SlotBudgetBytes)
+            return StackRefusal.Budget;
+        cycle ??= HasSelfCall(body, owner) || target.OnCallCycle(owner, body);
+        return cycle.Value ? StackRefusal.Cycle : null;
+    }
+
+    // Walks the binding and, recursively, the locals that alias it: each use must be a borrow in the pass that declared
+    // the binding, and every other use must be the declaration of such a local. Returns the reason, or null.
+    private static string StackUses(BindingFacts facts, VariableDef self, string tempName, StoragePlan plan, TirOwnership ownership,
+        List<(VariableDef Def, TirNode Value)> declarations, List<VariableDef> aliases)
+    {
+        var declared = facts.DeclaredLoops;
+        foreach (var use in facts.Uses)
+            if (use.Loops.Length < declared.Length || !declared.SequenceEqual(use.Loops.Take(declared.Length)))
+                return StackRefusal.Lifetime;
+        var children = declarations.Where(d => References(d.Value, self, tempName)).Select(d => d.Def).ToList();
+        if (facts.Uses.Count(u => u.Kind != TirUpdateFlow.UseKind.Borrow) != children.Count)
+            return StackRefusal.Escapes;
+        foreach (var child in children)
+        {
+            var childFacts = ownership.Of(child);
+            if (plan.Of(child) != ArrayStorage.Heap || childFacts == null)
+                return StackRefusal.Escapes;
+            if (childFacts.Captured)
+                return StackRefusal.Captured;
+            if (childFacts.DeclaredLoops.Length < declared.Length || !declared.SequenceEqual(childFacts.DeclaredLoops.Take(declared.Length)))
+                return StackRefusal.Lifetime;
+            aliases.Add(child);
+            var below = StackUses(childFacts, child, null, plan, ownership, declarations, aliases);
+            if (below != null)
+                return below;
+        }
+        return null;
+    }
+
+    private static bool References(TirNode value, VariableDef def, string tempName)
+        => TirRewrite.StripCoerce(value) switch
+        {
+            TirTempRef t => tempName != null && t.Name == tempName,
+            TirVariable { Def: { } v } => def != null && ReferenceEquals(v, def),
+            _ => false,
+        };
+
+    // A direct call of the function itself is visible in its own body whatever the call graph knows. The callee is the
+    // declared function and the owner may be the monomorphizer's copy of it, so the two are matched by owner type, name and arity.
+    private static bool HasSelfCall(TirNode body, FunctionDef owner)
+        => owner == null || body.Descendants().OfType<TirCall>().Any(c => c.Callee != null && c.Callee.Name == owner.Name
+            && c.Callee.NumParameters == owner.NumParameters && c.Callee.OwnerType?.Name == owner.OwnerType?.Name);
 
     // The binding a node declares with the value it is initialised to, or (null, null) for any other node.
     private static (VariableDef Def, TirNode Value) Declaration(TirNode n) => n switch

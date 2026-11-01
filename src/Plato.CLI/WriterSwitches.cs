@@ -49,6 +49,7 @@ public static class WriterSwitches
         // TKT-1152: off by default until each is measured and pinned in plato-brep.
         new("scalar-arrays", false),
         new("owned-arrays", false),
+        new("stack-arrays", false, "owned-arrays"),
         new("span-params", false, "owned-arrays"),
     };
 
@@ -103,6 +104,7 @@ public static class WriterSwitches
             SpecializeCallbacks = s["specialize-callbacks"],
             ScalarArrays = s["scalar-arrays"],
             OwnedArrays = s["owned-arrays"],
+            StackArrays = s["stack-arrays"],
             SpanParams = s["span-params"],
         };
 }

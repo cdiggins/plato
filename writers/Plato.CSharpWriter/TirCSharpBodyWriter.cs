@@ -323,8 +323,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     WriteLine(";");
                     return;
                 }
-                Write(HeapElementType(binding.Value) is { } heapElement && _plan?.Of(binding.Def) == ArrayStorage.Heap
-                    ? RecordHeapAlias(binding.Def, heapElement)
+                Write(HeapElementType(binding.Value) is { } heapElement && IsOwnedLocal(binding.Def)
+                    ? RecordOwnedAlias(binding.Def, heapElement)
                     : CSharpTypeName(binding.Type));
                 Write($" {CSharpTypeWriter.Identifier(binding.Def.Name)} = ");
                 WriteNode(binding.Value);
@@ -549,8 +549,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
     // `var`, or the array type of a local the plan holds as Heap, so that every read of it is direct.
     private string LetDeclaredType(TirLet let)
-        => _plan?.Of(let.Def) == ArrayStorage.Heap
-            ? RecordHeapAlias(let.Def, HeapElementType(let.Value) ?? CSharpTypeName(TirRewrite.ListElementType(let.Type)))
+        => IsOwnedLocal(let.Def)
+            ? RecordOwnedAlias(let.Def, HeapElementType(let.Value) ?? CSharpTypeName(TirRewrite.ListElementType(let.Type)))
             : "var";
 
     private void WriteRefAt(TirCall read)
