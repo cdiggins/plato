@@ -24,3 +24,12 @@ Acceptance: define and document the String/Character encoding and typed sum-fiel
 Repair chunks (2026-11-01): e4225c63 adds explicit null/present array state, preserving nested JSON null versus []; 373ceaae changes native Character/String to UTF-16 code units with explicit UTF-8 boundaries and Latin-1 Bytes unchanged. Native runtime/Unicode checks pass, integrated native regressions pass 10/10, and C++/CUDA dialect isolation passes 2/2. eb508247 centralizes typed defaults for omitted JSON members without weakening explicit Character validation; its generated-record and runtime selection passes 4/4.
 
 Frozen consumer candidate 373ceaae regenerates the same 1771 C# source files byte-for-byte as f6823eb7. Actual provenance matches the prepared manifest. Managed shared laws pass 5/5, isolated decode tests pass 90/90, and the managed host builds with zero warnings/errors. Full native build/stage/mesh gates remain pending. This candidate predates eb508247; the later typed-member follow-up still needs inclusion in the final frozen candidate. Consumer Unicode fixture preflight confirms Greek and a supplementary character are actually decoded; no comparator normalization was introduced.
+
+## Done means
+
+- [x] Define and document UTF-16 text, UTF-8 boundaries and typed null/present array defaults.
+- [x] Preserve non-Latin-1 text, surrogate pairs, embedded NULs and Bytes semantics in native tests.
+- [x] Regenerate committed sources including missing-member defaults and pass strict stage comparisons without normalization.
+- [x] Pass aligned law, decode and mesh gates before considering promotion.
+
+Final frozen consumer candidate 1fbae01c includes eb508247. Same library 414a183e8 and program c3c3db4c; all 1771 managed sources byte-identical to 373ceaae and provenance matches. Full native25-unit build passes with zero errors. Stage24/24, shared laws5/5 on each backend, decode90/90, SAM1+2workers and c211539faces11610triangles all pass. Consumer artifacts/cpp-validation/candidate-1fbae01c holds the reports. Shipping pins remain unchanged; correctness-gate completion does not imply the OpenCascade performance target.
