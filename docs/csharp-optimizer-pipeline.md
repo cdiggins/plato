@@ -25,6 +25,7 @@ Plato source
   -> elaborate to TIR; Boolean && and || become
      conditionals (TirShortCircuit)                      always on, in the compiler
   -> 1. TirInliner.Inline                                --inline (or --lower-scalars: scalar callees only)
+  -> 1a. TirCallbackSpecializer.Rewrite                  --specialize-callbacks (section 7e)
   -> 1b. TirFusion.Rewrite (uses TirLiteralUnroller)      --fuse
   -> 2. TirComponentUnroller.UnrollFunction              --optimize
   -> 2b. TirMultiConsumerFusion.Rewrite                  --loops --fuse-consumers
@@ -122,7 +123,7 @@ every body its input and the tree after each pass that changed it. `--inline-rep
 error, each inliner refusal keyed by (caller, callee, reason), plus totals.
 
 Passes that change the tree shape (`TirLoweredLoop`, `TirTempRef`, `TirComponentAccess`,
-`TirConstructorCall`, `TirBooleanChain`) introduce marker nodes that exist only for emission. A pass that runs
+`TirConstructorCall`, `TirBooleanChain`, `TirSpecializedCall`) introduce marker nodes that exist only for emission. A pass that runs
 earlier never sees a marker from a later pass. A pass that runs later sees the markers of earlier ones: the
 loop lowerer reads `TirComponentAccess`, `TirConstructorCall` and `TirBooleanChain` and passes through them.
 
@@ -587,6 +588,58 @@ on one subject (the same parameter, variable or equal pure call, compared struct
 the JIT makes a jump table. The subject is written once, so it is evaluated once. A generic sum prints the tag
 number, since its tag constants live on the instantiated struct. Shorter chains and chains that mix other
 conditions keep the ternary form (the tail after the last tag test is the default arm).
+
+## 7e. Pass 1a: `TirCallbackSpecializer` (`--specialize-callbacks`)
+
+A C#-only switch, off by default, with no other flag required; off, the output is byte-identical. Code:
+`Optimization/TirCallbackSpecializer.cs` (the pass, the `CallbackSpecializations` registry and the
+`TirSpecializedCall` marker), `CallbackSpecializationWriter.cs` (the file), one case in
+`TirCSharpBodyWriter.WriteNode`. Pinned by `tests/PlatoTests/Optimization/SpecializeCallbacksTests.cs`.
+`plato run --backend=csharp` takes it for the compiled law arm; the interpreter ignores it.
+
+**What it removes.** After pass 1 the lambdas left in a body are, almost all, arguments to a Plato function
+whose parameter is function-typed (`Function1<Number, Point3D>`) and whose body the inliner refused, most
+often because it is a statement body. Each such call allocates a delegate (plus a closure when the lambda
+captures) and the callee invokes it indirectly per sample. The pass replaces the call with a call to a CLONE
+of the callee: the callback parameter is gone, every invocation of it is the lambda body β-reduced in
+place, and the values the lambda captured (the caller's parameters and locals it names) arrive as extra
+parameters, `_cap0`, `_cap1`, ... A clone is keyed by (resolved callee, receiver type, the shape of each
+lambda with its captures abstracted by position and type), so one clone serves every site of that shape
+(`SameModel`'s `Corresponds(.., (x, y) => x.Equals(y))` sites ask for one clone per element type). The callee
+may be a member moved out of its struct, a member kept in it (a concept obligation such as `Deform`, rendered
+in the same extension context a moved member gets), or a static library function over a runtime class with
+no struct (`Array`, `Function1`: `MinimizeOverDomain`, `Corresponds`); a generic one is cloned with its body
+open in the type variables under a signature spelled from the call site's types, unless a type variable is
+bound to a scalar. Clones are static methods of `CallbackSpecializations.g.cs`, written after every other file, named
+`{Callee}_{FNV-1a of the shape, 8 hex digits}` so that an unrelated edit renames none of them (a second
+shape with the same hash takes a `_2` suffix). A clone's body goes through `RunOptimizerPasses` like any
+other, so when the callee forwards its callback to another function-typed parameter the forwarded lambda is
+specialized again, to `CallbackSpecializations.MaxDepth` (6): the whole inverse-search chain of plato-brep
+(`MinimizeOverDomain -> CanonicalOnDomain -> MinimizeOverCuts -> SearchWindow`) becomes delegate-free, and a
+callback forwarded to a combinator (`Map`, `Reduce`) reaches the loop lowerer as a literal, which inlines it.
+A call site inside a lambda is specialized too; its captures may be the enclosing lambda's parameters.
+
+**Where it refuses** (the call stays as it was; the generation log counts each reason): the caller is a
+law or a witness (`Law_`, `Witness_`: run once per trial, so a clone would only grow the output); the callee
+is a combinator the loop lowerer or the component unroller rewrites with its lambda in place (`Map`, `All`,
+`Reduce`, `MapComponents`, ...: a loop beats a clone of the stdlib body); the callee has no ground TIR for the
+receiver type, is generic over a scalar, type-level (`_` receiver), an operator or conversion, collides with
+a field, or calls itself; the callback parameter is used anywhere other than as the target of an invocation
+or an argument of a resolved, non-tuple, non-constructor call (let-bound, returned, stored in a record or
+tuple); the lambda has a statement body, a bare name, a type variable, a nested generic-origin lambda, or a
+result type that its delegate type converts (the receiver position would lose the conversion, as in the
+inliner); or a β-reduction would evaluate an invocation argument more than once (the lambda uses its
+parameter twice and the callee applies it to something more than a cheap projection or one element read
+`xs[i]`). The clone depth limit is a refusal too. `PLATO_SPECIALIZE_TRACE=1` in the environment prints each
+refusal with its site to standard error.
+
+**Interactions.** `--in-params`: a clone's modifiers come from the same rule as a moved member's
+(`LargeStructPassing.ParameterModifiers` over the clone's C# parameter types), so a large receiver or
+capture is `in` unless a surviving lambda in the clone captures it. `--share-calls`: a clone call is a
+syntactic call the sharing pass does not key, so two identical clone calls in one statement are not shared.
+`--hoist-invariants`: the hoister sees the clone's lowered loops as any other body's; it cannot expand a
+clone call (no callee body). `--cache-constants`: a clone call is never a closed constant. The inliner
+runs first and keeps every β-reduction it already made; the pass takes only what it refused.
 
 ## 8. Worked example
 

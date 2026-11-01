@@ -638,6 +638,13 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 WriteNode(c.Inner);
                 return;
 
+            case TirSpecializedCall specialized:
+                // --specialize-callbacks: a clone of the callee with the lambda substituted (TirCallbackSpecializer).
+                Write($"{CallbackSpecializations.ClassName}.{specialized.Name}(");
+                WriteArgs(specialized.Args);
+                Write(")");
+                return;
+
             case TirInvoke inv:
                 WriteNode(inv.Target);
                 Write(".Invoke(");

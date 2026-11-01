@@ -27,4 +27,8 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
 
     // --switch-match (TKT-1148): a tag-test chain is a switch expression on the tag.
     public bool SwitchMatch { get; init; }
+
+    // --specialize-callbacks (plato-brep lambda removal L2): a lambda literal passed to a function-typed
+    // parameter calls a clone of the callee with the lambda body substituted (TirCallbackSpecializer).
+    public bool SpecializeCallbacks { get; init; }
 }

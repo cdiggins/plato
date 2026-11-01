@@ -172,6 +172,11 @@ public sealed class LargeStructPassing
     /// <summary>The parameter modifiers of a moved extension member: <c>"in "</c> for a large
     /// parameter that no lambda captures and nothing assigns, <c>""</c> otherwise.</summary>
     public IReadOnlyList<string> ParameterModifiers(CSharpFunctionInfo fi, TirFunction tir)
+        => ParameterModifiers(fi.ParameterTypes, tir);
+
+    /// <summary>The same rule over a signature given as C# type names (a callback clone, whose
+    /// parameters are the callee's minus the callback plus its captures).</summary>
+    public IReadOnlyList<string> ParameterModifiers(IReadOnlyList<string> parameterTypes, TirFunction tir)
     {
         var unsafeParams = new HashSet<ParameterDef>();
         if (tir?.Body != null)
@@ -185,10 +190,10 @@ public sealed class LargeStructPassing
                     unsafeParams.Add(p.Def);
         }
         var modifiers = new List<string>();
-        for (var i = 0; i < fi.ParameterTypes.Count; i++)
+        for (var i = 0; i < parameterTypes.Count; i++)
         {
             var def = tir != null && i < tir.Parameters.Count ? tir.Parameters[i] : null;
-            modifiers.Add(def != null && IsLarge(fi.ParameterTypes[i]) && !unsafeParams.Contains(def) ? "in " : "");
+            modifiers.Add(def != null && IsLarge(parameterTypes[i]) && !unsafeParams.Contains(def) ? "in " : "");
         }
         return modifiers;
     }

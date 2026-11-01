@@ -431,7 +431,7 @@ public static partial class TirInliner
     /// <summary>Rename every lambda parameter in <paramref name="node"/> whose name collides with a
     /// caller-bound name to a fresh clone (<c>{name}_{N}</c>), updating both the lambda's parameter
     /// list and the parameter references in its body.</summary>
-    private static TirNode AlphaRenameCollidingLambdas(TirNode node, HashSet<string> callerNames)
+    internal static TirNode AlphaRenameCollidingLambdas(TirNode node, HashSet<string> callerNames)
     {
         var renames = BuildLambdaParamRenames(node, callerNames);
         if (renames == null)
@@ -499,7 +499,7 @@ public static partial class TirInliner
     /// <summary>Every name bound in the caller: function parameters, lambda parameters and let
     /// locals anywhere in the body. An inlined lambda parameter shadowing any of these is a
     /// compile error (CS0136) once the body lands in the caller's scope.</summary>
-    private static HashSet<string> CollectBoundNames(TirFunction tir, TirNode body)
+    internal static HashSet<string> CollectBoundNames(TirFunction tir, TirNode body)
     {
         var names = new HashSet<string>();
         if (tir.Parameters != null)
@@ -609,7 +609,7 @@ public static partial class TirInliner
     /// <summary>Whether a member call renders to something that exists on its receiver's type:
     /// the host's known member set, scaffolding, With* wither functions, or an unknown
     /// receiver type (interfaces, IReadOnlyList — trusted, they carry their own members).</summary>
-    private static bool IsCallableOnReceiver(ITirInlineHost host, TirCall c)
+    internal static bool IsCallableOnReceiver(ITirInlineHost host, TirCall c)
     {
         if (c.Callee == null || c.Args.Count == 0 || c.Name == null
             || c.Name.StartsWith("Tuple") || c.Name == "At")
@@ -632,7 +632,7 @@ public static partial class TirInliner
     /// Bounds3D has <c>self : Bounds3D</c>). Monomorphization specializes only <c>Self</c>, so the
     /// zonked receiver type can still be the interface; the owner type is the emitted truth and is
     /// what the concrete callee (<c>Deform@Bounds3D</c>) is keyed under.</summary>
-    private static string TrustedTypeName(TirFunction callerTir, TirNode n, ITirInlineHost host, string ownerTypeName)
+    internal static string TrustedTypeName(TirFunction callerTir, TirNode n, ITirInlineHost host, string ownerTypeName)
     {
         if (n is TirCoerce co && co.ToType?.Name != null)
             return co.ToType.Name;
