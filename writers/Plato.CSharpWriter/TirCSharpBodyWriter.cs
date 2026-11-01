@@ -325,6 +325,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 }
                 Write(HeapElementType(binding.Value) is { } heapElement && IsOwnedLocal(binding.Def)
                     ? RecordOwnedAlias(binding.Def, heapElement)
+                    : _plan?.Of(binding.Def) == ArrayStorage.Borrowed ? "var"   // a copy of a borrowed span parameter
                     : CSharpTypeName(binding.Type));
                 Write($" {CSharpTypeWriter.Identifier(binding.Def.Name)} = ");
                 WriteNode(binding.Value);

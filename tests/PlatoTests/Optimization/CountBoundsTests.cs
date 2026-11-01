@@ -72,6 +72,37 @@ public static class CountBoundsTests
     }
 
     [Test]
+    public static void AFieldReadOfAParameterIsGuarded()
+    {
+        var bound = Bound("FieldCount");
+        Assert.That(bound.IsGuarded, Is.True);
+        Assert.That(bound.Expression.ToString(), Does.Contain("Degree"));
+    }
+
+    [Test]
+    public static void ANestedFieldReadIsGuarded()
+        => Assert.That(Bound("NestedFieldCount").IsGuarded, Is.True);
+
+    [Test]
+    public static void MapOverAFieldArrayIsGuardedByItsCount()
+        => Assert.That(Bound("FieldArrayMap").IsGuarded, Is.True);
+
+    [Test]
+    public static void ACallThatIsNotAFieldGetterStaysUnknown()
+        => Assert.That(Bound("FieldOfCall").IsUnknown, Is.True);
+
+    [Test]
+    public static void AssignmentOfTheBaseMakesAFieldReadUnstable()
+    {
+        var (node, body) = Producer("FieldCount");
+        var loop = (TirLoweredLoop)node;
+        var parameter = loop.Sources[0].Descendants().OfType<TirParameter>().First();
+        var scope = new TirAssign(parameter, loop.Sources[0], null, null);
+        Assert.That(CountBounds.OfCount(loop.Sources[0], scope).IsUnknown, Is.True);
+        Assert.That(CountBounds.OfCount(loop.Sources[0], body).IsGuarded, Is.True);
+    }
+
+    [Test]
     public static void DivisionIsNotTotalSoUnknown()
         => Assert.That(Bound("Divided").IsUnknown, Is.True);
 

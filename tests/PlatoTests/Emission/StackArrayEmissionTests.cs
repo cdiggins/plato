@@ -23,7 +23,7 @@ public static class StackArrayEmissionTests
 {
     private static readonly string[] Methods =
     {
-        "Digest", "Constant", "Sized", "Rows", "Doubled", "FaultMidFill", "Many", "Recur", "Ping", "Pong", "Identity",
+        "Digest", "FieldWindow", "Constant", "Sized", "Rows", "Doubled", "FaultMidFill", "Many", "Recur", "Ping", "Pong", "Identity",
         "Passed", "Returned", "Probe", "Captured", "Reassigned",
     };
     private static readonly string[] Files = { "StackProbe.g.cs", "Extensions.g.cs" };
@@ -51,17 +51,23 @@ public static class StackArrayEmissionTests
         public static bool GreaterThanOrEquals(this Integer a, Integer b) => a.Value >= b.Value;
         public static bool Equals(this Integer a, Integer b) => a.Value == b.Value;
     } }",
-            $"{CSharpWriter.ConcreteArrayAccessClass}.g.cs");
+            $"{CSharpWriter.ConcreteArrayAccessClass}.g.cs", "_StackSpec.g.cs");
 
     private static readonly Lazy<EmittedLibrary> Heap = new(() => Build(false));
     private static readonly Lazy<EmittedLibrary> Stack = new(() => Build(true));
 
     private static object Call(EmittedLibrary library, string name, params object[] args)
-        => library.Method(name).Invoke(null, args)!;
+        => library.Method(name).Invoke(null, args.Select(a => a is SpecArg s
+            ? library.Assembly.GetType("Ara3D.Geometry.StackSpec", true)!.GetConstructors().Single().Invoke(new object[] { (Integer)s.Degree })
+            : a).ToArray())!;
 
     private static string Show(object value)
         => value is IEnumerable<Integer> xs ? "[" + string.Join(",", xs.Select(x => x.Value)) + "]"
             : value is Number number ? ((double)number).ToString(System.Globalization.CultureInfo.InvariantCulture) : ((Integer)value).Value.ToString();
+
+    private sealed record SpecArg(int Degree);
+
+    private static SpecArg Spec(int degree) => new(degree);
 
     private static readonly IReadOnlyList<Integer> FourFiveSix = new Integer[] { 4, 5, 6 };
     private static readonly IReadOnlyList<Integer> NoElements = Array.Empty<Integer>();
@@ -70,6 +76,8 @@ public static class StackArrayEmissionTests
     private static IEnumerable<TestCaseData> Shapes()
     {
         yield return new TestCaseData("Constant", new object[] { (Integer)7 }, "40").SetName("Constant: a constant count");
+        yield return new TestCaseData("FieldWindow", new object[] { Spec(3) }, "402").SetName("FieldWindow: a field-read count under the capacity");
+        yield return new TestCaseData("FieldWindow", new object[] { Spec(20) }, "2102").SetName("FieldWindow: a field-read count past the capacity falls back");
         yield return new TestCaseData("Sized", new object[] { (Integer)5 }, "5006").SetName("Sized: under the capacity");
         yield return new TestCaseData("Sized", new object[] { (Integer)16 }, "16006").SetName("Sized: at the capacity");
         yield return new TestCaseData("Sized", new object[] { (Integer)17 }, "17006").SetName("Sized: one past the capacity falls back to the heap");
@@ -126,6 +134,7 @@ public static class StackArrayEmissionTests
 
     private static int Slots(string method) => Stackalloc.Matches(Stack.Value.Body(method)).Count;
 
+    [TestCase("FieldWindow", 1)]
     [TestCase("Constant", 1)]
     [TestCase("Sized", 1)]
     [TestCase("Rows", 3)]
@@ -175,7 +184,7 @@ public static class StackArrayEmissionTests
     public static void TheWriterCountsSlotsAndRefusalsByReason()
     {
         _ = Stack.Value;
-        Assert.That(lastWriter.StackSlotsPlaced, Is.EqualTo(15), "1 + 1 + 3 + 1 + 1 + 8 slots of the fixture; none in the foundation");
+        Assert.That(lastWriter.StackSlotsPlaced, Is.EqualTo(16), "1 + 1 + 1 + 3 + 1 + 1 + 8 slots of the fixture; none in the foundation");
         Assert.That(lastWriter.StackRefusals.Keys, Does.Contain(TirStorageResolver.StackRefusal.Cycle));
         Assert.That(lastWriter.StackRefusals.Keys, Does.Contain(TirStorageResolver.StackRefusal.Escapes));
         Assert.That(lastWriter.StorageRefusals, Is.EqualTo(0), "no checker refusal");

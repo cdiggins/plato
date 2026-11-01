@@ -793,6 +793,9 @@ reason on `StoragePlan.Refusals` (`TirStorageResolver.StackRefusal`) and a count
 - the loop is a `MapRange`, `Map`, `MapIdx` or `Reverse` (the kinds that fill a fresh `T[n]` in one pass) and
   `CountBounds.OfLoop` states its count: a constant, or an expression over parameters and unassigned variables (unknown
   counts stay Heap);
+- a guarded count may read a field of a stable base (`b.Degree + 1`, `o.Inner.Degree`, `Count(s.Values)`): a call of a field
+  getter, or a component read, whose base is a parameter, a variable nothing assigns, or such a field read (values are
+  immutable, so it is the same number whenever read); a call that is not a field getter stays unknown;
 - the element is unmanaged (`StructLayouts.IsUnmanaged`), and a constant count is at most the slot capacity
   `min(16, 256 / sizeof(T))`; a guarded count is tested at run time against that capacity, and past it the array is a
   new heap array;
@@ -859,6 +862,10 @@ slot can be passed to a twin.
 twin that calls `Extensions_Pick(xs, k)` with the span as it is. The callee is asked first; a function asked about while it is
 being computed is on a call cycle and borrows nothing, so a parameter passed round a cycle is not borrowed. That answer is the
 least one and sound, but a function in a cycle may get a different mask depending on which member the writer meets first.
+
+A copy of a borrowed parameter is the same span whether the capture rewrite made it (`TirLet`) or the inliner bound it to an
+argument (`TirInlineBinding`, printed `var`); both are planned Borrowed, which is what lets `LocalDerivative` hand `local` on to
+`DeBoorLevels`.
 
 **Check.** Every twin a printed body names must be among the twins written: `BorrowedTwinWriter` throws at the end if one is
 missing (an error of the generator, found by the tests and not by the consumer's compiler). Counts: `CSharpWriter.TwinCallsRouted`

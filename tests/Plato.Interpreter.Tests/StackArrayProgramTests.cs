@@ -54,7 +54,7 @@ public class StackArrayProgramTests
         var (interpreted, owned, stack) = Runs.Value;
         Assert.That(interpreted.Select(r => r.Name), Does.Contain(FaultingLaw));
         Assert.That(interpreted.Concat(owned).Concat(stack).Where(r => r.Name != FaultingLaw && r.Status != LawStatus.Pass).Select(r => r.Name), Is.Empty);
-        Assert.That(interpreted.Count(r => r.Name != FaultingLaw), Is.EqualTo(17));
+        Assert.That(interpreted.Count(r => r.Name != FaultingLaw), Is.EqualTo(19));
     }
 
     [Test]
