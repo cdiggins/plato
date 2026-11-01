@@ -1607,7 +1607,9 @@ namespace Ara3D.Geometry.CppWriter
                     : fi.ReturnType?.Name;
 
                 var sigKey = $"{fi.Name}({paramTypes.JoinStringsWithComma()})";
-                if (IsCpu && IsPreludeArrayTemplate(fi.Name, paramTypes))
+                if (IsCpu && (IsPreludeArrayTemplate(fi.Name, paramTypes)
+                    || (fi.Name == "ToInteger" && ret == "int32_t"
+                        && paramTypes.SequenceEqual(new[] { "int32_t" }))))
                 {
                     if (_claimedSignatures.Add(sigKey))
                         _emitted.Add(new Emitted { Label = label, Key = sigKey, Prototype = "", Definition = "", Provided = true });
