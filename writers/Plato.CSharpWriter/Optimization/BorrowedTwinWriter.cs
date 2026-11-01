@@ -30,6 +30,7 @@ internal static class BorrowedTwinWriter
         writer.WriteLine($"public static class {BorrowedParameters.TwinClass}");
         writer.WriteStartBlock();
         var signatures = new HashSet<string>();
+        var written = new HashSet<string>(StringComparer.Ordinal);
         foreach (var site in writer.TwinSites.ToList())
         {
             var mask = writer.Borrowed.Of(site.Function, site.Type, site.Info);
@@ -55,7 +56,13 @@ internal static class BorrowedTwinWriter
                 continue;
             writer.WriteWithLineStateSync(tw.ToString());
             writer.Borrowed.CountWritten(mask);
+            written.Add(name);
         }
+        // A call routed to a twin names it before the twin exists, so the twin must exist: a call to a missing one is an error in
+        // the generated program, found here and not by the compiler of the consumer.
+        var missing = writer.RoutedTwins.Where(name => !written.Contains(name)).Distinct().ToList();
+        if (missing.Count > 0)
+            throw new InvalidOperationException($"--span-params: a body calls the span twin(s) {string.Join(", ", missing)}, which were not written.");
         return writer.WriteEndBlock();
     }
 
@@ -65,6 +72,8 @@ internal static class BorrowedTwinWriter
     {
         var usual = writer.StorageResolver;
         var refusals = writer.StorageRefusals;
+        var routed = writer.RoutedTwins.Count;
+        writer.TwinBodyBorrowed = tir.Parameters.Where((_, i) => mask[i]).ToList();
         writer.StorageResolver = (body, owner) =>
         {
             var scope = (usual ?? writer.DefaultStorageResolver)(body, owner);
@@ -78,10 +87,13 @@ internal static class BorrowedTwinWriter
         finally
         {
             writer.StorageResolver = usual;
+            writer.TwinBodyBorrowed = null;
         }
         if (writer.StorageRefusals == refusals)
             return true;
-        // The checker refused the plan and the body printed with List parameters, which no span satisfies.
+        // The checker refused the plan and the body printed with List parameters, which no span satisfies; its text is dropped,
+        // and so are the twins it named.
+        writer.RoutedTwins.RemoveRange(routed, writer.RoutedTwins.Count - routed);
         writer.Borrowed.Refuse($"{site.ClassName}.{site.Info.Name}: {writer.StorageRefusalLog[^1]}");
         return false;
     }

@@ -27,13 +27,20 @@ public static class TirStorageResolver
     /// <summary>Resolves <paramref name="body"/> with Heap storage for the owned lowered-loop temporaries.
     /// Returns the very same body inside the scope when no temporary qualifies.</summary>
     public static TirStorageScope Resolve(TirNode body, FunctionDef owner, TirArrayIdentity identity)
-        => Resolve(body, owner, identity, null);
+        => Resolve(body, owner, identity, null, false, false);
 
-    /// <summary>As above; with a <paramref name="stack"/> target (--stack-arrays) an owned temporary whose count is
-    /// bounded and whose every use only reads it takes a hoisted <c>stackalloc</c> slot instead (<see cref="AssignStack"/>).</summary>
-    public static TirStorageScope Resolve(TirNode body, FunctionDef owner, TirArrayIdentity identity, IStorageTarget stack)
+    /// <summary>As above; with <paramref name="stackArrays"/> (--stack-arrays) an owned temporary whose count is bounded and
+    /// whose every use only reads it takes a hoisted <c>stackalloc</c> slot instead (<see cref="AssignStack"/>), and with
+    /// <paramref name="twins"/> (--span-params) a call whose every borrowed argument is an owned array goes to the span twin
+    /// of its callee (<see cref="FindRoutes"/>). <paramref name="target"/> answers the type and call questions of both.</summary>
+    public static TirStorageScope Resolve(TirNode body, FunctionDef owner, TirArrayIdentity identity, IStorageTarget target,
+        bool stackArrays, bool twins, IReadOnlyList<ParameterDef> borrowed = null)
     {
         var plan = new StoragePlan(owner);
+        // The body of a span twin: its borrowed parameters are known before anything is routed, since a call that hands one on
+        // to the twin of its callee needs no conversion.
+        if (borrowed is { Count: > 0 })
+            BorrowedParameters.Plan(plan, body, borrowed);
         var ownership = TirOwnership.Analyze(body, identity);
         foreach (var loop in body.Descendants().OfType<TirLoweredLoop>())
         {
@@ -63,10 +70,65 @@ public static class TirStorageResolver
             else
                 plan.Refuse(def.Name, refusal);
         }
-        if (stack != null)
-            AssignStack(body, owner, plan, ownership, stack);
-        var resolved = new Converter(plan, identity).Walk(body, false);
+        var routes = twins && target != null ? FindRoutes(body, plan, target) : new Dictionary<TirCall, TwinRoute>(ReferenceEqualityComparer.Instance);
+        if (stackArrays && target != null)
+            AssignStack(body, owner, plan, ownership, target, Lent(routes, plan));
+        var resolved = new Converter(plan, identity, routes).Walk(body, false);
         return new TirStorageScope(resolved, plan);
+    }
+
+    // --- twin calls (--span-params) -------------------------------------------------------------
+
+    /// <summary>The calls that go to a span twin: the callee has one (<see cref="IStorageTarget.RouteOf"/>) and every
+    /// argument at a borrowed position is a reference to an array the body owns (Heap here; a Heap temporary may become Stack
+    /// afterwards, and the conversion to the span follows whichever it is) or already holds a span (a borrowed parameter of the
+    /// twin being written, which is how a twin hands its array on). One argument that is neither keeps the whole call on the
+    /// original, since the twin takes a span at every borrowed position.</summary>
+    internal static Dictionary<TirCall, TwinRoute> FindRoutes(TirNode body, StoragePlan plan, IStorageTarget target)
+    {
+        var routes = new Dictionary<TirCall, TwinRoute>(ReferenceEqualityComparer.Instance);
+        foreach (var call in body.Descendants().OfType<TirCall>())
+        {
+            if (call.Args.Count == 0 || target.RouteOf(call) is not { } route)
+                continue;
+            var owned = true;
+            for (var i = 0; i < call.Args.Count && owned; i++)
+                owned = !route.Borrowed[i] || plan.Of(TirRewrite.StripCoerce(call.Args[i])) is ArrayStorage.Heap or ArrayStorage.Borrowed;
+            if (owned)
+                routes[call] = route;
+        }
+        return routes;
+    }
+
+    /// <summary>Sends to their twins the calls of <paramref name="body"/> whose borrowed arguments are all spans already, with
+    /// the arguments as they are. <see cref="BorrowedParameters"/> asks whether a parameter that is handed on this way is
+    /// still borrowed.</summary>
+    internal static TirNode RoutePassedOn(TirNode body, StoragePlan plan, IStorageTarget target, TirArrayIdentity identity)
+    {
+        var routes = FindRoutes(body, plan, target);
+        return routes.Count == 0 ? body : new Converter(plan, identity, routes).Walk(body, false);
+    }
+
+    /// <summary>How many borrowed arguments of routed calls name each binding: those uses lend the array for the duration of
+    /// the call, so they are neither a borrow nor an escape. Keyed by the temporary's name or the local's definition.</summary>
+    private static Dictionary<object, int> Lent(Dictionary<TirCall, TwinRoute> routes, StoragePlan plan)
+    {
+        var lent = new Dictionary<object, int>();
+        foreach (var (call, route) in routes)
+            for (var i = 0; i < call.Args.Count; i++)
+            {
+                if (!route.Borrowed[i])
+                    continue;
+                object key = TirRewrite.StripCoerce(call.Args[i]) switch
+                {
+                    TirTempRef t => t.Name,
+                    TirVariable { Def: { } def } => def,
+                    _ => null,
+                };
+                if (key != null)
+                    lent[key] = lent.TryGetValue(key, out var n) ? n + 1 : 1;
+            }
+        return lent;
     }
 
     // --- Stack (--stack-arrays) -----------------------------------------------------------------
@@ -103,7 +165,8 @@ public static class TirStorageResolver
     /// loop around the allocation is one the plan names (the slot is declared before the outermost); the body's slots
     /// total at most 1 KiB; and the body is not on a call cycle. A local that aliases a Stack temporary is Stack.
     /// </summary>
-    private static void AssignStack(TirNode body, FunctionDef owner, StoragePlan plan, TirOwnership ownership, IStorageTarget target)
+    private static void AssignStack(TirNode body, FunctionDef owner, StoragePlan plan, TirOwnership ownership, IStorageTarget target,
+        Dictionary<object, int> lent)
     {
         var loops = body.Descendants().OfType<TirLoweredLoop>()
             .Where(l => TirLoopLowerer.ProducesArray(l.Kind) && plan.OfTemp(l.TempName) == ArrayStorage.Heap).ToList();
@@ -115,7 +178,7 @@ public static class TirStorageResolver
         var bytes = 0;
         foreach (var loop in loops)
         {
-            var reason = StackRefusalOf(loop, plan, ownership, declarations, frames, target, body, owner, ref cycle, bytes,
+            var reason = StackRefusalOf(loop, plan, ownership, declarations, frames, target, body, owner, ref cycle, bytes, lent,
                 out var element, out var capacity, out var aliases);
             if (reason != null)
             {
@@ -133,8 +196,8 @@ public static class TirStorageResolver
 
     private static string StackRefusalOf(TirLoweredLoop loop, StoragePlan plan, TirOwnership ownership,
         List<(VariableDef Def, TirNode Value)> declarations, IReadOnlyDictionary<string, int?[]> frames, IStorageTarget target,
-        TirNode body, FunctionDef owner, ref bool? cycle, int bytes, out TypeExpression element, out int capacity,
-        out List<VariableDef> aliases)
+        TirNode body, FunctionDef owner, ref bool? cycle, int bytes, Dictionary<object, int> lent, out TypeExpression element,
+        out int capacity, out List<VariableDef> aliases)
     {
         (capacity, aliases) = (0, new List<VariableDef>());
         element = loop.ElemType ?? (loop.Type != null && loop.Type.TypeArgs.Count == 1 ? loop.Type.TypeArgs[0] : null);
@@ -162,7 +225,7 @@ public static class TirStorageResolver
         var facts = ownership.OfTemp(loop.TempName);
         if (facts == null || facts.Captured)
             return StackRefusal.Captured;
-        var uses = StackUses(facts, null, loop.TempName, plan, ownership, declarations, aliases);
+        var uses = StackUses(facts, null, loop.TempName, plan, ownership, declarations, aliases, lent);
         if (uses != null)
             return uses;
         if (bytes + capacity * size > StorageChecker.SlotBudgetBytes)
@@ -174,14 +237,15 @@ public static class TirStorageResolver
     // Walks the binding and, recursively, the locals that alias it: each use must be a borrow in the pass that declared
     // the binding, and every other use must be the declaration of such a local. Returns the reason, or null.
     private static string StackUses(BindingFacts facts, VariableDef self, string tempName, StoragePlan plan, TirOwnership ownership,
-        List<(VariableDef Def, TirNode Value)> declarations, List<VariableDef> aliases)
+        List<(VariableDef Def, TirNode Value)> declarations, List<VariableDef> aliases, Dictionary<object, int> lent)
     {
         var declared = facts.DeclaredLoops;
         foreach (var use in facts.Uses)
             if (use.Loops.Length < declared.Length || !declared.SequenceEqual(use.Loops.Take(declared.Length)))
                 return StackRefusal.Lifetime;
         var children = declarations.Where(d => References(d.Value, self, tempName)).Select(d => d.Def).ToList();
-        if (facts.Uses.Count(u => u.Kind != TirUpdateFlow.UseKind.Borrow) != children.Count)
+        var lentHere = lent.TryGetValue((object)tempName ?? self, out var lentCount) ? lentCount : 0;
+        if (facts.Uses.Count(u => u.Kind != TirUpdateFlow.UseKind.Borrow) != children.Count + lentHere)
             return StackRefusal.Escapes;
         foreach (var child in children)
         {
@@ -193,7 +257,7 @@ public static class TirStorageResolver
             if (childFacts.DeclaredLoops.Length < declared.Length || !declared.SequenceEqual(childFacts.DeclaredLoops.Take(declared.Length)))
                 return StackRefusal.Lifetime;
             aliases.Add(child);
-            var below = StackUses(childFacts, child, null, plan, ownership, declarations, aliases);
+            var below = StackUses(childFacts, child, null, plan, ownership, declarations, aliases, lent);
             if (below != null)
                 return below;
         }
@@ -248,8 +312,10 @@ public static class TirStorageResolver
     {
         private readonly StoragePlan _plan;
         private readonly TirArrayIdentity _identity;
+        private readonly Dictionary<TirCall, TwinRoute> _routes;
 
-        public Converter(StoragePlan plan, TirArrayIdentity identity) => (_plan, _identity) = (plan, identity);
+        public Converter(StoragePlan plan, TirArrayIdentity identity, Dictionary<TirCall, TwinRoute> routes)
+            => (_plan, _identity, _routes) = (plan, identity, routes);
 
         /// <param name="observed">The position reads the array and keeps nothing (the receiver of Count or At,
         /// a lowered loop's source), so it accepts any storage.</param>
@@ -272,6 +338,20 @@ public static class TirStorageResolver
                     return With(n, pair.Children.Select((child, i) => Walk(child, i == 0)).ToList());
                 case TirCoerce c when TirRewrite.IsListType(c.Type) && TirRewrite.IsListType(TirRewrite.StripCoerce(c.Inner)?.Type):
                     return With(n, new[] { Walk(c.Inner, observed) });
+                case TirCall call when _routes.TryGetValue(call, out var route):
+                {
+                    // A twin takes a span at each borrowed position: the owned array there is converted, whichever of Heap or
+                    // Stack it is now; every other argument is converted as for any call.
+                    var args = new List<TirNode>();
+                    for (var i = 0; i < call.Args.Count; i++)
+                    {
+                        var arg = TirRewrite.StripCoerce(call.Args[i]);
+                        args.Add(!route.Borrowed[i] ? Walk(call.Args[i], false)
+                            : _plan.Of(arg) == ArrayStorage.Borrowed ? arg
+                            : new TirRepresent(arg, _plan.Of(arg), ArrayStorage.Borrowed));
+                    }
+                    return new TirTwinCall((TirCall)call.WithChildren(args), route.TwinClass, route.TwinName, route.Borrowed);
+                }
                 case TirCall call when call.Args.Count > 0 && _identity.IsObserver(call):
                     return With(n, call.Children.Select((child, i) => Walk(child, i == 0)).ToList());
                 case TirLoweredLoop loop:

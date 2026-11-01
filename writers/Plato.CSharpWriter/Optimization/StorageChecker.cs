@@ -22,6 +22,10 @@ public enum ConsumerKind
     Other,
 }
 
+/// <summary>A call the target can send to a span twin: where the twin lives, its name, and which arguments it takes as a
+/// <c>ReadOnlySpan&lt;T&gt;</c>.</summary>
+public sealed record TwinRoute(string TwinClass, string TwinName, IReadOnlyList<bool> Borrowed);
+
 /// <summary>What one output language lets an array of each storage do. C# is <see cref="CSharpStorageTarget"/>.</summary>
 public interface IStorageTarget
 {
@@ -38,6 +42,9 @@ public interface IStorageTarget
     /// <summary>As above, given the body about to be written (which holds the calls of what the optimiser inlined). The
     /// default answers the question without the body.</summary>
     bool OnCallCycle(FunctionDef function, TirNode body) => OnCallCycle(function);
+    /// <summary>The span twin a call may be routed to when every borrowed argument of it is an owned array (--span-params,
+    /// chunk C8b), or null for a call with no twin. The default has none.</summary>
+    TwinRoute RouteOf(TirCall call) => null;
 }
 
 /// <summary>The C# consumer table and conversion table of the plan, free of any compilation.</summary>
@@ -90,6 +97,27 @@ public sealed class CSharpStorageTarget : IStorageTarget
 
     /// <summary>The same question without a body: the function's own elaborated bodies stand in for it.</summary>
     public bool OnCallCycle(FunctionDef function) => CyclePath(function, null) != null;
+
+    /// <summary>The twin of an array-receiver library function (the ones written into <c>Extensions.g.cs</c>, which have no
+    /// receiver type of their own) that borrows at least one parameter (<see cref="BorrowedParameters"/>), under
+    /// <c>--span-params</c>. The twin is named by the function, so the call needs no knowledge of the order the originals
+    /// are written in; <see cref="BorrowedTwinWriter"/> checks at the end that every twin a body names was written. A moved
+    /// member of a struct is not routed. A function whose first parameter is not an array, whose borrowed parameter is not
+    /// spelled as a list, or whose arity differs from the call's is left alone.</summary>
+    public TwinRoute RouteOf(TirCall call)
+    {
+        if (!_writer.SpanParams || call?.Callee is not { Body: not null } callee || callee.NumParameters == 0
+            || callee.NumParameters != call.Args.Count || CSharpWriter.IgnoredFunctions.Contains(callee.Name)
+            || !CSharpWriter.IsListExtensionReceiver(callee.Parameters[0].Type))
+            return null;
+        var mask = _writer.Borrowed.Of(callee, null);
+        if (!BorrowedParameters.Any(mask) || mask.Length != call.Args.Count)
+            return null;
+        for (var i = 0; i < mask.Length; i++)
+            if (mask[i] && !TirRewrite.IsListType(callee.Parameters[i].Type))
+                return null;
+        return new TwinRoute(BorrowedParameters.TwinClass, BorrowedParameters.TwinName("Extensions", callee.Name), mask);
+    }
 
     /// <summary>The names along a cycle through <paramref name="function"/> (it first and last), or null when it is on none.</summary>
     public IReadOnlyList<string> CyclePath(FunctionDef function, TirNode body)

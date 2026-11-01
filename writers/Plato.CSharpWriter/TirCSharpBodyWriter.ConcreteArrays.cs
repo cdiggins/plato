@@ -85,7 +85,7 @@ public partial class TirCSharpBodyWriter
     /// comment and leave a hole in the program. A printer case for a new node class is added here.</summary>
     public static bool PrintsAsNode(TirNode node)
         => node is null or TirLiteral or TirParameter or TirVariable or TirTypeRef or TirLet or TirDefault or TirName
-            or TirCall or TirCoerce or TirSpecializedCall or TirInvoke or TirConditional or TirNew or TirArray or TirAssign
+            or TirCall or TirCoerce or TirSpecializedCall or TirTwinCall or TirInvoke or TirConditional or TirNew or TirArray or TirAssign
             or TirLambda or TirComponentAccess or TirConstructorCall or TirTempRef or TirRepresent or TirInPlaceSet
             or TirBooleanChain or TirUnresolved
             or TirInlineRegion or TirInlineExit or TirInlineBinding or TirBlock or TirReturn or TirIf or TirGuardedLoop

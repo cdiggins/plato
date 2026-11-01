@@ -37,6 +37,10 @@ An array that arrives from a caller or a call, or sits in a record, is copied: k
 
 With `--owned-arrays`, a bounded owned temporary that is only read becomes `ArrayStorage.Stack`: a `Span<T>` over a `stackalloc` slot declared before the outermost lowered loop around its allocation, a heap array when the run-time count exceeds the slot (`min(16, 256 / sizeof(T))` elements), at most 1 KiB of slots per body, no slot in a body on a call cycle (`CSharpStorageTarget.OnCallCycle`). The rules, the refusal reasons and the printed form are in `docs/csharp-optimizer-pipeline.md` section 7h; the checker (S5, S7) re-verifies every plan.
 
+## Span twins and their calls (`--span-params`, TKT-1152 chunks C8a and C8b)
+
+A function that only counts, indexes or loops over an array parameter gets a twin in `BorrowedTwins.g.cs` taking `ReadOnlySpan<T>` (`BorrowedParameters`, `BorrowedTwinWriter`). A call whose borrowed arguments are all owned arrays (Heap or Stack) or spans the twin already holds goes to the twin (`TirTwinCall`, routed by `TirStorageResolver` through `IStorageTarget.RouteOf`); the array is lent, so a Stack slot may be passed. A borrowed parameter handed on to another twin stays borrowed. The routing rules, the interprocedural case and the check that every named twin exists are in `docs/csharp-optimizer-pipeline.md` section 7i.
+
 ## Shared calls (`--share-calls`, TKT-1136)
 
 `TirSharedCalls` runs before the loop lowerer. A `match` lowers to a chain of tag tests and field reads that each name the scrutinee's expression, so `match (F(x)) { Decoded(row) => ...; Skipped(code, about) => ...; }` called `F` five times in the C# (the machine of the STEP front end decoded every curve and surface row twice on its common path, five times on a skip). A call that one statement evaluates twice returns the same value twice, so the pass evaluates it once into a local declared before the statement.

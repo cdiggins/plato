@@ -772,7 +772,7 @@ readonly var w = ref x[i]` local, or the element itself as an argument or receiv
 
 `TirCSharpBodyWriter.PrintsAsNode` lists the node classes the printer has a case for. Under the flag a body that holds any
 other node is refused by rule S8 (`StorageChecker.Rule.S8_Unprintable`), where the printer's `/*?*/` fall-through would
-leave a hole in the program; the list is extended with each new printer case (C8a adds `TirTwinCall`).
+leave a hole in the program; the list is extended with each new printer case (C8b added `TirTwinCall`).
 
 An index outside a Heap array throws `IndexOutOfRangeException`; the interface form throws
 `ArgumentOutOfRangeException`. The law runner and the differential run treat any two faults alike, so verdicts are
@@ -829,6 +829,45 @@ checks the slot (rules S5 and S7). Tests: `tests/PlatoTests/Emission/StackArrayE
 reused by twenty passes, a fault mid-fill, ten windows past the budget, self- and mutual recursion, an array passed on,
 returned, captured or assigned again) and `tests/Plato.Interpreter.Tests/StackArrayProgramTests.cs` (the same laws
 interpreted and compiled with and without the switch, equal verdicts).
+
+## 7i. Calls to span twins (`--span-params`, TKT-1152 chunks C8a and C8b)
+
+`--span-params` (requires `--owned-arrays`; rejected with statement inlining) writes `BorrowedTwins.g.cs` last, a static
+class with a twin of each function that only reads an array parameter (`BorrowedParameters`: every use is a `Count` or
+`At` receiver or a lowered loop's source, no printed lambda names it). A twin is the original body with
+`System.ReadOnlySpan<T>` in place of `IReadOnlyList<T>` for each borrowed parameter, named `Extensions_<Name>`, and it is a plain
+static method, never an extension; the original stays as it was, so it is still a method group and the public surface does
+not change. C8b makes the twins used.
+
+**Routing.** `TirStorageResolver` sends a call to the twin of its callee (a `TirTwinCall`, printed
+`BorrowedTwins.Extensions_Name(args)`) when `IStorageTarget.RouteOf` finds one and every argument at a borrowed position is
+an array the body owns or a span the twin already holds: a Heap local or temporary is wrapped
+(`new System.ReadOnlySpan<T>(x)`), a Stack slot is cast (`(System.ReadOnlySpan<T>)x`), a borrowed parameter of the twin being
+written goes on as it is. One argument that is none of these (a parameter array, a call result) keeps the whole call on the
+original, since the twin takes a span at every borrowed position. `RouteOf` answers for array-receiver library functions, the
+ones written into `Extensions.g.cs`, and not for a member moved onto a struct; it asks `BorrowedParameters.Of(callee, null)` and
+names the twin from the function alone, so no call depends on the order the originals are written in. A generic callee has no
+twin and its calls stay as they were.
+
+**Lent.** A borrowed argument of a routed call is neither a borrow nor an escape for the stack decision: the array is lent for
+the duration of the call and the twin cannot keep it (a span cannot be stored in a heap object, and a borrowed parameter is
+never returned). The resolver counts these arguments per binding and `--stack-arrays` takes them off the escapes it finds, so a
+slot can be passed to a twin.
+
+**Interprocedural borrowing.** A parameter handed on to a borrowed position of another twin is itself borrowed
+(`BorrowedParameters.Compute` routes such calls before the checker runs): `ViaPick(xs, k) => Pick(xs, k) + SumOf(xs)` has a
+twin that calls `Extensions_Pick(xs, k)` with the span as it is. The callee is asked first; a function asked about while it is
+being computed is on a call cycle and borrows nothing, so a parameter passed round a cycle is not borrowed. That answer is the
+least one and sound, but a function in a cycle may get a different mask depending on which member the writer meets first.
+
+**Check.** Every twin a printed body names must be among the twins written: `BorrowedTwinWriter` throws at the end if one is
+missing (an error of the generator, found by the tests and not by the consumer's compiler). Counts: `CSharpWriter.TwinCallsRouted`
+and `Borrowed.TwinsWritten`.
+
+Tests: `tests/PlatoTests/Emission/TwinCallEmissionTests.cs` (the fixture `OwnedArrayFixtures/twin-calls.plato` compiled and run:
+a slot lent to two twins, a heap array, two owned arguments, a parameter array, a generic callee, a recursive caller, a twin that
+lends its span on, a recursive callee, a read past the end inside a twin, and the original used as a method group) and
+`tests/Plato.Interpreter.Tests/TwinCallProgramTests.cs` (the same laws interpreted and compiled with and without the switch).
 
 ## 8. Worked example
 

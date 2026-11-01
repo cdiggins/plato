@@ -669,6 +669,15 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write(")");
                 return;
 
+            case TirTwinCall twin:
+                // --span-params: a call routed to the span twin of its callee (BorrowedTwinWriter), its borrowed arguments
+                // already converted to ReadOnlySpan by TirRepresent nodes.
+                _tw.Writer.RoutedTwins.Add(twin.TwinName);
+                Write($"{twin.TwinClass}.{twin.TwinName}(");
+                WriteArgs(twin.Call.Args);
+                Write(")");
+                return;
+
             case TirInvoke inv:
                 WriteNode(inv.Target);
                 Write(".Invoke(");

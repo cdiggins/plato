@@ -690,7 +690,15 @@ namespace Ara3D.Geometry.CSharpWriter
         /// <summary>The resolver <see cref="ResolveStorage"/> runs when <see cref="StorageResolver"/> is null.</summary>
         public TirStorageScope DefaultStorageResolver(TirNode body, FunctionDef owner)
             => TirStorageResolver.Resolve(body, owner, _storageIdentity ??= new TirArrayIdentity(Compilation),
-                StackArrays ? StorageTarget : null);
+                StackArrays || SpanParams ? StorageTarget : null, StackArrays, SpanParams, TwinBodyBorrowed);
+
+        // The borrowed parameters of the span twin whose body is being written (BorrowedTwinWriter), or null.
+        internal IReadOnlyList<ParameterDef> TwinBodyBorrowed;
+
+        // --span-params: the twins the bodies printed so far name (BorrowedTwinWriter checks each was written), and how many
+        // calls were routed to one.
+        internal readonly List<string> RoutedTwins = new List<string>();
+        public int TwinCallsRouted;
 
         /// <summary>The C# storage target of this writer's compilation (type sizes, call graph), made on first use.</summary>
         internal CSharpStorageTarget StorageTarget => _storageTarget ??= new CSharpStorageTarget(this);
@@ -709,6 +717,7 @@ namespace Ara3D.Geometry.CSharpWriter
             if (violations.Count == 0)
             {
                 StackSlotsPlaced += scope.Plan.Slots.Count;
+                TwinCallsRouted += System.Linq.Enumerable.Count(scope.Body.Descendants(), n => n is TirTwinCall);
                 foreach (var refusal in scope.Plan.Refusals)
                 {
                     var at = refusal.IndexOf(TirStorageResolver.StackRefusal.Prefix, System.StringComparison.Ordinal);
@@ -1113,6 +1122,7 @@ namespace Ara3D.Geometry.CSharpWriter
             ResetTemporaryCounters();
             _optimized.Clear();
             TwinSites.Clear();
+            RoutedTwins.Clear();
             _borrowed = null;
             RemainingStatementGrowth = StatementModuleNodeBudget;
 
