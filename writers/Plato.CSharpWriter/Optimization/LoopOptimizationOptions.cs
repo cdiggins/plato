@@ -34,4 +34,9 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     // --specialize-callbacks (plato-brep lambda removal L2): a lambda literal passed to a function-typed
     // parameter calls a clone of the callee with the lambda body substituted (TirCallbackSpecializer).
     public bool SpecializeCallbacks { get; init; }
+
+    // --owned-arrays (TKT-1152): a storage plan per body, verified by StorageChecker before printing
+    // (TirStorageResolver). Independent of the other switches; the resolver assigns List everywhere until
+    // later chunks add owned storage, so the output is unchanged.
+    public bool OwnedArrays { get; init; }
 }

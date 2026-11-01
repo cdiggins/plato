@@ -573,6 +573,40 @@ namespace Ara3D.Geometry.CSharpWriter
         // its captures as extra parameters (TirCallbackSpecializer); the clones are written to
         // CallbackSpecializations.g.cs. Extension style only. Default (false) output is unchanged.
         public bool SpecializeCallbacks { get; set; }
+
+        // --owned-arrays (TKT-1152): the storage layer. At the body writer's entry (after its own capture rewrite)
+        // TirStorageResolver covers the body with a storage plan and StorageChecker verifies it before anything
+        // prints; a violation discards the plan for that body and counts a refusal. Default (false) output is unchanged.
+        public bool OwnedArrays { get; set; }
+        // Tests only: a checker violation throws instead of counting a refusal.
+        public bool OwnedArraysStrict { get; set; }
+        public int StorageBodiesChecked;
+        public int StorageRefusals;
+        public readonly List<string> StorageRefusalLog = new List<string>();
+        // The resolver to run; replaced only by tests that need a plan the checker refuses.
+        public System.Func<TirNode, FunctionDef, TirStorageScope> StorageResolver { get; set; } = TirStorageResolver.Resolve;
+        private CSharpStorageTarget _storageTarget;
+
+        /// <summary>Passes 7 and 8 of the pipeline: resolves the storage of <paramref name="body"/> (already
+        /// capture-rewritten) and checks it. Returns the <see cref="TirStorageScope"/> to print, or the body
+        /// itself when the flag is off or the checker refused the plan.</summary>
+        public TirNode ResolveStorage(TirFunction tir, TirNode body)
+        {
+            if (!OwnedArrays || body == null)
+                return body;
+            var scope = StorageResolver(body, tir?.Original);
+            StorageBodiesChecked++;
+            var violations = StorageChecker.Check(scope, _storageTarget ??= new CSharpStorageTarget(this));
+            if (violations.Count == 0)
+                return scope;
+            var name = $"{tir?.Original?.OwnerType?.Name}.{tir?.Original?.Name}";
+            var text = $"{name}: {string.Join(", ", violations.Select(v => v.Rule))}";
+            if (OwnedArraysStrict)
+                throw new InvalidOperationException($"storage checker refused {text}");
+            StorageRefusals++;
+            StorageRefusalLog.Add(text);
+            return body;
+        }
         public CallbackSpecializations Specializations { get; } = new CallbackSpecializations();
         // The nesting depth of the clone whose body is being optimized (0 for an ordinary body).
         public int SpecializationDepth;
