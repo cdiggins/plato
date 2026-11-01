@@ -15,9 +15,11 @@ public class StringBorrowingTests
         Directory.CreateDirectory(output);
         var source = Path.Combine(output, "strings.plato");
         File.WriteAllText(source, """
+            type TextRecord { Value: Character; }
             library BorrowingFixture
             {
                 EchoText(text: String): String => text;
+                EchoRecord(record: TextRecord): TextRecord => record;
                 FirstText(text: String): Character => text[0];
                 UnicodeText(): String => "André Ω 😀";
             }
@@ -26,7 +28,7 @@ public class StringBorrowingTests
         var asts = Directory.GetFiles(folder, "*.plato").Append(source).Select(PlatoSource.ParseFile).ToList();
         var compilation = new Compilation(Ara3D.Logging.Logger.Null, asts);
         Assert.That(compilation.CompletedCompilation, Is.True);
-        var options = new CppCpuOptions(true, true, false, false, new[] { "EchoText", "FirstText", "UnicodeText" });
+        var options = new CppCpuOptions(true, true, false, false, new[] { "EchoText", "FirstText", "UnicodeText", "EchoRecord" });
         var writer = compilation.ToCpp(new DirectoryPath(output), CppDialect.Cpu, true, options);
         Assert.That(writer.Files["plato_functions.hpp"].ToString(),
             Does.Contain("String EchoText(const String& text)"));
@@ -35,6 +37,8 @@ public class StringBorrowingTests
         var includes = writer.Files.Keys.Where(f => f.StartsWith("plato_functions_") && f.EndsWith(".cpp"))
             .Select(f => $"#include \"{f}\"");
         File.WriteAllText(Path.Combine(output, "main.cpp"), string.Join("\n", includes) + """
+
+            #include "plato_json.cpp"
 
             int main()
             {
@@ -46,6 +50,14 @@ public class StringBorrowingTests
                 if (saved != u"first" || echo(String(u"temporary")) != u"temporary") return 1;
                 if (FirstText(String(u"abc")) != 'a') return 2;
                 if (UnicodeText() != u"Andr\u00e9 \u03a9 \U0001f600") return 3;
+                TextRecord record{};
+                record.Value = u'x';
+                from_json(Json::Object(), record);
+                if (record.Value != 0) return 4;
+                Json populated = Json::Object();
+                populated.set("Value", to_json(char16_t(937)));
+                from_json(populated, record);
+                if (record.Value != 937) return 5;
                 return 0;
             }
             """);

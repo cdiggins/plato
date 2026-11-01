@@ -1344,6 +1344,15 @@ namespace plato
             j.push(to_json(a.data[i]));
         return j;
     }
+    // Missing record fields receive CLR-style typed defaults; explicit null still
+    // goes through the scalar/array converter and its normal validation.
+    template <class T>
+    inline void from_json_member(const Json& object, const char* name, T& value)
+    {
+        if (const auto* field = object.find(name)) from_json(*field, value);
+        else value = T{};
+    }
+
 }
 """;
     }

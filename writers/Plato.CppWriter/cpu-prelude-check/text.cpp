@@ -24,7 +24,12 @@ int main()
     from_json(json, restored);
     CHECK(restored == text);
     CHECK(to_json(Substring(text, 8, 1)).s == "\xef\xbf\xbd");
-    char16_t character;
+    char16_t character = u'x';
+    from_json_member(Json::Object(), "Value", character);
+    CHECK(character == 0);
+    Array<int32_t> values = Range(2);
+    from_json_member(Json::Object(), "Values", values);
+    CHECK(json_dump(to_json(values)) == "null");
     from_json(to_json(char16_t(937)), character);
     CHECK(character == 937);
     CHECK(!IsNumberText(u"\u03a9") && !IsIntegerText(u"\u00e9"));

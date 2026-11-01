@@ -137,3 +137,7 @@ surrogates with U+FFFD when serializing, as the managed JSON boundary does.
 This changes the native text ABI. Hosts must use `make_string_n` or explicit
 UTF-8 conversion at byte boundaries, and use UTF-16 literals for native language
 strings. JSON storage and byte-based number parsing retain their byte representation.
+
+Generated CPU JSON readers distinguish missing members from explicit JSON values.
+Missing members reset to their typed defaults; present members use their normal
+converters, including rejection of null or multi-code-unit Character values.
