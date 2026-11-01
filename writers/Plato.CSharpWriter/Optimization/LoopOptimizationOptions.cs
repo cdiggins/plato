@@ -40,6 +40,10 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     // later chunks add owned storage, so the output is unchanged.
     public bool OwnedArrays { get; init; }
 
+    // --stack-arrays (TKT-1152 chunk C6): an owned, non-escaping, bounded array of an unmanaged element uses a
+    // hoisted stackalloc slot with a heap fallback. Requires OwnedArrays.
+    public bool StackArrays { get; init; }
+
     // --span-params (TKT-1152 chunk C8): a function with a borrowable array parameter also gets a twin taking
     // ReadOnlySpan<T> in BorrowedTwins.g.cs. Requires OwnedArrays; rejected with statement inlining.
     public bool SpanParams { get; init; }

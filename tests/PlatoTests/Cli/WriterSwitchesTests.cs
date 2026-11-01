@@ -20,7 +20,7 @@ public class WriterSwitchesTests
     {
         // TKT-1152's switches stay off by default until plato-brep measures and pins them.
         Assert.That(WriterSwitches.Table.Where(s => s.Default).Select(s => s.Name), Is.EquivalentTo(Pinned));
-        Assert.That(WriterSwitches.Table.Where(s => !s.Default).Select(s => s.Name), Is.EquivalentTo(new[] { "scalar-arrays", "owned-arrays", "span-params" }));
+        Assert.That(WriterSwitches.Table.Where(s => !s.Default).Select(s => s.Name), Is.EquivalentTo(new[] { "scalar-arrays", "owned-arrays", "stack-arrays", "span-params" }));
         var names = WriterSwitches.Table.Select(s => s.Name).ToList();
         foreach (var s in WriterSwitches.Table.Where(s => s.Requires != null))
             Assert.That(names.IndexOf(s.Requires!), Is.LessThan(names.IndexOf(s.Name)), s.Name + " must follow " + s.Requires);

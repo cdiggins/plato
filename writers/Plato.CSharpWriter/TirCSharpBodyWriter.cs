@@ -323,8 +323,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     WriteLine(";");
                     return;
                 }
-                Write(HeapElementType(binding.Value) is { } heapElement && _plan?.Of(binding.Def) == ArrayStorage.Heap
-                    ? RecordHeapAlias(binding.Def, heapElement)
+                Write(HeapElementType(binding.Value) is { } heapElement && IsOwnedLocal(binding.Def)
+                    ? RecordOwnedAlias(binding.Def, heapElement)
                     : CSharpTypeName(binding.Type));
                 Write($" {CSharpTypeWriter.Identifier(binding.Def.Name)} = ");
                 WriteNode(binding.Value);
@@ -549,8 +549,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
     // `var`, or the array type of a local the plan holds as Heap, so that every read of it is direct.
     private string LetDeclaredType(TirLet let)
-        => _plan?.Of(let.Def) == ArrayStorage.Heap
-            ? RecordHeapAlias(let.Def, HeapElementType(let.Value) ?? CSharpTypeName(TirRewrite.ListElementType(let.Type)))
+        => IsOwnedLocal(let.Def)
+            ? RecordOwnedAlias(let.Def, HeapElementType(let.Value) ?? CSharpTypeName(TirRewrite.ListElementType(let.Type)))
             : "var";
 
     private void WriteRefAt(TirCall read)
@@ -666,6 +666,15 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // --specialize-callbacks: a clone of the callee with the lambda substituted (TirCallbackSpecializer).
                 Write($"{CallbackSpecializations.ClassName}.{specialized.Name}(");
                 WriteArgs(specialized.Args);
+                Write(")");
+                return;
+
+            case TirTwinCall twin:
+                // --span-params: a call routed to the span twin of its callee (BorrowedTwinWriter), its borrowed arguments
+                // already converted to ReadOnlySpan by TirRepresent nodes.
+                _tw.Writer.RoutedTwins.Add(twin.TwinName);
+                Write($"{twin.TwinClass}.{twin.TwinName}(");
+                WriteArgs(twin.Call.Args);
                 Write(")");
                 return;
 

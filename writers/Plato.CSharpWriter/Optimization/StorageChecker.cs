@@ -22,6 +22,10 @@ public enum ConsumerKind
     Other,
 }
 
+/// <summary>A call the target can send to a span twin: where the twin lives, its name, and which arguments it takes as a
+/// <c>ReadOnlySpan&lt;T&gt;</c>.</summary>
+public sealed record TwinRoute(string TwinClass, string TwinName, IReadOnlyList<bool> Borrowed);
+
 /// <summary>What one output language lets an array of each storage do. C# is <see cref="CSharpStorageTarget"/>.</summary>
 public interface IStorageTarget
 {
@@ -35,6 +39,12 @@ public interface IStorageTarget
     int SizeOf(TypeExpression element);
     /// <summary>Whether the function is on a cycle of the call graph (mutual recursion included).</summary>
     bool OnCallCycle(FunctionDef function);
+    /// <summary>As above, given the body about to be written (which holds the calls of what the optimiser inlined). The
+    /// default answers the question without the body.</summary>
+    bool OnCallCycle(FunctionDef function, TirNode body) => OnCallCycle(function);
+    /// <summary>The span twin a call may be routed to when every borrowed argument of it is an owned array (--span-params,
+    /// chunk C8b), or null for a call with no twin. The default has none.</summary>
+    TwinRoute RouteOf(TirCall call) => null;
 }
 
 /// <summary>The C# consumer table and conversion table of the plan, free of any compilation.</summary>
@@ -64,6 +74,7 @@ public sealed class CSharpStorageTarget : IStorageTarget
 
     public CSharpStorageTarget(CSharpWriter writer)
     {
+        _writer = writer;
         _layouts = new StructLayouts(writer);
         _identity = new TirArrayIdentity(writer.Compilation);
     }
@@ -74,9 +85,144 @@ public sealed class CSharpStorageTarget : IStorageTarget
     public bool IsUnmanaged(TypeExpression element) => _layouts.IsUnmanaged(element);
     public int SizeOf(TypeExpression element) => _layouts.SizeOf(element);
 
-    /// <summary>Answers yes (refuse) for every function: no call graph exists yet, and no chunk before the stack
-    /// storage of C6 puts a slot in a body, so this costs nothing until then.</summary>
-    public bool OnCallCycle(FunctionDef function) => true;
+    /// <summary>Whether <paramref name="function"/> can reach itself through calls (TKT-1152 chunk C6). The graph has one
+    /// node per function <see cref="Key"/>; the successors of the function itself are the callees of its optimised
+    /// <paramref name="body"/> (which holds what the optimiser inlined), and of any other function the callees of every
+    /// <see cref="TirCall"/> in the elaborated bodies the writer has for it, lambdas included, so a function that hands
+    /// a lambda calling itself to a combinator is on a cycle of one. A function is found again by its key, not by
+    /// reference: the monomorphized body of a function names a copy of it. A call through a bodiless concept member is
+    /// not followed, and a callee with a body that cannot be elaborated is a leaf; both are counted in
+    /// <see cref="UnanalysedCallees"/>.</summary>
+    public bool OnCallCycle(FunctionDef function, TirNode body) => CyclePath(function, body) != null;
+
+    /// <summary>The same question without a body: the function's own elaborated bodies stand in for it.</summary>
+    public bool OnCallCycle(FunctionDef function) => CyclePath(function, null) != null;
+
+    /// <summary>The twin of an array-receiver library function (the ones written into <c>Extensions.g.cs</c>, which have no
+    /// receiver type of their own) that borrows at least one parameter (<see cref="BorrowedParameters"/>), under
+    /// <c>--span-params</c>. The twin is named by the function, so the call needs no knowledge of the order the originals
+    /// are written in; <see cref="BorrowedTwinWriter"/> checks at the end that every twin a body names was written. A moved
+    /// member of a struct is not routed. A function whose first parameter is not an array, whose borrowed parameter is not
+    /// spelled as a list, or whose arity differs from the call's is left alone.</summary>
+    public TwinRoute RouteOf(TirCall call)
+    {
+        if (!_writer.SpanParams || call?.Callee is not { Body: not null } callee || callee.NumParameters == 0
+            || callee.NumParameters != call.Args.Count || CSharpWriter.IgnoredFunctions.Contains(callee.Name)
+            || !CSharpWriter.IsListExtensionReceiver(callee.Parameters[0].Type))
+            return null;
+        var mask = _writer.Borrowed.Of(callee, null);
+        if (!BorrowedParameters.Any(mask) || mask.Length != call.Args.Count)
+            return null;
+        for (var i = 0; i < mask.Length; i++)
+            if (mask[i] && !TirRewrite.IsListType(callee.Parameters[i].Type))
+                return null;
+        return new TwinRoute(BorrowedParameters.TwinClass, BorrowedParameters.TwinName("Extensions", callee.Name), mask);
+    }
+
+    /// <summary>The names along a cycle through <paramref name="function"/> (it first and last), or null when it is on none.</summary>
+    public IReadOnlyList<string> CyclePath(FunctionDef function, TirNode body)
+    {
+        if (function == null)
+            return new[] { "(no function)" };
+        var key = Key(function);
+        var cacheKey = body == null ? key : null;
+        if (cacheKey != null && _cycle.TryGetValue(cacheKey, out var known))
+            return known;
+        var saved = CSharpWriter.TemporaryCounters.Save();
+        try
+        {
+            var start = body != null ? Callees(body) : Successors(function);
+            IReadOnlyList<string> found = null;
+            if (start == null)
+                found = new[] { $"{function.Name} (not elaborated)" };
+            else
+            {
+                var parent = new Dictionary<FunctionDef, FunctionDef>(ReferenceEqualityComparer.Instance);
+                var work = new Stack<FunctionDef>();
+                foreach (var first in start)
+                {
+                    if (Key(first) == key)
+                        return Store(cacheKey, new[] { function.Name, first.Name });
+                    if (parent.TryAdd(first, null))
+                        work.Push(first);
+                }
+                while (work.Count > 0 && found == null)
+                {
+                    var from = work.Pop();
+                    foreach (var next in Successors(from) ?? new HashSet<FunctionDef>(ReferenceEqualityComparer.Instance))
+                    {
+                        if (Key(next) == key)
+                        {
+                            var path = new List<string> { function.Name, next.Name };
+                            for (var at = from; at != null; at = parent[at])
+                                path.Insert(1, at.Name);
+                            found = path;
+                            break;
+                        }
+                        if (parent.TryAdd(next, from))
+                            work.Push(next);
+                    }
+                }
+            }
+            return Store(cacheKey, found);
+        }
+        finally
+        {
+            saved.Restore();
+        }
+    }
+
+    private IReadOnlyList<string> Store(string key, IReadOnlyList<string> value)
+    {
+        if (key != null)
+            _cycle[key] = value;
+        return value;
+    }
+
+    // The identity of a function across the copies the monomorphizer makes: owner type, name and arity. Overloads that
+    // share all three merge into one node, which can only add paths.
+    private static string Key(FunctionDef f) => $"{f.OwnerType?.Name}.{f.Name}/{f.NumParameters}";
+
+    private static HashSet<FunctionDef> Callees(TirNode body)
+        => body.Descendants().Append(body).OfType<TirCall>().Where(c => c.Callee != null).Select(c => c.Callee)
+            .ToHashSet<FunctionDef>(ReferenceEqualityComparer.Instance);
+
+    /// <summary>Callees with a body whose elaborated TIR the call graph could not get (counted once each).</summary>
+    public int UnanalysedCallees { get; private set; }
+
+    private readonly CSharpWriter _writer;
+    private readonly Dictionary<string, IReadOnlyList<string>> _cycle = new(StringComparer.Ordinal);
+    private readonly Dictionary<FunctionDef, HashSet<FunctionDef>> _edges = new(ReferenceEqualityComparer.Instance);
+
+    // The callees of a function, or null when none of its bodies can be elaborated.
+    private HashSet<FunctionDef> Successors(FunctionDef f)
+    {
+        if (_edges.TryGetValue(f, out var hit))
+            return hit;
+        HashSet<FunctionDef> result = null;
+        if (f.Body != null)
+        {
+            // The bodies the writer emits from: ground or open generic at the receiver (the owner type, or the type of the
+            // first parameter for a library function that is an extension of it), and the static body.
+            var receivers = new List<TypeDef> { null };
+            if (f.OwnerType != null)
+                receivers.Add(f.OwnerType);
+            if (f.Parameters.Count > 0 && f.Parameters[0].Type?.Def is { } first)
+                receivers.Add(first);
+            var bodies = receivers.Distinct().SelectMany(r => new[] { _writer.TryGetGroundTir(f, r), _writer.TryGetOpenGenericTir(f, r) })
+                .Append(_writer.TryGetStaticTir(f));
+            foreach (var tir in bodies.Where(t => t?.Body != null))
+            {
+                result ??= new HashSet<FunctionDef>(ReferenceEqualityComparer.Instance);
+                result.UnionWith(Callees(tir.Body));
+            }
+            if (result == null)
+                UnanalysedCallees++;
+        }
+        else
+            result = new HashSet<FunctionDef>(ReferenceEqualityComparer.Instance);
+        return _edges[f] = result;
+    }
 }
 
 /// <summary>
@@ -120,6 +266,16 @@ public static class StorageChecker
         return walk.Violations;
     }
 
+    /// <summary>The loops around each array-producing lowered loop of a body, outermost first, as the checker's own walk
+    /// sees them (a null entry is a loop the plan cannot name: a printed lambda, a while loop, a guarded loop), keyed by
+    /// the loop's temporary. The resolver asks where a slot may be declared with the very traversal that later checks it.</summary>
+    public static IReadOnlyDictionary<string, int?[]> AllocationFrames(TirNode body, IStorageTarget target)
+    {
+        var walk = new Walk(new TirStorageScope(body, new StoragePlan()), target);
+        walk.Run(slots: false);
+        return walk.Frames();
+    }
+
     private sealed class Allocation
     {
         public TirLoweredLoop Node;
@@ -144,11 +300,15 @@ public static class StorageChecker
 
         private void Report(Rule rule, TirNode node) => Violations.Add((rule, node));
 
-        public void Run()
+        public void Run(bool slots = true)
         {
             Operand(_scope.Body, ConsumerKind.Other);
-            CheckSlots();
+            if (slots)
+                CheckSlots();
         }
+
+        public IReadOnlyDictionary<string, int?[]> Frames()
+            => _allocations.ToDictionary(a => a.Key, a => a.Value.Frames, StringComparer.Ordinal);
 
         // --- the walk ------------------------------------------------------------------------------
 
@@ -420,7 +580,7 @@ public static class StorageChecker
             }
             if (bytes > SlotBudgetBytes)
                 Report(Rule.S5_Slot, _scope);
-            if (_plan.Slots.Count > 0 && _target.OnCallCycle(_plan.Owner))
+            if (_plan.Slots.Count > 0 && _target.OnCallCycle(_plan.Owner, _scope.Body))
                 Report(Rule.S5_Slot, _scope);
             // A Stack temporary needs its slot.
             foreach (var (name, allocation) in _allocations)

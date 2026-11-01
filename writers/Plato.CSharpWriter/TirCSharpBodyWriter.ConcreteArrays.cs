@@ -50,12 +50,17 @@ public partial class TirCSharpBodyWriter
             _ => null,
         };
 
-    /// <summary>Records <paramref name="def"/> as a Heap alias with the given element type and returns its declared type.</summary>
-    private string RecordHeapAlias(Ara3D.Geometry.Compiler.Symbols.VariableDef def, string element)
+    /// <summary>Records <paramref name="def"/> as an owned alias (Heap or Stack) with the given element type and returns
+    /// its declared type: <c>T[]</c>, or <c>Span&lt;T&gt;</c> spelled out (never <c>var</c>).</summary>
+    private string RecordOwnedAlias(Ara3D.Geometry.Compiler.Symbols.VariableDef def, string element)
     {
         _aliasElementTypes[def] = element;
-        return $"{element}[]";
+        return _plan?.Of(def) == ArrayStorage.Stack ? $"System.Span<{element}>" : $"{element}[]";
     }
+
+    /// <summary>Whether the plan holds a local as an array the body owns (Heap or Stack).</summary>
+    private bool IsOwnedLocal(Ara3D.Geometry.Compiler.Symbols.VariableDef def)
+        => _plan?.Of(def) is ArrayStorage.Heap or ArrayStorage.Stack;
 
     /// <summary>Prints a <see cref="TirRepresent"/> as the conversion the table of the plan names: Heap to List is a
     /// cast to the interface, Heap to Borrowed wraps the array, Stack to Borrowed casts the span.</summary>
@@ -80,7 +85,7 @@ public partial class TirCSharpBodyWriter
     /// comment and leave a hole in the program. A printer case for a new node class is added here.</summary>
     public static bool PrintsAsNode(TirNode node)
         => node is null or TirLiteral or TirParameter or TirVariable or TirTypeRef or TirLet or TirDefault or TirName
-            or TirCall or TirCoerce or TirSpecializedCall or TirInvoke or TirConditional or TirNew or TirArray or TirAssign
+            or TirCall or TirCoerce or TirSpecializedCall or TirTwinCall or TirInvoke or TirConditional or TirNew or TirArray or TirAssign
             or TirLambda or TirComponentAccess or TirConstructorCall or TirTempRef or TirRepresent or TirInPlaceSet
             or TirBooleanChain or TirUnresolved
             or TirInlineRegion or TirInlineExit or TirInlineBinding or TirBlock or TirReturn or TirIf or TirGuardedLoop

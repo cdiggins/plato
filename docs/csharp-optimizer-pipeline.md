@@ -37,6 +37,7 @@ Plato source
   -> (body writer entry, after its own TirLambdaCaptureRewriter.Rewrite)
      7. TirStorageResolver.Resolve                       --owned-arrays (section 7f)
      8. StorageChecker.Check                             --owned-arrays; a violation discards 7 for that body
+        (7 gives a Heap temporary a stackalloc slot under --stack-arrays, section 7h)
   -> TirCSharpBodyWriter                                 always on; prints the final tree as C#
        scalar lowering (not a TIR pass)                 --lower-scalars
        TirExactOutput specialization                    --loops --exact-output
@@ -771,7 +772,7 @@ readonly var w = ref x[i]` local, or the element itself as an argument or receiv
 
 `TirCSharpBodyWriter.PrintsAsNode` lists the node classes the printer has a case for. Under the flag a body that holds any
 other node is refused by rule S8 (`StorageChecker.Rule.S8_Unprintable`), where the printer's `/*?*/` fall-through would
-leave a hole in the program; the list is extended with each new printer case (C8a adds `TirTwinCall`).
+leave a hole in the program; the list is extended with each new printer case (C8b added `TirTwinCall`).
 
 An index outside a Heap array throws `IndexOutOfRangeException`; the interface form throws
 `ArgumentOutOfRangeException`. The law runner and the differential run treat any two faults alike, so verdicts are
@@ -780,6 +781,93 @@ unchanged (plan open question 1, default: accepted). Tests:
 `OwnedArrayFixtures/owned.plato` with Roslyn under the nineteen pinned flags plus `--owned-arrays`, and compares
 values with the flag off; `tests/Plato.Interpreter.Tests/OwnedArrayProgramTests.cs` runs the fixture's laws in the
 interpreter and compiled, flag off and on.
+
+## 7h. Stack slots (`--stack-arrays`, TKT-1152 chunk C6)
+
+A C#-only switch, off by default, that requires `--owned-arrays` (the writer throws without it, and the CLI table enables
+it only with it). Off, the output is byte-identical. On, `TirStorageResolver` upgrades a Heap lowered-loop temporary to
+`ArrayStorage.Stack` (a `System.Span<T>` over a hoisted `stackalloc` slot) when all of these hold, each with a refusal
+reason on `StoragePlan.Refusals` (`TirStorageResolver.StackRefusal`) and a count on the writer (`StackSlotsPlaced`,
+`StackRefusals`):
+
+- the loop is a `MapRange`, `Map`, `MapIdx` or `Reverse` (the kinds that fill a fresh `T[n]` in one pass) and
+  `CountBounds.OfLoop` states its count: a constant, or an expression over parameters and unassigned variables (unknown
+  counts stay Heap);
+- the element is unmanaged (`StructLayouts.IsUnmanaged`), and a constant count is at most the slot capacity
+  `min(16, 256 / sizeof(T))`; a guarded count is tested at run time against that capacity, and past it the array is a
+  new heap array;
+- every use of the temporary, and of each single-declaration local that aliases it, is a `Count`/`At` receiver or a lowered
+  loop's source, in the loop pass that allocates it (so the span never outlives the pass that reuses the slot), and no
+  printed lambda names it;
+- every loop around the allocation is a lowered loop (a `while` loop, a guarded loop or a printed lambda is a loop
+  the plan cannot name);
+- the body's slots total at most 1 KiB, and the body is not on a call cycle.
+
+A slot is declared as `System.Span<T> _slot<id> = stackalloc T[capacity];` before the outermost loop around the
+allocation (at the allocation when no loop surrounds it), never `var` (over a `stackalloc`, `var` is a pointer in unsafe
+code, and `CSharpProgram` compiles with `allowUnsafe`). The allocation prints as
+`System.Span<T> _a<id> = _n<id> <= capacity ? _slot<id>.Slice(0, _n<id>) : new T[_n<id>];`. The count is the loop's
+own, already clamped to zero or more, so a count of zero or less is an empty slice. Every element is written before it is
+read, in index order, so a reused slot needs no clearing and a callback that faults mid-fill faults at the same element as
+before. A local that aliases a Stack temporary is declared `System.Span<T>`.
+
+**Call cycles.** `CSharpStorageTarget.OnCallCycle(function, body)` walks calls from the body about to be written (so what
+the optimiser inlined is included) to the elaborated bodies of the callees, lambdas included, and reports a cycle when it
+reaches a function with the same owner type, name and arity as the body's own. Functions are matched by that key and not
+by reference because the monomorphizer's body names a copy of its function. A call through a bodiless concept member is not
+followed, and a callee whose body cannot be elaborated is a leaf (`UnanalysedCallees`); a stack overflow cannot be caught, so
+a recursive body gets no slot.
+
+**JIT inlining.** A method with a `stackalloc` is not inlined by the JIT. The slot is declared at the allocation's outermost
+loop, not at the top of the body, so a branch that does not allocate does not pay for it, but every slot-bearing method
+loses inlining; C9 measures that.
+
+`StorageChecker.AllocationFrames` gives the resolver the loops around each allocation by the same traversal that later
+checks the slot (rules S5 and S7). Tests: `tests/PlatoTests/Emission/StackArrayEmissionTests.cs` (the fixture
+`OwnedArrayFixtures/stack.plato` compiled with Roslyn under the nineteen pinned flags plus `--owned-arrays
+--stack-arrays`, strict, and run: a constant count, counts under, at and past the capacity, zero and negative counts, a slot
+reused by twenty passes, a fault mid-fill, ten windows past the budget, self- and mutual recursion, an array passed on,
+returned, captured or assigned again) and `tests/Plato.Interpreter.Tests/StackArrayProgramTests.cs` (the same laws
+interpreted and compiled with and without the switch, equal verdicts).
+
+## 7i. Calls to span twins (`--span-params`, TKT-1152 chunks C8a and C8b)
+
+`--span-params` (requires `--owned-arrays`; rejected with statement inlining) writes `BorrowedTwins.g.cs` last, a static
+class with a twin of each function that only reads an array parameter (`BorrowedParameters`: every use is a `Count` or
+`At` receiver or a lowered loop's source, no printed lambda names it). A twin is the original body with
+`System.ReadOnlySpan<T>` in place of `IReadOnlyList<T>` for each borrowed parameter, named `Extensions_<Name>`, and it is a plain
+static method, never an extension; the original stays as it was, so it is still a method group and the public surface does
+not change. C8b makes the twins used.
+
+**Routing.** `TirStorageResolver` sends a call to the twin of its callee (a `TirTwinCall`, printed
+`BorrowedTwins.Extensions_Name(args)`) when `IStorageTarget.RouteOf` finds one and every argument at a borrowed position is
+an array the body owns or a span the twin already holds: a Heap local or temporary is wrapped
+(`new System.ReadOnlySpan<T>(x)`), a Stack slot is cast (`(System.ReadOnlySpan<T>)x`), a borrowed parameter of the twin being
+written goes on as it is. One argument that is none of these (a parameter array, a call result) keeps the whole call on the
+original, since the twin takes a span at every borrowed position. `RouteOf` answers for array-receiver library functions, the
+ones written into `Extensions.g.cs`, and not for a member moved onto a struct; it asks `BorrowedParameters.Of(callee, null)` and
+names the twin from the function alone, so no call depends on the order the originals are written in. A generic callee has no
+twin and its calls stay as they were.
+
+**Lent.** A borrowed argument of a routed call is neither a borrow nor an escape for the stack decision: the array is lent for
+the duration of the call and the twin cannot keep it (a span cannot be stored in a heap object, and a borrowed parameter is
+never returned). The resolver counts these arguments per binding and `--stack-arrays` takes them off the escapes it finds, so a
+slot can be passed to a twin.
+
+**Interprocedural borrowing.** A parameter handed on to a borrowed position of another twin is itself borrowed
+(`BorrowedParameters.Compute` routes such calls before the checker runs): `ViaPick(xs, k) => Pick(xs, k) + SumOf(xs)` has a
+twin that calls `Extensions_Pick(xs, k)` with the span as it is. The callee is asked first; a function asked about while it is
+being computed is on a call cycle and borrows nothing, so a parameter passed round a cycle is not borrowed. That answer is the
+least one and sound, but a function in a cycle may get a different mask depending on which member the writer meets first.
+
+**Check.** Every twin a printed body names must be among the twins written: `BorrowedTwinWriter` throws at the end if one is
+missing (an error of the generator, found by the tests and not by the consumer's compiler). Counts: `CSharpWriter.TwinCallsRouted`
+and `Borrowed.TwinsWritten`.
+
+Tests: `tests/PlatoTests/Emission/TwinCallEmissionTests.cs` (the fixture `OwnedArrayFixtures/twin-calls.plato` compiled and run:
+a slot lent to two twins, a heap array, two owned arguments, a parameter array, a generic callee, a recursive caller, a twin that
+lends its span on, a recursive callee, a read past the end inside a twin, and the original used as a method group) and
+`tests/Plato.Interpreter.Tests/TwinCallProgramTests.cs` (the same laws interpreted and compiled with and without the switch).
 
 ## 8. Worked example
 

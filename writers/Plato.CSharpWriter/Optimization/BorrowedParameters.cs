@@ -10,7 +10,9 @@ namespace Ara3D.Geometry.CSharpWriter;
 /// The facts behind span twins. A parameter is borrowed when, in the callee's optimised TIR (after the body
 /// writer's own capture rewrite), it is a list and every use is a <c>Count</c> or <c>At</c> receiver or the source of a
 /// lowered loop, and no printed lambda captures it: the <see cref="StorageChecker"/> accepts the body with that
-/// parameter planned <see cref="ArrayStorage.Borrowed"/>, which is the whole definition. Any bodied, ground, non-generic
+/// parameter planned <see cref="ArrayStorage.Borrowed"/>, which is the whole definition. A call that hands the parameter on to a
+/// borrowed position of another twin counts as a borrow of it (C8b): the callee is asked first, and one asked about while it is
+/// being computed is on a call cycle and borrows nothing. Any bodied, ground, non-generic
 /// function without a <c>ref</c> return is a callee, whether a moved member or an array-receiver library function of
 /// <c>Extensions.g.cs</c>. The twin has the original's name under <see cref="TwinName"/> in <see cref="TwinClass"/>,
 /// takes <c>ReadOnlySpan&lt;T&gt;</c> for each borrowed parameter and is otherwise the same method; the original stays as it was.
@@ -35,6 +37,8 @@ public sealed class BorrowedParameters
 
     private readonly CSharpWriter _writer;
     private readonly Dictionary<(FunctionDef, TypeDef), bool[]> _memo = new(new PairComparer());
+    private readonly HashSet<(FunctionDef, TypeDef)> _computing = new(new PairComparer());
+    private TirArrayIdentity _identity;
     private CSharpStorageTarget _target;
 
     public BorrowedParameters(CSharpWriter writer) => _writer = writer;
@@ -48,7 +52,18 @@ public sealed class BorrowedParameters
             return System.Array.Empty<bool>();
         if (_memo.TryGetValue((function, concreteType), out var hit))
             return hit;
-        return _memo[(function, concreteType)] = Compute(function, concreteType, info);
+        // A function asked about while it is being computed is on a call cycle: it counts as borrowing nothing, so a parameter
+        // handed on round a cycle is not borrowed (the least answer, which no cycle can contradict).
+        if (!_computing.Add((function, concreteType)))
+            return new bool[function.NumParameters];
+        try
+        {
+            return _memo[(function, concreteType)] = Compute(function, concreteType, info);
+        }
+        finally
+        {
+            _computing.Remove((function, concreteType));
+        }
     }
 
     /// <summary>Twins written by <see cref="BorrowedTwinWriter"/>, and borrowed parameters among them.</summary>
@@ -129,7 +144,10 @@ public sealed class BorrowedParameters
                 continue;
             var plan = new StoragePlan(function);
             Plan(plan, body, new[] { def });
-            mask[i] = StorageChecker.Check(new TirStorageScope(body, plan), _target ??= new CSharpStorageTarget(_writer)).Count == 0;
+            // A call that hands the parameter to a twin's borrowed position keeps it borrowed (interprocedural borrowing).
+            var routed = TirStorageResolver.RoutePassedOn(body, plan, _target ??= new CSharpStorageTarget(_writer),
+                _identity ??= new TirArrayIdentity(_writer.Compilation));
+            mask[i] = StorageChecker.Check(new TirStorageScope(routed, plan), _target).Count == 0;
         }
         return mask;
     }
