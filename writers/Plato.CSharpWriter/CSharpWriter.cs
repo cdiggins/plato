@@ -703,6 +703,14 @@ namespace Ara3D.Geometry.CSharpWriter
             StorageRefusalLog.Add(text);
             return body;
         }
+        // --span-params (TKT-1152 chunk C8): each function with a borrowable array parameter gets a twin taking
+        // ReadOnlySpan<T>, written last into BorrowedTwins.g.cs (BorrowedTwinWriter). Requires OwnedArrays and is
+        // rejected with statement inlining. No call site uses a twin yet. Default (false) output is unchanged.
+        public bool SpanParams { get; set; }
+        private BorrowedParameters _borrowed;
+        public BorrowedParameters Borrowed => _borrowed ??= new BorrowedParameters(this);
+        // The bodies a twin may be written for, recorded as their originals are written (only when SpanParams is on).
+        internal readonly List<TwinSite> TwinSites = new List<TwinSite>();
         // --scalar-arrays (TKT-1152 chunk C0): see ConstantCounts. Default (false) output is unchanged.
         public bool ScalarArrays { get; set; }
         public CallbackSpecializations Specializations { get; } = new CallbackSpecializations();
@@ -1074,8 +1082,12 @@ namespace Ara3D.Geometry.CSharpWriter
             // names (`{p}_{N}`) draw from process-global counters; reset them per generation so
             // two WriteAll runs in one process produce identical output (a fresh CLI process
             // always started at 0, so file output is unchanged).
+            if (SpanParams && !OwnedArrays)
+                throw new InvalidOperationException("--span-params requires --owned-arrays.");
             ResetTemporaryCounters();
             _optimized.Clear();
+            TwinSites.Clear();
+            _borrowed = null;
             RemainingStatementGrowth = StatementModuleNodeBudget;
 
             WriteFile("NumberProfile.g.cs", WriteNumberProfileCheck);
@@ -1119,6 +1131,9 @@ namespace Ara3D.Geometry.CSharpWriter
 
             if (LargeStructs != null)
                 WriteFile(LargeStructPassing.HelperFile, () => { LargeStructPassing.WriteHelper(this); return this; });
+
+            if (SpanParams)
+                BorrowedTwinWriter.WriteFile(this);
 
             FlushTirDumps();
             return this;
@@ -1362,6 +1377,8 @@ namespace Ara3D.Geometry.CSharpWriter
                         $"{cfi.Name}{cfi.ExtensionGenericsString}({cfi.ParameterTypes.JoinStringsWithComma()})"))
                     continue;
                 interfaceWriter.WriteExtensionFunction(cfi);
+                if (SpanParams)
+                    TwinSites.Add(new TwinSite("Extensions", f, null, cfi, NewDefaultTypeWriter));
                 if (ExtensionStyle)
                     this.WriteWithLineStateSync(interfaceWriter.ToString());
                 else

@@ -49,6 +49,7 @@ public static class WriterSwitches
         // TKT-1152: off by default until each is measured and pinned in plato-brep.
         new("scalar-arrays", false),
         new("owned-arrays", false),
+        new("span-params", false, "owned-arrays"),
     };
 
     public static bool IsSwitch(string name) => Table.Any(s => s.Name == name);
@@ -102,6 +103,7 @@ public static class WriterSwitches
             SpecializeCallbacks = s["specialize-callbacks"],
             ScalarArrays = s["scalar-arrays"],
             OwnedArrays = s["owned-arrays"],
+            SpanParams = s["span-params"],
         };
 }
 

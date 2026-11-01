@@ -40,6 +40,10 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     // later chunks add owned storage, so the output is unchanged.
     public bool OwnedArrays { get; init; }
 
+    // --span-params (TKT-1152 chunk C8): a function with a borrowable array parameter also gets a twin taking
+    // ReadOnlySpan<T> in BorrowedTwins.g.cs. Requires OwnedArrays; rejected with statement inlining.
+    public bool SpanParams { get; init; }
+
     // --scalar-arrays (TKT-1152 chunk C0): the constant Count of a fixed-arity struct folds to a literal and
     // the component arrays built over it are unrolled, so ComponentArray and its consumers need no array
     // (ConstantCounts). Independent of the other switches; it unrolls through the literal rules, so it is

@@ -368,6 +368,8 @@ public static class ExtensionStyleWriter
             }
             tw.Write(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
             writer.WriteWithLineStateSync(tw.ToString());
+            if (writer.SpanParams)
+                writer.TwinSites.Add(new TwinSite(className, m.Function.Implementation, m.ConcreteType.TypeDef, fi, () => NewMemberWriter(writer, m)));
         }
 
         return writer.WriteEndBlock();
