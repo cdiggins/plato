@@ -146,3 +146,11 @@ CPU JSON definitions are emitted into bounded `plato_json*.cpp` translation unit
 Hosts must compile and link every matching unit; `plato_json.cpp` is always present.
 The writer preserves definition order and keeps each record converter pair intact.
 Generic converters remain in the type header so instantiation can see them.
+
+CPU functions borrow closed record parameters whose actual native `sizeof` is at
+least 256 bytes. Smaller records remain values; generic parameter positions retain
+deduction-compatible signatures. Assignment targets remain owned parameters, and
+all returns remain owned values. `CppCpuOptions.BorrowLargeParameters` defaults to
+true and can be disabled through the writer API for comparison. This changes native
+function signatures; regenerate and rebuild callers together. C++ value captures
+copy the referred-to record, so they cannot retain a reference to a caller temporary.

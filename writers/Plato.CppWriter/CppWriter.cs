@@ -1621,7 +1621,21 @@ namespace Ara3D.Geometry.CppWriter
                 if (!_claimedSignatures.Add(sigKey))
                     return; // identical overload already emitted (first wins)
 
-                var parameters = paramTypes.Zip(paramNames, ParameterDeclaration).JoinStringsWithComma();
+                // Assignment targets must remain owned values. Walk the entire target so
+                // member/index assignment cannot accidentally borrow its root parameter.
+                var assigned = tir?.Body?.Descendants().OfType<TirAssign>()
+                    .SelectMany(a => a.LValue.Descendants().OfType<TirParameter>())
+                    .Select(p => p.Def).ToHashSet() ?? new HashSet<ParameterDef>();
+                var parameters = paramTypes.Select((type, i) =>
+                {
+                    if (tir != null && assigned.Contains(tir.Parameters[i]))
+                        return $"{type} {paramNames[i]}";
+                    // Only closed, named records: alias templates in deduced parameter
+                    // positions would prevent generic argument deduction in C++.
+                    if (IsCpu && CpuOptions.BorrowLargeParameters && StructNames.Contains(type))
+                        return $"ReadOnlyParameter<{type}> {paramNames[i]}";
+                    return ParameterDeclaration(type, paramNames[i]);
+                }).JoinStringsWithComma();
                 var sig = $"{TemplateHeader(templateNames)}PLATO_FN {ret} {FunctionName(fi.Name)}({parameters})";
 
                 string definition;

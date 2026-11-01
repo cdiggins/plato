@@ -26,6 +26,10 @@ namespace plato
 {
     using String = std::u16string;
 
+    // Use the target compiler's real layout instead of duplicating its ABI rules.
+    // Return values remain owned; callers may bind temporaries for the call duration.
+    template <class T> using ReadOnlyParameter = std::conditional_t<(sizeof(T) >= 256), const T&, T>;
+
     // Plato text uses UTF-16 code units, like C#. JSON and host byte streams use UTF-8.
     inline void append_utf8(std::string& out, uint32_t cp)
     {

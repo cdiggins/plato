@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-01T16:35:38-05:00",
+  "updated_at": "2026-11-01T16:39:51-05:00",
   "note": "Written by tools/record-gates.py at 2026-11-01T12:43:06-05:00.",
   "gates": [
     {
@@ -127,7 +127,7 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-11-01T16:35:38-05:00",
+    "updated_at": "2026-11-01T16:39:51-05:00",
     "targets": {
       "forward-conformance": {
         "built_at": "2026-08-02T15:27:35-04:00",
@@ -499,14 +499,31 @@
           "CS0108": 10,
           "CS0162": 1
         }
+      },
+      "cpp-large-parameters": {
+        "built_at": "2026-11-01T16:39:51-05:00",
+        "project": "C:\\Users\\cdigg\\git\\plato-decoder-wave\\tests\\Plato.CppWriter.Tests\\Plato.CppWriter.Tests.csproj",
+        "log": "C:\\Users\\cdigg\\git\\plato-decoder-wave\\.temp\\csharp-build-logs\\cpp-large-parameters.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 11,
+        "summary_errors": 0,
+        "summary_warnings": 11,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {
+          "CS0108": 10,
+          "CS0162": 1
+        }
       }
     },
-    "latest_target": "cpp-json-units",
+    "latest_target": "cpp-large-parameters",
     "latest": {
-      "target": "cpp-json-units",
+      "target": "cpp-large-parameters",
       "total_errors": 0,
       "total_warnings": 11,
-      "built_at": "2026-11-01T16:35:38-05:00",
+      "built_at": "2026-11-01T16:39:51-05:00",
       "exit_code": 0,
       "by_category": {},
       "by_code_top": {}
