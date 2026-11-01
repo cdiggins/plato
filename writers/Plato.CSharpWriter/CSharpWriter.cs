@@ -573,6 +573,8 @@ namespace Ara3D.Geometry.CSharpWriter
         // its captures as extra parameters (TirCallbackSpecializer); the clones are written to
         // CallbackSpecializations.g.cs. Extension style only. Default (false) output is unchanged.
         public bool SpecializeCallbacks { get; set; }
+        // --specialize-callbacks-lean: see LoopOptimizationOptions.SpecializeCallbacksLean. Meaningless without SpecializeCallbacks.
+        public bool SpecializeCallbacksLean { get; set; }
         public CallbackSpecializations Specializations { get; } = new CallbackSpecializations();
         // The nesting depth of the clone whose body is being optimized (0 for an ordinary body).
         public int SpecializationDepth;

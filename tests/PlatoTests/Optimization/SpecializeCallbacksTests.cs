@@ -21,7 +21,7 @@ public static class SpecializeCallbacksTests
 {
     private const string Probe = "CallbackProbe.g.cs";
     private sealed record Program(CSharpWriter Writer, string Text, Assembly Assembly);
-    private static readonly Dictionary<(bool, bool), Program> Programs = new();
+    private static readonly Dictionary<(bool, bool, bool), Program> Programs = new();
 
     private static readonly Lazy<Ara3D.Geometry.Compiler.Compilation> Compilation = new(() =>
     {
@@ -36,12 +36,12 @@ public static class SpecializeCallbacksTests
         => Compilation.Value.LibraryDefinitionsByName["CallbackProbe"].Functions
             .Concat(Compilation.Value.LibraryDefinitionsByName["CallbackProbeGeneric"].Functions).Select(f => f.Name).ToHashSet();
 
-    private static Program Get(bool enabled, bool inParams = false)
+    private static Program Get(bool enabled, bool inParams = false, bool lean = false)
     {
-        if (Programs.TryGetValue((enabled, inParams), out var cached))
+        if (Programs.TryGetValue((enabled, inParams, lean), out var cached))
             return cached;
         var writer = new CSharpWriter(Compilation.Value, "unused-specialize-callbacks")
-            { ExtensionStyle = true, SpecializeCallbacks = enabled, InParameters = inParams };
+            { ExtensionStyle = true, SpecializeCallbacks = enabled, SpecializeCallbacksLean = lean, InParameters = inParams };
         writer.WriteAll();
         var names = ProbeNames;
         // The probe's methods: those over a Number receiver in its own library file, those over a
@@ -55,7 +55,7 @@ public static class SpecializeCallbacksTests
             sources.Add(helper.ToString());
         sources.Add(InParamsTests.NumberOperatorAdapters(writer));
         var assembly = CSharpTestCompilation.CompileAndLoad(sources.ToArray(), LanguageVersion.CSharp12, OptimizationLevel.Release);
-        return Programs[(enabled, inParams)] = new Program(writer, string.Join(Environment.NewLine, sources), assembly);
+        return Programs[(enabled, inParams, lean)] = new Program(writer, string.Join(Environment.NewLine, sources), assembly);
     }
 
     private static string KeepMethods(string source, Func<string, bool> keep)
@@ -91,7 +91,7 @@ public static class SpecializeCallbacksTests
         Assert.That(on.Writer.Files.ContainsKey(CallbackSpecializations.FileName), Is.True);
         // Scaled and ScaledTwice share the Iterate clone: the same shape with captures abstracted. Doubled is
         // another shape of Iterate, Applied a clone of Apply, ScaledTwice a clone of IterateTwice.
-        Assert.That(Clones(on, "Iterate"), Has.Count.EqualTo(2));
+        Assert.That(Clones(on, "Iterate"), Has.Count.EqualTo(3));
         Assert.That(Clones(on, "IterateTwice"), Has.Count.EqualTo(1));
         Assert.That(Clones(on, "Apply"), Has.Count.EqualTo(1));
         Assert.That(Clones(on, "Stored"), Is.Empty);
@@ -158,6 +158,47 @@ public static class SpecializeCallbacksTests
         Assert.That((bool)(Ara3D.Geometry.Boolean)method.Invoke(null, new object[] { xs, xs })!, Is.True);
     }
 
+    [Test]
+    public static void LeanLeavesValidationCallersAlone()
+    {
+        var on = Get(true);
+        var lean = Get(true, lean: true);
+        // Check_Tripled adds the third Iterate shape; lean refuses it, counts the refusal and keeps its lambda.
+        Assert.That(Clones(on, "Iterate"), Has.Count.EqualTo(3));
+        Assert.That(Clones(lean, "Iterate"), Has.Count.EqualTo(2));
+        Assert.That(lean.Writer.Specializations.Refusals["validation body"], Is.EqualTo(1));
+        Assert.That(on.Writer.Specializations.Refusals.ContainsKey("validation body"), Is.False);
+        Assert.That(Method(lean, "Check_Tripled"), Does.Contain(".Iterate((a)"));
+        Assert.That(Method(on, "Check_Tripled"), Does.Contain(CallbackSpecializations.ClassName));
+        // The production callers keep their clones.
+        Assert.That(Method(lean, "Scaled"), Does.Contain(CallbackSpecializations.ClassName));
+        Assert.That(Method(lean, "Doubled"), Does.Contain(CallbackSpecializations.ClassName));
+    }
+
+    [Test]
+    public static void LeanBindsTheArgumentOnceInsteadOfRefusing()
+    {
+        var on = Get(true);
+        var lean = Get(true, lean: true);
+        // Without the switch the lambda uses its parameter twice on a computed argument and the site is refused.
+        Assert.That(Clones(on, "ShiftThen"), Is.Empty);
+        Assert.That(on.Writer.Specializations.Refusals.Keys, Does.Contain("invocation argument used more than once"));
+        Assert.That(Method(on, "Squared"), Does.Contain(".ShiftThen((a)"));
+        // With it the site is a clone whose invocation calls a helper holding the lambda body: the argument
+        // is evaluated once, by the call, and no delegate is left.
+        var registry = lean.Writer.Specializations;
+        var clone = registry.Clones.Single(c => c.Callee.Name == "ShiftThen" && !c.Name.Contains("_L"));
+        var helper = registry.Clones.Single(c => c.Callee.Name == "ShiftThen" && c.Name.Contains("_L1"));
+        Assert.That(Method(lean, "Squared"), Does.Contain($"{CallbackSpecializations.ClassName}.{clone.Name}(x, k)"));
+        Assert.That(Method(lean, clone.Name), Does.Contain($"{CallbackSpecializations.ClassName}.{helper.Name}(x.Shifted("));
+        Assert.That(helper.ParameterTypes, Is.EqualTo(new[] { "Number", "Number" }));
+        Assert.That(Method(lean, helper.Name), Does.Contain("a.Multiply(a).Add(_cap0)"));
+        var clonesFile = lean.Writer.Files[CallbackSpecializations.FileName].ToString();
+        Assert.That(clonesFile, Does.Not.Contain("Func<").And.Not.Contain(".Invoke("));
+        Assert.That(Run(lean, "Squared", 9.0, 0.5), Is.EqualTo(Run(Get(false), "Squared", 9.0, 0.5)));
+        Assert.That(Run(lean, "Squared", 9.0, 0.5), Is.EqualTo(362.5));
+    }
+
     private static double Run(Program p, string name, params double[] args)
     {
         var method = p.Assembly.GetTypes().SelectMany(t => t.GetMethods()).Single(m => m.Name == name);
@@ -170,6 +211,7 @@ public static class SpecializeCallbacksTests
     {
         var off = Get(false);
         var on = Get(true, inParams);
+        var lean = Get(true, inParams, lean: true);
         var cases = new (string Name, double[] Args)[]
         {
             ("Scaled", new[] { 1.5, 3.0 }),
@@ -177,9 +219,14 @@ public static class SpecializeCallbacksTests
             ("Doubled", new[] { 7.25 }),
             ("Applied", new[] { 2.0, 4.0 }),
             ("StoredDoubled", new[] { 0.75 }),
+            ("Squared", new[] { 6.25, -0.5 }),
+            ("Check_Tripled", new[] { 1.25 }),
         };
         foreach (var (name, args) in cases)
+        {
             Assert.That(Run(on, name, args), Is.EqualTo(Run(off, name, args)), name);
+            Assert.That(Run(lean, name, args), Is.EqualTo(Run(off, name, args)), name + " lean");
+        }
         Assert.That(Run(on, "Scaled", 1.5, 3.0), Is.EqualTo((1.5 * 3.0 + 1.5) * 3.0 + 1.5 + (1.5 * 3.0 + 1.5)));
         Assert.That(Run(on, "Applied", 2.0, 4.0), Is.EqualTo(16.0));
     }

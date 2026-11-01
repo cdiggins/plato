@@ -11,7 +11,7 @@ internal static class GenerationArguments
         "--lean-inlining",
         "--concrete-arrays", "--presize", "--in-place", "--share-calls", "--lower-scalars",
         "--sink-bindings", "--bind-scrutinee", "--share-calls-wide", "--closure-free", "--in-params", "--switch-match",
-        "--hoist-invariants", "--cache-constants", "--primitive-compare", "--lower-more", "--specialize-callbacks"
+        "--hoist-invariants", "--cache-constants", "--primitive-compare", "--lower-more", "--specialize-callbacks", "--specialize-callbacks-lean"
     };
 
     private static readonly HashSet<string> ValueOptions = new(StringComparer.Ordinal)

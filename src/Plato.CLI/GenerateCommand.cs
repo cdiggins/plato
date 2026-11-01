@@ -56,10 +56,16 @@ internal static class GenerateCommand
             SwitchMatch = args.Contains("--switch-match"),
             LowerMore = args.Contains("--lower-more"),
             SpecializeCallbacks = args.Contains("--specialize-callbacks"),
+            SpecializeCallbacksLean = args.Contains("--specialize-callbacks-lean"),
         };
         if (loopOptimizations.LowerMore && (!loops || typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--lower-more requires C# generation with --loops.");
+            return 1;
+        }
+        if (loopOptimizations.SpecializeCallbacksLean && !loopOptimizations.SpecializeCallbacks)
+        {
+            Console.Error.WriteLine("--specialize-callbacks-lean requires --specialize-callbacks.");
             return 1;
         }
         if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks)
