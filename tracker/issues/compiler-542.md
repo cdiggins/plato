@@ -2,7 +2,7 @@
 id: compiler-542
 title: Align native text encoding and sum JSON defaults with C#
 type: bug
-status: ready
+status: in-progress
 priority: p1
 effort: M
 risk: med
