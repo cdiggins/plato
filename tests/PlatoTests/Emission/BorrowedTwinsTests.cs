@@ -118,12 +118,12 @@ public static class BorrowedTwinsTests
     }
 
     [Test]
-    public static void WithoutTheSwitchNoTwinIsConsideredAndOwnedArraysAloneChangesNothing()
+    public static void WithoutTheSwitchNoTwinIsConsidered()
     {
+        // --owned-arrays alone changes the output since C2b (Heap temporaries); that is OwnedArrayEmissionTests' subject.
         Assert.That(Off.Value.Files.ContainsKey("BorrowedTwins.g.cs"), Is.False);
         Assert.That(OwnedOnly.Value.Files.ContainsKey("BorrowedTwins.g.cs"), Is.False);
-        foreach (var (name, text) in Off.Value.Files)
-            Assert.That(OwnedOnly.Value.Files[name].ToString(), Is.EqualTo(text.ToString()), name);
+        Assert.That(OwnedOnly.Value.Files.Keys, Is.EquivalentTo(Off.Value.Files.Keys));
     }
 
     [Test]

@@ -684,13 +684,15 @@ namespace Ara3D.Geometry.CSharpWriter
         /// <summary>Passes 7 and 8 of the pipeline: resolves the storage of <paramref name="body"/> (already
         /// capture-rewritten) and checks it. Returns the <see cref="TirStorageScope"/> to print, or the body
         /// itself when the flag is off or the checker refused the plan.</summary>
+        /// <summary>The resolver <see cref="ResolveStorage"/> runs when <see cref="StorageResolver"/> is null.</summary>
+        public TirStorageScope DefaultStorageResolver(TirNode body, FunctionDef owner)
+            => TirStorageResolver.Resolve(body, owner, _storageIdentity ??= new TirArrayIdentity(Compilation));
+
         public TirNode ResolveStorage(TirFunction tir, TirNode body)
         {
             if (!OwnedArrays || body == null)
                 return body;
-            var scope = StorageResolver != null
-                ? StorageResolver(body, tir?.Original)
-                : TirStorageResolver.Resolve(body, tir?.Original, _storageIdentity ??= new TirArrayIdentity(Compilation));
+            var scope = (StorageResolver ?? DefaultStorageResolver)(body, tir?.Original);
             StorageBodiesChecked++;
             var violations = StorageChecker.Check(scope, _storageTarget ??= new CSharpStorageTarget(this));
             if (violations.Count == 0)

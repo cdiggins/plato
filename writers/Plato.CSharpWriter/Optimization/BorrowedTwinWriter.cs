@@ -67,7 +67,7 @@ internal static class BorrowedTwinWriter
         var refusals = writer.StorageRefusals;
         writer.StorageResolver = (body, owner) =>
         {
-            var scope = usual(body, owner);
+            var scope = (usual ?? writer.DefaultStorageResolver)(body, owner);
             BorrowedParameters.Plan(scope.Plan, scope.Body, tir.Parameters.Where((_, i) => mask[i]));
             return scope;
         };
