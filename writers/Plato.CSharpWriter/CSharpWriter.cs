@@ -284,6 +284,97 @@ namespace Ara3D.Geometry.CSharpWriter
             TirLoopLowerer.NextId = 0;
         }
 
+        /// <summary>The four per-thread counters behind generated temporary names, as one value.
+        /// <see cref="Save"/> reads them; <see cref="Restore"/> writes them back.</summary>
+        public readonly struct TemporaryCounters
+        {
+            private readonly int _symbol, _inlinerRename, _fusion, _loops;
+
+            private TemporaryCounters(int symbol, int inlinerRename, int fusion, int loops)
+            {
+                _symbol = symbol;
+                _inlinerRename = inlinerRename;
+                _fusion = fusion;
+                _loops = loops;
+            }
+
+            public static TemporaryCounters Save()
+                => new TemporaryCounters(SymbolRewriter.NextId, TirInliner.NextRenameId, TirFusion.NextId, TirLoopLowerer.NextId);
+
+            public void Restore()
+            {
+                SymbolRewriter.NextId = _symbol;
+                TirInliner.NextRenameId = _inlinerRename;
+                TirFusion.NextId = _fusion;
+                TirLoopLowerer.NextId = _loops;
+            }
+        }
+
+        private sealed class OptimizedEntry
+        {
+            public TirFunction Tir;
+            public CSharpFunctionInfo Info;
+            public TemporaryCounters After;
+        }
+
+        private sealed class ReferencePairComparer : IEqualityComparer<(FunctionDef, TypeDef)>
+        {
+            public bool Equals((FunctionDef, TypeDef) a, (FunctionDef, TypeDef) b)
+                => ReferenceEquals(a.Item1, b.Item1) && ReferenceEquals(a.Item2, b.Item2);
+
+            public int GetHashCode((FunctionDef, TypeDef) k)
+                => System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(k.Item1) * 31
+                   + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(k.Item2);
+        }
+
+        private readonly Dictionary<(FunctionDef, TypeDef), OptimizedEntry> _optimized
+            = new Dictionary<(FunctionDef, TypeDef), OptimizedEntry>(new ReferencePairComparer());
+
+        /// <summary>The optimized TIR of a bodied function at a concrete type (ground TIR, else the
+        /// open-generic one, else for a null type the static one; null when none exists), memoised per (function, type). For inspecting a
+        /// callee while another body is being emitted: the passes run, and the temporary counters are
+        /// put back as they were, so the caller's numbering is untouched (TKT-1137). The passes
+        /// themselves restart the counters, so the tree is the one the function's own emission gets.
+        /// <paramref name="info"/> is the signature record the component unroller reads; pass it when
+        /// known. A tree first built without one is rebuilt when a later request supplies one.</summary>
+        public TirFunction OptimizedTir(FunctionDef function, TypeDef concreteType, CSharpFunctionInfo info = null)
+        {
+            var saved = TemporaryCounters.Save();
+            try
+            {
+                return OptimizedEntryFor(function, concreteType, info)?.Tir;
+            }
+            finally
+            {
+                saved.Restore();
+            }
+        }
+
+        /// <summary>The same memoised tree for the body-emit site, which runs the body writer next:
+        /// leaves the counters where the passes left them (also when the tree was memoised earlier),
+        /// exactly as <see cref="RunOptimizerPasses"/> does.</summary>
+        internal TirFunction OptimizedTirForEmission(FunctionDef function, TypeDef concreteType, CSharpFunctionInfo info)
+        {
+            var entry = OptimizedEntryFor(function, concreteType, info);
+            entry?.After.Restore();
+            return entry?.Tir;
+        }
+
+        private OptimizedEntry OptimizedEntryFor(FunctionDef function, TypeDef concreteType, CSharpFunctionInfo info)
+        {
+            var key = (function, concreteType);
+            if (_optimized.TryGetValue(key, out var hit) && (info == null || hit.Info != null))
+                return hit;
+            var tir = function.Body != null
+                    ? TryGetGroundTir(function, concreteType) ?? TryGetOpenGenericTir(function, concreteType)
+                      ?? (concreteType == null ? TryGetStaticTir(function) : null)
+                    : null;
+            if (tir == null)
+                return null;
+            tir = RunOptimizerPasses(tir, info);
+            return _optimized[key] = new OptimizedEntry { Tir = tir, Info = info, After = TemporaryCounters.Save() };
+        }
+
         private static string SanitizeFileName(string s)
         {
             foreach (var c in System.IO.Path.GetInvalidFileNameChars())
@@ -977,6 +1068,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // two WriteAll runs in one process produce identical output (a fresh CLI process
             // always started at 0, so file output is unchanged).
             ResetTemporaryCounters();
+            _optimized.Clear();
             RemainingStatementGrowth = StatementModuleNodeBudget;
 
             WriteFile("NumberProfile.g.cs", WriteNumberProfileCheck);

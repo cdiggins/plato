@@ -333,14 +333,10 @@ public static class ExtensionStyleWriter
             // (receiver by parameter name) with the extension re-qualification context set on tw
             // above — the sole body writer since C4. Moved members are always bodied (the plan
             // keeps body-less functions in the struct).
-            var tir = m.Function.Implementation?.Body != null
-                    ? writer.TryGetGroundTir(m.Function.Implementation, m.ConcreteType.TypeDef)
-                      ?? writer.TryGetOpenGenericTir(m.Function.Implementation, m.ConcreteType.TypeDef)
-                    : null;
+            var tir = writer.OptimizedTirForEmission(m.Function.Implementation, m.ConcreteType.TypeDef, fi);
             if (tir != null)
             {
                 writer.TirBodiesEmitted++;
-                tir = writer.RunOptimizerPasses(tir, fi);
                 // --in-params: the signature depends on the body (captures, assignments, shape).
                 if (writer.LargeStructs is { } passing)
                 {
