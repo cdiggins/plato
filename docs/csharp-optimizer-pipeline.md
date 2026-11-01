@@ -26,6 +26,7 @@ Plato source
      conditionals (TirShortCircuit)                      always on, in the compiler
   -> 1. TirInliner.Inline                                --inline (or --lower-scalars: scalar callees only)
   -> 1a. TirCallbackSpecializer.Rewrite                  --specialize-callbacks (section 7e)
+  -> 1a'. ConstantCounts.Rewrite                         --scalar-arrays (section 7f)
   -> 1b. TirFusion.Rewrite (uses TirLiteralUnroller)      --fuse
   -> 2. TirComponentUnroller.UnrollFunction              --optimize
   -> 2b. TirMultiConsumerFusion.Rewrite                  --loops --fuse-consumers
@@ -664,6 +665,47 @@ syntactic call the sharing pass does not key, so two identical clone calls in on
 `--hoist-invariants`: the hoister sees the clone's lowered loops as any other body's; it cannot expand a
 clone call (no callee body). `--cache-constants`: a clone call is never a closed constant. The inliner
 runs first and keeps every β-reduction it already made; the pass takes only what it refused.
+
+## 7f. Pass 1a': `ConstantCounts` (`--scalar-arrays`, TKT-1152 chunk C0)
+
+A C#-only switch, off by default, independent of the other new storage switches; it unrolls through the literal rules of
+section 4a, so it is meant for use with `--fuse`. Off, the output is byte-identical. Code: `Optimization/ConstantCounts.cs`
+(the pass), the policy-taking overloads of `TirLiteralUnroller` (`UnrollPolicy`, `UnrollZipOverArray`), one line in
+`RunOptimizerPasses` between the callback specializer and `TirFusion`. Pinned by
+`tests/PlatoTests/Optimization/ScalarArraysTests.cs` (the emitted text) and
+`tests/Plato.Interpreter.Tests/ScalarArraysProgramTests.cs` (values, call order, faults and the three-way law run).
+
+**What it removes.** `ComponentArray(self: IVector)` is `self.Count.Range.Map(i => self[i])`, and the generic
+vector functions (`MapComponents`, `ZipComponents`, `ReduceComponents` and so `SumSqrComponents`, `MinComponent`,
+`MaxComponent`, `AllComponents`, `AnyComponent`, `Dot`, ...) consume it. Each call allocated a `Number[3]`, ran a loop
+over it and, for a lambda, called a delegate per element. A fixed-arity struct knows its `Count` statically; nothing
+in pass 1b used that.
+
+**The three rewrites** (each only on a leaf receiver, so nothing that can fault is dropped or repeated):
+
+1. `Count(v)` of a fixed-arity struct becomes the integer literal. Fixed arity here is the writer's own rule for
+   the `Count` it synthesizes (`CSharpTypeWriter.GenerateFunc`): a concrete, non-generic struct of two or more fields,
+   not a primitive, whose `Count` and `At` no library function implements. `VectorN`, whose `Count` is the length of its
+   array, and any type with its own `Count` body, are not folded. With the count a literal, `TirFusion` unrolls the
+   `MapRange` in `ComponentArray` itself into a three-element literal instead of a loop.
+2. A `Map`, `Zip`, `Reduce`, `All` or `Any` whose array sources are `ComponentArray(v)` calls (stdlib identity, not
+   name) or small array literals is unrolled over the array of component reads `v.X`, `v.Y`, ... The rules are the
+   literal rules of section 4a, with an `UnrollPolicy`: a component read of a leaf may be repeated by a lambda body,
+   a delegate-typed combining function is invoked once per element (`f(f(f(init, v.X), v.Y), v.Z)`), and a `Reduce`
+   accumulator that its step reads twice (the Min and Max steps) may repeat while the unrolled expression stays under
+   128 nodes, which holds for three components and refuses four or more. A refused unroll leaves the call as it was.
+3. `FromComponents(v, [a, b, c])` of the matching arity is `new T(a, b, c)`, which is the library body.
+
+Element `j` of a result is computed before element `j + 1`, so a callback is called with the same arguments in the same
+order as the loop called it, and one that throws is the last called. **A repeated accumulator** (Min and Max) evaluates
+the accumulator expression more than once; the values are the same pure scalar expression, so results are bit-equal, and the
+budget bounds the growth.
+
+**Interactions.** `--specialize-callbacks` runs first, so `SumSqrComponents`'s `ReduceComponents_xxxxxxxx` clone is
+unrolled with its lambda. `--lower-scalars` prints the unrolled arithmetic on the primitives. A `Count` folded in an
+unrelated body (`LastIndex`, `Middle`) prints as the literal `Unsafe.BitCast<int, Integer>(3)`; `--cache-constants`
+numbers its holder classes by emission order, so the flag renumbers some `_ConstN` names in files it does not otherwise
+change.
 
 ## 8. Worked example
 

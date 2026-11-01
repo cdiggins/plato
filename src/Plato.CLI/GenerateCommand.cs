@@ -56,16 +56,17 @@ internal static class GenerateCommand
             SwitchMatch = args.Contains("--switch-match"),
             LowerMore = args.Contains("--lower-more"),
             SpecializeCallbacks = args.Contains("--specialize-callbacks"),
+            ScalarArrays = args.Contains("--scalar-arrays"),
         };
         if (loopOptimizations.LowerMore && (!loops || typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--lower-more requires C# generation with --loops.");
             return 1;
         }
-        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks)
+        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks || loopOptimizations.ScalarArrays)
             && (typeScript || rust || glsl || cpp || cuda))
         {
-            Console.Error.WriteLine("--cache-constants, --primitive-compare and --specialize-callbacks apply to C# generation only.");
+            Console.Error.WriteLine("--cache-constants, --primitive-compare, --specialize-callbacks and --scalar-arrays apply to C# generation only.");
             return 1;
         }
         if (loopOptimizations.HoistInvariants && (!loops || typeScript || rust || glsl || cpp || cuda))

@@ -249,6 +249,8 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("inline (layer 7)");
             tir = TirCallbackSpecializer.Rewrite(tir, this, fi?.OwnerType?.Name);
             Phase("specialize-callbacks / clone the callee per lambda shape");
+            tir = ConstantCounts.Rewrite(tir, this);
+            Phase("scalar-arrays / constant counts and component arrays");
             tir = TirFusion.Rewrite(tir, this);
             Phase("fuse / combinator fusion (layer 7b)");
             tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
@@ -573,6 +575,9 @@ namespace Ara3D.Geometry.CSharpWriter
         // its captures as extra parameters (TirCallbackSpecializer); the clones are written to
         // CallbackSpecializations.g.cs. Extension style only. Default (false) output is unchanged.
         public bool SpecializeCallbacks { get; set; }
+
+        // --scalar-arrays (TKT-1152 chunk C0): see ConstantCounts. Default (false) output is unchanged.
+        public bool ScalarArrays { get; set; }
         public CallbackSpecializations Specializations { get; } = new CallbackSpecializations();
         // The nesting depth of the clone whose body is being optimized (0 for an ordinary body).
         public int SpecializationDepth;

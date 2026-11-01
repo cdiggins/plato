@@ -86,6 +86,8 @@ public sealed class CSharpProgram
         writer.HoistInvariants = loopOptimizations?.HoistInvariants ?? false;
         writer.CacheConstants = loopOptimizations?.CacheConstants ?? false;
         writer.PrimitiveCompare = loopOptimizations?.PrimitiveCompare ?? false;
+        writer.SpecializeCallbacks = loopOptimizations?.SpecializeCallbacks ?? false;
+        writer.ScalarArrays = loopOptimizations?.ScalarArrays ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 

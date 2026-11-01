@@ -1,0 +1,55 @@
+// Fixture of the --scalar-arrays tests (TKT-1152 chunk C0): each probe is a consumer of a fixed-arity
+// struct's component array in a shape the rewrite handles (or the one it refuses), and each law states
+// the value the loop-and-array meaning gives. Two of the laws use literal components that are exact in
+// binary, so they hold in the interpreter, in the flag-off build and in the flag-on build alike.
+library ScalarArrayProbe
+{
+    // A reduce with a lambda: ReduceComponents is cloned for the lambda, then unrolled.
+    SumSqr(v: Vector3D): Number => v.SumSqrComponents;
+
+    // A reduce whose step reads the accumulator twice (Min).
+    Smallest(v: Vector3D): Number => v.MinComponent;
+    Largest(v: Vector3D): Number => v.MaxComponent;
+
+    // A map with a lambda that captures a parameter.
+    Scaled(v: Vector3D, k: Number): Vector3D => v.MapComponents(x => x * k);
+
+    // A map and a fold over a delegate-typed parameter: the calls stay, in component order.
+    Mapped(v: Vector3D, f: Function1<Number, Number>): Vector3D => v.MapComponents(f);
+    Folded(v: Vector3D, f: Function2<Number, Number, Number>): Number => v.ReduceComponents(0.0, f);
+
+    // A zip of two vectors, and the three-way zip.
+    Summed(a: Vector3D, b: Vector3D): Vector3D => a.ZipComponents(b, (x, y) => x + y);
+    Blended(a: Vector3D, b: Vector3D, c: Vector3D): Vector3D => a.ZipComponents(b, c, (x, y, z) => x * y + z);
+
+    // All, Any and their zipped forms.
+    AllPositive(v: Vector3D): Boolean => v.AllComponents(x => x > 0.0);
+    AnyNegative(v: Vector3D): Boolean => v.AnyComponent(x => x < 0.0);
+    AllLess(a: Vector3D, b: Vector3D): Boolean => a.AllZipComponents(b, (x, y) => x < y);
+
+    // FromComponents of its own component array is the vector again.
+    Rebuilt(v: Vector3D): Vector3D => v.FromComponents(v.ComponentArray);
+
+    // A constant Count: the arity of the type.
+    Arity(v: Vector3D): Integer => v.Count;
+    Middle(v: Vector3D): Number => v.At(v.Count / 2);
+
+    // Not fixed-arity: VectorN's Count is the length of its array, so nothing folds.
+    ArityN(v: VectorN): Integer => v.Count;
+
+    //== Laws: the result the array meaning gives
+
+    Law_SumSqr(): Boolean => SumSqr(Vector3D(1.0, 2.0, 3.0)) == 14.0;
+    Law_Smallest(): Boolean => Smallest(Vector3D(3.0, -2.0, 1.0)) == -2.0;
+    Law_Largest(): Boolean => Largest(Vector3D(3.0, -2.0, 1.0)) == 3.0;
+    Law_Scaled(): Boolean => Scaled(Vector3D(1.0, 2.0, 3.0), 2.0) == Vector3D(2.0, 4.0, 6.0);
+    Law_Summed(): Boolean => Summed(Vector3D(1.0, 2.0, 3.0), Vector3D(4.0, 5.0, 6.0)) == Vector3D(5.0, 7.0, 9.0);
+    Law_Blended(): Boolean => Blended(Vector3D(1.0, 2.0, 3.0), Vector3D(4.0, 5.0, 6.0), Vector3D(1.0, 1.0, 1.0)) == Vector3D(5.0, 11.0, 19.0);
+    Law_AllPositive(): Boolean => AllPositive(Vector3D(1.0, 2.0, 3.0)) && !AllPositive(Vector3D(1.0, -2.0, 3.0));
+    Law_AnyNegative(): Boolean => AnyNegative(Vector3D(1.0, -2.0, 3.0)) && !AnyNegative(Vector3D(1.0, 2.0, 3.0));
+    Law_AllLess(): Boolean => AllLess(Vector3D(1.0, 2.0, 3.0), Vector3D(2.0, 3.0, 4.0)) && !AllLess(Vector3D(1.0, 2.0, 3.0), Vector3D(2.0, 2.0, 4.0));
+    Law_Rebuilt(): Boolean => Rebuilt(Vector3D(1.5, -2.5, 3.5)) == Vector3D(1.5, -2.5, 3.5);
+    Law_Arity(): Boolean => Arity(Vector3D(1.0, 2.0, 3.0)) == 3;
+    Law_Middle(): Boolean => Middle(Vector3D(1.0, 2.0, 3.0)) == 2.0;
+    Law_ArityN(): Boolean => ArityN(VectorN([1.0, 2.0, 3.0, 4.0, 5.0])) == 5;
+}
