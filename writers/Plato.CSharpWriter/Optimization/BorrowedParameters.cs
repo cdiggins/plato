@@ -90,7 +90,9 @@ public sealed class BorrowedParameters
         var parameters = borrowed.ToHashSet();
         foreach (var p in parameters)
             plan.AssignParameter(p, ArrayStorage.Borrowed);
-        var lets = body.Descendants().OfType<TirLet>().Where(l => l.Def != null).ToList();
+        // A copy the capture rewrite made (TirLet) or the inliner bound to an argument (TirInlineBinding) is the same span.
+        var lets = body.Descendants().Select(n => n switch { TirLet l => (l.Def, l.Value), TirInlineBinding b => (b.Def, b.Value), _ => (null, null) })
+            .Where(d => d.Def != null).ToList();
         for (var changed = true; changed;)
         {
             changed = false;

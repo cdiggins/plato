@@ -87,7 +87,7 @@ public static class CountBounds
         if (source is TirArray or TirLoweredLoop)
             return OfArray(source, scope);
         // A variable or parameter array: its length is the guarded Count of it.
-        if (source is TirVariable or TirParameter && IsTotal(source, Assigned(scope), array: true)
+        if (source is TirVariable or TirParameter or TirCall or TirComponentAccess && IsTotal(source, Assigned(scope), array: true)
             && !IsBuilder(source.Type))
             return new CountBound(null, CountOf(source));
         return CountBound.Unknown;
@@ -147,6 +147,9 @@ public static class CountBounds
             TirLiteral { Value: long or int } => !array,
             TirVariable v => !assigned.Contains(v.Def) && (array || v.Type?.Name == "Integer"),
             TirParameter p => !assigned.Contains(p.Def) && (array || p.Type?.Name == "Integer"),
+            // A field read of a stable base: values are immutable, so it is the same number whenever it is read.
+            TirCall or TirComponentAccess when IsFieldRead(node) => IsStableBase(FieldBase(node), assigned)
+                && (array ? IsListTyped(node.Type) : node.Type?.Name == "Integer"),
             TirCall { Name: "Add" or "Subtract" or "Multiply", Args.Count: 2 } c
                 => !array && c.Type?.Name == "Integer" && c.Args.All(a => IsTotal(a, assigned)),
             TirCall { Name: "Count", Args.Count: 1 } c
@@ -154,6 +157,25 @@ public static class CountBounds
                     && IsTotal(c.Args[0], assigned, array: true),
             _ => false,
         };
+
+    // A call of a field getter with one argument, or a component read: <c>b.Degree</c>.
+    private static bool IsFieldRead(TirNode node)
+        => node is TirComponentAccess || node is TirCall { Args.Count: 1, Callee.FunctionType: FunctionType.Field };
+
+    private static TirNode FieldBase(TirNode node)
+        => TirRewrite.StripCoerce(node is TirComponentAccess c ? c.Receiver : ((TirCall)node).Args[0]);
+
+    // A parameter or variable nothing assigns in scope, or a field read of one (nested reads included), of any type.
+    private static bool IsStableBase(TirNode node, HashSet<object> assigned)
+        => node switch
+        {
+            TirVariable v => !assigned.Contains(v.Def),
+            TirParameter p => !assigned.Contains(p.Def),
+            _ when IsFieldRead(node) => IsStableBase(FieldBase(node), assigned),
+            _ => false,
+        };
+
+    private static bool IsListTyped(TypeExpression type) => TirRewrite.IsListType(type);
 
     private static bool IsBuilder(TypeExpression type) => type?.Name is "List" or "Buffer";
 
