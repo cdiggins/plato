@@ -102,6 +102,8 @@ public static class StorageChecker
         S6_TwinArg,
         /// <summary>A binding holding a Stack value outlives the loop pass that allocated it.</summary>
         S7_Lifetime,
+        /// <summary>A node the C# printer has no case for (it would print as <c>/*?*/</c>).</summary>
+        S8_Unprintable,
     }
 
     /// <summary>Capacity limit of one slot: <c>min(16, 256 / sizeof(T))</c> elements.</summary>
@@ -245,7 +247,16 @@ public static class StorageChecker
                     VisitPrintedLambda(lambda);
                     return ArrayStorage.List;
 
-                case TirLoop or TirGuardedLoop or TirMultiReduction:
+                case TirMultiReduction pair:
+                    // The one source is read before the loop starts, by the loop the printer writes.
+                    Operand(pair.Source, ConsumerKind.LoopSource);
+                    _loops.Add(null);
+                    foreach (var child in pair.Children.Skip(1))
+                        Operand(child, ConsumerKind.Other);
+                    _loops.RemoveAt(_loops.Count - 1);
+                    return ArrayStorage.List;
+
+                case TirLoop or TirGuardedLoop:
                     _loops.Add(null);
                     foreach (var child in n.Children)
                         Operand(child, ConsumerKind.Other);
@@ -253,6 +264,8 @@ public static class StorageChecker
                     return ArrayStorage.List;
 
                 default:
+                    if (!TirCSharpBodyWriter.PrintsAsNode(n))
+                        Report(Rule.S8_Unprintable, n);
                     foreach (var child in n.Children)
                         Operand(child, ConsumerKind.Other);
                     return ArrayStorage.List;

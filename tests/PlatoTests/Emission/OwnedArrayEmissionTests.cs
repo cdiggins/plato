@@ -3,11 +3,14 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Ara3D.Geometry.CSharpWriter;
+using Ara3D.Geometry.Compiler.Checking;
+using Ara3D.Geometry.Compiler.Symbols;
 using NUnit.Framework;
 
 namespace PlatoTests.Emission;
 
 using Integer = Ara3D.Geometry.Integer;
+using Number = Ara3D.Geometry.Number;
 
 /// <summary>
 /// The fixture <c>OwnedArrayFixtures/owned.plato</c> has one function per place a lowered-loop temporary can sit: the
@@ -20,7 +23,8 @@ using Integer = Ara3D.Geometry.Integer;
 [TestFixture]
 public static class OwnedArrayEmissionTests
 {
-    private const string IntegerOperators = @"namespace Ara3D.Geometry { public static class IntegerProbeOperators {
+    private const string IntegerOperators = @"global using NumberValue = System.Double;
+    namespace Ara3D.Geometry { public static class IntegerProbeOperators {
         public static Integer Add(this Integer a, Integer b) => a + b;
         public static Integer Subtract(this Integer a, Integer b) => a - b;
         public static Integer Multiply(this Integer a, Integer b) => a * b;
@@ -36,6 +40,7 @@ public static class OwnedArrayEmissionTests
     {
         "Digest", "Zipped", "Paired", "ReadTwice", "DirectReads", "ReadAt", "ReduceSeed", "FlatMapSource", "Join", "Pick",
         "Identity", "GenericArgument", "Returned", "Probe", "Captured", "MadeInClosure", "Carried", "PerPass",
+        "TwoLoops", "Paired2", "FlatMapRagged", "FlatMapExact", "Reassigned",
     };
     private static readonly string[] Files = { "OwnedProbe.g.cs", "Extensions.g.cs" };
 
@@ -65,7 +70,8 @@ public static class OwnedArrayEmissionTests
         => library.Assembly.GetType("Ara3D.Geometry.OwnedShape", true)!.GetMethod(kind)!.Invoke(null, args)!;
 
     private static string Show(object value)
-        => value is IEnumerable<Integer> xs ? "[" + string.Join(",", xs.Select(x => x.Value)) + "]" : ((Integer)value).Value.ToString();
+        => value is IEnumerable<Integer> xs ? "[" + string.Join(",", xs.Select(x => x.Value)) + "]"
+            : value is Number number ? ((double)number).ToString(System.Globalization.CultureInfo.InvariantCulture) : ((Integer)value).Value.ToString();
 
     private static readonly IReadOnlyList<Integer> Nine = new Integer[] { 9 };
     private static readonly IReadOnlyList<Integer> NineEight = new Integer[] { 9, 8 };
@@ -84,6 +90,11 @@ public static class OwnedArrayEmissionTests
         yield return new TestCaseData("Join", new object[] { (Integer)1, NineEight }, "[9,8]").SetName("Join: the parameter arm");
         yield return new TestCaseData("GenericArgument", new object[] { (Integer)3 }, "[3,4,5]").SetName("GenericArgument: a generic argument");
         yield return new TestCaseData("Returned", new object[] { (Integer)4 }, "[0,1,4,9]").SetName("Returned: a return");
+        yield return new TestCaseData("TwoLoops", new object[] { (Integer)6 }, "43").SetName("TwoLoops: a let-bound array read by two loops");
+        yield return new TestCaseData("Paired2", new object[] { (Integer)3, (Number)2.0 }, "73").SetName("Paired2: a multi-consumer loop over an owned source");
+        yield return new TestCaseData("FlatMapRagged", new object[] { (Integer)3 }, "[0,0,2,0,3,6]").SetName("FlatMapRagged: a FlatMap over an owned source");
+        yield return new TestCaseData("FlatMapExact", new object[] { (Integer)3 }, "[0,1,1,2,4,5]").SetName("FlatMapExact: exact output over an owned source");
+        yield return new TestCaseData("Reassigned", new object[] { (Integer)4 }, "6").SetName("Reassigned: a local assigned again keeps the interface");
         yield return new TestCaseData("Captured", new object[] { (Integer)4 }, "5").SetName("Captured: a real lambda capture");
         yield return new TestCaseData("MadeInClosure", new object[] { (Integer)4 }, "4").SetName("MadeInClosure: made inside a lambda");
         yield return new TestCaseData("Carried", new object[] { (Integer)4 }, "[3,4,5,6]").SetName("Carried: assigned in a loop");
@@ -170,11 +181,136 @@ public static class OwnedArrayEmissionTests
         => Assert.That(On.Value.Body(name), Does.Contain(expected), On.Value.Body(name));
 
     [Test]
-    public static void ALetBoundTemporaryStaysTheInterfaceUntilNamedLocalsTakeStorage()
-        => Assert.That(On.Value.Body("ReadTwice"), Does.Contain("var kept = ((IReadOnlyList<Integer>)_lp0);"));
+    public static void ALetBoundArrayIsDeclaredAsAnArrayAndReadDirectlyByTwoLoops()
+    {
+        var body = On.Value.Body("TwoLoops");
+        Assert.That(body, Does.Contain("Integer[] kept = _lp0;").And.Contain("Integer[] doubled = _lp1;"), body);
+        Assert.That(body, Does.Contain("var _s1 = kept;").And.Contain("var _s2 = kept;"), body);
+        Assert.That(body, Does.Contain("_s1.Length").And.Contain("_s2[_i2]").And.Contain("doubled[checked((int)(5L))]").And.Contain("kept.Length"), body);
+        Assert.That(body, Does.Not.Contain("ConcreteArrayAccess").And.Not.Contain("IReadOnlyList"), body);
+        Assert.That(Off.Value.Body("TwoLoops"), Does.Contain("var kept = _lp0;").And.Contain("ConcreteArrayAccess.Count(_s1)"));
+    }
+
+    [Test]
+    public static void ALetBoundArrayThatIsAssignedAgainStaysTheInterface()
+        => Assert.That(On.Value.Body("Reassigned"), Does.Contain("var kept = ((IReadOnlyList<Integer>)_lp0);").And.Contain("kept = ((IReadOnlyList<Integer>)_lp1);"));
+
+    [Test]
+    public static void ALetBoundArrayCapturedByAClosureStaysTheInterface()
+        => Assert.That(On.Value.Body("Captured"), Does.Contain("IReadOnlyList<Integer> a = ").Or.Contain("var a = ((IReadOnlyList<Integer>)"));
+
+    [Test]
+    public static void AMultiConsumerLoopReadsAnOwnedSourceWithoutAConversion()
+    {
+        var body = On.Value.Body("Paired2");
+        Assert.That(body, Does.Contain("Number[] samples = _lp0;").And.Contain("var _mc0_source = samples;"), body);
+        Assert.That(body, Does.Contain("_mc0_source.Length").And.Contain("_mc0_source[_mc0_index]"), body);
+        Assert.That(body, Does.Not.Contain("ConcreteArrayAccess").And.Not.Contain("IReadOnlyList"), body);
+        Assert.That(Off.Value.Body("Paired2"), Does.Contain("ConcreteArrayAccess.Count(_mc0_source)"));
+    }
+
+    [Test]
+    public static void AFlatMapReadsAnOwnedSourceDirectlyWithAndWithoutExactOutput()
+    {
+        var ragged = On.Value.Body("FlatMapRagged");
+        Assert.That(ragged, Does.Contain("var _s1 = kept;").And.Contain("_s1.Length").And.Contain("_s1[_i1]"), ragged);
+        Assert.That(ragged, Does.Not.Contain("ConcreteArrayAccess.Count(_s1)").And.Not.Contain("(IReadOnlyList<Integer>)kept"), ragged);
+        var exact = On.Value.Body("FlatMapExact");
+        // The source is an array already: the run-time test for one is gone, the size test stays.
+        Assert.That(exact, Does.Contain("if (_exactSize1 <= System.Array.MaxLength)").And.Not.Contain("is Integer[]"), exact);
+        Assert.That(exact, Does.Contain("var _eval1_1 = _s1[_i1];"), exact);
+        Assert.That(Off.Value.Body("FlatMapExact"), Does.Contain("_s1 is Integer[] &&"));
+    }
 
     [Test]
     public static void FewerTypeTestedReadsRemainWithTheFlagOn()
         => Assert.That(Regex.Matches(On.Value.Text, @"ConcreteArrayAccess\.(At|Count)\(").Count,
             Is.LessThan(Regex.Matches(Off.Value.Text, @"ConcreteArrayAccess\.(At|Count)\(").Count));
+}
+
+/// <summary>
+/// TKT-1152 C2c with <c>--in-params</c>: an element of an owned array of large structs (<c>owned-large.plato</c>,
+/// forty Integers) is read where it lies, with no <c>RefAccess.RefAt</c> call and no type test: a <c>ref readonly</c>
+/// local is <c>ref x[i]</c>, and an argument or receiver is the element itself, which C# passes by reference without
+/// a copy. Flag off, the same reads go through the accessor. Values are equal.
+/// </summary>
+[TestFixture]
+public static class OwnedArrayLargeElementTests
+{
+    private static readonly string[] Methods = { "Make", "Ends", "ByRefLocal", "ByArgument", "ByReceiver" };
+
+    private static EmittedLibrary Build(bool ownedArrays)
+        => EmittedLibrary.Build("OwnedArrayFixtures", "owned-large.plato", name => Methods.Contains(name),
+            new[] { "OwnedLargeProbe.g.cs" }, writer => OwnedArrayEmissionTests.Pin(writer, ownedArrays), null,
+            "_OwnLarge.g.cs", $"{LargeStructPassing.HelperFile}", $"{CSharpWriter.ConcreteArrayAccessClass}.g.cs");
+
+    private static readonly Lazy<EmittedLibrary> Off = new(() => Build(false));
+    private static readonly Lazy<EmittedLibrary> On = new(() => Build(true));
+
+    [TestCase("ByRefLocal", 48)]
+    [TestCase("ByArgument", 47)]
+    [TestCase("ByReceiver", 43)]
+    public static void EachReadGivesTheFlagOffValue(string name, long expected)
+    {
+        foreach (var library in new[] { Off.Value, On.Value })
+            Assert.That(((Integer)library.Method(name).Invoke(null, new object[] { (Integer)4, (Integer)2 })!).Value, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public static void AReferenceLocalIsARefIntoTheOwnedArray()
+    {
+        var on = On.Value.Body("ByRefLocal");
+        Assert.That(on, Does.Contain("Make[] rows = ").Or.Contain("OwnLarge[] rows = "), on);
+        Assert.That(on, Does.Contain("ref readonly var w = ref rows[").And.Not.Contain("RefAccess"), on);
+        Assert.That(Off.Value.Body("ByRefLocal"), Does.Contain("ref readonly var w = ref RefAccess.RefAt(rows"));
+    }
+
+    [TestCase("ByArgument")]
+    [TestCase("ByReceiver")]
+    public static void AnArgumentOrReceiverIsTheElementItself(string name)
+    {
+        var on = On.Value.Body(name);
+        Assert.That(on, Does.Contain("rows[").And.Not.Contain("RefAccess").And.Not.Contain("ConcreteArrayAccess"), on);
+        Assert.That(Off.Value.Body(name), Does.Contain("RefAccess.RefAt(rows"));
+    }
+}
+
+/// <summary>
+/// TKT-1152 C2c: under the flag a node the printer has no case for would print as <c>/*?*/</c> and leave a hole in the
+/// program; the checker refuses the body instead (rule S8).
+/// </summary>
+[TestFixture]
+public static class OwnedArrayUnprintableNodeTests
+{
+    private sealed class Mystery : TirNode
+    {
+        public Mystery(params TirNode[] children) : base(null, null) => Kids = children;
+        public TirNode[] Kids { get; }
+        public override IEnumerable<TirNode> Children => Kids;
+    }
+
+    private sealed class Target : IStorageTarget
+    {
+        public bool Accepts(ArrayStorage value, ConsumerKind consumer) => CSharpStorageRules.Accepts(value, consumer);
+        public bool MayConvert(ArrayStorage from, ArrayStorage to) => CSharpStorageRules.MayConvert(from, to);
+        public bool IsObserver(TirCall call) => false;
+        public bool IsUnmanaged(TypeExpression element) => false;
+        public int SizeOf(TypeExpression element) => 0;
+        public bool OnCallCycle(FunctionDef function) => true;
+    }
+
+    [Test]
+    public static void ANodeWithoutAPrinterCaseIsRefusedNotPrintedAsAComment()
+    {
+        var violations = StorageChecker.Check(new TirStorageScope(new Mystery(new Mystery()), new StoragePlan()), new Target());
+        Assert.That(violations.Select(v => v.Rule), Is.EqualTo(new[] { StorageChecker.Rule.S8_Unprintable, StorageChecker.Rule.S8_Unprintable }));
+    }
+
+    [Test]
+    public static void ANodeWithACaseIsNotRefused()
+    {
+        var literal = new TirDefault(null, null);
+        Assert.That(StorageChecker.Check(new TirStorageScope(literal, new StoragePlan()), new Target()), Is.Empty);
+        Assert.That(TirCSharpBodyWriter.PrintsAsNode(literal), Is.True);
+    }
 }

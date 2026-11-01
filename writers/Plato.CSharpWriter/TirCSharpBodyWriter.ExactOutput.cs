@@ -40,7 +40,11 @@ public partial class TirCSharpBodyWriter
         WriteLine($"var {n} = {count};");
         WriteLine($"var {size} = (long){n} * {width};");
         WriteLine($"IReadOnlyList<{elem}> {loop.TempName};");
-        WriteLine($"if ({source} is {input}[] && {size} <= System.Array.MaxLength)");
+        // A Heap source is an array already; any other is tested for one.
+        var sourceStorage = StorageOf(loop.Sources[0]);
+        WriteLine(sourceStorage != ArrayStorage.List
+            ? $"if ({size} <= System.Array.MaxLength)"
+            : $"if ({source} is {input}[] && {size} <= System.Array.MaxLength)");
         WriteStartBlock();
         WriteLine($"var {array} = new {elem}[(int){size}];");
         WriteLine($"var {offset} = 0;");
@@ -61,7 +65,7 @@ public partial class TirCSharpBodyWriter
         {
             WriteLine($"for (var {i} = 0; {i} < {n}; {i}++)");
             WriteStartBlock();
-            WriteLine($"var {_loopParamNames[lambda.Parameters[0]]} = {(IsInterfaceList(loop.Sources[0]) ? ListAt(source, i) : $"{source}[{i}]")};");
+            WriteLine($"var {_loopParamNames[lambda.Parameters[0]]} = {(sourceStorage != ArrayStorage.List || IsInterfaceList(loop.Sources[0]) ? ListAt(source, i, sourceStorage) : $"{source}[{i}]")};");
             // Retain the literal's complete eager evaluation and conversion context.
             Write($"IReadOnlyList<{elem}> {part} = ");
             _lambdaDepth++;

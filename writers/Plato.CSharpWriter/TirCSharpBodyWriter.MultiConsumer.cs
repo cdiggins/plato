@@ -27,10 +27,12 @@ public partial class TirCSharpBodyWriter
             }
             WriteLine(";");
         }
-        var isList = IsInterfaceList(pair.Source);
-        WriteLine($"for (var {index} = 0; {index} < {(isList ? ListCount(source) : $"{source}.Count")}; {index}++)");
+        // A Heap source is a T[]; any other is read through the interface forms.
+        var storage = StorageOf(pair.Source);
+        var isList = storage != ArrayStorage.List || IsInterfaceList(pair.Source);
+        WriteLine($"for (var {index} = 0; {index} < {(isList ? ListCount(source, storage) : $"{source}.Count")}; {index}++)");
         WriteStartBlock();
-        WriteLine($"var {element} = {(isList ? ListAt(source, index) : $"{source}[{index}]")};");
+        WriteLine($"var {element} = {(isList ? ListAt(source, index, storage) : $"{source}[{index}]")};");
         WriteReductionStep(pair.First, element);
         WriteReductionStep(pair.Second, element);
         WriteEndBlock();
