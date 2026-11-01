@@ -33,7 +33,8 @@ public static class SpecializeCallbacksTests
     });
 
     private static HashSet<string> ProbeNames
-        => Compilation.Value.LibraryDefinitionsByName["CallbackProbe"].Functions.Select(f => f.Name).ToHashSet();
+        => Compilation.Value.LibraryDefinitionsByName["CallbackProbe"].Functions
+            .Concat(Compilation.Value.LibraryDefinitionsByName["CallbackProbeGeneric"].Functions).Select(f => f.Name).ToHashSet();
 
     private static Program Get(bool enabled, bool inParams = false)
     {
@@ -45,7 +46,7 @@ public static class SpecializeCallbacksTests
         var names = ProbeNames;
         // The probe's methods: those over a Number receiver in its own library file, those over a
         // Function1 receiver (Apply) among the runtime-class extensions of Extensions.g.cs.
-        var sources = new List<string> { "global using System; global using System.Collections.Generic;" };
+        var sources = new List<string> { "global using System; global using System.Collections.Generic;", writer.Files["_PairA.g.cs"].ToString(), writer.Files["_PairB.g.cs"].ToString() };
         sources.AddRange(new[] { Probe, "Extensions.g.cs" }.Select(f => KeepMethods(writer.Files[f].ToString(), names.Contains)));
         // The clones of the probe's callees only: the foundation's own clones name types the test runtime lacks.
         if (writer.Files.TryGetValue(CallbackSpecializations.FileName, out var clones))
@@ -134,6 +135,27 @@ public static class SpecializeCallbacksTests
         again.WriteAll();
         Assert.That(again.Specializations.Clones.Select(c => c.Name), Is.EqualTo(on.Writer.Specializations.Clones.Select(c => c.Name)));
         Assert.That(again.Files[CallbackSpecializations.FileName].ToString(), Is.EqualTo(on.Writer.Files[CallbackSpecializations.FileName].ToString()));
+    }
+
+    [Test]
+    public static void GenericCalleeIsClonedPerElementType()
+    {
+        var on = Get(true);
+        // The same lambda shape over two element types: two clones, each call bound to its own.
+        var clones = on.Writer.Specializations.Clones.Where(c => c.Callee.Name == "Agree").ToList();
+        Assert.That(clones, Has.Count.EqualTo(2));
+        Assert.That(clones.Select(c => c.ParameterTypes[0]), Is.EquivalentTo(new[] { "IReadOnlyList<PairA>", "IReadOnlyList<PairB>" }));
+        var a = clones.Single(c => c.ParameterTypes[0] == "IReadOnlyList<PairA>");
+        var b = clones.Single(c => c.ParameterTypes[0] == "IReadOnlyList<PairB>");
+        Assert.That(Method(on, "AgreeA"), Does.Contain($"{CallbackSpecializations.ClassName}.{a.Name}(xs, ys)"));
+        Assert.That(Method(on, "AgreeB"), Does.Contain($"{CallbackSpecializations.ClassName}.{b.Name}(xs, ys)"));
+        Assert.That(a.Name, Is.Not.EqualTo(b.Name));
+        var pairA = on.Assembly.GetType("Ara3D.Geometry.PairA", true)!;
+        var xs = Array.CreateInstance(pairA, 2);
+        xs.SetValue(Activator.CreateInstance(pairA, (RuntimeNumber)1.0, (RuntimeNumber)1.5), 0);
+        xs.SetValue(Activator.CreateInstance(pairA, (RuntimeNumber)2.0, (RuntimeNumber)2.5), 1);
+        var method = on.Assembly.GetTypes().SelectMany(t => t.GetMethods()).Single(m => m.Name == "AgreeA");
+        Assert.That((bool)(Ara3D.Geometry.Boolean)method.Invoke(null, new object[] { xs, xs })!, Is.True);
     }
 
     private static double Run(Program p, string name, params double[] args)
