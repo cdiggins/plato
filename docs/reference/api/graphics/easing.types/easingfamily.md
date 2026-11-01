@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The family (base shape) of a non-linear classic easing curve.
+
+## Signature
+
+```plato
+type EasingFamily
+    = Quad | Cubic | Quart | Quint | Sine | Expo | Circ | Back | Elastic | Bounce
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [easing.types](../easing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/easing.types.plato, line 1](../../../../../stdlib/graphics/easing.types.plato#L1).
 

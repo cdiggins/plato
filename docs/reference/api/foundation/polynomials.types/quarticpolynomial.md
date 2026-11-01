@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The quartic A\*x^4 + B\*x^3 + C\*x^2 + D\*x + E (descending school form).
+
+## Signature
+
+```plato
+type QuarticPolynomial
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Find a root with Newton's method](../../../cookbook/newton-root.md)
+- [Polynomials, series and basis functions](../../../library/foundation/polynomials.md)
+
+## Source
+
 **File:** [polynomials.types](../polynomials.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 64
+### Line 64
 
 **Source:** [stdlib/foundation/polynomials.types.plato, line 64](../../../../../stdlib/foundation/polynomials.types.plato#L64).
 

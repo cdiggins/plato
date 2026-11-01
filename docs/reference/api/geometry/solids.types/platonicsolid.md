@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One of the five Platonic solids (https://en.wikipedia.org/wiki/Platonic\_solid),
+> each naming the unit solid: centered at the origin, axis-aligned, with
+> vertices at circumscribed radius one. `PolygonMesh3D(PlatonicSolid)` in
+> `solids.library.plato` is the mesh; place it by transforming that mesh.
+
+## Signature
+
+```plato
+type PlatonicSolid
+    = Tetrahedron | Cube | Octahedron | Dodecahedron | Icosahedron
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.types](../solids.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 225
+### Line 225
 
 **Source:** [stdlib/geometry/solids.types.plato, line 225](../../../../../stdlib/geometry/solids.types.plato#L225).
 

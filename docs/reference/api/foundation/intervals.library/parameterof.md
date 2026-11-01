@@ -3,11 +3,44 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The parameter `t` for which At(self, t) equals `x` (inverse lerp): maps `x`
+> from \[Start, End\] back onto the unitless fraction line, so Start -> 0 and
+> End -> 1. Precondition: Start != End (a zero-width interval has no inverse).
+
+## Signature
+
+```plato
+ParameterOf(self: NumberInterval, x: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ParameterOfInvertsAt
+
+[stdlib/tests/foundation.laws.plato, line 44](../../../../../stdlib/tests/foundation.laws.plato#L44)
+
+```plato
+// ParameterOf is the inverse of At: At(ParameterOf(x)) == x for a non-degenerate
+// interval. Degenerate (Start == End) intervals have no inverse and are skipped.
+Law_ParameterOfInvertsAt(i: NumberInterval, x: Number): Boolean
+    => i.Start.LawEq(i.End) || i[i.ParameterOf(x)].LawEq(x);
+```
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 317
+### Line 317
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 317](../../../../../stdlib/foundation/intervals.library.plato#L317).
 

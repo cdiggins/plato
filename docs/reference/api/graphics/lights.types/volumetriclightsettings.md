@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Participating-media scattering along a light's volume ("god rays").
+> Anisotropy is the Henyey-Greenstein g in \[-1, 1\]: 0 is isotropic, positive
+> scatters forward. MaxDistance bounds the ray march in scene units.
+> (https://en.wikipedia.org/wiki/Volumetric\_lighting)
+
+## Signature
+
+```plato
+type VolumetricLightSettings
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [lights.types](../lights.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 226
+### Line 226
 
 **Source:** [stdlib/graphics/lights.types.plato, line 226](../../../../../stdlib/graphics/lights.types.plato#L226).
 

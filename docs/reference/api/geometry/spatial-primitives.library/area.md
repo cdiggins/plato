@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> pi \* r^2.
+
+## Signature
+
+```plato
+Area(d: Disk3D): Number
+Area(t: Triangle3D): Number
+Area(q: Quad3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 530](../../../../../stdlib/geometry/spatial-primitives.library.plato#L530): and `ClosestPoint` always lands ON the patch. The frame and disk-extent helpers are
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 523
+### Line 523
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 523](../../../../../stdlib/geometry/spatial-primitives.library.plato#L523).
 
@@ -33,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Number.Pi * d.Radius.Square;
 ```
 
-## Line 574
+### Line 574
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 574](../../../../../stdlib/geometry/spatial-primitives.library.plato#L574).
 
@@ -45,7 +73,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.TwiceVectorArea.Magnitude * 0.5;
 ```
 
-## Line 646
+### Line 646
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 646](../../../../../stdlib/geometry/spatial-primitives.library.plato#L646).
 

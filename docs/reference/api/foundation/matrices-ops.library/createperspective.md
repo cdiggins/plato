@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The perspective projection of a symmetric frustum described by the size of
+> its near plane. Preconditions (unchecked):
+> 0 \< nearPlaneDistance \< farPlaneDistance, and non-zero width and height.
+
+## Signature
+
+```plato
+CreatePerspective(_: Matrix4x4, width: Number, height: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 578
+### Line 578
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 578](../../../../../stdlib/foundation/matrices-ops.library.plato#L578).
 

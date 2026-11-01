@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> True when the model is named as expected, the identity check a caller
+> makes before trusting a conversion.
+
+## Signature
+
+```plato
+IsNamed(self: CalibrationModel, name: String): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty-measurement.library](../uncertainty-measurement.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 70
+### Line 70
 
 **Source:** [stdlib/future/uncertainty-measurement.library.plato, line 70](../../../../../stdlib/future/uncertainty-measurement.library.plato#L70).
 

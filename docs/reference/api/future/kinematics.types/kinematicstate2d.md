@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The instantaneous linear motion of a point in the plane. Position is in
+> meters; Velocity is in meters per second; Acceleration is in meters per
+> second squared.
+
+## Signature
+
+```plato
+type KinematicState2D
+    implements IValue, IInterpolatable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IInterpolatable](../../foundation/algebra.concepts/iinterpolatable.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.types](../kinematics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/kinematics.types.plato, line 1](../../../../../stdlib/future/kinematics.types.plato#L1).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The query box's high edge on the node's splitting axis.
+
+## Signature
+
+```plato
+SplitHigh(n: KdTreeNode2D, bounds: Bounds2D): Number
+SplitHigh(n: KdTreeNode3D, bounds: Bounds3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 210
+### Line 210
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 210](../../../../../stdlib/geometry/spatial-structures.library.plato#L210).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => n.SplitAxis == 0 ? bounds.Max.X : bounds.Max.Y;
 ```
 
-## Line 292
+### Line 292
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 292](../../../../../stdlib/geometry/spatial-structures.library.plato#L292).
 

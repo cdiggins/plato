@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The same, from plain vertex numbers: the readable form for the literal
+> face tables of the polyhedra seeds.
+
+## Signature
+
+```plato
+PolygonMeshOfVertexNumbers(positions: Array<Point3D>, faces: Array<Array<Integer>>): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes-polygon.library](../meshes-polygon.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 115
+### Line 115
 
 **Source:** [stdlib/geometry/meshes-polygon.library.plato, line 115](../../../../../stdlib/geometry/meshes-polygon.library.plato#L115).
 

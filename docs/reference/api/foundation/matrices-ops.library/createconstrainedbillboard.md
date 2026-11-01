@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The cylindrical billboard at `objectPosition`: the object turns toward the
+> camera about `rotateAxis` only, so the axis is preserved exactly. When the
+> facing direction is within a tenth of a degree of the axis the turn is
+> undefined, and the object's own forward — or, failing that, a fixed world
+> axis — is substituted.
+
+## Signature
+
+```plato
+CreateConstrainedBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, rotateAxis: Vector3D, cameraForwardVector: Vector3D, objectForwardVector: Vector3D): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 651](../../../../../stdlib/foundation/matrices-ops.library.plato#L651): The cosine beyond which two unit vectors count as parallel.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 643
+### Line 643
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 643](../../../../../stdlib/foundation/matrices-ops.library.plato#L643).
 

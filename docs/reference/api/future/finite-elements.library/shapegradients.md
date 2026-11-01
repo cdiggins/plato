@@ -3,11 +3,42 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The gradients of the four barycentric shape functions of a linear
+> tetrahedron, in the cell's vertex order. Each is CONSTANT over the cell —
+> that is the entire content of "constant strain": the shape functions are
+> affine, so their gradients, and hence the strain, do not vary inside the
+> element.
+>
+> Gradient i points from the face opposite node i towards node i, with
+> magnitude one over the distance between them. It is built as the cross
+> product spanning that opposite face divided by six times the signed volume,
+> which supplies both the direction and that magnitude at once. Degenerate
+> for a flat cell, whose signed volume is zero.
+
+## Signature
+
+```plato
+ShapeGradients(c: TetrahedronCell, positions: Array<Point3D>): Array<Vector3D>
+ShapeGradients(f: TriangleFace, positions: Array<Point2D>): Array<Vector3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 366
+### Line 366
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 366](../../../../../stdlib/future/finite-elements.library.plato#L366).
 
@@ -36,7 +67,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 394
+### Line 394
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 394](../../../../../stdlib/future/finite-elements.library.plato#L394).
 

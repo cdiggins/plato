@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The primitives under `node` whose subtree meets the query bounds. A node
+> index of -1 contributes nothing.
+>
+> Written as an expression rather than with `var` bindings on purpose: a
+> `var` is evaluated whether or not the branch that reads it is taken, so
+> binding the recursive descent would defeat the very pruning the guard
+> exists for — and would not terminate on a node with one absent child. Every
+> traversal in this library has the same shape for the same reason.
+
+## Signature
+
+```plato
+BvhCandidates(self: Bvh2D, bounds: Bounds2D, node: SpatialNodeIndex): Array<ItemIndex>
+BvhCandidates(self: Bvh3D, bounds: Bounds3D, node: SpatialNodeIndex): Array<ItemIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 572
+### Line 572
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 572](../../../../../stdlib/geometry/spatial-structures.library.plato#L572).
 
@@ -27,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : self.BvhNodeCandidates(bounds, self.Nodes[node.Value]);
 ```
 
-## Line 608
+### Line 608
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 608](../../../../../stdlib/geometry/spatial-structures.library.plato#L608).
 

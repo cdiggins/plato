@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Rotate the displacement from origin to point about axis by angle, then
+> re-seat at origin. Shared by Twist3D and Bend3D.
+
+## Signature
+
+```plato
+RotateAboutAxis(origin: Point3D, axis: Direction3D, angle: Angle, point: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [deformations.library](../deformations.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/deformations.library.plato, line 1](../../../../../stdlib/geometry/deformations.library.plato#L1).
 

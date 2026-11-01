@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> 3D Primitive geometry
+
+## Signature
+
+```plato
+interface IPrimitiveGeometry3D<PrimitiveT>
+    where PrimitiveT: IGeometricPrimitive3D
+    inherits IGeometry3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry3D](igeometry3d.md).
+
+Implemented in this tier by: [Points3D](../geometry.types/points3d.md), [Lines3D](../geometry.types/lines3d.md), [Triangles3D](../geometry.types/triangles3d.md), [Quads3D](../geometry.types/quads3d.md).
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 213
+### Line 213
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 213](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L213).
 

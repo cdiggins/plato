@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The (column, row) pair for a row-major flat index. Inverse of FlattenIndex.
+
+## Signature
+
+```plato
+UnflattenIndex(self: IIndexable2D<$T>, index: Integer): Tuple2<Integer, Integer>
+UnflattenIndex(self: IIndexable3D<$T>, index: Integer): Tuple3<Integer, Integer, Integer>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.library](../collections.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 129
+### Line 129
 
 **Source:** [stdlib/foundation/collections.library.plato, line 129](../../../../../stdlib/foundation/collections.library.plato#L129).
 
@@ -18,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (index % self.ColumnCount, index / self.ColumnCount);
 ```
 
-## Line 157
+### Line 157
 
 **Source:** [stdlib/foundation/collections.library.plato, line 157](../../../../../stdlib/foundation/collections.library.plato#L157).
 

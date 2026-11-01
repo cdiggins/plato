@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The vertex array with a distance constraint's two ends replaced, in one
+> rebuild rather than two.
+
+## Signature
+
+```plato
+WithTwoVertices(self: Array<ClothVertex>, c: ClothDistanceConstraint, a: ClothVertex, b: ClothVertex): Array<ClothVertex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/future/cloth.library.plato, line 131](../../../../../stdlib/future/cloth.library.plato#L131).
 

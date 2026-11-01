@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number of nodes along X (one more than the cell count).
+
+## Signature
+
+```plato
+NodeColumns(self: SampledScalarGrid2D): Integer
+NodeColumns(self: SampledScalarGrid3D): Integer
+NodeColumns(self: SampledVectorGrid2D): Integer
+NodeColumns(self: SampledVectorGrid3D): Integer
+NodeColumns(self: SampledColorGrid2D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 75](../../../../../stdlib/geometry/sampling.library.plato#L75).
 
@@ -21,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Values.ColumnCount;
 ```
 
-## Line 104
+### Line 104
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 104](../../../../../stdlib/geometry/sampling.library.plato#L104).
 
@@ -39,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Grid.CellCounts.X + 1;
 ```
 
-## Line 152
+### Line 152
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 152](../../../../../stdlib/geometry/sampling.library.plato#L152).
 
@@ -53,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Values.ColumnCount;
 ```
 
-## Line 180
+### Line 180
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 180](../../../../../stdlib/geometry/sampling.library.plato#L180).
 
@@ -67,7 +91,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Grid.CellCounts.X + 1;
 ```
 
-## Line 224
+### Line 224
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 224](../../../../../stdlib/geometry/sampling.library.plato#L224).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One of the three unsigned cardinal axes of 3D space: the X, Y, or Z direction
+> line (https://en.wikipedia.org/wiki/Cartesian\_coordinate\_system). Unsigned —
+> it names a direction line, not an orientation; the six oriented cube-face
+> normals are `SignedAxis3D`.
+
+## Signature
+
+```plato
+type Axis3D = X | Y | Z
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [axes.types](../axes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/axes.types.plato, line 1](../../../../../stdlib/foundation/axes.types.plato#L1).
 

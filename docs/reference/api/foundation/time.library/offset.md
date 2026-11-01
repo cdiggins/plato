@@ -3,11 +3,63 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The instant's displacement from the epoch.
+
+## Signature
+
+```plato
+Offset(t: Instant): Duration
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_OriginPlusOffsetRecoversPosition2D
+
+[stdlib/tests/foundation.laws.plato, line 154](../../../../../stdlib/tests/foundation.laws.plato#L154)
+
+```plato
+// A position is its origin displaced by its own offset. This is the IOriginBased
+// round trip, and it is what makes Offset/FromOffset a genuine isomorphism rather
+// than two unrelated conversions.
+Law_OriginPlusOffsetRecoversPosition2D(p: Point2D): Boolean
+    => p.Origin.Add(p.Offset).Distance(p) <= 1e-4;
+```
+
+### Law_OriginPlusOffsetRecoversPosition3D
+
+[stdlib/tests/foundation.laws.plato, line 157](../../../../../stdlib/tests/foundation.laws.plato#L157)
+
+```plato
+Law_OriginPlusOffsetRecoversPosition3D(p: Point3D): Boolean
+    => p.Origin.Add(p.Offset).Distance(p) <= 1e-4;
+```
+
+### Law_OriginIsEpoch
+
+[stdlib/tests/foundation.laws.plato, line 162](../../../../../stdlib/tests/foundation.laws.plato#L162)
+
+```plato
+// The epoch is the origin: an Instant's offset from the origin is its own
+// seconds-since-epoch. Ties the derived Origin back to the field it came from.
+Law_OriginIsEpoch(t: Instant): Boolean
+    => t.Origin.Add(t.Offset).SecondsSinceEpoch.LawEq(t.SecondsSinceEpoch);
+```
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [time.library](../time.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/time.library.plato, line 1](../../../../../stdlib/foundation/time.library.plato#L1).
 

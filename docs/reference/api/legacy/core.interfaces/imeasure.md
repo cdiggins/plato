@@ -3,11 +3,37 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A measure is a numeric value with an intrinisic unit of measure.
+> It resembles an IRealNumber except you cannot multiply or divide two measures without
+> getting a new type. It does however support addition, negation, and scalar arithmetic
+> We can think of it as a vector with a single component, and as such can be ordered.
+
+## Signature
+
+```plato
+interface IMeasure
+    inherits IVectorLike, IOrderable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IVectorLike](ivectorlike.md), [IOrderable](iorderable.md).
+
+Implemented in this tier by: [Time](../core.types/time.md), [Angle](../primitives/angle.md).
+
+## Source
+
 **File:** [core.interfaces](../core.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 136
+### Line 136
 
 **Source:** [legacy/stdlib-legacy/core.interfaces.plato, line 136](../../../../../legacy/stdlib-legacy/core.interfaces.plato#L136).
 

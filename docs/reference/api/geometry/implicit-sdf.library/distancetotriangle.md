@@ -3,11 +3,82 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed distance from a point to the triangle with the given vertices:
+> negative inside. Unlike the primitives above this one is NOT centred at the
+> origin — a triangle has no canonical centred form worth the loss of generality.
+> Winding-agnostic: each edge orientation test is compared against the
+> triangle's OWN orientation, so either winding gives the same field. A
+> degenerate (collinear) triangle has zero orientation and therefore no
+> interior, which is why the sign test excludes it rather than calling every
+> point inside — the difference from `Contains(Triangle2D, Point2D)`, which is
+> a closed-set membership test and reports the degenerate case as containment.
+> Exact. (IQ: sdTriangle.)
+
+## Signature
+
+```plato
+DistanceToTriangle(p: Point2D, a: Point2D, b: Point2D, c: Point2D): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_PlanarTriangleAgreesWithSpatialPatch
+
+[stdlib/tests/implicit-sdf.laws.plato, line 311](../../../../../stdlib/tests/implicit-sdf.laws.plato#L311)
+
+```plato
+// The planar triangle and the spatial triangle patch describe the same shape
+// once the query is coplanar with it: outside they are both the distance to the
+// nearest edge, and inside the patch reports zero where the solid reports a
+// negative depth. Two independently written bodies with two different inside
+// tests, forced to agree.
+Law_PlanarTriangleAgreesWithSpatialPatch(p: Point2D, a: Point2D, b: Point2D, c: Point2D): Boolean
+    => UnsignedDistanceToTriangle(
+            Point3D(p.X, p.Y, 0.0),
+            Point3D(a.X, a.Y, 0.0),
+            Point3D(b.X, b.Y, 0.0),
+            Point3D(c.X, c.Y, 0.0))
+        .LawEq(DistanceToTriangle(p, a, b, c).Max(0.0));
+```
+
+### Law_CollinearTriangleIsSegmentDistance
+
+[stdlib/tests/implicit-sdf.laws.plato, line 322](../../../../../stdlib/tests/implicit-sdf.laws.plato#L322)
+
+```plato
+// A collinear triangle has no interior, so its field must be the unsigned
+// distance to the segment it collapsed onto — never negative. The law that
+// catches the sign test calling a degenerate triangle inside.
+Law_CollinearTriangleIsSegmentDistance(p: Point2D, a: Point2D, b: Point2D): Boolean
+    => DistanceToTriangle(p, a, a, b).LawEq(DistanceToCapsule(p, a, b, 0.0));
+```
+
+### Law_DegenerateQuadIsTriangle
+
+[stdlib/tests/implicit-sdf.laws.plato, line 327](../../../../../stdlib/tests/implicit-sdf.laws.plato#L327)
+
+```plato
+// Repeating a vertex turns the quad into the triangle on its other three, so the
+// even-odd sign rule and the orientation sign rule must land on the same field.
+Law_DegenerateQuadIsTriangle(p: Point2D, a: Point2D, b: Point2D, c: Point2D): Boolean
+    => DistanceToQuad(p, a, b, c, c).LawEq(DistanceToTriangle(p, a, b, c));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1085
+### Line 1085
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 1085](../../../../../stdlib/geometry/implicit-sdf.library.plato#L1085).
 

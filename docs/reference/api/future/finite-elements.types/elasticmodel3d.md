@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A linear-elastic analysis of a solid meshed into constant-strain tetrahedra.
+> Tractions act on triangles whose vertex indices name Mesh.Positions; they are
+> not checked against the mesh boundary, so a face in the interior is a modelling
+> error rather than a detected one.
+> (https://en.wikipedia.org/wiki/Finite\_element\_method)
+
+## Signature
+
+```plato
+type ElasticModel3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.types](../finite-elements.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 107
+### Line 107
 
 **Source:** [stdlib/future/finite-elements.types.plato, line 107](../../../../../stdlib/future/finite-elements.types.plato#L107).
 

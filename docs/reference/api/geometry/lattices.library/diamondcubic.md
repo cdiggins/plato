@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The diamond cubic cell: four interior nodes at the quarter points, each
+> bonded tetrahedrally to one corner and three face centers. Coordination 4
+> everywhere. Four of the eight corners carry no strut inside this cell;
+> they are listed because the tiling needs a node on every cube corner, and
+> once tiled all eight are the same welded node.
+> (https://en.wikipedia.org/wiki/Diamond\_cubic)
+
+## Signature
+
+```plato
+DiamondCubic(_: LatticeUnitCell): LatticeUnitCell
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 141
+### Line 141
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 141](../../../../../stdlib/geometry/lattices.library.plato#L141).
 

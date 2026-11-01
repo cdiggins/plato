@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True where the field has no local rotation within tolerance (irrotational)
+> (https://en.wikipedia.org/wiki/Irrotational\_flow).
+
+## Signature
+
+```plato
+IsIrrotationalAt(self: IDifferentiableVectorField2D, point: Point2D, tolerance: Number): Boolean
+IsIrrotationalAt(self: IDifferentiableVectorField3D, point: Point3D, tolerance: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 247
+### Line 247
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 247](../../../../../stdlib/geometry/fields-implicits.library.plato#L247).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.CurlAt(point).Abs <= tolerance;
 ```
 
-## Line 280
+### Line 280
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 280](../../../../../stdlib/geometry/fields-implicits.library.plato#L280).
 

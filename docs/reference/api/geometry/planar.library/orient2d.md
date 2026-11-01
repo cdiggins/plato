@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The orientation of the ordered triple (a, b, c): +1 when it turns LEFT
+> (counter-clockwise), -1 when it turns RIGHT (clockwise), 0 when the three are
+> collinear. The sign of twice the signed area -- the foundational predicate of
+> computational geometry (point-in-triangle, convex hull, segment crossing).
+> https://en.wikipedia.org/wiki/Curve\_orientation
+
+## Signature
+
+```plato
+Orient2D(a: Point2D, b: Point2D, c: Point2D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 704
+### Line 704
 
 **Source:** [stdlib/geometry/planar.library.plato, line 704](../../../../../stdlib/geometry/planar.library.plato#L704).
 

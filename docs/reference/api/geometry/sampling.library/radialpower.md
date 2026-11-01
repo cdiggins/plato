@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The mean power at one frequency magnitude, averaged over `directions`
+> evenly spaced directions across a half turn — power is symmetric, so a
+> whole turn would measure each direction twice. Averaging over direction is
+> what makes the reading a statement about ISOTROPY as well as about
+> frequency content: an axis-aligned pattern that spikes along one direction
+> shows up here as a bump the spacing readings never see.
+
+## Signature
+
+```plato
+RadialPower(frequency: Number, directions: Integer, points: Array<Point2D>): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1051
+### Line 1051
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 1051](../../../../../stdlib/geometry/sampling.library.plato#L1051).
 

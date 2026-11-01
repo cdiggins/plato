@@ -3,11 +3,49 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A Porter-Duff alpha-compositing operator: how source and destination
+> coverage combine. (https://en.wikipedia.org/wiki/Alpha\_compositing)
+
+## Signature
+
+```plato
+type PorterDuff
+    = Clear
+    | Source
+    | Destination
+    | SourceOver
+    | DestinationOver
+    | SourceIn
+    | DestinationIn
+    | SourceOut
+    | DestinationOut
+    | SourceAtop
+    | DestinationAtop
+    | Xor
+    | Plus
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [image-processing.types](../image-processing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 175
+### Line 175
 
 **Source:** [stdlib/graphics/image-processing.types.plato, line 175](../../../../../stdlib/graphics/image-processing.types.plato#L175).
 

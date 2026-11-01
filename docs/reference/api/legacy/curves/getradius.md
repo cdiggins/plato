@@ -3,11 +3,39 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+GetRadius(curve: CycloidOfCeva, t: Angle): Number
+GetRadius(curve: Limacon, t: Angle): Number
+GetRadius(curve: Cardoid, t: Angle): Number
+GetRadius(curve: TschirnhausenCubic, t: Angle): Number
+GetRadius(curve: Rose, t: Angle): Number
+GetRadius(curve: ArchimedeanSpiral, t: Angle): Number
+GetRadius(curve: ConicSection, t: Angle): Number
+GetRadius(curve: LemniscateOfBernoulli, t: Angle): Number
+GetRadius(curve: TrisectrixOfMaclaurin, t: Angle): Number
+GetRadius(curve: ConchoidOfDeSluze, t: Angle): Number
+GetRadius(curve: SinusoidalSpiral, t: Angle): Number
+GetRadius(curve: FermatsSpiral, t: Angle): Number
+GetRadius(curve: LogarithmicSpiral, t: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 13 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 323
+### Line 323
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 323](../../../../../legacy/stdlib-legacy/curves.plato#L323).
 
@@ -17,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.CycloidOfCeva;
 ```
 
-## Line 330
+### Line 330
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 330](../../../../../legacy/stdlib-legacy/curves.plato#L330).
 
@@ -27,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> t.Limacon(curve.A, curve.B);
 ```
 
-## Line 337
+### Line 337
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 337](../../../../../legacy/stdlib-legacy/curves.plato#L337).
 
@@ -37,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
 	    => t.Cardoid;
 ```
 
-## Line 344
+### Line 344
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 344](../../../../../legacy/stdlib-legacy/curves.plato#L344).
 
@@ -47,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.TschirnhausenCubic(curve.A);
 ```
 
-## Line 352
+### Line 352
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 352](../../../../../legacy/stdlib-legacy/curves.plato#L352).
 
@@ -57,7 +85,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.Rose(curve.K);
 ```
 
-## Line 359
+### Line 359
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 359](../../../../../legacy/stdlib-legacy/curves.plato#L359).
 
@@ -67,7 +95,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.ArchimedeanSpiral(curve.A, curve.B);
 ```
 
-## Line 366
+### Line 366
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 366](../../../../../legacy/stdlib-legacy/curves.plato#L366).
 
@@ -77,7 +105,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.ConicSection(curve.SemiLatusRectum, curve.Eccentricity);
 ```
 
-## Line 373
+### Line 373
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 373](../../../../../legacy/stdlib-legacy/curves.plato#L373).
 
@@ -87,7 +115,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.LemniscateOfBernoulli(curve.A);
 ```
 
-## Line 380
+### Line 380
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 380](../../../../../legacy/stdlib-legacy/curves.plato#L380).
 
@@ -97,7 +125,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.TrisectrixOfMaclaurin(curve.A);
 ```
 
-## Line 387
+### Line 387
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 387](../../../../../legacy/stdlib-legacy/curves.plato#L387).
 
@@ -107,7 +135,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.ConchoidOfDeSluze(curve.A);
 ```
 
-## Line 394
+### Line 394
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 394](../../../../../legacy/stdlib-legacy/curves.plato#L394).
 
@@ -117,7 +145,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.SinusoidalSpiral(curve.A, curve.N);
 ```
 
-## Line 402
+### Line 402
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 402](../../../../../legacy/stdlib-legacy/curves.plato#L402).
 
@@ -127,7 +155,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.FermatsSpiral(curve.A);
 ```
 
-## Line 409
+### Line 409
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 409](../../../../../legacy/stdlib-legacy/curves.plato#L409).
 

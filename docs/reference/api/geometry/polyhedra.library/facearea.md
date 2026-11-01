@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The area of one face: the magnitude of its Newell vector area
+> (`polygons.library.plato`). Exact for a planar face and the least-squares
+> reading of a nearly planar one, which is the same bargain `FaceUnitNormal`
+> makes.
+
+## Signature
+
+```plato
+FaceArea(self: PolygonMesh3D, face: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 838
+### Line 838
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 838](../../../../../stdlib/geometry/polyhedra.library.plato#L838).
 

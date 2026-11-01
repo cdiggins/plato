@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> All points within Radius of the segment from A to B: a cylinder with
+> hemispherical ends. The smooth, convex sweep of a ball along a segment.
+> (https://en.wikipedia.org/wiki/Capsule\_(geometry))
+
+## Signature
+
+```plato
+type Capsule3D
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IVolume, IBounded3D, ICentroid3D, IContainsPoint3D, INearestPoint3D, ISupport3D, IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IVolume](../geometry.concepts/ivolume.md), [IBounded3D](../geometry.concepts/ibounded3d.md), [ICentroid3D](../geometry.concepts/icentroid3d.md), [IContainsPoint3D](../geometry.concepts/icontainspoint3d.md), [INearestPoint3D](../geometry.concepts/inearestpoint3d.md), [ISupport3D](../geometry.concepts/isupport3d.md), [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.types](../spatial-primitives.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 100
+### Line 100
 
 **Source:** [stdlib/geometry/spatial-primitives.types.plato, line 100](../../../../../stdlib/geometry/spatial-primitives.types.plato#L100).
 

@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The ray parameter where sphere tracing converges, or `MissDistance` when the
+> budget runs out or the march passes `reach`. Recurses one step per advance.
+> Precondition: the ray direction is unit length; tolerance and reach are
+> positive; the field is exact or a lower bound — one that is not a bound
+> tunnels.
+
+## Signature
+
+```plato
+MarchFrom(self: ISignedDistanceField3D, ray: Ray3D, t: Number, budget: Integer, tolerance: Number, reach: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 403](../../../../../stdlib/geometry/implicit-sdf.library.plato#L403): tolerance. Convergence therefore depends on the field being EXACT or a
+- [Line 407](../../../../../stdlib/geometry/implicit-sdf.library.plato#L407): exact where the label is not trusted; a field that is k-Lipschitz for a
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 396
+### Line 396
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 396](../../../../../stdlib/geometry/implicit-sdf.library.plato#L396).
 

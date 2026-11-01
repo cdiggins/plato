@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The index of the last element (Count - 1); negative when empty.
+
+## Signature
+
+```plato
+LastIndex(self: IIndexable<$T>): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 239](../../../../../stdlib/foundation/collections.library.plato#L239): not implement IIndex and must not — they are opaque codes, not element
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.library](../collections.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 236
+### Line 236
 
 **Source:** [stdlib/foundation/collections.library.plato, line 236](../../../../../stdlib/foundation/collections.library.plato#L236).
 

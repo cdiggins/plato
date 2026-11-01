@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The measured value stripped of its provenance.
+
+## Signature
+
+```plato
+Reading(self: Measurement<$T>): $T
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Equality, ordering, and hashing](../../../language/equality.md)
+- [Products, fields, and construction](../../../language/products.md)
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty-measurement.library](../uncertainty-measurement.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 33
+### Line 33
 
 **Source:** [stdlib/future/uncertainty-measurement.library.plato, line 33](../../../../../stdlib/future/uncertainty-measurement.library.plato#L33).
 

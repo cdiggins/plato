@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The smooth difference: a smoothly intersected with the complement of b.
+> A lower bound. Precondition: blendRadius is positive.
+> (IQ: opSmoothSubtraction.)
+
+## Signature
+
+```plato
+SmoothDifferenceDistance(a: Number, b: Number, blendRadius: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 654
+### Line 654
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 654](../../../../../stdlib/geometry/implicit-sdf.library.plato#L654).
 

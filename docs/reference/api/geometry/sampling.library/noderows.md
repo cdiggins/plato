@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number of nodes along Y.
+
+## Signature
+
+```plato
+NodeRows(self: SampledScalarGrid2D): Integer
+NodeRows(self: SampledScalarGrid3D): Integer
+NodeRows(self: SampledVectorGrid2D): Integer
+NodeRows(self: SampledVectorGrid3D): Integer
+NodeRows(self: SampledColorGrid2D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 82
+### Line 82
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 82](../../../../../stdlib/geometry/sampling.library.plato#L82).
 
@@ -18,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Values.RowCount;
 ```
 
-## Line 115
+### Line 115
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 115](../../../../../stdlib/geometry/sampling.library.plato#L115).
 
@@ -29,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Grid.CellCounts.Y + 1;
 ```
 
-## Line 159
+### Line 159
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 159](../../../../../stdlib/geometry/sampling.library.plato#L159).
 
@@ -40,7 +64,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Values.RowCount;
 ```
 
-## Line 187
+### Line 187
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 187](../../../../../stdlib/geometry/sampling.library.plato#L187).
 
@@ -51,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Grid.CellCounts.Y + 1;
 ```
 
-## Line 236
+### Line 236
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 236](../../../../../stdlib/geometry/sampling.library.plato#L236).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number of nodes along Z.
+
+## Signature
+
+```plato
+NodeLayers(self: SampledScalarGrid3D): Integer
+NodeLayers(self: SampledVectorGrid3D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 119
+### Line 119
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 119](../../../../../stdlib/geometry/sampling.library.plato#L119).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Grid.CellCounts.Z + 1;
 ```
 
-## Line 191
+### Line 191
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 191](../../../../../stdlib/geometry/sampling.library.plato#L191).
 

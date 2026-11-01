@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A per-edge decision array that selects exactly one edge: the single-operator
+> form of every batched pass below.
+
+## Signature
+
+```plato
+SingleEdgeMask(edgeCount: Integer, edge: UndirectedEdgeIndex): Array<Boolean>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 191
+### Line 191
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 191](../../../../../stdlib/geometry/remeshing.library.plato#L191).
 

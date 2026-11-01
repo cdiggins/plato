@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Per-edge incident faces, parallel to an UndirectedEdgeList: LeftFaces\[i\] is
+> the face on the side of UndirectedEdges\[i\] where the traversal A to B runs
+> counter-clockwise along the face loop; RightFaces\[i\] is the opposite side. A
+> boundary edge stores -1 in RightFaces; a wire edge stores -1 in both.
+
+## Signature
+
+```plato
+type UndirectedEdgeAdjacency
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.types](../topology.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 41
+### Line 41
 
 **Source:** [stdlib/geometry/topology.types.plato, line 41](../../../../../stdlib/geometry/topology.types.plato#L41).
 

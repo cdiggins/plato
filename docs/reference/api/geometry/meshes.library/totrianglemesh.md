@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The IMesh3D obligation: the geometry without its attribute channels.
+
+## Signature
+
+```plato
+ToTriangleMesh(self: RichMesh3D): TriangleMesh3D
+ToTriangleMesh(a: TriangleArray3D): TriangleMesh3D
+ToTriangleMesh(a: QuadArray3D): TriangleMesh3D
+ToTriangleMesh(self: IParametricSurface, nCols: Integer, nRows: Integer): TriangleMesh3D
+ToTriangleMesh(self: IScalarField2D, domain: Bounds2D, nCols: Integer, nRows: Integer): TriangleMesh3D
+ToTriangleMesh(self: TriangleMesh3D): TriangleMesh3D
+ToTriangleMesh(self: QuadMesh3D): TriangleMesh3D
+ToTriangleMesh(self: SegmentedMesh3D): TriangleMesh3D
+ToTriangleMesh(self: TetrahedralMesh3D): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 9 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 37
+### Line 37
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 37](../../../../../stdlib/geometry/meshes.library.plato#L37).
 
@@ -18,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Mesh;
 ```
 
-## Line 58
+### Line 58
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 58](../../../../../stdlib/geometry/meshes.library.plato#L58).
 
@@ -33,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
                 TriangleFace(VertexIndex(3 * i), VertexIndex(3 * i + 1), VertexIndex(3 * i + 2))));
 ```
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 93](../../../../../stdlib/geometry/meshes.library.plato#L93).
 
@@ -46,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
             a.Quads.Count.MapRange(i => i).FlatMap(i => a.QuadTriangleFaces(i)));
 ```
 
-## Line 399
+### Line 399
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 399](../../../../../stdlib/geometry/meshes.library.plato#L399).
 
@@ -58,7 +86,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ToQuadMesh(nCols, nRows).ToTriangleMesh;
 ```
 
-## Line 432
+### Line 432
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 432](../../../../../stdlib/geometry/meshes.library.plato#L432).
 
@@ -70,7 +98,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ToQuadMesh(domain, nCols, nRows).ToTriangleMesh;
 ```
 
-## Line 506
+### Line 506
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 506](../../../../../stdlib/geometry/meshes.library.plato#L506).
 
@@ -82,7 +110,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self;
 ```
 
-## Line 586
+### Line 586
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 586](../../../../../stdlib/geometry/meshes.library.plato#L586).
 
@@ -94,7 +122,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Positions, self.Faces.FlatMap(q => q.FanTriangles));
 ```
 
-## Line 695
+### Line 695
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 695](../../../../../stdlib/geometry/meshes.library.plato#L695).
 
@@ -107,7 +135,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Mesh;
 ```
 
-## Line 938
+### Line 938
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 938](../../../../../stdlib/geometry/meshes.library.plato#L938).
 

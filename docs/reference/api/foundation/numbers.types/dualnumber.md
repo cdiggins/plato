@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A value carried together with its first derivative with respect to a single
+> seed variable: the algebra of x + e\*x', where e is nilpotent (e^2 = 0).
+> Seed an input with Derivative 1 (`x.DualVariable`) and every constant with
+> Derivative 0 (`c.DualConstant`); the derivative of the whole expression falls
+> out of the arithmetic. (https://en.wikipedia.org/wiki/Dual\_number)
+
+## Signature
+
+```plato
+type DualNumber
+    implements INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [INumerical](../algebra.concepts/inumerical.md).
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.types](../numbers.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 86
+### Line 86
 
 **Source:** [stdlib/foundation/numbers.types.plato, line 86](../../../../../stdlib/foundation/numbers.types.plato#L86).
 

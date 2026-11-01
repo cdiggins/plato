@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The combined hash of the two coordinates.
+
+## Signature
+
+```plato
+Hash(self: Point2D): Integer
+Hash(self: Point3D): Integer
+Hash(self: VectorN): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 500](../../../../../stdlib/foundation/numeric-structures.library.plato#L500): exactly as the vector twins in `vectors.library.plato` are: two
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 494
+### Line 494
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 494](../../../../../stdlib/foundation/numeric-structures.library.plato#L494).
 
@@ -26,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X.Hash.CombineHash(self.Y.Hash);
 ```
 
-## Line 506
+### Line 506
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 506](../../../../../stdlib/foundation/numeric-structures.library.plato#L506).
 
@@ -37,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X.Hash.CombineHash(self.Y.Hash).CombineHash(self.Z.Hash);
 ```
 
-## Line 861
+### Line 861
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 861](../../../../../stdlib/foundation/numeric-structures.library.plato#L861).
 

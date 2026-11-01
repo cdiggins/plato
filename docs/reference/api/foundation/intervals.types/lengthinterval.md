@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A directed interval of lengths.
+
+## Signature
+
+```plato
+type LengthInterval
+    implements IInterval<Length>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IInterval](../intervals-bounds.concepts/iinterval.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.types](../intervals.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 41
+### Line 41
 
 **Source:** [stdlib/foundation/intervals.types.plato, line 41](../../../../../stdlib/foundation/intervals.types.plato#L41).
 

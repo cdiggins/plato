@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The body-centered cubic cell: a node at the cell center joined to all
+> eight corners, with no cube edges. Coordination 8 at both the center and
+> the corner. (https://en.wikipedia.org/wiki/Cubic\_crystal\_system)
+
+## Signature
+
+```plato
+BodyCenteredCubic(_: LatticeUnitCell): LatticeUnitCell
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 95
+### Line 95
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 95](../../../../../stdlib/geometry/lattices.library.plato#L95).
 

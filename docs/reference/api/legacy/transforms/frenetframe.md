@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A frame of reference for a moving particle
+> https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret\_formulas
+
+## Signature
+
+```plato
+type FrenetFrame
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 241
+### Line 241
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 241](../../../../../legacy/stdlib-legacy/transforms.plato#L241).
 

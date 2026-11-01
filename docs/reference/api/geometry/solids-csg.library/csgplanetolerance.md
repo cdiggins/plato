@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The on-plane thickness for polygon/plane classification: a vertex within
+> this absolute distance of a plane counts as lying ON it. One shared knob
+> rather than a magic number in each body.
+
+## Signature
+
+```plato
+CsgPlaneTolerance(_: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 52
+### Line 52
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 52](../../../../../stdlib/geometry/solids-csg.library.plato#L52).
 

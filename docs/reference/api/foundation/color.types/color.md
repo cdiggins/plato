@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A linear-light RGBA color (https://en.wikipedia.org/wiki/RGBA\_color\_model).
+> The canonical color type for computation; interpolation and arithmetic are
+> component-wise.
+> Convention: see CONVENTIONS.md - Color (linear-light, straight alpha; A is
+> straight; do not lerp/construct from sRGB bytes without decoding).
+
+## Signature
+
+```plato
+type Color
+    implements INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [INumerical](../algebra.concepts/inumerical.md).
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+
+## Source
+
 **File:** [color.types](../color.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/color.types.plato, line 1](../../../../../stdlib/foundation/color.types.plato#L1).
 

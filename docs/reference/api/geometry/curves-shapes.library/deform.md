@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The IDeformable2D obligation: every control point carried through the
+> mapping. Exact for an affine mapping, which commutes with the Bernstein
+> basis; under a nonlinear one the result is the Bezier over the moved
+> control points, not the image of the curve.
+
+## Signature
+
+```plato
+Deform(self: QuadraticBezier2D, mapping: Function1<Point2D, Point2D>): QuadraticBezier2D
+Deform(self: CubicBezier2D, mapping: Function1<Point2D, Point2D>): CubicBezier2D
+Deform(self: QuadraticBezier3D, mapping: Function1<Point3D, Point3D>): QuadraticBezier3D
+Deform(self: CubicBezier3D, mapping: Function1<Point3D, Point3D>): CubicBezier3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.library](../curves-shapes.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 98
+### Line 98
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 98](../../../../../stdlib/geometry/curves-shapes.library.plato#L98).
 
@@ -21,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (mapping(self.P0), mapping(self.P1), mapping(self.P2));
 ```
 
-## Line 105
+### Line 105
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 105](../../../../../stdlib/geometry/curves-shapes.library.plato#L105).
 
@@ -32,7 +58,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (mapping(self.P0), mapping(self.P1), mapping(self.P2), mapping(self.P3));
 ```
 
-## Line 471
+### Line 471
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 471](../../../../../stdlib/geometry/curves-shapes.library.plato#L471).
 
@@ -44,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (mapping(self.P0), mapping(self.P1), mapping(self.P2));
 ```
 
-## Line 476
+### Line 476
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 476](../../../../../stdlib/geometry/curves-shapes.library.plato#L476).
 

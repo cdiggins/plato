@@ -3,11 +3,165 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The standard rounded-box inside test: fold the query into the first quadrant,
+> subtract the inner (unrounded) half-extents, and compare the resulting
+> distance to the corner radius. Boundary inclusive.
+> https://iquilezles.org/articles/distfunctions2d/
+
+## Signature
+
+```plato
+Contains(r: RoundedRect2D, point: Point2D): Boolean
+Contains(b: OrientedBox2D, point: Point2D): Boolean
+Contains(g: RegularPolygon, point: Point2D): Boolean
+Contains(c: Circle, point: Point2D): Boolean
+Contains(a: Annulus, point: Point2D): Boolean
+Contains(s: CircularSector, point: Point2D): Boolean
+Contains(s: CircularSegment, point: Point2D): Boolean
+Contains(c: Capsule2D, point: Point2D): Boolean
+Contains(e: Ellipse, point: Point2D): Boolean
+Contains(se: SuperEllipse, point: Point2D): Boolean
+Contains(t: Triangle2D, point: Point2D): Boolean
+Contains(q: Quad2D, point: Point2D): Boolean
+Contains(g: Parallelogram2D, point: Point2D): Boolean
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ContainsStart
+
+[stdlib/tests/foundation.laws.plato, line 55](../../../../../stdlib/tests/foundation.laws.plato#L55)
+
+```plato
+// A forward interval contains its own Start endpoint (closed interval, inclusive).
+Law_ContainsStart(self: IInterval<$T>): Boolean
+    => self.IsReversed || self.Contains(self.Start);
+```
+
+### Law_ContainsEnd
+
+[stdlib/tests/foundation.laws.plato, line 59](../../../../../stdlib/tests/foundation.laws.plato#L59)
+
+```plato
+// A forward interval contains its own End endpoint.
+Law_ContainsEnd(self: IInterval<$T>): Boolean
+    => self.IsReversed || self.Contains(self.End);
+```
+
+### Law_ContainsCenter
+
+[stdlib/tests/foundation.laws.plato, line 63](../../../../../stdlib/tests/foundation.laws.plato#L63)
+
+```plato
+// A forward interval contains its own center.
+Law_ContainsCenter(self: IInterval<$T>): Boolean
+    => self.IsReversed || self.Contains(self.Center);
+```
+
+### Law_ContainsCenter
+
+[stdlib/tests/foundation.laws.plato, line 79](../../../../../stdlib/tests/foundation.laws.plato#L79)
+
+```plato
+// Same property, stated over AngleInterval's OWN surface.
+//
+// DOMAIN: AngleInterval reinterprets both Contains and Center as ARC operations
+// (intervals.library.plato), so the generic law above does
+// not describe this type. Worse, monomorphizing it produces a CHIMERA: the
+// interface's linear Center is inlined into the law body (resolution happens
+// against IInterval, where the specialization is invisible), while the
+// Contains call survives as a call and is re-bound by C# extension-method
+// overload resolution to the type's wrap-aware one (tracked as plato-374). Arc
+// Contains of a linear midpoint holds for neither reading, and it fails for
+// every interval whose stored End - Start exceeds a turn. Restated here on the
+// arc surface, where
+// the midpoint is Start + Span/2 and containment always holds.
+Law_ContainsCenter(self: AngleInterval): Boolean
+    => self.Contains(self.Center);
+```
+
+### Law_Bounds2DContainsCenter
+
+[stdlib/tests/foundation.laws.plato, line 86](../../../../../stdlib/tests/foundation.laws.plato#L86)
+
+```plato
+// A non-empty box contains its own center point.
+Law_Bounds2DContainsCenter(b: Bounds2D): Boolean
+    => b.IsEmpty || b.Contains(b.Center);
+```
+
+### Law_Bounds2DExpandContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 90](../../../../../stdlib/tests/foundation.laws.plato#L90)
+
+```plato
+// Expanding outward by a non-negative amount still contains the original box.
+Law_Bounds2DExpandContainsSelf(b: Bounds2D): Boolean
+    => b.IsEmpty || b.Expand(1.0).Contains(b);
+```
+
+### Law_Bounds2DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 94](../../../../../stdlib/tests/foundation.laws.plato#L94)
+
+```plato
+// A box is contained in its union with any other box.
+Law_Bounds2DUnionContainsSelf(b: Bounds2D, o: Bounds2D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+### Law_Bounds2DUnionContainsOther
+
+[stdlib/tests/foundation.laws.plato, line 98](../../../../../stdlib/tests/foundation.laws.plato#L98)
+
+```plato
+// The other operand is contained in the union too.
+Law_Bounds2DUnionContainsOther(b: Bounds2D, o: Bounds2D): Boolean
+    => o.IsEmpty || b.Union(o).Contains(o);
+```
+
+### Law_Bounds3DContainsCenter
+
+[stdlib/tests/foundation.laws.plato, line 104](../../../../../stdlib/tests/foundation.laws.plato#L104)
+
+```plato
+Law_Bounds3DContainsCenter(b: Bounds3D): Boolean
+    => b.IsEmpty || b.Contains(b.Center);
+```
+
+### Law_Bounds3DExpandContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 107](../../../../../stdlib/tests/foundation.laws.plato#L107)
+
+```plato
+Law_Bounds3DExpandContainsSelf(b: Bounds3D): Boolean
+    => b.IsEmpty || b.Expand(1.0).Contains(b);
+```
+
+### Law_Bounds3DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 110](../../../../../stdlib/tests/foundation.laws.plato#L110)
+
+```plato
+Law_Bounds3DUnionContainsSelf(b: Bounds3D, o: Bounds3D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 13 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 72
+### Line 72
 
 **Source:** [stdlib/geometry/planar.library.plato, line 72](../../../../../stdlib/geometry/planar.library.plato#L72).
 
@@ -27,7 +181,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 112
+### Line 112
 
 **Source:** [stdlib/geometry/planar.library.plato, line 112](../../../../../stdlib/geometry/planar.library.plato#L112).
 
@@ -42,7 +196,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 174
+### Line 174
 
 **Source:** [stdlib/geometry/planar.library.plato, line 174](../../../../../stdlib/geometry/planar.library.plato#L174).
 
@@ -53,7 +207,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => g.RegularPolygonVertices.PolygonContainsPoint(point);
 ```
 
-## Line 229
+### Line 229
 
 **Source:** [stdlib/geometry/planar.library.plato, line 229](../../../../../stdlib/geometry/planar.library.plato#L229).
 
@@ -65,7 +219,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => c.Center.Between(point).MagnitudeSquared <= c.Radius.Square;
 ```
 
-## Line 264
+### Line 264
 
 **Source:** [stdlib/geometry/planar.library.plato, line 264](../../../../../stdlib/geometry/planar.library.plato#L264).
 
@@ -81,7 +235,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 314
+### Line 314
 
 **Source:** [stdlib/geometry/planar.library.plato, line 314](../../../../../stdlib/geometry/planar.library.plato#L314).
 
@@ -101,7 +255,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 372
+### Line 372
 
 **Source:** [stdlib/geometry/planar.library.plato, line 372](../../../../../stdlib/geometry/planar.library.plato#L372).
 
@@ -116,7 +270,7 @@ Copied from source, comments included. A comment records intent. The body is the
         && TwiceSignedArea(s.ChordStart, s.ChordEnd, point) <= 0.0;
 ```
 
-## Line 407
+### Line 407
 
 **Source:** [stdlib/geometry/planar.library.plato, line 407](../../../../../stdlib/geometry/planar.library.plato#L407).
 
@@ -128,7 +282,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => DistanceToSegment(c.A, c.B, point) <= c.Radius;
 ```
 
-## Line 496
+### Line 496
 
 **Source:** [stdlib/geometry/planar.library.plato, line 496](../../../../../stdlib/geometry/planar.library.plato#L496).
 
@@ -143,7 +297,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 525
+### Line 525
 
 **Source:** [stdlib/geometry/planar.library.plato, line 525](../../../../../stdlib/geometry/planar.library.plato#L525).
 
@@ -159,7 +313,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 681
+### Line 681
 
 **Source:** [stdlib/geometry/planar.library.plato, line 681](../../../../../stdlib/geometry/planar.library.plato#L681).
 
@@ -180,7 +334,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 806
+### Line 806
 
 **Source:** [stdlib/geometry/planar.library.plato, line 806](../../../../../stdlib/geometry/planar.library.plato#L806).
 
@@ -191,7 +345,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => q.Points.PolygonContainsPoint(point);
 ```
 
-## Line 841
+### Line 841
 
 **Source:** [stdlib/geometry/planar.library.plato, line 841](../../../../../stdlib/geometry/planar.library.plato#L841).
 

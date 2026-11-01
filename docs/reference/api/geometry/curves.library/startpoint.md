@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The curve's starting position, Eval(0).
+
+## Signature
+
+```plato
+StartPoint(self: ICurve2D): Point2D
+StartPoint(self: ICurve3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 77
+### Line 77
 
 **Source:** [stdlib/geometry/curves.library.plato, line 77](../../../../../stdlib/geometry/curves.library.plato#L77).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(0.0);
 ```
 
-## Line 117
+### Line 117
 
 **Source:** [stdlib/geometry/curves.library.plato, line 117](../../../../../stdlib/geometry/curves.library.plato#L117).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The claim table after accepting every masked, flippable edge whose four
+> vertices are all still unclaimed. Entry v is -1 while vertex v is unclaimed,
+> and otherwise the number of the edge whose flip claimed it.
+
+## Signature
+
+```plato
+FlipVertexClaims(self: TriangleMesh3D, topology: TriangleMeshTopology, flipMask: Array<Boolean>): Array<Integer>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 599
+### Line 599
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 599](../../../../../stdlib/geometry/remeshing.library.plato#L599).
 

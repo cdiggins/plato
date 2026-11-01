@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The quadrilateral Catmull-Clark emits at one corner: the corner's own moved
+> vertex, the point on the edge leaving it, the face's own centroid, and the
+> point on the edge arriving at it. Keeps the original face's winding.
+> Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+
+## Signature
+
+```plato
+CatmullClarkCornerFace(self: PolygonMesh3D, edges: Array<UndirectedEdgeIndex>, vertexCount: Integer,
+                       edgeCount: Integer, face: Integer, slot: Integer): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 992
+### Line 992
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 992](../../../../../stdlib/geometry/remeshing.library.plato#L992).
 

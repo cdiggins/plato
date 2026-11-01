@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The IMesh3D obligation: fan every face, sharing the position array
+> unchanged so vertex numbering survives the conversion.
+
+## Signature
+
+```plato
+ToTriangleMesh(self: PolygonMesh3D): TriangleMesh3D
+ToTriangleMesh(self: IPolygonMesh3D): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes-polygon.library](../meshes-polygon.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 149
+### Line 149
 
 **Source:** [stdlib/geometry/meshes-polygon.library.plato, line 149](../../../../../stdlib/geometry/meshes-polygon.library.plato#L149).
 
@@ -20,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
             self.FaceCount.MapRange(f => f).FlatMap(f => self.FaceTriangleFan(f)));
 ```
 
-## Line 155
+### Line 155
 
 **Source:** [stdlib/geometry/meshes-polygon.library.plato, line 155](../../../../../stdlib/geometry/meshes-polygon.library.plato#L155).
 

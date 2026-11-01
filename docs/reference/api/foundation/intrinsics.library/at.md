@@ -3,11 +3,112 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The character at index n. Precondition: 0 \<= n \< Count; outside it the call faults
+> (the C# runtime throws IndexOutOfRangeException, the interpreter an evaluation
+> error, the C++ prelude asserts), so test the index first. A Character is one UTF-16
+> code unit in C# and the interpreter and one byte in the C++ prelude, identical for
+> the Latin-1 text the STEP parser reads. Witness: "abc".At(1).ToInteger == 98.
+
+## Signature
+
+```plato
+At(s: String, n: Integer): Character
+At(xs: Array<$T>, n: Integer): $T
+At(xs: List<$T>, n: Integer): $T
+At(xs: Buffer<$T>, n: Integer): $T
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_FromCharactersOfCharactersIsIdentity
+
+[stdlib/tests/text.laws.plato, line 14](../../../../../stdlib/tests/text.laws.plato#L14)
+
+```plato
+// The characters of a String, rebuilt, are the String.
+Law_FromCharactersOfCharactersIsIdentity(s: String): Boolean
+    => FromCharacters(MapRange(s.Count, i => s.At(i))) == s;
+```
+
+### Law_FromCharactersWitness
+
+[stdlib/tests/text.laws.plato, line 18](../../../../../stdlib/tests/text.laws.plato#L18)
+
+```plato
+// Two-line witness: the characters of "ab" in reverse order make "ba"; none make "".
+Law_FromCharactersWitness(): Boolean
+    => FromCharacters(["ab".At(1), "ab".At(0)]) == "ba"
+    && FromCharacters(MapRange(0, i => "ab".At(i))) == "";
+```
+
+### Law_CharacterWitness
+
+[stdlib/tests/text.laws.plato, line 26](../../../../../stdlib/tests/text.laws.plato#L26)
+
+```plato
+// Two-line witness: the character at an index, its code, and the code's character.
+Law_CharacterWitness(): Boolean
+    => "abc".At(1).ToInteger == 98 && "a".At(0).ToInteger == 97 && 97.ToCharacter.ToInteger == 97
+    && 97.ToCharacter == "a".At(0) && FromCharacters([10.ToCharacter, 13.ToCharacter]).Count == 2
+    && FromCharacters([10.ToCharacter, 13.ToCharacter]).At(0).ToInteger == 10;
+```
+
+### Law_AtReadsWhatFromCharactersWrote
+
+[stdlib/tests/text.laws.plato, line 32](../../../../../stdlib/tests/text.laws.plato#L32)
+
+```plato
+// At reads what FromCharacters wrote, at every index.
+Law_AtReadsWhatFromCharactersWrote(s: String): Boolean
+    => FromCharacters(MapRange(s.Count, i => s.At(i))).Count == s.Count
+    && s.Count.Range.All(i => s.At(i).ToInteger.ToCharacter == s.At(i));
+```
+
+### Law_StringLiteralKeepsBackslashAndNonAscii
+
+[stdlib/tests/text.laws.plato, line 45](../../../../../stdlib/tests/text.laws.plato#L45)
+
+```plato
+// "André\x" is seven characters: the e acute (233), a backslash (92) and an x.
+Law_StringLiteralKeepsBackslashAndNonAscii(): Boolean
+    => "André\x".Count == 7 && "André\x".At(4).ToInteger == 233
+    && "André\x".At(5).ToInteger == 92 && "André\x".At(6).ToInteger == 120
+    && "André\x" == FromCharacters([65.ToCharacter, 110.ToCharacter, 100.ToCharacter, 114.ToCharacter, 233.ToCharacter, 92.ToCharacter, 120.ToCharacter]);
+```
+
+### Law_SubstringCharactersAreTheSourceCharacters
+
+[stdlib/tests/text.laws.plato, line 59](../../../../../stdlib/tests/text.laws.plato#L59)
+
+```plato
+// Each character is the source character at the same offset from the clamped start.
+Law_SubstringCharactersAreTheSourceCharacters(s: String, start: Integer, count: Integer): Boolean
+    => Substring(s, start, count).Count.Range.All(i =>
+        Substring(s, start, count).At(i) == s.At(start.Max(0) + i));
+```
+
+### Law_PrefixPrecedesExtension
+
+[stdlib/tests/text.laws.plato, line 180](../../../../../stdlib/tests/text.laws.plato#L180)
+
+```plato
+// A prefix precedes its extension, for the runner's Strings and a character after it.
+Law_PrefixPrecedesExtension(s: String, a: Integer): Boolean
+    => s < FromCharacters(MapRange(s.Count + 1, i => i < s.Count ? s.At(i) : Code(a).ToCharacter))
+    && !(FromCharacters(MapRange(s.Count + 1, i => i < s.Count ? s.At(i) : Code(a).ToCharacter)) <= s);
+```
+
+## Source
+
 **File:** [intrinsics.library](../intrinsics.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 161
+### Line 161
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 161](../../../../../stdlib/foundation/intrinsics.library.plato#L161).
 
@@ -21,7 +122,7 @@ Copied from source, comments included. A comment records intent. The body is the
     At(s: String, n: Integer): Character;
 ```
 
-## Line 244
+### Line 244
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 244](../../../../../stdlib/foundation/intrinsics.library.plato#L244).
 
@@ -29,7 +130,7 @@ Copied from source, comments included. A comment records intent. The body is the
     At(xs: Array<$T>, n: Integer): $T;
 ```
 
-## Line 262
+### Line 262
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 262](../../../../../stdlib/foundation/intrinsics.library.plato#L262).
 
@@ -39,7 +140,7 @@ Copied from source, comments included. A comment records intent. The body is the
     At(xs: List<$T>, n: Integer): $T;
 ```
 
-## Line 291
+### Line 291
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 291](../../../../../stdlib/foundation/intrinsics.library.plato#L291).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point after `remaining` further warp iterations.
+
+## Signature
+
+```plato
+WarpPoint(basis: NoiseBasis, seed: Integer, strength: Number, frequency: Number, p: Point2D, remaining: Integer): Point2D
+WarpPoint(basis: NoiseBasis, seed: Integer, strength: Number, frequency: Number, p: Point3D, remaining: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 718](../../../../../stdlib/geometry/noise.library.plato#L718): 1e-3 in the field's own input units: small enough that the second-order error
+- [Line 720](../../../../../stdlib/geometry/noise.library.plato#L720): catastrophic cancellation in single precision.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 703
+### Line 703
 
 **Source:** [stdlib/geometry/noise.library.plato, line 703](../../../../../stdlib/geometry/noise.library.plato#L703).
 
@@ -49,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
                 remaining - 1);
 ```
 
-## Line 738
+### Line 738
 
 **Source:** [stdlib/geometry/noise.library.plato, line 738](../../../../../stdlib/geometry/noise.library.plato#L738).
 

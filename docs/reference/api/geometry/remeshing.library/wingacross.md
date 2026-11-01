@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The vertex across the triangle on the far side of a corner's edge — one wing
+> of the Butterfly stencil. The "none" index when that edge is on a boundary.
+
+## Signature
+
+```plato
+WingAcross(self: TriangleMesh3D, topology: TriangleMeshTopology, corner: CornerIndex): VertexIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 820
+### Line 820
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 820](../../../../../stdlib/geometry/remeshing.library.plato#L820).
 

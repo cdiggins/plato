@@ -3,11 +3,52 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Every vertex position, in vertex order.
+
+## Signature
+
+```plato
+Positions(self: Cloth3D): Array<Point3D>
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_TriangulationPreservesPositions
+
+[stdlib/tests/triangulation.laws.plato, line 40](../../../../../stdlib/tests/triangulation.laws.plato#L40)
+
+```plato
+// The mesh triangulation is over the polygon's own vertices: the positions come back
+// unchanged and in order, which is what makes the face indices meaningful to the caller.
+Law_TriangulationPreservesPositions(p: Polygon2D): Boolean
+    => p.Triangulate.Positions.Count == p.Points.Count;
+```
+
+### Law_HoledTriangulationPreservesPositions
+
+[stdlib/tests/triangulation.laws.plato, line 57](../../../../../stdlib/tests/triangulation.laws.plato#L57)
+
+```plato
+Law_HoledTriangulationPreservesPositions(r: PolygonWithHoles2D): Boolean
+    => r.Triangulate.Positions.Count == r.PointPool.Count;
+```
+
+## Used by
+
+- [Mapping Plato to C#](../../../implementation/csharp.md)
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 787
+### Line 787
 
 **Source:** [stdlib/future/cloth.library.plato, line 787](../../../../../stdlib/future/cloth.library.plato#L787).
 

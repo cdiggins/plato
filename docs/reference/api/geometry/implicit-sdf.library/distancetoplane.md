@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed distance from a point to the plane with the given unit normal at
+> signed offset from the origin. Exact. Precondition: normal has unit length.
+> (IQ: sdPlane.)
+
+## Signature
+
+```plato
+DistanceToPlane(p: Point3D, normal: Vector3D, offset: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_LineIsPlaneSlice
+
+[stdlib/tests/implicit-sdf.laws.plato, line 130](../../../../../stdlib/tests/implicit-sdf.laws.plato#L130)
+
+```plato
+// A line is the z = 0 slice of the plane with the same in-plane normal.
+Law_LineIsPlaneSlice(p: Point2D, normal: Vector2D, offset: Number): Boolean
+    => DistanceToLine(p, normal, offset)
+        .LawEq(DistanceToPlane(
+            Point3D(p.X, p.Y, 0.0),
+            Vector3D(normal.X, normal.Y, 0.0),
+            offset));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 898
+### Line 898
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 898](../../../../../stdlib/geometry/implicit-sdf.library.plato#L898).
 

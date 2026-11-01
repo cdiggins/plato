@@ -3,11 +3,27 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Rotate about the world Y axis through the origin.
+
+## Signature
+
+```plato
+RotateY(self: IDeformable3D, angle: Angle): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intervals-transforms-deformable.library](../intervals-transforms-deformable.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 103
+### Line 103
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 103](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L103).
 

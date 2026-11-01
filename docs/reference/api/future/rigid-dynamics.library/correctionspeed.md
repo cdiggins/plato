@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The correction speed a penetration asks for: the excess beyond the slop,
+> scaled by the Baumgarte factor and spread over one step, capped. Zero when
+> the overlap is within the slop.
+
+## Signature
+
+```plato
+CorrectionSpeed(penetration: Length, settings: ContactSolverSettings, seconds: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 760](../../../../../stdlib/future/rigid-dynamics.library.plato#L760):     which is what gives collision detection something to find next frame; a
+- [Line 761](../../../../../stdlib/future/rigid-dynamics.library.plato#L761):     solver that drives penetration to exactly zero loses the contact, regains
+- [Line 762](../../../../../stdlib/future/rigid-dynamics.library.plato#L762):     it after the body falls back, and buzzes at the frame rate.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 745
+### Line 745
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 745](../../../../../stdlib/future/rigid-dynamics.library.plato#L745).
 

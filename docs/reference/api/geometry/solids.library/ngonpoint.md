@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A point on the regular n-gon inscribed in the unit circle, walked at
+> CONSTANT RATE: t in \[0,1\] covers the whole perimeter and the path is linear
+> between vertices (so the sides are genuinely flat, not chorded arcs). t is
+> taken modulo 1, so the walk repeats. Precondition: n >= 3.
+
+## Signature
+
+```plato
+NGonPoint(t: Number, n: Integer): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.library](../solids.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 48
+### Line 48
 
 **Source:** [stdlib/geometry/solids.library.plato, line 48](../../../../../stdlib/geometry/solids.library.plato#L48).
 

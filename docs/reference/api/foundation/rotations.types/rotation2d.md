@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A rotation in the plane, stored as a single angle.
+
+## Signature
+
+```plato
+type Rotation2D
+    implements IValue, IMultiplicative, IInterpolatable, IRigid2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IMultiplicative](../algebra.concepts/imultiplicative.md), [IInterpolatable](../algebra.concepts/iinterpolatable.md), [IRigid2D](../transforms.concepts/irigid2d.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [rotations.types](../rotations.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 49
+### Line 49
 
 **Source:** [stdlib/foundation/rotations.types.plato, line 49](../../../../../stdlib/foundation/rotations.types.plato#L49).
 

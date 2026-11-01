@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One stitch per undirected edge: folded over the corners keeping only the
+> canonical half of each twin pair, appending that edge's stitch faces.
+> `Repeat(0, ...)` is the empty seed.
+
+## Signature
+
+```plato
+EdgeStitchFaces(self: PolygonMesh3D, stitch: Function2<PolygonMesh3D, CornerIndex, Array<Array<VertexIndex>>>): Array<Array<VertexIndex>>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 454
+### Line 454
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 454](../../../../../stdlib/geometry/polyhedra.library.plato#L454).
 

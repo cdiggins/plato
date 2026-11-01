@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Every vertex of one grid row pinned: the rail a hanging curtain hangs
+> from. Precondition: the cloth was built from this grid.
+
+## Signature
+
+```plato
+WithPinnedGridRow(self: ClothMesh3D, grid: ClothGrid3D, row: Integer): ClothMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 824
+### Line 824
 
 **Source:** [stdlib/future/cloth.library.plato, line 824](../../../../../stdlib/future/cloth.library.plato#L824).
 

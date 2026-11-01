@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Signed shoelace area: positive for counter-clockwise winding
+
+## Signature
+
+```plato
+Area(t: Triangle2D): Number
+Area(t: Triangle3D): Number
+Area(q: Quad2D): Number
+Area(q: Quad3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 78
+### Line 78
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 78](../../../../../legacy/stdlib-legacy/geometry.library.plato#L78).
 
@@ -20,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
 	Area(t: Triangle2D): Number => (t.A.X * (t.B.Y - t.C.Y) + t.B.X * (t.C.Y - t.A.Y) + t.C.X * (t.A.Y - t.B.Y)).Half;
 ```
 
-## Line 91
+### Line 91
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 91](../../../../../legacy/stdlib-legacy/geometry.library.plato#L91).
 
@@ -32,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Area(t: Triangle3D): Number => t.CrossProductA.Magnitude.Half;
 ```
 
-## Line 134
+### Line 134
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 134](../../../../../legacy/stdlib-legacy/geometry.library.plato#L134).
 
@@ -40,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Area(q: Quad2D): Number => q.TriangleA.Area + q.TriangleB.Area;
 ```
 
-## Line 149
+### Line 149
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 149](../../../../../legacy/stdlib-legacy/geometry.library.plato#L149).
 

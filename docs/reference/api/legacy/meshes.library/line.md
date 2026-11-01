@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Line(self: IArray<Point3D>, index: Integer2): Line3D
+Line(self: IPointGeometry3D, index: Integer2): Line3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 1](../../../../../legacy/stdlib-legacy/meshes.library.plato#L1).
 
@@ -18,7 +35,7 @@ library Meshes
     Line(self: IArray<Point3D>, index: Integer2): Line3D => (self[index.A], self[index.B]);
 ```
 
-## Line 7
+### Line 7
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 7](../../../../../legacy/stdlib-legacy/meshes.library.plato#L7).
 

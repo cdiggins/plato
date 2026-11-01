@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The sum of two inertia tensors, which is how a compound body's tensor is
+> built: shift each part to the common centre of mass, then add.
+
+## Signature
+
+```plato
+CombinedInertia(a: SymmetricMatrix3x3, b: SymmetricMatrix3x3): SymmetricMatrix3x3
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 207
+### Line 207
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 207](../../../../../stdlib/future/rigid-dynamics.library.plato#L207).
 

@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> True when the vertex must not move: explicitly pinned, or of infinite
+> mass (a non-positive inverse mass).
+
+## Signature
+
+```plato
+IsFixed(self: ClothVertex): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 60
+### Line 60
 
 **Source:** [stdlib/future/cloth.library.plato, line 60](../../../../../stdlib/future/cloth.library.plato#L60).
 

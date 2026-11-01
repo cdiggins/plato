@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One undirected shell edge: the two vertices it connects and the one curve
+> it owns. The curve runs from Start (parameter 0) to End (parameter 1);
+> `Validate` checks that agreement.
+
+## Signature
+
+```plato
+type BrepEdge
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [brep.types](../brep.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 32
+### Line 32
 
 **Source:** [stdlib/geometry/brep.types.plato, line 32](../../../../../stdlib/geometry/brep.types.plato#L32).
 

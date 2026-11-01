@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The edge anti-aliasing technique: hardware multisampling with its sample
+> count (Msaa), fast post-process (Fxaa), temporal (Taa), or morphological
+> (Smaa). (https://en.wikipedia.org/wiki/Spatial\_anti-aliasing)
+
+## Signature
+
+```plato
+type AntiAliasing
+    = None
+    | Msaa(SampleCount: Integer)
+    | Fxaa
+    | Taa
+    | Smaa
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [render.types](../render.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 32
+### Line 32
 
 **Source:** [stdlib/graphics/render.types.plato, line 32](../../../../../stdlib/graphics/render.types.plato#L32).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unit surface normal at the centre of the UV domain.
+
+## Signature
+
+```plato
+NormalAtCenter(self: IDifferentiableSurface): Direction3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 402](../../../../../stdlib/geometry/surfaces.library.plato#L402): span the tangent plane; NormalAt is their oriented unit normal. The
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.library](../surfaces.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 397
+### Line 397
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 397](../../../../../stdlib/geometry/surfaces.library.plato#L397).
 

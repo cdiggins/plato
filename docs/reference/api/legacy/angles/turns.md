@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Turns(x: Integer): Angle
+Turns(x: Number): Angle
+Turns(x: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [angles](../angles.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [legacy/stdlib-legacy/angles.plato, line 1](../../../../../legacy/stdlib-legacy/angles.plato#L1).
 
@@ -18,7 +36,7 @@ library Angles
 	Turns(x: Integer): Angle => x.Number.Turns;
 ```
 
-## Line 9
+### Line 9
 
 **Source:** [legacy/stdlib-legacy/angles.plato, line 9](../../../../../legacy/stdlib-legacy/angles.plato#L9).
 
@@ -27,7 +45,7 @@ library Angles
 	Turns(x: Number): Angle => (x * TwoPi);
 ```
 
-## Line 15
+### Line 15
 
 **Source:** [legacy/stdlib-legacy/angles.plato, line 15](../../../../../legacy/stdlib-legacy/angles.plato#L15).
 

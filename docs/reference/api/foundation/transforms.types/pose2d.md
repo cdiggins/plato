@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A rigid placement in the plane: position plus rotation. Also known as a 2D
+> rigid transform (https://en.wikipedia.org/wiki/Rigid\_transformation).
+
+## Signature
+
+```plato
+type Pose2D
+    implements IValue, IInterpolatable, IRigid2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IInterpolatable](../algebra.concepts/iinterpolatable.md), [IRigid2D](../transforms.concepts/irigid2d.md).
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.types](../transforms.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 121
+### Line 121
 
 **Source:** [stdlib/foundation/transforms.types.plato, line 121](../../../../../stdlib/foundation/transforms.types.plato#L121).
 

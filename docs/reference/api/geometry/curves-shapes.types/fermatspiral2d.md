@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One branch of Fermat's spiral r = Scale \* sqrt(theta), swept over Angles:
+> evenly filling coils, the basis of sunflower/phyllotaxis layouts
+> (https://en.wikipedia.org/wiki/Fermat%27s\_spiral).
+
+## Signature
+
+```plato
+type FermatSpiral2D
+    implements IPolarCurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IPolarCurve2D](../curves.concepts/ipolarcurve2d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.types](../curves-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 294
+### Line 294
 
 **Source:** [stdlib/geometry/curves-shapes.types.plato, line 294](../../../../../stdlib/geometry/curves-shapes.types.plato#L294).
 

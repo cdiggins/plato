@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Three degrees of freedom per mesh position.
+
+## Signature
+
+```plato
+DofCount(model: ElasticModel3D): Integer
+DofCount(model: ElasticModel2D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 432](../../../../../stdlib/future/finite-elements.library.plato#L432): "which degrees of freedom does this load touch" separate from "add it up"
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 426
+### Line 426
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 426](../../../../../stdlib/future/finite-elements.library.plato#L426).
 
@@ -26,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => model.Mesh.Positions.Count * 3;
 ```
 
-## Line 511
+### Line 511
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 511](../../../../../stdlib/future/finite-elements.library.plato#L511).
 

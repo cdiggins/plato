@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The length of the sampled vector: flow speed or displacement magnitude.
+
+## Signature
+
+```plato
+MagnitudeAt(self: IVectorField2D, point: Point2D): Number
+MagnitudeAt(self: IVectorField3D, point: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 98
+### Line 98
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 98](../../../../../stdlib/geometry/fields-implicits.library.plato#L98).
 
@@ -24,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(point).Magnitude;
 ```
 
-## Line 113
+### Line 113
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 113](../../../../../stdlib/geometry/fields-implicits.library.plato#L113).
 

@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> True when an undirected edge is shared by two faces, which is what a
+> dihedral bend constraint needs. A boundary edge has one.
+
+## Signature
+
+```plato
+IsInteriorEdge(self: PolygonMesh3D, edge: UndirectedEdgeIndex): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 625
+### Line 625
 
 **Source:** [stdlib/future/cloth.library.plato, line 625](../../../../../stdlib/future/cloth.library.plato#L625).
 

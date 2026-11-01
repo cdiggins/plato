@@ -3,11 +3,45 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The response shape of a second-order (biquad) filter section. The peaking
+> and shelf shapes carry their gain in decibels; the others have none.
+> (https://en.wikipedia.org/wiki/Audio\_filter)
+
+## Signature
+
+```plato
+type BiquadResponse
+    = LowPass
+    | HighPass
+    | BandPass
+    | Notch
+    | AllPass
+    | PeakingEq(GainDecibels: Number)
+    | LowShelf(GainDecibels: Number)
+    | HighShelf(GainDecibels: Number)
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [signals.types](../signals.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 125
+### Line 125
 
 **Source:** [stdlib/future/signals.types.plato, line 125](../../../../../stdlib/future/signals.types.plato#L125).
 

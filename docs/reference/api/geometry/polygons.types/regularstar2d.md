@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A star polygon with PointCount tips alternating between OuterRadius and
+> InnerRadius vertices about Center (2 \* PointCount vertices in all); Rotation
+> turns the first tip away from +X (https://en.wikipedia.org/wiki/Star\_polygon).
+> Invariants: PointCount >= 3, 0 \< InnerRadius \<= OuterRadius.
+
+## Signature
+
+```plato
+type RegularStar2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, ICentered2D, IContainsPoint2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry2D](../geometry.concepts/igeometry2d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConnected](../geometry.concepts/iconnected.md), [IArea](../geometry.concepts/iarea.md), [IBounded2D](../geometry.concepts/ibounded2d.md), [ICentered2D](../geometry.concepts/icentered2d.md), [IContainsPoint2D](../geometry.concepts/icontainspoint2d.md).
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.types](../polygons.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 56
+### Line 56
 
 **Source:** [stdlib/geometry/polygons.types.plato, line 56](../../../../../stdlib/geometry/polygons.types.plato#L56).
 

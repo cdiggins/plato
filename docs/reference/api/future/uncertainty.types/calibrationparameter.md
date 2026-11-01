@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One fitted coefficient of a calibration model: its name, its value with the
+> uncertainty the fit assigned it, and the unit that value is expressed in.
+
+## Signature
+
+```plato
+type CalibrationParameter
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty.types](../uncertainty.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 235
+### Line 235
 
 **Source:** [stdlib/future/uncertainty.types.plato, line 235](../../../../../stdlib/future/uncertainty.types.plato#L235).
 

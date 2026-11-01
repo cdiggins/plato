@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The figure-eight immersion of the Klein bottle: a section of radius TubeRadius
+> makes a half turn as it travels once around a ring of radius Radius, so the
+> surface closes onto itself reversed. Closed and one-sided, with no boundary
+> (https://en.wikipedia.org/wiki/Klein\_bottle).
+
+## Signature
+
+```plato
+type KleinBottle
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.types](../surfaces-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 187
+### Line 187
 
 **Source:** [stdlib/geometry/surfaces-shapes.types.plato, line 187](../../../../../stdlib/geometry/surfaces-shapes.types.plato#L187).
 

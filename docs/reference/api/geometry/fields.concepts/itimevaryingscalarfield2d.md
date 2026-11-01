@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar scalar field that changes over time: animated masks, ripples,
+> and evolving density maps.
+
+## Signature
+
+```plato
+interface ITimeVaryingScalarField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields.concepts](../fields.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 149
+### Line 149
 
 **Source:** [stdlib/geometry/fields.concepts.plato, line 149](../../../../../stdlib/geometry/fields.concepts.plato#L149).
 

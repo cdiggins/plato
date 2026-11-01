@@ -3,11 +3,29 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Rotate every point about `center` by `rotation`.
+
+## Signature
+
+```plato
+RotateAbout(self: IDeformable2D, center: Point2D, rotation: Rotation2D): Self
+RotateAbout(self: IDeformable2D, center: Point2D, angle: Angle): Self
+RotateAbout(self: IDeformable3D, center: Point3D, rotation: Quaternion): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intervals-transforms-deformable.library](../intervals-transforms-deformable.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 28
+### Line 28
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 28](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L28).
 
@@ -18,7 +36,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => center + center.Between(p).Transform(rotation));
 ```
 
-## Line 32
+### Line 32
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 32](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L32).
 
@@ -29,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.RotateAbout(center, Rotation2D(angle));
 ```
 
-## Line 91
+### Line 91
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 91](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L91).
 

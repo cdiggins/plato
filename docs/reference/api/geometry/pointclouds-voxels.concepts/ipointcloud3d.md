@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Anything that can shed its structure and yield its points as a bare
+> position cloud: meshes, enriched clouds, scan slices.
+
+## Signature
+
+```plato
+interface IPointCloud3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [OrientedPointCloud3D](../pointclouds.types/orientedpointcloud3d.md), [ColoredPointCloud3D](../pointclouds.types/coloredpointcloud3d.md), [AttributedPointCloud3D](../pointclouds.types/attributedpointcloud3d.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [pointclouds-voxels.concepts](../pointclouds-voxels.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/pointclouds-voxels.concepts.plato, line 1](../../../../../stdlib/geometry/pointclouds-voxels.concepts.plato#L1).
 

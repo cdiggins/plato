@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The secant vector between the positions at parameters t0 and t1.
+
+## Signature
+
+```plato
+SecantBetween(self: ICurve2D, t0: Number, t1: Number): Vector2D
+SecantBetween(self: ICurve3D, t0: Number, t1: Number): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 97
+### Line 97
 
 **Source:** [stdlib/geometry/curves.library.plato, line 97](../../../../../stdlib/geometry/curves.library.plato#L97).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(t0).Between(self.Eval(t1));
 ```
 
-## Line 137
+### Line 137
 
 **Source:** [stdlib/geometry/curves.library.plato, line 137](../../../../../stdlib/geometry/curves.library.plato#L137).
 

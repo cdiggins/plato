@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> (tan x)' = x' / cos^2 x. Precondition: IValue is not an odd multiple of
+> a quarter turn, where the tangent and this rule both diverge.
+
+## Signature
+
+```plato
+Tan(x: DualNumber): DualNumber
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 399
+### Line 399
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 399](../../../../../stdlib/foundation/numbers.library.plato#L399).
 

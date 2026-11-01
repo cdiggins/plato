@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar vector field with the same vector at every point.
+
+## Signature
+
+```plato
+type ConstantVectorField2D
+    implements IValue, IVectorField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IVectorField2D](../fields.concepts/ivectorfield2d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields.types](../fields.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 29
+### Line 29
 
 **Source:** [stdlib/geometry/fields.types.plato, line 29](../../../../../stdlib/geometry/fields.types.plato#L29).
 

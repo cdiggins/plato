@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Primitives stored as index tuples into a shared vertex pool: the storage
+> layer under an indexed mesh (https://en.wikipedia.org/wiki/Polygon\_mesh).
+> Every index must be valid — no -1 inside a face. TIndex is the typed index
+> tuple that fixes the primitive's arity — VertexPair, TriangleFace, QuadFace.
+> `Primitives` is derivable here (gather Vertices by FaceIndices), so an
+> implementor supplies the pool and the index table and inherits the view.
+
+## Signature
+
+```plato
+interface IIndexedGeometry<TPoint, TPrim, TIndex>
+    inherits IPrimitiveGeometry<TPoint, TPrim>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IPrimitiveGeometry](iprimitivegeometry.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.concepts](../meshes.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 114
+### Line 114
 
 **Source:** [stdlib/geometry/meshes.concepts.plato, line 114](../../../../../stdlib/geometry/meshes.concepts.plato#L114).
 

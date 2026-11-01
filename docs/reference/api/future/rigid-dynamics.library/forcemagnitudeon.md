@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The magnitude of the force exerted on the body, in newtons.
+
+## Signature
+
+```plato
+ForceMagnitudeOn(self: IForceModel2D, body: RigidBody2D): Number
+ForceMagnitudeOn(self: IForceModel3D, body: RigidBody3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 1](../../../../../stdlib/future/rigid-dynamics.library.plato#L1).
 
@@ -94,7 +115,7 @@ library RigidDynamics
         => self.ForceOn(body).Magnitude;
 ```
 
-## Line 92
+### Line 92
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 92](../../../../../stdlib/future/rigid-dynamics.library.plato#L92).
 

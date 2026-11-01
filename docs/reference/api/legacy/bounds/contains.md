@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Contains(x: IBounds<$T, $D>, value: $T): Boolean
+Contains(x: IBounds<$T, $D>, y: IBounds<$T, $D>): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [bounds](../bounds.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 12
+### Line 12
 
 **Source:** [legacy/stdlib-legacy/bounds.plato, line 12](../../../../../legacy/stdlib-legacy/bounds.plato#L12).
 
@@ -17,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => value.Between(x.Min, x.Max);
 ```
 
-## Line 15
+### Line 15
 
 **Source:** [legacy/stdlib-legacy/bounds.plato, line 15](../../../../../legacy/stdlib-legacy/bounds.plato#L15).
 

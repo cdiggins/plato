@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The midpoint of every undirected edge, in edge-index order: the vertices
+> of the ambo. Folded over the corners in ascending order keeping only the
+> canonical half of each twin pair — whose rank IS its edge index, so the
+> result lands in CornerUndirectedEdge order by construction. `Repeat(0, …)` is the
+> empty seed.
+
+## Signature
+
+```plato
+UndirectedEdgeMidpoints(self: PolygonMesh3D): Array<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 290
+### Line 290
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 290](../../../../../stdlib/geometry/polyhedra.library.plato#L290).
 

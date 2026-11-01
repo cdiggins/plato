@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The hull vertices as the source points they came from, in hull order.
+> The provenance the hull preserves: index a per-point attribute array
+> with these to carry attributes onto the hull.
+
+## Signature
+
+```plato
+SourcePoints(self: ConvexHull2D, points: Array<Point2D>): Array<Point2D>
+SourcePoints(self: ConvexHull3D, points: Array<Point3D>): Array<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 221
+### Line 221
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 221](../../../../../stdlib/geometry/geometry.library.plato#L221).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.SourceIndices.Map(i => points[i.Value]);
 ```
 
-## Line 309
+### Line 309
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 309](../../../../../stdlib/geometry/geometry.library.plato#L309).
 

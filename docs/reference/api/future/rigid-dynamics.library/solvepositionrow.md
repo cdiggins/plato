@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The world after solving row `index` once for POSITION: the normal axis only,
+> aiming at the correction speed, with no restitution and no friction. Friction
+> is deliberately absent — a fictitious tangential velocity would shear a stack
+> sideways as it settles.
+>
+> The row's NormalImpulse field is reused as the accumulator for the pseudo
+> impulse, so the clamp is on the accumulated value exactly as in the velocity
+> solve and a later row can undo an earlier row's over-push. That reuse is safe
+> because `SolvePositions` runs on a copy whose constraints it discards; only
+> the body twists survive.
+
+## Signature
+
+```plato
+SolvePositionRow(world: RigidWorld3D, index: Integer): RigidWorld3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 774
+### Line 774
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 774](../../../../../stdlib/future/rigid-dynamics.library.plato#L774).
 

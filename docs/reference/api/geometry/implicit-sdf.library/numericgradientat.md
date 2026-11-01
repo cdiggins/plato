@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The gradient of a planar SDF by central differences: one forward and one
+> backward evaluation per axis, which cancels the first-order error term.
+> Precondition: step is positive.
+> (https://en.wikipedia.org/wiki/Finite\_difference)
+
+## Signature
+
+```plato
+NumericGradientAt(self: ISignedDistanceField2D, point: Point2D, step: Number): Vector2D
+NumericGradientAt(self: ISignedDistanceField3D, point: Point3D, step: Number): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 323
+### Line 323
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 323](../../../../../stdlib/geometry/implicit-sdf.library.plato#L323).
 
@@ -24,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
            / (2.0 * step);
 ```
 
-## Line 333
+### Line 333
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 333](../../../../../stdlib/geometry/implicit-sdf.library.plato#L333).
 

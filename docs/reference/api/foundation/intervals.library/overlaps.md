@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the two boxes share any point (closed overlap on every axis).
+
+## Signature
+
+```plato
+Overlaps(self: Bounds2D, other: Bounds2D): Boolean
+Overlaps(self: Bounds3D, other: Bounds3D): Boolean
+Overlaps(self: IInterval<$T>, other: IInterval<$T>): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 97
+### Line 97
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 97](../../../../../stdlib/foundation/intervals.library.plato#L97).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         && self.Min.Y <= other.Max.Y && other.Min.Y <= self.Max.Y;
 ```
 
-## Line 137
+### Line 137
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 137](../../../../../stdlib/foundation/intervals.library.plato#L137).
 
@@ -32,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
         && self.Min.Z <= other.Max.Z && other.Min.Z <= self.Max.Z;
 ```
 
-## Line 231
+### Line 231
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 231](../../../../../stdlib/foundation/intervals.library.plato#L231).
 

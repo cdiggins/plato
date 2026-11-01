@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The edges of a triangle mesh, recovered once and indexed both ways: from a
+> corner to the undirected edge it runs along, and from an undirected edge back
+> to the corner that names it. CornerEdges and CornerTwins have one entry per
+> corner (three times the face count); UndirectedEdges and EdgeCorners have one
+> entry per undirected edge. A corner with no twin is a boundary corner and
+> stores -1.
+> Convention: see CONVENTIONS.md - Typed indices (-1 means "none").
+
+## Signature
+
+```plato
+type TriangleMeshTopology
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.types](../remeshing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/remeshing.types.plato, line 1](../../../../../stdlib/geometry/remeshing.types.plato#L1).
 

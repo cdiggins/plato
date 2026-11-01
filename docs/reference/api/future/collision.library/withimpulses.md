@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The row with new values for its three accumulated impulses and everything
+> else left alone. Rebuilt field by field: `With<Field>` accessors are
+> synthesized by the code writers, not by the language, so a Plato body that
+> wants one names the constructor.
+
+## Signature
+
+```plato
+WithImpulses(row: ContactConstraint3D, normal: Impulse, tangent: Impulse,
+    bitangent: Impulse): ContactConstraint3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 329
+### Line 329
 
 **Source:** [stdlib/future/collision.library.plato, line 329](../../../../../stdlib/future/collision.library.plato#L329).
 

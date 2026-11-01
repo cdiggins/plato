@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The relative radius: the smallest distance between any two points, as a
+> fraction of `ReferenceSpacing`. The single number that says how blue a
+> pattern is. A hexagonal lattice reads 1 by definition and a square grid
+> reads about 0.93. A maximal Poisson-disk set lands somewhat below that,
+> near its own radius over the reference spacing. Uniform random points and a
+> fully jittered grid both read near zero, for the same reason: two
+> independent draws can land arbitrarily close, and one pair doing so is
+> enough. Fewer than two points read zero.
+
+## Signature
+
+```plato
+RelativeRadius(region: Bounds2D, points: Array<Point2D>): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 979
+### Line 979
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 979](../../../../../stdlib/geometry/sampling.library.plato#L979).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The disk of all points within Radius of Center; its boundary is the circle
+> proper (https://en.wikipedia.org/wiki/Circle). Radius is non-negative.
+
+## Signature
+
+```plato
+type Circle
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentered2D, IContainsPoint2D, INearestPoint2D, ISupport2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry2D](../geometry.concepts/igeometry2d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IArea](../geometry.concepts/iarea.md), [IBounded2D](../geometry.concepts/ibounded2d.md), [ICentered2D](../geometry.concepts/icentered2d.md), [IContainsPoint2D](../geometry.concepts/icontainspoint2d.md), [INearestPoint2D](../geometry.concepts/inearestpoint2d.md), [ISupport2D](../geometry.concepts/isupport2d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [planar.types](../planar.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 50
+### Line 50
 
 **Source:** [stdlib/geometry/planar.types.plato, line 50](../../../../../stdlib/geometry/planar.types.plato#L50).
 

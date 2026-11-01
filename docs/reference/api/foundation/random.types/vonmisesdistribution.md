@@ -3,11 +3,51 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A circular distribution of angles concentrated around MeanDirection; the
+> circular analog of the normal distribution. Concentration 0 is uniform on
+> the circle. Pdf and Cdf take the angle in radians, and Mean reports the
+> mean direction in radians.
+
+## Signature
+
+```plato
+type VonMisesDistribution
+    implements IProbabilityDistribution
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_VonMisesCdfZeroKappaIsUniform
+
+[stdlib/tests/special-numerics.laws.plato, line 46](../../../../../stdlib/tests/special-numerics.laws.plato#L46)
+
+```plato
+// At Concentration 0 the distribution is uniform on the circle and the CDF
+// of the wrapped angle is 1/2 + wrap(x)/(2 pi).
+Law_VonMisesCdfZeroKappaIsUniform(x: Number): Boolean
+    => VonMisesDistribution(Angle(0.0), 0.0).Cdf(x)
+        .SpecialEq(0.5 + x.WrapToPi / Number.Tau);
+```
+
+## Concepts
+
+Implements: [IProbabilityDistribution](../random.concepts/iprobabilitydistribution.md).
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.types](../random.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 121
+### Line 121
 
 **Source:** [stdlib/foundation/random.types.plato, line 121](../../../../../stdlib/foundation/random.types.plato#L121).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar vector field defined by a stored function from a plane position to a
+> 2D vector: gradients, flows, and displacement maps.
+
+## Signature
+
+```plato
+type VectorFunctionField2D
+    implements IVectorField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IVectorField2D](../fields.concepts/ivectorfield2d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields.types](../fields.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 100
+### Line 100
 
 **Source:** [stdlib/geometry/fields.types.plato, line 100](../../../../../stdlib/geometry/fields.types.plato#L100).
 

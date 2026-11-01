@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The convex hull of a 3D point set: the bounding triangle mesh with outward
+> normals, plus the index of the source point each hull vertex came from.
+> SourceIndices is index-aligned with the mesh's own Positions.
+> (https://en.wikipedia.org/wiki/Quickhull)
+> No builder yet: instances come from a host, until a quickhull lands — see
+> tracker/decisions/2026-08-04-spatial-structure-construction-in-plato.md.
+
+## Signature
+
+```plato
+type ConvexHull3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.types](../geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 104
+### Line 104
 
 **Source:** [stdlib/geometry/geometry.types.plato, line 104](../../../../../stdlib/geometry/geometry.types.plato#L104).
 

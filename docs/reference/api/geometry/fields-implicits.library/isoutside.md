@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the point is strictly outside the boundary (positive distance).
+
+## Signature
+
+```plato
+IsOutside(self: ISignedDistanceField2D, point: Point2D): Boolean
+IsOutside(self: ISignedDistanceField3D, point: Point3D): Boolean
+IsOutside(self: IImplicitRegion2D, point: Point2D): Boolean
+IsOutside(self: IImplicitVolume3D, point: Point3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 312
+### Line 312
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 312](../../../../../stdlib/geometry/fields-implicits.library.plato#L312).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(point) > 0.0;
 ```
 
-## Line 351
+### Line 351
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 351](../../../../../stdlib/geometry/fields-implicits.library.plato#L351).
 
@@ -29,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(point) > 0.0;
 ```
 
-## Line 385
+### Line 385
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 385](../../../../../stdlib/geometry/fields-implicits.library.plato#L385).
 
@@ -40,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(point).Not;
 ```
 
-## Line 404
+### Line 404
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 404](../../../../../stdlib/geometry/fields-implicits.library.plato#L404).
 

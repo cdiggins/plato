@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The monkey saddle z = Scale \* (x^3 - 3 x y^2) over Domain: a saddle with three
+> descending directions rather than two. Not minimal — it is the standard
+> example of a degenerate critical point, and sits here beside the saddles it is
+> compared with (https://en.wikipedia.org/wiki/Monkey\_saddle).
+
+## Signature
+
+```plato
+type MonkeySaddle
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.types](../surfaces-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 327
+### Line 327
 
 **Source:** [stdlib/geometry/surfaces-shapes.types.plato, line 327](../../../../../stdlib/geometry/surfaces-shapes.types.plato#L327).
 

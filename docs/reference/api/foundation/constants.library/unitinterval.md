@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The interval \[0, 1\]: the default parameter domain for curves, surfaces,
+> easing functions, and interpolation. (https://en.wikipedia.org/wiki/Unit\_interval)
+
+## Signature
+
+```plato
+UnitInterval(_: NumberInterval): NumberInterval
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 159](../../../../../stdlib/foundation/constants.library.plato#L159): Canonical unit shapes
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [constants.library](../constants.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 157
+### Line 157
 
 **Source:** [stdlib/foundation/constants.library.plato, line 157](../../../../../stdlib/foundation/constants.library.plato#L157).
 

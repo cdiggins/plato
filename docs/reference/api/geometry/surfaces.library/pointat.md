@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The position for a UV coordinate; an intent-revealing alias for Eval.
+
+## Signature
+
+```plato
+PointAt(self: IParametricSurface, uv: UvCoordinate): Point3D
+PointAt(self: IParametricVolume, uvw: UvwCoordinate): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 351](../../../../../stdlib/geometry/surfaces.library.plato#L351): A UV surface's canonical domain is the unit square and a volume's the unit
+- [Line 357](../../../../../stdlib/geometry/surfaces.library.plato#L357): A surface over the unit-square UV domain (IProcedural\<UvCoordinate,
+- [Line 461](../../../../../stdlib/geometry/surfaces.library.plato#L461): A volume over the unit-cube UVW domain (IProcedural\<UvwCoordinate,
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.library](../surfaces.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 341
+### Line 341
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 341](../../../../../stdlib/geometry/surfaces.library.plato#L341).
 
@@ -37,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(uv);
 ```
 
-## Line 457
+### Line 457
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 457](../../../../../stdlib/geometry/surfaces.library.plato#L457).
 

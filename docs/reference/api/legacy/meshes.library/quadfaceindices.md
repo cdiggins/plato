@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> d -- c
+> |    |
+> a -- b
+> Where a == (col,row), b == (col+1,row), c == (col+1,row+1), d == (col,row+1)
+
+## Signature
+
+```plato
+QuadFaceIndices(col: Integer, row: Integer, nCols: Integer, nRows: Integer): Integer4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 112
+### Line 112
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 112](../../../../../legacy/stdlib-legacy/meshes.library.plato#L112).
 

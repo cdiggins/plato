@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The constant strain inside one tetrahedral cell, as the symmetric tensor of
+> TENSOR strains — off-diagonal entries are half the engineering shears,
+> which is what `StrainState3D` documents.
+> (https://en.wikipedia.org/wiki/Infinitesimal\_strain\_theory)
+
+## Signature
+
+```plato
+ElementStrain(c: TetrahedronCell, positions: Array<Point3D>,
+    displacements: Array<Vector3D>): StrainState3D
+
+ElementStrain(f: TriangleFace, positions: Array<Point2D>,
+    displacements: Array<Vector2D>): StrainState2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 592
+### Line 592
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 592](../../../../../stdlib/future/finite-elements.library.plato#L592).
 
@@ -36,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 642
+### Line 642
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 642](../../../../../stdlib/future/finite-elements.library.plato#L642).
 

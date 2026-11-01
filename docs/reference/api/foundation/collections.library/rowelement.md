@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The k-th item of row `row`, addressed without materializing the row.
+> Precondition: 0 \<= row \< RowCount and 0 \<= k \< RowLength(row).
+
+## Signature
+
+```plato
+RowElement(self: IJagged<$T>, row: Integer, k: Integer): $T
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.library](../collections.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 339
+### Line 339
 
 **Source:** [stdlib/foundation/collections.library.plato, line 339](../../../../../stdlib/foundation/collections.library.plato#L339).
 

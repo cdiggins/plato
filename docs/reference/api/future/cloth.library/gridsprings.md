@@ -3,11 +3,31 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The whole spring set: structural, then shear, then bend.
+
+## Signature
+
+```plato
+GridSprings(self: ClothGrid3D, compliance: Number): Array<ClothDistanceConstraint>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 526
+### Line 526
 
 **Source:** [stdlib/future/cloth.library.plato, line 526](../../../../../stdlib/future/cloth.library.plato#L526).
 

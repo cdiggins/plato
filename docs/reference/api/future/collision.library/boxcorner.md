@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Corner `index` (0 to 7) of an oriented box: bit 0 selects the +X half, bit 1
+> the +Y half and bit 2 the +Z half, each along the box's own axes.
+
+## Signature
+
+```plato
+BoxCorner(b: Box3D, index: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 195
+### Line 195
 
 **Source:** [stdlib/future/collision.library.plato, line 195](../../../../../stdlib/future/collision.library.plato#L195).
 

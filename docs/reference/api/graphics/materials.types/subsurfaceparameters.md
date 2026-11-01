@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Sub-surface light diffusion (skin, wax, marble). Radius is the per-channel
+> mean free path in scene units, uniformly scaled by Scale (0 disables);
+> Anisotropy is the Henyey-Greenstein g in \[-1, 1\].
+> (https://en.wikipedia.org/wiki/Subsurface\_scattering)
+
+## Signature
+
+```plato
+type SubsurfaceParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [materials.types](../materials.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 223
+### Line 223
 
 **Source:** [stdlib/graphics/materials.types.plato, line 223](../../../../../stdlib/graphics/materials.types.plato#L223).
 

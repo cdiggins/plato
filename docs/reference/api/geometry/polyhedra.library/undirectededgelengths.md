@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every undirected edge's length, in edge-index order — folded over the
+> corners keeping the canonical half of each twin pair, exactly as
+> `UndirectedEdgeMidpoints` does. `Repeat(0, …)` is the empty seed.
+
+## Signature
+
+```plato
+UndirectedEdgeLengths(self: PolygonMesh3D): Array<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 883
+### Line 883
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 883](../../../../../stdlib/geometry/polyhedra.library.plato#L883).
 

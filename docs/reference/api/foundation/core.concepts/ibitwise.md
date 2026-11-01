@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Supports bit-level operations. Applies to whole-number representations.
+> (https://en.wikipedia.org/wiki/Bitwise\_operation)
+
+## Signature
+
+```plato
+interface IBitwise
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Integer](../primitives/integer.md).
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [core.concepts](../core.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 76
+### Line 76
 
 **Source:** [stdlib/foundation/core.concepts.plato, line 76](../../../../../stdlib/foundation/core.concepts.plato#L76).
 

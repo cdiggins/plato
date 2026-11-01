@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The playback position and rate of a running animation. Time is the offset
+> into the clip; Speed is a rate multiplier (1 is natural speed).
+
+## Signature
+
+```plato
+type AnimationPlayhead
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [keyframes.types](../keyframes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 90
+### Line 90
 
 **Source:** [stdlib/future/keyframes.types.plato, line 90](../../../../../stdlib/future/keyframes.types.plato#L90).
 

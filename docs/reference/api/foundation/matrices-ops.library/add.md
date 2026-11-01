@@ -3,11 +3,114 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Element-wise sum.
+
+## Signature
+
+```plato
+Add(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2
+Add(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_AddBetweenAreInverse2D
+
+[stdlib/tests/foundation.laws.plato, line 126](../../../../../stdlib/tests/foundation.laws.plato#L126)
+
+```plato
+// The orientation contract, stated exactly as the interface documents it:
+// a.Add(a.Between(b)) == b. Between and Add are inverse.
+Law_AddBetweenAreInverse2D(a: Point2D, b: Point2D): Boolean
+    => a.Add(a.Between(b)).Distance(b) <= 1e-4;
+```
+
+### Law_AddBetweenAreInverse3D
+
+[stdlib/tests/foundation.laws.plato, line 129](../../../../../stdlib/tests/foundation.laws.plato#L129)
+
+```plato
+Law_AddBetweenAreInverse3D(a: Point3D, b: Point3D): Boolean
+    => a.Add(a.Between(b)).Distance(b) <= 1e-4;
+```
+
+### Law_AddBetweenAreInverseInstant
+
+[stdlib/tests/foundation.laws.plato, line 133](../../../../../stdlib/tests/foundation.laws.plato#L133)
+
+```plato
+// The same law on the time line, where the delta is a Duration rather than a vector.
+Law_AddBetweenAreInverseInstant(a: Instant, b: Instant): Boolean
+    => a.Add(a.Between(b)).SecondsSinceEpoch.LawEq(b.SecondsSinceEpoch);
+```
+
+### Law_AddThenSubtractDeltaIsIdentity2D
+
+[stdlib/tests/foundation.laws.plato, line 145](../../../../../stdlib/tests/foundation.laws.plato#L145)
+
+```plato
+// Displacing by a delta and back is the identity: (p + d) - d == p. Exercises the
+// derived Subtract(position, delta), which routes through Negative on the delta.
+Law_AddThenSubtractDeltaIsIdentity2D(p: Point2D, d: Vector2D): Boolean
+    => p.Add(d).Subtract(d).Distance(p) <= 1e-4;
+```
+
+### Law_AddThenSubtractDeltaIsIdentity3D
+
+[stdlib/tests/foundation.laws.plato, line 148](../../../../../stdlib/tests/foundation.laws.plato#L148)
+
+```plato
+Law_AddThenSubtractDeltaIsIdentity3D(p: Point3D, d: Vector3D): Boolean
+    => p.Add(d).Subtract(d).Distance(p) <= 1e-4;
+```
+
+### Law_OriginPlusOffsetRecoversPosition2D
+
+[stdlib/tests/foundation.laws.plato, line 154](../../../../../stdlib/tests/foundation.laws.plato#L154)
+
+```plato
+// A position is its origin displaced by its own offset. This is the IOriginBased
+// round trip, and it is what makes Offset/FromOffset a genuine isomorphism rather
+// than two unrelated conversions.
+Law_OriginPlusOffsetRecoversPosition2D(p: Point2D): Boolean
+    => p.Origin.Add(p.Offset).Distance(p) <= 1e-4;
+```
+
+### Law_OriginPlusOffsetRecoversPosition3D
+
+[stdlib/tests/foundation.laws.plato, line 157](../../../../../stdlib/tests/foundation.laws.plato#L157)
+
+```plato
+Law_OriginPlusOffsetRecoversPosition3D(p: Point3D): Boolean
+    => p.Origin.Add(p.Offset).Distance(p) <= 1e-4;
+```
+
+### Law_OriginIsEpoch
+
+[stdlib/tests/foundation.laws.plato, line 162](../../../../../stdlib/tests/foundation.laws.plato#L162)
+
+```plato
+// The epoch is the origin: an Instant's offset from the origin is its own
+// seconds-since-epoch. Ties the derived Origin back to the field it came from.
+Law_OriginIsEpoch(t: Instant): Boolean
+    => t.Origin.Add(t.Offset).SecondsSinceEpoch.LawEq(t.SecondsSinceEpoch);
+```
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 69
+### Line 69
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 69](../../../../../stdlib/foundation/matrices-ops.library.plato#L69).
 
@@ -20,7 +123,7 @@ Copied from source, comments included. A comment records intent. The body is the
             value1.Row3 + value2.Row3);
 ```
 
-## Line 200
+### Line 200
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 200](../../../../../stdlib/foundation/matrices-ops.library.plato#L200).
 

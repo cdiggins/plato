@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The polygon as a 0- or 1-element list: dropped when its ring has fewer
+> than three vertices and so bounds no area.
+
+## Signature
+
+```plato
+NonDegenerate(p: Polygon3D): Array<Polygon3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 126
+### Line 126
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 126](../../../../../stdlib/geometry/solids-csg.library.plato#L126).
 

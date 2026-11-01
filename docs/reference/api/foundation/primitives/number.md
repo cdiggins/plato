@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A real number, approximated by the arithmetic of the compilation's Number profile
+> (docs/SEMANTICS.md section 1): IEEE 754 binary64 under cpu64, the default, and binary32
+> under gpu32. One profile holds for the whole program; there is no second floating type.
+> (https://en.wikipedia.org/wiki/IEEE\_754)
+
+## Signature
+
+```plato
+primitive Number
+    implements IReal
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IReal](../algebra.concepts/ireal.md).
+
+## Used by
+
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+- [Numbers: Number and Integer](../../../start/tour/numbers.md)
+
+## Source
+
 **File:** [primitives](../primitives.md). Kind: primitive. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/primitives.plato, line 1](../../../../../stdlib/foundation/primitives.plato#L1).
 

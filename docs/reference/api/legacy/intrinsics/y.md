@@ -3,11 +3,41 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Y(self: Vector2): Number
+Y(self: Vector3): Number
+Y(self: Vector4): Number
+Y(self: Quaternion): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Mapping Plato to C#](../../../implementation/csharp.md)
+- [Language cheat sheet](../../../language/cheatsheet.md)
+- [Plato reference](../../../README.md)
+- [Interfaces: what a type can do](../../../start/tour/interfaces.md)
+- [Products: values with named fields](../../../start/tour/products.md)
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 97
+### Line 97
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 97](../../../../../legacy/stdlib-legacy/intrinsics.plato#L97).
 
@@ -15,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Y(self: Vector2): Number;
 ```
 
-## Line 134
+### Line 134
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 134](../../../../../legacy/stdlib-legacy/intrinsics.plato#L134).
 
@@ -23,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Y(self: Vector3): Number;
 ```
 
-## Line 172
+### Line 172
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 172](../../../../../legacy/stdlib-legacy/intrinsics.plato#L172).
 
@@ -31,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Y(self: Vector4): Number;
 ```
 
-## Line 280
+### Line 280
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 280](../../../../../legacy/stdlib-legacy/intrinsics.plato#L280).
 

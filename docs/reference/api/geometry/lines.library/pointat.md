@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point at parameter t: Origin + Direction \* t.
+
+## Signature
+
+```plato
+PointAt(l: InfiniteLine2D, t: Number): Point2D
+PointAt(l: InfiniteLine3D, t: Number): Point3D
+PointAt(r: Ray2D, t: Number): Point2D
+PointAt(r: Ray3D, t: Number): Point3D
+PointAt(s: Line2D, t: Number): Point2D
+PointAt(s: Line3D, t: Number): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 97
+### Line 97
 
 **Source:** [stdlib/geometry/lines.library.plato, line 97](../../../../../stdlib/geometry/lines.library.plato#L97).
 
@@ -28,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => l.Origin + l.Direction.Vector * t;
 ```
 
-## Line 111
+### Line 111
 
 **Source:** [stdlib/geometry/lines.library.plato, line 111](../../../../../stdlib/geometry/lines.library.plato#L111).
 
@@ -39,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => l.Origin + l.Direction.Vector * t;
 ```
 
-## Line 115
+### Line 115
 
 **Source:** [stdlib/geometry/lines.library.plato, line 115](../../../../../stdlib/geometry/lines.library.plato#L115).
 
@@ -50,7 +76,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Origin + r.Direction.Vector * t;
 ```
 
-## Line 119
+### Line 119
 
 **Source:** [stdlib/geometry/lines.library.plato, line 119](../../../../../stdlib/geometry/lines.library.plato#L119).
 
@@ -61,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Origin + r.Direction.Vector * t;
 ```
 
-## Line 123
+### Line 123
 
 **Source:** [stdlib/geometry/lines.library.plato, line 123](../../../../../stdlib/geometry/lines.library.plato#L123).
 
@@ -72,7 +98,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => s.A.Lerp(s.B, t);
 ```
 
-## Line 127
+### Line 127
 
 **Source:** [stdlib/geometry/lines.library.plato, line 127](../../../../../stdlib/geometry/lines.library.plato#L127).
 

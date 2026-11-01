@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Apply two transforms in order: `first` then `second`. Equal to
+> Transform(first.Compose(second)) — the helper exists so the caller does not
+> have to name the composition.
+
+## Signature
+
+```plato
+ThenTransform(self: ITransformable2D, first: Transform2D, second: Transform2D): Self
+ThenTransform(self: ITransformable2D, first: Transform2D, second: Transform2D, third: Transform2D): Self
+ThenTransform(self: ITransformable3D, first: Transform3D, second: Transform3D): Self
+ThenTransform(self: ITransformable3D, first: Transform3D, second: Transform3D, third: Transform3D): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 377
+### Line 377
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 377](../../../../../stdlib/foundation/intervals.library.plato#L377).
 
@@ -35,7 +60,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Transform(first).Transform(second);
 ```
 
-## Line 398
+### Line 398
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 398](../../../../../stdlib/foundation/intervals.library.plato#L398).
 
@@ -46,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Transform(first).Transform(second).Transform(third);
 ```
 
-## Line 402
+### Line 402
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 402](../../../../../stdlib/foundation/intervals.library.plato#L402).
 
@@ -57,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Transform(first).Transform(second);
 ```
 
-## Line 406
+### Line 406
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 406](../../../../../stdlib/foundation/intervals.library.plato#L406).
 

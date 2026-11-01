@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The polygon split by the plane into its non-degenerate pieces: itself,
+> uncut, when it does not span the plane (a coplanar polygon is kept once,
+> not clipped into both half-spaces), otherwise its front piece followed by
+> its back piece.
+
+## Signature
+
+```plato
+SplitByPlane(p: Polygon3D, pl: Plane, tolerance: Number): Array<Polygon3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 131](../../../../../stdlib/geometry/solids-csg.library.plato#L131).
 

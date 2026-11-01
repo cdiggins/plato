@@ -3,11 +3,166 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when every element satisfies the predicate (vacuously true when empty).
+
+## Signature
+
+```plato
+All(xs: Array<$T>, f: Function1<$T, Boolean>): Boolean
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SortedIndicesIsStable
+
+[stdlib/tests/sorting.laws.plato, line 27](../../../../../stdlib/tests/sorting.laws.plato#L27)
+
+```plato
+// Stability: when two elements compare equal, their source order survives.
+// Keys are folded into a handful of buckets so the pseudorandom input
+// actually produces ties for the law to bite on.
+Law_SortedIndicesIsStable(xs: Array<Integer>): Boolean
+{
+    var keys = xs.Map(x => x % 4);
+    var perm = keys.SortedIndices((a, b) => a <= b);
+    return (perm.Count - 1).Greater(0).MapRange(i =>
+        keys[perm[i]] != keys[perm[i + 1]] || perm[i] < perm[i + 1]).All(b => b);
+}
+```
+
+### Law_HullVerticesComeFromTheInput
+
+[stdlib/tests/spatial-structures.laws.plato, line 24](../../../../../stdlib/tests/spatial-structures.laws.plato#L24)
+
+```plato
+// Every hull vertex is one of the input points, at the position its
+// provenance names.
+Law_HullVerticesComeFromTheInput(points: Array<Point2D>): Boolean
+{
+    var hull = points.ConvexHull;
+    return hull.SourceIndices.Count == hull.HullVertexCount
+        && hull.SourceIndices.All(s => s.Value >= 0 && s.Value < points.Count)
+        && hull.HullVertexCount.MapRange(v =>
+            hull.Hull.Points[v].X == points[hull.SourceOf(v).Value].X
+            && hull.Hull.Points[v].Y == points[hull.SourceOf(v).Value].Y).All(b => b);
+}
+```
+
+### Law_HullIsConvexAndCounterClockwise
+
+[stdlib/tests/spatial-structures.laws.plato, line 36](../../../../../stdlib/tests/spatial-structures.laws.plato#L36)
+
+```plato
+// A non-degenerate hull turns strictly left at every corner: convex,
+// counter-clockwise, no collinear vertices.
+Law_HullIsConvexAndCounterClockwise(points: Array<Point2D>): Boolean
+{
+    var hull = points.ConvexHull;
+    var m = hull.HullVertexCount;
+    return hull.IsDegenerate
+        || m.MapRange(v => TwiceSignedArea(
+            hull.Hull.Points[v],
+            hull.Hull.Points[(v + 1) % m],
+            hull.Hull.Points[(v + 2) % m]) > 0.0).All(b => b);
+}
+```
+
+### Law_OctreeChildrenAreConsecutiveAndPresent
+
+[stdlib/tests/spatial-structures.laws.plato, line 88](../../../../../stdlib/tests/spatial-structures.laws.plato#L88)
+
+```plato
+// Every internal node's eight children exist in the node array.
+Law_OctreeChildrenAreConsecutiveAndPresent(points: Array<Point3D>): Boolean
+{
+    var tree = points.BuildOctree(8, 4);
+    return tree.Nodes.All(n => n.FirstChild.Value < 0
+        || (n.FirstChild.Value > 0 && n.FirstChild.Value + 8 <= tree.Nodes.Count));
+}
+```
+
+### Law_AtReadsWhatFromCharactersWrote
+
+[stdlib/tests/text.laws.plato, line 32](../../../../../stdlib/tests/text.laws.plato#L32)
+
+```plato
+// At reads what FromCharacters wrote, at every index.
+Law_AtReadsWhatFromCharactersWrote(s: String): Boolean
+    => FromCharacters(MapRange(s.Count, i => s.At(i))).Count == s.Count
+    && s.Count.Range.All(i => s.At(i).ToInteger.ToCharacter == s.At(i));
+```
+
+### Law_SubstringCharactersAreTheSourceCharacters
+
+[stdlib/tests/text.laws.plato, line 59](../../../../../stdlib/tests/text.laws.plato#L59)
+
+```plato
+// Each character is the source character at the same offset from the clamped start.
+Law_SubstringCharactersAreTheSourceCharacters(s: String, start: Integer, count: Integer): Boolean
+    => Substring(s, start, count).Count.Range.All(i =>
+        Substring(s, start, count).At(i) == s.At(start.Max(0) + i));
+```
+
+### Law_TriangulationFacesIndexInputPoints
+
+[stdlib/tests/triangulation.laws.plato, line 29](../../../../../stdlib/tests/triangulation.laws.plato#L29)
+
+```plato
+// Every face indexes a point that exists. The clipper carries VertexIndex values from the
+// pool it was handed, so a face can only ever name one of them; an out-of-range index would
+// mean a slot was read whose node had never been linked.
+Law_TriangulationFacesIndexInputPoints(p: Polygon2D): Boolean
+    => p.Triangulate.Faces.All(f => p.Points.FaceIsInRange(f));
+```
+
+### Law_TriangulationFacesHaveDistinctCorners
+
+[stdlib/tests/triangulation.laws.plato, line 46](../../../../../stdlib/tests/triangulation.laws.plato#L46)
+
+```plato
+// A face never repeats a vertex: the three corners of a clipped ear are three distinct
+// slots of the ring. (Two of them may still coincide in POSITION, where a bridge duplicated
+// a vertex, so this is an index property, not a geometric one.)
+Law_TriangulationFacesHaveDistinctCorners(p: Polygon2D): Boolean
+    => p.Triangulate.Faces.All(f => f.HasDistinctCorners);
+```
+
+### Law_HoledTriangulationFacesIndexInputPoints
+
+[stdlib/tests/triangulation.laws.plato, line 54](../../../../../stdlib/tests/triangulation.laws.plato#L54)
+
+```plato
+Law_HoledTriangulationFacesIndexInputPoints(r: PolygonWithHoles2D): Boolean
+    => r.Triangulate.Faces.All(f => r.PointPool.FaceIsInRange(f));
+```
+
+### Law_HoledTriangulationFacesHaveDistinctCorners
+
+[stdlib/tests/triangulation.laws.plato, line 60](../../../../../stdlib/tests/triangulation.laws.plato#L60)
+
+```plato
+Law_HoledTriangulationFacesHaveDistinctCorners(r: PolygonWithHoles2D): Boolean
+    => r.Triangulate.Faces.All(f => f.HasDistinctCorners);
+```
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [primitives.library](../primitives.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 216
+### Line 216
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 216](../../../../../stdlib/foundation/primitives.library.plato#L216).
 

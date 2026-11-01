@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A closed, bounded region of 3D space: a volume together with its watertight
+> boundary surface. Marker interface for all solid representations
+> (https://en.wikipedia.org/wiki/Solid\_geometry).
+
+## Signature
+
+```plato
+interface ISolid
+    inherits IGeometry3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry3D](../geometry.concepts/igeometry3d.md).
+
+Implemented in this tier by: [CsgTree3D](../solids.types/csgtree3d.md), [PolygonSoup3D](../solids.types/polygonsoup3d.md), [ExtrudedSolid](../solids.types/extrudedsolid.md), [RevolvedSolid](../solids.types/revolvedsolid.md), [LoftedSolid](../solids.types/loftedsolid.md), [SweptSolid](../solids.types/sweptsolid.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-solids.concepts](../surfaces-solids.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 57
+### Line 57
 
 **Source:** [stdlib/geometry/surfaces-solids.concepts.plato, line 57](../../../../../stdlib/geometry/surfaces-solids.concepts.plato#L57).
 

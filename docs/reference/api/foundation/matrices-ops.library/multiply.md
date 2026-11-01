@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Composition of two affine maps: applying the result is applying value1
+> then value2. The translation row of value1 is carried through value2's
+> linear block and then offset by value2's own translation.
+
+## Signature
+
+```plato
+Multiply(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2
+Multiply(value1: Matrix3x2, scalar: Number): Matrix3x2
+Multiply(scalar: Number, value1: Matrix3x2): Matrix3x2
+Multiply(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4
+Multiply(value1: Matrix4x4, f: Number): Matrix4x4
+Multiply(f: Number, value1: Matrix4x4): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 81
+### Line 81
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 81](../../../../../stdlib/foundation/matrices-ops.library.plato#L81).
 
@@ -25,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
                     value1.Row3.X * value2.Row1.Y + value1.Row3.Y * value2.Row2.Y + value2.Row3.Y));
 ```
 
-## Line 92
+### Line 92
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 92](../../../../../stdlib/foundation/matrices-ops.library.plato#L92).
 
@@ -36,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (value1.Row1 * scalar, value1.Row2 * scalar, value1.Row3 * scalar);
 ```
 
-## Line 96
+### Line 96
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 96](../../../../../stdlib/foundation/matrices-ops.library.plato#L96).
 
@@ -47,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => value1 * scalar;
 ```
 
-## Line 214
+### Line 214
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 214](../../../../../stdlib/foundation/matrices-ops.library.plato#L214).
 
@@ -63,7 +90,7 @@ Copied from source, comments included. A comment records intent. The body is the
             value1.Row4.Transform(value2));
 ```
 
-## Line 223
+### Line 223
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 223](../../../../../stdlib/foundation/matrices-ops.library.plato#L223).
 
@@ -74,7 +101,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (value1.Row1 * f, value1.Row2 * f, value1.Row3 * f, value1.Row4 * f);
 ```
 
-## Line 227
+### Line 227
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 227](../../../../../stdlib/foundation/matrices-ops.library.plato#L227).
 

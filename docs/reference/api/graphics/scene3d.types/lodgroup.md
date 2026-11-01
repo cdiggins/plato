@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Discrete levels of detail for one object. Meshes (indices into
+> SceneResources.Meshes) and SwitchDistances are parallel arrays ordered by
+> ascending distance: Meshes\[i\] is shown while the view distance from Center
+> is below SwitchDistances\[i\]; beyond the last distance the object is culled.
+> See https://en.wikipedia.org/wiki/Level\_of\_detail\_(computer\_graphics).
+
+## Signature
+
+```plato
+type LodGroup
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [scene3d.types](../scene3d.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 235
+### Line 235
 
 **Source:** [stdlib/graphics/scene3d.types.plato, line 235](../../../../../stdlib/graphics/scene3d.types.plato#L235).
 

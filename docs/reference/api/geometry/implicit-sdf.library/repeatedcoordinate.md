@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One coordinate folded into its lattice cell, centred on the cell: the
+> coordinate minus the nearest whole multiple of period. Repetition is limited
+> to count cells on either side of the origin; a non-positive count repeats
+> without limit. Precondition: period is positive. (IQ: opRepetition/opRepLim.)
+
+## Signature
+
+```plato
+RepeatedCoordinate(coordinate: Number, period: Number, count: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 533
+### Line 533
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 533](../../../../../stdlib/geometry/implicit-sdf.library.plato#L533).
 

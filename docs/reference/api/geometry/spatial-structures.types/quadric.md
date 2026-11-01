@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A general quadric surface: the homogeneous points p with
+> Transpose(p) \* Coefficients \* p = 0 (https://en.wikipedia.org/wiki/Quadric).
+> Coefficients is symmetric. Spheres, ellipsoids, cones, cylinders,
+> paraboloids, and hyperboloids are all special cases.
+
+## Signature
+
+```plato
+type Quadric
+    implements IGeometry3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry3D](../geometry.concepts/igeometry3d.md).
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.types](../spatial-structures.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 115
+### Line 115
 
 **Source:** [stdlib/geometry/spatial-structures.types.plato, line 115](../../../../../stdlib/geometry/spatial-structures.types.plato#L115).
 

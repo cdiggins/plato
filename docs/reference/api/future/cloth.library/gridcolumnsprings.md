@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Every spring joining a vertex to the one `step` rows below it: step 1 is
+> structural, step 2 is bend.
+
+## Signature
+
+```plato
+GridColumnSprings(self: ClothGrid3D, step: Integer, compliance: Number): Array<ClothDistanceConstraint>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 500
+### Line 500
 
 **Source:** [stdlib/future/cloth.library.plato, line 500](../../../../../stdlib/future/cloth.library.plato#L500).
 

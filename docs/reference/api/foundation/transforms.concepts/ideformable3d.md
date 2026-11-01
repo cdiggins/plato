@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Can be deformed by an arbitrary 3D point mapping. Strictly stronger than
+> ITransformable3D, and its Transform member is likewise derived from Deform.
+
+## Signature
+
+```plato
+interface IDeformable3D
+    inherits ITransformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ITransformable3D](itransformable3d.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.concepts](../transforms.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/foundation/transforms.concepts.plato, line 67](../../../../../stdlib/foundation/transforms.concepts.plato#L67).
 

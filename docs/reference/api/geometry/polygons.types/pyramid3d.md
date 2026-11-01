@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The solid cone over a polygon: all segments from points of Base to Apex
+> (https://en.wikipedia.org/wiki/Pyramid\_(geometry)). Degenerate when Apex lies
+> in the base plane.
+
+## Signature
+
+```plato
+type Pyramid3D
+    implements IGeometry3D, IClosedShape, IConnected, IVolume, IBounded3D, ICentroid3D, IContainsPoint3D, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConnected](../geometry.concepts/iconnected.md), [IVolume](../geometry.concepts/ivolume.md), [IBounded3D](../geometry.concepts/ibounded3d.md), [ICentroid3D](../geometry.concepts/icentroid3d.md), [IContainsPoint3D](../geometry.concepts/icontainspoint3d.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.types](../polygons.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 140
+### Line 140
 
 **Source:** [stdlib/geometry/polygons.types.plato, line 140](../../../../../stdlib/geometry/polygons.types.plato#L140).
 

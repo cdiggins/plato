@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A gamma-encoded sRGB color with alpha, components nominally in \[0, 1\]: the
+> interchange form of most 2D content. Decode to linear `Color` before
+> arithmetic. (https://en.wikipedia.org/wiki/SRGB)
+
+## Signature
+
+```plato
+type ColorSRGB
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [color-spaces.types](../color-spaces.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 233
+### Line 233
 
 **Source:** [stdlib/graphics/color-spaces.types.plato, line 233](../../../../../stdlib/graphics/color-spaces.types.plato#L233).
 

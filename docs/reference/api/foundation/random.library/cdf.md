@@ -3,11 +3,111 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The cumulative probability: the position of value within the interval,
+> clamped to \[0, 1\].
+
+## Signature
+
+```plato
+Cdf(self: UniformDistribution, value: Number): Number
+Cdf(self: NormalDistribution, value: Number): Number
+Cdf(self: LogNormalDistribution, value: Number): Number
+Cdf(self: ExponentialDistribution, value: Number): Number
+Cdf(self: GammaDistribution, value: Number): Number
+Cdf(self: BetaDistribution, value: Number): Number
+Cdf(self: ChiSquaredDistribution, value: Number): Number
+Cdf(self: StudentTDistribution, value: Number): Number
+Cdf(self: CauchyDistribution, value: Number): Number
+Cdf(self: LaplaceDistribution, value: Number): Number
+Cdf(self: WeibullDistribution, value: Number): Number
+Cdf(self: ParetoDistribution, value: Number): Number
+Cdf(self: TriangularDistribution, value: Number): Number
+Cdf(self: VonMisesDistribution, value: Number): Number
+Cdf(self: BernoulliDistribution, value: Number): Number
+Cdf(self: BinomialDistribution, value: Number): Number
+Cdf(self: GeometricDistribution, value: Number): Number
+Cdf(self: PoissonDistribution, value: Number): Number
+Cdf(self: DiscreteDistribution, value: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_VonMisesCdfAtMeanIsHalf
+
+[stdlib/tests/special-numerics.laws.plato, line 41](../../../../../stdlib/tests/special-numerics.laws.plato#L41)
+
+```plato
+// The CDF at the mean direction is exactly one half, for every concentration.
+Law_VonMisesCdfAtMeanIsHalf(d: VonMisesDistribution): Boolean
+    => d.VonMisesOutOfRegime || d.Cdf(d.MeanDirection.Radians).SpecialEq(0.5);
+```
+
+### Law_VonMisesCdfZeroKappaIsUniform
+
+[stdlib/tests/special-numerics.laws.plato, line 46](../../../../../stdlib/tests/special-numerics.laws.plato#L46)
+
+```plato
+// At Concentration 0 the distribution is uniform on the circle and the CDF
+// of the wrapped angle is 1/2 + wrap(x)/(2 pi).
+Law_VonMisesCdfZeroKappaIsUniform(x: Number): Boolean
+    => VonMisesDistribution(Angle(0.0), 0.0).Cdf(x)
+        .SpecialEq(0.5 + x.WrapToPi / Number.Tau);
+```
+
+### Law_VonMisesCdfStartsAtZero
+
+[stdlib/tests/special-numerics.laws.plato, line 65](../../../../../stdlib/tests/special-numerics.laws.plato#L65)
+
+```plato
+// The CDF starts at 0 at the cut (the antipode of the mean direction).
+//
+// DOMAIN: the law states the RIGHT-hand limit, a fixed margin inside the arc,
+// because the cut itself is a JUMP and is therefore not a testable point in
+// floating point. F is 0 at mu - pi and 1 immediately below it, while the
+// argument the law can actually build, `mu - pi`, is a rounded float: for
+// mu = 9.965367 it lands exactly one ulp BELOW the cut, where F = 1 is the
+// correct answer, not a defect in the series. (Measured: the rounding goes the
+// wrong way for roughly a quarter of random mean directions.)
+//
+// At `margin` inside the arc F is bounded by margin times the antipodal
+// density, which is at most 1/(2 pi) for every kappa -- so F < margin / 6, and
+// asserting F < margin has better than a 6x margin over the true value while
+// still separating 0 from the 1 that the seam bug would produce. margin = 1e-4
+// is three decades above the ~1e-7 rounding noise of the argument itself.
+Law_VonMisesCdfStartsAtZero(d: VonMisesDistribution): Boolean
+    => d.VonMisesOutOfRegime
+    || d.Cdf(d.MeanDirection.Radians - Number.Pi + 1e-4) < 1e-4;
+```
+
+### Law_VonMisesCdfSymmetry
+
+[stdlib/tests/special-numerics.laws.plato, line 71](../../../../../stdlib/tests/special-numerics.laws.plato#L71)
+
+```plato
+// Reflection symmetry about the mean: F(mu + t) + F(mu - t) = 1 for t
+// strictly inside (-pi, pi) (at the cut itself both sides wrap to 0).
+Law_VonMisesCdfSymmetry(d: VonMisesDistribution, x: Number): Boolean
+    => d.VonMisesOutOfRegime
+    || x.WrapToPi.Abs > 3.1
+    || (d.Cdf(d.MeanDirection.Radians + x.WrapToPi)
+        + d.Cdf(d.MeanDirection.Radians - x.WrapToPi)).SpecialEq(1.0);
+```
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.library](../random.library.md). Kind: function. 19 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 143
+### Line 143
 
 **Source:** [stdlib/foundation/random.library.plato, line 143](../../../../../stdlib/foundation/random.library.plato#L143).
 
@@ -19,7 +119,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ((value - self.Min) / (self.Max - self.Min)).Clamp(0.0, 1.0);
 ```
 
-## Line 166
+### Line 166
 
 **Source:** [stdlib/foundation/random.library.plato, line 166](../../../../../stdlib/foundation/random.library.plato#L166).
 
@@ -31,7 +131,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => StandardNormalCdf((value - self.Mean) / self.StandardDeviation);
 ```
 
-## Line 197
+### Line 197
 
 **Source:** [stdlib/foundation/random.library.plato, line 197](../../../../../stdlib/foundation/random.library.plato#L197).
 
@@ -45,7 +145,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : StandardNormalCdf((value.NaturalLog - self.LogMean) / self.LogStandardDeviation);
 ```
 
-## Line 225
+### Line 225
 
 **Source:** [stdlib/foundation/random.library.plato, line 225](../../../../../stdlib/foundation/random.library.plato#L225).
 
@@ -59,7 +159,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : 1.0 - (-self.Rate * value).Exp;
 ```
 
-## Line 269
+### Line 269
 
 **Source:** [stdlib/foundation/random.library.plato, line 269](../../../../../stdlib/foundation/random.library.plato#L269).
 
@@ -73,7 +173,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : RegularizedGammaP(self.Shape, value / self.Scale);
 ```
 
-## Line 301
+### Line 301
 
 **Source:** [stdlib/foundation/random.library.plato, line 301](../../../../../stdlib/foundation/random.library.plato#L301).
 
@@ -89,7 +189,7 @@ Copied from source, comments included. A comment records intent. The body is the
                 : RegularizedBeta(self.Alpha, self.Beta, value);
 ```
 
-## Line 336
+### Line 336
 
 **Source:** [stdlib/foundation/random.library.plato, line 336](../../../../../stdlib/foundation/random.library.plato#L336).
 
@@ -103,7 +203,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : RegularizedGammaP(0.5 * self.DegreesOfFreedom, 0.5 * value);
 ```
 
-## Line 369
+### Line 369
 
 **Source:** [stdlib/foundation/random.library.plato, line 369](../../../../../stdlib/foundation/random.library.plato#L369).
 
@@ -121,7 +221,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 424
+### Line 424
 
 **Source:** [stdlib/foundation/random.library.plato, line 424](../../../../../stdlib/foundation/random.library.plato#L424).
 
@@ -133,7 +233,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 0.5 + ((value - self.Location) / self.Scale).Atan.Radians / Number.Pi;
 ```
 
-## Line 449
+### Line 449
 
 **Source:** [stdlib/foundation/random.library.plato, line 449](../../../../../stdlib/foundation/random.library.plato#L449).
 
@@ -147,7 +247,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : 1.0 - 0.5 * (-(value - self.Location) / self.Scale).Exp;
 ```
 
-## Line 482
+### Line 482
 
 **Source:** [stdlib/foundation/random.library.plato, line 482](../../../../../stdlib/foundation/random.library.plato#L482).
 
@@ -161,7 +261,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : 1.0 - (-(value / self.Scale).Pow(self.Shape)).Exp;
 ```
 
-## Line 516
+### Line 516
 
 **Source:** [stdlib/foundation/random.library.plato, line 516](../../../../../stdlib/foundation/random.library.plato#L516).
 
@@ -175,7 +275,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : 1.0 - (self.MinimumValue / value).Pow(self.Shape);
 ```
 
-## Line 555
+### Line 555
 
 **Source:** [stdlib/foundation/random.library.plato, line 555](../../../../../stdlib/foundation/random.library.plato#L555).
 
@@ -195,7 +295,7 @@ Copied from source, comments included. A comment records intent. The body is the
                         / ((self.Max - self.Min) * (self.Max - self.Mode));
 ```
 
-## Line 605
+### Line 605
 
 **Source:** [stdlib/foundation/random.library.plato, line 605](../../../../../stdlib/foundation/random.library.plato#L605).
 
@@ -230,7 +330,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 667
+### Line 667
 
 **Source:** [stdlib/foundation/random.library.plato, line 667](../../../../../stdlib/foundation/random.library.plato#L667).
 
@@ -245,7 +345,7 @@ Copied from source, comments included. A comment records intent. The body is the
                 : 1.0;
 ```
 
-## Line 707
+### Line 707
 
 **Source:** [stdlib/foundation/random.library.plato, line 707](../../../../../stdlib/foundation/random.library.plato#L707).
 
@@ -267,7 +367,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 747
+### Line 747
 
 **Source:** [stdlib/foundation/random.library.plato, line 747](../../../../../stdlib/foundation/random.library.plato#L747).
 
@@ -281,7 +381,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : 1.0 - (1.0 - self.SuccessProbability.Value).Pow(value.Floor + 1.0);
 ```
 
-## Line 782
+### Line 782
 
 **Source:** [stdlib/foundation/random.library.plato, line 782](../../../../../stdlib/foundation/random.library.plato#L782).
 
@@ -301,7 +401,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 833
+### Line 833
 
 **Source:** [stdlib/foundation/random.library.plato, line 833](../../../../../stdlib/foundation/random.library.plato#L833).
 

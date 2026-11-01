@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Component-wise remainder against a real factor.
+
+## Signature
+
+```plato
+Modulo(z: Complex, scalar: Number): Complex
+Modulo(x: Proportion, scalar: Number): Proportion
+Modulo(x: Percent, scalar: Number): Percent
+Modulo(x: Probability, scalar: Number): Probability
+Modulo(x: DualNumber, scalar: Number): DualNumber
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 58
+### Line 58
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 58](../../../../../stdlib/foundation/numbers.library.plato#L58).
 
@@ -18,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (z.Real.Modulo(scalar), z.Imaginary.Modulo(scalar));
 ```
 
-## Line 142
+### Line 142
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 142](../../../../../stdlib/foundation/numbers.library.plato#L142).
 
@@ -28,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Proportion(x.Value.Modulo(scalar));
 ```
 
-## Line 181
+### Line 181
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 181](../../../../../stdlib/foundation/numbers.library.plato#L181).
 
@@ -38,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Percent(x.Value.Modulo(scalar));
 ```
 
-## Line 220
+### Line 220
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 220](../../../../../stdlib/foundation/numbers.library.plato#L220).
 
@@ -48,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Probability(x.Value.Modulo(scalar));
 ```
 
-## Line 325
+### Line 325
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 325](../../../../../stdlib/foundation/numbers.library.plato#L325).
 

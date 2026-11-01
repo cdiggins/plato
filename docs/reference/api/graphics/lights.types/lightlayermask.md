@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A bitmask selecting which render layers a light illuminates: bit i set means
+> the light affects the RenderLayer with IIndex i (`scene3d.types.plato`). All bits set means
+> all layers.
+
+## Signature
+
+```plato
+type LightLayerMask
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [lights.types](../lights.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 207
+### Line 207
 
 **Source:** [stdlib/graphics/lights.types.plato, line 207](../../../../../stdlib/graphics/lights.types.plato#L207).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A uniform number in \[0, 1) drawn from three whole numbers: the seed, an
+> index identifying WHAT is being drawn for, and a stream index separating
+> several draws for the same thing. All three arguments are the state.
+
+## Signature
+
+```plato
+SampleUnit(seed: Integer, index: Integer, stream: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 257
+### Line 257
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 257](../../../../../stdlib/geometry/sampling.library.plato#L257).
 

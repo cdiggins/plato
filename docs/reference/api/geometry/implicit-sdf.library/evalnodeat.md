@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The distance the node at the given index produces.
+
+## Signature
+
+```plato
+EvalNodeAt(tree: SdfTree2D, index: SdfNodeIndex, primitives: Array<FunctionSdf2D>, point: Point2D): Number
+EvalNodeAt(tree: SdfTree3D, index: SdfNodeIndex, primitives: Array<FunctionSdf3D>, point: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1226
+### Line 1226
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 1226](../../../../../stdlib/geometry/implicit-sdf.library.plato#L1226).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => tree.Nodes[index.Value].EvalNode(tree, primitives, point);
 ```
 
-## Line 1244
+### Line 1244
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 1244](../../../../../stdlib/geometry/implicit-sdf.library.plato#L1244).
 

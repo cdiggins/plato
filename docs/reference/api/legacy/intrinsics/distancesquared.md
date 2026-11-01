@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+DistanceSquared(self: Vector2, value2: Vector2): Number
+DistanceSquared(self: Vector3, value2: Vector3): Number
+DistanceSquared(self: Vector4, value2: Vector4): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 117
+### Line 117
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 117](../../../../../legacy/stdlib-legacy/intrinsics.plato#L117).
 
@@ -15,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
     DistanceSquared(self: Vector2, value2: Vector2): Number;
 ```
 
-## Line 157
+### Line 157
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 157](../../../../../legacy/stdlib-legacy/intrinsics.plato#L157).
 
@@ -23,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
     DistanceSquared(self: Vector3, value2: Vector3): Number;
 ```
 
-## Line 196
+### Line 196
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 196](../../../../../legacy/stdlib-legacy/intrinsics.plato#L196).
 

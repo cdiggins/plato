@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The widened copy of an original face: each of its edges contributes two
+> new vertices — the near one from the corner itself, the far one from that
+> corner's twin, which cuts at the other end of the same edge.
+
+## Signature
+
+```plato
+TruncateFaceOfFace(self: PolygonMesh3D, face: Integer): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 337
+### Line 337
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 337](../../../../../stdlib/geometry/polyhedra.library.plato#L337).
 

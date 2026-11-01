@@ -3,11 +3,55 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Uniform scale.
+
+## Signature
+
+```plato
+Multiply(left: Vector2D, scalar: Number): Vector2D
+Multiply(scalar: Number, right: Vector2D): Vector2D
+Multiply(left: Vector2D, factors: Number2): Vector2D
+Multiply(matrix: Matrix3x2, self: Vector2D): Vector2D
+Multiply(matrix: Matrix4x4, self: Vector2D): Vector2D
+Multiply(rotation: Quaternion, self: Vector2D): Vector2D
+Multiply(left: Vector3D, scalar: Number): Vector3D
+Multiply(scalar: Number, right: Vector3D): Vector3D
+Multiply(left: Vector3D, factors: Number3): Vector3D
+Multiply(matrix: Matrix4x4, self: Vector3D): Vector3D
+Multiply(rotation: Quaternion, self: Vector3D): Vector3D
+Multiply(left: Number2, right: Number2): Number2
+Multiply(left: Number2, scalar: Number): Number2
+Multiply(scalar: Number, right: Number2): Number2
+Multiply(left: Number3, right: Number3): Number3
+Multiply(left: Number3, scalar: Number): Number3
+Multiply(scalar: Number, right: Number3): Number3
+Multiply(left: Number4, right: Number4): Number4
+Multiply(left: Number4, scalar: Number): Number4
+Multiply(scalar: Number, right: Number4): Number4
+Multiply(matrix: Matrix4x4, self: Number4): Number4
+Multiply(rotation: Quaternion, self: Number4): Number4
+Multiply(left: Number8, right: Number8): Number8
+Multiply(left: Number8, scalar: Number): Number8
+Multiply(scalar: Number, right: Number8): Number8
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [vectors.library](../vectors.library.md). Kind: function. 25 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 49
+### Line 49
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 49](../../../../../stdlib/foundation/vectors.library.plato#L49).
 
@@ -18,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X * scalar, left.Y * scalar);
 ```
 
-## Line 53
+### Line 53
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 53](../../../../../stdlib/foundation/vectors.library.plato#L53).
 
@@ -29,7 +73,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (scalar * right.X, scalar * right.Y);
 ```
 
-## Line 57
+### Line 57
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 57](../../../../../stdlib/foundation/vectors.library.plato#L57).
 
@@ -40,7 +84,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X * factors.X, left.Y * factors.Y);
 ```
 
-## Line 87
+### Line 87
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 87](../../../../../stdlib/foundation/vectors.library.plato#L87).
 
@@ -51,7 +95,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Transform(matrix);
 ```
 
-## Line 97
+### Line 97
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 97](../../../../../stdlib/foundation/vectors.library.plato#L97).
 
@@ -62,7 +106,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Transform(matrix);
 ```
 
-## Line 117
+### Line 117
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 117](../../../../../stdlib/foundation/vectors.library.plato#L117).
 
@@ -73,7 +117,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Transform(rotation);
 ```
 
-## Line 160
+### Line 160
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 160](../../../../../stdlib/foundation/vectors.library.plato#L160).
 
@@ -84,7 +128,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X * scalar, left.Y * scalar, left.Z * scalar);
 ```
 
-## Line 164
+### Line 164
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 164](../../../../../stdlib/foundation/vectors.library.plato#L164).
 
@@ -95,7 +139,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (scalar * right.X, scalar * right.Y, scalar * right.Z);
 ```
 
-## Line 168
+### Line 168
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 168](../../../../../stdlib/foundation/vectors.library.plato#L168).
 
@@ -106,7 +150,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X * factors.X, left.Y * factors.Y, left.Z * factors.Z);
 ```
 
-## Line 208
+### Line 208
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 208](../../../../../stdlib/foundation/vectors.library.plato#L208).
 
@@ -117,7 +161,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Transform(matrix);
 ```
 
-## Line 233
+### Line 233
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 233](../../../../../stdlib/foundation/vectors.library.plato#L233).
 
@@ -128,7 +172,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Transform(rotation);
 ```
 
-## Line 312
+### Line 312
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 312](../../../../../stdlib/foundation/vectors.library.plato#L312).
 
@@ -139,7 +183,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X * right.X, left.Y * right.Y);
 ```
 
-## Line 316
+### Line 316
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 316](../../../../../stdlib/foundation/vectors.library.plato#L316).
 
@@ -150,7 +194,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X * scalar, left.Y * scalar);
 ```
 
-## Line 320
+### Line 320
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 320](../../../../../stdlib/foundation/vectors.library.plato#L320).
 
@@ -161,7 +205,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (scalar * right.X, scalar * right.Y);
 ```
 
-## Line 384
+### Line 384
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 384](../../../../../stdlib/foundation/vectors.library.plato#L384).
 
@@ -172,7 +216,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X * right.X, left.Y * right.Y, left.Z * right.Z);
 ```
 
-## Line 388
+### Line 388
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 388](../../../../../stdlib/foundation/vectors.library.plato#L388).
 
@@ -183,7 +227,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X * scalar, left.Y * scalar, left.Z * scalar);
 ```
 
-## Line 392
+### Line 392
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 392](../../../../../stdlib/foundation/vectors.library.plato#L392).
 
@@ -194,7 +238,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (scalar * right.X, scalar * right.Y, scalar * right.Z);
 ```
 
-## Line 458
+### Line 458
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 458](../../../../../stdlib/foundation/vectors.library.plato#L458).
 
@@ -205,7 +249,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X * right.X, left.Y * right.Y, left.Z * right.Z, left.W * right.W);
 ```
 
-## Line 462
+### Line 462
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 462](../../../../../stdlib/foundation/vectors.library.plato#L462).
 
@@ -216,7 +260,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X * scalar, left.Y * scalar, left.Z * scalar, left.W * scalar);
 ```
 
-## Line 466
+### Line 466
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 466](../../../../../stdlib/foundation/vectors.library.plato#L466).
 
@@ -227,7 +271,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (scalar * right.X, scalar * right.Y, scalar * right.Z, scalar * right.W);
 ```
 
-## Line 525
+### Line 525
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 525](../../../../../stdlib/foundation/vectors.library.plato#L525).
 
@@ -240,7 +284,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Transform(matrix);
 ```
 
-## Line 556
+### Line 556
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 556](../../../../../stdlib/foundation/vectors.library.plato#L556).
 
@@ -251,7 +295,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Transform(rotation);
 ```
 
-## Line 576
+### Line 576
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 576](../../../../../stdlib/foundation/vectors.library.plato#L576).
 
@@ -263,7 +307,7 @@ Copied from source, comments included. A comment records intent. The body is the
                    left.X4 * right.X4, left.X5 * right.X5, left.X6 * right.X6, left.X7 * right.X7);
 ```
 
-## Line 581
+### Line 581
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 581](../../../../../stdlib/foundation/vectors.library.plato#L581).
 
@@ -275,7 +319,7 @@ Copied from source, comments included. A comment records intent. The body is the
                    left.X4 * scalar, left.X5 * scalar, left.X6 * scalar, left.X7 * scalar);
 ```
 
-## Line 586
+### Line 586
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 586](../../../../../stdlib/foundation/vectors.library.plato#L586).
 

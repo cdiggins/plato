@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The affine matrix mapping frame-local coordinates to world coordinates
+> (axes become the linear rows, the origin the translation row).
+
+## Signature
+
+```plato
+Matrix3x2(f: Frame2D): Matrix3x2
+Matrix3x2(pose: Pose2D): Matrix3x2
+Matrix3x2(r: Rotation2D): Matrix3x2
+Matrix3x2(r: Rotor2D): Matrix3x2
+Matrix3x2(t: TrsTransform2D): Matrix3x2
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 628](../../../../../stdlib/foundation/transforms.library.plato#L628): # Frame and basis operations
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 626
+### Line 626
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 626](../../../../../stdlib/foundation/transforms.library.plato#L626).
 
@@ -31,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Number2(f.Origin.X, f.Origin.Y));
 ```
 
-## Line 983
+### Line 983
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 983](../../../../../stdlib/foundation/transforms.library.plato#L983).
 
@@ -42,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => pose.Rotation.Matrix3x2 * Matrix3x2.CreateTranslation(pose.Position.PositionVector);
 ```
 
-## Line 1330
+### Line 1330
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1330](../../../../../stdlib/foundation/transforms.library.plato#L1330).
 
@@ -57,7 +89,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix3x2.CreateRotation(r.Angle);
 ```
 
-## Line 1338
+### Line 1338
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1338](../../../../../stdlib/foundation/transforms.library.plato#L1338).
 
@@ -68,7 +100,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Rotation2D.Matrix3x2;
 ```
 
-## Line 1391
+### Line 1391
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1391](../../../../../stdlib/foundation/transforms.library.plato#L1391).
 

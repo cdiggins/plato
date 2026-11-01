@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The quad between the inner copy and the boundary at one corner: this
+> corner's one-third point, the two-thirds point of the same edge (its
+> twin's), the vertex the corner points at, and the next corner's
+> one-third point.
+
+## Signature
+
+```plato
+PropellerFaceOfCorner(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 788
+### Line 788
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 788](../../../../../stdlib/geometry/polyhedra.library.plato#L788).
 

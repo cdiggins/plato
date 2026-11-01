@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An unbounded, accept-all raycast request for a bare ray.
+
+## Signature
+
+```plato
+UnboundedRayQuery(self: IRaycast2D, ray: Ray2D): RayQuery2D
+UnboundedRayQuery(self: IRaycast3D, ray: Ray3D): RayQuery3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 396
+### Line 396
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 396](../../../../../stdlib/geometry/spatial-structures.library.plato#L396).
 
@@ -23,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (ray, 0.0, -1);
 ```
 
-## Line 438
+### Line 438
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 438](../../../../../stdlib/geometry/spatial-structures.library.plato#L438).
 

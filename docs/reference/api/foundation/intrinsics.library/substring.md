@@ -3,11 +3,76 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The characters at the indices start to start + count - 1 that exist. The range
+> is clamped to the String at both ends, so a negative start, a count past the end,
+> a count of zero or less, and a range wholly outside never fail: the last two give
+> "". Expressible as FromCharacters over MapRange and At, but that copies and
+> allocates once per character and the STEP parser slices every keyword; the
+> intrinsic is one block copy. Witness: Substring("abcd", 1, 2) == "bc";
+> Substring("abcd", -1, 3) == "ab" and Substring("abcd", 3, 9) == "d".
+
+## Signature
+
+```plato
+Substring(s: String, start: Integer, count: Integer): String
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SubstringCountIsTheClampedRange
+
+[stdlib/tests/text.laws.plato, line 54](../../../../../stdlib/tests/text.laws.plato#L54)
+
+```plato
+// The length is the size of the intersection of [start, start + count) with [0, Count).
+Law_SubstringCountIsTheClampedRange(s: String, start: Integer, count: Integer): Boolean
+    => Substring(s, start, count).Count
+        == (count <= 0 ? 0 : (start + count).Min(s.Count).Subtract(start.Max(0)).Max(0));
+```
+
+### Law_SubstringCharactersAreTheSourceCharacters
+
+[stdlib/tests/text.laws.plato, line 59](../../../../../stdlib/tests/text.laws.plato#L59)
+
+```plato
+// Each character is the source character at the same offset from the clamped start.
+Law_SubstringCharactersAreTheSourceCharacters(s: String, start: Integer, count: Integer): Boolean
+    => Substring(s, start, count).Count.Range.All(i =>
+        Substring(s, start, count).At(i) == s.At(start.Max(0) + i));
+```
+
+### Law_SubstringOfTheWholeRangeIsIdentity
+
+[stdlib/tests/text.laws.plato, line 64](../../../../../stdlib/tests/text.laws.plato#L64)
+
+```plato
+// The whole String is its own substring from 0 for Count.
+Law_SubstringOfTheWholeRangeIsIdentity(s: String): Boolean
+    => Substring(s, 0, s.Count) == s;
+```
+
+### Law_SubstringWitness
+
+[stdlib/tests/text.laws.plato, line 68](../../../../../stdlib/tests/text.laws.plato#L68)
+
+```plato
+// Two-line witness: the clamped cases and the empty ones.
+Law_SubstringWitness(): Boolean
+    => Substring("abcd", 1, 2) == "bc" && Substring("abcd", -1, 3) == "ab" && Substring("abcd", 3, 9) == "d"
+    && Substring("abcd", 0, 0) == "" && Substring("abcd", 4, 1) == "" && Substring("abcd", 0, -2) == "";
+```
+
+## Source
+
 **File:** [intrinsics.library](../intrinsics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 177
+### Line 177
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 177](../../../../../stdlib/foundation/intrinsics.library.plato#L177).
 

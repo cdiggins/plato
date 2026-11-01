@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Cross-multiply order, accounting for the sign of the product of
+> denominators so negative denominators do not reverse the relation.
+
+## Signature
+
+```plato
+LessThanOrEquals(a: Rational, b: Rational): Boolean
+LessThanOrEquals(a: Proportion, b: Proportion): Boolean
+LessThanOrEquals(a: Percent, b: Percent): Boolean
+LessThanOrEquals(a: Probability, b: Probability): Boolean
+LessThanOrEquals(a: Cardinal, b: Cardinal): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 114
+### Line 114
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 114](../../../../../stdlib/foundation/numbers.library.plato#L114).
 
@@ -24,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 160
+### Line 160
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 160](../../../../../stdlib/foundation/numbers.library.plato#L160).
 
@@ -34,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Value <= b.Value;
 ```
 
-## Line 199
+### Line 199
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 199](../../../../../stdlib/foundation/numbers.library.plato#L199).
 
@@ -44,7 +72,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Value <= b.Value;
 ```
 
-## Line 238
+### Line 238
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 238](../../../../../stdlib/foundation/numbers.library.plato#L238).
 
@@ -54,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Value <= b.Value;
 ```
 
-## Line 241
+### Line 241
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 241](../../../../../stdlib/foundation/numbers.library.plato#L241).
 

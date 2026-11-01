@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> All cameras of a scene grouped into typed arrays; SceneCameraBinding
+> entries address into these. Each array is an independent zero-based index
+> space.
+
+## Signature
+
+```plato
+type SceneCameraSet
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [scene3d.types](../scene3d.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 76
+### Line 76
 
 **Source:** [stdlib/graphics/scene3d.types.plato, line 76](../../../../../stdlib/graphics/scene3d.types.plato#L76).
 

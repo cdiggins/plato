@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The rows of a whole set of manifolds, in manifold order. Manifolds with no
+> points contribute nothing, so a pair test that found nothing needs no
+> filtering out.
+
+## Signature
+
+```plato
+Flatten(manifolds: Array<ContactManifold3D>, bodies: Array<SolverBody3D>, threshold: Speed)
+    : Array<ContactConstraint3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 374
+### Line 374
 
 **Source:** [stdlib/future/collision.library.plato, line 374](../../../../../stdlib/future/collision.library.plato#L374).
 

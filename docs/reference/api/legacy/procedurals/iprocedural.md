@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+interface IProcedural<TIn, TOut>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [procedurals](../procedurals.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [legacy/stdlib-legacy/procedurals.plato, line 1](../../../../../legacy/stdlib-legacy/procedurals.plato#L1).
 

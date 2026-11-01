@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The polygon with every vertex carried through the mapping.
+
+## Signature
+
+```plato
+Deform(p: Polygon2D, mapping: Function1<Point2D, Point2D>): Polygon2D
+Deform(p: ConvexPolygon2D, mapping: Function1<Point2D, Point2D>): ConvexPolygon2D
+Deform(r: PolygonWithHoles2D, mapping: Function1<Point2D, Point2D>): PolygonWithHoles2D
+Deform(s: PolygonSet2D, mapping: Function1<Point2D, Point2D>): PolygonSet2D
+Deform(p: Polyline2D, mapping: Function1<Point2D, Point2D>): Polyline2D
+Deform(p: Polyline3D, mapping: Function1<Point3D, Point3D>): Polyline3D
+Deform(p: Polygon3D, mapping: Function1<Point3D, Point3D>): Polygon3D
+Deform(y: Pyramid3D, mapping: Function1<Point3D, Point3D>): Pyramid3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 8 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 66
+### Line 66
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 66](../../../../../stdlib/geometry/polygons.library.plato#L66).
 
@@ -18,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Polygon2D(p.Points.Map(mapping));
 ```
 
-## Line 103
+### Line 103
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 103](../../../../../stdlib/geometry/polygons.library.plato#L103).
 
@@ -30,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ConvexPolygon2D(p.Points.Map(mapping));
 ```
 
-## Line 144
+### Line 144
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 144](../../../../../stdlib/geometry/polygons.library.plato#L144).
 
@@ -41,7 +68,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (r.Boundary.Deform(mapping), r.Holes.Map(h => h.Deform(mapping)));
 ```
 
-## Line 172
+### Line 172
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 172](../../../../../stdlib/geometry/polygons.library.plato#L172).
 
@@ -52,7 +79,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => PolygonSet2D(s.Polygons.Map(p => p.Deform(mapping)));
 ```
 
-## Line 317
+### Line 317
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 317](../../../../../stdlib/geometry/polygons.library.plato#L317).
 
@@ -63,7 +90,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (p.Points.Map(mapping), p.Closed);
 ```
 
-## Line 321
+### Line 321
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 321](../../../../../stdlib/geometry/polygons.library.plato#L321).
 
@@ -74,7 +101,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (p.Points.Map(mapping), p.Closed);
 ```
 
-## Line 361
+### Line 361
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 361](../../../../../stdlib/geometry/polygons.library.plato#L361).
 
@@ -89,7 +116,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Polygon3D(p.Points.Map(mapping));
 ```
 
-## Line 453
+### Line 453
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 453](../../../../../stdlib/geometry/polygons.library.plato#L453).
 

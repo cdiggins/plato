@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Folds a parameter into the half-open interval \[0, Period). The extra
+> "+ Period then modulo" corrects the truncated remainder, which is negative
+> for negative t. Precondition: Period > 0.
+
+## Signature
+
+```plato
+WrapParameter(self: IPeriodicCurve<$TRange>, t: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 201](../../../../../stdlib/geometry/curves.library.plato#L201): derivatives in the plane and in space, a moving frame, planarity, polar form,
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 195
+### Line 195
 
 **Source:** [stdlib/geometry/curves.library.plato, line 195](../../../../../stdlib/geometry/curves.library.plato#L195).
 

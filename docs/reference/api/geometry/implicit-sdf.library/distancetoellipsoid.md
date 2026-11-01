@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed distance from a point to an axis-aligned ellipsoid with the given
+> semi-axis radii, centred at the origin. A LOWER BOUND, not exact: an
+> ellipsoid has no closed-form signed distance, and this under-estimates, which
+> keeps it safe for sphere tracing at the cost of shorter steps. Precondition:
+> every radius is positive, and p is not the centre. (IQ: sdEllipsoid.)
+
+## Signature
+
+```plato
+DistanceToEllipsoid(p: Point3D, radii: Vector3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 945
+### Line 945
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 945](../../../../../stdlib/geometry/implicit-sdf.library.plato#L945).
 

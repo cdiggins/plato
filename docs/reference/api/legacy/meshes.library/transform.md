@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Any Deformable3D is also a Transformable3D
+
+## Signature
+
+```plato
+Transform(self: IDeformable3D, t: Transform3D): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 77
+### Line 77
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 77](../../../../../legacy/stdlib-legacy/meshes.library.plato#L77).
 

@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A rounded pipe of the given radius running along the curve where the two
+> surfaces meet. (hg\_sdf: fOpPipe.)
+
+## Signature
+
+```plato
+PipeDistance(a: Number, b: Number, radius: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_PipeIsCommutative
+
+[stdlib/tests/implicit-sdf.laws.plato, line 277](../../../../../stdlib/tests/implicit-sdf.laws.plato#L277)
+
+```plato
+// A pipe is radially symmetric in its two guiding surfaces.
+Law_PipeIsCommutative(a: Number, b: Number, radius: Number): Boolean
+    => PipeDistance(a, b, radius).LawEq(PipeDistance(b, a, radius));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 739
+### Line 739
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 739](../../../../../stdlib/geometry/implicit-sdf.library.plato#L739).
 

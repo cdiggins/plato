@@ -3,11 +3,46 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number itself: `IReal.ToNumber` on the carrier type is the identity.
+> It exists so a body generic over IReal can drop to a plain Number.
+
+## Signature
+
+```plato
+ToNumber(self: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_CbrtOfExactCubeIsTheRootBitwise
+
+[stdlib/tests/text.laws.plato, line 194](../../../../../stdlib/tests/text.laws.plato#L194)
+
+```plato
+// Cbrt inverts the cube bitwise on exactly representable cubes: the small integers and halves
+// (a half cubed is an eighth, still exact), either sign, and zero keeps its sign.
+Law_CbrtOfExactCubeIsTheRootBitwise(n: Integer): Boolean
+    => CbrtRootsBack(n.ToNumber) && CbrtRootsBack(n.ToNumber * 0.5) && CbrtRootsBack(-(n.ToNumber));
+```
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [primitives.library](../primitives.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 1](../../../../../stdlib/foundation/primitives.library.plato#L1).
 

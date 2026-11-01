@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The positions, without the per-point normals.
+
+## Signature
+
+```plato
+ToPointCloud(self: OrientedPointCloud3D): PointCloud3D
+ToPointCloud(self: ColoredPointCloud3D): PointCloud3D
+ToPointCloud(self: AttributedPointCloud3D): PointCloud3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [pointclouds.library](../pointclouds.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 25
+### Line 25
 
 **Source:** [stdlib/geometry/pointclouds.library.plato, line 25](../../../../../stdlib/geometry/pointclouds.library.plato#L25).
 
@@ -27,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => PointCloud3D(self.Positions);
 ```
 
-## Line 38
+### Line 38
 
 **Source:** [stdlib/geometry/pointclouds.library.plato, line 38](../../../../../stdlib/geometry/pointclouds.library.plato#L38).
 
@@ -38,7 +60,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => PointCloud3D(self.Positions);
 ```
 
-## Line 42
+### Line 42
 
 **Source:** [stdlib/geometry/pointclouds.library.plato, line 42](../../../../../stdlib/geometry/pointclouds.library.plato#L42).
 

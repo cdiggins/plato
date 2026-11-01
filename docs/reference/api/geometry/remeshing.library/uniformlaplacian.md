@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The uniform Laplacian at a vertex: the offset from it to the average of its
+> neighbours (https://en.wikipedia.org/wiki/Laplacian\_smoothing).
+
+## Signature
+
+```plato
+UniformLaplacian(positions: Array<Point3D>, neighbors: Array<Array<VertexIndex>>, v: Integer): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1123
+### Line 1123
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1123](../../../../../stdlib/geometry/remeshing.library.plato#L1123).
 

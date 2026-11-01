@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The rhombus left where an edge was: endpoint, far face's apex, other
+> endpoint, near face's apex. The far apex comes first because the near
+> face lies to the LEFT of the corner's directed edge, and taking it first
+> would wind the quad clockwise seen from outside.
+> Precondition: `corner` is canonical (one call per undirected edge).
+
+## Signature
+
+```plato
+JoinFaceOfEdge(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 556
+### Line 556
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 556](../../../../../stdlib/geometry/polyhedra.library.plato#L556).
 

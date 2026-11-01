@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Determinant(self: Matrix4x4): Number
+Determinant(self: Matrix3x2): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 19
+### Line 19
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 19](../../../../../legacy/stdlib-legacy/intrinsics.plato#L19).
 
@@ -16,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Determinant(self: Matrix4x4): Number;
 ```
 
-## Line 71
+### Line 71
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 71](../../../../../legacy/stdlib-legacy/intrinsics.plato#L71).
 

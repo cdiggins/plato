@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A Lissajous figure: x = XAmplitude \* sin(2 \* pi \* XFrequency \* t + Phase),
+> y = YAmplitude \* sin(2 \* pi \* YFrequency \* t). Closes when the frequency
+> ratio is rational; the canonical parameter covers one combined period
+> (https://en.wikipedia.org/wiki/Lissajous\_curve).
+
+## Signature
+
+```plato
+type Lissajous2D
+    implements ICurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICurve2D](../curves.concepts/icurve2d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.types](../curves-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 161
+### Line 161
 
 **Source:** [stdlib/geometry/curves-shapes.types.plato, line 161](../../../../../stdlib/geometry/curves-shapes.types.plato#L161).
 

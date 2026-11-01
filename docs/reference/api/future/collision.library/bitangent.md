@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The second friction direction, completing a right-handed frame with the
+> normal and the tangent. Precondition: the two are unit and perpendicular,
+> which `Tangent` guarantees.
+
+## Signature
+
+```plato
+Bitangent(normal: Direction3D, tangent: Direction3D): Direction3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 91
+### Line 91
 
 **Source:** [stdlib/future/collision.library.plato, line 91](../../../../../stdlib/future/collision.library.plato#L91).
 

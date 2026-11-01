@@ -3,11 +3,36 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Subtract(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4
+Subtract(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2
+Subtract(left: Vector2, right: Vector2): Vector2
+Subtract(left: Vector3, right: Vector3): Vector3
+Subtract(left: Vector4, right: Vector4): Vector4
+Subtract(left: Vector8, right: Vector8): Vector8
+Subtract(a: Quaternion, b: Quaternion): Quaternion
+Subtract(a: Number, b: Number): Number
+Subtract(a: Integer, b: Integer): Integer
+Subtract(a: Angle, b: Angle): Angle
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 10 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 23
+### Line 23
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 23](../../../../../legacy/stdlib-legacy/intrinsics.plato#L23).
 
@@ -15,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Subtract(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4;
 ```
 
-## Line 73
+### Line 73
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 73](../../../../../legacy/stdlib-legacy/intrinsics.plato#L73).
 
@@ -23,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Subtract(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2;
 ```
 
-## Line 108
+### Line 108
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 108](../../../../../legacy/stdlib-legacy/intrinsics.plato#L108).
 
@@ -31,7 +56,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Subtract(left: Vector2, right: Vector2): Vector2;
 ```
 
-## Line 147
+### Line 147
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 147](../../../../../legacy/stdlib-legacy/intrinsics.plato#L147).
 
@@ -39,7 +64,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Subtract(left: Vector3, right: Vector3): Vector3;
 ```
 
-## Line 187
+### Line 187
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 187](../../../../../legacy/stdlib-legacy/intrinsics.plato#L187).
 
@@ -47,7 +72,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Subtract(left: Vector4, right: Vector4): Vector4;
 ```
 
-## Line 231
+### Line 231
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 231](../../../../../legacy/stdlib-legacy/intrinsics.plato#L231).
 
@@ -55,7 +80,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Subtract(left: Vector8, right: Vector8): Vector8;
 ```
 
-## Line 295
+### Line 295
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 295](../../../../../legacy/stdlib-legacy/intrinsics.plato#L295).
 
@@ -63,7 +88,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Subtract(a: Quaternion, b: Quaternion): Quaternion;
 ```
 
-## Line 355
+### Line 355
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 355](../../../../../legacy/stdlib-legacy/intrinsics.plato#L355).
 
@@ -71,7 +96,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Subtract(a: Number, b: Number): Number;
 ```
 
-## Line 404
+### Line 404
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 404](../../../../../legacy/stdlib-legacy/intrinsics.plato#L404).
 
@@ -79,7 +104,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Subtract(a: Integer, b: Integer): Integer;
 ```
 
-## Line 442
+### Line 442
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 442](../../../../../legacy/stdlib-legacy/intrinsics.plato#L442).
 

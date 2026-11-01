@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Negative(value: Vector2): Vector2
+Negative(value: Vector3): Vector3
+Negative(value: Vector4): Vector4
+Negative(value: Vector8): Vector8
+Negative(a: Quaternion): Quaternion
+Negative(n: Number): Number
+Negative(n: Integer): Integer
+Negative(n: Angle): Angle
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 8 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 114
+### Line 114
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 114](../../../../../legacy/stdlib-legacy/intrinsics.plato#L114).
 
@@ -15,7 +38,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Negative(value: Vector2): Vector2;
 ```
 
-## Line 153
+### Line 153
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 153](../../../../../legacy/stdlib-legacy/intrinsics.plato#L153).
 
@@ -23,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Negative(value: Vector3): Vector3;
 ```
 
-## Line 193
+### Line 193
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 193](../../../../../legacy/stdlib-legacy/intrinsics.plato#L193).
 
@@ -31,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Negative(value: Vector4): Vector4;
 ```
 
-## Line 238
+### Line 238
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 238](../../../../../legacy/stdlib-legacy/intrinsics.plato#L238).
 
@@ -39,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Negative(value: Vector8): Vector8;
 ```
 
-## Line 296
+### Line 296
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 296](../../../../../legacy/stdlib-legacy/intrinsics.plato#L296).
 
@@ -47,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Negative(a: Quaternion): Quaternion;
 ```
 
-## Line 358
+### Line 358
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 358](../../../../../legacy/stdlib-legacy/intrinsics.plato#L358).
 
@@ -55,7 +78,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Negative(n: Number): Number;
 ```
 
-## Line 400
+### Line 400
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 400](../../../../../legacy/stdlib-legacy/intrinsics.plato#L400).
 
@@ -63,7 +86,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Negative(n: Integer): Integer;
 ```
 
-## Line 437
+### Line 437
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 437](../../../../../legacy/stdlib-legacy/intrinsics.plato#L437).
 

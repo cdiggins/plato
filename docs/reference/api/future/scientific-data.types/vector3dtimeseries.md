@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A uniformly sampled series of 3D vectors (positions, velocities, field
+> samples): sample i occurs at Start plus i times SamplePeriod. Components are
+> in Unit.
+
+## Signature
+
+```plato
+type Vector3DTimeSeries
+    implements ITimeSampled
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ITimeSampled](../scientific-data.concepts/itimesampled.md).
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.types](../scientific-data.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 141
+### Line 141
 
 **Source:** [stdlib/future/scientific-data.types.plato, line 141](../../../../../stdlib/future/scientific-data.types.plato#L141).
 

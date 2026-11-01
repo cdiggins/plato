@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The six face centers of the unit cube, in the order used by the
+> face-centered tables: z = 0, z = 1, y = 0, y = 1, x = 0, x = 1. They take
+> indices 8-13 when appended to `CubeCorners`.
+
+## Signature
+
+```plato
+CubeFaceCenters(_: LatticeUnitCell): Array<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 64
+### Line 64
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 64](../../../../../stdlib/geometry/lattices.library.plato#L64).
 

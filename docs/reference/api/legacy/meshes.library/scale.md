@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Scale(x: ITransformable3D, v: Vector3): ITransformable3D
+Scale(x: ITransformable3D, s: Number): ITransformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 86
+### Line 86
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 86](../../../../../legacy/stdlib-legacy/meshes.library.plato#L86).
 
@@ -16,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Scale(x: ITransformable3D, v: Vector3): ITransformable3D => x.Transform(new Scaling3D(v));
 ```
 
-## Line 88
+### Line 88
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 88](../../../../../legacy/stdlib-legacy/meshes.library.plato#L88).
 

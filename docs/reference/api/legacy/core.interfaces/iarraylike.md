@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Support for types that are arrays of values.
+
+## Signature
+
+```plato
+interface IArrayLike<T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Integer2](../core.types/integer2.md), [Integer3](../core.types/integer3.md), [Integer4](../core.types/integer4.md), [Bounds2D](../geometry.types/bounds2d.md), [Triangle2D](../geometry.types/triangle2d.md), [Quad2D](../geometry.types/quad2d.md), [Line2D](../geometry.types/line2d.md), [Bounds3D](../geometry.types/bounds3d.md), [Line3D](../geometry.types/line3d.md), [Triangle3D](../geometry.types/triangle3d.md), [Quad3D](../geometry.types/quad3d.md), [Matrix3x2](../primitives/matrix3x2.md), [Matrix4x4](../primitives/matrix4x4.md), [Quaternion](../primitives/quaternion.md).
+
+## Source
+
 **File:** [core.interfaces](../core.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 36
+### Line 36
 
 **Source:** [legacy/stdlib-legacy/core.interfaces.plato, line 36](../../../../../legacy/stdlib-legacy/core.interfaces.plato#L36).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A pure spatial space warp: maps every Point3D to a Point3D. Implements are
+> parametric structs (Twist3D, Bend3D, Taper3D, ...); apply with
+> `geom.Deform(d)` / `d.Eval(p)`.
+
+## Signature
+
+```plato
+interface IDeformation3D
+    inherits IProcedural<Point3D, Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IProcedural](../../foundation/functional.concepts/iprocedural.md).
+
+Implemented in this tier by: [Twist3D](../deformations.types/twist3d.md), [Bend3D](../deformations.types/bend3d.md), [Taper3D](../deformations.types/taper3d.md), [Shear3D](../deformations.types/shear3d.md), [Spherify3D](../deformations.types/spherify3d.md), [MappingDeformation3D](../deformations.types/mappingdeformation3d.md).
+
+## Source
+
 **File:** [deformations.concepts](../deformations.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 18
+### Line 18
 
 **Source:** [stdlib/geometry/deformations.concepts.plato, line 18](../../../../../stdlib/geometry/deformations.concepts.plato#L18).
 

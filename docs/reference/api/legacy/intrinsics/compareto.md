@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+CompareTo(self: Number, other: Number): Integer
+CompareTo(self: Integer, other: Integer): Integer
+CompareTo(self: Boolean, other: Boolean): Integer
+CompareTo(self: Angle, other: Angle): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 366
+### Line 366
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 366](../../../../../legacy/stdlib-legacy/intrinsics.plato#L366).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     CompareTo(self: Number, other: Number): Integer;
 ```
 
-## Line 391
+### Line 391
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 391](../../../../../legacy/stdlib-legacy/intrinsics.plato#L391).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     CompareTo(self: Integer, other: Integer): Integer;
 ```
 
-## Line 412
+### Line 412
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 412](../../../../../legacy/stdlib-legacy/intrinsics.plato#L412).
 
@@ -31,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     CompareTo(self: Boolean, other: Boolean): Integer;
 ```
 
-## Line 426
+### Line 426
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 426](../../../../../legacy/stdlib-legacy/intrinsics.plato#L426).
 

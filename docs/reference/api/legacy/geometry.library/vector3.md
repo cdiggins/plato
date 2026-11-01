@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Vector3(x: Point3D): Vector3
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 29
+### Line 29
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 29](../../../../../legacy/stdlib-legacy/geometry.library.plato#L29).
 

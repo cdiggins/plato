@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One of the two unsigned cardinal axes of 2D space: the X or Y direction line.
+
+## Signature
+
+```plato
+type Axis2D = X | Y
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [axes.types](../axes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 34
+### Line 34
 
 **Source:** [stdlib/foundation/axes.types.plato, line 34](../../../../../stdlib/foundation/axes.types.plato#L34).
 

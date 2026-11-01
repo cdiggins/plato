@@ -3,11 +3,111 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed distance from a point to an axis-aligned box with the given
+> half-extents, centred at the origin. The exterior part is the length of the
+> positive per-axis surface offsets, the interior part the largest (least
+> negative) offset. Exact. (IQ: sdBox.)
+
+## Signature
+
+```plato
+DistanceToBox(p: Point3D, halfExtents: Vector3D): Number
+DistanceToBox(p: Point2D, halfExtents: Vector2D): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_RoundedBoxAtZeroRadiusIsBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 29](../../../../../stdlib/tests/implicit-sdf.laws.plato#L29)
+
+```plato
+// Rounding by zero leaves the box unchanged: the rounded-box body inflates the
+// half-extents and subtracts the radius back off, so a zero radius must cancel.
+Law_RoundedBoxAtZeroRadiusIsBox(p: Point3D, halfExtents: Vector3D): Boolean
+    => DistanceToRoundedBox(p, halfExtents, 0.0).LawEq(DistanceToBox(p, halfExtents));
+```
+
+### Law_RoundedBox2DAtZeroRadiusIsBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 33](../../../../../stdlib/tests/implicit-sdf.laws.plato#L33)
+
+```plato
+// The planar form of the same cancellation.
+Law_RoundedBox2DAtZeroRadiusIsBox(p: Point2D, halfExtents: Vector2D): Boolean
+    => DistanceToRoundedBox(p, halfExtents, 0.0).LawEq(DistanceToBox(p, halfExtents));
+```
+
+### Law_BoxIsBoxSlice
+
+[stdlib/tests/implicit-sdf.laws.plato, line 121](../../../../../stdlib/tests/implicit-sdf.laws.plato#L121)
+
+```plato
+// A rectangle is the z = 0 slice of the box with the same half-extents in x and
+// y. The slice's own half-extent in z is irrelevant at z = 0 as long as it is
+// not the nearest face, so it is taken larger than the others.
+Law_BoxIsBoxSlice(p: Point2D, halfExtents: Vector2D): Boolean {
+    var depth = halfExtents.X.Max(halfExtents.Y) + 1.0;
+    return DistanceToBox(p, halfExtents)
+        .LawEq(DistanceToBox(
+            Point3D(p.X, p.Y, 0.0),
+            Vector3D(halfExtents.X, halfExtents.Y, depth)));
+}
+```
+
+### Law_AxisAlignedQuadIsBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 333](../../../../../stdlib/tests/implicit-sdf.laws.plato#L333)
+
+```plato
+// The quad on the four corners of an axis-aligned rectangle is that rectangle,
+// whose distance the box primitive computes from half-extents alone. Guarded to
+// a non-degenerate rectangle. (Counter-clockwise, as Quad2D expects.)
+Law_AxisAlignedQuadIsBox(p: Point2D, halfExtents: Vector2D): Boolean
+    => halfExtents.X <= 0.0 || halfExtents.Y <= 0.0
+    || DistanceToQuad(
+            p,
+            Point2D(halfExtents.X.Negative, halfExtents.Y.Negative),
+            Point2D(halfExtents.X, halfExtents.Y.Negative),
+            Point2D(halfExtents.X, halfExtents.Y),
+            Point2D(halfExtents.X.Negative, halfExtents.Y))
+        .LawEq(DistanceToBox(p, halfExtents));
+```
+
+### Law_FlatQuadPatchIsFlatBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 346](../../../../../stdlib/tests/implicit-sdf.laws.plato#L346)
+
+```plato
+// The same rectangle as a patch in space is a box of zero depth, whose signed
+// distance is already the unsigned distance to the patch. Cross-checks the quad
+// patch's edge-vote branch against a formula with no votes in it.
+Law_FlatQuadPatchIsFlatBox(p: Point3D, halfExtents: Vector2D): Boolean
+    => halfExtents.X <= 0.0 || halfExtents.Y <= 0.0
+    || UnsignedDistanceToQuad(
+            p,
+            Point3D(halfExtents.X.Negative, halfExtents.Y.Negative, 0.0),
+            Point3D(halfExtents.X, halfExtents.Y.Negative, 0.0),
+            Point3D(halfExtents.X, halfExtents.Y, 0.0),
+            Point3D(halfExtents.X.Negative, halfExtents.Y, 0.0))
+        .LawEq(DistanceToBox(p, Vector3D(halfExtents.X, halfExtents.Y, 0.0)));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 846
+### Line 846
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 846](../../../../../stdlib/geometry/implicit-sdf.library.plato#L846).
 
@@ -27,7 +127,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 1046
+### Line 1046
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 1046](../../../../../stdlib/geometry/implicit-sdf.library.plato#L1046).
 

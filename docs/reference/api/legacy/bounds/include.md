@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Include(x: IBounds<$T, $D>, value: $T): IBounds<$T, $D>
+Include(x: IBounds<$T, $D>, y: IBounds<$T, $D>): IBounds<$T, $D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [bounds](../bounds.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 30
+### Line 30
 
 **Source:** [legacy/stdlib-legacy/bounds.plato, line 30](../../../../../legacy/stdlib-legacy/bounds.plato#L30).
 
@@ -17,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> (Min(x.Min, value), Max(x.Max, value));
 ```
 
-## Line 33
+### Line 33
 
 **Source:** [legacy/stdlib-legacy/bounds.plato, line 33](../../../../../legacy/stdlib-legacy/bounds.plato#L33).
 

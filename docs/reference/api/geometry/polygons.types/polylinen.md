@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A chain of straight segments in N-dimensional space. When Closed, an extra
+> segment joins the last point back to the first. All points share one arity.
+
+## Signature
+
+```plato
+type PolylineN
+    implements IGeometryND, IConnected, ILength
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometryND](../geometry.concepts/igeometrynd.md), [IConnected](../geometry.concepts/iconnected.md), [ILength](../geometry.concepts/ilength.md).
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.types](../polygons.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 96
+### Line 96
 
 **Source:** [stdlib/geometry/polygons.types.plato, line 96](../../../../../stdlib/geometry/polygons.types.plato#L96).
 

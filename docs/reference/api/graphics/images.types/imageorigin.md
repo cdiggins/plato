@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Where pixel row zero sits in an image's coordinate convention: scanline
+> order as in most codecs (TopLeft), or OpenGL texture order (BottomLeft).
+
+## Signature
+
+```plato
+type ImageOrigin = TopLeft | BottomLeft
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [images.types](../images.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/images.types.plato, line 1](../../../../../stdlib/graphics/images.types.plato#L1).
 

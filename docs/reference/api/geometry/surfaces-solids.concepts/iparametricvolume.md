@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A deformable volume evaluated from a UVW parameter box (canonically the unit
+> cube): trivariate patches, free-form deformation cages, solid textures spaces
+> (https://en.wikipedia.org/wiki/Free-form\_deformation).
+
+## Signature
+
+```plato
+interface IParametricVolume
+    inherits IGeometry3D, IProcedural<UvwCoordinate, Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IProcedural](../../foundation/functional.concepts/iprocedural.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-solids.concepts](../surfaces-solids.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 73
+### Line 73
 
 **Source:** [stdlib/geometry/surfaces-solids.concepts.plato, line 73](../../../../../stdlib/geometry/surfaces-solids.concepts.plato#L73).
 

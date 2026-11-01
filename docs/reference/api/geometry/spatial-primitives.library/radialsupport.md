@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A unit displacement of length `radius` in the direction of `v` projected
+> perpendicular to `axis`; the zero vector when `v` is parallel to `axis` (any
+> rim point is then equally extreme, and the caller adds the axial part).
+
+## Signature
+
+```plato
+RadialSupport(v: Vector3D, axis: Vector3D, radius: Number): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 84
+### Line 84
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 84](../../../../../stdlib/geometry/spatial-primitives.library.plato#L84).
 

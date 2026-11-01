@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+primitive Function5<T0, T1, T2, T3, T4, TR>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+- [Numbers: Number and Integer](../../../start/tour/numbers.md)
+
+## Source
+
 **File:** [primitives](../primitives.md). Kind: primitive. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/foundation/primitives.plato, line 131](../../../../../stdlib/foundation/primitives.plato#L131).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the horizontal ray from `point` towards +X crosses the edge
+> (a, b). The half-open rule on the y comparison (`a.Y > point.Y` exclusive-or
+> `b.Y > point.Y`) counts each vertex exactly once, so a ray through a vertex
+> does not double count.
+
+## Signature
+
+```plato
+EdgeCrossesRay(a: Point2D, b: Point2D, point: Point2D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 470
+### Line 470
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 470](../../../../../stdlib/geometry/geometry.library.plato#L470).
 

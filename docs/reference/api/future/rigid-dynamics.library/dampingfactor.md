@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The velocity decay factor of an exponential damping rate over a step:
+> exp(-rate \* dt), which is the exact solution of dv/dt = -rate v and is
+> therefore stable at any step size, unlike the (1 - rate \* dt) that a
+> first-order reading of the same rate would give and that goes negative once
+> the step is long enough.
+
+## Signature
+
+```plato
+DampingFactor(rate: Number, seconds: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 520
+### Line 520
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 520](../../../../../stdlib/future/rigid-dynamics.library.plato#L520).
 

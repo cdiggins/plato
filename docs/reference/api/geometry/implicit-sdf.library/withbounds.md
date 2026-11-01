@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Package a planar function SDF with conservative domain bounds.
+
+## Signature
+
+```plato
+WithBounds(self: FunctionSdf2D, bounds: Bounds2D): BoundedSdf2D
+WithBounds(self: FunctionSdf3D, bounds: Bounds3D): BoundedSdf3D
+WithBounds(self: ISignedDistanceField2D, bounds: Bounds2D): BoundedSdf2D
+WithBounds(self: ISignedDistanceField3D, bounds: Bounds3D): BoundedSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 40
+### Line 40
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 40](../../../../../stdlib/geometry/implicit-sdf.library.plato#L40).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self, bounds);
 ```
 
-## Line 44
+### Line 44
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 44](../../../../../stdlib/geometry/implicit-sdf.library.plato#L44).
 
@@ -29,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self, bounds);
 ```
 
-## Line 48
+### Line 48
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 48](../../../../../stdlib/geometry/implicit-sdf.library.plato#L48).
 
@@ -40,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.FunctionSdf2D.WithBounds(bounds);
 ```
 
-## Line 52
+### Line 52
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 52](../../../../../stdlib/geometry/implicit-sdf.library.plato#L52).
 

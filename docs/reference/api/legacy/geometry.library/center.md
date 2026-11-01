@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Center(x: Line2D): Point2D
+Center(x: Line3D): Point3D
+Center(t: Triangle2D): Point2D
+Center(t: Triangle3D): Point3D
+Center(q: Quad2D): Point2D
+Center(q: Quad3D): Point3D
+Center(x: Bounds2D): Point2D
+Center(x: Bounds3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 8 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 51
+### Line 51
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 51](../../../../../legacy/stdlib-legacy/geometry.library.plato#L51).
 
@@ -15,7 +38,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Center(x: Line2D): Point2D => x.A.Average(x.B);
 ```
 
-## Line 69
+### Line 69
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 69](../../../../../legacy/stdlib-legacy/geometry.library.plato#L69).
 
@@ -23,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Center(x: Line3D): Point3D => x.A.Average(x.B);
 ```
 
-## Line 85
+### Line 85
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 85](../../../../../legacy/stdlib-legacy/geometry.library.plato#L85).
 
@@ -31,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Center(t: Triangle2D): Point2D => (t.A + t.B + t.C) / 3.0;
 ```
 
-## Line 99
+### Line 99
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 99](../../../../../legacy/stdlib-legacy/geometry.library.plato#L99).
 
@@ -39,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Center(t: Triangle3D): Point3D => (t.A + t.B + t.C) / 3.0;
 ```
 
-## Line 127
+### Line 127
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 127](../../../../../legacy/stdlib-legacy/geometry.library.plato#L127).
 
@@ -47,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Center(q: Quad2D): Point2D => (q.A + q.B + q.C + q.D) / 4.0;
 ```
 
-## Line 141
+### Line 141
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 141](../../../../../legacy/stdlib-legacy/geometry.library.plato#L141).
 
@@ -55,7 +78,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Center(q: Quad3D): Point3D => (q.A + q.B + q.C + q.D) / 4.0;
 ```
 
-## Line 151
+### Line 151
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 151](../../../../../legacy/stdlib-legacy/geometry.library.plato#L151).
 
@@ -67,7 +90,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Center(x: Bounds2D): Point2D => x.Min.Average(x.Max);
 ```
 
-## Line 163
+### Line 163
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 163](../../../../../legacy/stdlib-legacy/geometry.library.plato#L163).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The value at parameter t evaluated on the primary period: Eval(t mod Period).
+> Any t (negative or beyond one period) maps to the equivalent value in
+> \[0, Period). Precondition: Period > 0.
+
+## Signature
+
+```plato
+EvalWrapped(self: IPeriodicCurve<$TRange>, t: Number): $TRange
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 223
+### Line 223
 
 **Source:** [stdlib/geometry/curves.library.plato, line 223](../../../../../stdlib/geometry/curves.library.plato#L223).
 

@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> |vectorArea . Offset| — the base area times the component of Offset
+> perpendicular to the base, which is the prism's height. Correct for an
+> oblique prism (Cavalieri's principle).
+> https://en.wikipedia.org/wiki/Prism\_(geometry)#Volume
+
+## Signature
+
+```plato
+Volume(p: Prism3D): Number
+Volume(y: Pyramid3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 386](../../../../../stdlib/geometry/polygons.library.plato#L386): The base swept along Offset. Precondition throughout: Offset is not parallel
+- [Line 427](../../../../../stdlib/geometry/polygons.library.plato#L427): Precondition throughout: the Apex is not in the base plane (the declaration's
+- [Line 428](../../../../../stdlib/geometry/polygons.library.plato#L428): stated degenerate case).
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 382
+### Line 382
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 382](../../../../../stdlib/geometry/polygons.library.plato#L382).
 
@@ -28,7 +60,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Base.Points.VectorArea.Dot(p.Offset).Abs;
 ```
 
-## Line 423
+### Line 423
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 423](../../../../../stdlib/geometry/polygons.library.plato#L423).
 

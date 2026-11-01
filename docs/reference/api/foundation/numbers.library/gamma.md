@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The gamma function. For x >= 0.5 this is the Lanczos reconstruction
+> sqrt(2\*pi) \* t^(z + 1/2) \* exp(-t) \* A\_g(z) with z = x - 1 and
+> t = z + g + 1/2; for x \< 0.5 it is the reflection formula, which also
+> extends the function to negative non-integer arguments with the correct
+> sign. Precondition: x is not zero or a negative integer (the poles).
+> Expected accuracy: ~1e-12 relative. Overflows for x > ~171.6.
+> https://en.wikipedia.org/wiki/Gamma\_function
+
+## Signature
+
+```plato
+Gamma(x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 613
+### Line 613
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 613](../../../../../stdlib/foundation/numbers.library.plato#L613).
 

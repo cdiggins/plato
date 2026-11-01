@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> How a constraint row relates its left side to its right side.
+> (https://en.wikipedia.org/wiki/Constraint\_(mathematics))
+
+## Signature
+
+```plato
+type ConstraintRelation = Equality | LessOrEqual | GreaterOrEqual
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [optimization.types](../optimization.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 101
+### Line 101
 
 **Source:** [stdlib/future/optimization.types.plato, line 101](../../../../../stdlib/future/optimization.types.plato#L101).
 

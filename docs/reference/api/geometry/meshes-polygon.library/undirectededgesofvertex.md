@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every undirected edge with this vertex as an endpoint, each once. Folded
+> over canonical corners only, which is what makes it once rather than twice.
+
+## Signature
+
+```plato
+UndirectedEdgesOfVertex(self: PolygonMesh3D, vertex: VertexIndex): Array<UndirectedEdgeIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes-polygon.library](../meshes-polygon.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 373
+### Line 373
 
 **Source:** [stdlib/geometry/meshes-polygon.library.plato, line 373](../../../../../stdlib/geometry/meshes-polygon.library.plato#L373).
 

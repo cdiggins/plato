@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when a scene depth lies within the rendered \[Near, Far\] range.
+
+## Signature
+
+```plato
+ContainsDepth(self: ICamera, depth: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [cameras.library](../cameras.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 41
+### Line 41
 
 **Source:** [stdlib/graphics/cameras.library.plato, line 41](../../../../../stdlib/graphics/cameras.library.plato#L41).
 

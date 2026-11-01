@@ -3,11 +3,36 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+D(self: Plane): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [Find a root with Newton's method](../../../cookbook/newton-root.md)
+- [Functions as mathematical objects](../../../library/foundation/functions.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 261
+### Line 261
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 261](../../../../../legacy/stdlib-legacy/intrinsics.plato#L261).
 

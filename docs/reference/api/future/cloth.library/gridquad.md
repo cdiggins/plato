@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One cell's quadrilateral corner loop, wound counter-clockwise seen from
+> the side the cross product of ColumnStep and RowStep points at.
+> Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+
+## Signature
+
+```plato
+GridQuad(self: ClothGrid3D, column: Integer, row: Integer): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 534
+### Line 534
 
 **Source:** [stdlib/future/cloth.library.plato, line 534](../../../../../stdlib/future/cloth.library.plato#L534).
 

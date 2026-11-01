@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The zero-degree basis: one on the half-open span \[k\_i, k\_i+1), zero
+> elsewhere. The final span is closed on the right instead, so that the
+> curve is defined AT the end of its domain rather than collapsing to the
+> origin there — the usual special case, expressed by passing the domain end
+> down rather than by clamping the parameter short of it.
+
+## Signature
+
+```plato
+ZeroDegreeBasis(knots: KnotVector, domainEnd: Number, i: Integer, t: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 174
+### Line 174
 
 **Source:** [stdlib/geometry/splines.library.plato, line 174](../../../../../stdlib/geometry/splines.library.plato#L174).
 

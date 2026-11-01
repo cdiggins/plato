@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The inertial properties of a spatial rigid body: total mass, center of mass
+> in the body's local frame (meters), and the inertia tensor about the center
+> of mass in body space, in kilogram-square-meters.
+> (https://en.wikipedia.org/wiki/Moment\_of\_inertia)
+
+## Signature
+
+```plato
+type MassProperties3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 44
+### Line 44
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 44](../../../../../stdlib/future/rigid-dynamics.types.plato#L44).
 

@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> 3D Poly-lines that are known to alwaybe be closed
+
+## Signature
+
+```plato
+interface IPolygon3D inherits IPolyLine3D, IClosedShape3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IPolyLine3D](ipolyline3d.md), [IClosedShape3D](iclosedshape3d.md).
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 170
+### Line 170
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 170](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L170).
 

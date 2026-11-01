@@ -3,11 +3,31 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> True when the collection holds at least one sample.
+
+## Signature
+
+```plato
+IsNotEmpty(self: ITimeSampled): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.library](../scientific-data.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 23
+### Line 23
 
 **Source:** [stdlib/future/scientific-data.library.plato, line 23](../../../../../stdlib/future/scientific-data.library.plato#L23).
 

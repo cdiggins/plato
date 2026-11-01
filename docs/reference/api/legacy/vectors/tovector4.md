@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+ToVector4(v: Vector2, z: Number, w: Number): Vector4
+ToVector4(v: Vector3, w: Number): Vector4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [vectors](../vectors.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 11
+### Line 11
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 11](../../../../../legacy/stdlib-legacy/vectors.plato#L11).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ToVector4(v: Vector2, z: Number, w: Number): Vector4 => (v.X, v.Y, z, w);
 ```
 
-## Line 35
+### Line 35
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 35](../../../../../legacy/stdlib-legacy/vectors.plato#L35).
 

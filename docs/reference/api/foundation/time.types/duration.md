@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A span of time, stored in seconds. The delta type of Instant.
+
+## Signature
+
+```plato
+type Duration
+    implements IQuantity
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IQuantity](../quantities.concepts/iquantity.md).
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [time.types](../time.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/time.types.plato, line 1](../../../../../stdlib/foundation/time.types.plato#L1).
 

@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Grid vertex n, at rest (previous position equal to position) and free.
+> A non-positive mass gives an inverse mass of zero, i.e. a pinned sheet.
+
+## Signature
+
+```plato
+GridVertex(self: ClothGrid3D, n: Integer, vertexMass: Mass): ClothVertex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 469
+### Line 469
 
 **Source:** [stdlib/future/cloth.library.plato, line 469](../../../../../stdlib/future/cloth.library.plato#L469).
 

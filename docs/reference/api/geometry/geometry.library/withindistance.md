@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the shape lies within `radius` of the query point (inclusive).
+> Compares squared distances, so no square root is taken.
+
+## Signature
+
+```plato
+WithinDistance(self: INearestPoint2D, point: Point2D, radius: Number): Boolean
+WithinDistance(self: INearestPoint3D, point: Point3D, radius: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 860
+### Line 860
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 860](../../../../../stdlib/geometry/geometry.library.plato#L860).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.DistanceToSquared(point) <= radius * radius;
 ```
 
-## Line 874
+### Line 874
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 874](../../../../../stdlib/geometry/geometry.library.plato#L874).
 

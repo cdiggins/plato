@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the query strikes something.
+
+## Signature
+
+```plato
+DidHit(self: IRaycast2D, query: RayQuery2D): Boolean
+DidHit(self: IRaycast2D, ray: Ray2D): Boolean
+DidHit(self: IRaycast3D, query: RayQuery3D): Boolean
+DidHit(self: IRaycast3D, ray: Ray3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 409
+### Line 409
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 409](../../../../../stdlib/geometry/spatial-structures.library.plato#L409).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Raycast(query).Hit;
 ```
 
-## Line 413
+### Line 413
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 413](../../../../../stdlib/geometry/spatial-structures.library.plato#L413).
 
@@ -29,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Raycast(ray).Hit;
 ```
 
-## Line 449
+### Line 449
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 449](../../../../../stdlib/geometry/spatial-structures.library.plato#L449).
 
@@ -40,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Raycast(query).Hit;
 ```
 
-## Line 453
+### Line 453
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 453](../../../../../stdlib/geometry/spatial-structures.library.plato#L453).
 

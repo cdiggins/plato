@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Tuning of differential evolution: population size, the differential
+> weight F scaling donor differences, the crossover probability, and the
+> random seed.
+> (https://en.wikipedia.org/wiki/Differential\_evolution)
+
+## Signature
+
+```plato
+type DifferentialEvolutionParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [optimization.types](../optimization.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 220
+### Line 220
 
 **Source:** [stdlib/future/optimization.types.plato, line 220](../../../../../stdlib/future/optimization.types.plato#L220).
 

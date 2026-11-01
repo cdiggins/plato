@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> How a track interpolates between a key and its successor: hold the key's
+> value until the next key (Constant), interpolate linearly, follow a smooth
+> spline with automatic tangents (CubicSpline), use explicit weighted tangent
+> handles (Bezier) or explicit tangent slopes (Hermite), or approach the next
+> value like a damped spring (Spring).
+> (https://en.wikipedia.org/wiki/Interpolation)
+
+## Signature
+
+```plato
+type KeyInterpolation = Constant | Linear | CubicSpline | Bezier | Hermite | Spring
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [keyframes.types](../keyframes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 140
+### Line 140
 
 **Source:** [stdlib/future/keyframes.types.plato, line 140](../../../../../stdlib/future/keyframes.types.plato#L140).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The rotation that aims local -Z along `forward` with local +Y as close to
+> `up` as possible, matching the view-space frame of
+> CONVENTIONS.md - View space. Built from the CreateWorld basis so the
+> handedness is stated in exactly one place. Preconditions (unchecked):
+> `forward` and `up` are not parallel.
+
+## Signature
+
+```plato
+LookRotation(forward: Direction3D, up: Direction3D): Quaternion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 615
+### Line 615
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 615](../../../../../stdlib/foundation/transforms.library.plato#L615).
 

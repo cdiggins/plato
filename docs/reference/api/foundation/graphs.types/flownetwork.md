@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A directed flow network: edge weights are nonnegative capacities
+> (unit-agnostic), with distinguished source and sink vertices.
+> (https://en.wikipedia.org/wiki/Flow\_network)
+
+## Signature
+
+```plato
+type FlowNetwork
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Graph data and graph summaries](../../../library/foundation/graphs.md)
+
+## Source
+
 **File:** [graphs.types](../graphs.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 203
+### Line 203
 
 **Source:** [stdlib/foundation/graphs.types.plato, line 203](../../../../../stdlib/foundation/graphs.types.plato#L203).
 

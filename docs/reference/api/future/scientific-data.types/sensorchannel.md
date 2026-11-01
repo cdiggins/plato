@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Description of one acquisition channel of an instrument: what it measures,
+> in which unit, and how often it samples.
+
+## Signature
+
+```plato
+type SensorChannel
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.types](../scientific-data.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 78
+### Line 78
 
 **Source:** [stdlib/future/scientific-data.types.plato, line 78](../../../../../stdlib/future/scientific-data.types.plato#L78).
 

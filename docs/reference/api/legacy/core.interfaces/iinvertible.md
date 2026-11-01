@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> IMultiplicative inverse
+
+## Signature
+
+```plato
+interface IInvertible
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [core.interfaces](../core.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 108
+### Line 108
 
 **Source:** [legacy/stdlib-legacy/core.interfaces.plato, line 108](../../../../../legacy/stdlib-legacy/core.interfaces.plato#L108).
 

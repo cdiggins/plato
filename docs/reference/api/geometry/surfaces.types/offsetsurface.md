@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The surface displaced from a base surface by a constant Distance along its
+> normal (positive Distance follows the base orientation)
+> (https://en.wikipedia.org/wiki/Parallel\_curve).
+
+## Signature
+
+```plato
+type OffsetSurface
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.types](../surfaces.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 82
+### Line 82
 
 **Source:** [stdlib/geometry/surfaces.types.plato, line 82](../../../../../stdlib/geometry/surfaces.types.plato#L82).
 

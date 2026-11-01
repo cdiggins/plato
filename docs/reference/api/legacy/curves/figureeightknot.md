@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Figure-eight\_knot\_(mathematics)
+
+## Signature
+
+```plato
+FigureEightKnot(t: Angle): Point3D
+
+type FigureEightKnot
+	implements IAngularCurve3D, IClosedShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IAngularCurve3D](iangularcurve3d.md), [IClosedShape](../geometry.interfaces/iclosedshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 562
+### Line 562
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 562](../../../../../legacy/stdlib-legacy/curves.plato#L562).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
             (t * 4.0).Sin);
 ```
 
-## Line 594
+### Line 594
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 594](../../../../../legacy/stdlib-legacy/curves.plato#L594).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One component of a three-component row, by column index.
+
+## Signature
+
+```plato
+RowElement(self: Matrix3x3, row: Number3, column: Integer): Number
+RowElement(self: Matrix4x4, row: Number4, column: Integer): Number
+RowElement(self: Matrix4x3, row: Number3, column: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 93](../../../../../stdlib/foundation/matrices.library.plato#L93).
 
@@ -18,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => column == 0 ? row.X : (column == 1 ? row.Y : row.Z);
 ```
 
-## Line 141
+### Line 141
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 141](../../../../../stdlib/foundation/matrices.library.plato#L141).
 
@@ -29,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => column == 0 ? row.X : (column == 1 ? row.Y : (column == 2 ? row.Z : row.W));
 ```
 
-## Line 197
+### Line 197
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 197](../../../../../stdlib/foundation/matrices.library.plato#L197).
 

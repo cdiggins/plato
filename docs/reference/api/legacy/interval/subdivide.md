@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Subdivide(interval: IInterval<$T>, start: Number, end: Number): IInterval<$T>
+Subdivide(interval: IInterval<$T>, subInterval: NumberInterval): IInterval<$T>
+Subdivide(interval: IInterval<$T>, count: Integer): IArray<IInterval<$T>>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [interval](../interval.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 69
+### Line 69
 
 **Source:** [legacy/stdlib-legacy/interval.plato, line 69](../../../../../legacy/stdlib-legacy/interval.plato#L69).
 
@@ -17,7 +35,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> (interval.Lerp(start), interval.Lerp(end));
 ```
 
-## Line 72
+### Line 72
 
 **Source:** [legacy/stdlib-legacy/interval.plato, line 72](../../../../../legacy/stdlib-legacy/interval.plato#L72).
 
@@ -27,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> interval.Subdivide(subInterval.Start, subInterval.End);
 ```
 
-## Line 75
+### Line 75
 
 **Source:** [legacy/stdlib-legacy/interval.plato, line 75](../../../../../legacy/stdlib-legacy/interval.plato#L75).
 

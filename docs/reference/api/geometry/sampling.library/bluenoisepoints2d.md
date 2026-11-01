@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> About `count` blue-noise points over the region: a saturated Poisson-disk
+> set at the radius the count implies, thinned to exactly the count when the
+> region held enough. Thirty darts per cell is the figure
+> `PoissonDiskPattern2D` names.
+
+## Signature
+
+```plato
+BlueNoisePoints2D(region: Bounds2D, count: Integer, seed: Integer): Array<Point2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 759
+### Line 759
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 759](../../../../../stdlib/geometry/sampling.library.plato#L759).
 

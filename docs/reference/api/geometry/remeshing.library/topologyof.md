@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The full derived connectivity of a triangle mesh. Every pass below starts
+> here, and a caller running several passes should build this once and pass it
+> down rather than let each pass rebuild it.
+
+## Signature
+
+```plato
+TopologyOf(self: TriangleMesh3D): TriangleMeshTopology
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 131](../../../../../stdlib/geometry/remeshing.library.plato#L131).
 

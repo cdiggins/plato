@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> ONE FRAME of a scene made of balls and one ground plane: refresh the contacts
+> against the bodies' current poses, carrying last frame's accumulated impulses
+> across, and then step. The whole simulation loop of such a scene is repeated
+> application of this function to its own result.
+
+## Signature
+
+```plato
+StepBallScene(world: RigidWorld3D, radii: Array<Number>, ground: Plane,
+    groundBody: BodyIndex, friction: Number, restitution: Proportion,
+    matchTolerance: Length): RigidWorld3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 893
+### Line 893
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 893](../../../../../stdlib/future/rigid-dynamics.library.plato#L893).
 

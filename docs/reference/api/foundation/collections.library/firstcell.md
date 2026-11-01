@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The top-left cell (0, 0). Precondition: the grid is not empty.
+
+## Signature
+
+```plato
+FirstCell(self: IIndexable2D<$T>): $T
+FirstCell(self: IIndexable3D<$T>): $T
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.library](../collections.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 133
+### Line 133
 
 **Source:** [stdlib/foundation/collections.library.plato, line 133](../../../../../stdlib/foundation/collections.library.plato#L133).
 
@@ -18,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.At(0, 0);
 ```
 
-## Line 163
+### Line 163
 
 **Source:** [stdlib/foundation/collections.library.plato, line 163](../../../../../stdlib/foundation/collections.library.plato#L163).
 

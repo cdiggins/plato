@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A rational Bezier curve in the plane: per-point weights (same count as
+> ControlPoints) pull the curve toward heavier points. Represents conic
+> sections exactly (https://en.wikipedia.org/wiki/B%C3%A9zier\_curve).
+
+## Signature
+
+```plato
+type RationalBezierCurve2D
+    implements ICurve2D, IDeformable2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICurve2D](../curves.concepts/icurve2d.md), [IDeformable2D](../../foundation/transforms.concepts/ideformable2d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.types](../splines.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 38
+### Line 38
 
 **Source:** [stdlib/geometry/splines.types.plato, line 38](../../../../../stdlib/geometry/splines.types.plato#L38).
 

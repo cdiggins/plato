@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The next corner around the same face, in corner order. A polygon face wraps
+> at its own arity, so this is NOT the mod-3 step the triangle section uses.
+
+## Signature
+
+```plato
+PolygonNextCorners(self: PolygonMesh3D): Array<CornerIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 911
+### Line 911
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 911](../../../../../stdlib/geometry/remeshing.library.plato#L911).
 

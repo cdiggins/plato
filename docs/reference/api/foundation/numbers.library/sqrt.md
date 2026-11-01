@@ -3,11 +3,93 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> (sqrt x)' = x' / (2 \* sqrt x). Precondition: Value is strictly positive
+> (the rule divides by the root, so zero is excluded even though the
+> square root itself is defined there).
+
+## Signature
+
+```plato
+Sqrt(x: DualNumber): DualNumber
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SuperEllipseExponentOnePerimeterIsDiamond
+
+[stdlib/tests/special-numerics.laws.plato, line 107](../../../../../stdlib/tests/special-numerics.laws.plato#L107)
+
+```plato
+// At Exponent 1 the superellipse is the diamond with vertices on the axes,
+// whose perimeter is exactly 4 sqrt(a^2 + b^2).
+Law_SuperEllipseExponentOnePerimeterIsDiamond(se: SuperEllipse): Boolean
+    => se.SuperEllipseOutOfRegime
+    || SuperEllipse(se.Center, se.SemiAxes, se.Rotation, 1.0).Perimeter
+        .SpecialEq(4.0 * (se.SemiAxes.X.Square + se.SemiAxes.Y.Square).Sqrt);
+```
+
+### Law_PseudosphereFitsItsRadius
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 223](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L223)
+
+```plato
+// The pseudosphere's radius is Radius / cosh t, so it never exceeds Radius.
+Law_PseudosphereFitsItsRadius(s: Pseudosphere, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    return p.SurfaceFinite.Not
+        || (p.X * p.X + p.Y * p.Y).Sqrt <= s.Radius.Abs + 1e-4;
+}
+```
+
+### Law_PluckerConoidFitsItsBounds
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 230](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L230)
+
+```plato
+// The conoid's rays stop at Radius and its rise stops at Height.
+Law_PluckerConoidFitsItsBounds(s: PluckerConoid, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    return p.SurfaceFinite.Not
+        || ((p.X * p.X + p.Y * p.Y).Sqrt <= s.Radius.Abs + 1e-4
+            && p.Z.Abs <= s.Height.Abs + 1e-4);
+}
+```
+
+### Law_HelicoidCoversItsRadii
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 334](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L334)
+
+```plato
+// The helicoid's radial parameter sweeps Radii: the V edges sit at the two ends
+// of that interval, measured from the axis.
+Law_HelicoidCoversItsRadii(s: Helicoid): Boolean {
+    var inner = s.Eval((0.0, 0.0));
+    var outer = s.Eval((0.0, 1.0));
+    return inner.SurfaceFinite.Not
+        || outer.SurfaceFinite.Not
+        || (SurfaceEq((inner.X * inner.X + inner.Y * inner.Y).Sqrt, s.Radii.Start.Abs)
+            && SurfaceEq((outer.X * outer.X + outer.Y * outer.Y).Sqrt, s.Radii.End.Abs));
+}
+```
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 363
+### Line 363
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 363](../../../../../stdlib/foundation/numbers.library.plato#L363).
 

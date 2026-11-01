@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A named rendering layer. IIndex is the bit position used by SceneNode3D
+> LayerMask and LightLayerMask values; valid indices are 0 through 31.
+
+## Signature
+
+```plato
+type RenderLayer
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [scene3d.types](../scene3d.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 116
+### Line 116
 
 **Source:** [stdlib/graphics/scene3d.types.plato, line 116](../../../../../stdlib/graphics/scene3d.types.plato#L116).
 

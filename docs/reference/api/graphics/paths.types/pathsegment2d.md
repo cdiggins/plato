@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One drawing verb of a contour, following SVG path semantics. Every segment
+> starts at the previous segment's endpoint; each verb carries exactly the
+> control data it needs and nothing more (the on-curve endpoint is always
+> EndPoint). The arc form is the SVG elliptical arc: x/y radii, rotation of
+> the ellipse axes, and the large-arc and sweep flags.
+> (https://en.wikipedia.org/wiki/SVG)
+
+## Signature
+
+```plato
+type PathSegment2D
+    implements IValue
+    = Move(EndPoint: Point2D)                                            // start a new sub-path
+    | Line(EndPoint: Point2D)                                            // straight line to EndPoint
+    | Quadratic(Control: Point2D, EndPoint: Point2D)                     // one control point
+    | Cubic(Control1: Point2D, Control2: Point2D, EndPoint: Point2D)     // two control points
+    | Arc(Radii: Number2, AxisRotation: Angle, LargeArc: Boolean, Sweep: Boolean, EndPoint: Point2D) // SVG elliptical arc
+    | Close
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), `EndPoint`, `Control2`, `EndPoint`, `AxisRotation`, `LargeArc`, `Sweep`, `EndPoint`.
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [paths.types](../paths.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/paths.types.plato, line 1](../../../../../stdlib/graphics/paths.types.plato#L1).
 

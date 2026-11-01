@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Scherk's first surface, z = Scale \* ln(cos(y / Scale) / cos(x / Scale)) over
+> Domain: the doubly periodic minimal surface. Precondition: Domain stays
+> strictly inside the square on which both cosines are positive
+> (https://en.wikipedia.org/wiki/Scherk\_surface).
+
+## Signature
+
+```plato
+type ScherkSurface
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.types](../surfaces-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 296
+### Line 296
 
 **Source:** [stdlib/geometry/surfaces-shapes.types.plato, line 296](../../../../../stdlib/geometry/surfaces-shapes.types.plato#L296).
 

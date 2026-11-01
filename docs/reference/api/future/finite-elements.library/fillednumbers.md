@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A number buffer of `n` slots, every one written to `value`. `new
+> Buffer\<T>(n)` leaves slot contents to the runtime, so every accumulator
+> below starts here rather than from a bare allocation.
+
+## Signature
+
+```plato
+FilledNumbers(n: Integer, value: Number): Buffer<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 85](../../../../../stdlib/future/finite-elements.library.plato#L85): never escapes the function that allocates it.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 75](../../../../../stdlib/future/finite-elements.library.plato#L75).
 

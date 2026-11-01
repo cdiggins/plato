@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The engagement class of a shaft-hole pair: the shaft is always smaller
+> (Clearance), may clear or interfere (Transition), or is always larger
+> (Interference).
+> (https://en.wikipedia.org/wiki/Engineering\_fit)
+
+## Signature
+
+```plato
+type FitClass = Clearance | Transition | Interference
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [engineering.types](../engineering.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 56
+### Line 56
 
 **Source:** [stdlib/future/engineering.types.plato, line 56](../../../../../stdlib/future/engineering.types.plato#L56).
 

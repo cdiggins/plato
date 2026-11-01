@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Latitude/longitude point on the unit sphere: u wraps around the equator,
+> v runs from the north pole (v=0) to the south pole (v=1).
+
+## Signature
+
+```plato
+UnitSphere(uv: Vector2): Vector3
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [solids](../solids.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 128
+### Line 128
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 128](../../../../../legacy/stdlib-legacy/solids.plato#L128).
 

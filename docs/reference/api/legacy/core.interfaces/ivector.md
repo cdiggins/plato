@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A vector supports component-wise arithmetic operations.
+
+## Signature
+
+```plato
+interface IVector
+    inherits INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [INumerical](inumerical.md).
+
+Implemented in this tier by: [Vector2](../primitives/vector2.md), [Vector3](../primitives/vector3.md), [Vector4](../primitives/vector4.md), [Vector8](../primitives/vector8.md).
+
+## Source
+
 **File:** [core.interfaces](../core.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 97
+### Line 97
 
 **Source:** [legacy/stdlib-legacy/core.interfaces.plato, line 97](../../../../../legacy/stdlib-legacy/core.interfaces.plato#L97).
 

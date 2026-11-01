@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every edge longer than `maxLength` split once. One pass halves a long edge,
+> so an edge several times the target needs several passes — which is what the
+> iteration count of `IsotropicRemeshed` below supplies.
+
+## Signature
+
+```plato
+SplitLongEdges(self: TriangleMesh3D, maxLength: Number): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 401
+### Line 401
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 401](../../../../../stdlib/geometry/remeshing.library.plato#L401).
 

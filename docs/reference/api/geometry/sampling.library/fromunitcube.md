@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unit-cube coordinate carried onto the region.
+
+## Signature
+
+```plato
+FromUnitCube(region: Bounds3D, u: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 415
+### Line 415
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 415](../../../../../stdlib/geometry/sampling.library.plato#L415).
 

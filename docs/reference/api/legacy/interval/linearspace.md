@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+LinearSpace(count: Integer): IArray<Number>
+LinearSpace(interval: IInterval<$T>, count: Integer): IArray<$T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [interval](../interval.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 54
+### Line 54
 
 **Source:** [legacy/stdlib-legacy/interval.plato, line 54](../../../../../legacy/stdlib-legacy/interval.plato#L54).
 
@@ -17,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => count.Fractions;
 ```
 
-## Line 60
+### Line 60
 
 **Source:** [legacy/stdlib-legacy/interval.plato, line 60](../../../../../legacy/stdlib-legacy/interval.plato#L60).
 

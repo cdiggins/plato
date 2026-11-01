@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The query position in the source field's own frame: the pose undone, then
+> the uniform scale undone. Precondition: Scale is positive.
+
+## Signature
+
+```plato
+SourcePoint(self: PlacedSdf2D, point: Point2D): Point2D
+SourcePoint(self: PlacedSdf3D, point: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 245](../../../../../stdlib/geometry/implicit-sdf.library.plato#L245): back into the source's own frame and pushes the resulting distance forward
+- [Line 247](../../../../../stdlib/geometry/implicit-sdf.library.plato#L247): result is exact, a lower bound, or not a bound exactly as its source is.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 239
+### Line 239
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 239](../../../../../stdlib/geometry/implicit-sdf.library.plato#L239).
 
@@ -30,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 255
+### Line 255
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 255](../../../../../stdlib/geometry/implicit-sdf.library.plato#L255).
 

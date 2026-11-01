@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The closed 2D region between two parallel lines: the points p whose signed
+> distance Dot(Normal, p) lies within Interval. Interval runs from the lower to
+> the upper signed distance.
+
+## Signature
+
+```plato
+type Slab2D
+    implements IGeometry2D, IConvexShape, IConnected, IContainsPoint2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry2D](../geometry.concepts/igeometry2d.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IContainsPoint2D](../geometry.concepts/icontainspoint2d.md).
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.types](../lines.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 137
+### Line 137
 
 **Source:** [stdlib/geometry/lines.types.plato, line 137](../../../../../stdlib/geometry/lines.types.plato#L137).
 

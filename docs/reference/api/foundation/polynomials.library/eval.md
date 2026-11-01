@@ -3,11 +3,523 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The value of the dense polynomial sum(Coefficients\[k\] \* x^k) at x.
+
+## Signature
+
+```plato
+Eval(p: Polynomial, x: Number): Number
+Eval(p: SparsePolynomial, x: Number): Number
+Eval(s: PowerSeries, x: Number): Number
+Eval(m: Monomial, x: Number): Number
+Eval(p: QuadraticPolynomial, x: Number): Number
+Eval(p: CubicPolynomial, x: Number): Number
+Eval(p: QuarticPolynomial, x: Number): Number
+Eval(r: RationalFunction, x: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ProgressIsEval
+
+[stdlib/tests/easing.laws.plato, line 21](../../../../../stdlib/tests/easing.laws.plato#L21)
+
+```plato
+// Progress is Eval under a readable name.
+Law_ProgressIsEval(f: IEasingFunction, t: Number): Boolean
+    => f.Progress(t).LawEq(f.Eval(t));
+```
+
+### Law_ProgressAtMidpointIsEvalAtHalf
+
+[stdlib/tests/easing.laws.plato, line 25](../../../../../stdlib/tests/easing.laws.plato#L25)
+
+```plato
+// Progress at the temporal midpoint is the evaluation at t = 0.5.
+Law_ProgressAtMidpointIsEvalAtHalf(f: IEasingFunction): Boolean
+    => f.ProgressAtMidpoint.LawEq(f.Eval(0.5));
+```
+
+### Law_MirroredIsEvalOfComplementaryTime
+
+[stdlib/tests/easing.laws.plato, line 36](../../../../../stdlib/tests/easing.laws.plato#L36)
+
+```plato
+// Mirrored playback samples the same curve at the complementary time.
+Law_MirroredIsEvalOfComplementaryTime(f: IEasingFunction, t: Number): Boolean
+    => f.EvaluateMirrored(t).LawEq(f.Eval(1.0 - t));
+```
+
+### Law_HyperboloidOfOneSheetSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 70](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L70)
+
+```plato
+Law_HyperboloidOfOneSheetSeamsInU(s: HyperboloidOfOneSheet, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_HyperboloidOfTwoSheetsSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 73](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L73)
+
+```plato
+Law_HyperboloidOfTwoSheetsSeamsInU(s: HyperboloidOfTwoSheets, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_CatenoidSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 76](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L76)
+
+```plato
+Law_CatenoidSeamsInU(s: Catenoid, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_PseudosphereSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 79](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L79)
+
+```plato
+Law_PseudosphereSeamsInU(s: Pseudosphere, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_DupinCyclideSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 82](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L82)
+
+```plato
+Law_DupinCyclideSeamsInU(s: DupinCyclide, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_SeashellSurfaceSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 85](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L85)
+
+```plato
+Law_SeashellSurfaceSeamsInU(s: SeashellSurface, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_RomanSurfaceSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 88](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L88)
+
+```plato
+Law_RomanSurfaceSeamsInU(s: RomanSurface, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_CrossCapSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 91](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L91)
+
+```plato
+Law_CrossCapSeamsInU(s: CrossCap, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_BohemianDomeSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 94](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L94)
+
+```plato
+Law_BohemianDomeSeamsInU(s: BohemianDome, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_PluckerConoidSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 98](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L98)
+
+```plato
+// A whole number of folds over the lap, which the Integer field guarantees.
+Law_PluckerConoidSeamsInU(s: PluckerConoid, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_SuperellipsoidSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 105](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L105)
+
+```plato
+// The two superquadrics close exactly in arithmetic, but their bodies raise a
+// sinusoid to a supplied exponent: at the seam that sinusoid is a rounding
+// residue rather than a true zero, and an exponent below 1 magnifies the residue
+// instead of shrinking it. The law is stated where the exponent contracts.
+Law_SuperellipsoidSeamsInU(s: Superellipsoid, v: Number): Boolean
+    => s.LongitudeExponent < 1.0
+    || s.LatitudeExponent < 1.0
+    || SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_SupertoroidSeamsInU
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 110](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L110)
+
+```plato
+Law_SupertoroidSeamsInU(s: Supertoroid, v: Number): Boolean
+    => s.RingExponent < 1.0
+    || s.SectionExponent < 1.0
+    || SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+```
+
+### Law_DupinCyclideSeamsInV
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 118](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L118)
+
+```plato
+Law_DupinCyclideSeamsInV(s: DupinCyclide, u: Number): Boolean
+    => SurfaceSeam(s.Eval((u.SurfaceParameter, 0.0)), s.Eval((u.SurfaceParameter, 1.0)));
+```
+
+### Law_BohemianDomeSeamsInV
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 121](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L121)
+
+```plato
+Law_BohemianDomeSeamsInV(s: BohemianDome, u: Number): Boolean
+    => SurfaceSeam(s.Eval((u.SurfaceParameter, 0.0)), s.Eval((u.SurfaceParameter, 1.0)));
+```
+
+### Law_KleinBottleSeamsInV
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 124](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L124)
+
+```plato
+Law_KleinBottleSeamsInV(s: KleinBottle, u: Number): Boolean
+    => SurfaceSeam(s.Eval((u.SurfaceParameter, 0.0)), s.Eval((u.SurfaceParameter, 1.0)));
+```
+
+### Law_BoySurfaceSeamsInV
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 127](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L127)
+
+```plato
+Law_BoySurfaceSeamsInV(s: BoySurface, u: Number): Boolean
+    => SurfaceSeam(s.Eval((u.SurfaceParameter, 0.0)), s.Eval((u.SurfaceParameter, 1.0)));
+```
+
+### Law_SupertoroidSeamsInV
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 130](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L130)
+
+```plato
+Law_SupertoroidSeamsInV(s: Supertoroid, u: Number): Boolean
+    => s.RingExponent < 1.0
+    || s.SectionExponent < 1.0
+    || SurfaceSeam(s.Eval((u.SurfaceParameter, 0.0)), s.Eval((u.SurfaceParameter, 1.0)));
+```
+
+### Law_KleinBottleLapClosesReversed
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 142](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L142)
+
+```plato
+// The lap DOES close, but with the section reversed, which is why ClosedU is
+// reported true while the pointwise U seam law above is absent: the U = 1 edge
+// carries the same circle as the U = 0 edge traversed backwards. This states the
+// identification the surface actually has.
+Law_KleinBottleLapClosesReversed(s: KleinBottle, v: Number): Boolean
+    => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)),
+                   s.Eval((1.0, 1.0 - v.SurfaceParameter)));
+```
+
+### Law_HyperboloidOfOneSheetSatisfiesItsEquation
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 154](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L154)
+
+```plato
+// x^2/a^2 + y^2/b^2 - z^2/c^2 = 1, the one-sheet hyperboloid's own equation.
+Law_HyperboloidOfOneSheetSatisfiesItsEquation(s: HyperboloidOfOneSheet, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var x = p.X / s.SemiAxes.X;
+    var y = p.Y / s.SemiAxes.Y;
+    var z = p.Z / s.SemiAxes.Z;
+    return p.SurfaceFinite.Not
+        || SurfaceEqNear(x * x + y * y - z * z, 1.0, x * x + y * y + z * z);
+}
+```
+
+### Law_HyperboloidOfTwoSheetsSatisfiesItsEquation
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 164](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L164)
+
+```plato
+// The same equation with -1 on the right: the two-sheet hyperboloid.
+Law_HyperboloidOfTwoSheetsSatisfiesItsEquation(s: HyperboloidOfTwoSheets, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var x = p.X / s.SemiAxes.X;
+    var y = p.Y / s.SemiAxes.Y;
+    var z = p.Z / s.SemiAxes.Z;
+    return p.SurfaceFinite.Not
+        || SurfaceEqNear(x * x + y * y - z * z, -1.0, x * x + y * y + z * z);
+}
+```
+
+### Law_HyperbolicParaboloidSatisfiesItsEquation
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 174](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L174)
+
+```plato
+// z = (x/a)^2 - (y/b)^2.
+Law_HyperbolicParaboloidSatisfiesItsEquation(s: HyperbolicParaboloid, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var x = p.X / s.SemiAxes.X;
+    var y = p.Y / s.SemiAxes.Y;
+    return p.SurfaceFinite.Not || SurfaceEqNear(p.Z, x * x - y * y, x * x + y * y);
+}
+```
+
+### Law_MonkeySaddleSatisfiesItsEquation
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 182](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L182)
+
+```plato
+// z = Scale (x^3 - 3 x y^2).
+Law_MonkeySaddleSatisfiesItsEquation(s: MonkeySaddle, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var height = s.Scale * (p.X * p.X * p.X - 3.0 * p.X * p.Y * p.Y);
+    return p.SurfaceFinite.Not || SurfaceEq(p.Z, height);
+}
+```
+
+### Law_WhitneyUmbrellaSatisfiesItsEquation
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 190](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L190)
+
+```plato
+// x^2 = y^2 z: Whitney's umbrella is the zero set of that cubic, and the pinch
+// point is where all three vanish together.
+Law_WhitneyUmbrellaSatisfiesItsEquation(s: WhitneyUmbrella, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    return p.SurfaceFinite.Not
+        || SurfaceEqNear(p.X * p.X, p.Y * p.Y * p.Z, p.X * p.X + p.Y * p.Y * p.Z);
+}
+```
+
+### Law_RomanSurfaceSatisfiesItsEquation
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 199](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L199)
+
+```plato
+// x^2 y^2 + y^2 z^2 + z^2 x^2 = Scale x y z, the Steiner quartic. Follows from
+// the parameterization only because the source point is on the UNIT sphere, so
+// this is a real check on the spherical helper as well as on the map.
+Law_RomanSurfaceSatisfiesItsEquation(s: RomanSurface, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var quartic = p.X * p.X * p.Y * p.Y + p.Y * p.Y * p.Z * p.Z + p.Z * p.Z * p.X * p.X;
+    return p.SurfaceFinite.Not
+        || SurfaceEqNear(quartic, s.Scale * p.X * p.Y * p.Z, quartic);
+}
+```
+
+### Law_CatenoidSatisfiesItsProfile
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 208](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L208)
+
+```plato
+// x^2 + y^2 = (WaistRadius cosh(z / WaistRadius))^2: the catenary profile,
+// recovered from the sample's own height.
+Law_CatenoidSatisfiesItsProfile(s: Catenoid, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var r = s.WaistRadius * (p.Z / s.WaistRadius).Angle.Cosh;
+    return p.SurfaceFinite.Not
+        || r.IsFinite.Not
+        || SurfaceEqNear(p.X * p.X + p.Y * p.Y, r * r, r * r);
+}
+```
+
+### Law_PseudosphereFitsItsRadius
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 223](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L223)
+
+```plato
+// The pseudosphere's radius is Radius / cosh t, so it never exceeds Radius.
+Law_PseudosphereFitsItsRadius(s: Pseudosphere, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    return p.SurfaceFinite.Not
+        || (p.X * p.X + p.Y * p.Y).Sqrt <= s.Radius.Abs + 1e-4;
+}
+```
+
+### Law_PluckerConoidFitsItsBounds
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 230](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L230)
+
+```plato
+// The conoid's rays stop at Radius and its rise stops at Height.
+Law_PluckerConoidFitsItsBounds(s: PluckerConoid, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    return p.SurfaceFinite.Not
+        || ((p.X * p.X + p.Y * p.Y).Sqrt <= s.Radius.Abs + 1e-4
+            && p.Z.Abs <= s.Height.Abs + 1e-4);
+}
+```
+
+### Law_SuperellipsoidPolesAreOnTheAxis
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 244](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L244)
+
+```plato
+Law_SuperellipsoidPolesAreOnTheAxis(s: Superellipsoid, u: Number): Boolean {
+    var p = s.Eval((u.SurfaceParameter, 0.0));
+    return p.SurfaceFinite.Not
+        || (SurfaceEqNear(p.X, 0.0, s.SemiAxes.X) && SurfaceEqNear(p.Y, 0.0, s.SemiAxes.Y));
+}
+```
+
+### Law_Superformula3DPolesAreOnTheAxis
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 250](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L250)
+
+```plato
+Law_Superformula3DPolesAreOnTheAxis(s: Superformula3D, u: Number): Boolean {
+    var p = s.Eval((u.SurfaceParameter, 0.0));
+    return p.SurfaceFinite.Not
+        || (SurfaceEqNear(p.X, 0.0, p.Z) && SurfaceEqNear(p.Y, 0.0, p.Z));
+}
+```
+
+### Law_SphericalHarmonicSurfacePolesAreOnTheAxis
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 256](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L256)
+
+```plato
+Law_SphericalHarmonicSurfacePolesAreOnTheAxis(s: SphericalHarmonicSurface, u: Number): Boolean {
+    var p = s.Eval((u.SurfaceParameter, 0.0));
+    return p.SurfaceFinite.Not
+        || (SurfaceEqNear(p.X, 0.0, p.Z) && SurfaceEqNear(p.Y, 0.0, p.Z));
+}
+```
+
+### Law_HelicoidRisesByItsPitch
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 270](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L270)
+
+```plato
+// A full sweep of the helicoid rises Pitch per turn, at every radius.
+Law_HelicoidRisesByItsPitch(s: Helicoid, v: Number): Boolean {
+    var bottom = s.Eval((0.0, v.SurfaceParameter));
+    var top = s.Eval((1.0, v.SurfaceParameter));
+    return bottom.SurfaceFinite.Not
+        || top.SurfaceFinite.Not
+        || SurfaceEq(top.Z - bottom.Z, s.Pitch * s.TurnCount);
+}
+```
+
+### Law_DiniSurfaceRisesByItsTwist
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 279](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L279)
+
+```plato
+// Dini's surface rises Twist per turn, at every point of the tractrix profile.
+Law_DiniSurfaceRisesByItsTwist(s: DiniSurface, v: Number): Boolean {
+    var bottom = s.Eval((0.0, v.SurfaceParameter));
+    var top = s.Eval((1.0, v.SurfaceParameter));
+    return bottom.SurfaceFinite.Not
+        || top.SurfaceFinite.Not
+        || SurfaceEq(top.Z - bottom.Z, s.Twist * s.TurnCount);
+}
+```
+
+### Law_HyperbolicParaboloidCoversItsDomain
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 295](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L295)
+
+```plato
+Law_HyperbolicParaboloidCoversItsDomain(s: HyperbolicParaboloid): Boolean {
+    var low = s.Eval((0.0, 0.0));
+    var high = s.Eval((1.0, 1.0));
+    return SurfaceEq(low.X, s.Domain.Min.X)
+        && SurfaceEq(low.Y, s.Domain.Min.Y)
+        && SurfaceEq(high.X, s.Domain.Max.X)
+        && SurfaceEq(high.Y, s.Domain.Max.Y);
+}
+```
+
+### Law_MonkeySaddleCoversItsDomain
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 304](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L304)
+
+```plato
+Law_MonkeySaddleCoversItsDomain(s: MonkeySaddle): Boolean {
+    var low = s.Eval((0.0, 0.0));
+    var high = s.Eval((1.0, 1.0));
+    return SurfaceEq(low.X, s.Domain.Min.X)
+        && SurfaceEq(low.Y, s.Domain.Min.Y)
+        && SurfaceEq(high.X, s.Domain.Max.X)
+        && SurfaceEq(high.Y, s.Domain.Max.Y);
+}
+```
+
+### Law_ScherkSurfaceCoversItsDomain
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 313](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L313)
+
+```plato
+Law_ScherkSurfaceCoversItsDomain(s: ScherkSurface): Boolean {
+    var low = s.Eval((0.0, 0.0));
+    var high = s.Eval((1.0, 1.0));
+    return SurfaceEq(low.X, s.Domain.Min.X)
+        && SurfaceEq(low.Y, s.Domain.Min.Y)
+        && SurfaceEq(high.X, s.Domain.Max.X)
+        && SurfaceEq(high.Y, s.Domain.Max.Y);
+}
+```
+
+### Law_WhitneyUmbrellaCoversItsDomain
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 325](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L325)
+
+```plato
+// Whitney's umbrella returns its first parameter as Y rather than as X, so its
+// domain law reads off the other component — the transposition the graph-form
+// laws above would have hidden.
+Law_WhitneyUmbrellaCoversItsDomain(s: WhitneyUmbrella): Boolean {
+    var low = s.Eval((0.0, 0.0));
+    var high = s.Eval((1.0, 1.0));
+    return SurfaceEq(low.Y, s.Domain.Min.X)
+        && SurfaceEq(high.Y, s.Domain.Max.X);
+}
+```
+
+### Law_HelicoidCoversItsRadii
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 334](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L334)
+
+```plato
+// The helicoid's radial parameter sweeps Radii: the V edges sit at the two ends
+// of that interval, measured from the axis.
+Law_HelicoidCoversItsRadii(s: Helicoid): Boolean {
+    var inner = s.Eval((0.0, 0.0));
+    var outer = s.Eval((0.0, 1.0));
+    return inner.SurfaceFinite.Not
+        || outer.SurfaceFinite.Not
+        || (SurfaceEq((inner.X * inner.X + inner.Y * inner.Y).Sqrt, s.Radii.Start.Abs)
+            && SurfaceEq((outer.X * outer.X + outer.Y * outer.Y).Sqrt, s.Radii.End.Abs));
+}
+```
+
+## Used by
+
+- [Find a root with Newton's method](../../../cookbook/newton-root.md)
+- [Polynomials, series and basis functions](../../../library/foundation/polynomials.md)
+
+## Source
+
 **File:** [polynomials.library](../polynomials.library.md). Kind: function. 8 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 191
+### Line 191
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 191](../../../../../stdlib/foundation/polynomials.library.plato#L191).
 
@@ -18,7 +530,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => HornerEval(p.Coefficients, x);
 ```
 
-## Line 195
+### Line 195
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 195](../../../../../stdlib/foundation/polynomials.library.plato#L195).
 
@@ -32,7 +544,7 @@ Copied from source, comments included. A comment records intent. The body is the
                .Reduce(0.0, (acc, term) => acc + term);
 ```
 
-## Line 202
+### Line 202
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 202](../../../../../stdlib/foundation/polynomials.library.plato#L202).
 
@@ -44,7 +556,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => HornerEval(s.Coefficients, x - s.Center);
 ```
 
-## Line 207
+### Line 207
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 207](../../../../../stdlib/foundation/polynomials.library.plato#L207).
 
@@ -55,7 +567,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => m.Coefficient * x.Pow(m.Power.ToNumber);
 ```
 
-## Line 211
+### Line 211
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 211](../../../../../stdlib/foundation/polynomials.library.plato#L211).
 
@@ -66,7 +578,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.A * x.Square + p.B * x + p.C;
 ```
 
-## Line 215
+### Line 215
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 215](../../../../../stdlib/foundation/polynomials.library.plato#L215).
 
@@ -77,7 +589,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.A * x.Square * x + p.B * x.Square + p.C * x + p.D;
 ```
 
-## Line 219
+### Line 219
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 219](../../../../../stdlib/foundation/polynomials.library.plato#L219).
 
@@ -88,7 +600,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.A * x.Square * x.Square + p.B * x.Square * x + p.C * x.Square + p.D * x + p.E;
 ```
 
-## Line 235
+### Line 235
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 235](../../../../../stdlib/foundation/polynomials.library.plato#L235).
 

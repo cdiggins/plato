@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when `q` lies on the segment \[a, b\], endpoints included: collinear with it
+> and within its bounding box.
+
+## Signature
+
+```plato
+IsOnSegment(q: Point2D, a: Point2D, b: Point2D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 481](../../../../../stdlib/geometry/polygons.library.plato#L481): "precondition: simple" and have callers able to honour it.
+- [Line 485](../../../../../stdlib/geometry/polygons.library.plato#L485):   \* Coincidence and collinearity are tested EXACTLY, with no tolerance. A
+- [Line 486](../../../../../stdlib/geometry/polygons.library.plato#L486):     tolerance would make these predicates disagree with the bodies that consume
+- [Line 487](../../../../../stdlib/geometry/polygons.library.plato#L487):     them, which are exact throughout, and would silently merge distinct vertices
+- [Line 488](../../../../../stdlib/geometry/polygons.library.plato#L488):     of a finely sampled ring. Callers wanting a tolerant answer should snap their
+- [Line 492](../../../../../stdlib/geometry/polygons.library.plato#L492):   \* The repairs are TOTAL — every ring has an answer, including a degenerate one,
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 473
+### Line 473
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 473](../../../../../stdlib/geometry/polygons.library.plato#L473).
 

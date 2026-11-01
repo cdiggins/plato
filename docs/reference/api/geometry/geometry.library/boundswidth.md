@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The horizontal extent of the bounding rectangle.
+
+## Signature
+
+```plato
+BoundsWidth(self: IBounded2D): Number
+BoundsWidth(self: IBounded3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 590
+### Line 590
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 590](../../../../../stdlib/geometry/geometry.library.plato#L590).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.BoundsSize.X;
 ```
 
-## Line 634
+### Line 634
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 634](../../../../../stdlib/geometry/geometry.library.plato#L634).
 

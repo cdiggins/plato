@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every corner outgoing from a vertex, in rotation order around it: start at
+> the lowest-numbered one and turn one face at a time. The walk closes back
+> on its start after exactly VertexDegree steps, so the degree — not a
+> termination test — bounds it.
+
+## Signature
+
+```plato
+VertexCornerRing(self: PolygonMesh3D, vertex: VertexIndex): Array<CornerIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes-polygon.library](../meshes-polygon.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 252
+### Line 252
 
 **Source:** [stdlib/geometry/meshes-polygon.library.plato, line 252](../../../../../stdlib/geometry/meshes-polygon.library.plato#L252).
 

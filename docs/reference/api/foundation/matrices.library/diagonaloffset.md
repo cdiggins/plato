@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed diagonal offset of the entry: zero on the main diagonal,
+> positive above it, negative below.
+
+## Signature
+
+```plato
+DiagonalOffset(self: SparseMatrixEntry): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 312
+### Line 312
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 312](../../../../../stdlib/foundation/matrices.library.plato#L312).
 

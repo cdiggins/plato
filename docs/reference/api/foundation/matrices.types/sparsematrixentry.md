@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One stored element of a sparse matrix: its zero-based position and value.
+> Entries are unordered and a position may repeat; the value at a position is
+> the sum of the entries that name it, which is what makes concatenation a
+> correct sum.
+> (https://en.wikipedia.org/wiki/Sparse\_matrix#Coordinate\_list\_(COO))
+
+## Signature
+
+```plato
+type SparseMatrixEntry
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.types](../matrices.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 102
+### Line 102
 
 **Source:** [stdlib/foundation/matrices.types.plato, line 102](../../../../../stdlib/foundation/matrices.types.plato#L102).
 

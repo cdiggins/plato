@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The chord endpoint at the start of the sweep.
+
+## Signature
+
+```plato
+ChordStart(s: CircularSegment): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 327
+### Line 327
 
 **Source:** [stdlib/geometry/planar.library.plato, line 327](../../../../../stdlib/geometry/planar.library.plato#L327).
 

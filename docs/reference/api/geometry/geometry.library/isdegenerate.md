@@ -3,11 +3,55 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the hull has no area: fewer than three vertices, which is what
+> an empty, single-point, or collinear input produces.
+
+## Signature
+
+```plato
+IsDegenerate(self: ConvexHull2D): Boolean
+IsDegenerate(self: ConvexHull3D): Boolean
+IsDegenerate(self: ILength, tolerance: Number): Boolean
+IsDegenerate(self: IArea, tolerance: Number): Boolean
+IsDegenerate(self: IVolume, tolerance: Number): Boolean
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_HullIsConvexAndCounterClockwise
+
+[stdlib/tests/spatial-structures.laws.plato, line 36](../../../../../stdlib/tests/spatial-structures.laws.plato#L36)
+
+```plato
+// A non-degenerate hull turns strictly left at every corner: convex,
+// counter-clockwise, no collinear vertices.
+Law_HullIsConvexAndCounterClockwise(points: Array<Point2D>): Boolean
+{
+    var hull = points.ConvexHull;
+    var m = hull.HullVertexCount;
+    return hull.IsDegenerate
+        || m.MapRange(v => TwiceSignedArea(
+            hull.Hull.Points[v],
+            hull.Hull.Points[(v + 1) % m],
+            hull.Hull.Points[(v + 2) % m]) > 0.0).All(b => b);
+}
+```
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 227
+### Line 227
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 227](../../../../../stdlib/geometry/geometry.library.plato#L227).
 
@@ -19,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.HullVertexCount < 3;
 ```
 
-## Line 314
+### Line 314
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 314](../../../../../stdlib/geometry/geometry.library.plato#L314).
 
@@ -31,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.HullVertexCount < 4;
 ```
 
-## Line 673
+### Line 673
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 673](../../../../../stdlib/geometry/geometry.library.plato#L673).
 
@@ -59,7 +103,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Length.AlmostZero(tolerance);
 ```
 
-## Line 698
+### Line 698
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 698](../../../../../stdlib/geometry/geometry.library.plato#L698).
 
@@ -75,7 +119,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Area.AlmostZero(tolerance);
 ```
 
-## Line 723
+### Line 723
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 723](../../../../../stdlib/geometry/geometry.library.plato#L723).
 

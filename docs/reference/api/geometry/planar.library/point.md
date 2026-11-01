@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point A\*U + B\*V + C\*W: the inverse of `Barycentric`, mapping a coordinate
+> triple back to its position. The affine combination is a true point for any
+> weights that sum to 1.
+
+## Signature
+
+```plato
+Point(t: Triangle2D, b: BarycentricCoordinate): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 734
+### Line 734
 
 **Source:** [stdlib/geometry/planar.library.plato, line 734](../../../../../stdlib/geometry/planar.library.plato#L734).
 

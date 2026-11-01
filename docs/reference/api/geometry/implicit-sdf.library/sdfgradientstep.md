@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The finite-difference step used to estimate an SDF gradient. Far above
+> `Number.Epsilon`, where a difference quotient would be rounding noise rather
+> than signal, and well below the feature size the distance primitives are
+> written for.
+
+## Signature
+
+```plato
+SdfGradientStep(_: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 305](../../../../../stdlib/geometry/implicit-sdf.library.plato#L305): (`implicit-sdf.concepts.plato`). The gradient of an exact distance field is
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 300
+### Line 300
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 300](../../../../../stdlib/geometry/implicit-sdf.library.plato#L300).
 

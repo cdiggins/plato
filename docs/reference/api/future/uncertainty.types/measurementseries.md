@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A time-ordered run of readings of the same value from the same source:
+> a sensor log, a repeated observation, an instrument sweep. Measurements are
+> ordered by Timestamp, ascending.
+
+## Signature
+
+```plato
+type MeasurementSeries<T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty.types](../uncertainty.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 227
+### Line 227
 
 **Source:** [stdlib/future/uncertainty.types.plato, line 227](../../../../../stdlib/future/uncertainty.types.plato#L227).
 

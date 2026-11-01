@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Corner `slot` is an EAR when it turns counter-clockwise and no other ring
+> vertex lies inside its triangle.
+
+## Signature
+
+```plato
+IsEar(points: Array<Point2D>, nodes: Buffer<EarClipNode>, slot: Integer): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 470
+### Line 470
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 470](../../../../../stdlib/geometry/triangulation.library.plato#L470).
 

@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> After-Effects-style wiggle: smooth fractal noise added to a property.
+> Frequency is the base wiggle rate; each of Octaves noise layers doubles the
+> frequency and multiplies amplitude by Persistence. Seed selects the noise
+> stream, so equal seeds replay identical motion.
+> (https://en.wikipedia.org/wiki/Fractional\_Brownian\_motion)
+
+## Signature
+
+```plato
+type WiggleMotion
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [motion-graphics.types](../motion-graphics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 133
+### Line 133
 
 **Source:** [stdlib/graphics/motion-graphics.types.plato, line 133](../../../../../stdlib/graphics/motion-graphics.types.plato#L133).
 

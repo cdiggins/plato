@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> ln B(a, b) = ln Gamma(a) + ln Gamma(b) - ln Gamma(a + b), stable far
+> beyond where the direct product overflows. Precondition: a > 0, b > 0.
+> Inherits the ~1e-13 relative accuracy of LogGamma.
+
+## Signature
+
+```plato
+LogBeta(a: Number, b: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 485](../../../../../stdlib/foundation/numbers.library.plato#L485): INumerical Recipes' ITMAX budget. Expected accuracy: ~1e-13 relative for
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 475
+### Line 475
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 475](../../../../../stdlib/foundation/numbers.library.plato#L475).
 

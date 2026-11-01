@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The remainder after dividing the amount by a unitless factor. Useful for
+> wrapping a quantity into a repeating range.
+
+## Signature
+
+```plato
+Modulo(x: IQuantity, scalar: Number): IQuantity
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [quantities.library](../quantities.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 99
+### Line 99
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 99](../../../../../stdlib/foundation/quantities.library.plato#L99).
 

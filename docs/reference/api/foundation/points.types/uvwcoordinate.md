@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A normalized 3D volume parameter: 3D textures, trivariate patches.
+
+## Signature
+
+```plato
+type UvwCoordinate
+    implements ICoordinate, IOriginBased<Vector3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICoordinate](../points.concepts/icoordinate.md), [IOriginBased](../algebra.concepts/ioriginbased.md).
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [points.types](../points.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 154
+### Line 154
 
 **Source:** [stdlib/foundation/points.types.plato, line 154](../../../../../stdlib/foundation/points.types.plato#L154).
 

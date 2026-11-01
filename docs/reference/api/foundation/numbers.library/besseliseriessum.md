@@ -3,11 +3,46 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The tail of the ascending series for I\_nu from term index k onward,
+> in the variable q = x^2/4: term(k+1) = term(k) \* q / ((k+1)(k+1+nu)).
+> Seed with k = 0, term = 1; the order-nu prefactor (x/2)^nu / nu! is
+> applied by the caller. Fixed 60 terms.
+
+## Signature
+
+```plato
+BesselISeriesSum(nu: Number, q: Number, k: Integer, term: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 418](../../../../../stdlib/foundation/numbers.library.plato#L418): (which is entire and fully double-accurate for small arguments) below the
+- [Line 421](../../../../../stdlib/foundation/numbers.library.plato#L421): series is summed to a fixed 60 terms (saturated well past double precision
+- [Line 424](../../../../../stdlib/foundation/numbers.library.plato#L424): improving as x grows. Overall expected accuracy: ~1e-15 relative for
+- [Line 425](../../../../../stdlib/foundation/numbers.library.plato#L425): |x| \<= 15, ~1e-13 relative beyond. Both overflow with exp(x) past
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 412
+### Line 412
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 412](../../../../../stdlib/foundation/numbers.library.plato#L412).
 

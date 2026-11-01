@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How a sampled grid treats coordinates outside its bounds: clamp to the
+> edge value, tile, reflect, or read zero.
+
+## Signature
+
+```plato
+type GridBoundary = ClampToEdge | Wrap | Mirror | ZeroOutside
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 347
+### Line 347
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 347](../../../../../stdlib/geometry/sampling.types.plato#L347).
 

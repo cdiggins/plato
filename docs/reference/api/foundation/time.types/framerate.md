@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Playback or capture rate, in frames per second
+> (https://en.wikipedia.org/wiki/Frame\_rate).
+
+## Signature
+
+```plato
+type FrameRate
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [time.types](../time.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 31
+### Line 31
 
 **Source:** [stdlib/foundation/time.types.plato, line 31](../../../../../stdlib/foundation/time.types.plato#L31).
 

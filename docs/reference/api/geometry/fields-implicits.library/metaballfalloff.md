@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The radial falloff kernel as a function of distance measured in radii: one
+> at the centre, zero at and beyond one radius, with vanishing first and
+> second derivatives at both ends. The classic Wyvill cubic (1 - r^2)^3.
+
+## Signature
+
+```plato
+MetaBallFalloff(normalizedDistance: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 614
+### Line 614
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 614](../../../../../stdlib/geometry/fields-implicits.library.plato#L614).
 

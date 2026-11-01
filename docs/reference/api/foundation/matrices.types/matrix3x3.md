@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A 3x3 matrix: 3D linear maps, 2D homogeneous transforms, orientation bases.
+
+## Signature
+
+```plato
+type Matrix3x3
+    implements IMatrix, IMultiplicative
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IMatrix](../matrices.concepts/imatrix.md), [IMultiplicative](../algebra.concepts/imultiplicative.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.types](../matrices.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 31
+### Line 31
 
 **Source:** [stdlib/foundation/matrices.types.plato, line 31](../../../../../stdlib/foundation/matrices.types.plato#L31).
 

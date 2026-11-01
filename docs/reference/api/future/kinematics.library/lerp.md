@@ -3,11 +3,55 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Position, velocity and acceleration blended independently.
+
+## Signature
+
+```plato
+Lerp(a: KinematicState2D, b: KinematicState2D, t: Number): KinematicState2D
+Lerp(a: KinematicState3D, b: KinematicState3D, t: Number): KinematicState3D
+Lerp(a: SpatialVelocity2D, b: SpatialVelocity2D, t: Number): SpatialVelocity2D
+Lerp(a: SpatialVelocity3D, b: SpatialVelocity3D, t: Number): SpatialVelocity3D
+Lerp(a: SpatialForce2D, b: SpatialForce2D, t: Number): SpatialForce2D
+Lerp(a: SpatialForce3D, b: SpatialForce3D, t: Number): SpatialForce3D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_LerpAtZeroIsStart2D
+
+[stdlib/tests/foundation.laws.plato, line 166](../../../../../stdlib/tests/foundation.laws.plato#L166)
+
+```plato
+// Lerp endpoints, now derived from Add + Between rather than written per type.
+Law_LerpAtZeroIsStart2D(a: Point2D, b: Point2D): Boolean
+    => a.Lerp(b, 0.0).Distance(a) <= 1e-4;
+```
+
+### Law_LerpAtOneIsEnd2D
+
+[stdlib/tests/foundation.laws.plato, line 169](../../../../../stdlib/tests/foundation.laws.plato#L169)
+
+```plato
+Law_LerpAtOneIsEnd2D(a: Point2D, b: Point2D): Boolean
+    => a.Lerp(b, 1.0).Distance(b) <= 1e-4;
+```
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.library](../kinematics.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 78
+### Line 78
 
 **Source:** [stdlib/future/kinematics.library.plato, line 78](../../../../../stdlib/future/kinematics.library.plato#L78).
 
@@ -31,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
             a.Acceleration.Lerp(b.Acceleration, t));
 ```
 
-## Line 95
+### Line 95
 
 **Source:** [stdlib/future/kinematics.library.plato, line 95](../../../../../stdlib/future/kinematics.library.plato#L95).
 
@@ -44,7 +88,7 @@ Copied from source, comments included. A comment records intent. The body is the
             a.Acceleration.Lerp(b.Acceleration, t));
 ```
 
-## Line 101
+### Line 101
 
 **Source:** [stdlib/future/kinematics.library.plato, line 101](../../../../../stdlib/future/kinematics.library.plato#L101).
 
@@ -55,7 +99,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Linear.Lerp(b.Linear, t), a.Angular.Lerp(b.Angular, t));
 ```
 
-## Line 105
+### Line 105
 
 **Source:** [stdlib/future/kinematics.library.plato, line 105](../../../../../stdlib/future/kinematics.library.plato#L105).
 
@@ -66,7 +110,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Linear.Lerp(b.Linear, t), a.Angular.Lerp(b.Angular, t));
 ```
 
-## Line 109
+### Line 109
 
 **Source:** [stdlib/future/kinematics.library.plato, line 109](../../../../../stdlib/future/kinematics.library.plato#L109).
 
@@ -77,7 +121,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Force.Lerp(b.Force, t), a.Torque.Lerp(b.Torque, t));
 ```
 
-## Line 113
+### Line 113
 
 **Source:** [stdlib/future/kinematics.library.plato, line 113](../../../../../stdlib/future/kinematics.library.plato#L113).
 

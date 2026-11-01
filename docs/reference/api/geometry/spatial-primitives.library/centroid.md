@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The box's centre; rounding is symmetric on every axis.
+
+## Signature
+
+```plato
+Centroid(b: RoundedBox3D): Point3D
+Centroid(c: Capsule3D): Point3D
+Centroid(c: Cone): Point3D
+Centroid(f: ConicalFrustum): Point3D
+Centroid(t: Triangle3D): Point3D
+Centroid(q: Quad3D): Point3D
+Centroid(t: Tetrahedron): Point3D
+Centroid(w: Wedge): Point3D
+Centroid(c: SphericalCap): Point3D
+Centroid(e: Ellipsoid): Point3D
+Centroid(t: Torus): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 11 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 219
+### Line 219
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 219](../../../../../stdlib/geometry/spatial-primitives.library.plato#L219).
 
@@ -18,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => b.Box.Center;
 ```
 
-## Line 285
+### Line 285
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 285](../../../../../stdlib/geometry/spatial-primitives.library.plato#L285).
 
@@ -29,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => c.A.MidPoint(c.B);
 ```
 
-## Line 433
+### Line 433
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 433](../../../../../stdlib/geometry/spatial-primitives.library.plato#L433).
 
@@ -41,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => c.Apex + c.Axis.Vector * (0.75 * c.Height);
 ```
 
-## Line 492
+### Line 492
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 492](../../../../../stdlib/geometry/spatial-primitives.library.plato#L492).
 
@@ -62,7 +92,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 597
+### Line 597
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 597](../../../../../stdlib/geometry/spatial-primitives.library.plato#L597).
 
@@ -76,7 +106,7 @@ Copied from source, comments included. A comment records intent. The body is the
             (t.A.Z + t.B.Z + t.C.Z) / 3.0);
 ```
 
-## Line 654
+### Line 654
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 654](../../../../../stdlib/geometry/spatial-primitives.library.plato#L654).
 
@@ -93,7 +123,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 709
+### Line 709
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 709](../../../../../stdlib/geometry/spatial-primitives.library.plato#L709).
 
@@ -107,7 +137,7 @@ Copied from source, comments included. A comment records intent. The body is the
             (t.A.Z + t.B.Z + t.C.Z + t.D.Z) * 0.25);
 ```
 
-## Line 751
+### Line 751
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 751](../../../../../stdlib/geometry/spatial-primitives.library.plato#L751).
 
@@ -119,7 +149,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => w.Base.Centroid + w.Offset * 0.5;
 ```
 
-## Line 879
+### Line 879
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 879](../../../../../stdlib/geometry/spatial-primitives.library.plato#L879).
 
@@ -137,7 +167,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 931
+### Line 931
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 931](../../../../../stdlib/geometry/spatial-primitives.library.plato#L931).
 
@@ -148,7 +178,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => e.Center;
 ```
 
-## Line 1002
+### Line 1002
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 1002](../../../../../stdlib/geometry/spatial-primitives.library.plato#L1002).
 

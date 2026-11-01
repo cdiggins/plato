@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The squared distance from the centroid to a query point; avoids the square
+> root when only relative distances are compared.
+
+## Signature
+
+```plato
+DistanceFromCentroidSquared(self: ICentroid2D, point: Point2D): Number
+DistanceFromCentroidSquared(self: ICentroid3D, point: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 751
+### Line 751
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 751](../../../../../stdlib/geometry/geometry.library.plato#L751).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Centroid.Between(point).MagnitudeSquared;
 ```
 
-## Line 760
+### Line 760
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 760](../../../../../stdlib/geometry/geometry.library.plato#L760).
 

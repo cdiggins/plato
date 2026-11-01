@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A directed interval of angles: arc sweeps, angular ranges. Endpoints are
+> INCLUSIVE and the sweep is the CCW (increasing-angle) arc from Start to End,
+> which may CROSS the +/-pi seam: an arc from 170 deg to -170 deg is the short
+> 20 deg sweep across the seam, not the long way round. Arc consumers
+> (CircularArc2D, CircularSector) read it this way. Wrap-aware Span/Contains live
+> in intervals.library.plato; the generic linear IInterval helpers
+> are correct only for non-wrapping ranges. Convention: see CONVENTIONS.md - Angles.
+
+## Signature
+
+```plato
+type AngleInterval
+    implements IInterval<Angle>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IInterval](../intervals-bounds.concepts/iinterval.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.types](../intervals.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 27
+### Line 27
 
 **Source:** [stdlib/foundation/intervals.types.plato, line 27](../../../../../stdlib/foundation/intervals.types.plato#L27).
 

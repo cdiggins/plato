@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The dot product. https://en.wikipedia.org/wiki/Dot\_product
+
+## Signature
+
+```plato
+Dot(self: Vector2D, right: Vector2D): Number
+Dot(self: Vector3D, right: Vector3D): Number
+Dot(self: Number2, right: Number2): Number
+Dot(self: Number3, right: Number3): Number
+Dot(self: Number4, right: Number4): Number
+Dot(self: Number8, right: Number8): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [vectors.library](../vectors.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 69
+### Line 69
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 69](../../../../../stdlib/foundation/vectors.library.plato#L69).
 
@@ -18,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X * right.X + self.Y * right.Y;
 ```
 
-## Line 180
+### Line 180
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 180](../../../../../stdlib/foundation/vectors.library.plato#L180).
 
@@ -29,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X * right.X + self.Y * right.Y + self.Z * right.Z;
 ```
 
-## Line 336
+### Line 336
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 336](../../../../../stdlib/foundation/vectors.library.plato#L336).
 
@@ -40,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X * right.X + self.Y * right.Y;
 ```
 
-## Line 408
+### Line 408
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 408](../../../../../stdlib/foundation/vectors.library.plato#L408).
 
@@ -51,7 +76,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X * right.X + self.Y * right.Y + self.Z * right.Z;
 ```
 
-## Line 482
+### Line 482
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 482](../../../../../stdlib/foundation/vectors.library.plato#L482).
 
@@ -62,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X * right.X + self.Y * right.Y + self.Z * right.Z + self.W * right.W;
 ```
 
-## Line 616
+### Line 616
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 616](../../../../../stdlib/foundation/vectors.library.plato#L616).
 

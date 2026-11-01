@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The mesh with coincident vertices merged and the faces that became
+> degenerate dropped.
+
+## Signature
+
+```plato
+Welded(self: TriangleMesh3D, tolerance: Number): TriangleMesh3D
+Welded(self: TriangleArray3D, tolerance: Number): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 314
+### Line 314
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 314](../../../../../stdlib/geometry/remeshing.library.plato#L314).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ApplyRemap(WeldRemap(self.Positions, tolerance));
 ```
 
-## Line 319
+### Line 319
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 319](../../../../../stdlib/geometry/remeshing.library.plato#L319).
 

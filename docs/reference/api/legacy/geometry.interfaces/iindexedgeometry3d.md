@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Most meshes are indexed geometry, they have a set of control points (vertices)
+> A set of indices that define the faces of the mesh.
+
+## Signature
+
+```plato
+interface IIndexedGeometry3D<IndexT>
+    inherits IPointGeometry3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IPointGeometry3D](ipointgeometry3d.md).
+
+Implemented in this tier by: [LineMesh3D](../geometry.types/linemesh3d.md), [TriangleMesh3D](../geometry.types/trianglemesh3d.md), [QuadMesh3D](../geometry.types/quadmesh3d.md).
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 221
+### Line 221
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 221](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L221).
 

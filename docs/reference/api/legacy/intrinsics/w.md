@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+W(self: Vector4): Number
+W(self: Quaternion): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Typed IR, specialization, and execution](../../../implementation/typed-ir.md)
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 174
+### Line 174
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 174](../../../../../legacy/stdlib-legacy/intrinsics.plato#L174).
 
@@ -15,7 +37,7 @@ Copied from source, comments included. A comment records intent. The body is the
     W(self: Vector4): Number;
 ```
 
-## Line 282
+### Line 282
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 282](../../../../../legacy/stdlib-legacy/intrinsics.plato#L282).
 

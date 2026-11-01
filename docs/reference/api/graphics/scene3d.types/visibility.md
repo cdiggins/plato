@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Node visibility for pipelines needing a tri-state instead of the plain
+> SceneNode3D.Visible flag: follow the parent (Inherited), or force the node
+> shown or hidden (including all descendants).
+
+## Signature
+
+```plato
+type Visibility = Inherited | Visible | Hidden
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [scene3d.types](../scene3d.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 39
+### Line 39
 
 **Source:** [stdlib/graphics/scene3d.types.plato, line 39](../../../../../stdlib/graphics/scene3d.types.plato#L39).
 

@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Light transmission through the surface with volume attenuation (glass,
+> liquids, gemstones). Transmission 0 disables the layer. Thickness and
+> AttenuationDistance are in scene units: light traveling AttenuationDistance
+> through the medium is tinted to AttenuationColor.
+> (https://en.wikipedia.org/wiki/Refractive\_index)
+
+## Signature
+
+```plato
+type TransmissionLayer
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [materials.types](../materials.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 185
+### Line 185
 
 **Source:** [stdlib/graphics/materials.types.plato, line 185](../../../../../stdlib/graphics/materials.types.plato#L185).
 

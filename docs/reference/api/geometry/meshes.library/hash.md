@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The corners folded in declaration order.
+
+## Signature
+
+```plato
+Hash(self: TriangleFace): Integer
+Hash(self: QuadFace): Integer
+Hash(self: TetrahedronCell): Integer
+Hash(self: HexahedronCell): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 222](../../../../../stdlib/geometry/meshes.library.plato#L222): differently here, because they are different values and IHashable must
+- [Line 879](../../../../../stdlib/geometry/meshes.library.plato#L879): face records above: IHashable must agree with
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 216
+### Line 216
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 216](../../../../../stdlib/geometry/meshes.library.plato#L216).
 
@@ -27,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.A.Value.Hash.CombineHash(self.B.Value.Hash).CombineHash(self.C.Value.Hash);
 ```
 
-## Line 229
+### Line 229
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 229](../../../../../stdlib/geometry/meshes.library.plato#L229).
 
@@ -39,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
             .CombineHash(self.C.Value.Hash).CombineHash(self.D.Value.Hash);
 ```
 
-## Line 874
+### Line 874
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 874](../../../../../stdlib/geometry/meshes.library.plato#L874).
 
@@ -59,7 +89,7 @@ Copied from source, comments included. A comment records intent. The body is the
             .CombineHash(self.C.Value.Hash).CombineHash(self.D.Value.Hash);
 ```
 
-## Line 887
+### Line 887
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 887](../../../../../stdlib/geometry/meshes.library.plato#L887).
 

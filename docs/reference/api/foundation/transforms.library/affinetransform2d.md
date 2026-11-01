@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Any TRS transform is affine.
+
+## Signature
+
+```plato
+AffineTransform2D(t: TrsTransform2D): AffineTransform2D
+AffineTransform2D(pose: Pose2D): AffineTransform2D
+AffineTransform2D(r: Rotation2D): AffineTransform2D
+AffineTransform2D(t: Translation2D): AffineTransform2D
+AffineTransform2D(s: Scaling2D): AffineTransform2D
+AffineTransform2D(s: UniformScaling2D): AffineTransform2D
+AffineTransform2D(r: Reflection2D): AffineTransform2D
+AffineTransform2D(r: RotationAbout2D): AffineTransform2D
+AffineTransform2D(s: ScalingAbout2D): AffineTransform2D
+AffineTransform2D(f: Frame2D): AffineTransform2D
+AffineTransform2D(x: IRigid2D): AffineTransform2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 11 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 63
+### Line 63
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 63](../../../../../stdlib/foundation/transforms.library.plato#L63).
 
@@ -18,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(t.Matrix3x2);
 ```
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 67](../../../../../stdlib/foundation/transforms.library.plato#L67).
 
@@ -29,7 +60,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(pose.Matrix3x2);
 ```
 
-## Line 71
+### Line 71
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 71](../../../../../stdlib/foundation/transforms.library.plato#L71).
 
@@ -40,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(r.Matrix3x2);
 ```
 
-## Line 215
+### Line 215
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 215](../../../../../stdlib/foundation/transforms.library.plato#L215).
 
@@ -65,7 +96,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(Matrix3x2.CreateTranslation(t.Vector));
 ```
 
-## Line 285
+### Line 285
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 285](../../../../../stdlib/foundation/transforms.library.plato#L285).
 
@@ -81,7 +112,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(Matrix3x2.CreateScale(s.Amount));
 ```
 
-## Line 346
+### Line 346
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 346](../../../../../stdlib/foundation/transforms.library.plato#L346).
 
@@ -92,7 +123,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(Matrix3x2.CreateScale(s.Amount));
 ```
 
-## Line 402
+### Line 402
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 402](../../../../../stdlib/foundation/transforms.library.plato#L402).
 
@@ -121,7 +152,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 484
+### Line 484
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 484](../../../../../stdlib/foundation/transforms.library.plato#L484).
 
@@ -137,7 +168,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(Matrix3x2.CreateRotation(r.Rotation.Angle, r.Center));
 ```
 
-## Line 550
+### Line 550
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 550](../../../../../stdlib/foundation/transforms.library.plato#L550).
 
@@ -148,7 +179,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(Matrix3x2.CreateScale(s.Amount, s.Center));
 ```
 
-## Line 655
+### Line 655
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 655](../../../../../stdlib/foundation/transforms.library.plato#L655).
 
@@ -159,7 +190,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(f.Matrix3x2);
 ```
 
-## Line 1078
+### Line 1078
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1078](../../../../../stdlib/foundation/transforms.library.plato#L1078).
 

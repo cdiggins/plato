@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Has a finite area and a finite boundary length: closed 2D regions, and flat
+> or curved bounded patches in any embedding. (https://en.wikipedia.org/wiki/Area)
+
+## Signature
+
+```plato
+interface IArea
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [RoundedRect2D](../planar.types/roundedrect2d.md), [OrientedBox2D](../planar.types/orientedbox2d.md), [RegularPolygon](../planar.types/regularpolygon.md), [Circle](../planar.types/circle.md), [Annulus](../planar.types/annulus.md), [CircularSector](../planar.types/circularsector.md), [CircularSegment](../planar.types/circularsegment.md), [Capsule2D](../planar.types/capsule2d.md), [Ellipse](../planar.types/ellipse.md), [SuperEllipse](../planar.types/superellipse.md), [Triangle2D](../planar.types/triangle2d.md), [Quad2D](../planar.types/quad2d.md), [Parallelogram2D](../planar.types/parallelogram2d.md), [Polygon2D](../polygons.types/polygon2d.md), [ConvexPolygon2D](../polygons.types/convexpolygon2d.md), [PolygonWithHoles2D](../polygons.types/polygonwithholes2d.md), [PolygonSet2D](../polygons.types/polygonset2d.md), [RegularStar2D](../polygons.types/regularstar2d.md), [Polygon3D](../polygons.types/polygon3d.md), [Disk3D](../spatial-primitives.types/disk3d.md), [Triangle3D](../spatial-primitives.types/triangle3d.md), [Quad3D](../spatial-primitives.types/quad3d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 160
+### Line 160
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 160](../../../../../stdlib/geometry/geometry.concepts.plato#L160).
 

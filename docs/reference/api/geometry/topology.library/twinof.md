@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The oppositely directed half-edge of the same undirected edge; -1 on a
+> boundary.
+
+## Signature
+
+```plato
+TwinOf(self: HalfEdgeMesh, halfEdge: HalfEdgeIndex): HalfEdgeIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.library](../topology.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/geometry/topology.library.plato, line 93](../../../../../stdlib/geometry/topology.library.plato#L93).
 

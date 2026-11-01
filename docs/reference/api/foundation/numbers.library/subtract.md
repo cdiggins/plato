@@ -3,11 +3,70 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Component-wise difference.
+
+## Signature
+
+```plato
+Subtract(a: Complex, b: Complex): Complex
+Subtract(a: Rational, b: Rational): Rational
+Subtract(a: Proportion, b: Proportion): Proportion
+Subtract(a: Percent, b: Percent): Percent
+Subtract(a: Probability, b: Probability): Probability
+Subtract(a: DualNumber, b: DualNumber): DualNumber
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_AddThenSubtractDeltaIsIdentity2D
+
+[stdlib/tests/foundation.laws.plato, line 145](../../../../../stdlib/tests/foundation.laws.plato#L145)
+
+```plato
+// Displacing by a delta and back is the identity: (p + d) - d == p. Exercises the
+// derived Subtract(position, delta), which routes through Negative on the delta.
+Law_AddThenSubtractDeltaIsIdentity2D(p: Point2D, d: Vector2D): Boolean
+    => p.Add(d).Subtract(d).Distance(p) <= 1e-4;
+```
+
+### Law_AddThenSubtractDeltaIsIdentity3D
+
+[stdlib/tests/foundation.laws.plato, line 148](../../../../../stdlib/tests/foundation.laws.plato#L148)
+
+```plato
+Law_AddThenSubtractDeltaIsIdentity3D(p: Point3D, d: Vector3D): Boolean
+    => p.Add(d).Subtract(d).Distance(p) <= 1e-4;
+```
+
+### Law_SubstringCountIsTheClampedRange
+
+[stdlib/tests/text.laws.plato, line 54](../../../../../stdlib/tests/text.laws.plato#L54)
+
+```plato
+// The length is the size of the intersection of [start, start + count) with [0, Count).
+Law_SubstringCountIsTheClampedRange(s: String, start: Integer, count: Integer): Boolean
+    => Substring(s, start, count).Count
+        == (count <= 0 ? 0 : (start + count).Min(s.Count).Subtract(start.Max(0)).Max(0));
+```
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 30
+### Line 30
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 30](../../../../../stdlib/foundation/numbers.library.plato#L30).
 
@@ -18,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Real - b.Real, a.Imaginary - b.Imaginary);
 ```
 
-## Line 95
+### Line 95
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 95](../../../../../stdlib/foundation/numbers.library.plato#L95).
 
@@ -31,7 +90,7 @@ Copied from source, comments included. A comment records intent. The body is the
             a.Denominator * b.Denominator);
 ```
 
-## Line 130
+### Line 130
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 130](../../../../../stdlib/foundation/numbers.library.plato#L130).
 
@@ -41,7 +100,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Proportion(a.Value - b.Value);
 ```
 
-## Line 169
+### Line 169
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 169](../../../../../stdlib/foundation/numbers.library.plato#L169).
 
@@ -51,7 +110,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Percent(a.Value - b.Value);
 ```
 
-## Line 208
+### Line 208
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 208](../../../../../stdlib/foundation/numbers.library.plato#L208).
 
@@ -61,7 +120,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Probability(a.Value - b.Value);
 ```
 
-## Line 287
+### Line 287
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 287](../../../../../stdlib/foundation/numbers.library.plato#L287).
 

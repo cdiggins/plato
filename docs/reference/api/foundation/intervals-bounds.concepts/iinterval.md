@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A one-dimensional directed span from Start to End. Start may exceed End,
+> which encodes a reversed interval.
+
+## Signature
+
+```plato
+interface IInterval<T>
+    where T: IAdditive, T: IInterpolatable, T: IComparable
+    inherits IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IValue](../core.concepts/ivalue.md).
+
+Implemented in this tier by: [NumberInterval](../intervals.types/numberinterval.md), [AngleInterval](../intervals.types/angleinterval.md), [LengthInterval](../intervals.types/lengthinterval.md), [IntegerInterval](../intervals.types/integerinterval.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals-bounds.concepts](../intervals-bounds.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/intervals-bounds.concepts.plato, line 1](../../../../../stdlib/foundation/intervals-bounds.concepts.plato#L1).
 

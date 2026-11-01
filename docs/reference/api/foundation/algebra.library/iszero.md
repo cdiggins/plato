@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when x equals the additive identity (zero).
+
+## Signature
+
+```plato
+IsZero(x: INumerical): Boolean
+IsZero(x: IWhole): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 136](../../../../../stdlib/foundation/algebra.library.plato#L136): identity tests, blends, sign and absolute value, tolerance comparisons,
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.library](../algebra.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/foundation/algebra.library.plato, line 131](../../../../../stdlib/foundation/algebra.library.plato#L131).
 
@@ -30,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => x == x.Zero;
 ```
 
-## Line 277
+### Line 277
 
 **Source:** [stdlib/foundation/algebra.library.plato, line 277](../../../../../stdlib/foundation/algebra.library.plato#L277).
 

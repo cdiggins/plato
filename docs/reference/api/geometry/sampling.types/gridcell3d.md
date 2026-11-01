@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One cell of a spatial regular grid: its integer coordinates within the grid
+> and its axis-aligned bounds in world space.
+
+## Signature
+
+```plato
+type GridCell3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 140
+### Line 140
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 140](../../../../../stdlib/geometry/sampling.types.plato#L140).
 

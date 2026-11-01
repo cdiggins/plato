@@ -3,11 +3,47 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The two bodies after one visit to a distance joint. `stiffness` is the
+> fraction of the length error removed per step, in \[0, 1\].
+>
+> The impulse's sign is clamped to match the violation: a joint that is too
+> long may only pull and a joint that is too short may only push. Without that
+> clamp a rope would hold its ends apart as well as together, which is a rod.
+
+## Signature
+
+```plato
+SolveJoint(bodies: Array<SolverBody3D>, joint: DistanceJoint, stiffness: Number,
+    seconds: Number): Array<SolverBody3D>
+
+SolveJoint(bodies: Array<SolverBody3D>, joint: BallSocketJoint, stiffness: Number,
+    seconds: Number): Array<SolverBody3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 104](../../../../../stdlib/future/joints.library.plato#L104): Too long: pull, so the impulse on B must run back along -axis, i.e. be
+- [Line 105](../../../../../stdlib/future/joints.library.plato#L105): negative. Too short: push, so it must be positive.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [joints.library](../joints.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 82
+### Line 82
 
 **Source:** [stdlib/future/joints.library.plato, line 82](../../../../../stdlib/future/joints.library.plato#L82).
 
@@ -46,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 151
+### Line 151
 
 **Source:** [stdlib/future/joints.library.plato, line 151](../../../../../stdlib/future/joints.library.plato#L151).
 

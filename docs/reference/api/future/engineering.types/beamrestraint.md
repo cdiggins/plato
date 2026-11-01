@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> How a beam is restrained at a support point: translation and rotation
+> (Fixed), translation only (Pinned), transverse translation only (Roller),
+> or an unrestrained end (Free).
+> (https://en.wikipedia.org/wiki/Structural\_support)
+
+## Signature
+
+```plato
+type BeamRestraint = Fixed | Pinned | Roller | Free
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [engineering.types](../engineering.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/engineering.types.plato, line 1](../../../../../stdlib/future/engineering.types.plato#L1).
 

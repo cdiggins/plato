@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Map forward then back; equals the original input for a true bijection.
+
+## Signature
+
+```plato
+RoundTripDomain(self: IBijective<$TDomain, $TRange>, input: $TDomain): $TDomain
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Functions as mathematical objects](../../../library/foundation/functions.md)
+
+## Source
+
 **File:** [functional-procedural.library](../functional-procedural.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 23
+### Line 23
 
 **Source:** [stdlib/foundation/functional-procedural.library.plato, line 23](../../../../../stdlib/foundation/functional-procedural.library.plato#L23).
 

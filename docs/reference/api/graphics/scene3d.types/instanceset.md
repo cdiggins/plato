@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Many placed copies of one mesh (hardware instancing). Mesh and Material
+> index into SceneResources. Colors, when non-empty, runs parallel to
+> Transforms and tints each instance; an empty Colors array means no
+> per-instance color. (https://en.wikipedia.org/wiki/Geometry\_instancing)
+
+## Signature
+
+```plato
+type InstanceSet
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [scene3d.types](../scene3d.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 222
+### Line 222
 
 **Source:** [stdlib/graphics/scene3d.types.plato, line 222](../../../../../stdlib/graphics/scene3d.types.plato#L222).
 

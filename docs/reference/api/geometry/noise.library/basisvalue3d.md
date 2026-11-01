@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A sample of the named basis noise at the given seed and frequency.
+
+## Signature
+
+```plato
+BasisValue3D(basis: NoiseBasis, seed: Integer, frequency: Number, p: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 194
+### Line 194
 
 **Source:** [stdlib/geometry/noise.library.plato, line 194](../../../../../stdlib/geometry/noise.library.plato#L194).
 

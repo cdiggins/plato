@@ -3,11 +3,51 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The eased progress at normalized time t; a readable spelling of Eval.
+
+## Signature
+
+```plato
+Progress(self: IEasingFunction, t: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ProgressIsEval
+
+[stdlib/tests/easing.laws.plato, line 21](../../../../../stdlib/tests/easing.laws.plato#L21)
+
+```plato
+// Progress is Eval under a readable name.
+Law_ProgressIsEval(f: IEasingFunction, t: Number): Boolean
+    => f.Progress(t).LawEq(f.Eval(t));
+```
+
+### Law_ProgressAndRemainingSumToOne
+
+[stdlib/tests/easing.laws.plato, line 32](../../../../../stdlib/tests/easing.laws.plato#L32)
+
+```plato
+// Progress and remaining partition full completion at every time.
+Law_ProgressAndRemainingSumToOne(f: IEasingFunction, t: Number): Boolean
+    => (f.Progress(t) + f.Remaining(t)).LawEq(1.0);
+```
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [easing.library](../easing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/easing.library.plato, line 1](../../../../../stdlib/graphics/easing.library.plato#L1).
 

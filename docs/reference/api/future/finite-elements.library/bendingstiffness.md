@@ -3,11 +3,45 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The bending stiffness EI, in newton-square-meters, about the section's Z
+> principal axis: the axis this transverse model bends about. A beam bending
+> about the other axis is the same beam with SecondMomentY and SecondMomentZ
+> exchanged in its section.
+
+## Signature
+
+```plato
+BendingStiffness(b: Beam): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 759](../../../../../stdlib/future/finite-elements.library.plato#L759): the exact deflected shape of a segment carrying no load between its ends,
+- [Line 760](../../../../../stdlib/future/finite-elements.library.plato#L760): so the deflections it reports AT THE NODES are exact — not converged-to,
+- [Line 761](../../../../../stdlib/future/finite-elements.library.plato#L761): exact — for point loads sitting on nodes, and for distributed loads too,
+- [Line 766](../../../../../stdlib/future/finite-elements.library.plato#L766): The model carries two degrees of freedom per node, transverse deflection
+- [Line 767](../../../../../stdlib/future/finite-elements.library.plato#L767): then rotation, and NO axial degree of freedom. Two consequences worth
+- [Line 769](../../../../../stdlib/future/finite-elements.library.plato#L769): restrain exactly the same thing here, since what distinguishes a roller is
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 751
+### Line 751
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 751](../../../../../stdlib/future/finite-elements.library.plato#L751).
 

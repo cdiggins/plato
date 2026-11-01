@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the point lies within the bounding rectangle (inclusive).
+
+## Signature
+
+```plato
+BoundsContainsPoint(self: IBounded2D, point: Point2D): Boolean
+BoundsContainsPoint(self: IBounded3D, point: Point3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 606
+### Line 606
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 606](../../../../../stdlib/geometry/geometry.library.plato#L606).
 
@@ -19,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         && point.Y >= self.Bounds.Min.Y && point.Y <= self.Bounds.Max.Y;
 ```
 
-## Line 654
+### Line 654
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 654](../../../../../stdlib/geometry/geometry.library.plato#L654).
 

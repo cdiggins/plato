@@ -3,11 +3,37 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Catmull�Rom Spline
+>    A common cubic spline interpolation that uses four control points
+>    We'll name them p0, p1, p2, p3, with the curve passing from p1 to p2.
+>    Parameter "t" in \[0..1\].
+>    This form is typically:
+>
+>    CR(t) = 0.5 \* \[  (2 \* p1)
+>                   + (-p0 + p2) \* t
+>                   + (2p0 - 5p1 + 4p2 - p3) \* t^2
+>                   + (-p0 + 3p1 - 3p2 + p3) \* t^3 \]
+> https://en.wikipedia.org/wiki/Cubic\_Hermite\_spline#Catmull%E2%80%93Rom\_spline
+
+## Signature
+
+```plato
+CatmullRom(p0: INumerical, p1: INumerical, p2: INumerical, p3: INumerical, t: Number): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [algebra](../algebra.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 120
+### Line 120
 
 **Source:** [legacy/stdlib-legacy/algebra.plato, line 120](../../../../../legacy/stdlib-legacy/algebra.plato#L120).
 

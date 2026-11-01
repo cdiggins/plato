@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Trefoil\_knot
+
+## Signature
+
+```plato
+TrefoilKnot(t: Angle): Point3D
+
+type TrefoilKnot
+    implements IAngularCurve3D, IClosedShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IAngularCurve3D](iangularcurve3d.md), [IClosedShape](../geometry.interfaces/iclosedshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 553
+### Line 553
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 553](../../../../../legacy/stdlib-legacy/curves.plato#L553).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
             -(t * 3.0).Sin);
 ```
 
-## Line 589
+### Line 589
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 589](../../../../../legacy/stdlib-legacy/curves.plato#L589).
 

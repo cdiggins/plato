@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> All shortest paths from one source vertex, in parent-pointer form.
+> ParentIndices\[v\] is the predecessor of v on its shortest path (-1 for the
+> source and for unreachable vertices). Distances\[v\] is the path weight from
+> the source (meaningful only when v is the source or has a parent).
+> (https://en.wikipedia.org/wiki/Shortest-path\_tree)
+
+## Signature
+
+```plato
+type ShortestPathTree
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Graph data and graph summaries](../../../library/foundation/graphs.md)
+
+## Source
+
 **File:** [graphs.types](../graphs.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 134
+### Line 134
 
 **Source:** [stdlib/foundation/graphs.types.plato, line 134](../../../../../stdlib/foundation/graphs.types.plato#L134).
 

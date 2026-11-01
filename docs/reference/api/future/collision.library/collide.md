@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The contact between two balls: one point when they overlap, none otherwise.
+> The point sits half a penetration depth inside each surface, the symmetric
+> choice that only the two-sphere case permits. Concentric balls have no
+> separating direction, so the normal falls back to +Z.
+> (https://en.wikipedia.org/wiki/Sphere)
+
+## Signature
+
+```plato
+Collide(a: Sphere, b: Sphere): Array<ContactPoint3D>
+Collide(a: Sphere, b: Plane): Array<ContactPoint3D>
+Collide(a: Sphere, b: Box3D): Array<ContactPoint3D>
+Collide(a: Sphere, b: Capsule3D): Array<ContactPoint3D>
+Collide(a: Box3D, b: Plane): Array<ContactPoint3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 132
+### Line 132
 
 **Source:** [stdlib/future/collision.library.plato, line 132](../../../../../stdlib/future/collision.library.plato#L132).
 
@@ -29,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 147
+### Line 147
 
 **Source:** [stdlib/future/collision.library.plato, line 147](../../../../../stdlib/future/collision.library.plato#L147).
 
@@ -47,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 158
+### Line 158
 
 **Source:** [stdlib/future/collision.library.plato, line 158](../../../../../stdlib/future/collision.library.plato#L158).
 
@@ -75,7 +103,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 179
+### Line 179
 
 **Source:** [stdlib/future/collision.library.plato, line 179](../../../../../stdlib/future/collision.library.plato#L179).
 
@@ -98,7 +126,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 206
+### Line 206
 
 **Source:** [stdlib/future/collision.library.plato, line 206](../../../../../stdlib/future/collision.library.plato#L206).
 

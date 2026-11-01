@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar color field stored on grid nodes; evaluation interpolates each
+> channel bilinearly. An image with explicit world-space placement.
+
+## Signature
+
+```plato
+type SampledColorGrid2D
+    implements IValue, IColorField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IColorField2D](../fields.concepts/icolorfield2d.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 92
+### Line 92
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 92](../../../../../stdlib/geometry/sampling.types.plato#L92).
 

@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The force the spring exerts along the line between its anchors, in newtons,
+> signed so that a positive value pushes the anchors apart: Hooke's restoring
+> term plus a damping term proportional to the rate of change of the length.
+> (https://en.wikipedia.org/wiki/Hooke%27s\_law)
+
+## Signature
+
+```plato
+SpringForce(joint: SpringJoint, extension: Number, lengthRate: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 173](../../../../../stdlib/future/joints.library.plato#L173): step sizes a real-time simulation uses; a joint that must be rigid should be
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [joints.library](../joints.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 163
+### Line 163
 
 **Source:** [stdlib/future/joints.library.plato, line 163](../../../../../stdlib/future/joints.library.plato#L163).
 

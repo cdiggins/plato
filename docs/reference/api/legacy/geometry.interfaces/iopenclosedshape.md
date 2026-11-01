@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> If Closed is true, the first point is also the last point, otherwise it isn't
+
+## Signature
+
+```plato
+interface IOpenClosedShape
+    inherits IShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IShape](ishape.md).
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 42
+### Line 42
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 42](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L42).
 

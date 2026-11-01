@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A weighted collection of draws standing in for one uncertain value. The
+> ensemble mean and spread are the sampled estimate of that value's nominal
+> reading and its uncertainty.
+> (https://en.wikipedia.org/wiki/Ensemble\_(mathematical\_physics))
+
+## Signature
+
+```plato
+type Ensemble<T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty.types](../uncertainty.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 276
+### Line 276
 
 **Source:** [stdlib/future/uncertainty.types.plato, line 276](../../../../../stdlib/future/uncertainty.types.plato#L276).
 

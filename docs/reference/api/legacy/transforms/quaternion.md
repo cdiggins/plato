@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Implictly converts a Rotation3D into a Quaternion
+
+## Signature
+
+```plato
+Quaternion(r: Rotation3D): Quaternion
+Quaternion(aa: AxisAngle): Quaternion
+Quaternion(e: YawPitchRoll): Quaternion
+Quaternion(e: YawPitch): Quaternion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 343
+### Line 343
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 343](../../../../../legacy/stdlib-legacy/transforms.plato#L343).
 
@@ -21,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Quaternion;
 ```
 
-## Line 408
+### Line 408
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 408](../../../../../legacy/stdlib-legacy/transforms.plato#L408).
 
@@ -34,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
 	    => Quaternion.CreateFromAxisAngle(aa.Axis, aa.Angle);
 ```
 
-## Line 434
+### Line 434
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 434](../../../../../legacy/stdlib-legacy/transforms.plato#L434).
 
@@ -47,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Quaternion.CreateFromYawPitchRoll(e.Yaw, e.Pitch, e.Roll);
 ```
 
-## Line 443
+### Line 443
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 443](../../../../../legacy/stdlib-legacy/transforms.plato#L443).
 

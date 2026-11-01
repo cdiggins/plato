@@ -3,11 +3,66 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed distance from a point to a capped cone (a conical frustum) centred
+> at the origin with its axis along Y: bottomRadius at y = -halfHeight,
+> topRadius at y = +halfHeight. Equal radii degenerate to a cylinder and a zero
+> radius to a cone with its apex on the axis, so this subsumes both. Exact.
+> Precondition: halfHeight and both radii are non-negative.
+> (IQ: sdCappedCone.)
+
+## Signature
+
+```plato
+DistanceToCappedCone(p: Point3D, halfHeight: Number, bottomRadius: Number, topRadius: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_EqualRadiusCappedConeIsCylinder
+
+[stdlib/tests/implicit-sdf.laws.plato, line 67](../../../../../stdlib/tests/implicit-sdf.laws.plato#L67)
+
+```plato
+// A capped cone with equal radii IS a capped cylinder.
+Law_EqualRadiusCappedConeIsCylinder(p: Point3D, halfHeight: Number, radius: Number): Boolean
+    => DistanceToCappedCone(p, halfHeight, radius, radius)
+        .LawEq(DistanceToCappedCylinder(p, halfHeight, radius));
+```
+
+### Law_ConeIsDegenerateCappedCone
+
+[stdlib/tests/implicit-sdf.laws.plato, line 75](../../../../../stdlib/tests/implicit-sdf.laws.plato#L75)
+
+```plato
+// A cone with its apex at the origin opening along +Y is the capped cone that
+// tapers to nothing, once the capped cone's centred frame is shifted onto the
+// cone's apex-at-origin frame. Guarded to the body's own precondition: the half
+// angle must be strictly between zero and a quarter turn.
+Law_ConeIsDegenerateCappedCone(p: Point3D, halfAngle: Angle, height: Number): Boolean
+    => halfAngle.Sin <= 0.0 || halfAngle.Cos <= 0.0 || height <= 0.0
+    || DistanceToCone(p, halfAngle, height)
+        .LawEq(DistanceToCappedCone(
+            Point3D(p.X, p.Y - height * 0.5, p.Z),
+            height * 0.5,
+            height * halfAngle.Sin / halfAngle.Cos,
+            0.0));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 928
+### Line 928
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 928](../../../../../stdlib/geometry/implicit-sdf.library.plato#L928).
 

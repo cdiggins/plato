@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The iso-contour of a 2D scalar field over `domain`, sampled on a grid of
+> `resolution` nodes per axis. The boundary of the region where the field is
+> at or above isoLevel, to within the sampling resolution.
+> Preconditions: both resolution components exceed one.
+
+## Signature
+
+```plato
+IsoContour(self: IScalarField2D, domain: Bounds2D, resolution: IntegerVector2, isoLevel: Number): Array<Line2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1272
+### Line 1272
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1272](../../../../../stdlib/geometry/fields-implicits.library.plato#L1272).
 

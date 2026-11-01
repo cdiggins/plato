@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The matrix that mirrors points through the plane:
+> p' = p - 2 (Dot(N, p) - Distance) N. In row-vector form the linear block is
+> I - 2 N (x) N (symmetric, so transposition is moot) and the translation row
+> is 2 Distance N. The plane is normalized first so a broken unit invariant
+> cannot scale the reflection.
+
+## Signature
+
+```plato
+CreateReflection(_: Matrix4x4, value: Plane): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 472
+### Line 472
 
 **Source:** [stdlib/geometry/lines.library.plato, line 472](../../../../../stdlib/geometry/lines.library.plato#L472).
 

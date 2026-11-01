@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A measured or estimated number with its standard (1-sigma) uncertainty,
+> in the same implicit unit as the value.
+> (https://en.wikipedia.org/wiki/Measurement\_uncertainty)
+
+## Signature
+
+```plato
+type UncertainNumber
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty.types](../uncertainty.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/uncertainty.types.plato, line 1](../../../../../stdlib/future/uncertainty.types.plato#L1).
 

@@ -3,11 +3,31 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Max(self: Vector2, value2: Vector2): Vector2
+Max(self: Vector3, value2: Vector3): Vector3
+Max(self: Vector4, value2: Vector4): Vector4
+Max(self: Vector8, other: Vector8): Vector8
+Max(self: Number, other: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 125
+### Line 125
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 125](../../../../../legacy/stdlib-legacy/intrinsics.plato#L125).
 
@@ -15,7 +35,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Max(self: Vector2, value2: Vector2): Vector2;
 ```
 
-## Line 163
+### Line 163
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 163](../../../../../legacy/stdlib-legacy/intrinsics.plato#L163).
 
@@ -23,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Max(self: Vector3, value2: Vector3): Vector3;
 ```
 
-## Line 200
+### Line 200
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 200](../../../../../legacy/stdlib-legacy/intrinsics.plato#L200).
 
@@ -31,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Max(self: Vector4, value2: Vector4): Vector4;
 ```
 
-## Line 250
+### Line 250
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 250](../../../../../legacy/stdlib-legacy/intrinsics.plato#L250).
 
@@ -39,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Max(self: Vector8, other: Vector8): Vector8;
 ```
 
-## Line 338
+### Line 338
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 338](../../../../../legacy/stdlib-legacy/intrinsics.plato#L338).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An indexed quadrilateral mesh in 3D: subdivision cages, quad-dominant
+> retopology, structured patches.
+
+## Signature
+
+```plato
+type QuadMesh3D
+    implements IValue, IMesh3D, IIndexedQuadGeometry3D, IMeshElementCounts, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IMesh3D](../meshes.concepts/imesh3d.md), [IIndexedQuadGeometry3D](../meshes.concepts/iindexedquadgeometry3d.md), [IMeshElementCounts](../topology.concepts/imeshelementcounts.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.types](../meshes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 71
+### Line 71
 
 **Source:** [stdlib/geometry/meshes.types.plato, line 71](../../../../../stdlib/geometry/meshes.types.plato#L71).
 

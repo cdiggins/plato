@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The octet truss: the face-centered cell plus the twelve edges of the
+> octahedron its six face centers form. Every strut has the same length and
+> every node has coordination 12; it is fully triangulated and therefore
+> stretch-dominated, which is why it is the default choice for stiffness at
+> low density. (https://en.wikipedia.org/wiki/Octet\_truss)
+
+## Signature
+
+```plato
+OctetTruss(_: LatticeUnitCell): LatticeUnitCell
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 127
+### Line 127
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 127](../../../../../stdlib/geometry/lattices.library.plato#L127).
 

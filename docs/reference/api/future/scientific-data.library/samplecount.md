@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One time per stored value.
+
+## Signature
+
+```plato
+SampleCount(self: TimeSeries): Integer
+SampleCount(self: IrregularTimeSeries): Integer
+SampleCount(self: Vector3DTimeSeries): Integer
+SampleCount(self: EventLog): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.library](../scientific-data.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 48
+### Line 48
 
 **Source:** [stdlib/future/scientific-data.library.plato, line 48](../../../../../stdlib/future/scientific-data.library.plato#L48).
 
@@ -25,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Values.Count;
 ```
 
-## Line 63
+### Line 63
 
 **Source:** [stdlib/future/scientific-data.library.plato, line 63](../../../../../stdlib/future/scientific-data.library.plato#L63).
 
@@ -36,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Values.Count;
 ```
 
-## Line 71
+### Line 71
 
 **Source:** [stdlib/future/scientific-data.library.plato, line 71](../../../../../stdlib/future/scientific-data.library.plato#L71).
 
@@ -47,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Values.Count;
 ```
 
-## Line 79
+### Line 79
 
 **Source:** [stdlib/future/scientific-data.library.plato, line 79](../../../../../stdlib/future/scientific-data.library.plato#L79).
 

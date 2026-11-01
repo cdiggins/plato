@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Tschirnhausen\_cubic
+
+## Signature
+
+```plato
+TschirnhausenCubic(t: Angle, a: Number): Number
+
+type TschirnhausenCubic
+    implements IPolarCurve, IOpenShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IPolarCurve](ipolarcurve.md), [IOpenShape](../geometry.interfaces/iopenshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 340
+### Line 340
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 340](../../../../../legacy/stdlib-legacy/curves.plato#L340).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a * (t / 3.0).Sec.Pow3;
 ```
 
-## Line 467
+### Line 467
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 467](../../../../../legacy/stdlib-legacy/curves.plato#L467).
 

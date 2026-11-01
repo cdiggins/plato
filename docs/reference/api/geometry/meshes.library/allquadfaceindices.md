@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every quad face of an nCols x nRows vertex grid. A direction that is closed
+> contributes a full count of cells (the last one wraps back to index 0); an
+> open direction contributes one fewer. Result dimensions are therefore
+> (nCols - (closedU ? 0 : 1)) x (nRows - (closedV ? 0 : 1)).
+
+## Signature
+
+```plato
+AllQuadFaceIndices(nCols: Integer, nRows: Integer, closedU: Boolean, closedV: Boolean): Array2D<QuadFace>
+AllQuadFaceIndices(self: IIndexable2D<$T>, closedU: Boolean, closedV: Boolean): Array2D<QuadFace>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 349
+### Line 349
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 349](../../../../../stdlib/geometry/meshes.library.plato#L349).
 
@@ -25,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 360
+### Line 360
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 360](../../../../../stdlib/geometry/meshes.library.plato#L360).
 

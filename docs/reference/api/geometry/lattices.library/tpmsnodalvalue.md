@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The raw nodal implicit of a family at a point, in the family's own
+> unitless scale. Zero on the surface, and of opposite sign in the two
+> labyrinths it separates.
+
+## Signature
+
+```plato
+TpmsNodalValue(family: TpmsFamily, period: Number, p: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 629
+### Line 629
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 629](../../../../../stdlib/geometry/lattices.library.plato#L629).
 

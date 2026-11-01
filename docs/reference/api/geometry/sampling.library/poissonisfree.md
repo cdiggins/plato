@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when `p` clears every point already accepted in the earlier half of its
+> 5x5 cell block: the two rows above in full, and the cells left of column `i`
+> in the row being built. `above1` is full width, so it also fixes the column
+> count; `row` holds only the columns decided so far.
+
+## Signature
+
+```plato
+PoissonIsFree(p: Point2D, region: Bounds2D, radius: Number, above2: Array<Point2D>,
+    above1: Array<Point2D>, row: Array<Point2D>, i: Integer): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 602
+### Line 602
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 602](../../../../../stdlib/geometry/sampling.library.plato#L602).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The stored planar distance function. Implicit, and faithful as an SDF: Eval
+> ignores Bounds entirely, so both values are the same distance function. The
+> bounds are a caller-supplied conservative hint about where sampling is
+> worthwhile, not part of what the field means, and any valid bounds would do
+> (Convention: see CONVENTIONS.md - Conversions). This overload exists to
+> return the stored field directly rather than re-wrap it in a closure.
+
+## Signature
+
+```plato
+FunctionSdf2D(self: BoundedSdf2D): FunctionSdf2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 56
+### Line 56
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 56](../../../../../stdlib/geometry/implicit-sdf.library.plato#L56).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The query point when it is inside, otherwise the query clamped to the box in
+> the box's own frame and mapped back to world.
+
+## Signature
+
+```plato
+ClosestPoint(b: Box3D, point: Point3D): Point3D
+ClosestPoint(c: Capsule3D, point: Point3D): Point3D
+ClosestPoint(d: Disk3D, point: Point3D): Point3D
+ClosestPoint(t: Triangle3D, point: Point3D): Point3D
+ClosestPoint(s: Sphere, point: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 143
+### Line 143
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 143](../../../../../stdlib/geometry/spatial-primitives.library.plato#L143).
 
@@ -28,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 302
+### Line 302
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 302](../../../../../stdlib/geometry/spatial-primitives.library.plato#L302).
 
@@ -46,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 551
+### Line 551
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 551](../../../../../stdlib/geometry/spatial-primitives.library.plato#L551).
 
@@ -64,7 +89,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 614
+### Line 614
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 614](../../../../../stdlib/geometry/spatial-primitives.library.plato#L614).
 
@@ -84,7 +109,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 817
+### Line 817
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 817](../../../../../stdlib/geometry/spatial-primitives.library.plato#L817).
 

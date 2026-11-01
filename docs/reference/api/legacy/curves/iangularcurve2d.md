@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+interface IAngularCurve2D inherits ICurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICurve2D](../geometry.interfaces/icurve2d.md).
+
+Implemented in this tier by: [Circle](circle.md), [Ellipse](ellipse.md), [Epicycloid](epicycloid.md), [Hypocycloid](hypocycloid.md), [Epitrochoid](epitrochoid.md), [Hypotrochoid](hypotrochoid.md), [ButterflyCurve](butterflycurve.md), [Lissajous](lissajous.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 146
+### Line 146
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 146](../../../../../legacy/stdlib-legacy/curves.plato#L146).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> 6 squares + 8 hexagons on 24 vertices
+> (https://en.wikipedia.org/wiki/Truncated\_octahedron).
+
+## Signature
+
+```plato
+TruncatedOctahedron(_: PolygonMesh3D): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 61
+### Line 61
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 61](../../../../../stdlib/geometry/polyhedra.library.plato#L61).
 

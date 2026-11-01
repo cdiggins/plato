@@ -3,11 +3,41 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Divide(value1: Matrix4x4, f: Number): Matrix4x4
+Divide(value1: Matrix3x2, scalar: Number): Matrix3x2
+Divide(left: Vector2, right: Vector2): Vector2
+Divide(left: Vector2, scalar: Number): Vector2
+Divide(left: Vector3, right: Vector3): Vector3
+Divide(left: Vector3, scalar: Number): Vector3
+Divide(left: Vector4, right: Vector4): Vector4
+Divide(left: Vector4, scalar: Number): Vector4
+Divide(left: Vector8, right: Vector8): Vector8
+Divide(left: Vector8, scalar: Number): Vector8
+Divide(scalar: Number, right: Vector8): Vector8
+Divide(a: Quaternion, b: Quaternion): Quaternion
+Divide(a: Number, b: Number): Number
+Divide(a: Integer, b: Integer): Integer
+Divide(a: Angle, x: Number): Angle
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 15 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 27
+### Line 27
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 27](../../../../../legacy/stdlib-legacy/intrinsics.plato#L27).
 
@@ -15,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(value1: Matrix4x4, f: Number): Matrix4x4;
 ```
 
-## Line 77
+### Line 77
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 77](../../../../../legacy/stdlib-legacy/intrinsics.plato#L77).
 
@@ -23,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(value1: Matrix3x2, scalar: Number): Matrix3x2;
 ```
 
-## Line 112
+### Line 112
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 112](../../../../../legacy/stdlib-legacy/intrinsics.plato#L112).
 
@@ -31,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(left: Vector2, right: Vector2): Vector2;
 ```
 
-## Line 113
+### Line 113
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 113](../../../../../legacy/stdlib-legacy/intrinsics.plato#L113).
 
@@ -39,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(left: Vector2, scalar: Number): Vector2;
 ```
 
-## Line 151
+### Line 151
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 151](../../../../../legacy/stdlib-legacy/intrinsics.plato#L151).
 
@@ -47,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(left: Vector3, right: Vector3): Vector3;
 ```
 
-## Line 152
+### Line 152
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 152](../../../../../legacy/stdlib-legacy/intrinsics.plato#L152).
 
@@ -55,7 +85,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(left: Vector3, scalar: Number): Vector3;
 ```
 
-## Line 191
+### Line 191
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 191](../../../../../legacy/stdlib-legacy/intrinsics.plato#L191).
 
@@ -63,7 +93,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(left: Vector4, right: Vector4): Vector4;
 ```
 
-## Line 192
+### Line 192
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 192](../../../../../legacy/stdlib-legacy/intrinsics.plato#L192).
 
@@ -71,7 +101,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(left: Vector4, scalar: Number): Vector4;
 ```
 
-## Line 235
+### Line 235
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 235](../../../../../legacy/stdlib-legacy/intrinsics.plato#L235).
 
@@ -79,7 +109,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(left: Vector8, right: Vector8): Vector8;
 ```
 
-## Line 236
+### Line 236
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 236](../../../../../legacy/stdlib-legacy/intrinsics.plato#L236).
 
@@ -87,7 +117,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(left: Vector8, scalar: Number): Vector8;
 ```
 
-## Line 237
+### Line 237
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 237](../../../../../legacy/stdlib-legacy/intrinsics.plato#L237).
 
@@ -95,7 +125,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(scalar: Number, right: Vector8): Vector8;
 ```
 
-## Line 299
+### Line 299
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 299](../../../../../legacy/stdlib-legacy/intrinsics.plato#L299).
 
@@ -103,7 +133,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(a: Quaternion, b: Quaternion): Quaternion;
 ```
 
-## Line 357
+### Line 357
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 357](../../../../../legacy/stdlib-legacy/intrinsics.plato#L357).
 
@@ -111,7 +141,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(a: Number, b: Number): Number;
 ```
 
-## Line 392
+### Line 392
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 392](../../../../../legacy/stdlib-legacy/intrinsics.plato#L392).
 
@@ -119,7 +149,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Divide(a: Integer, b: Integer): Integer;
 ```
 
-## Line 429
+### Line 429
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 429](../../../../../legacy/stdlib-legacy/intrinsics.plato#L429).
 

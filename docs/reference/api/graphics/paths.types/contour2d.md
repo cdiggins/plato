@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A connected run of segments (a sub-path). When Closed is true the contour
+> is implicitly sealed with a line back to its first point, equivalent to a
+> trailing Close segment.
+
+## Signature
+
+```plato
+type Contour2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [paths.types](../paths.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 24
+### Line 24
 
 **Source:** [stdlib/graphics/paths.types.plato, line 24](../../../../../stdlib/graphics/paths.types.plato#L24).
 

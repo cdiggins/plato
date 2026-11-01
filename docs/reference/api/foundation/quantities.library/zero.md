@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The additive identity: none of this quantity's unit. The receiver only
+> selects the type. (Zero lives on IAdditive, not INumericalLimits, which
+> quantities do not inherit.)
+
+## Signature
+
+```plato
+Zero(x: IQuantity): IQuantity
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [quantities.library](../quantities.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 72
+### Line 72
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 72](../../../../../stdlib/foundation/quantities.library.plato#L72).
 

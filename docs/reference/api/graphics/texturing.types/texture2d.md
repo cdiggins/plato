@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A 2D texture descriptor: dimensions, texel format, and mip count. A
+> MipLevels of 0 requests a full chain down to 1x1. Pixel data lives in
+> images (Bitmap, FloatImage, or MipChain), not in the descriptor.
+> (https://en.wikipedia.org/wiki/Texture\_mapping)
+
+## Signature
+
+```plato
+type Texture2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [texturing.types](../texturing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/texturing.types.plato, line 1](../../../../../stdlib/graphics/texturing.types.plato#L1).
 

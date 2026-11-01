@@ -3,11 +3,119 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The additive inverse: the same magnitude, the opposite sense of rotation.
+
+## Signature
+
+```plato
+Negative(n: Angle): Angle
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SubtractIsIntersectWithComplement
+
+[stdlib/tests/implicit-sdf.laws.plato, line 145](../../../../../stdlib/tests/implicit-sdf.laws.plato#L145)
+
+```plato
+// Subtraction is intersection against the complement, which is what makes the
+// sign convention of Difference consistent with Intersection.
+Law_SubtractIsIntersectWithComplement(a: Number, b: Number): Boolean
+    => SubtractDistance(a, b).LawEq(IntersectionDistance(a, b.Negative));
+```
+
+### Law_SmoothIntersectionIsDualOfSmoothUnion
+
+[stdlib/tests/implicit-sdf.laws.plato, line 192](../../../../../stdlib/tests/implicit-sdf.laws.plato#L192)
+
+```plato
+// Smooth intersection is the De Morgan dual of smooth union, which is how the
+// body is defined; asserting it here pins the negation from being dropped.
+Law_SmoothIntersectionIsDualOfSmoothUnion(a: Number, b: Number, blendRadius: Number): Boolean
+    => blendRadius <= 0.0
+    || SmoothIntersectionDistance(a, b, blendRadius)
+        .LawEq(SmoothUnionDistance(a.Negative, b.Negative, blendRadius).Negative);
+```
+
+### Law_ChamferDifferenceIsIntersectWithComplement
+
+[stdlib/tests/implicit-sdf.laws.plato, line 214](../../../../../stdlib/tests/implicit-sdf.laws.plato#L214)
+
+```plato
+// Chamfered difference is chamfered intersection against the complement — the
+// relation that keeps its sign convention consistent with the sharp operators.
+Law_ChamferDifferenceIsIntersectWithComplement(a: Number, b: Number, width: Number): Boolean
+    => width <= 0.0
+    || ChamferDifferenceDistance(a, b, width)
+        .LawEq(ChamferIntersectionDistance(a, b.Negative, width));
+```
+
+### Law_ShellIsSymmetricAboutSurface
+
+[stdlib/tests/implicit-sdf.laws.plato, line 290](../../../../../stdlib/tests/implicit-sdf.laws.plato#L290)
+
+```plato
+// A shell is symmetric about the source surface: points equidistant inside and
+// outside land at the same shell distance.
+Law_ShellIsSymmetricAboutSurface(thickness: Number, distance: Number): Boolean
+    => SdfShellModifier(thickness).ApplyToDistance(distance)
+        .LawEq(SdfShellModifier(thickness).ApplyToDistance(distance.Negative));
+```
+
+### Law_AxisAlignedQuadIsBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 333](../../../../../stdlib/tests/implicit-sdf.laws.plato#L333)
+
+```plato
+// The quad on the four corners of an axis-aligned rectangle is that rectangle,
+// whose distance the box primitive computes from half-extents alone. Guarded to
+// a non-degenerate rectangle. (Counter-clockwise, as Quad2D expects.)
+Law_AxisAlignedQuadIsBox(p: Point2D, halfExtents: Vector2D): Boolean
+    => halfExtents.X <= 0.0 || halfExtents.Y <= 0.0
+    || DistanceToQuad(
+            p,
+            Point2D(halfExtents.X.Negative, halfExtents.Y.Negative),
+            Point2D(halfExtents.X, halfExtents.Y.Negative),
+            Point2D(halfExtents.X, halfExtents.Y),
+            Point2D(halfExtents.X.Negative, halfExtents.Y))
+        .LawEq(DistanceToBox(p, halfExtents));
+```
+
+### Law_FlatQuadPatchIsFlatBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 346](../../../../../stdlib/tests/implicit-sdf.laws.plato#L346)
+
+```plato
+// The same rectangle as a patch in space is a box of zero depth, whose signed
+// distance is already the unsigned distance to the patch. Cross-checks the quad
+// patch's edge-vote branch against a formula with no votes in it.
+Law_FlatQuadPatchIsFlatBox(p: Point3D, halfExtents: Vector2D): Boolean
+    => halfExtents.X <= 0.0 || halfExtents.Y <= 0.0
+    || UnsignedDistanceToQuad(
+            p,
+            Point3D(halfExtents.X.Negative, halfExtents.Y.Negative, 0.0),
+            Point3D(halfExtents.X, halfExtents.Y.Negative, 0.0),
+            Point3D(halfExtents.X, halfExtents.Y, 0.0),
+            Point3D(halfExtents.X.Negative, halfExtents.Y, 0.0))
+        .LawEq(DistanceToBox(p, Vector3D(halfExtents.X, halfExtents.Y, 0.0)));
+```
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Angles and periodic values](../../../library/foundation/angles.md)
+
+## Source
+
 **File:** [angles.library](../angles.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 252
+### Line 252
 
 **Source:** [stdlib/foundation/angles.library.plato, line 252](../../../../../stdlib/foundation/angles.library.plato#L252).
 

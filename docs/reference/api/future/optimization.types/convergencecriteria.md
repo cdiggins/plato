@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Stopping rules for an iterative solver. Iteration stops when the step or
+> objective change falls below AbsoluteTolerance, or below RelativeTolerance
+> times the current magnitude, or when an iteration or evaluation budget is
+> exhausted. A budget of -1 means no limit.
+
+## Signature
+
+```plato
+type ConvergenceCriteria
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [optimization.types](../optimization.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 21
+### Line 21
 
 **Source:** [stdlib/future/optimization.types.plato, line 21](../../../../../stdlib/future/optimization.types.plato#L21).
 

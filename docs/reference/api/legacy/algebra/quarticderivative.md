@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Quartic derivative: dy/dx = 4\*a\*x^3 + 3\*b\*x^2 + 2\*c\*x + d
+
+## Signature
+
+```plato
+QuarticDerivative(a: INumerical, b: INumerical, c: INumerical, d: INumerical, e: INumerical, x: INumerical): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [algebra](../algebra.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 51
+### Line 51
 
 **Source:** [legacy/stdlib-legacy/algebra.plato, line 51](../../../../../legacy/stdlib-legacy/algebra.plato#L51).
 

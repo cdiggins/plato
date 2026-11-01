@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> IBitwise negated-and of the corresponding bits of a and b.
+
+## Signature
+
+```plato
+BitwiseNand(a: IBitwise, b: IBitwise): IBitwise
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [core.library](../core.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 139
+### Line 139
 
 **Source:** [stdlib/foundation/core.library.plato, line 139](../../../../../stdlib/foundation/core.library.plato#L139).
 

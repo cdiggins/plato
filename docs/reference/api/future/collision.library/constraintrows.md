@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The rows of one manifold, with each point's approach speed measured against
+> the bodies as they currently stand — which is the moment the measurement is
+> meaningful, because the velocity solve is about to change it.
+
+## Signature
+
+```plato
+ConstraintRows(m: ContactManifold3D, bodies: Array<SolverBody3D>, threshold: Speed)
+    : Array<ContactConstraint3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 360](../../../../../stdlib/future/collision.library.plato#L360): of bodies, so its cost is the square of the body count. A broad phase (a
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 352
+### Line 352
 
 **Source:** [stdlib/future/collision.library.plato, line 352](../../../../../stdlib/future/collision.library.plato#L352).
 

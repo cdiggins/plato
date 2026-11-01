@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The mapping from raster pixel indices to projected map coordinates for a
+> north-up image: the easting/northing of the outer corner of the top-left
+> (northwest) pixel, plus the positive pixel footprint. Easting grows by
+> PixelWidth per column; northing shrinks by PixelHeight per row.
+> (https://en.wikipedia.org/wiki/World\_file)
+
+## Signature
+
+```plato
+type GeoTransform
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [geo-spatial.types](../geo-spatial.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 108
+### Line 108
 
 **Source:** [stdlib/future/geo-spatial.types.plato, line 108](../../../../../stdlib/future/geo-spatial.types.plato#L108).
 

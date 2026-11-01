@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point on the unit sphere at the given azimuth and inclination, with
+> inclination measured from the +Z pole. The radial direction under the
+> spherical-product formulas below.
+
+## Signature
+
+```plato
+SpherePoint(azimuth: Angle, inclination: Angle): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.library](../surfaces-shapes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 42
+### Line 42
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 42](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L42).
 

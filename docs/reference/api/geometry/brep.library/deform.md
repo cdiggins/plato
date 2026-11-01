@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The curve with its control points moved through the mapping: a line
+> stays the line through its mapped endpoints.
+
+## Signature
+
+```plato
+Deform(c: BrepCurve, mapping: Function1<Point3D, Point3D>): BrepCurve
+Deform(s: BrepSurface, mapping: Function1<Point3D, Point3D>): BrepSurface
+Deform(e: BrepEdge, mapping: Function1<Point3D, Point3D>): BrepEdge
+Deform(f: BrepFace, mapping: Function1<Point3D, Point3D>): BrepFace
+Deform(b: Brep3D, mapping: Function1<Point3D, Point3D>): Brep3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [brep.library](../brep.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 142
+### Line 142
 
 **Source:** [stdlib/geometry/brep.library.plato, line 142](../../../../../stdlib/geometry/brep.library.plato#L142).
 
@@ -24,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
         };
 ```
 
-## Line 152
+### Line 152
 
 **Source:** [stdlib/geometry/brep.library.plato, line 152](../../../../../stdlib/geometry/brep.library.plato#L152).
 
@@ -46,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
         };
 ```
 
-## Line 167
+### Line 167
 
 **Source:** [stdlib/geometry/brep.library.plato, line 167](../../../../../stdlib/geometry/brep.library.plato#L167).
 
@@ -57,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (e.Start, e.End, e.Curve.Deform(mapping));
 ```
 
-## Line 171
+### Line 171
 
 **Source:** [stdlib/geometry/brep.library.plato, line 171](../../../../../stdlib/geometry/brep.library.plato#L171).
 
@@ -68,7 +93,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (f.Surface.Deform(mapping), f.Loops);
 ```
 
-## Line 175
+### Line 175
 
 **Source:** [stdlib/geometry/brep.library.plato, line 175](../../../../../stdlib/geometry/brep.library.plato#L175).
 

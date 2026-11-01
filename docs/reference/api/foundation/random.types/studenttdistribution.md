@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Student's t distribution; approaches the standard normal as
+> DegreesOfFreedom grows.
+
+## Signature
+
+```plato
+type StudentTDistribution
+    implements IProbabilityDistribution
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IProbabilityDistribution](../random.concepts/iprobabilitydistribution.md).
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.types](../random.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 166
+### Line 166
 
 **Source:** [stdlib/foundation/random.types.plato, line 166](../../../../../stdlib/foundation/random.types.plato#L166).
 

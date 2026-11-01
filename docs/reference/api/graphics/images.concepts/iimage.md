@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A raster image: a rectangular pixel grid with known dimensions. Pixel access
+> is deliberately not part of the interface; each concrete image type exposes its
+> own pixel representation. (https://en.wikipedia.org/wiki/Raster\_graphics)
+
+## Signature
+
+```plato
+interface IImage
+    inherits IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IValue](../../foundation/core.concepts/ivalue.md).
+
+Implemented in this tier by: [Bitmap](../images.types/bitmap.md), [FloatImage](../images.types/floatimage.md), [GrayscaleImage](../images.types/grayscaleimage.md), [BinaryImage](../images.types/binaryimage.md), [IndexedImage](../images.types/indexedimage.md), [DepthImage](../images.types/depthimage.md), [NormalImage](../images.types/normalimage.md).
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [images.concepts](../images.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/images.concepts.plato, line 1](../../../../../stdlib/graphics/images.concepts.plato#L1).
 

@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Uniform spatial gravity: the same acceleration, in meters per second
+> squared, applied to every dynamic body regardless of position. World space is
+> Z-up here, so downward gravity is negative on Z — `UniformGravity3D.Earth` in
+> `rigid-dynamics.library.plato` is the value to reach for.
+> Convention: see CONVENTIONS.md - World space
+
+## Signature
+
+```plato
+type UniformGravity3D
+    implements IValue, IForceModel3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IForceModel3D](../rigid-dynamics.concepts/iforcemodel3d.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 214
+### Line 214
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 214](../../../../../stdlib/future/rigid-dynamics.types.plato#L214).
 

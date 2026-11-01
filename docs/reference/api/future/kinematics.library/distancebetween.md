@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The straight-line distance covered between the two times (chord length).
+
+## Signature
+
+```plato
+DistanceBetween(self: IKinematic2D, earlier: Duration, later: Duration): Number
+DistanceBetween(self: IKinematic3D, earlier: Duration, later: Duration): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.library](../kinematics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 27
+### Line 27
 
 **Source:** [stdlib/future/kinematics.library.plato, line 27](../../../../../stdlib/future/kinematics.library.plato#L27).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.PositionAt(earlier).Between(self.PositionAt(later)).Magnitude;
 ```
 
-## Line 59
+### Line 59
 
 **Source:** [stdlib/future/kinematics.library.plato, line 59](../../../../../stdlib/future/kinematics.library.plato#L59).
 

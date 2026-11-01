@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The dimensionless ratio of two spans. Precondition: b is non-zero.
+
+## Signature
+
+```plato
+Divide(a: Duration, b: Duration): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [time.library](../time.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 52
+### Line 52
 
 **Source:** [stdlib/foundation/time.library.plato, line 52](../../../../../stdlib/foundation/time.library.plato#L52).
 

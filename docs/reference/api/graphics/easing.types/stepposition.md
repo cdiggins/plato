@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Where the jump occurs within each interval of a stepped easing, following
+> the CSS steps() model: rise at interval start, at interval end, neither
+> endpoint (Steps must exceed 1), or both endpoints.
+
+## Signature
+
+```plato
+type StepPosition = JumpStart | JumpEnd | JumpNone | JumpBoth
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [easing.types](../easing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 36
+### Line 36
 
 **Source:** [stdlib/graphics/easing.types.plato, line 36](../../../../../stdlib/graphics/easing.types.plato#L36).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Evaluates a dense coefficient array given in ASCENDING powers at x by
+> Horner's rule (https://en.wikipedia.org/wiki/Horner%27s\_method): folding
+> the highest-power coefficient first means no explicit power of x is ever
+> formed, which is both faster and more stable.
+> An empty array is the zero polynomial and evaluates to 0.
+
+## Signature
+
+```plato
+HornerEval(coefficients: Array<Number>, x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Find a root with Newton's method](../../../cookbook/newton-root.md)
+- [Polynomials, series and basis functions](../../../library/foundation/polynomials.md)
+
+## Source
+
 **File:** [polynomials.library](../polynomials.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 172
+### Line 172
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 172](../../../../../stdlib/foundation/polynomials.library.plato#L172).
 

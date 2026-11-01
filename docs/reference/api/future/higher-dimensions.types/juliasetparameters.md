@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Parameters of a quadratic Julia set in the complex plane: z maps to
+> z^2 + C. Iteration stops at MaxIterations or when the magnitude of z
+> exceeds EscapeRadius (complex-plane units, at least 2).
+> (https://en.wikipedia.org/wiki/Julia\_set)
+
+## Signature
+
+```plato
+type JuliaSetParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [higher-dimensions.types](../higher-dimensions.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 54
+### Line 54
 
 **Source:** [stdlib/future/higher-dimensions.types.plato, line 54](../../../../../stdlib/future/higher-dimensions.types.plato#L54).
 

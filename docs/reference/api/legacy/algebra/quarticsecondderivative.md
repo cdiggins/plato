@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Quartic second derivative: d2y/dx2 = 12\*a\*x^2 + 6\*b\*x + 2\*c
+
+## Signature
+
+```plato
+QuarticSecondDerivative(a: INumerical, b: INumerical, c: INumerical, d: INumerical, e: INumerical, x: Number): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [algebra](../algebra.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 58
+### Line 58
 
 **Source:** [legacy/stdlib-legacy/algebra.plato, line 58](../../../../../legacy/stdlib-legacy/algebra.plato#L58).
 

@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The shortest (great-circle, or geodesic on the ellipsoid) arc between two
+> geodetic coordinates.
+> (https://en.wikipedia.org/wiki/Great-circle\_distance)
+
+## Signature
+
+```plato
+type GeoSegment
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [geo-spatial.types](../geo-spatial.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 48
+### Line 48
 
 **Source:** [stdlib/future/geo-spatial.types.plato, line 48](../../../../../stdlib/future/geo-spatial.types.plato#L48).
 

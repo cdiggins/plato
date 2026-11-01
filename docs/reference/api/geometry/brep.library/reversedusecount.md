@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How many times the shell cites an edge in its reversed direction.
+
+## Signature
+
+```plato
+ReversedUseCount(b: Brep3D, e: UndirectedEdgeIndex): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [brep.library](../brep.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 82
+### Line 82
 
 **Source:** [stdlib/geometry/brep.library.plato, line 82](../../../../../stdlib/geometry/brep.library.plato#L82).
 

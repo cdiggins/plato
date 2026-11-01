@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The IDeformable2D obligation: every sample point carried through the
+> mapping, parameters unchanged.
+
+## Signature
+
+```plato
+Deform(self: SampledCurve2D, mapping: Function1<Point2D, Point2D>): SampledCurve2D
+Deform(self: SampledCurve3D, mapping: Function1<Point3D, Point3D>): SampledCurve3D
+Deform(self: SampledSurfaceGrid, mapping: Function1<Point3D, Point3D>): SampledSurfaceGrid
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 1](../../../../../stdlib/geometry/sampling.library.plato#L1).
 
@@ -46,7 +69,7 @@ library Sampling
         => (self.Parameters, self.Points.Map(mapping));
 ```
 
-## Line 33
+### Line 33
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 33](../../../../../stdlib/geometry/sampling.library.plato#L33).
 
@@ -58,7 +81,7 @@ library Sampling
         => (self.Parameters, self.Points.Map(mapping));
 ```
 
-## Line 38
+### Line 38
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 38](../../../../../stdlib/geometry/sampling.library.plato#L38).
 

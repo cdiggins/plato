@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> 80 triangles + 12 pentagons on 60 vertices; the twist is the classical
+> 13.1064 degrees (https://en.wikipedia.org/wiki/Snub\_dodecahedron).
+
+## Signature
+
+```plato
+SnubDodecahedron(_: PolygonMesh3D): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 210
+### Line 210
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 210](../../../../../stdlib/geometry/polyhedra.library.plato#L210).
 

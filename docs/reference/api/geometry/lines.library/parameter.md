@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unclamped parameter of the foot of the perpendicular from `point`, so
+> PointAt of it is the line's nearest point. Exact because Direction is unit.
+
+## Signature
+
+```plato
+Parameter(l: InfiniteLine2D, point: Point2D): Number
+Parameter(l: InfiniteLine3D, point: Point3D): Number
+Parameter(r: Ray2D, point: Point2D): Number
+Parameter(r: Ray3D, point: Point3D): Number
+Parameter(s: Line2D, point: Point2D): Number
+Parameter(s: Line3D, point: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Grammar and front-end construction](../../../implementation/grammar.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/geometry/lines.library.plato, line 131](../../../../../stdlib/geometry/lines.library.plato#L131).
 
@@ -19,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => l.Origin.Between(point).Dot(l.Direction.Vector);
 ```
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/geometry/lines.library.plato, line 136](../../../../../stdlib/geometry/lines.library.plato#L136).
 
@@ -30,7 +58,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => l.Origin.Between(point).Dot(l.Direction.Vector);
 ```
 
-## Line 140
+### Line 140
 
 **Source:** [stdlib/geometry/lines.library.plato, line 140](../../../../../stdlib/geometry/lines.library.plato#L140).
 
@@ -42,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0);
 ```
 
-## Line 145
+### Line 145
 
 **Source:** [stdlib/geometry/lines.library.plato, line 145](../../../../../stdlib/geometry/lines.library.plato#L145).
 
@@ -53,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0);
 ```
 
-## Line 149
+### Line 149
 
 **Source:** [stdlib/geometry/lines.library.plato, line 149](../../../../../stdlib/geometry/lines.library.plato#L149).
 
@@ -66,7 +94,7 @@ Copied from source, comments included. A comment records intent. The body is the
             .Clamp(0.0, 1.0);
 ```
 
-## Line 155
+### Line 155
 
 **Source:** [stdlib/geometry/lines.library.plato, line 155](../../../../../stdlib/geometry/lines.library.plato#L155).
 

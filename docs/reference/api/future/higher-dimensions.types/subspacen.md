@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An affine subspace of N-dimensional space: an origin plus orthonormal
+> basis vectors spanning the subspace (the vector count sets its dimension).
+> (https://en.wikipedia.org/wiki/Affine\_space)
+
+## Signature
+
+```plato
+type SubspaceN
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [higher-dimensions.types](../higher-dimensions.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 45
+### Line 45
 
 **Source:** [stdlib/future/higher-dimensions.types.plato, line 45](../../../../../stdlib/future/higher-dimensions.types.plato#L45).
 

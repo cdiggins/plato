@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The angle reduced into the half-open range \[0, period) by removing whole
+> multiples of period. Assumes period is a positive (non-zero) span.
+
+## Signature
+
+```plato
+Wrap(self: Angle, period: Angle): Angle
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Generics, inference variables, and bounds](../../../language/generics.md)
+- [Angles and periodic values](../../../library/foundation/angles.md)
+
+## Source
+
 **File:** [angles.library](../angles.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 140
+### Line 140
 
 **Source:** [stdlib/foundation/angles.library.plato, line 140](../../../../../stdlib/foundation/angles.library.plato#L140).
 

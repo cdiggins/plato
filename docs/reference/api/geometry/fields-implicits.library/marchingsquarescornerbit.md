@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> 1 when cell corner `corner` is below isoLevel, 0 when at or above it.
+
+## Signature
+
+```plato
+MarchingSquaresCornerBit(cell: IntegerVector2, corner: Integer, valueAt: Function2<Integer, Integer, Number>, isoLevel: Number): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1207
+### Line 1207
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1207](../../../../../stdlib/geometry/fields-implicits.library.plato#L1207).
 

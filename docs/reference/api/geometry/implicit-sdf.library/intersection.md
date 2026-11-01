@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Pointwise maximum distance; bounds are the intersection of the operands
+> (may be empty).
+
+## Signature
+
+```plato
+Intersection(a: BoundedSdf2D, b: BoundedSdf2D): BoundedSdf2D
+Intersection(a: BoundedSdf3D, b: BoundedSdf3D): BoundedSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 122
+### Line 122
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 122](../../../../../stdlib/geometry/implicit-sdf.library.plato#L122).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Sdf.Intersection(b.Sdf), IntersectionOfBounds(a.Bounds, b.Bounds));
 ```
 
-## Line 127
+### Line 127
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 127](../../../../../stdlib/geometry/implicit-sdf.library.plato#L127).
 

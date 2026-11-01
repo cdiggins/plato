@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> sRGB (135, 206, 235), opaque.
+
+## Signature
+
+```plato
+SkyBlue(_: Color8): Color8
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+
+## Source
+
 **File:** [color.library](../color.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 633
+### Line 633
 
 **Source:** [stdlib/foundation/color.library.plato, line 633](../../../../../stdlib/foundation/color.library.plato#L633).
 

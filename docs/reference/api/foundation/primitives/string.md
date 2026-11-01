@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Immutable text. (https://en.wikipedia.org/wiki/String\_(computer\_science))
+
+## Signature
+
+```plato
+primitive String
+    implements IValue, IOrderable, ICountable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IOrderable](../core.concepts/iorderable.md), [ICountable](../collections.concepts/icountable.md).
+
+## Used by
+
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+- [Numbers: Number and Integer](../../../start/tour/numbers.md)
+
+## Source
+
 **File:** [primitives](../primitives.md). Kind: primitive. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 44
+### Line 44
 
 **Source:** [stdlib/foundation/primitives.plato, line 44](../../../../../stdlib/foundation/primitives.plato#L44).
 

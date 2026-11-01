@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The position folded onto the +Y half-space: mirrored about the XZ plane.
+
+## Signature
+
+```plato
+MirroredY(p: Point3D): Point3D
+MirroredY(p: Point2D): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 806
+### Line 806
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 806](../../../../../stdlib/geometry/implicit-sdf.library.plato#L806).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Point3D(p.X, p.Y.Abs, p.Z);
 ```
 
-## Line 824
+### Line 824
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 824](../../../../../stdlib/geometry/implicit-sdf.library.plato#L824).
 

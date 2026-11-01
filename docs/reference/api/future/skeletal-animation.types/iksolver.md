@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The algorithm an inverse-kinematics chain is solved with: an analytic
+> two-segment solve, cyclic coordinate descent, or forward-and-backward
+> reaching.
+
+## Signature
+
+```plato
+type IkSolver = TwoBone | Ccd | Fabrik
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [skeletal-animation.types](../skeletal-animation.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 125
+### Line 125
 
 **Source:** [stdlib/future/skeletal-animation.types.plato, line 125](../../../../../stdlib/future/skeletal-animation.types.plato#L125).
 

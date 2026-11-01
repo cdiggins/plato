@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+UnitY(_: Vector2): Vector2
+UnitY(_: Vector3): Vector3
+UnitY(_: Vector4): Vector4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [vectors](../vectors.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 14
+### Line 14
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 14](../../../../../legacy/stdlib-legacy/vectors.plato#L14).
 
@@ -15,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
     UnitY(_: Vector2): Vector2 => (0.0, 1.0);
 ```
 
-## Line 59
+### Line 59
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 59](../../../../../legacy/stdlib-legacy/vectors.plato#L59).
 
@@ -23,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
     UnitY(_: Vector3): Vector3 => (0.0, 1.0, 0.0);    
 ```
 
-## Line 76
+### Line 76
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 76](../../../../../legacy/stdlib-legacy/vectors.plato#L76).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Reports how well a fitted shape matches the samples it was fitted to.
+> (https://en.wikipedia.org/wiki/Goodness\_of\_fit)
+
+## Signature
+
+```plato
+interface IFitted
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [LineFit2D](../geometry.types/linefit2d.md), [LineFit3D](../geometry.types/linefit3d.md), [PlaneFit3D](../geometry.types/planefit3d.md), [CircleFit2D](../geometry.types/circlefit2d.md), [SphereFit3D](../geometry.types/spherefit3d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 86
+### Line 86
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 86](../../../../../stdlib/geometry/geometry.concepts.plato#L86).
 

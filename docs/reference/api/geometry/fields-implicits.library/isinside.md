@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the point is strictly inside the boundary (negative distance).
+
+## Signature
+
+```plato
+IsInside(self: ISignedDistanceField2D, point: Point2D): Boolean
+IsInside(self: ISignedDistanceField3D, point: Point3D): Boolean
+IsInside(self: IImplicitRegion2D, point: Point2D): Boolean
+IsInside(self: IImplicitVolume3D, point: Point3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 308
+### Line 308
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 308](../../../../../stdlib/geometry/fields-implicits.library.plato#L308).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(point) < 0.0;
 ```
 
-## Line 347
+### Line 347
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 347](../../../../../stdlib/geometry/fields-implicits.library.plato#L347).
 
@@ -29,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(point) < 0.0;
 ```
 
-## Line 380
+### Line 380
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 380](../../../../../stdlib/geometry/fields-implicits.library.plato#L380).
 
@@ -41,7 +64,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(point);
 ```
 
-## Line 399
+### Line 399
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 399](../../../../../stdlib/geometry/fields-implicits.library.plato#L399).
 

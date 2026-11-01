@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The result of a 3D raycast against triangulated geometry. When Hit is false
+> the remaining fields are meaningless. IFace is the struck triangle (-1 when
+> the target is not a mesh); Barycentric locates the hit within that triangle
+> (https://en.wikipedia.org/wiki/Barycentric\_coordinate\_system); Uv is the
+> interpolated surface parameter at the hit, (0, 0) when the target carries no
+> UVs.
+
+## Signature
+
+```plato
+type RayHit3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.types](../spatial-structures.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 397
+### Line 397
 
 **Source:** [stdlib/geometry/spatial-structures.types.plato, line 397](../../../../../stdlib/geometry/spatial-structures.types.plato#L397).
 

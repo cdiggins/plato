@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The force one spring exerts on the vertex numbered `index`: Hooke's law
+> along the spring axis plus a damper on the closing speed. Zero when the
+> vertex is not an end of this spring, which is what lets the whole set be
+> summed by a fold with no adjacency structure.
+
+## Signature
+
+```plato
+SpringForceOn(vertices: Array<ClothVertex>, c: ClothDistanceConstraint, index: Integer, settings: MassSpringSettings, dt: Duration)
+    : Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 733](../../../../../stdlib/future/cloth.library.plato#L733): exactly what purity does not offer without a per-vertex adjacency table.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 712
+### Line 712
 
 **Source:** [stdlib/future/cloth.library.plato, line 712](../../../../../stdlib/future/cloth.library.plato#L712).
 

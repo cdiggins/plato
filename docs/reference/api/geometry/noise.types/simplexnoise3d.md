@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Spatial simplex noise: gradient noise on a tetrahedral lattice. Fewer
+> directional artifacts and cheaper in higher dimensions than Perlin noise
+> (https://en.wikipedia.org/wiki/Simplex\_noise).
+
+## Signature
+
+```plato
+type SimplexNoise3D
+    implements IValue, IScalarField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IScalarField3D](../fields.concepts/iscalarfield3d.md).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.types](../noise.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 111
+### Line 111
 
 **Source:** [stdlib/geometry/noise.types.plato, line 111](../../../../../stdlib/geometry/noise.types.plato#L111).
 

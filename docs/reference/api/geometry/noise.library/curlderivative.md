@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The partial derivative of potential component `component` along axis
+> `axis` (0 = X, 1 = Y, 2 = Z), by central difference.
+
+## Signature
+
+```plato
+CurlDerivative(self: CurlNoise3D, p: Point3D, component: Integer, axis: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 795
+### Line 795
 
 **Source:** [stdlib/geometry/noise.library.plato, line 795](../../../../../stdlib/geometry/noise.library.plato#L795).
 

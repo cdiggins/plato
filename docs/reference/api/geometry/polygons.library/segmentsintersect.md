@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the segments \[a, b\] and \[c, d\] share at least one point — a proper
+> crossing, a touch at an endpoint, or a collinear overlap.
+> https://en.wikipedia.org/wiki/Line\_segment\_intersection
+
+## Signature
+
+```plato
+SegmentsIntersect(a: Point2D, b: Point2D, c: Point2D, d: Point2D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 502
+### Line 502
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 502](../../../../../stdlib/geometry/polygons.library.plato#L502).
 

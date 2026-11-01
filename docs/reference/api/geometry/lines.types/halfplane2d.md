@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The closed 2D region on and behind a boundary line in Hesse normal form: the
+> points p with Dot(Normal, p) \<= Distance
+> (https://en.wikipedia.org/wiki/Half-plane). Normal points out of the half-plane.
+
+## Signature
+
+```plato
+type HalfPlane2D
+    implements IGeometry2D, IConvexShape, IConnected, IContainsPoint2D, INearestPoint2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry2D](../geometry.concepts/igeometry2d.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IContainsPoint2D](../geometry.concepts/icontainspoint2d.md), [INearestPoint2D](../geometry.concepts/inearestpoint2d.md).
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.types](../lines.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 127
+### Line 127
 
 **Source:** [stdlib/geometry/lines.types.plato, line 127](../../../../../stdlib/geometry/lines.types.plato#L127).
 

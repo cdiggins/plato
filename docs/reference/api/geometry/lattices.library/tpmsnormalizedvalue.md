@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The distance-like value of a family's implicit relative to a level: the
+> nodal value less the level, divided by the family's Lipschitz bound.
+> Negative inside the at-or-below labyrinth. A LOWER BOUND on distance.
+
+## Signature
+
+```plato
+TpmsNormalizedValue(family: TpmsFamily, period: Number, level: Number, p: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 667
+### Line 667
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 667](../../../../../stdlib/geometry/lattices.library.plato#L667).
 

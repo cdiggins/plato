@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Supports the Boolean algebra of conjunction, disjunction, and negation.
+> Also models set-like union/intersection/complement.
+> (https://en.wikipedia.org/wiki/Boolean\_algebra)
+
+## Signature
+
+```plato
+interface ILogical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Boolean](../primitives/boolean.md).
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [core.concepts](../core.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 53
+### Line 53
 
 **Source:** [stdlib/foundation/core.concepts.plato, line 53](../../../../../stdlib/foundation/core.concepts.plato#L53).
 

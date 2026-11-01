@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The cloth with one vertex pinned or released.
+
+## Signature
+
+```plato
+WithPinnedVertex(self: Cloth3D, index: VertexIndex, pinned: Boolean): Cloth3D
+WithPinnedVertex(self: ClothMesh3D, index: VertexIndex, pinned: Boolean): ClothMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 813
+### Line 813
 
 **Source:** [stdlib/future/cloth.library.plato, line 813](../../../../../stdlib/future/cloth.library.plato#L813).
 
@@ -21,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.WithVertices(self.Vertices.WithVertex(index, self.Vertices[index.Value].WithPinned(pinned)));
 ```
 
-## Line 820
+### Line 820
 
 **Source:** [stdlib/future/cloth.library.plato, line 820](../../../../../stdlib/future/cloth.library.plato#L820).
 

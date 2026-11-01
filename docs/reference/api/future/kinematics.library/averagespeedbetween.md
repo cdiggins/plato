@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The average speed over \[earlier, later\]: chord distance over elapsed
+> seconds. Precondition: earlier and later differ.
+
+## Signature
+
+```plato
+AverageSpeedBetween(self: IKinematic2D, earlier: Duration, later: Duration): Number
+AverageSpeedBetween(self: IKinematic3D, earlier: Duration, later: Duration): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.library](../kinematics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 36
+### Line 36
 
 **Source:** [stdlib/future/kinematics.library.plato, line 36](../../../../../stdlib/future/kinematics.library.plato#L36).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.DistanceBetween(earlier, later) / (later.Seconds - earlier.Seconds);
 ```
 
-## Line 68
+### Line 68
 
 **Source:** [stdlib/future/kinematics.library.plato, line 68](../../../../../stdlib/future/kinematics.library.plato#L68).
 

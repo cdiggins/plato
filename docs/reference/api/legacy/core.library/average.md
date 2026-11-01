@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Average(x: Number, y: Number): Number
+Average(x: IVectorLike, y: IVectorLike): IVectorLike
+Average(a: IInterpolatable, b: IInterpolatable): IInterpolatable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [core.library](../core.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 10
+### Line 10
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 10](../../../../../legacy/stdlib-legacy/core.library.plato#L10).
 
@@ -15,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Average(x: Number, y: Number): Number => (x + y).Half;
 ```
 
-## Line 81
+### Line 81
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 81](../../../../../legacy/stdlib-legacy/core.library.plato#L81).
 
@@ -23,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Average(x: IVectorLike, y: IVectorLike): IVectorLike => x.Lerp(y, 0.5);
 ```
 
-## Line 127
+### Line 127
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 127](../../../../../legacy/stdlib-legacy/core.library.plato#L127).
 

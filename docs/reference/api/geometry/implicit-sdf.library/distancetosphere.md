@@ -3,11 +3,65 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed distance from a point to a sphere of the given radius centred at
+> the origin. Exact. (IQ: sdSphere.)
+
+## Signature
+
+```plato
+DistanceToSphere(p: Point3D, radius: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_DegenerateCapsuleIsSphere
+
+[stdlib/tests/implicit-sdf.laws.plato, line 38](../../../../../stdlib/tests/implicit-sdf.laws.plato#L38)
+
+```plato
+// A capsule whose two endpoints coincide at the origin is a sphere. Cross-checks
+// the segment-based capsule against the closed-form sphere.
+Law_DegenerateCapsuleIsSphere(p: Point3D, radius: Number): Boolean
+    => DistanceToCapsule(p, Point3D(0.0, 0.0, 0.0), Point3D(0.0, 0.0, 0.0), radius)
+        .LawEq(DistanceToSphere(p, radius));
+```
+
+### Law_RevolvedCircleIsSphere
+
+[stdlib/tests/implicit-sdf.laws.plato, line 95](../../../../../stdlib/tests/implicit-sdf.laws.plato#L95)
+
+```plato
+// Revolving about the Y axis with no offset sends a point to its distance from
+// that axis, so a revolved planar circle centred on the axis is a sphere.
+Law_RevolvedCircleIsSphere(p: Point3D, radius: Number): Boolean
+    => DistanceToCircle(RevolvedPoint(p, 0.0), radius).LawEq(DistanceToSphere(p, radius));
+```
+
+### Law_CircleIsSphereSlice
+
+[stdlib/tests/implicit-sdf.laws.plato, line 115](../../../../../stdlib/tests/implicit-sdf.laws.plato#L115)
+
+```plato
+// A circle is the z = 0 slice of the sphere of the same radius.
+Law_CircleIsSphereSlice(p: Point2D, radius: Number): Boolean
+    => DistanceToCircle(p, radius).LawEq(DistanceToSphere(Point3D(p.X, p.Y, 0.0), radius));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 828
+### Line 828
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 828](../../../../../stdlib/geometry/implicit-sdf.library.plato#L828).
 

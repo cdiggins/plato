@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Butterfly's new point on one edge: 1/2 to each endpoint, 1/8 to each apex and
+> -1/16 to each of the four wings. Where the stencil runs off a boundary the
+> scheme has no rule of its own, so the point falls back to Loop's, which is
+> defined everywhere.
+
+## Signature
+
+```plato
+ButterflyEdgePoint(self: TriangleMesh3D, topology: TriangleMeshTopology, e: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 856
+### Line 856
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 856](../../../../../stdlib/geometry/remeshing.library.plato#L856).
 

@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Pearson correlation implied by the covariance:
+> Xy / sqrt(Xx \* Yy), in \[-1, 1\]. Precondition: both variances positive.
+> https://en.wikipedia.org/wiki/Pearson\_correlation\_coefficient
+
+## Signature
+
+```plato
+PearsonCorrelation(self: Covariance2D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Summarize a sample](../../../cookbook/sample-statistics.md)
+- [Statistics, covariance and fitted models](../../../library/foundation/statistics.md)
+
+## Source
+
 **File:** [statistics.library](../statistics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 220
+### Line 220
 
 **Source:** [stdlib/foundation/statistics.library.plato, line 220](../../../../../stdlib/foundation/statistics.library.plato#L220).
 

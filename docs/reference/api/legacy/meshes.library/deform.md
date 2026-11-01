@@ -3,11 +3,47 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Deform(x: Line2D, f: Function1<Point2D, Point2D>): Line2D
+Deform(x: Ray2D, f: Function1<Point2D, Point2D>): Ray2D
+Deform(t: Triangle2D, f: Function1<Point2D, Point2D>): Triangle2D
+Deform(q: Quad2D, f: Function1<Point2D, Point2D>): Quad2D
+Deform(v: Point2D, f: Function1<Point2D, Point2D>): Point2D
+Deform(x: Bounds2D, f: Function1<Point2D, Point2D>): Bounds2D
+Deform(x: Line3D, f: Function1<Point3D, Point3D>): Line3D
+Deform(x: Ray3D, f: Function1<Point3D, Point3D>): Ray3D
+Deform(t: Triangle3D, f: Function1<Point3D, Point3D>): Triangle3D
+Deform(q: Quad3D, f: Function1<Point3D, Point3D>): Quad3D
+Deform(v: Point3D, f: Function1<Point3D, Point3D>): Point3D
+Deform(x: LineMesh3D, f: Function1<Point3D, Point3D>): LineMesh3D
+Deform(x: TriangleMesh3D, f: Function1<Point3D, Point3D>): TriangleMesh3D
+Deform(x: QuadMesh3D, f: Function1<Point3D, Point3D>): QuadMesh3D
+Deform(x: PolyLine3D, f: Function1<Point3D, Point3D>): PolyLine3D
+Deform(x: Points3D, f: Function1<Point3D, Point3D>): Points3D
+Deform(x: Lines3D, f: Function1<Point3D, Point3D>): Lines3D
+Deform(x: Triangles3D, f: Function1<Point3D, Point3D>): Triangles3D
+Deform(x: Quads3D, f: Function1<Point3D, Point3D>): Quads3D
+Deform(x: QuadGrid3D, f: Function1<Point3D, Point3D>): QuadGrid3D
+Deform(x: Bounds3D, f: Function1<Point3D, Point3D>): Bounds3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 21 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 46
+### Line 46
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 46](../../../../../legacy/stdlib-legacy/meshes.library.plato#L46).
 
@@ -19,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: Line2D, f: Function1<Point2D, Point2D>): Line2D => (f(x.A), f(x.B));
 ```
 
-## Line 51
+### Line 51
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 51](../../../../../legacy/stdlib-legacy/meshes.library.plato#L51).
 
@@ -27,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: Ray2D, f: Function1<Point2D, Point2D>): Ray2D => (f(x.Origin), f(x.Origin + x.Direction).Vector2.Normalize);
 ```
 
-## Line 52
+### Line 52
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 52](../../../../../legacy/stdlib-legacy/meshes.library.plato#L52).
 
@@ -35,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(t: Triangle2D, f: Function1<Point2D, Point2D>): Triangle2D => (f(t.A), f(t.B), f(t.C));
 ```
 
-## Line 53
+### Line 53
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 53](../../../../../legacy/stdlib-legacy/meshes.library.plato#L53).
 
@@ -43,7 +79,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(q: Quad2D, f: Function1<Point2D, Point2D>): Quad2D => (f(q.A), f(q.B), f(q.C), f(q.D));
 ```
 
-## Line 54
+### Line 54
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 54](../../../../../legacy/stdlib-legacy/meshes.library.plato#L54).
 
@@ -51,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(v: Point2D, f: Function1<Point2D, Point2D>): Point2D => f(v);
 ```
 
-## Line 55
+### Line 55
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 55](../../../../../legacy/stdlib-legacy/meshes.library.plato#L55).
 
@@ -59,7 +95,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: Bounds2D, f: Function1<Point2D, Point2D>): Bounds2D => x.Corners.Map(f).Bounds();
 ```
 
-## Line 56
+### Line 56
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 56](../../../../../legacy/stdlib-legacy/meshes.library.plato#L56).
 
@@ -68,7 +104,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: Line3D, f: Function1<Point3D, Point3D>): Line3D => (f(x.A), f(x.B));
 ```
 
-## Line 58
+### Line 58
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 58](../../../../../legacy/stdlib-legacy/meshes.library.plato#L58).
 
@@ -76,7 +112,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: Ray3D, f: Function1<Point3D, Point3D>): Ray3D => (f(x.Origin), f(x.Origin + x.Direction).Vector3.Normalize);
 ```
 
-## Line 59
+### Line 59
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 59](../../../../../legacy/stdlib-legacy/meshes.library.plato#L59).
 
@@ -84,7 +120,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(t: Triangle3D, f: Function1<Point3D, Point3D>): Triangle3D => (f(t.A), f(t.B), f(t.C));
 ```
 
-## Line 60
+### Line 60
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 60](../../../../../legacy/stdlib-legacy/meshes.library.plato#L60).
 
@@ -92,7 +128,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(q: Quad3D, f: Function1<Point3D, Point3D>): Quad3D => (f(q.A), f(q.B), f(q.C), f(q.D));
 ```
 
-## Line 61
+### Line 61
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 61](../../../../../legacy/stdlib-legacy/meshes.library.plato#L61).
 
@@ -100,7 +136,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(v: Point3D, f: Function1<Point3D, Point3D>): Point3D => f(v);
 ```
 
-## Line 62
+### Line 62
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 62](../../../../../legacy/stdlib-legacy/meshes.library.plato#L62).
 
@@ -109,7 +145,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: LineMesh3D, f: Function1<Point3D, Point3D>): LineMesh3D => (x.Points.Map(f), x.FaceIndices);
 ```
 
-## Line 64
+### Line 64
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 64](../../../../../legacy/stdlib-legacy/meshes.library.plato#L64).
 
@@ -117,7 +153,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: TriangleMesh3D, f: Function1<Point3D, Point3D>): TriangleMesh3D => (x.Points.Map(f), x.FaceIndices);
 ```
 
-## Line 65
+### Line 65
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 65](../../../../../legacy/stdlib-legacy/meshes.library.plato#L65).
 
@@ -125,7 +161,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: QuadMesh3D, f: Function1<Point3D, Point3D>): QuadMesh3D => (x.Points.Map(f), x.FaceIndices);
 ```
 
-## Line 66
+### Line 66
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 66](../../../../../legacy/stdlib-legacy/meshes.library.plato#L66).
 
@@ -133,7 +169,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: PolyLine3D, f: Function1<Point3D, Point3D>): PolyLine3D => (x.Points.Map(f), x.Closed);
 ```
 
-## Line 67
+### Line 67
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 67](../../../../../legacy/stdlib-legacy/meshes.library.plato#L67).
 
@@ -144,7 +180,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: Points3D, f: Function1<Point3D, Point3D>): Points3D => new Points3D(x.Points.Map(f));
 ```
 
-## Line 71
+### Line 71
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 71](../../../../../legacy/stdlib-legacy/meshes.library.plato#L71).
 
@@ -152,7 +188,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: Lines3D, f: Function1<Point3D, Point3D>): Lines3D => new Lines3D(x.Lines.Map(l => l.Deform(f)));
 ```
 
-## Line 72
+### Line 72
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 72](../../../../../legacy/stdlib-legacy/meshes.library.plato#L72).
 
@@ -160,7 +196,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: Triangles3D, f: Function1<Point3D, Point3D>): Triangles3D => new Triangles3D(x.Triangles.Map(t => t.Deform(f)));
 ```
 
-## Line 73
+### Line 73
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 73](../../../../../legacy/stdlib-legacy/meshes.library.plato#L73).
 
@@ -168,7 +204,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: Quads3D, f: Function1<Point3D, Point3D>): Quads3D => new Quads3D(x.Quads.Map(q => q.Deform(f)));
 ```
 
-## Line 74
+### Line 74
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 74](../../../../../legacy/stdlib-legacy/meshes.library.plato#L74).
 
@@ -177,7 +213,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Deform(x: QuadGrid3D, f: Function1<Point3D, Point3D>): QuadGrid3D => (x.PointGrid.Map(f), x.ClosedX, x.ClosedY);
 ```
 
-## Line 76
+### Line 76
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 76](../../../../../legacy/stdlib-legacy/meshes.library.plato#L76).
 

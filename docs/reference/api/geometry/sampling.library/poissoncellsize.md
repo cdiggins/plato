@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The background grid's cell size: radius / sqrt(2), the largest cell whose
+> diagonal is still shorter than the radius, so a cell holds one point at most.
+
+## Signature
+
+```plato
+PoissonCellSize(radius: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 540](../../../../../stdlib/geometry/sampling.library.plato#L540): so every pair is checked exactly once.
+- [Line 553](../../../../../stdlib/geometry/sampling.library.plato#L553): Cost is the cell count times `attempts`, so `radius` must be a real
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 519
+### Line 519
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 519](../../../../../stdlib/geometry/sampling.library.plato#L519).
 

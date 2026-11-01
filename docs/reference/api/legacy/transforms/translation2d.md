@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A translation transformation in 2D space
+
+## Signature
+
+```plato
+type Translation2D
+    implements IRigidTransform2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IRigidTransform2D](irigidtransform2d.md).
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 17
+### Line 17
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 17](../../../../../legacy/stdlib-legacy/transforms.plato#L17).
 

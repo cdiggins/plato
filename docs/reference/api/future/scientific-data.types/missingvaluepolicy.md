@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> How missing values in a series or column are treated during computation:
+> drop the sample (Skip), substitute zero (Zero), fill from neighbors
+> (Interpolate), or repeat the previous value (Hold).
+> (https://en.wikipedia.org/wiki/Missing\_data)
+
+## Signature
+
+```plato
+type MissingValuePolicy = Skip | Zero | Interpolate | Hold
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.types](../scientific-data.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 177
+### Line 177
 
 **Source:** [stdlib/future/scientific-data.types.plato, line 177](../../../../../stdlib/future/scientific-data.types.plato#L177).
 

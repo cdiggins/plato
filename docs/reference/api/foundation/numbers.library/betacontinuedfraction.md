@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The INumerical Recipes `betacf` continued fraction, evaluated bottom-up
+> one odd/even coefficient pair per level: this returns
+> F(m) = 1 + d(2m+1) / (1 + d(2m+2) / F(m+1)) with the standard
+>   d(2m+1) = -(a+m)(a+b+m) x / ((a+2m)(a+2m+1))
+>   d(2m)   =  m(b-m) x / ((a+2m-1)(a+2m))
+> truncated at 100 pairs. I\_x(a, b) then equals
+> exp(a\*ln(x) + b\*ln(1-x) - LogBeta(a, b)) / (a \* F(0)). Converges
+> rapidly for x \< (a + 1) / (a + b + 2), the only region it is used in.
+
+## Signature
+
+```plato
+BetaContinuedFraction(a: Number, b: Number, x: Number, m: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 505
+### Line 505
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 505](../../../../../stdlib/foundation/numbers.library.plato#L505).
 

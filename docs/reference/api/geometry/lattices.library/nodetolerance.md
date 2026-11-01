@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The tolerance within which two normalized cell coordinates count as the
+> same node. Cell tables are written with exact 0, 1 and quarter-point
+> literals, so this only has to absorb the arithmetic of a derived cell.
+
+## Signature
+
+```plato
+NodeTolerance(_: LatticeUnitCell): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 241](../../../../../stdlib/geometry/lattices.library.plato#L241): cell repeats. Both are answered inside the unit cube, before any world
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 234
+### Line 234
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 234](../../../../../stdlib/geometry/lattices.library.plato#L234).
 

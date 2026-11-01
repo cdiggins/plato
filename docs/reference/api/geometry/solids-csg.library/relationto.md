@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How the polygon sits relative to the plane, with vertices within
+> `tolerance` of the plane counting as on it: Spanning when vertices lie
+> strictly on both sides, otherwise the side any strict vertex lies on,
+> otherwise Coplanar.
+
+## Signature
+
+```plato
+RelationTo(p: Polygon3D, pl: Plane, tolerance: Number): PlaneRelation3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 78
+### Line 78
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 78](../../../../../stdlib/geometry/solids-csg.library.plato#L78).
 

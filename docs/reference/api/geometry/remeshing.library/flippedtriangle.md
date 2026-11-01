@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The replacement for one of the two triangles of an accepted flip. With the
+> edge running u to v, w the near apex and x the far apex, the quadrilateral
+> reads v, w, u, x counter-clockwise and the new diagonal is w-x; the near
+> triangle becomes (w, u, x) and the far one (w, x, v).
+> Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+
+## Signature
+
+```plato
+FlippedTriangle(self: TriangleMesh3D, topology: TriangleMeshTopology, e: Integer, face: Integer): TriangleFace
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 650
+### Line 650
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 650](../../../../../stdlib/geometry/remeshing.library.plato#L650).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The motor of a rigid pose.
+
+## Signature
+
+```plato
+Motor3D(pose: Pose3D): Motor3D
+Motor3D(q: Quaternion): Motor3D
+Motor3D(r: Rotor3D): Motor3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 785
+### Line 785
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 785](../../../../../stdlib/foundation/transforms.library.plato#L785).
 
@@ -32,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 811
+### Line 811
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 811](../../../../../stdlib/foundation/transforms.library.plato#L811).
 
@@ -43,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (q, Quaternion(0.0, 0.0, 0.0, 0.0));
 ```
 
-## Line 815
+### Line 815
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 815](../../../../../stdlib/foundation/transforms.library.plato#L815).
 

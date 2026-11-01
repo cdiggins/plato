@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The total order and structural equality. LessThanOrEquals is the single
+> IOrderable primitive; LessThan / GreaterThan / GreaterThanOrEquals /
+> Compare / Clamp / Lesser / Greater all derive from it in
+> `core.library.plato`, and NotEquals from Equals.
+
+## Signature
+
+```plato
+LessThanOrEquals(a: Number, b: Number): Boolean
+LessThanOrEquals(a: Integer, b: Integer): Boolean
+LessThanOrEquals(a: Character, b: Character): Boolean
+LessThanOrEquals(a: String, b: String): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 146](../../../../../stdlib/foundation/intrinsics.library.plato#L146): Both primitives declare `IOrderable` (primitives.plato), which the host must
+- [Line 147](../../../../../stdlib/foundation/intrinsics.library.plato#L147): discharge: String order is ordinal in every runtime (UTF-16 code units in C#
+
+## Source
+
 **File:** [intrinsics.library](../intrinsics.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 53
+### Line 53
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 53](../../../../../stdlib/foundation/intrinsics.library.plato#L53).
 
@@ -20,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
     LessThanOrEquals(a: Number, b: Number): Boolean;
 ```
 
-## Line 115
+### Line 115
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 115](../../../../../stdlib/foundation/intrinsics.library.plato#L115).
 
@@ -29,7 +58,7 @@ Copied from source, comments included. A comment records intent. The body is the
     LessThanOrEquals(a: Integer, b: Integer): Boolean;
 ```
 
-## Line 142
+### Line 142
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 142](../../../../../stdlib/foundation/intrinsics.library.plato#L142).
 
@@ -48,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
     LessThanOrEquals(a: Character, b: Character): Boolean;
 ```
 
-## Line 154
+### Line 154
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 154](../../../../../stdlib/foundation/intrinsics.library.plato#L154).
 

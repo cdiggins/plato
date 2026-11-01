@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How a planar polygon sits relative to a plane: entirely in the plane's front
+> (positive) half-space, entirely behind, lying in the plane itself (within the
+> classification tolerance), or crossing it (vertices strictly on both sides).
+> The four-way answer every plane-clipping and BSP construction dispatches on.
+> (https://en.wikipedia.org/wiki/Binary\_space\_partitioning)
+
+## Signature
+
+```plato
+type PlaneRelation3D
+    = Front
+    | Back
+    | Coplanar
+    | Spanning
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.types](../solids.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 72
+### Line 72
 
 **Source:** [stdlib/geometry/solids.types.plato, line 72](../../../../../stdlib/geometry/solids.types.plato#L72).
 

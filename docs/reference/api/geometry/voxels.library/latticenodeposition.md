@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The world position of lattice node (i, j, k) of a lattice of nodeCounts
+> nodes spanning bounds inclusively.
+
+## Signature
+
+```plato
+LatticeNodePosition(bounds: Bounds3D, nodeCounts: IntegerVector3, i: Integer, j: Integer, k: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.library](../voxels.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 555
+### Line 555
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 555](../../../../../stdlib/geometry/voxels.library.plato#L555).
 

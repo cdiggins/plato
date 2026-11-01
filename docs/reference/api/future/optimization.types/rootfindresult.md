@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The outcome of a root-finding run. Residual is the function value at the
+> reported Root.
+> (https://en.wikipedia.org/wiki/Root-finding\_algorithm)
+
+## Signature
+
+```plato
+type RootFindResult
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [optimization.types](../optimization.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 73
+### Line 73
 
 **Source:** [stdlib/future/optimization.types.plato, line 73](../../../../../stdlib/future/optimization.types.plato#L73).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The rigid pose of a frame. Precondition: the axes are orthonormal and
+> right-handed.
+
+## Signature
+
+```plato
+Pose2D(f: Frame2D): Pose2D
+Pose2D(m: Matrix3x2): Pose2D
+Pose2D(t: Translation2D): Pose2D
+Pose2D(r: Rotation2D): Pose2D
+Pose2D(r: RotationAbout2D): Pose2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 650
+### Line 650
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 650](../../../../../stdlib/foundation/transforms.library.plato#L650).
 
@@ -19,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => f.Matrix3x2.Pose2D;
 ```
 
-## Line 987
+### Line 987
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 987](../../../../../stdlib/foundation/transforms.library.plato#L987).
 
@@ -31,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Point2D(m.Row3.X, m.Row3.Y), Rotation2D(m.Row1.Y.Atan2(m.Row1.X)));
 ```
 
-## Line 1035
+### Line 1035
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1035](../../../../../stdlib/foundation/transforms.library.plato#L1035).
 
@@ -50,7 +76,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (t.Vector.ToPoint, Rotation2D.Identity);
 ```
 
-## Line 1051
+### Line 1051
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1051](../../../../../stdlib/foundation/transforms.library.plato#L1051).
 
@@ -61,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Point2D.Origin, r);
 ```
 
-## Line 1064
+### Line 1064
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1064](../../../../../stdlib/foundation/transforms.library.plato#L1064).
 

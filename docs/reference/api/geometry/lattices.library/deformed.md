@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The struts with both endpoints carried through a point map. This is how a
+> lattice is conformed to something other than its box, and how a graded
+> CELL SIZE is expressed: warp the tiled struts rather than tile unevenly.
+> A map that is not injective folds the lattice onto itself.
+
+## Signature
+
+```plato
+Deformed(struts: Array<Line3D>, mapping: Function1<Point3D, Point3D>): Array<Line3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 532
+### Line 532
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 532](../../../../../stdlib/geometry/lattices.library.plato#L532).
 

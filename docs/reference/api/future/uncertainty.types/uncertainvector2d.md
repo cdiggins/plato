@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A 2D vector with a 2x2 covariance of its components.
+
+## Signature
+
+```plato
+type UncertainVector2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty.types](../uncertainty.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 120
+### Line 120
 
 **Source:** [stdlib/future/uncertainty.types.plato, line 120](../../../../../stdlib/future/uncertainty.types.plato#L120).
 

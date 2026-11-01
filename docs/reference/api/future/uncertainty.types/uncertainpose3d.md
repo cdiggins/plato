@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A rigid placement with the 6x6 covariance of its own error, ordered
+> translation before rotation. The state a scanner, tracker, or SLAM front end
+> actually reports: a pose is never known exactly, and the covariance is what
+> downstream registration needs in order to weight it.
+> (https://en.wikipedia.org/wiki/Pose\_(computer\_vision))
+
+## Signature
+
+```plato
+type UncertainPose3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty.types](../uncertainty.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 285
+### Line 285
 
 **Source:** [stdlib/future/uncertainty.types.plato, line 285](../../../../../stdlib/future/uncertainty.types.plato#L285).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Kelvin cell: the wireframe of a truncated octahedron (a
+> tetrakaidecahedron), whose six square faces sit exactly on the cube faces
+> and are therefore shared with the neighbouring cells. Coordination 4 once
+> tiled, though the polyhedron itself is 3-valent: the fourth strut comes
+> from the neighbour across the square face. This is Kelvin's answer to the
+> minimal-surface foam problem.
+> (https://en.wikipedia.org/wiki/Truncated\_octahedron)
+
+## Signature
+
+```plato
+TruncatedOctahedron(_: LatticeUnitCell): LatticeUnitCell
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 162
+### Line 162
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 162](../../../../../stdlib/geometry/lattices.library.plato#L162).
 

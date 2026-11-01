@@ -3,11 +3,57 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The real cube root, defined for negative input by odd symmetry —
+> Pow alone would return NaN there.
+> (https://en.wikipedia.org/wiki/Cube\_root)
+
+## Signature
+
+```plato
+Cbrt(self: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_CbrtWitness
+
+[stdlib/tests/text.laws.plato, line 200](../../../../../stdlib/tests/text.laws.plato#L200)
+
+```plato
+Law_CbrtWitness(): Boolean
+    => 8.0.Cbrt == 2.0 && (-27.0).Cbrt == -3.0 && 0.0.Cbrt == 0.0 && 1.0 / 0.0.Cbrt == 1.0 / 0.0
+    && 1.0 / (-0.0).Cbrt == -1.0 / 0.0 && 1.0.Cbrt == 1.0 && (-1.0).Cbrt == -1.0 && 0.125.Cbrt == 0.5
+    && (1.0 / 0.0).Cbrt == 1.0 / 0.0 && (0.0 / 0.0).Cbrt.IsNaN;
+```
+
+### Law_CbrtIsOdd
+
+[stdlib/tests/text.laws.plato, line 206](../../../../../stdlib/tests/text.laws.plato#L206)
+
+```plato
+// Odd symmetry and monotonicity over the runner's Numbers.
+Law_CbrtIsOdd(x: Number): Boolean
+    => (-x).Cbrt == -(x.Cbrt);
+```
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [primitives.library](../primitives.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 425
+### Line 425
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 425](../../../../../stdlib/foundation/primitives.library.plato#L425).
 

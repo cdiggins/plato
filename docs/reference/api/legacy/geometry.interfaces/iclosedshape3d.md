@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A 3D shape that is closed
+
+## Signature
+
+```plato
+interface IClosedShape3D inherits IGeometry3D, IClosedShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry3D](igeometry3d.md), [IClosedShape](iclosedshape.md).
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 64
+### Line 64
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 64](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L64).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number of slots the band occupies, including the off-matrix corners
+> the layout stores and ignores. This is the expected length of Values.
+
+## Signature
+
+```plato
+BandSlotCount(self: BandedMatrix): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 381
+### Line 381
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 381](../../../../../stdlib/foundation/matrices.library.plato#L381).
 

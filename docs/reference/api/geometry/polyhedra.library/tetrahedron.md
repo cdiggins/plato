@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Four triangles, four vertices: alternate corners of a cube
+> (https://en.wikipedia.org/wiki/Tetrahedron).
+
+## Signature
+
+```plato
+Tetrahedron(_: PolygonMesh3D): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 1005](../../../../../stdlib/geometry/polyhedra.library.plato#L1005): projected onto the unit sphere so the circumscribed radius is one. Read as
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 999
+### Line 999
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 999](../../../../../stdlib/geometry/polyhedra.library.plato#L999).
 

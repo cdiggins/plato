@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar scalar field with an analytic or numeric first derivative. The
+> gradient points in the direction of steepest increase
+> (https://en.wikipedia.org/wiki/Gradient).
+
+## Signature
+
+```plato
+interface IDifferentiableScalarField2D
+    inherits IScalarField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IScalarField2D](iscalarfield2d.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields.concepts](../fields.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 99
+### Line 99
 
 **Source:** [stdlib/geometry/fields.concepts.plato, line 99](../../../../../stdlib/geometry/fields.concepts.plato#L99).
 

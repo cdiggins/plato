@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Planar composition: apply first, then second.
+
+## Signature
+
+```plato
+Compose(first: IDeformation2D, second: IDeformation2D): MappingDeformation2D
+Compose(first: IDeformation3D, second: IDeformation3D): MappingDeformation3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [deformations.library](../deformations.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 98
+### Line 98
 
 **Source:** [stdlib/geometry/deformations.library.plato, line 98](../../../../../stdlib/geometry/deformations.library.plato#L98).
 
@@ -25,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => MappingDeformation2D(p => second.Eval(first.Eval(p)));
 ```
 
-## Line 109
+### Line 109
 
 **Source:** [stdlib/geometry/deformations.library.plato, line 109](../../../../../stdlib/geometry/deformations.library.plato#L109).
 

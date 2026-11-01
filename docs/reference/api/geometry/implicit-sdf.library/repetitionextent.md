@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The half-extent of a bounded planar tiling: the distance from the origin to
+> the outer face of the last repeated cell on each axis. Meaningless on an
+> axis whose count is non-positive (that axis repeats without limit).
+
+## Signature
+
+```plato
+RepetitionExtent(self: SdfRepetitionModifier2D): Vector2D
+RepetitionExtent(self: SdfRepetitionModifier3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 564
+### Line 564
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 564](../../../../../stdlib/geometry/implicit-sdf.library.plato#L564).
 
@@ -22,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
             self.Period.Y * self.Counts.Y.ToNumber);
 ```
 
-## Line 572
+### Line 572
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 572](../../../../../stdlib/geometry/implicit-sdf.library.plato#L572).
 

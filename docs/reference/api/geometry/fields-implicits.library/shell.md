@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The outline of a planar shape: the band within half of thickness on either
+> side of its boundary curve. Exact. Precondition: thickness is positive.
+
+## Signature
+
+```plato
+Shell(self: FunctionSdf2D, thickness: Number): FunctionSdf2D
+Shell(self: FunctionSdf3D, thickness: Number): FunctionSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 879
+### Line 879
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 879](../../../../../stdlib/geometry/fields-implicits.library.plato#L879).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => self.Eval(p).Abs - thickness * 0.5);
 ```
 
-## Line 884
+### Line 884
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 884](../../../../../stdlib/geometry/fields-implicits.library.plato#L884).
 

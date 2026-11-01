@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> 30 rhombi on 32 vertices: the dual of the icosidodecahedron
+> (https://en.wikipedia.org/wiki/Rhombic\_triacontahedron).
+
+## Signature
+
+```plato
+RhombicTriacontahedron(_: PolygonMesh3D): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 85
+### Line 85
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 85](../../../../../stdlib/geometry/polyhedra.library.plato#L85).
 

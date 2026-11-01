@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The query box's low edge on the node's splitting axis (0 = X, 1 = Y).
+
+## Signature
+
+```plato
+SplitLow(n: KdTreeNode2D, bounds: Bounds2D): Number
+SplitLow(n: KdTreeNode3D, bounds: Bounds3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 206
+### Line 206
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 206](../../../../../stdlib/geometry/spatial-structures.library.plato#L206).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => n.SplitAxis == 0 ? bounds.Min.X : bounds.Min.Y;
 ```
 
-## Line 288
+### Line 288
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 288](../../../../../stdlib/geometry/spatial-structures.library.plato#L288).
 

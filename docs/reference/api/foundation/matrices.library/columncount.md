@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Two columns.
+
+## Signature
+
+```plato
+ColumnCount(self: Matrix2x2): Integer
+ColumnCount(self: Matrix3x3): Integer
+ColumnCount(self: Matrix4x4): Integer
+ColumnCount(self: Matrix3x2): Integer
+ColumnCount(self: Matrix4x3): Integer
+ColumnCount(self: MatrixN): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 35
+### Line 35
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 35](../../../../../stdlib/foundation/matrices.library.plato#L35).
 
@@ -17,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ColumnCount(self: Matrix2x2): Integer => 2;
 ```
 
-## Line 83
+### Line 83
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 83](../../../../../stdlib/foundation/matrices.library.plato#L83).
 
@@ -27,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ColumnCount(self: Matrix3x3): Integer => 3;
 ```
 
-## Line 130
+### Line 130
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 130](../../../../../stdlib/foundation/matrices.library.plato#L130).
 
@@ -37,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ColumnCount(self: Matrix4x4): Integer => 4;
 ```
 
-## Line 162
+### Line 162
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 162](../../../../../stdlib/foundation/matrices.library.plato#L162).
 
@@ -47,7 +72,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ColumnCount(self: Matrix3x2): Integer => 2;
 ```
 
-## Line 186
+### Line 186
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 186](../../../../../stdlib/foundation/matrices.library.plato#L186).
 
@@ -57,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ColumnCount(self: Matrix4x3): Integer => 3;
 ```
 
-## Line 235
+### Line 235
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 235](../../../../../stdlib/foundation/matrices.library.plato#L235).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The color encoding of the final displayed image. Distinct from working
+> color spaces (the `color-spaces-*` files): this names the presentation encoding only.
+> Rec2020Pq is HDR10.
+
+## Signature
+
+```plato
+type DisplayColorSpace
+    = SrgbNonlinear | LinearRec709 | DisplayP3 | Rec2020Pq | Rec2020Hlg
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [render.types](../render.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 141
+### Line 141
 
 **Source:** [stdlib/graphics/render.types.plato, line 141](../../../../../stdlib/graphics/render.types.plato#L141).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The fractional part of x, in \[0, 1). The wrap every additive recurrence
+> below ends on.
+
+## Signature
+
+```plato
+UnitFraction(x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 299](../../../../../stdlib/geometry/sampling.library.plato#L299): Deterministic sequences that fill the unit square more evenly than
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 295
+### Line 295
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 295](../../../../../stdlib/geometry/sampling.library.plato#L295).
 

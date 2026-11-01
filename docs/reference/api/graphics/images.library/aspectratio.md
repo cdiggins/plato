@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The width-to-height ratio of the image. Width and Height are widened to
+> Number via Integer.ToNumber. Precondition: Height is non-zero
+> (https://en.wikipedia.org/wiki/Aspect\_ratio\_%28image%29).
+
+## Signature
+
+```plato
+AspectRatio(self: IImage): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [images.library](../images.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 30
+### Line 30
 
 **Source:** [stdlib/graphics/images.library.plato, line 30](../../../../../stdlib/graphics/images.library.plato#L30).
 

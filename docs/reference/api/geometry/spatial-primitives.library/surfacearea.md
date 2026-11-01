@@ -3,11 +3,44 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> 2 \* (wh + wd + hd).
+
+## Signature
+
+```plato
+SurfaceArea(b: Box3D): Number
+SurfaceArea(b: RoundedBox3D): Number
+SurfaceArea(c: Capsule3D): Number
+SurfaceArea(c: Cylinder): Number
+SurfaceArea(s: CylindricalShell): Number
+SurfaceArea(c: Cone): Number
+SurfaceArea(f: ConicalFrustum): Number
+SurfaceArea(t: Tetrahedron): Number
+SurfaceArea(w: Wedge): Number
+SurfaceArea(s: Sphere): Number
+SurfaceArea(s: SphericalShell): Number
+SurfaceArea(c: SphericalCap): Number
+SurfaceArea(e: Ellipsoid): Number
+SurfaceArea(t: Torus): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 14 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 111
+### Line 111
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 111](../../../../../stdlib/geometry/spatial-primitives.library.plato#L111).
 
@@ -20,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
             + b.Size.Height * b.Size.Depth);
 ```
 
-## Line 209
+### Line 209
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 209](../../../../../stdlib/geometry/spatial-primitives.library.plato#L209).
 
@@ -37,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 280
+### Line 280
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 280](../../../../../stdlib/geometry/spatial-primitives.library.plato#L280).
 
@@ -49,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 2.0 * Number.Pi * c.Radius * c.SpineLength + 4.0 * Number.Pi * c.Radius.Square;
 ```
 
-## Line 336
+### Line 336
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 336](../../../../../stdlib/geometry/spatial-primitives.library.plato#L336).
 
@@ -61,7 +94,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 2.0 * Number.Pi * c.Radius * c.Height + 2.0 * Number.Pi * c.Radius.Square;
 ```
 
-## Line 381
+### Line 381
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 381](../../../../../stdlib/geometry/spatial-primitives.library.plato#L381).
 
@@ -74,7 +107,7 @@ Copied from source, comments included. A comment records intent. The body is the
         + 2.0 * Number.Pi * (s.OuterRadius.Square - s.InnerRadius.Square);
 ```
 
-## Line 428
+### Line 428
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 428](../../../../../stdlib/geometry/spatial-primitives.library.plato#L428).
 
@@ -86,7 +119,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Number.Pi * c.Radius.Square + Number.Pi * c.Radius * c.SlantHeight;
 ```
 
-## Line 487
+### Line 487
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 487](../../../../../stdlib/geometry/spatial-primitives.library.plato#L487).
 
@@ -98,7 +131,7 @@ Copied from source, comments included. A comment records intent. The body is the
         + Number.Pi * (f.BottomRadius + f.TopRadius) * f.SlantHeight;
 ```
 
-## Line 702
+### Line 702
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 702](../../../../../stdlib/geometry/spatial-primitives.library.plato#L702).
 
@@ -112,7 +145,7 @@ Copied from source, comments included. A comment records intent. The body is the
         + Triangle3D(t.B, t.C, t.D).Area;
 ```
 
-## Line 743
+### Line 743
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 743](../../../../../stdlib/geometry/spatial-primitives.library.plato#L743).
 
@@ -127,7 +160,7 @@ Copied from source, comments included. A comment records intent. The body is the
         + w.Base.C.Between(w.Base.A).Cross(w.Offset).Magnitude;
 ```
 
-## Line 804
+### Line 804
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 804](../../../../../stdlib/geometry/spatial-primitives.library.plato#L804).
 
@@ -138,7 +171,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 4.0 * Number.Pi * s.Radius.Square;
 ```
 
-## Line 835
+### Line 835
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 835](../../../../../stdlib/geometry/spatial-primitives.library.plato#L835).
 
@@ -150,7 +183,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 4.0 * Number.Pi * (s.OuterRadius.Square + s.InnerRadius.Square);
 ```
 
-## Line 872
+### Line 872
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 872](../../../../../stdlib/geometry/spatial-primitives.library.plato#L872).
 
@@ -164,7 +197,7 @@ Copied from source, comments included. A comment records intent. The body is the
         + Number.Pi * c.CapBaseRadius.Square;
 ```
 
-## Line 916
+### Line 916
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 916](../../../../../stdlib/geometry/spatial-primitives.library.plato#L916).
 
@@ -186,7 +219,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 997
+### Line 997
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 997](../../../../../stdlib/geometry/spatial-primitives.library.plato#L997).
 

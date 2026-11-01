@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A time-sampled spatial motion stored as parallel arrays: Times\[i\] is the
+> time since trajectory start, Positions\[i\] the position in meters, and
+> Velocities\[i\] the velocity in meters per second. Velocities may be empty
+> when unknown.
+> (https://en.wikipedia.org/wiki/Trajectory)
+
+## Signature
+
+```plato
+type Trajectory3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.types](../kinematics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 161
+### Line 161
 
 **Source:** [stdlib/future/kinematics.types.plato, line 161](../../../../../stdlib/future/kinematics.types.plato#L161).
 

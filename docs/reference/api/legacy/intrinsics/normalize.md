@@ -3,11 +3,31 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Normalize(self: Vector2): Vector2
+Normalize(self: Vector3): Vector3
+Normalize(self: Vector4): Vector4
+Normalize(self: Plane): Plane
+Normalize(self: Quaternion): Quaternion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 101
+### Line 101
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 101](../../../../../legacy/stdlib-legacy/intrinsics.plato#L101).
 
@@ -16,7 +36,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Normalize(self: Vector2): Vector2;
 ```
 
-## Line 140
+### Line 140
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 140](../../../../../legacy/stdlib-legacy/intrinsics.plato#L140).
 
@@ -25,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Normalize(self: Vector3): Vector3;
 ```
 
-## Line 180
+### Line 180
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 180](../../../../../legacy/stdlib-legacy/intrinsics.plato#L180).
 
@@ -34,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Normalize(self: Vector4): Vector4;
 ```
 
-## Line 265
+### Line 265
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 265](../../../../../legacy/stdlib-legacy/intrinsics.plato#L265).
 
@@ -43,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Normalize(self: Plane): Plane;
 ```
 
-## Line 291
+### Line 291
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 291](../../../../../legacy/stdlib-legacy/intrinsics.plato#L291).
 

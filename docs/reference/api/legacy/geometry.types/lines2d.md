@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A collection of 2D lines.
+
+## Signature
+
+```plato
+type Lines2D
+    implements IPrimitiveGeometry2D<Line2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IPrimitiveGeometry2D](../geometry.interfaces/iprimitivegeometry2d.md).
+
+## Source
+
 **File:** [geometry.types](../geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 183
+### Line 183
 
 **Source:** [legacy/stdlib-legacy/geometry.types.plato, line 183](../../../../../legacy/stdlib-legacy/geometry.types.plato#L183).
 

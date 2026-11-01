@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point of grid cell (i, j, k), jittered from the cell center.
+
+## Signature
+
+```plato
+JitteredCellPoint3D(region: Bounds3D, cellCounts: IntegerVector3, jitter: Number,
+    seed: Integer, i: Integer, j: Integer, k: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 866
+### Line 866
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 866](../../../../../stdlib/geometry/sampling.library.plato#L866).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every edge shorter than `minLength` collapsed to its midpoint, except those
+> that would cross the boundary. Only an independent set of them survives the
+> conflict rule, so short edges left over are collapsed by a later pass.
+
+## Signature
+
+```plato
+CollapseShortEdges(self: TriangleMesh3D, minLength: Number): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 546
+### Line 546
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 546](../../../../../stdlib/geometry/remeshing.library.plato#L546).
 

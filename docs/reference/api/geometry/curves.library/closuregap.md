@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The distance between the first and last evaluated points; zero for an
+> exactly closed curve.
+
+## Signature
+
+```plato
+ClosureGap(self: IClosedCurve2D): Number
+ClosureGap(self: IClosedCurve3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 146
+### Line 146
 
 **Source:** [stdlib/geometry/curves.library.plato, line 146](../../../../../stdlib/geometry/curves.library.plato#L146).
 
@@ -25,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ChordLength;
 ```
 
-## Line 161
+### Line 161
 
 **Source:** [stdlib/geometry/curves.library.plato, line 161](../../../../../stdlib/geometry/curves.library.plato#L161).
 

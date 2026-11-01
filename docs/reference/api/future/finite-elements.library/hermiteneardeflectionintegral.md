@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The integral from 0 to x of the near-node DEFLECTION shape function, in the
+> element's unit parameter. This and the three below are the antiderivatives
+> of the cubic Hermite basis; they exist so that a distributed load covering
+> only PART of an element still produces its exact consistent nodal loads,
+> rather than a fraction of the full-element ones.
+
+## Signature
+
+```plato
+HermiteNearDeflectionIntegral(x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 846
+### Line 846
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 846](../../../../../stdlib/future/finite-elements.library.plato#L846).
 

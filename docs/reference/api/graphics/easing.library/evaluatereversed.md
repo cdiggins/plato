@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The reversed easing sampled at t: 1 - f(1 - t). This is the standard
+> ease-in to ease-out transform, preserving the pinned endpoints.
+
+## Signature
+
+```plato
+EvaluateReversed(self: IEasingFunction, t: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ReversedIsComplementOfMirrored
+
+[stdlib/tests/easing.laws.plato, line 40](../../../../../stdlib/tests/easing.laws.plato#L40)
+
+```plato
+// The ease-in to ease-out transform is the complement of mirrored playback.
+Law_ReversedIsComplementOfMirrored(f: IEasingFunction, t: Number): Boolean
+    => f.EvaluateReversed(t).LawEq(1.0 - f.EvaluateMirrored(t));
+```
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [easing.library](../easing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 41
+### Line 41
 
 **Source:** [stdlib/graphics/easing.library.plato, line 41](../../../../../stdlib/graphics/easing.library.plato#L41).
 

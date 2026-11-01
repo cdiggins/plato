@@ -3,11 +3,76 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar angle, stored in radians (https://en.wikipedia.org/wiki/Angle).
+
+## Signature
+
+```plato
+type Angle implements IQuantity
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_VonMisesCdfZeroKappaIsUniform
+
+[stdlib/tests/special-numerics.laws.plato, line 46](../../../../../stdlib/tests/special-numerics.laws.plato#L46)
+
+```plato
+// At Concentration 0 the distribution is uniform on the circle and the CDF
+// of the wrapped angle is 1/2 + wrap(x)/(2 pi).
+Law_VonMisesCdfZeroKappaIsUniform(x: Number): Boolean
+    => VonMisesDistribution(Angle(0.0), 0.0).Cdf(x)
+        .SpecialEq(0.5 + x.WrapToPi / Number.Tau);
+```
+
+### Law_SuperEllipseUnitCirclePerimeter
+
+[stdlib/tests/special-numerics.laws.plato, line 114](../../../../../stdlib/tests/special-numerics.laws.plato#L114)
+
+```plato
+// The unit circle as a superellipse (a = b = 1, Exponent 2) has perimeter
+// 2 pi.
+Law_SuperEllipseUnitCirclePerimeter(t: Number): Boolean
+    => SuperEllipse(Point2D.Origin, Number2.One, Angle(0.0), 2.0)
+        .Perimeter.SpecialEq(Number.Tau);
+```
+
+### Law_CatenoidSatisfiesItsProfile
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 208](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L208)
+
+```plato
+// x^2 + y^2 = (WaistRadius cosh(z / WaistRadius))^2: the catenary profile,
+// recovered from the sample's own height.
+Law_CatenoidSatisfiesItsProfile(s: Catenoid, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var r = s.WaistRadius * (p.Z / s.WaistRadius).Angle.Cosh;
+    return p.SurfaceFinite.Not
+        || r.IsFinite.Not
+        || SurfaceEqNear(p.X * p.X + p.Y * p.Y, r * r, r * r);
+}
+```
+
+## Concepts
+
+Implements: [IQuantity](../quantities.concepts/iquantity.md).
+
+## Used by
+
+- [Angles and periodic values](../../../library/foundation/angles.md)
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [quantities.types](../quantities.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 85
+### Line 85
 
 **Source:** [stdlib/foundation/quantities.types.plato, line 85](../../../../../stdlib/foundation/quantities.types.plato#L85).
 

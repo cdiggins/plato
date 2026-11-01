@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A whole-number avalanche mix: one bit of input changes about half the
+> output bits. The xor-shift-multiply shape of the Murmur3 finalizer. The
+> multiplications are expected to wrap.
+
+## Signature
+
+```plato
+NoiseMix(x: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/noise.library.plato, line 1](../../../../../stdlib/geometry/noise.library.plato#L1).
 

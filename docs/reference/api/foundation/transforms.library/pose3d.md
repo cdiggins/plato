@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The rigid pose of a frame. Precondition: the axes are orthonormal and
+> right-handed.
+
+## Signature
+
+```plato
+Pose3D(f: Frame3D): Pose3D
+Pose3D(m: Motor3D): Pose3D
+Pose3D(m: Matrix4x4): Pose3D
+Pose3D(t: Translation3D): Pose3D
+Pose3D(q: Quaternion): Pose3D
+Pose3D(r: IRotational3D): Pose3D
+Pose3D(r: RotationAbout3D): Pose3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 7 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 681
+### Line 681
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 681](../../../../../stdlib/foundation/transforms.library.plato#L681).
 
@@ -19,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => f.Matrix4x4.Pose3D;
 ```
 
-## Line 803
+### Line 803
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 803](../../../../../stdlib/foundation/transforms.library.plato#L803).
 
@@ -34,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 1030
+### Line 1030
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1030](../../../../../stdlib/foundation/transforms.library.plato#L1030).
 
@@ -46,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (m.Translation.ToPoint, m.Rotation);
 ```
 
-## Line 1047
+### Line 1047
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1047](../../../../../stdlib/foundation/transforms.library.plato#L1047).
 
@@ -57,7 +85,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (t.Vector.ToPoint, Quaternion.Identity);
 ```
 
-## Line 1055
+### Line 1055
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1055](../../../../../stdlib/foundation/transforms.library.plato#L1055).
 
@@ -68,7 +96,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Point3D.Origin, q);
 ```
 
-## Line 1059
+### Line 1059
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1059](../../../../../stdlib/foundation/transforms.library.plato#L1059).
 
@@ -80,7 +108,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Quaternion.Pose3D;
 ```
 
-## Line 1071
+### Line 1071
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1071](../../../../../stdlib/foundation/transforms.library.plato#L1071).
 

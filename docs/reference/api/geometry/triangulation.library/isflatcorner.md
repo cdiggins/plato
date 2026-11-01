@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the corner at `slot` encloses no area — a repeated vertex, a
+> collinear midpoint, or the tip of a zero-width spike — and so would only ever
+> emit a degenerate triangle.
+
+## Signature
+
+```plato
+IsFlatCorner(points: Array<Point2D>, nodes: Buffer<EarClipNode>, slot: Integer): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 246
+### Line 246
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 246](../../../../../stdlib/geometry/triangulation.library.plato#L246).
 

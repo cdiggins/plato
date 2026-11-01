@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A unit vector perpendicular to `normal`, chosen by crossing with the
+> cardinal axis the normal leans on least.
+
+## Signature
+
+```plato
+Tangent(normal: Direction3D): Direction3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 73](../../../../../stdlib/future/collision.library.plato#L73): unit vectors spanning that plane. Any two will do geometrically; what
+- [Line 78](../../../../../stdlib/future/collision.library.plato#L78): leans on least, which is never degenerate: a unit vector cannot have a
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 68
+### Line 68
 
 **Source:** [stdlib/future/collision.library.plato, line 68](../../../../../stdlib/future/collision.library.plato#L68).
 

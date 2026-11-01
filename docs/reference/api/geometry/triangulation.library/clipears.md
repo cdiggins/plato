@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Clips the ring through `head` down to its last triangle and returns the faces
+> in clipping order. Consumes the buffer. A head of -1, or a ring shorter than
+> a triangle, yields no faces.
+
+## Signature
+
+```plato
+ClipEars(points: Array<Point2D>, nodes: Buffer<EarClipNode>,
+    head: Integer): Array<TriangleFace>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 509
+### Line 509
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 509](../../../../../stdlib/geometry/triangulation.library.plato#L509).
 

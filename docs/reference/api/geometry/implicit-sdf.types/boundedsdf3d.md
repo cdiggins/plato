@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A spatial function SDF with a conservative bounding box. Outside Bounds
+> the solid may be treated as empty for culling; the stored distance
+> function is still evaluated on request.
+
+## Signature
+
+```plato
+type BoundedSdf3D
+    implements IValue, IBoundedSignedDistanceField3D, IDifferentiableSignedDistanceField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IBoundedSignedDistanceField3D](../implicit-sdf.concepts/iboundedsigneddistancefield3d.md), [IDifferentiableSignedDistanceField3D](../implicit-sdf.concepts/idifferentiablesigneddistancefield3d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.types](../implicit-sdf.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 34
+### Line 34
 
 **Source:** [stdlib/geometry/implicit-sdf.types.plato, line 34](../../../../../stdlib/geometry/implicit-sdf.types.plato#L34).
 

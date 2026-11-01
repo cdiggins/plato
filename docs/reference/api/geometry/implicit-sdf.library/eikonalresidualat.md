@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How far the field departs from being an exact distance at this point. An
+> exact signed distance field satisfies the eikonal equation, so its gradient
+> has unit length; a field that is only a lower bound, or not a bound at all,
+> does not. Zero means exact here. The residual is unsigned, so it reports the
+> departure without saying which side: a gradient shorter than unit makes a
+> raymarcher take shorter steps than the geometry requires, a longer one is
+> the field over-estimating distance and about to tunnel.
+> (https://en.wikipedia.org/wiki/Eikonal\_equation)
+
+## Signature
+
+```plato
+EikonalResidualAt(self: IDifferentiableScalarField2D, point: Point2D): Number
+EikonalResidualAt(self: IDifferentiableScalarField3D, point: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 381
+### Line 381
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 381](../../../../../stdlib/geometry/implicit-sdf.library.plato#L381).
 
@@ -25,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.GradientAt(point).Magnitude - 1.0).Abs;
 ```
 
-## Line 392
+### Line 392
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 392](../../../../../stdlib/geometry/implicit-sdf.library.plato#L392).
 

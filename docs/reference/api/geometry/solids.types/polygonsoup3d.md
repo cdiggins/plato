@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A closed solid bounded by a soup of CONVEX planar polygons whose outward
+> normals (CCW winding, CONVENTIONS.md - winding) bound a watertight volume:
+> csg.js's polygon-list model of a solid. Unordered, unindexed, and permitted
+> to hold T-junctions from clipping; convexity of every face is the invariant
+> the Sutherland-Hodgman clipping bodies rely on.
+> (https://en.wikipedia.org/wiki/Boundary\_representation)
+
+## Signature
+
+```plato
+type PolygonSoup3D
+    implements ISolid, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ISolid](../surfaces-solids.concepts/isolid.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.types](../solids.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/geometry/solids.types.plato, line 93](../../../../../stdlib/geometry/solids.types.plato#L93).
 

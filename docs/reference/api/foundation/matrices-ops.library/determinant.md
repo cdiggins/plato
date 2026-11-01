@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The determinant of the 2x2 linear block: M11 M22 - M21 M12. The
+> translation row does not affect it.
+
+## Signature
+
+```plato
+Determinant(self: Matrix3x2): Number
+Determinant(self: Matrix4x4): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 1](../../../../../stdlib/foundation/matrices-ops.library.plato#L1).
 
@@ -53,7 +75,7 @@ library MatricesOps
         => self.Row1.X * self.Row2.Y - self.Row2.X * self.Row1.Y;
 ```
 
-## Line 166
+### Line 166
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 166](../../../../../stdlib/foundation/matrices-ops.library.plato#L166).
 

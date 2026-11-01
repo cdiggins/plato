@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every corner whose own vertex is the given one. On a closed manifold these
+> correspond one-to-one with the edges at that vertex and with the faces
+> around it, which is what lets the vertex rules below read all three from one
+> scan.
+
+## Signature
+
+```plato
+OutgoingCornersOfVertex(self: PolygonMesh3D, vertex: Integer): Array<CornerIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 952
+### Line 952
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 952](../../../../../stdlib/geometry/remeshing.library.plato#L952).
 

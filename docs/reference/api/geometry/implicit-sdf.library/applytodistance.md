@@ -3,11 +3,64 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The rounded distance: subtracting the radius inflates the shape and rounds
+> its edges. Exact when the source distance is. (IQ: opRound.)
+
+## Signature
+
+```plato
+ApplyToDistance(self: SdfRoundingModifier, distance: Number): Number
+ApplyToDistance(self: SdfShellModifier, distance: Number): Number
+ApplyToDistance(self: SdfOnionModifier, distance: Number): Number
+ApplyToDistance(self: SdfDisplacementModifier3D, distance: Number, sourceValue: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_RoundingSubtractsRadius
+
+[stdlib/tests/implicit-sdf.laws.plato, line 285](../../../../../stdlib/tests/implicit-sdf.laws.plato#L285)
+
+```plato
+// Rounding inflates: a positive radius moves every distance inward by exactly
+// that much, so the surface moves outward.
+Law_RoundingSubtractsRadius(radius: Number, distance: Number): Boolean
+    => SdfRoundingModifier(radius).ApplyToDistance(distance).LawEq(distance - radius);
+```
+
+### Law_ShellIsSymmetricAboutSurface
+
+[stdlib/tests/implicit-sdf.laws.plato, line 290](../../../../../stdlib/tests/implicit-sdf.laws.plato#L290)
+
+```plato
+// A shell is symmetric about the source surface: points equidistant inside and
+// outside land at the same shell distance.
+Law_ShellIsSymmetricAboutSurface(thickness: Number, distance: Number): Boolean
+    => SdfShellModifier(thickness).ApplyToDistance(distance)
+        .LawEq(SdfShellModifier(thickness).ApplyToDistance(distance.Negative));
+```
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 475](../../../../../stdlib/geometry/implicit-sdf.library.plato#L475): does not STRETCH: rounding, shells, onions and elongation preserve exact
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 465
+### Line 465
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 465](../../../../../stdlib/geometry/implicit-sdf.library.plato#L465).
 
@@ -34,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => distance - self.Radius;
 ```
 
-## Line 485
+### Line 485
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 485](../../../../../stdlib/geometry/implicit-sdf.library.plato#L485).
 
@@ -47,7 +100,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => distance.Abs - self.Thickness * 0.5;
 ```
 
-## Line 491
+### Line 491
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 491](../../../../../stdlib/geometry/implicit-sdf.library.plato#L491).
 
@@ -60,7 +113,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => distance.Abs - self.Thickness;
 ```
 
-## Line 502
+### Line 502
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 502](../../../../../stdlib/geometry/implicit-sdf.library.plato#L502).
 

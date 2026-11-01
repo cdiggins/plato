@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The chamfered intersection of two planar SDFs.
+> Precondition: width is positive.
+
+## Signature
+
+```plato
+ChamferIntersection(a: FunctionSdf2D, b: FunctionSdf2D, width: Number): FunctionSdf2D
+ChamferIntersection(a: FunctionSdf3D, b: FunctionSdf3D, width: Number): FunctionSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 809
+### Line 809
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 809](../../../../../stdlib/geometry/fields-implicits.library.plato#L809).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => ChamferIntersectionDistance(a.Eval(p), b.Eval(p), width));
 ```
 
-## Line 814
+### Line 814
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 814](../../../../../stdlib/geometry/fields-implicits.library.plato#L814).
 

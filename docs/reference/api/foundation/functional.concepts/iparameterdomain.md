@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Has a preferred parameter domain over which evaluation is meaningful.
+> (https://en.wikipedia.org/wiki/Domain\_of\_a\_function)
+
+## Signature
+
+```plato
+interface IParameterDomain
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Functions as mathematical objects](../../../library/foundation/functions.md)
+
+## Source
+
 **File:** [functional.concepts](../functional.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 48
+### Line 48
 
 **Source:** [stdlib/foundation/functional.concepts.plato, line 48](../../../../../stdlib/foundation/functional.concepts.plato#L48).
 

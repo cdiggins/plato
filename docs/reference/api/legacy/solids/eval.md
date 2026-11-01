@@ -3,11 +3,37 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Eval(s: Sphere, uv: Vector2): Point3D
+Eval(s: Ellipsoid, uv: Vector2): Point3D
+Eval(s: Torus, uv: Vector2): Point3D
+Eval(s: Cone, uv: Vector2): Point3D
+Eval(s: ConeSegment, uv: Vector2): Point3D
+Eval(s: Capsule, uv: Vector2): Point3D
+Eval(s: Tube, uv: Vector2): Point3D
+Eval(s: NPrism, uv: Vector2): Point3D
+Eval(s: NPyramid, uv: Vector2): Point3D
+Eval(s: Box, uv: Vector2): Point3D
+Eval(s: Pyramid, uv: Vector2): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [solids](../solids.md). Kind: function. 11 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 137
+### Line 137
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 137](../../../../../legacy/stdlib-legacy/solids.plato#L137).
 
@@ -21,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => uv.UnitSphere * s.Radius;
 ```
 
-## Line 146
+### Line 146
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 146](../../../../../legacy/stdlib-legacy/solids.plato#L146).
 
@@ -31,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => uv.UnitSphere * s.Radii;
 ```
 
-## Line 151
+### Line 151
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 151](../../../../../legacy/stdlib-legacy/solids.plato#L151).
 
@@ -49,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 164
+### Line 164
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 164](../../../../../legacy/stdlib-legacy/solids.plato#L164).
 
@@ -62,7 +88,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 172
+### Line 172
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 172](../../../../../legacy/stdlib-legacy/solids.plato#L172).
 
@@ -75,7 +101,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 180
+### Line 180
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 180](../../../../../legacy/stdlib-legacy/solids.plato#L180).
 
@@ -99,7 +125,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 199
+### Line 199
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 199](../../../../../legacy/stdlib-legacy/solids.plato#L199).
 
@@ -115,7 +141,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 210
+### Line 210
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 210](../../../../../legacy/stdlib-legacy/solids.plato#L210).
 
@@ -132,7 +158,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 222
+### Line 222
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 222](../../../../../legacy/stdlib-legacy/solids.plato#L222).
 
@@ -145,7 +171,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 230
+### Line 230
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 230](../../../../../legacy/stdlib-legacy/solids.plato#L230).
 
@@ -158,7 +184,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 238
+### Line 238
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 238](../../../../../legacy/stdlib-legacy/solids.plato#L238).
 

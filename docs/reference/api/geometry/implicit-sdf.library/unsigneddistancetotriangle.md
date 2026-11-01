@@ -3,11 +3,61 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unsigned distance from a point to the triangle patch with the given
+> vertices. Zero on the patch, positive everywhere else; a degenerate
+> (collinear) triangle has a zero normal, which fails the inside test and leaves
+> the edge branch — the right answer for a shape that is a segment. Exact.
+> (IQ: udTriangle.)
+
+## Signature
+
+```plato
+UnsignedDistanceToTriangle(p: Point3D, a: Point3D, b: Point3D, c: Point3D): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_PlanarTriangleAgreesWithSpatialPatch
+
+[stdlib/tests/implicit-sdf.laws.plato, line 311](../../../../../stdlib/tests/implicit-sdf.laws.plato#L311)
+
+```plato
+// The planar triangle and the spatial triangle patch describe the same shape
+// once the query is coplanar with it: outside they are both the distance to the
+// nearest edge, and inside the patch reports zero where the solid reports a
+// negative depth. Two independently written bodies with two different inside
+// tests, forced to agree.
+Law_PlanarTriangleAgreesWithSpatialPatch(p: Point2D, a: Point2D, b: Point2D, c: Point2D): Boolean
+    => UnsignedDistanceToTriangle(
+            Point3D(p.X, p.Y, 0.0),
+            Point3D(a.X, a.Y, 0.0),
+            Point3D(b.X, b.Y, 0.0),
+            Point3D(c.X, c.Y, 0.0))
+        .LawEq(DistanceToTriangle(p, a, b, c).Max(0.0));
+```
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 966](../../../../../stdlib/geometry/implicit-sdf.library.plato#L966): zero exactly on it — and the name says so. Subtract a half-thickness to get a
+- [Line 968](../../../../../stdlib/geometry/implicit-sdf.library.plato#L968): plate whose distance is exact.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 959
+### Line 959
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 959](../../../../../stdlib/geometry/implicit-sdf.library.plato#L959).
 

@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Length(x: Line2D): Number
+Length(x: Line3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 41
+### Line 41
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 41](../../../../../legacy/stdlib-legacy/geometry.library.plato#L41).
 
@@ -19,7 +36,7 @@ Copied from source, comments included. A comment records intent. The body is the
 	Length(x: Line2D): Number => (x.B - x.A).Length;
 ```
 
-## Line 58
+### Line 58
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 58](../../../../../legacy/stdlib-legacy/geometry.library.plato#L58).
 

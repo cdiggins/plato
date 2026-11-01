@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A point cloud carrying a unit normal per point: the input to surface
+> reconstruction (https://en.wikipedia.org/wiki/Surface\_reconstruction) and
+> oriented splatting. Positions and Normals are parallel.
+
+## Signature
+
+```plato
+type OrientedPointCloud3D
+    implements IValue, IPointCloud3D, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IPointCloud3D](../pointclouds-voxels.concepts/ipointcloud3d.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [pointclouds.types](../pointclouds.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/pointclouds.types.plato, line 1](../../../../../stdlib/geometry/pointclouds.types.plato#L1).
 

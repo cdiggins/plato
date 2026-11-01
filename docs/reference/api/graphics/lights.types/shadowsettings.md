@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Shadow-map rendering controls for one light. Resolution is the shadow map
+> edge length in pixels. Bias and NormalBias offset depth comparisons along
+> the view ray and surface normal to prevent acne. PenumbraSize scales
+> soft-shadow width. CascadeCount splits a directional shadow into successive
+> depth ranges (1 = no cascades). MaxDistance is the farthest shadowed
+> distance in scene units. (https://en.wikipedia.org/wiki/Shadow\_mapping)
+
+## Signature
+
+```plato
+type ShadowSettings
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [lights.types](../lights.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 182
+### Line 182
 
 **Source:** [stdlib/graphics/lights.types.plato, line 182](../../../../../stdlib/graphics/lights.types.plato#L182).
 

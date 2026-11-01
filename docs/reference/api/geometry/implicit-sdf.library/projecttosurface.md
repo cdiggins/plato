@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point on the surface nearest the query, by one Newton step along the
+> gradient: the point moved against its own normal by its own signed distance.
+> Lands on the surface in one step for an exact field; iterate for a lower
+> bound, and expect it to overshoot for a field that is not a bound.
+
+## Signature
+
+```plato
+ProjectToSurface(self: IDifferentiableSignedDistanceField2D, point: Point2D): Point2D
+ProjectToSurface(self: IDifferentiableSignedDistanceField3D, point: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 453
+### Line 453
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 453](../../../../../stdlib/geometry/implicit-sdf.library.plato#L453).
 
@@ -21,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => point - self.GradientAt(point).Normalize * self.Eval(point);
 ```
 
-## Line 460
+### Line 460
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 460](../../../../../stdlib/geometry/implicit-sdf.library.plato#L460).
 

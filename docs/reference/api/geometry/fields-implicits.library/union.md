@@ -3,11 +3,71 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The union of two planar distance fields: the pointwise minimum. Exact.
+
+## Signature
+
+```plato
+Union(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
+Union(a: ScalarFunctionField3D, b: ScalarFunctionField3D): ScalarFunctionField3D
+Union(a: FunctionSdf2D, b: FunctionSdf2D): FunctionSdf2D
+Union(a: FunctionSdf3D, b: FunctionSdf3D): FunctionSdf3D
+Union(a: FunctionRegion2D, b: FunctionRegion2D): FunctionRegion2D
+Union(a: FunctionVolume3D, b: FunctionVolume3D): FunctionVolume3D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_Bounds2DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 94](../../../../../stdlib/tests/foundation.laws.plato#L94)
+
+```plato
+// A box is contained in its union with any other box.
+Law_Bounds2DUnionContainsSelf(b: Bounds2D, o: Bounds2D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+### Law_Bounds2DUnionContainsOther
+
+[stdlib/tests/foundation.laws.plato, line 98](../../../../../stdlib/tests/foundation.laws.plato#L98)
+
+```plato
+// The other operand is contained in the union too.
+Law_Bounds2DUnionContainsOther(b: Bounds2D, o: Bounds2D): Boolean
+    => o.IsEmpty || b.Union(o).Contains(o);
+```
+
+### Law_Bounds3DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 110](../../../../../stdlib/tests/foundation.laws.plato#L110)
+
+```plato
+Law_Bounds3DUnionContainsSelf(b: Bounds3D, o: Bounds3D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 540](../../../../../stdlib/geometry/fields-implicits.library.plato#L540): (`implicit-sdf.concepts.plato`), for exact operands: union is exact,
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 533
+### Line 533
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 533](../../../../../stdlib/geometry/fields-implicits.library.plato#L533).
 
@@ -28,7 +88,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Combine(b, (x, y) => x.Min(y));
 ```
 
-## Line 547
+### Line 547
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 547](../../../../../stdlib/geometry/fields-implicits.library.plato#L547).
 
@@ -39,7 +99,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Combine(b, (x, y) => x.Min(y));
 ```
 
-## Line 752
+### Line 752
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 752](../../../../../stdlib/geometry/fields-implicits.library.plato#L752).
 
@@ -50,7 +110,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => a.Eval(p).Min(b.Eval(p)));
 ```
 
-## Line 756
+### Line 756
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 756](../../../../../stdlib/geometry/fields-implicits.library.plato#L756).
 
@@ -61,7 +121,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => a.Eval(p).Min(b.Eval(p)));
 ```
 
-## Line 898
+### Line 898
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 898](../../../../../stdlib/geometry/fields-implicits.library.plato#L898).
 
@@ -72,7 +132,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionRegion2D(p => a.Eval(p) || b.Eval(p));
 ```
 
-## Line 914
+### Line 914
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 914](../../../../../stdlib/geometry/fields-implicits.library.plato#L914).
 

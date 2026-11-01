@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Used for types that represent transformations in 2D space
+
+## Signature
+
+```plato
+interface ITransform2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [UniformScale2D](uniformscale2d.md), [Scale2D](scale2d.md), [OffsetScale2D](offsetscale2d.md), [TRSTransform2D](trstransform2d.md), [Reflection2D](reflection2d.md), [Skew2D](skew2d.md), [Transform2D](transform2d.md).
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 1](../../../../../legacy/stdlib-legacy/transforms.plato#L1).
 

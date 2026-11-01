@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The constant acceleration of a uniform gravity field.
+
+## Signature
+
+```plato
+AccelerationAt(self: ParticleGravity): Vector3D
+AccelerationAt(self: ParticleDrag, relativeVelocity: Vector3D): Vector3D
+AccelerationAt(self: ParticleVortex, position: Point3D): Vector3D
+AccelerationAt(self: ParticleAttractor, position: Point3D): Vector3D
+AccelerationAt(self: ParticleTurbulence, position: Point3D): Vector3D
+AccelerationAt(self: ParticleForces3D, position: Point3D, velocity: Vector3D, time: Number): Vector3D
+AccelerationAt(self: ParticleForces3D, position: Point2D, velocity: Vector2D, time: Number): Vector2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.library](../particles.library.md). Kind: function. 7 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/particles.library.plato, line 1](../../../../../stdlib/future/particles.library.plato#L1).
 
@@ -46,7 +72,7 @@ library Particles
         => self.Acceleration;
 ```
 
-## Line 33
+### Line 33
 
 **Source:** [stdlib/future/particles.library.plato, line 33](../../../../../stdlib/future/particles.library.plato#L33).
 
@@ -61,7 +87,7 @@ library Particles
             + relativeVelocity * (self.QuadraticCoefficient * relativeVelocity.Magnitude)).Negative;
 ```
 
-## Line 41
+### Line 41
 
 **Source:** [stdlib/future/particles.library.plato, line 41](../../../../../stdlib/future/particles.library.plato#L41).
 
@@ -82,7 +108,7 @@ library Particles
     }
 ```
 
-## Line 55
+### Line 55
 
 **Source:** [stdlib/future/particles.library.plato, line 55](../../../../../stdlib/future/particles.library.plato#L55).
 
@@ -99,7 +125,7 @@ library Particles
     }
 ```
 
-## Line 65
+### Line 65
 
 **Source:** [stdlib/future/particles.library.plato, line 65](../../../../../stdlib/future/particles.library.plato#L65).
 
@@ -112,7 +138,7 @@ library Particles
         => CurlNoise3D(self.Seed, self.SpatialFrequency).Eval(position) * self.Strength;
 ```
 
-## Line 99
+### Line 99
 
 **Source:** [stdlib/future/particles.library.plato, line 99](../../../../../stdlib/future/particles.library.plato#L99).
 
@@ -138,7 +164,7 @@ library Particles
     }
 ```
 
-## Line 118
+### Line 118
 
 **Source:** [stdlib/future/particles.library.plato, line 118](../../../../../stdlib/future/particles.library.plato#L118).
 

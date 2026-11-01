@@ -3,11 +3,49 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Supports taking a contiguous sub-range. Inherits ICountable so that end-relative
+> helpers (Skip, TakeLast, DropLast) can convert a count into an endpoint.
+> (https://en.wikipedia.org/wiki/Array\_slicing)
+>
+> The range is HALF-OPEN BY ENDPOINT: \[from, exclusiveTo), so the result holds
+> exclusiveTo - from elements and Slice(0, Count) is the whole collection. This
+> took a (start, count) pair until plato-378, which made `Slice` mean two
+> different things depending on the receiver — every actual call site in the
+> tree passes endpoints (`Slice(offsets[i], offsets[i+1])`), and `Array.Slice`
+> was already the endpoint form. A count-based sub-range is `Array.SubArray`.
+
+## Signature
+
+```plato
+interface ISliceable
+    inherits ICountable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICountable](icountable.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.concepts](../collections.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/collections.concepts.plato, line 1](../../../../../stdlib/foundation/collections.concepts.plato#L1).
 

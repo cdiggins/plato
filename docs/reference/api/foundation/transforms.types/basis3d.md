@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Three basis vectors in 3D; not necessarily orthonormal
+> (https://en.wikipedia.org/wiki/Basis\_(linear\_algebra)).
+
+## Signature
+
+```plato
+type Basis3D
+    implements IValue, IAffine3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IAffine3D](../transforms.concepts/iaffine3d.md).
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.types](../transforms.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 91
+### Line 91
 
 **Source:** [stdlib/foundation/transforms.types.plato, line 91](../../../../../stdlib/foundation/transforms.types.plato#L91).
 

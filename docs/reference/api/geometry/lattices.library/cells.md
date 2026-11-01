@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The integer coordinates of every cell, x fastest then y then z. A
+> non-positive count on any axis makes the lattice empty.
+
+## Signature
+
+```plato
+Cells(self: StrutLattice3D): Array<IntegerVector3>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 355
+### Line 355
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 355](../../../../../stdlib/geometry/lattices.library.plato#L355).
 

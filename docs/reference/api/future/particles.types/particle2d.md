@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One planar particle. Velocity is in meters per second; Size is the world
+> diameter in meters; Rotation is the sprite spin angle and AngularVelocity
+> its rate; a particle dies when Age reaches Lifetime.
+
+## Signature
+
+```plato
+type Particle2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.types](../particles.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 104
+### Line 104
 
 **Source:** [stdlib/future/particles.types.plato, line 104](../../../../../stdlib/future/particles.types.plato#L104).
 

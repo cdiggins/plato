@@ -3,11 +3,54 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> w\*h minus the four corner offcuts: each corner replaces an r-by-r square with
+> a quarter disk, removing (4 - pi) \* r^2 in total.
+
+## Signature
+
+```plato
+Area(r: RoundedRect2D): Number
+Area(b: OrientedBox2D): Number
+Area(g: RegularPolygon): Number
+Area(c: Circle): Number
+Area(a: Annulus): Number
+Area(s: CircularSector): Number
+Area(s: CircularSegment): Number
+Area(c: Capsule2D): Number
+Area(e: Ellipse): Number
+Area(se: SuperEllipse): Number
+Area(t: Triangle2D): Number
+Area(q: Quad2D): Number
+Area(g: Parallelogram2D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 198](../../../../../stdlib/geometry/planar.library.plato#L198):     body assumes the origin.
+- [Line 209](../../../../../stdlib/geometry/planar.library.plato#L209): Shared kernels live in `geometry.library.plato` and the local-frame
+- [Line 440](../../../../../stdlib/geometry/planar.library.plato#L440): `planar.types.plato`. Both shapes reduce to an axis-aligned test in the frame
+- [Line 447](../../../../../stdlib/geometry/planar.library.plato#L447): out on the body: the ellipse perimeter is Ramanujan's second approximation, and
+- [Line 449](../../../../../stdlib/geometry/planar.library.plato#L449): area is exact via `Gamma`).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 13 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 47
+### Line 47
 
 **Source:** [stdlib/geometry/planar.library.plato, line 47](../../../../../stdlib/geometry/planar.library.plato#L47).
 
@@ -22,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 85
+### Line 85
 
 **Source:** [stdlib/geometry/planar.library.plato, line 85](../../../../../stdlib/geometry/planar.library.plato#L85).
 
@@ -39,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => b.Size.Width * b.Size.Height;
 ```
 
-## Line 157
+### Line 157
 
 **Source:** [stdlib/geometry/planar.library.plato, line 157](../../../../../stdlib/geometry/planar.library.plato#L157).
 
@@ -52,7 +95,7 @@ Copied from source, comments included. A comment records intent. The body is the
         * (1.0 / g.SideCount.ToNumber).Turns.Sin;
 ```
 
-## Line 188
+### Line 188
 
 **Source:** [stdlib/geometry/planar.library.plato, line 188](../../../../../stdlib/geometry/planar.library.plato#L188).
 
@@ -91,7 +134,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Number.Pi * c.Radius.Square;
 ```
 
-## Line 245
+### Line 245
 
 **Source:** [stdlib/geometry/planar.library.plato, line 245](../../../../../stdlib/geometry/planar.library.plato#L245).
 
@@ -107,7 +150,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Number.Pi * (a.OuterRadius.Square - a.InnerRadius.Square);
 ```
 
-## Line 286
+### Line 286
 
 **Source:** [stdlib/geometry/planar.library.plato, line 286](../../../../../stdlib/geometry/planar.library.plato#L286).
 
@@ -118,7 +161,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 0.5 * s.Circle.Radius.Square * s.Sweep.Extent.Radians;
 ```
 
-## Line 343
+### Line 343
 
 **Source:** [stdlib/geometry/planar.library.plato, line 343](../../../../../stdlib/geometry/planar.library.plato#L343).
 
@@ -129,7 +172,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 0.5 * s.Circle.Radius.Square * (s.Sweep.Extent.Radians - s.Sweep.Extent.Sin);
 ```
 
-## Line 390
+### Line 390
 
 **Source:** [stdlib/geometry/planar.library.plato, line 390](../../../../../stdlib/geometry/planar.library.plato#L390).
 
@@ -140,7 +183,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Number.Pi * c.Radius.Square + 2.0 * c.Radius * c.SpineLength;
 ```
 
-## Line 435
+### Line 435
 
 **Source:** [stdlib/geometry/planar.library.plato, line 435](../../../../../stdlib/geometry/planar.library.plato#L435).
 
@@ -171,7 +214,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Number.Pi * e.SemiAxes.X * e.SemiAxes.Y;
 ```
 
-## Line 534
+### Line 534
 
 **Source:** [stdlib/geometry/planar.library.plato, line 534](../../../../../stdlib/geometry/planar.library.plato#L534).
 
@@ -187,7 +230,7 @@ Copied from source, comments included. A comment records intent. The body is the
          / Gamma(1.0 + 2.0 / se.Exponent);
 ```
 
-## Line 655
+### Line 655
 
 **Source:** [stdlib/geometry/planar.library.plato, line 655](../../../../../stdlib/geometry/planar.library.plato#L655).
 
@@ -200,7 +243,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => TwiceSignedArea(t.A, t.B, t.C).Abs * 0.5;
 ```
 
-## Line 791
+### Line 791
 
 **Source:** [stdlib/geometry/planar.library.plato, line 791](../../../../../stdlib/geometry/planar.library.plato#L791).
 
@@ -212,7 +255,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => q.Points.ShoelaceArea.Abs;
 ```
 
-## Line 824
+### Line 824
 
 **Source:** [stdlib/geometry/planar.library.plato, line 824](../../../../../stdlib/geometry/planar.library.plato#L824).
 

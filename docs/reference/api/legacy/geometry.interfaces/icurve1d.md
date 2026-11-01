@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A 1 dimensional shape with a topological space of 1 dimensions
+> Basically a simple function
+
+## Signature
+
+```plato
+interface ICurve1D
+    inherits ICurve<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICurve](icurve.md).
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 87
+### Line 87
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 87](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L87).
 

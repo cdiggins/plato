@@ -3,11 +3,46 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The multiplicative unit. Not a white point: equal tristimulus values are
+> the equal-energy illuminant E, and every other white (D65, D50) has its own
+> triple.
+
+## Signature
+
+```plato
+One(_: ColorXYZ): ColorXYZ
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SuperEllipseUnitCirclePerimeter
+
+[stdlib/tests/special-numerics.laws.plato, line 114](../../../../../stdlib/tests/special-numerics.laws.plato#L114)
+
+```plato
+// The unit circle as a superellipse (a = b = 1, Exponent 2) has perimeter
+// 2 pi.
+Law_SuperEllipseUnitCirclePerimeter(t: Number): Boolean
+    => SuperEllipse(Point2D.Origin, Number2.One, Angle(0.0), 2.0)
+        .Perimeter.SpecialEq(Number.Tau);
+```
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [color-spaces.library](../color-spaces.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 105
+### Line 105
 
 **Source:** [stdlib/graphics/color-spaces.library.plato, line 105](../../../../../stdlib/graphics/color-spaces.library.plato#L105).
 

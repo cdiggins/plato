@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point's displacement from the origin.
+
+## Signature
+
+```plato
+PositionVector(p: Point2D): Vector2D
+PositionVector(p: Point3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 914
+### Line 914
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 914](../../../../../stdlib/foundation/transforms.library.plato#L914).
 
@@ -26,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Offset;
 ```
 
-## Line 926
+### Line 926
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 926](../../../../../stdlib/foundation/transforms.library.plato#L926).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Two pi: the number of radians in a full turn. Spelled `Tau` as an
+> intrinsic; this is the conventional alternative name.
+
+## Signature
+
+```plato
+TwoPi(_: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 68](../../../../../stdlib/foundation/constants.library.plato#L68): radian magnitudes used to build Angle values (see `angles.library.plato`),
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [constants.library](../constants.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 63
+### Line 63
 
 **Source:** [stdlib/foundation/constants.library.plato, line 63](../../../../../stdlib/foundation/constants.library.plato#L63).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How close a surface is to being a 2-manifold
+> (https://en.wikipedia.org/wiki/IManifold): IManifold means every undirected
+> edge borders exactly two faces and vertex stars are disks;
+> ManifoldWithBoundary allows undirected edges bordering one or two faces.
+
+## Signature
+
+```plato
+type Manifoldness = Unknown | Manifold | ManifoldWithBoundary | NonManifold
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.types](../topology.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 97
+### Line 97
 
 **Source:** [stdlib/geometry/topology.types.plato, line 97](../../../../../stdlib/geometry/topology.types.plato#L97).
 

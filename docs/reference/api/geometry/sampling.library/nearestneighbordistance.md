@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The distance from point `index` to the nearest other point, or the largest
+> representable number when there is no other point. The per-point reading a
+> caller histograms: uniform random points give an exponential-looking
+> histogram with mass at zero, and a blue-noise set gives a narrow bump with
+> nothing below its radius.
+
+## Signature
+
+```plato
+NearestNeighborDistance(index: Integer, points: Array<Point2D>): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 954
+### Line 954
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 954](../../../../../stdlib/geometry/sampling.library.plato#L954).
 

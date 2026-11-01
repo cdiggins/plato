@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Controls for reducing a path's segment count while staying within a
+> geometric error budget of Tolerance (in path units). When PreserveCorners
+> is true, points where the tangent is discontinuous are never removed.
+> (https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker\_algorithm)
+
+## Signature
+
+```plato
+type PathSimplifyParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [paths.types](../paths.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/graphics/paths.types.plato, line 93](../../../../../stdlib/graphics/paths.types.plato#L93).
 

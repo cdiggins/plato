@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Two 3D transforms can be combined (composed) into one via matrix multiplication
+
+## Signature
+
+```plato
+Compose(t: ITransform3D, m: Matrix4x4): Transform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 296
+### Line 296
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 296](../../../../../legacy/stdlib-legacy/transforms.plato#L296).
 

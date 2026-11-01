@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The first shape carrying a raised rectangular tongue where the second crosses
+> it — the mating half of a groove. (hg\_sdf: fOpTongue.)
+
+## Signature
+
+```plato
+TongueDistance(a: Number, b: Number, height: Number, halfWidth: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ZeroHeightTongueIsUnchanged
+
+[stdlib/tests/implicit-sdf.laws.plato, line 273](../../../../../stdlib/tests/implicit-sdf.laws.plato#L273)
+
+```plato
+// A tongue of zero height adds nothing.
+Law_ZeroHeightTongueIsUnchanged(a: Number, b: Number, halfWidth: Number): Boolean
+    => TongueDistance(a, b, 0.0, halfWidth).LawEq(a.Min(a.Max(b.Abs - halfWidth)));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 763
+### Line 763
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 763](../../../../../stdlib/geometry/implicit-sdf.library.plato#L763).
 

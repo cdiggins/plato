@@ -3,11 +3,28 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Equals(a: Number, b: Number): Boolean
+Equals(a: Integer, b: Integer): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics.library](../intrinsics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 59
+### Line 59
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 59](../../../../../stdlib/foundation/intrinsics.library.plato#L59).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Equals(a: Number, b: Number): Boolean;
 ```
 
-## Line 117
+### Line 117
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 117](../../../../../stdlib/foundation/intrinsics.library.plato#L117).
 

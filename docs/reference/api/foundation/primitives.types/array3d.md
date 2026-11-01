@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An immutable collection addressed by column, row, and layer.
+
+## Signature
+
+```plato
+type Array3D<T>
+    implements IIndexable3D<T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IIndexable3D](../collections.concepts/iindexable3d.md).
+
+## Used by
+
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [primitives.types](../primitives.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 42
+### Line 42
 
 **Source:** [stdlib/foundation/primitives.types.plato, line 42](../../../../../stdlib/foundation/primitives.types.plato#L42).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The overlapping interval common to both. Forward orientation: start at the
+> greater start, end at the lesser end. Empty (Start > End) when they are
+> disjoint — test with IsForward.
+
+## Signature
+
+```plato
+Intersection(self: IInterval<$T>, other: IInterval<$T>): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 247
+### Line 247
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 247](../../../../../stdlib/foundation/intervals.library.plato#L247).
 

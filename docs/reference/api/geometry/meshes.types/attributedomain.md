@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Which mesh element an attribute's values attach to: one value per vertex,
+> per face, per face-vertex slot (allowing seams and hard edges), per
+> undirected edge, or a single value for the whole mesh.
+
+## Signature
+
+```plato
+type AttributeDomain = PerVertex | PerFace | PerCorner | PerUndirectedEdge | Uniform
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.types](../meshes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 101
+### Line 101
 
 **Source:** [stdlib/geometry/meshes.types.plato, line 101](../../../../../stdlib/geometry/meshes.types.plato#L101).
 

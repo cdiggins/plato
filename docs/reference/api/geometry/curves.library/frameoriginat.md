@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The frame origin at t, which lies on the curve.
+
+## Signature
+
+```plato
+FrameOriginAt(self: IFramedCurve3D, t: Number): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 327](../../../../../stdlib/geometry/curves.library.plato#L327): A 3D curve carrying a continuous moving frame whose origin lies on the
+- [Line 328](../../../../../stdlib/geometry/curves.library.plato#L328): curve and whose Z axis is tangent. The frame's axes give ready-made
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 323
+### Line 323
 
 **Source:** [stdlib/geometry/curves.library.plato, line 323](../../../../../stdlib/geometry/curves.library.plato#L323).
 

@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A collection of variable-length rows packed in Compressed Sparse Row (CSR)
+> form
+> (https://en.wikipedia.org/wiki/Sparse\_matrix#Compressed\_sparse\_row\_(CSR,\_CRS\_or\_Yale\_format)).
+> Offsets has (row count + 1) entries and is non-decreasing; the items of row i
+> occupy the half-open range \[Offsets\[i\], Offsets\[i+1\]) of Values; the last
+> offset equals Values.Count. The empty jagged collection is Offsets = \[0\] with
+> Values = \[\]. Offsets hold one-past-end boundaries, not element references, so
+> they stay plain Integer
+> (Convention: see CONVENTIONS.md - Typed indices).
+
+## Signature
+
+```plato
+interface IJagged<T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [JaggedArray](../collections-jagged.types/jaggedarray.md).
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.concepts](../collections.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 120
+### Line 120
 
 **Source:** [stdlib/foundation/collections.concepts.plato, line 120](../../../../../stdlib/foundation/collections.concepts.plato#L120).
 

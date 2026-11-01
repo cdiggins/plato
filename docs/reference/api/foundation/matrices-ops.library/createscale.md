@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The uniform scale about the origin.
+
+## Signature
+
+```plato
+CreateScale(_: Matrix3x2, scale: Number): Matrix3x2
+CreateScale(_: Matrix3x2, scales: Number2): Matrix3x2
+CreateScale(_: Matrix3x2, scales: Number2, centerPoint: Point2D): Matrix3x2
+CreateScale(_: Matrix4x4, scale: Number): Matrix4x4
+CreateScale(_: Matrix4x4, scales: Number3): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 131](../../../../../stdlib/foundation/matrices-ops.library.plato#L131).
 
@@ -18,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Number2(scale, 0.0), Number2(0.0, scale), Number2(0.0, 0.0));
 ```
 
-## Line 135
+### Line 135
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 135](../../../../../stdlib/foundation/matrices-ops.library.plato#L135).
 
@@ -29,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Number2(scales.X, 0.0), Number2(0.0, scales.Y), Number2(0.0, 0.0));
 ```
 
-## Line 139
+### Line 139
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 139](../../../../../stdlib/foundation/matrices-ops.library.plato#L139).
 
@@ -43,7 +67,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Number2(centerPoint.X * (1.0 - scales.X), centerPoint.Y * (1.0 - scales.Y)));
 ```
 
-## Line 436
+### Line 436
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 436](../../../../../stdlib/foundation/matrices-ops.library.plato#L436).
 
@@ -57,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Number4(0.0, 0.0, 0.0, 1.0));
 ```
 
-## Line 443
+### Line 443
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 443](../../../../../stdlib/foundation/matrices-ops.library.plato#L443).
 

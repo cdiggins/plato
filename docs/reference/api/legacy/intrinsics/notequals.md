@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+NotEquals(a: Matrix3x2, b: Matrix3x2): Boolean
+NotEquals(a: Vector8, b: Vector8): Vector8
+NotEquals(a: Number, b: Number): Boolean
+NotEquals(a: IOrderable, b: IOrderable): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 79
+### Line 79
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 79](../../../../../legacy/stdlib-legacy/intrinsics.plato#L79).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     NotEquals(a: Matrix3x2, b: Matrix3x2): Boolean;
 ```
 
-## Line 245
+### Line 245
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 245](../../../../../legacy/stdlib-legacy/intrinsics.plato#L245).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     NotEquals(a: Vector8, b: Vector8): Vector8;
 ```
 
-## Line 361
+### Line 361
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 361](../../../../../legacy/stdlib-legacy/intrinsics.plato#L361).
 
@@ -31,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     NotEquals(a: Number, b: Number): Boolean;
 ```
 
-## Line 374
+### Line 374
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 374](../../../../../legacy/stdlib-legacy/intrinsics.plato#L374).
 

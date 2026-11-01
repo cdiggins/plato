@@ -3,11 +3,59 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Uniformly scale about the origin by `factor`.
+
+## Signature
+
+```plato
+Scale(self: IDeformable2D, factor: Number): Self
+Scale(self: IDeformable2D, factors: Number2): Self
+Scale(self: IDeformable3D, factor: Number): Self
+Scale(self: IDeformable3D, factors: Number3): Self
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_MonkeySaddleSatisfiesItsEquation
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 182](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L182)
+
+```plato
+// z = Scale (x^3 - 3 x y^2).
+Law_MonkeySaddleSatisfiesItsEquation(s: MonkeySaddle, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var height = s.Scale * (p.X * p.X * p.X - 3.0 * p.X * p.Y * p.Y);
+    return p.SurfaceFinite.Not || SurfaceEq(p.Z, height);
+}
+```
+
+### Law_RomanSurfaceSatisfiesItsEquation
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 199](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L199)
+
+```plato
+// x^2 y^2 + y^2 z^2 + z^2 x^2 = Scale x y z, the Steiner quartic. Follows from
+// the parameterization only because the source point is on the UNIT sphere, so
+// this is a real check on the spherical helper as well as on the map.
+Law_RomanSurfaceSatisfiesItsEquation(s: RomanSurface, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var quartic = p.X * p.X * p.Y * p.Y + p.Y * p.Y * p.Z * p.Z + p.Z * p.Z * p.X * p.X;
+    return p.SurfaceFinite.Not
+        || SurfaceEqNear(quartic, s.Scale * p.X * p.Y * p.Z, quartic);
+}
+```
+
+## Source
+
 **File:** [intervals-transforms-deformable.library](../intervals-transforms-deformable.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 40
+### Line 40
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 40](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L40).
 
@@ -18,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ScaleAbout(Point2D.Origin, factor);
 ```
 
-## Line 44
+### Line 44
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 44](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L44).
 
@@ -29,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ScaleAbout(Point2D.Origin, factors);
 ```
 
-## Line 111
+### Line 111
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 111](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L111).
 
@@ -40,7 +88,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ScaleAbout(Point3D.Origin, factor);
 ```
 
-## Line 115
+### Line 115
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 115](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L115).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A spherical panorama camera mapping longitude to X and latitude to Y
+> (equirectangular / lat-long; https://en.wikipedia.org/wiki/Equirectangular\_projection).
+> Sweeps of 360 by 180 degrees capture the whole sphere; smaller sweeps crop it.
+
+## Signature
+
+```plato
+type EquirectangularCamera
+    implements ICamera
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICamera](../cameras.concepts/icamera.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [cameras.types](../cameras.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 90
+### Line 90
 
 **Source:** [stdlib/graphics/cameras.types.plato, line 90](../../../../../stdlib/graphics/cameras.types.plato#L90).
 

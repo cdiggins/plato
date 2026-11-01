@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The average vertex degree: the degree sum (2E) over the vertex count, as a
+> Number via Integer.ToNumber. Precondition: the graph is non-empty.
+
+## Signature
+
+```plato
+AverageDegree(self: IGraph): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Graph data and graph summaries](../../../library/foundation/graphs.md)
+
+## Source
+
 **File:** [graphs.library](../graphs.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 54
+### Line 54
 
 **Source:** [stdlib/foundation/graphs.library.plato, line 54](../../../../../stdlib/foundation/graphs.library.plato#L54).
 

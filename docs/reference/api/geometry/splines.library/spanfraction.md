@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The local parameter within the span that SpanIndex selects, in \[0, 1\].
+
+## Signature
+
+```plato
+SpanFraction(count: Integer, closed: Boolean, t: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 293
+### Line 293
 
 **Source:** [stdlib/geometry/splines.library.plato, line 293](../../../../../stdlib/geometry/splines.library.plato#L293).
 

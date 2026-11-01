@@ -3,11 +3,51 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Eval(f: LinearEquation, x: Number): Number
+Eval(f: Quadratic, x: Number): Number
+Eval(f: Cubic, x: Number): Number
+Eval(f: SineWave, x: Number): Number
+Eval(f: Parabola, x: Number): Number
+Eval(curve: Spiral, t: Number): Point2D
+Eval(curve: QuadraticBezier2D, t: Number): Point2D
+Eval(curve: CubicBezier2D, t: Number): Point2D
+Eval(curve: IAngularCurve2D, t: Number): Point2D
+Eval(curve: Circle, t: Angle): Point2D
+Eval(curve: Ellipse, t: Angle): Point2D
+Eval(curve: Epicycloid, t: Angle): Point2D
+Eval(curve: Hypocycloid, t: Angle): Point2D
+Eval(curve: Epitrochoid, t: Angle): Point2D
+Eval(curve: Hypotrochoid, t: Angle): Point2D
+Eval(curve: ButterflyCurve, t: Angle): Point2D
+Eval(curve: Lissajous, t: Angle): Point2D
+Eval(curve: IPolarCurve, t: Angle): Point2D
+Eval(curve: QuadraticBezier3D, t: Number): Point3D
+Eval(curve: CubicBezier3D, t: Number): Point3D
+Eval(curve: IAngularCurve3D, t: Number): Point3D
+Eval(curve: TorusKnot, t: Angle): Point3D
+Eval(curve: TrefoilKnot, t: Angle): Point3D
+Eval(curve: FigureEightKnot, t: Angle): Point3D
+Eval(curve: Helix, t: Angle): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 25 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 18
+### Line 18
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 18](../../../../../legacy/stdlib-legacy/curves.plato#L18).
 
@@ -17,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => x.Linear(f.Slope, f.YIntercept);
 ```
 
-## Line 21
+### Line 21
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 21](../../../../../legacy/stdlib-legacy/curves.plato#L21).
 
@@ -27,7 +67,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => x.Quadratic(f.A, f.B, f.C);
 ```
 
-## Line 24
+### Line 24
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 24](../../../../../legacy/stdlib-legacy/curves.plato#L24).
 
@@ -37,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => x.Cubic(f.A, f.B, f.C, f.D);
 ```
 
-## Line 32
+### Line 32
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 32](../../../../../legacy/stdlib-legacy/curves.plato#L32).
 
@@ -47,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => x.SineWave(f.Amplitude, f.Frequency, f.Phase);
 ```
 
-## Line 35
+### Line 35
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 35](../../../../../legacy/stdlib-legacy/curves.plato#L35).
 
@@ -58,7 +98,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => x.Sqr;
 ```
 
-## Line 109
+### Line 109
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 109](../../../../../legacy/stdlib-legacy/curves.plato#L109).
 
@@ -68,7 +108,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> t.Spiral(curve.Radius1, curve.Radius2, curve.NumTurns);
 ```
 
-## Line 112
+### Line 112
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 112](../../../../../legacy/stdlib-legacy/curves.plato#L112).
 
@@ -78,7 +118,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> curve.A.Vector2.QuadraticBezier(curve.B, curve.C, t);
 ```
 
-## Line 115
+### Line 115
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 115](../../../../../legacy/stdlib-legacy/curves.plato#L115).
 
@@ -89,7 +129,7 @@ Copied from source, comments included. A comment records intent. The body is the
 }
 ```
 
-## Line 154
+### Line 154
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 154](../../../../../legacy/stdlib-legacy/curves.plato#L154).
 
@@ -102,7 +142,7 @@ library AngularCurves2D
     	=> curve.Eval(t.Turns);
 ```
 
-## Line 166
+### Line 166
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 166](../../../../../legacy/stdlib-legacy/curves.plato#L166).
 
@@ -112,7 +152,7 @@ library AngularCurves2D
 		=> t.Circle(curve.Center, curve.Radius);
 ```
 
-## Line 172
+### Line 172
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 172](../../../../../legacy/stdlib-legacy/curves.plato#L172).
 
@@ -122,7 +162,7 @@ library AngularCurves2D
         => t.UnitCircle * curve.Size + curve.Center;
 ```
 
-## Line 181
+### Line 181
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 181](../../../../../legacy/stdlib-legacy/curves.plato#L181).
 
@@ -132,7 +172,7 @@ library AngularCurves2D
         => t.Epicycloid(curve.Radius1, curve.Radius2);
 ```
 
-## Line 190
+### Line 190
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 190](../../../../../legacy/stdlib-legacy/curves.plato#L190).
 
@@ -142,7 +182,7 @@ library AngularCurves2D
 		=> t.Hypocycloid(curve.Radius1, curve.Radius2);
 ```
 
-## Line 199
+### Line 199
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 199](../../../../../legacy/stdlib-legacy/curves.plato#L199).
 
@@ -152,7 +192,7 @@ library AngularCurves2D
         => t.Epitrochoid(curve.Radius1, curve.Radius2, curve.Dist);
 ```
 
-## Line 208
+### Line 208
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 208](../../../../../legacy/stdlib-legacy/curves.plato#L208).
 
@@ -162,7 +202,7 @@ library AngularCurves2D
 		=> t.Hypotrochoid(curve.Radius1, curve.Radius2, curve.Dist);
 ```
 
-## Line 219
+### Line 219
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 219](../../../../../legacy/stdlib-legacy/curves.plato#L219).
 
@@ -172,7 +212,7 @@ library AngularCurves2D
         => t.ButterflyCurve;
 ```
 
-## Line 227
+### Line 227
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 227](../../../../../legacy/stdlib-legacy/curves.plato#L227).
 
@@ -183,7 +223,7 @@ library AngularCurves2D
 }
 ```
 
-## Line 315
+### Line 315
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 315](../../../../../legacy/stdlib-legacy/curves.plato#L315).
 
@@ -194,7 +234,7 @@ library AngularCurves2D
         => curve.EvalPolar(t);
 ```
 
-## Line 495
+### Line 495
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 495](../../../../../legacy/stdlib-legacy/curves.plato#L495).
 
@@ -209,7 +249,7 @@ library Curves3D
 		=> curve.A.Vector3.QuadraticBezier(curve.B, curve.C, t);
 ```
 
-## Line 503
+### Line 503
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 503](../../../../../legacy/stdlib-legacy/curves.plato#L503).
 
@@ -220,7 +260,7 @@ library Curves3D
 }
 ```
 
-## Line 535
+### Line 535
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 535](../../../../../legacy/stdlib-legacy/curves.plato#L535).
 
@@ -232,7 +272,7 @@ library AngularCurves3D
 		=> curve.Eval(t.Turns);
 ```
 
-## Line 550
+### Line 550
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 550](../../../../../legacy/stdlib-legacy/curves.plato#L550).
 
@@ -242,7 +282,7 @@ library AngularCurves3D
         => t.TorusKnot(curve.P, curve.Q) * curve.Radius;
 ```
 
-## Line 559
+### Line 559
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 559](../../../../../legacy/stdlib-legacy/curves.plato#L559).
 
@@ -252,7 +292,7 @@ library AngularCurves3D
         => t.TrefoilKnot;
 ```
 
-## Line 568
+### Line 568
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 568](../../../../../legacy/stdlib-legacy/curves.plato#L568).
 
@@ -262,7 +302,7 @@ library AngularCurves3D
         => t.FigureEightKnot;
 ```
 
-## Line 577
+### Line 577
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 577](../../../../../legacy/stdlib-legacy/curves.plato#L577).
 

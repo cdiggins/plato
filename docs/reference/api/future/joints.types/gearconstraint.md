@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A velocity coupling between two rotational axes (gear train): body B's
+> angular velocity about AxisB is -Ratio times body A's about AxisA. Ratio is
+> the dimensionless gear ratio; the axes are in each body's local frame.
+> (https://en.wikipedia.org/wiki/Gear\_train)
+
+## Signature
+
+```plato
+type GearConstraint
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [joints.types](../joints.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 194
+### Line 194
 
 **Source:** [stdlib/future/joints.types.plato, line 194](../../../../../stdlib/future/joints.types.plato#L194).
 

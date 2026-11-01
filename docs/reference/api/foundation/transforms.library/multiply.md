@@ -3,11 +3,99 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Alias for Transform with transform-on-left (\* operator): a \* p.
+
+## Signature
+
+```plato
+Multiply(a: AffineTransform2D, p: Point2D): Point2D
+Multiply(a: AffineTransform2D, v: Vector2D): Vector2D
+Multiply(a: AffineTransform2D, b: AffineTransform2D): AffineTransform2D
+Multiply(a: AffineTransform3D, p: Point3D): Point3D
+Multiply(a: AffineTransform3D, v: Vector3D): Vector3D
+Multiply(a: AffineTransform3D, b: AffineTransform3D): AffineTransform3D
+Multiply(a: Matrix3x3, b: Matrix3x3): Matrix3x3
+Multiply(t: Transform2D, p: Point2D): Point2D
+Multiply(a: Transform2D, b: Transform2D): Transform2D
+Multiply(t: Transform3D, p: Point3D): Point3D
+Multiply(a: Transform3D, b: Transform3D): Transform3D
+Multiply(t: Translation2D, p: Point2D): Point2D
+Multiply(t: Translation2D, v: Vector2D): Vector2D
+Multiply(t: Translation3D, p: Point3D): Point3D
+Multiply(t: Translation3D, v: Vector3D): Vector3D
+Multiply(s: Scaling2D, p: Point2D): Point2D
+Multiply(s: Scaling2D, v: Vector2D): Vector2D
+Multiply(s: Scaling3D, p: Point3D): Point3D
+Multiply(s: Scaling3D, v: Vector3D): Vector3D
+Multiply(s: UniformScaling2D, p: Point2D): Point2D
+Multiply(s: UniformScaling2D, v: Vector2D): Vector2D
+Multiply(s: UniformScaling3D, p: Point3D): Point3D
+Multiply(s: UniformScaling3D, v: Vector3D): Vector3D
+Multiply(r: Reflection2D, p: Point2D): Point2D
+Multiply(r: Reflection2D, v: Vector2D): Vector2D
+Multiply(r: Reflection3D, p: Point3D): Point3D
+Multiply(r: Reflection3D, v: Vector3D): Vector3D
+Multiply(r: RotationAbout2D, p: Point2D): Point2D
+Multiply(r: RotationAbout2D, v: Vector2D): Vector2D
+Multiply(r: RotationAbout3D, p: Point3D): Point3D
+Multiply(r: RotationAbout3D, v: Vector3D): Vector3D
+Multiply(s: ScalingAbout2D, p: Point2D): Point2D
+Multiply(s: ScalingAbout2D, v: Vector2D): Vector2D
+Multiply(s: ScalingAbout3D, p: Point3D): Point3D
+Multiply(s: ScalingAbout3D, v: Vector3D): Vector3D
+Multiply(a: Motor3D, b: Motor3D): Motor3D
+Multiply(m: Motor3D, p: Point3D): Point3D
+Multiply(m: Motor3D, v: Vector3D): Vector3D
+Multiply(pose: Pose2D, p: Point2D): Point2D
+Multiply(pose: Pose2D, v: Vector2D): Vector2D
+Multiply(a: Pose2D, b: Pose2D): Pose2D
+Multiply(pose: Pose3D, p: Point3D): Point3D
+Multiply(pose: Pose3D, v: Vector3D): Vector3D
+Multiply(a: Pose3D, b: Pose3D): Pose3D
+Multiply(a: Rotation2D, b: Rotation2D): Rotation2D
+Multiply(r: Rotation2D, v: Vector2D): Vector2D
+Multiply(r: Rotation2D, p: Point2D): Point2D
+Multiply(r: Rotation2D, d: Direction2D): Direction2D
+Multiply(a: Rotor2D, b: Rotor2D): Rotor2D
+Multiply(r: Rotor2D, v: Vector2D): Vector2D
+Multiply(r: Rotor2D, p: Point2D): Point2D
+Multiply(a: Rotor3D, b: Rotor3D): Rotor3D
+Multiply(r: Rotor3D, v: Vector3D): Vector3D
+Multiply(r: Rotor3D, p: Point3D): Point3D
+Multiply(q: Quaternion, p: Point3D): Point3D
+Multiply(q: Quaternion, d: Direction3D): Direction3D
+Multiply(t: TrsTransform2D, p: Point2D): Point2D
+Multiply(t: TrsTransform2D, v: Vector2D): Vector2D
+Multiply(a: TrsTransform2D, b: TrsTransform2D): AffineTransform2D
+Multiply(t: TrsTransform3D, p: Point3D): Point3D
+Multiply(t: TrsTransform3D, v: Vector3D): Vector3D
+Multiply(a: TrsTransform3D, b: TrsTransform3D): TrsTransform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 1109](../../../../../stdlib/foundation/transforms.library.plato#L1109): form (a unit complex number built from the half angle).
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 62 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 33
+### Line 33
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 33](../../../../../stdlib/foundation/transforms.library.plato#L33).
 
@@ -18,7 +106,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, a);
 ```
 
-## Line 42
+### Line 42
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 42](../../../../../stdlib/foundation/transforms.library.plato#L42).
 
@@ -29,7 +117,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, a);
 ```
 
-## Line 51
+### Line 51
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 51](../../../../../stdlib/foundation/transforms.library.plato#L51).
 
@@ -40,7 +128,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Compose(b);
 ```
 
-## Line 101
+### Line 101
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 101](../../../../../stdlib/foundation/transforms.library.plato#L101).
 
@@ -51,7 +139,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, a);
 ```
 
-## Line 112
+### Line 112
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 112](../../../../../stdlib/foundation/transforms.library.plato#L112).
 
@@ -62,7 +150,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, a);
 ```
 
-## Line 121
+### Line 121
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 121](../../../../../stdlib/foundation/transforms.library.plato#L121).
 
@@ -73,7 +161,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Compose(b);
 ```
 
-## Line 145
+### Line 145
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 145](../../../../../stdlib/foundation/transforms.library.plato#L145).
 
@@ -96,7 +184,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 179
+### Line 179
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 179](../../../../../stdlib/foundation/transforms.library.plato#L179).
 
@@ -107,7 +195,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, t);
 ```
 
-## Line 187
+### Line 187
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 187](../../../../../stdlib/foundation/transforms.library.plato#L187).
 
@@ -118,7 +206,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Compose(b);
 ```
 
-## Line 203
+### Line 203
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 203](../../../../../stdlib/foundation/transforms.library.plato#L203).
 
@@ -129,7 +217,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, t);
 ```
 
-## Line 211
+### Line 211
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 211](../../../../../stdlib/foundation/transforms.library.plato#L211).
 
@@ -140,7 +228,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Compose(b);
 ```
 
-## Line 237
+### Line 237
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 237](../../../../../stdlib/foundation/transforms.library.plato#L237).
 
@@ -151,7 +239,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, t);
 ```
 
-## Line 245
+### Line 245
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 245](../../../../../stdlib/foundation/transforms.library.plato#L245).
 
@@ -162,7 +250,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, t);
 ```
 
-## Line 265
+### Line 265
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 265](../../../../../stdlib/foundation/transforms.library.plato#L265).
 
@@ -173,7 +261,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, t);
 ```
 
-## Line 273
+### Line 273
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 273](../../../../../stdlib/foundation/transforms.library.plato#L273).
 
@@ -184,7 +272,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, t);
 ```
 
-## Line 298
+### Line 298
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 298](../../../../../stdlib/foundation/transforms.library.plato#L298).
 
@@ -195,7 +283,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, s);
 ```
 
-## Line 306
+### Line 306
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 306](../../../../../stdlib/foundation/transforms.library.plato#L306).
 
@@ -206,7 +294,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, s);
 ```
 
-## Line 326
+### Line 326
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 326](../../../../../stdlib/foundation/transforms.library.plato#L326).
 
@@ -217,7 +305,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, s);
 ```
 
-## Line 334
+### Line 334
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 334](../../../../../stdlib/foundation/transforms.library.plato#L334).
 
@@ -228,7 +316,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, s);
 ```
 
-## Line 354
+### Line 354
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 354](../../../../../stdlib/foundation/transforms.library.plato#L354).
 
@@ -239,7 +327,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, s);
 ```
 
-## Line 362
+### Line 362
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 362](../../../../../stdlib/foundation/transforms.library.plato#L362).
 
@@ -250,7 +338,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, s);
 ```
 
-## Line 382
+### Line 382
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 382](../../../../../stdlib/foundation/transforms.library.plato#L382).
 
@@ -261,7 +349,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, s);
 ```
 
-## Line 390
+### Line 390
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 390](../../../../../stdlib/foundation/transforms.library.plato#L390).
 
@@ -272,7 +360,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, s);
 ```
 
-## Line 428
+### Line 428
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 428](../../../../../stdlib/foundation/transforms.library.plato#L428).
 
@@ -283,7 +371,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, r);
 ```
 
-## Line 437
+### Line 437
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 437](../../../../../stdlib/foundation/transforms.library.plato#L437).
 
@@ -294,7 +382,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, r);
 ```
 
-## Line 467
+### Line 467
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 467](../../../../../stdlib/foundation/transforms.library.plato#L467).
 
@@ -305,7 +393,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, r);
 ```
 
-## Line 476
+### Line 476
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 476](../../../../../stdlib/foundation/transforms.library.plato#L476).
 
@@ -316,7 +404,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, r);
 ```
 
-## Line 497
+### Line 497
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 497](../../../../../stdlib/foundation/transforms.library.plato#L497).
 
@@ -327,7 +415,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, r);
 ```
 
-## Line 505
+### Line 505
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 505](../../../../../stdlib/foundation/transforms.library.plato#L505).
 
@@ -338,7 +426,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, r);
 ```
 
-## Line 530
+### Line 530
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 530](../../../../../stdlib/foundation/transforms.library.plato#L530).
 
@@ -349,7 +437,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, r);
 ```
 
-## Line 538
+### Line 538
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 538](../../../../../stdlib/foundation/transforms.library.plato#L538).
 
@@ -360,7 +448,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, r);
 ```
 
-## Line 558
+### Line 558
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 558](../../../../../stdlib/foundation/transforms.library.plato#L558).
 
@@ -371,7 +459,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, s);
 ```
 
-## Line 567
+### Line 567
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 567](../../../../../stdlib/foundation/transforms.library.plato#L567).
 
@@ -382,7 +470,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, s);
 ```
 
-## Line 593
+### Line 593
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 593](../../../../../stdlib/foundation/transforms.library.plato#L593).
 
@@ -393,7 +481,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, s);
 ```
 
-## Line 602
+### Line 602
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 602](../../../../../stdlib/foundation/transforms.library.plato#L602).
 
@@ -404,7 +492,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, s);
 ```
 
-## Line 823
+### Line 823
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 823](../../../../../stdlib/foundation/transforms.library.plato#L823).
 
@@ -417,7 +505,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Real * b.Real, a.Real * b.Dual + a.Dual * b.Real);
 ```
 
-## Line 850
+### Line 850
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 850](../../../../../stdlib/foundation/transforms.library.plato#L850).
 
@@ -428,7 +516,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, m);
 ```
 
-## Line 859
+### Line 859
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 859](../../../../../stdlib/foundation/transforms.library.plato#L859).
 
@@ -439,7 +527,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, m);
 ```
 
-## Line 952
+### Line 952
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 952](../../../../../stdlib/foundation/transforms.library.plato#L952).
 
@@ -450,7 +538,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, pose);
 ```
 
-## Line 961
+### Line 961
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 961](../../../../../stdlib/foundation/transforms.library.plato#L961).
 
@@ -461,7 +549,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, pose);
 ```
 
-## Line 969
+### Line 969
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 969](../../../../../stdlib/foundation/transforms.library.plato#L969).
 
@@ -472,7 +560,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Compose(b);
 ```
 
-## Line 996
+### Line 996
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 996](../../../../../stdlib/foundation/transforms.library.plato#L996).
 
@@ -483,7 +571,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, pose);
 ```
 
-## Line 1004
+### Line 1004
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1004](../../../../../stdlib/foundation/transforms.library.plato#L1004).
 
@@ -494,7 +582,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, pose);
 ```
 
-## Line 1012
+### Line 1012
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1012](../../../../../stdlib/foundation/transforms.library.plato#L1012).
 
@@ -505,7 +593,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Compose(b);
 ```
 
-## Line 1097
+### Line 1097
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1097](../../../../../stdlib/foundation/transforms.library.plato#L1097).
 
@@ -530,7 +618,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Rotation2D(a.Angle + b.Angle);
 ```
 
-## Line 1133
+### Line 1133
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1133](../../../../../stdlib/foundation/transforms.library.plato#L1133).
 
@@ -541,7 +629,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, r);
 ```
 
-## Line 1141
+### Line 1141
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1141](../../../../../stdlib/foundation/transforms.library.plato#L1141).
 
@@ -552,7 +640,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, r);
 ```
 
-## Line 1149
+### Line 1149
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1149](../../../../../stdlib/foundation/transforms.library.plato#L1149).
 
@@ -563,7 +651,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(d, r);
 ```
 
-## Line 1164
+### Line 1164
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1164](../../../../../stdlib/foundation/transforms.library.plato#L1164).
 
@@ -575,7 +663,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Scalar * b.Scalar - a.XY * b.XY, a.Scalar * b.XY + a.XY * b.Scalar);
 ```
 
-## Line 1189
+### Line 1189
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1189](../../../../../stdlib/foundation/transforms.library.plato#L1189).
 
@@ -586,7 +674,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, r);
 ```
 
-## Line 1197
+### Line 1197
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1197](../../../../../stdlib/foundation/transforms.library.plato#L1197).
 
@@ -597,7 +685,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, r);
 ```
 
-## Line 1283
+### Line 1283
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1283](../../../../../stdlib/foundation/transforms.library.plato#L1283).
 
@@ -609,7 +697,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Quaternion * b.Quaternion).Rotor3D;
 ```
 
-## Line 1302
+### Line 1302
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1302](../../../../../stdlib/foundation/transforms.library.plato#L1302).
 
@@ -620,7 +708,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, r);
 ```
 
-## Line 1310
+### Line 1310
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1310](../../../../../stdlib/foundation/transforms.library.plato#L1310).
 
@@ -631,7 +719,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, r);
 ```
 
-## Line 1318
+### Line 1318
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1318](../../../../../stdlib/foundation/transforms.library.plato#L1318).
 
@@ -642,7 +730,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, q);
 ```
 
-## Line 1326
+### Line 1326
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1326](../../../../../stdlib/foundation/transforms.library.plato#L1326).
 
@@ -653,7 +741,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(d, q);
 ```
 
-## Line 1378
+### Line 1378
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1378](../../../../../stdlib/foundation/transforms.library.plato#L1378).
 
@@ -664,7 +752,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, t);
 ```
 
-## Line 1387
+### Line 1387
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1387](../../../../../stdlib/foundation/transforms.library.plato#L1387).
 
@@ -675,7 +763,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, t);
 ```
 
-## Line 1403
+### Line 1403
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1403](../../../../../stdlib/foundation/transforms.library.plato#L1403).
 
@@ -687,7 +775,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Compose(b);
 ```
 
-## Line 1421
+### Line 1421
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1421](../../../../../stdlib/foundation/transforms.library.plato#L1421).
 
@@ -698,7 +786,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(p, t);
 ```
 
-## Line 1429
+### Line 1429
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1429](../../../../../stdlib/foundation/transforms.library.plato#L1429).
 
@@ -709,7 +797,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform(v, t);
 ```
 
-## Line 1444
+### Line 1444
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1444](../../../../../stdlib/foundation/transforms.library.plato#L1444).
 

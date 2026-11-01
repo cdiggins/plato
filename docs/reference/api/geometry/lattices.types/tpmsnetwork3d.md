@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The network (skeletal) solid of a triply periodic surface: the labyrinth
+> where the implicit is at or below Level. Distances are a LOWER BOUND, not
+> exact: the nodal implicit is divided by a bound on its gradient, so a sphere
+> tracer converges in short steps and never steps through the surface.
+
+## Signature
+
+```plato
+type TpmsNetwork3D
+    implements IValue, ISignedDistanceField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [ISignedDistanceField3D](../implicit-sdf.concepts/isigneddistancefield3d.md).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.types](../lattices.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 142
+### Line 142
 
 **Source:** [stdlib/geometry/lattices.types.plato, line 142](../../../../../stdlib/geometry/lattices.types.plato#L142).
 

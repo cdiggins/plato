@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Animates position along a 2D path. Progress in \[0, 1\] maps to arc length;
+> StartOffset shifts the starting point along the path; when OrientToPath is
+> true the moving element rotates to face along the path's tangent.
+
+## Signature
+
+```plato
+type MotionPath2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [motion-graphics.types](../motion-graphics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 148
+### Line 148
 
 **Source:** [stdlib/graphics/motion-graphics.types.plato, line 148](../../../../../stdlib/graphics/motion-graphics.types.plato#L148).
 

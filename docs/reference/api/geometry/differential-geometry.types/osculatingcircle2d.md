@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The osculating circle of a planar curve at a point: the circle of best
+> second-order contact. Radius (world units) is the reciprocal of the unsigned
+> curvature at ContactPoint.
+> (https://en.wikipedia.org/wiki/Osculating\_circle)
+
+## Signature
+
+```plato
+type OsculatingCircle2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [differential-geometry.types](../differential-geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 141
+### Line 141
 
 **Source:** [stdlib/geometry/differential-geometry.types.plato, line 141](../../../../../stdlib/geometry/differential-geometry.types.plato#L141).
 

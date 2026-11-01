@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One node of a flattened CSG tree. Interior nodes combine two children by
+> Operation; leaf nodes reference a primitive by index into a primitive
+> collection supplied alongside the tree. Child references are node indices
+> into the same flat array, never embedded nodes.
+
+## Signature
+
+```plato
+type CsgNode3D
+    = Leaf(PrimitiveIndex: ItemIndex)
+    | Interior(Operation: CsgOperation, LeftChild: CsgNodeIndex, RightChild: CsgNodeIndex)
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.types](../solids.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 42
+### Line 42
 
 **Source:** [stdlib/geometry/solids.types.plato, line 42](../../../../../stdlib/geometry/solids.types.plato#L42).
 

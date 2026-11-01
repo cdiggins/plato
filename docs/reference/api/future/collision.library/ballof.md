@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Body `index` read as a ball: the solver body's centre, and the radius the
+> caller keeps alongside. A `SolverBody3D` carries no shape — that is what lets
+> one solver serve every shape — so a scene keeps its radii in a parallel
+> array, in body order.
+
+## Signature
+
+```plato
+BallOf(bodies: Array<SolverBody3D>, radii: Array<Number>, index: Integer): Sphere
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 381
+### Line 381
 
 **Source:** [stdlib/future/collision.library.plato, line 381](../../../../../stdlib/future/collision.library.plato#L381).
 

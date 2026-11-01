@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A 3D curve which is known to be closed
+
+## Signature
+
+```plato
+interface IClosedCurve3D
+	inherits ICurve3D, IClosedShape3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICurve3D](icurve3d.md), [IClosedShape3D](iclosedshape3d.md).
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 113
+### Line 113
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 113](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L113).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Independent quadrilaterals in space, each carrying its own four corner
+> positions. As with `Quad3D`, coplanarity is not guaranteed; triangulation
+> splits on the A-C diagonal.
+
+## Signature
+
+```plato
+type QuadArray3D
+    implements IValue, IQuadGeometry3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IQuadGeometry3D](../meshes.concepts/iquadgeometry3d.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.types](../meshes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 230
+### Line 230
 
 **Source:** [stdlib/geometry/meshes.types.plato, line 230](../../../../../stdlib/geometry/meshes.types.plato#L230).
 

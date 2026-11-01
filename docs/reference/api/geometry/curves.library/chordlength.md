@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The straight-line distance from the start to the end of the curve.
+
+## Signature
+
+```plato
+ChordLength(self: ICurve2D): Number
+ChordLength(self: ICurve3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/geometry/curves.library.plato, line 93](../../../../../stdlib/geometry/curves.library.plato#L93).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(0.0).Between(self.Eval(1.0)).Magnitude;
 ```
 
-## Line 133
+### Line 133
 
 **Source:** [stdlib/geometry/curves.library.plato, line 133](../../../../../stdlib/geometry/curves.library.plato#L133).
 

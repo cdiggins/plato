@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The combined hash of the three rows.
+
+## Signature
+
+```plato
+Hash(self: Matrix3x2): Integer
+Hash(self: Matrix4x4): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 120
+### Line 120
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 120](../../../../../stdlib/foundation/matrices-ops.library.plato#L120).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Row1.Hash.CombineHash(self.Row2.Hash).CombineHash(self.Row3.Hash);
 ```
 
-## Line 245
+### Line 245
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 245](../../../../../stdlib/foundation/matrices-ops.library.plato#L245).
 

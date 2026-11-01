@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the polygon satisfies the invariant its declaration states.
+
+## Signature
+
+```plato
+IsSimple(p: Polygon2D): Boolean
+IsSimple(r: PolygonWithHoles2D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 609
+### Line 609
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 609](../../../../../stdlib/geometry/polygons.library.plato#L609).
 
@@ -21,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Points.IsSimpleRing;
 ```
 
-## Line 656
+### Line 656
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 656](../../../../../stdlib/geometry/polygons.library.plato#L656).
 

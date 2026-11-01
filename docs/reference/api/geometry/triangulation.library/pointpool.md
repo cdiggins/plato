@@ -3,11 +3,51 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The pool a region with holes is triangulated over: the boundary vertices,
+> then each hole's vertices in order.
+
+## Signature
+
+```plato
+PointPool(r: PolygonWithHoles2D): Array<Point2D>
+PointPool(s: PolygonSet2D): Array<Point2D>
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_HoledTriangulationFacesIndexInputPoints
+
+[stdlib/tests/triangulation.laws.plato, line 54](../../../../../stdlib/tests/triangulation.laws.plato#L54)
+
+```plato
+Law_HoledTriangulationFacesIndexInputPoints(r: PolygonWithHoles2D): Boolean
+    => r.Triangulate.Faces.All(f => r.PointPool.FaceIsInRange(f));
+```
+
+### Law_HoledTriangulationPreservesPositions
+
+[stdlib/tests/triangulation.laws.plato, line 57](../../../../../stdlib/tests/triangulation.laws.plato#L57)
+
+```plato
+Law_HoledTriangulationPreservesPositions(r: PolygonWithHoles2D): Boolean
+    => r.Triangulate.Positions.Count == r.PointPool.Count;
+```
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 590
+### Line 590
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 590](../../../../../stdlib/geometry/triangulation.library.plato#L590).
 
@@ -19,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Holes.Reduce(r.Boundary.Points, (pool, h) => pool.Concatenate(h.Points));
 ```
 
-## Line 622
+### Line 622
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 622](../../../../../stdlib/geometry/triangulation.library.plato#L622).
 

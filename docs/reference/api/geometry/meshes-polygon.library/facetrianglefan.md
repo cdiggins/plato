@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One face fanned into triangles from its first vertex: (A, B, C),
+> (A, C, D), … — arity - 2 of them, and exact for a convex face
+> (https://en.wikipedia.org/wiki/Fan\_triangulation). Every catalog
+> polyhedron has convex faces; a non-convex face needs a real
+> triangulator instead.
+
+## Signature
+
+```plato
+FaceTriangleFan(self: PolygonMesh3D, face: Integer): Array<TriangleFace>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes-polygon.library](../meshes-polygon.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 135
+### Line 135
 
 **Source:** [stdlib/geometry/meshes-polygon.library.plato, line 135](../../../../../stdlib/geometry/meshes-polygon.library.plato#L135).
 

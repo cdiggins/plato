@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when a strut between these two normalized coordinates belongs to its
+> own cell rather than to the neighbour it shares a face with. A strut with
+> BOTH endpoints on the far face of an axis lies in that shared face, so the
+> next cell along describes the very same segment with both endpoints on its
+> near face; the near-face copy is the one kept. This one rule is the whole
+> of the welding, and it is a decision about one strut in isolation — no
+> search, no vertex table, no tolerance on world positions.
+
+## Signature
+
+```plato
+CellOwnsStrut(a: Point3D, b: Point3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 266
+### Line 266
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 266](../../../../../stdlib/geometry/lattices.library.plato#L266).
 

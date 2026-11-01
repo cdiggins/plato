@@ -3,11 +3,60 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The position a fraction `t` of the way from a to b, walked along the
+> displacement between them. t is unclamped, so it extrapolates. This is the
+> IInterpolatable obligation for every ICoordinate that is also a IDifference,
+> and it is what makes MidPoint / LerpClamped / SmoothLerp (P1, over
+> IInterpolatable) reach the position types.
+
+## Signature
+
+```plato
+Lerp(a: IDifference<$D>, b: IDifference<$D>, t: Number): IDifference<$D>
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_LerpAtZeroIsStart2D
+
+[stdlib/tests/foundation.laws.plato, line 166](../../../../../stdlib/tests/foundation.laws.plato#L166)
+
+```plato
+// Lerp endpoints, now derived from Add + Between rather than written per type.
+Law_LerpAtZeroIsStart2D(a: Point2D, b: Point2D): Boolean
+    => a.Lerp(b, 0.0).Distance(a) <= 1e-4;
+```
+
+### Law_LerpAtOneIsEnd2D
+
+[stdlib/tests/foundation.laws.plato, line 169](../../../../../stdlib/tests/foundation.laws.plato#L169)
+
+```plato
+Law_LerpAtOneIsEnd2D(a: Point2D, b: Point2D): Boolean
+    => a.Lerp(b, 1.0).Distance(b) <= 1e-4;
+```
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 86](../../../../../stdlib/foundation/algebra.library.plato#L86): dispatches on its FIRST parameter, which the compiler requires to be a
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.library](../algebra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 84
+### Line 84
 
 **Source:** [stdlib/foundation/algebra.library.plato, line 84](../../../../../stdlib/foundation/algebra.library.plato#L84).
 

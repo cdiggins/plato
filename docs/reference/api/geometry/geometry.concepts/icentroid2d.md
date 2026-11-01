@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Can report its center of mass under uniform density in the plane.
+> (https://en.wikipedia.org/wiki/Centroid)
+
+## Signature
+
+```plato
+interface ICentroid2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Line2D](../lines.types/line2d.md), [RoundedRect2D](../planar.types/roundedrect2d.md), [CircularSector](../planar.types/circularsector.md), [CircularSegment](../planar.types/circularsegment.md), [Capsule2D](../planar.types/capsule2d.md), [Ellipse](../planar.types/ellipse.md), [Triangle2D](../planar.types/triangle2d.md), [Quad2D](../planar.types/quad2d.md), [Parallelogram2D](../planar.types/parallelogram2d.md), [Polygon2D](../polygons.types/polygon2d.md), [ConvexPolygon2D](../polygons.types/convexpolygon2d.md), [PolygonWithHoles2D](../polygons.types/polygonwithholes2d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 176
+### Line 176
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 176](../../../../../stdlib/geometry/geometry.concepts.plato#L176).
 

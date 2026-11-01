@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Clamp(self: Vector2, min: Vector2, max: Vector2): Vector2
+Clamp(self: Vector3, min: Vector3, max: Vector3): Vector3
+Clamp(self: Vector4, min: Vector4, max: Vector4): Vector4
+Clamp(self: Number, min: Number, max: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 118
+### Line 118
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 118](../../../../../legacy/stdlib-legacy/intrinsics.plato#L118).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Clamp(self: Vector2, min: Vector2, max: Vector2): Vector2;
 ```
 
-## Line 158
+### Line 158
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 158](../../../../../legacy/stdlib-legacy/intrinsics.plato#L158).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Clamp(self: Vector3, min: Vector3, max: Vector3): Vector3;
 ```
 
-## Line 197
+### Line 197
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 197](../../../../../legacy/stdlib-legacy/intrinsics.plato#L197).
 
@@ -31,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Clamp(self: Vector4, min: Vector4, max: Vector4): Vector4;
 ```
 
-## Line 326
+### Line 326
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 326](../../../../../legacy/stdlib-legacy/intrinsics.plato#L326).
 

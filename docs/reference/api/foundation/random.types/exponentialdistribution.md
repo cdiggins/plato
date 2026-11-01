@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Waiting time between Poisson events. Rate is per unit; the mean is 1 / Rate.
+
+## Signature
+
+```plato
+type ExponentialDistribution
+    implements IProbabilityDistribution
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IProbabilityDistribution](../random.concepts/iprobabilitydistribution.md).
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.types](../random.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 70
+### Line 70
 
 **Source:** [stdlib/foundation/random.types.plato, line 70](../../../../../stdlib/foundation/random.types.plato#L70).
 

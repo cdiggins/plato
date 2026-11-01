@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The displacement from `center` to `point`, expressed in the frame rotated by
+> `rotation`: the inverse rotation R(-rotation) applied to (point - center).
+
+## Signature
+
+```plato
+LocalOffset(center: Point2D, rotation: Angle, point: Point2D): Vector2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 580](../../../../../stdlib/geometry/planar.library.plato#L580): # Local-frame and centred-bounds helpers
+- [Line 583](../../../../../stdlib/geometry/planar.library.plato#L583): RegularPolygon) all share: a conversion into the frame rotated by `Rotation` about
+- [Line 588](../../../../../stdlib/geometry/planar.library.plato#L588): # Local-frame helpers
+- [Line 591](../../../../../stdlib/geometry/planar.library.plato#L591): all reduce to an axis-aligned test in a frame rotated by `Rotation` about
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 578
+### Line 578
 
 **Source:** [stdlib/geometry/planar.library.plato, line 578](../../../../../stdlib/geometry/planar.library.plato#L578).
 

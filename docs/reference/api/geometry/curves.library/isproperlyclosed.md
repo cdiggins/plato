@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the endpoints coincide within the given (non-negative) tolerance.
+
+## Signature
+
+```plato
+IsProperlyClosed(self: IClosedCurve2D, tolerance: Number): Boolean
+IsProperlyClosed(self: IClosedCurve3D, tolerance: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 157
+### Line 157
 
 **Source:** [stdlib/geometry/curves.library.plato, line 157](../../../../../stdlib/geometry/curves.library.plato#L157).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ClosureGap <= tolerance;
 ```
 
-## Line 171
+### Line 171
 
 **Source:** [stdlib/geometry/curves.library.plato, line 171](../../../../../stdlib/geometry/curves.library.plato#L171).
 

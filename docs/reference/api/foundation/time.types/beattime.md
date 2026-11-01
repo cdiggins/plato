@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A position measured in musical beats
+> (https://en.wikipedia.org/wiki/Beat\_(music)); combine with Tempo to reach
+> seconds.
+
+## Signature
+
+```plato
+type BeatTime
+    implements IValue, IComparable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IComparable](../core.concepts/icomparable.md).
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [time.types](../time.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 63
+### Line 63
 
 **Source:** [stdlib/foundation/time.types.plato, line 63](../../../../../stdlib/foundation/time.types.plato#L63).
 

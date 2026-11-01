@@ -3,11 +3,50 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The PrimitiveCollection3D obligation: the stored faces themselves.
+
+## Signature
+
+```plato
+Primitives(a: TriangleArray3D): Array<Triangle3D>
+Primitives(a: QuadArray3D): Array<Quad3D>
+Primitives(self: TriangleMesh3D): Array<Triangle3D>
+Primitives(self: TriangleMesh2D): Array<Triangle2D>
+Primitives(self: QuadMesh3D): Array<Quad3D>
+Primitives(self: LineSet3D): Array<Line3D>
+Primitives(self: LineSet2D): Array<Line2D>
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_BvhLeavesPartitionThePermutation
+
+[stdlib/tests/spatial-structures.laws.plato, line 60](../../../../../stdlib/tests/spatial-structures.laws.plato#L60)
+
+```plato
+// The leaves partition the permutation: every position of it lies in
+// exactly one leaf range, and internal ranges are empty.
+Law_BvhLeavesPartitionThePermutation(bounds: Array<Bounds3D>): Boolean
+    => bounds.BuildBvh(4).Nodes.LeavesPartition(
+        bounds.Count, n => n.LeftChild.Value < 0 && n.RightChild.Value < 0,
+        n2 => n2.Primitives);
+```
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 7 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 73
+### Line 73
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 73](../../../../../stdlib/geometry/meshes.library.plato#L73).
 
@@ -18,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Triangles;
 ```
 
-## Line 104
+### Line 104
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 104](../../../../../stdlib/geometry/meshes.library.plato#L104).
 
@@ -29,7 +68,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Quads;
 ```
 
-## Line 523
+### Line 523
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 523](../../../../../stdlib/geometry/meshes.library.plato#L523).
 
@@ -43,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
                                           self.Positions[f.C.Value]));
 ```
 
-## Line 563
+### Line 563
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 563](../../../../../stdlib/geometry/meshes.library.plato#L563).
 
@@ -57,7 +96,7 @@ Copied from source, comments included. A comment records intent. The body is the
                                           self.Positions[f.C.Value]));
 ```
 
-## Line 603
+### Line 603
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 603](../../../../../stdlib/geometry/meshes.library.plato#L603).
 
@@ -72,7 +111,7 @@ Copied from source, comments included. A comment records intent. The body is the
                                       self.Positions[f.D.Value]));
 ```
 
-## Line 666
+### Line 666
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 666](../../../../../stdlib/geometry/meshes.library.plato#L666).
 
@@ -85,7 +124,7 @@ Copied from source, comments included. A comment records intent. The body is the
                                       self.Positions[e.B.Value]));
 ```
 
-## Line 678
+### Line 678
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 678](../../../../../stdlib/geometry/meshes.library.plato#L678).
 

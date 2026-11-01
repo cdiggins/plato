@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Every ball-versus-ball manifold of a scene, plus every ball against one
+> ground plane. Body `groundBody` is the plane's body — an immovable
+> `SolverBody3D` — and is excluded from the ball tests.
+>
+> Ordered pairs with A's index below B's are tested, which visits each unordered
+> pair once and fixes the normal's direction: from the lower-numbered body
+> toward the higher one. The full square is enumerated and half of it discarded,
+> because an index into the upper triangle is arithmetic nobody should have to
+> read.
+
+## Signature
+
+```plato
+BallSceneManifolds(bodies: Array<SolverBody3D>, radii: Array<Number>, ground: Plane,
+    groundBody: BodyIndex, friction: Number, restitution: Proportion): Array<ContactManifold3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 388
+### Line 388
 
 **Source:** [stdlib/future/collision.library.plato, line 388](../../../../../stdlib/future/collision.library.plato#L388).
 

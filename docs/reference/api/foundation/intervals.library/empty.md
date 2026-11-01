@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The canonical empty box: Min at +infinity, Max at -infinity, so it contains no
+> point and is absorbed by Union with any real box (the empty sentinel).
+
+## Signature
+
+```plato
+Empty(_: Bounds2D): Bounds2D
+Empty(_: Bounds3D): Bounds3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 78](../../../../../stdlib/foundation/intervals.library.plato#L78): reached via the Number Min/Max lattice ops, exactly as BoundsOfPoints does.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 64
+### Line 64
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 64](../../../../../stdlib/foundation/intervals.library.plato#L64).
 
@@ -34,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Point2D(Number.MaxValue, Number.MaxValue), Point2D(Number.MinValue, Number.MinValue));
 ```
 
-## Line 118
+### Line 118
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 118](../../../../../stdlib/foundation/intervals.library.plato#L118).
 

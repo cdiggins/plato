@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The continuous lattice coordinate of a position along one axis: 0 at the low
+> bound, count - 1 at the high bound.
+
+## Signature
+
+```plato
+LatticeCoordinate(coordinate: Number, low: Number, high: Number, count: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 1132](../../../../../stdlib/geometry/implicit-sdf.library.plato#L1132): Precondition: at least two nodes along every axis.
+- [Line 1136](../../../../../stdlib/geometry/implicit-sdf.library.plato#L1136): interpolation error over one cell, so a sphere tracer must shorten its steps
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1124
+### Line 1124
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 1124](../../../../../stdlib/geometry/implicit-sdf.library.plato#L1124).
 

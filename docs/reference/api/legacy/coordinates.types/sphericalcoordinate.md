@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Spherical\_coordinate\_system
+
+## Signature
+
+```plato
+type SphericalCoordinate
+    implements ICoordinate
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICoordinate](../core.interfaces/icoordinate.md).
+
+## Source
+
 **File:** [coordinates.types](../coordinates.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [legacy/stdlib-legacy/coordinates.types.plato, line 1](../../../../../legacy/stdlib-legacy/coordinates.types.plato#L1).
 

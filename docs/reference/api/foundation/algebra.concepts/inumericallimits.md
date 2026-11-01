@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Has a distinguished one element and representable extremes. The additive
+> identity is NOT here: Zero is a property of the additive group and lives on
+> `IAdditive` (algebra.concepts.plato), which every INumerical also
+> inherits — so a INumerical still reaches Zero, while a IQuantity or IMatrix
+> gets it without having to claim representable extremes it has no meaning for.
+
+## Signature
+
+```plato
+interface INumericalLimits
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.concepts](../algebra.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/foundation/algebra.concepts.plato, line 93](../../../../../stdlib/foundation/algebra.concepts.plato#L93).
 

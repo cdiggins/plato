@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the image is wider than it is tall (aspect ratio above 1).
+
+## Signature
+
+```plato
+IsLandscape(self: ICamera): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [cameras.library](../cameras.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/graphics/cameras.library.plato, line 67](../../../../../stdlib/graphics/cameras.library.plato#L67).
 

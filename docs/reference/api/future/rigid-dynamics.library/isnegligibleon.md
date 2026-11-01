@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> True when the force on the body is negligible, within the given
+> non-negative tolerance in newtons.
+
+## Signature
+
+```plato
+IsNegligibleOn(self: IForceModel2D, body: RigidBody2D, tolerance: Number): Boolean
+IsNegligibleOn(self: IForceModel3D, body: RigidBody3D, tolerance: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 87
+### Line 87
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 87](../../../../../stdlib/future/rigid-dynamics.library.plato#L87).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ForceOn(body).Magnitude <= tolerance;
 ```
 
-## Line 101
+### Line 101
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 101](../../../../../stdlib/future/rigid-dynamics.library.plato#L101).
 

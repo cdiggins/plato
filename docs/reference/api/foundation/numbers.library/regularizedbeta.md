@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The regularized incomplete beta function I\_x(a, b), the CDF of the beta
+> distribution: 0 at x = 0 rising to 1 at x = 1. Continued fraction
+> directly when x \< (a + 1) / (a + b + 2), otherwise through the symmetry
+> I\_x(a, b) = 1 - I\_{1-x}(b, a) so the fraction always runs in its
+> fast-convergence region. Precondition: a > 0, b > 0, 0 \<= x \<= 1.
+> Expected accuracy: ~1e-13 relative for moderate a and b.
+> https://en.wikipedia.org/wiki/Beta\_function#Incomplete\_beta\_function
+
+## Signature
+
+```plato
+RegularizedBeta(a: Number, b: Number, x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 525
+### Line 525
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 525](../../../../../stdlib/foundation/numbers.library.plato#L525).
 

@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A point on the axis-aligned square with corners at (+-1, +-1), walked at
+> constant rate (an N-gon with four sides, rotated an eighth turn and scaled
+> so the sides are axis-aligned).
+
+## Signature
+
+```plato
+SquarePoint(t: Number): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [solids](../solids.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 115
+### Line 115
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 115](../../../../../legacy/stdlib-legacy/solids.plato#L115).
 

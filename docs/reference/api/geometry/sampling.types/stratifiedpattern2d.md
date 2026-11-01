@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Stratified scattering: the region is divided into StrataCounts strata and
+> SamplesPerStratum points are placed uniformly at random within each,
+> bounding the variance of Monte Carlo estimates
+> (https://en.wikipedia.org/wiki/Stratified\_sampling).
+
+## Signature
+
+```plato
+type StratifiedPattern2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 191
+### Line 191
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 191](../../../../../stdlib/geometry/sampling.types.plato#L191).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Frenet frame of a planar curve at one parameter value: position, unit
+> tangent, unit left normal, and signed curvature (reciprocal world units;
+> positive when the curve bends toward the normal).
+> (https://en.wikipedia.org/wiki/Curvature)
+
+## Signature
+
+```plato
+type FrenetFrame2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [differential-geometry.types](../differential-geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/differential-geometry.types.plato, line 1](../../../../../stdlib/geometry/differential-geometry.types.plato#L1).
 

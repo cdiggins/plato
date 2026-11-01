@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The rotation of the three Tait-Bryan angles, applied roll then pitch then
+> yaw (yaw about Y, pitch about X, roll about Z).
+> https://en.wikipedia.org/wiki/Conversion\_between\_quaternions\_and\_Euler\_angles
+
+## Signature
+
+```plato
+CreateFromYawPitchRoll(_: Quaternion, yaw: Angle, pitch: Angle, roll: Angle): Quaternion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [rotations-ops.library](../rotations-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 165
+### Line 165
 
 **Source:** [stdlib/foundation/rotations-ops.library.plato, line 165](../../../../../stdlib/foundation/rotations-ops.library.plato#L165).
 

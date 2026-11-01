@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The triangle with all three vertices carried through the mapping.
+
+## Signature
+
+```plato
+Deform(t: Triangle3D, mapping: Function1<Point3D, Point3D>): Triangle3D
+Deform(q: Quad3D, mapping: Function1<Point3D, Point3D>): Quad3D
+Deform(t: Tetrahedron, mapping: Function1<Point3D, Point3D>): Tetrahedron
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 627
+### Line 627
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 627](../../../../../stdlib/geometry/spatial-primitives.library.plato#L627).
 
@@ -18,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (mapping(t.A), mapping(t.B), mapping(t.C));
 ```
 
-## Line 664
+### Line 664
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 664](../../../../../stdlib/geometry/spatial-primitives.library.plato#L664).
 
@@ -29,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (mapping(q.A), mapping(q.B), mapping(q.C), mapping(q.D));
 ```
 
-## Line 729
+### Line 729
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 729](../../../../../stdlib/geometry/spatial-primitives.library.plato#L729).
 

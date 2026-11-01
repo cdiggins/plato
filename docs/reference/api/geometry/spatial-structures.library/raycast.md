@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Cast a bare ray with no distance bound and no filtering.
+
+## Signature
+
+```plato
+Raycast(self: IRaycast2D, ray: Ray2D): RayHit2D
+Raycast(self: IRaycast3D, ray: Ray3D): RayHit3D
+Raycast(self: Bvh3D, query: RayQuery3D): RayHit3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 405
+### Line 405
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 405](../../../../../stdlib/geometry/spatial-structures.library.plato#L405).
 
@@ -18,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Raycast(self.UnboundedRayQuery(ray));
 ```
 
-## Line 445
+### Line 445
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 445](../../../../../stdlib/geometry/spatial-structures.library.plato#L445).
 
@@ -29,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Raycast(self.UnboundedRayQuery(ray));
 ```
 
-## Line 689
+### Line 689
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 689](../../../../../stdlib/geometry/spatial-structures.library.plato#L689).
 

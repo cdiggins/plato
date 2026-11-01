@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The height above the origin of the ground plane, (0, 0).
+
+## Signature
+
+```plato
+HeightAtOrigin(self: IHeightFieldSurface): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.library](../surfaces.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 449
+### Line 449
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 449](../../../../../stdlib/geometry/surfaces.library.plato#L449).
 

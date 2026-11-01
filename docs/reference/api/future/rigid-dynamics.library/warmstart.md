@@ -3,11 +3,31 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The world with every row's stored impulse re-applied.
+
+## Signature
+
+```plato
+WarmStart(world: RigidWorld3D): RigidWorld3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 728
+### Line 728
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 728](../../../../../stdlib/future/rigid-dynamics.library.plato#L728).
 

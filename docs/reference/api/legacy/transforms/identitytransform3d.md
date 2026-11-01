@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> The transform which does not change anything
+
+## Signature
+
+```plato
+type IdentityTransform3D
+    implements IRotation3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IRotation3D](irotation3d.md).
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 129
+### Line 129
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 129](../../../../../legacy/stdlib-legacy/transforms.plato#L129).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The rectangle's centre: the rounding is symmetric in both axes.
+
+## Signature
+
+```plato
+Centroid(r: RoundedRect2D): Point2D
+Centroid(s: CircularSector): Point2D
+Centroid(s: CircularSegment): Point2D
+Centroid(c: Capsule2D): Point2D
+Centroid(e: Ellipse): Point2D
+Centroid(t: Triangle2D): Point2D
+Centroid(q: Quad2D): Point2D
+Centroid(g: Parallelogram2D): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 8 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 63
+### Line 63
 
 **Source:** [stdlib/geometry/planar.library.plato, line 63](../../../../../stdlib/geometry/planar.library.plato#L63).
 
@@ -18,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Rect.Center;
 ```
 
-## Line 294
+### Line 294
 
 **Source:** [stdlib/geometry/planar.library.plato, line 294](../../../../../stdlib/geometry/planar.library.plato#L294).
 
@@ -38,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 352
+### Line 352
 
 **Source:** [stdlib/geometry/planar.library.plato, line 352](../../../../../stdlib/geometry/planar.library.plato#L352).
 
@@ -60,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 398
+### Line 398
 
 **Source:** [stdlib/geometry/planar.library.plato, line 398](../../../../../stdlib/geometry/planar.library.plato#L398).
 
@@ -71,7 +98,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => c.A.MidPoint(c.B);
 ```
 
-## Line 479
+### Line 479
 
 **Source:** [stdlib/geometry/planar.library.plato, line 479](../../../../../stdlib/geometry/planar.library.plato#L479).
 
@@ -82,7 +109,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => e.Center;
 ```
 
-## Line 676
+### Line 676
 
 **Source:** [stdlib/geometry/planar.library.plato, line 676](../../../../../stdlib/geometry/planar.library.plato#L676).
 
@@ -94,7 +121,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ((t.A.X + t.B.X + t.C.X) / 3.0, (t.A.Y + t.B.Y + t.C.Y) / 3.0);
 ```
 
-## Line 800
+### Line 800
 
 **Source:** [stdlib/geometry/planar.library.plato, line 800](../../../../../stdlib/geometry/planar.library.plato#L800).
 
@@ -107,7 +134,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => q.Points.PolygonAreaCentroid;
 ```
 
-## Line 833
+### Line 833
 
 **Source:** [stdlib/geometry/planar.library.plato, line 833](../../../../../stdlib/geometry/planar.library.plato#L833).
 

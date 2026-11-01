@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every masked edge collapsed at once, subject to the link condition and the
+> adjacent-endpoint rule. `placement` gives the surviving position of each
+> collapsed edge, taking the edge number — the midpoint for a plain collapse,
+> the quadric minimizer for decimation.
+
+## Signature
+
+```plato
+CollapseEdges(self: TriangleMesh3D, topology: TriangleMeshTopology, collapseMask: Array<Boolean>,
+              placement: Function1<Integer, Point3D>): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 516
+### Line 516
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 516](../../../../../stdlib/geometry/remeshing.library.plato#L516).
 

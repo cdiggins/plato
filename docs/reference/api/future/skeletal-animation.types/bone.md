@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A named node in a skeleton hierarchy. Parent indexes the owning skeleton's
+> bone array; -1 marks a root. BindPose is the bone's rest pose relative to its
+> parent (relative to the model for roots).
+
+## Signature
+
+```plato
+type Bone
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [skeletal-animation.types](../skeletal-animation.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 24
+### Line 24
 
 **Source:** [stdlib/future/skeletal-animation.types.plato, line 24](../../../../../stdlib/future/skeletal-animation.types.plato#L24).
 

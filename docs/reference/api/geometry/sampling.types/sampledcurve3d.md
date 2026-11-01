@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A spatial curve recorded at discrete parameters: Parameters and Points have
+> equal length and Parameters ascend. Evaluation between samples
+> interpolates linearly.
+
+## Signature
+
+```plato
+type SampledCurve3D
+    implements IValue, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 28
+### Line 28
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 28](../../../../../stdlib/geometry/sampling.types.plato#L28).
 

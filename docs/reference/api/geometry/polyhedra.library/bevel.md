@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Bevel (omnitruncation): the Conway identity b = ta — truncate the ambo.
+> Cube -> truncated cuboctahedron. Topologically exact; the vertex faces
+> come out as rectangles rather than squares (the uniform bevel is not
+> reachable by literal truncation), which a caller may accept or relax.
+
+## Signature
+
+```plato
+Bevel(self: PolygonMesh3D): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 493
+### Line 493
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 493](../../../../../stdlib/geometry/polyhedra.library.plato#L493).
 

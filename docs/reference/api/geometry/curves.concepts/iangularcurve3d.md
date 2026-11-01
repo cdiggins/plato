@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A space curve whose natural parameter is an angle: helices, torus knots,
+> and the other named space curves that wind about an axis. Implementors
+> supply the angular evaluation; the bridge in `curves.library.plato`
+> derives the canonical evaluation, mapping t in \[0,1\] to one full turn.
+
+## Signature
+
+```plato
+interface IAngularCurve3D
+    inherits ICurve3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICurve3D](icurve3d.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.concepts](../curves.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 73
+### Line 73
 
 **Source:** [stdlib/geometry/curves.concepts.plato, line 73](../../../../../stdlib/geometry/curves.concepts.plato#L73).
 

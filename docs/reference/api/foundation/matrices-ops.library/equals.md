@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Exact element-wise equality. Two matrices differing only by floating-point
+> drift compare unequal.
+
+## Signature
+
+```plato
+Equals(a: Matrix3x2, b: Matrix3x2): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 105
+### Line 105
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 105](../../../../../stdlib/foundation/matrices-ops.library.plato#L105).
 

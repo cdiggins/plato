@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A paint sourced from a texture (`texturing.types.plato`), positioned by an affine transform
+> from texture space into the space of the geometry being filled.
+> (https://en.wikipedia.org/wiki/Texture\_mapping)
+
+## Signature
+
+```plato
+type TexturePaint2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [vector-styling.types](../vector-styling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 58
+### Line 58
 
 **Source:** [stdlib/graphics/vector-styling.types.plato, line 58](../../../../../stdlib/graphics/vector-styling.types.plato#L58).
 

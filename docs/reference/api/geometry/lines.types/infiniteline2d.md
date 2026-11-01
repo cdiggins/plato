@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An infinite straight line in the plane: all points Origin + Direction \* t for
+> any real t. Origin is any point on the line.
+
+## Signature
+
+```plato
+type InfiniteLine2D
+    implements IGeometry2D, IConnected, INearestPoint2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry2D](../geometry.concepts/igeometry2d.md), [IConnected](../geometry.concepts/iconnected.md), [INearestPoint2D](../geometry.concepts/inearestpoint2d.md).
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.types](../lines.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 39
+### Line 39
 
 **Source:** [stdlib/geometry/lines.types.plato, line 39](../../../../../stdlib/geometry/lines.types.plato#L39).
 

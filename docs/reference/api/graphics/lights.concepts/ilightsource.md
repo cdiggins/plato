@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A scene light that can be toggled to cast shadows.
+> (https://en.wikipedia.org/wiki/Computer\_graphics\_lighting)
+
+## Signature
+
+```plato
+interface ILightSource
+    inherits IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IValue](../../foundation/core.concepts/ivalue.md).
+
+Implemented in this tier by: [DirectionalLight](../lights.types/directionallight.md), [PointLight](../lights.types/pointlight.md), [SpotLight](../lights.types/spotlight.md), [AreaLight](../lights.types/arealight.md), [DiskLight](../lights.types/disklight.md), [SphereLight](../lights.types/spherelight.md), [TubeLight](../lights.types/tubelight.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [lights.concepts](../lights.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/lights.concepts.plato, line 1](../../../../../stdlib/graphics/lights.concepts.plato#L1).
 

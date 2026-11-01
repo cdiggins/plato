@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One decimation pass: rank every edge by quadric error and collapse the
+> `budget` cheapest of them that pass the collapse rules and do not cross the
+> boundary. Materially fewer than `budget` collapses land, because no two may
+> have adjacent endpoints; that is what makes several passes the normal way to
+> use this.
+
+## Signature
+
+```plato
+DecimationPass(self: TriangleMesh3D, budget: Integer): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1421
+### Line 1421
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1421](../../../../../stdlib/geometry/remeshing.library.plato#L1421).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A Mobius band: a strip of the given Width whose centerline circle of radius
+> Radius lies in the frame's XY plane, twisted by HalfTwistCount half-turns
+> over one lap (https://en.wikipedia.org/wiki/M%C3%B6bius\_strip). An odd count
+> yields the one-sided surface.
+
+## Signature
+
+```plato
+type MobiusStrip
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.types](../surfaces.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 218
+### Line 218
 
 **Source:** [stdlib/geometry/surfaces.types.plato, line 218](../../../../../stdlib/geometry/surfaces.types.plato#L218).
 

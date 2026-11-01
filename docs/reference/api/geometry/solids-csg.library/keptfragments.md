@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The fragments of a's faces, cut by b's planes, whose centroid's
+> insideness of b equals `keepInside`. The centroid of a convex fragment is
+> interior to it, so it classifies the whole fragment.
+
+## Signature
+
+```plato
+KeptFragments(a: PolygonSoup3D, b: PolygonSoup3D, keepInside: Boolean): Array<Polygon3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 1](../../../../../stdlib/geometry/solids-csg.library.plato#L1).
 

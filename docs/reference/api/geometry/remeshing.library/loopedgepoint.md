@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Loop's new point on one edge: 3/8 to each endpoint and 1/8 to each apex, or
+> the midpoint on a boundary edge, which has only one apex.
+
+## Signature
+
+```plato
+LoopEdgePoint(self: TriangleMesh3D, topology: TriangleMeshTopology, e: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 792
+### Line 792
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 792](../../../../../stdlib/geometry/remeshing.library.plato#L792).
 

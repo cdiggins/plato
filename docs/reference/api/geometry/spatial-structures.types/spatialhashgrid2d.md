@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A sparse uniform grid over the plane, keyed by integer cell coordinate
+> (world position divided by CellSize, floored). Only occupied cells are
+> stored: cell i has coordinate CellCoordinates\[i\] and items
+> ItemIndices\[BucketOffsets\[i\] .. BucketOffsets\[i+1\]) (half-open CSR;
+> BucketOffsets has one more entry than CellCoordinates).
+
+## Signature
+
+```plato
+type SpatialHashGrid2D
+    implements IValue, ISpatialIndex2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [ISpatialIndex2D](../spatial.concepts/ispatialindex2d.md).
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.types](../spatial-structures.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/spatial-structures.types.plato, line 1](../../../../../stdlib/geometry/spatial-structures.types.plato#L1).
 

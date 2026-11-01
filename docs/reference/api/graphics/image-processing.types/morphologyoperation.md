@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A mathematical-morphology operation; Gradient is dilation minus erosion.
+> (https://en.wikipedia.org/wiki/Mathematical\_morphology)
+
+## Signature
+
+```plato
+type MorphologyOperation
+    = Erode | Dilate | Open | Close | TopHat | BlackHat | Gradient
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [image-processing.types](../image-processing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 282
+### Line 282
 
 **Source:** [stdlib/graphics/image-processing.types.plato, line 282](../../../../../stdlib/graphics/image-processing.types.plato#L282).
 

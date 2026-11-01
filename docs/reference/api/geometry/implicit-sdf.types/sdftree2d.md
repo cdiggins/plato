@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A flat planar SDF combination tree. Nodes may only reference lower-indexed
+> nodes; Root is the index of the node producing the final distance. Leaf
+> primitive indices resolve against a caller-supplied list of planar SDFs.
+
+## Signature
+
+```plato
+type SdfTree2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.types](../implicit-sdf.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 352
+### Line 352
 
 **Source:** [stdlib/geometry/implicit-sdf.types.plato, line 352](../../../../../stdlib/geometry/implicit-sdf.types.plato#L352).
 

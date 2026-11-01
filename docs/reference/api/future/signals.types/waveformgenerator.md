@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A pure description of a periodic waveform generator. Phase offsets the
+> start of the cycle.
+> (https://en.wikipedia.org/wiki/Signal\_generator)
+
+## Signature
+
+```plato
+type WaveformGenerator
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [signals.types](../signals.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 255
+### Line 255
 
 **Source:** [stdlib/future/signals.types.plato, line 255](../../../../../stdlib/future/signals.types.plato#L255).
 

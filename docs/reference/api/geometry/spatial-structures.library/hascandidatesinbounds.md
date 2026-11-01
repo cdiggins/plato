@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when any candidate primitive overlaps the bounds.
+
+## Signature
+
+```plato
+HasCandidatesInBounds(self: ISpatialIndex2D, bounds: Bounds2D): Boolean
+HasCandidatesInBounds(self: ISpatialIndex3D, bounds: Bounds3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 377
+### Line 377
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 377](../../../../../stdlib/geometry/spatial-structures.library.plato#L377).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.CandidateCountInBounds(bounds).IsPositive;
 ```
 
-## Line 392
+### Line 392
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 392](../../../../../stdlib/geometry/spatial-structures.library.plato#L392).
 

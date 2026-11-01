@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One triangle's contribution to the gradient at the SECOND shared-edge
+> vertex. The full gradient there is the negated sum of both triangles'
+> contributions; the first shared vertex's gradient is fixed by the
+> requirement that the four gradients sum to zero (a rigid translation
+> cannot change an angle).
+
+## Signature
+
+```plato
+BendEdgeGradientTerm(edge: Vector3D, wing: Vector3D, ownNormal: Vector3D, otherNormal: Vector3D, cosine: Number): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 281
+### Line 281
 
 **Source:** [stdlib/future/cloth.library.plato, line 281](../../../../../stdlib/future/cloth.library.plato#L281).
 

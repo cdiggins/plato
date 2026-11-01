@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A vector in the same direction as self but with the given length.
+> Precondition: self is non-zero.
+
+## Signature
+
+```plato
+ScaledToLength(self: IVector, length: Number): IVector
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 746
+### Line 746
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 746](../../../../../stdlib/foundation/numeric-structures.library.plato#L746).
 

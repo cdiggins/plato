@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> n factorial (n! = 1\*2\*...\*n) as a Number, with 0! = 1! = 1. Exact for
+> n \<= 22 in IEEE double; larger n loses precision and eventually overflows.
+> Precondition: n >= 0.
+> https://en.wikipedia.org/wiki/Factorial
+
+## Signature
+
+```plato
+Factorial(n: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.library](../random.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/random.library.plato, line 1](../../../../../stdlib/foundation/random.library.plato#L1).
 

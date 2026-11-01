@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A reconstruction policy for sampled grids: which interpolation scheme to
+> use between nodes and how to treat out-of-bounds coordinates.
+
+## Signature
+
+```plato
+type GridSamplingScheme
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 351
+### Line 351
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 351](../../../../../stdlib/geometry/sampling.types.plato#L351).
 

@@ -3,11 +3,42 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The unweighted correction one distance constraint asks for: the
+> displacement that would remove the whole error if one end were free and
+> the other infinitely heavy. Each end then takes its own inverse-mass
+> share of it, with opposite signs.
+>
+> `Compliance` is an inverse stiffness in meters per newton and enters as
+> alpha = Compliance / dt^2, the XPBD softening term: zero is a rigid
+> constraint, larger values stretch. `stiffness` is the per-sweep
+> proportion of the error to remove — pass `IterationStiffness` so the
+> felt stiffness does not depend on the iteration count.
+>
+> Two fixed ends, or two coincident positions, ask for nothing.
+
+## Signature
+
+```plato
+DistanceCorrection(vertices: Array<ClothVertex>, c: ClothDistanceConstraint, stiffness: Number, dt: Duration): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 154
+### Line 154
 
 **Source:** [stdlib/future/cloth.library.plato, line 154](../../../../../stdlib/future/cloth.library.plato#L154).
 

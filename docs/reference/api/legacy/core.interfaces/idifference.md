@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> When subtracting values gives us a new type (like Point2D gives Vector2)
+
+## Signature
+
+```plato
+interface IDifference<T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Point2D](../geometry.types/point2d.md), [Point3D](../geometry.types/point3d.md).
+
+## Source
+
 **File:** [core.interfaces](../core.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 149
+### Line 149
 
 **Source:** [legacy/stdlib-legacy/core.interfaces.plato, line 149](../../../../../legacy/stdlib-legacy/core.interfaces.plato#L149).
 

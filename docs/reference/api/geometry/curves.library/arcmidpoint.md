@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point halfway along the curve by arc length.
+
+## Signature
+
+```plato
+ArcMidPoint(self: IArcLengthParameterized<$T>): $T
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 400
+### Line 400
 
 **Source:** [stdlib/geometry/curves.library.plato, line 400](../../../../../stdlib/geometry/curves.library.plato#L400).
 

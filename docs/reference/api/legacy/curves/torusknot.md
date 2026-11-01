@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Torus\_knot
+
+## Signature
+
+```plato
+TorusKnot(t: Angle, p: Number, q: Number): Point3D
+
+type TorusKnot
+    implements IAngularCurve3D, IClosedShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IAngularCurve3D](iangularcurve3d.md), [IClosedShape](../geometry.interfaces/iclosedshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 540
+### Line 540
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 540](../../../../../legacy/stdlib-legacy/curves.plato#L540).
 
@@ -24,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 581
+### Line 581
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 581](../../../../../legacy/stdlib-legacy/curves.plato#L581).
 

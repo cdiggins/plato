@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The barycentric location of the first hit within its struck triangle.
+> Precondition: the query hits a mesh.
+
+## Signature
+
+```plato
+HitBarycentric(self: IRaycast3D, query: RayQuery3D): BarycentricCoordinate
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 477
+### Line 477
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 477](../../../../../stdlib/geometry/spatial-structures.library.plato#L477).
 

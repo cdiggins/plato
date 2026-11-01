@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The complement of FillFraction: the fraction of the dense shape left
+> implicit. This is the number usually quoted as "sparsity".
+
+## Signature
+
+```plato
+Sparsity(self: SparseMatrix): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 335
+### Line 335
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 335](../../../../../stdlib/foundation/matrices.library.plato#L335).
 

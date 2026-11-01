@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar SDF placed by a rigid pose and a uniform scale. Distances are the
+> source field's multiplied by Scale, so the source's fidelity survives: an
+> exact source stays exact. Precondition: Scale is positive.
+
+## Signature
+
+```plato
+type PlacedSdf2D
+    implements IValue, IDifferentiableSignedDistanceField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IDifferentiableSignedDistanceField2D](../implicit-sdf.concepts/idifferentiablesigneddistancefield2d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.types](../implicit-sdf.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 44
+### Line 44
 
 **Source:** [stdlib/geometry/implicit-sdf.types.plato, line 44](../../../../../stdlib/geometry/implicit-sdf.types.plato#L44).
 

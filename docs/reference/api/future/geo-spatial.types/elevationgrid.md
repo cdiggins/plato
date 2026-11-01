@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A regular grid of terrain elevations over a geographic region. Elevations
+> are in meters above the datum's reference surface; the column index runs
+> west to east and the row index runs south to north across Bounds.
+> (https://en.wikipedia.org/wiki/Digital\_elevation\_model)
+
+## Signature
+
+```plato
+type ElevationGrid
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [geo-spatial.types](../geo-spatial.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 91
+### Line 91
 
 **Source:** [stdlib/future/geo-spatial.types.plato, line 91](../../../../../stdlib/future/geo-spatial.types.plato#L91).
 

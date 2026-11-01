@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The first derivative (velocity) of the cubic Bezier:
+> 3(1-t)^2(b - a) + 6(1-t)t(c - b) + 3t^2(d - c).
+
+## Signature
+
+```plato
+CubicBezierDerivative(a: INumerical, b: INumerical, c: INumerical, d: INumerical, t: Number): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Find a root with Newton's method](../../../cookbook/newton-root.md)
+- [Polynomials, series and basis functions](../../../library/foundation/polynomials.md)
+
+## Source
+
 **File:** [polynomials.library](../polynomials.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 112
+### Line 112
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 112](../../../../../stdlib/foundation/polynomials.library.plato#L112).
 

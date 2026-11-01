@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A full 3D projective map, operating on homogeneous coordinates; includes
+> perspective projections. The widest transform of space, and the one
+> `ITransformable3D` carries (https://en.wikipedia.org/wiki/Homography).
+
+## Signature
+
+```plato
+type Transform3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.types](../transforms.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 53
+### Line 53
 
 **Source:** [stdlib/foundation/transforms.types.plato, line 53](../../../../../stdlib/foundation/transforms.types.plato#L53).
 

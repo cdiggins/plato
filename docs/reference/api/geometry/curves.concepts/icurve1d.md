@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A real-valued function of one real parameter, viewed as a curve: profiles,
+> envelopes, cross-section laws, and interpolated channels.
+
+## Signature
+
+```plato
+interface ICurve1D
+    inherits ICurve<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICurve](icurve.md).
+
+Implemented in this tier by: [NaturalCubicSpline1D](../splines.types/naturalcubicspline1d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.concepts](../curves.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 30
+### Line 30
 
 **Source:** [stdlib/geometry/curves.concepts.plato, line 30](../../../../../stdlib/geometry/curves.concepts.plato#L30).
 

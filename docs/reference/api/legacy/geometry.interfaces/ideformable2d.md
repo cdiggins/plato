@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Any type that supports being deformed, by applying a Point3D to Point3D function.
+
+## Signature
+
+```plato
+interface IDeformable2D
+    inherits ITransformable2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ITransformable2D](itransformable2d.md).
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 248
+### Line 248
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 248](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L248).
 

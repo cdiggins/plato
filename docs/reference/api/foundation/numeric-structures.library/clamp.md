@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Restricts every component to the scalar range \[lo, hi\]. Precondition: lo \<= hi.
+
+## Signature
+
+```plato
+Clamp(self: IVector, lo: Number, hi: Number): IVector
+Clamp(self: IVector, lo: IVector, hi: IVector): IVector
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 143
+### Line 143
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 143](../../../../../stdlib/foundation/numeric-structures.library.plato#L143).
 
@@ -18,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.MapComponents(x => x.Clamp(lo, hi));
 ```
 
-## Line 751
+### Line 751
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 751](../../../../../stdlib/foundation/numeric-structures.library.plato#L751).
 

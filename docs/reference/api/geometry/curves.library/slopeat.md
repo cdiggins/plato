@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A central-difference estimate of the first derivative at t using step h.
+> Precondition: h > 0 and t +/- h stay in the domain of interest.
+
+## Signature
+
+```plato
+SlopeAt(self: ICurve1D, t: Number, h: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 55
+### Line 55
 
 **Source:** [stdlib/geometry/curves.library.plato, line 55](../../../../../stdlib/geometry/curves.library.plato#L55).
 

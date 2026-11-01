@@ -3,11 +3,48 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Rounds sharp edges and corners by subtracting Radius from the distance,
+> inflating the shape and smoothing its features.
+
+## Signature
+
+```plato
+type SdfRoundingModifier
+    implements IValue
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_RoundingSubtractsRadius
+
+[stdlib/tests/implicit-sdf.laws.plato, line 285](../../../../../stdlib/tests/implicit-sdf.laws.plato#L285)
+
+```plato
+// Rounding inflates: a positive radius moves every distance inward by exactly
+// that much, so the surface moves outward.
+Law_RoundingSubtractsRadius(radius: Number, distance: Number): Boolean
+    => SdfRoundingModifier(radius).ApplyToDistance(distance).LawEq(distance - radius);
+```
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.types](../implicit-sdf.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 179
+### Line 179
 
 **Source:** [stdlib/geometry/implicit-sdf.types.plato, line 179](../../../../../stdlib/geometry/implicit-sdf.types.plato#L179).
 

@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every item binned into a cell that meets the query bounds.
+
+## Signature
+
+```plato
+CandidatesInBounds(self: SpatialHashGrid2D, bounds: Bounds2D): Array<ItemIndex>
+CandidatesInBounds(self: SpatialHashGrid3D, bounds: Bounds3D): Array<ItemIndex>
+CandidatesInBounds(self: BinningGrid2D, bounds: Bounds2D): Array<ItemIndex>
+CandidatesInBounds(self: BinningGrid3D, bounds: Bounds3D): Array<ItemIndex>
+CandidatesInBounds(self: KdTree2D, bounds: Bounds2D): Array<ItemIndex>
+CandidatesInBounds(self: KdTree3D, bounds: Bounds3D): Array<ItemIndex>
+CandidatesInBounds(self: Bvh2D, bounds: Bounds2D): Array<ItemIndex>
+CandidatesInBounds(self: Bvh3D, bounds: Bounds3D): Array<ItemIndex>
+CandidatesInBounds(self: Quadtree2D, bounds: Bounds2D): Array<ItemIndex>
+CandidatesInBounds(self: Octree3D, bounds: Bounds3D): Array<ItemIndex>
+CandidatesInBounds(self: LooseOctree3D, bounds: Bounds3D): Array<ItemIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 11 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 46
+### Line 46
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 46](../../../../../stdlib/geometry/spatial-structures.library.plato#L46).
 
@@ -18,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.CellCoordinates.Count.Range.FlatMap(i => self.CellCandidates(bounds, i));
 ```
 
-## Line 68
+### Line 68
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 68](../../../../../stdlib/geometry/spatial-structures.library.plato#L68).
 
@@ -29,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.CellCoordinates.Count.Range.FlatMap(i => self.CellCandidates(bounds, i));
 ```
 
-## Line 106
+### Line 106
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 106](../../../../../stdlib/geometry/spatial-structures.library.plato#L106).
 
@@ -40,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.BucketCount.Range.FlatMap(b => self.BucketCandidates(bounds, b));
 ```
 
-## Line 142
+### Line 142
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 142](../../../../../stdlib/geometry/spatial-structures.library.plato#L142).
 
@@ -51,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.BucketCount.Range.FlatMap(b => self.BucketCandidates(bounds, b));
 ```
 
-## Line 226
+### Line 226
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 226](../../../../../stdlib/geometry/spatial-structures.library.plato#L226).
 
@@ -65,7 +95,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : self.KdCandidates(bounds, SpatialNodeIndex(0));
 ```
 
-## Line 308
+### Line 308
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 308](../../../../../stdlib/geometry/spatial-structures.library.plato#L308).
 
@@ -78,7 +108,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : self.KdCandidates(bounds, SpatialNodeIndex(0));
 ```
 
-## Line 594
+### Line 594
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 594](../../../../../stdlib/geometry/spatial-structures.library.plato#L594).
 
@@ -92,7 +122,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : self.BvhCandidates(bounds, SpatialNodeIndex(0));
 ```
 
-## Line 623
+### Line 623
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 623](../../../../../stdlib/geometry/spatial-structures.library.plato#L623).
 
@@ -105,7 +135,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : self.BvhCandidates(bounds, SpatialNodeIndex(0));
 ```
 
-## Line 732
+### Line 732
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 732](../../../../../stdlib/geometry/spatial-structures.library.plato#L732).
 
@@ -118,7 +148,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : self.QuadtreeCandidates(bounds, SpatialNodeIndex(0));
 ```
 
-## Line 766
+### Line 766
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 766](../../../../../stdlib/geometry/spatial-structures.library.plato#L766).
 
@@ -131,7 +161,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : self.OctreeCandidates(bounds, SpatialNodeIndex(0));
 ```
 
-## Line 776
+### Line 776
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 776](../../../../../stdlib/geometry/spatial-structures.library.plato#L776).
 

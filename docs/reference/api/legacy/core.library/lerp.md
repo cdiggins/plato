@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Lerp(a: Number, b: Number, t: Number): Number
+Lerp(a: IVectorLike, b: IVectorLike, t: Number): IVectorLike
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [core.library](../core.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 17
+### Line 17
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 17](../../../../../legacy/stdlib-legacy/core.library.plato#L17).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Lerp(a: Number, b: Number, t: Number): Number => a * t.FromOne + b * t;
 ```
 
-## Line 88
+### Line 88
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 88](../../../../../legacy/stdlib-legacy/core.library.plato#L88).
 

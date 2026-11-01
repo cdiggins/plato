@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point set after one repulsion pass. Every point moves from the same
+> starting configuration — the pass is a simultaneous step, not a sweep — so
+> the result does not depend on the order the points are stored in.
+
+## Signature
+
+```plato
+RepelledPoints2D(region: Bounds2D, points: Array<Point2D>, radius: Number,
+    strength: Number): Array<Point2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 813
+### Line 813
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 813](../../../../../stdlib/geometry/sampling.library.plato#L813).
 

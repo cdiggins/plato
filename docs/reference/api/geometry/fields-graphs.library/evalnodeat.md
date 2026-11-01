@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The value the node at the given index produces.
+
+## Signature
+
+```plato
+EvalNodeAt(graph: ScalarFieldGraph2D, index: FieldNodeIndex, sources: Array<ScalarFunctionField2D>, point: Point2D): Number
+EvalNodeAt(graph: ScalarFieldGraph3D, index: FieldNodeIndex, sources: Array<ScalarFunctionField3D>, point: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-graphs.library](../fields-graphs.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 42
+### Line 42
 
 **Source:** [stdlib/geometry/fields-graphs.library.plato, line 42](../../../../../stdlib/geometry/fields-graphs.library.plato#L42).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => graph.Nodes[index.Value].EvalNode(graph, sources, point);
 ```
 
-## Line 76
+### Line 76
 
 **Source:** [stdlib/geometry/fields-graphs.library.plato, line 76](../../../../../stdlib/geometry/fields-graphs.library.plato#L76).
 

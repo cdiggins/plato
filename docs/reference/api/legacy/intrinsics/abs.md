@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Abs(self: Vector2): Vector2
+Abs(self: Vector3): Vector3
+Abs(self: Vector4): Vector4
+Abs(self: Vector8): Vector8
+Abs(self: Number): Number
+Abs(self: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 105
+### Line 105
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 105](../../../../../legacy/stdlib-legacy/intrinsics.plato#L105).
 
@@ -15,7 +36,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Abs(self: Vector2): Vector2;
 ```
 
-## Line 144
+### Line 144
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 144](../../../../../legacy/stdlib-legacy/intrinsics.plato#L144).
 
@@ -23,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Abs(self: Vector3): Vector3;
 ```
 
-## Line 184
+### Line 184
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 184](../../../../../legacy/stdlib-legacy/intrinsics.plato#L184).
 
@@ -31,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Abs(self: Vector4): Vector4;
 ```
 
-## Line 223
+### Line 223
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 223](../../../../../legacy/stdlib-legacy/intrinsics.plato#L223).
 
@@ -40,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Abs(self: Vector8): Vector8;
 ```
 
-## Line 309
+### Line 309
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 309](../../../../../legacy/stdlib-legacy/intrinsics.plato#L309).
 
@@ -53,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Abs(self: Number): Number;
 ```
 
-## Line 384
+### Line 384
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 384](../../../../../legacy/stdlib-legacy/intrinsics.plato#L384).
 

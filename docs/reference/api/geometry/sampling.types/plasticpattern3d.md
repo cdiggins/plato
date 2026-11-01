@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Plastic (R3) low-discrepancy scattering through a volume: Count terms of the
+> additive recurrence whose three increments are the reciprocal powers of the
+> positive root of x^4 = x + 1, offset by Offset in \[0, 1).
+
+## Signature
+
+```plato
+type PlasticPattern3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 317
+### Line 317
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 317](../../../../../stdlib/geometry/sampling.types.plato#L317).
 

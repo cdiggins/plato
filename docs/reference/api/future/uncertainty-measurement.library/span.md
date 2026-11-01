@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The span from the first reading to the last. Precondition: the run is
+> not empty.
+
+## Signature
+
+```plato
+Span(self: MeasurementSeries<$T>): Duration
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty-measurement.library](../uncertainty-measurement.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 48
+### Line 48
 
 **Source:** [stdlib/future/uncertainty-measurement.library.plato, line 48](../../../../../stdlib/future/uncertainty-measurement.library.plato#L48).
 

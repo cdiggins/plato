@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The hexagon straddling an edge: endpoint, the two shrunk points of the
+> face on the far side, the other endpoint, then the two of the near face.
+> The far side is traversed first for the same winding reason as `Join`.
+> Precondition: `corner` is canonical.
+
+## Signature
+
+```plato
+ChamferFaceOfEdge(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 752
+### Line 752
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 752](../../../../../stdlib/geometry/polyhedra.library.plato#L752).
 

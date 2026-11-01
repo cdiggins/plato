@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Extends the IArray interface with rows and columns.
+
+## Signature
+
+```plato
+interface IArray2D<T>
+    inherits IArray<T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IArray](iarray.md).
+
+Implemented in this tier by: [Array2D](../primitives/array2d.md).
+
+## Source
+
 **File:** [array](../array.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 8
+### Line 8
 
 **Source:** [legacy/stdlib-legacy/array.plato, line 8](../../../../../legacy/stdlib-legacy/array.plato#L8).
 

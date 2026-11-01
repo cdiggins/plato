@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Halton low-discrepancy scattering: Count quasi-random points from radical
+> inverses in bases BaseX and BaseY, which must be coprime (typically 2
+> and 3). Deterministic and progressive: prefixes are well distributed
+> (https://en.wikipedia.org/wiki/Halton\_sequence).
+
+## Signature
+
+```plato
+type HaltonPattern2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 204
+### Line 204
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 204](../../../../../stdlib/geometry/sampling.types.plato#L204).
 

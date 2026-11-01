@@ -3,11 +3,44 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> # Marching cubes — the case table
+>
+> One row of sixteen entries per cube configuration, in configuration order:
+> the edge indices of up to five triangles, three at a time, terminated by
+> -1. Row c begins at c \* 16. Public-domain data from
+> http://paulbourke.net/geometry/polygonise/, transcribed unchanged; the
+> separate edge-mask table of that reference is not needed here, because the
+> first entry of a row already reports an empty configuration.
+>
+> The table is dispatched on `TriangleArray3D` — the type the extraction
+> produces — following the tree's constant idiom, and read as
+> `TriangleArray3D.MarchingCubesCaseTable`. Build it ONCE per extraction and
+> pass it down: an array literal allocates on every evaluation, so calling
+> this from a per-cube body would allocate four thousand entries per cube.
+
+## Signature
+
+```plato
+MarchingCubesCaseTable(_: TriangleArray3D): Array<Integer>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.library](../voxels.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 95
+### Line 95
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 95](../../../../../stdlib/geometry/voxels.library.plato#L95).
 

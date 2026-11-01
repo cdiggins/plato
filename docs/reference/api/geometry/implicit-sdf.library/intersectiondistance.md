@@ -3,11 +3,83 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The intersection of two sampled distances: the maximum. A lower bound:
+> outside a corner the larger of the two distances under-estimates the
+> distance to the corner itself.
+
+## Signature
+
+```plato
+IntersectionDistance(a: Number, b: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SubtractIsIntersectWithComplement
+
+[stdlib/tests/implicit-sdf.laws.plato, line 145](../../../../../stdlib/tests/implicit-sdf.laws.plato#L145)
+
+```plato
+// Subtraction is intersection against the complement, which is what makes the
+// sign convention of Difference consistent with Intersection.
+Law_SubtractIsIntersectWithComplement(a: Number, b: Number): Boolean
+    => SubtractDistance(a, b).LawEq(IntersectionDistance(a, b.Negative));
+```
+
+### Law_IntersectionIsCommutative
+
+[stdlib/tests/implicit-sdf.laws.plato, line 152](../../../../../stdlib/tests/implicit-sdf.laws.plato#L152)
+
+```plato
+Law_IntersectionIsCommutative(a: Number, b: Number): Boolean
+    => IntersectionDistance(a, b).LawEq(IntersectionDistance(b, a));
+```
+
+### Law_IntersectionIsIdempotent
+
+[stdlib/tests/implicit-sdf.laws.plato, line 159](../../../../../stdlib/tests/implicit-sdf.laws.plato#L159)
+
+```plato
+Law_IntersectionIsIdempotent(a: Number): Boolean
+    => IntersectionDistance(a, a).LawEq(a);
+```
+
+### Law_IntersectionIsNoLessThanOperands
+
+[stdlib/tests/implicit-sdf.laws.plato, line 168](../../../../../stdlib/tests/implicit-sdf.laws.plato#L168)
+
+```plato
+// Intersection is the dual: no less than either operand.
+Law_IntersectionIsNoLessThanOperands(a: Number, b: Number): Boolean
+    => IntersectionDistance(a, b) >= a && IntersectionDistance(a, b) >= b;
+```
+
+### Law_SubtractIsIntersectWithComplementOperator
+
+[stdlib/tests/implicit-sdf.laws.plato, line 254](../../../../../stdlib/tests/implicit-sdf.laws.plato#L254)
+
+```plato
+// Difference is intersection against a complement, stated through the operator
+// rather than through raw negation.
+Law_SubtractIsIntersectWithComplementOperator(a: Number, b: Number): Boolean
+    => SubtractDistance(a, b).LawEq(IntersectionDistance(a, ComplementDistance(b)));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 620
+### Line 620
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 620](../../../../../stdlib/geometry/implicit-sdf.library.plato#L620).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Spatial fractal Brownian motion: a sum of Octaves layers of the Basis noise
+> with geometrically scaled frequency and amplitude. The workhorse for
+> terrain, clouds, and natural textures
+> (https://en.wikipedia.org/wiki/Fractional\_Brownian\_motion).
+
+## Signature
+
+```plato
+type FbmNoise3D
+    implements IValue, IScalarField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IScalarField3D](../fields.concepts/iscalarfield3d.md).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.types](../noise.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 203
+### Line 203
 
 **Source:** [stdlib/geometry/noise.types.plato, line 203](../../../../../stdlib/geometry/noise.types.plato#L203).
 

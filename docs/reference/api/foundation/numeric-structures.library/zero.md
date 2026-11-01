@@ -3,11 +3,46 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The vector with every component zero (the additive identity).
+
+## Signature
+
+```plato
+Zero(self: IVector): IVector
+Zero(_: Matrix2x2): Matrix2x2
+Zero(_: Matrix3x3): Matrix3x3
+Zero(_: Matrix4x4): Matrix4x4
+Zero(_: Matrix3x2): Matrix3x2
+Zero(_: Matrix4x3): Matrix4x3
+Zero(x: MatrixN): MatrixN
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 593](../../../../../stdlib/foundation/numeric-structures.library.plato#L593): Transpose cannot (see the TODO above): it must CONSTRUCT a matrix, and
+- [Line 595](../../../../../stdlib/foundation/numeric-structures.library.plato#L595): supplies its own, exactly as the note above prescribes. The fixed-size
+- [Line 598](../../../../../stdlib/foundation/numeric-structures.library.plato#L598): literally. MatrixN carries its shape at runtime and so must keep a real
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 7 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 282
+### Line 282
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 282](../../../../../stdlib/foundation/numeric-structures.library.plato#L282).
 
@@ -24,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Broadcast(0.0);
 ```
 
-## Line 588
+### Line 588
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 588](../../../../../stdlib/foundation/numeric-structures.library.plato#L588).
 
@@ -48,7 +83,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ((0.0, 0.0), (0.0, 0.0));
 ```
 
-## Line 605
+### Line 605
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 605](../../../../../stdlib/foundation/numeric-structures.library.plato#L605).
 
@@ -59,7 +94,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0));
 ```
 
-## Line 609
+### Line 609
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 609](../../../../../stdlib/foundation/numeric-structures.library.plato#L609).
 
@@ -70,7 +105,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ((0.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0, 0.0));
 ```
 
-## Line 613
+### Line 613
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 613](../../../../../stdlib/foundation/numeric-structures.library.plato#L613).
 
@@ -81,7 +116,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ((0.0, 0.0), (0.0, 0.0), (0.0, 0.0));
 ```
 
-## Line 617
+### Line 617
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 617](../../../../../stdlib/foundation/numeric-structures.library.plato#L617).
 
@@ -92,7 +127,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0));
 ```
 
-## Line 621
+### Line 621
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 621](../../../../../stdlib/foundation/numeric-structures.library.plato#L621).
 

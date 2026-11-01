@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A right regular prism: two parallel regular SideCount-gons of circumscribed
+> radius Radius in planes perpendicular to the frame's Z axis, separated by
+> Height and joined by rectangles (https://en.wikipedia.org/wiki/Prism\_(geometry)).
+> (The general polygon-swept prism is Prism3D, `polygons.types.plato`.)
+
+## Signature
+
+```plato
+type RegularPrism
+    implements IConvexSolid, IParametricSurface, IPolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IConvexSolid](../surfaces-solids.concepts/iconvexsolid.md), [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md), [IPolygonMesh3D](../meshes.concepts/ipolygonmesh3d.md).
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.types](../solids.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 160
+### Line 160
 
 **Source:** [stdlib/geometry/solids.types.plato, line 160](../../../../../stdlib/geometry/solids.types.plato#L160).
 

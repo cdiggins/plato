@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The family of matrix types: element access by zero-based row and column.
+
+## Signature
+
+```plato
+interface IMatrix
+    inherits IValue, IAdditive, IScalable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IValue](../core.concepts/ivalue.md), [IAdditive](../algebra.concepts/iadditive.md), [IScalable](../algebra.concepts/iscalable.md).
+
+Implemented in this tier by: [Matrix2x2](../matrices.types/matrix2x2.md), [Matrix3x3](../matrices.types/matrix3x3.md), [Matrix4x4](../matrices.types/matrix4x4.md), [Matrix3x2](../matrices.types/matrix3x2.md), [Matrix4x3](../matrices.types/matrix4x3.md), [MatrixN](../matrices.types/matrixn.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.concepts](../matrices.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/matrices.concepts.plato, line 1](../../../../../stdlib/foundation/matrices.concepts.plato#L1).
 

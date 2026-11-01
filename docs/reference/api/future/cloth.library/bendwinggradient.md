@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The constraint gradient at one WING vertex: how the dihedral angle
+> changes as that wing moves. `ownNormal` is the normal of the triangle
+> this wing belongs to and `otherNormal` the other one.
+
+## Signature
+
+```plato
+BendWingGradient(edge: Vector3D, wing: Vector3D, ownNormal: Vector3D, otherNormal: Vector3D, cosine: Number): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 274
+### Line 274
 
 **Source:** [stdlib/future/cloth.library.plato, line 274](../../../../../stdlib/future/cloth.library.plato#L274).
 

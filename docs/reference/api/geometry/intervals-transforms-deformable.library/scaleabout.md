@@ -3,11 +3,30 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Uniformly scale about `center` by `factor` (1 leaves the shape unchanged).
+
+## Signature
+
+```plato
+ScaleAbout(self: IDeformable2D, center: Point2D, factor: Number): Self
+ScaleAbout(self: IDeformable2D, center: Point2D, factors: Number2): Self
+ScaleAbout(self: IDeformable3D, center: Point3D, factor: Number): Self
+ScaleAbout(self: IDeformable3D, center: Point3D, factors: Number3): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intervals-transforms-deformable.library](../intervals-transforms-deformable.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 20
+### Line 20
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 20](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L20).
 
@@ -18,7 +37,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => center + center.Between(p) * factor);
 ```
 
-## Line 24
+### Line 24
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 24](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L24).
 
@@ -29,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => center + center.Between(p) * factors);
 ```
 
-## Line 83
+### Line 83
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 83](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L83).
 
@@ -40,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => center + center.Between(p) * factor);
 ```
 
-## Line 87
+### Line 87
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 87](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L87).
 

@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Z(self: Vector3): Number
+Z(self: Vector4): Number
+Z(self: Quaternion): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 135
+### Line 135
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 135](../../../../../legacy/stdlib-legacy/intrinsics.plato#L135).
 
@@ -15,7 +37,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Z(self: Vector3): Number;
 ```
 
-## Line 173
+### Line 173
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 173](../../../../../legacy/stdlib-legacy/intrinsics.plato#L173).
 
@@ -23,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Z(self: Vector4): Number;
 ```
 
-## Line 281
+### Line 281
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 281](../../../../../legacy/stdlib-legacy/intrinsics.plato#L281).
 

@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One dual vertex per face, placed by polar reciprocation about the unit
+> sphere: a face lying in the plane { x : x.n = d } (unit normal n, support
+> distance d = n.centroid) reciprocates to the point n / d
+> (https://en.wikipedia.org/wiki/Dual\_polyhedron#Polar\_reciprocation). Every
+> dual face then lies in a plane by construction — all reciprocals of planes
+> through a point v lie in { x : x.v = 1 } — which is what keeps the Catalan
+> solids planar; the face centroids alone do not, and centroid / |centroid|^2
+> is only right when the centroid ray is perpendicular to the face (true for
+> a face with a symmetry axis, false for e.g. the edge-triangles of a snub).
+> Precondition: no face plane passes through the origin.
+
+## Signature
+
+```plato
+PolarVertices(self: PolygonMesh3D): Array<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 262
+### Line 262
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 262](../../../../../stdlib/geometry/polyhedra.library.plato#L262).
 

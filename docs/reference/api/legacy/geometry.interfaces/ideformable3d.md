@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Any type that supports being deformed, by applying a Point3D to Point3D function.
+
+## Signature
+
+```plato
+interface IDeformable3D
+    inherits ITransformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ITransformable3D](itransformable3d.md).
+
+Implemented in this tier by: [Bounds3D](../geometry.types/bounds3d.md), [Line3D](../geometry.types/line3d.md), [Ray3D](../geometry.types/ray3d.md), [Triangle3D](../geometry.types/triangle3d.md), [Quad3D](../geometry.types/quad3d.md).
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 235
+### Line 235
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 235](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L235).
 

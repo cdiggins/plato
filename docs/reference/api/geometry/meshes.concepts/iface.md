@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A face record: the corner loop of one mesh face as vertex indices, wound
+> counter-clockwise when viewed from the front (outside). Count is the face's
+> arity; At(i) is the i-th corner's vertex index, i in \[0, Count) — corners do
+> not wrap, use the wrapping helpers in `meshes.library.plato` to walk
+> the loop. Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+
+## Signature
+
+```plato
+interface IFace
+    inherits IValue, IHashable, IIndexable<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IValue](../../foundation/core.concepts/ivalue.md), [IHashable](../../foundation/core.concepts/ihashable.md), [IIndexable](../../foundation/collections.concepts/iindexable.md).
+
+Implemented in this tier by: [TriangleFace](../meshes.types/triangleface.md), [QuadFace](../meshes.types/quadface.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.concepts](../meshes.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/meshes.concepts.plato, line 1](../../../../../stdlib/geometry/meshes.concepts.plato#L1).
 

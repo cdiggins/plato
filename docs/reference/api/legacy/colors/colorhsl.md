@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/HSL\_and\_HSV
+
+## Signature
+
+```plato
+type ColorHSL
+    implements ICoordinate
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICoordinate](../core.interfaces/icoordinate.md).
+
+## Source
+
 **File:** [colors](../colors.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 62
+### Line 62
 
 **Source:** [legacy/stdlib-legacy/colors.plato, line 62](../../../../../legacy/stdlib-legacy/colors.plato#L62).
 

@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Planar Worley (cellular) noise: distances to randomly scattered feature
+> points, one per lattice cell. Jitter in \[0, 1\] moves feature points from
+> cell centers (0) to fully random positions (1). Produces cellular,
+> crystalline, and cracked patterns; output is non-negative
+> (https://en.wikipedia.org/wiki/Worley\_noise).
+
+## Signature
+
+```plato
+type WorleyNoise2D
+    implements IValue, IScalarField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IScalarField2D](../fields.concepts/iscalarfield2d.md).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.types](../noise.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 121
+### Line 121
 
 **Source:** [stdlib/geometry/noise.types.plato, line 121](../../../../../stdlib/geometry/noise.types.plato#L121).
 

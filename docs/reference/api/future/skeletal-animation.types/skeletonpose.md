@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A full articulation of a skeleton: one local pose per bone, parallel to the
+> owning skeleton's bone array. Composing along parent chains yields
+> model-space poses (https://en.wikipedia.org/wiki/Forward\_kinematics).
+
+## Signature
+
+```plato
+type SkeletonPose
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [skeletal-animation.types](../skeletal-animation.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 45
+### Line 45
 
 **Source:** [stdlib/future/skeletal-animation.types.plato, line 45](../../../../../stdlib/future/skeletal-animation.types.plato#L45).
 

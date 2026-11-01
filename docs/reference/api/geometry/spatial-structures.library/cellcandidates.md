@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The i-th cell's bucket when it meets the query, and nothing when it does not.
+
+## Signature
+
+```plato
+CellCandidates(self: SpatialHashGrid2D, bounds: Bounds2D, i: Integer): Array<ItemIndex>
+CellCandidates(self: SpatialHashGrid3D, bounds: Bounds3D, i: Integer): Array<ItemIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 40
+### Line 40
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 40](../../../../../stdlib/geometry/spatial-structures.library.plato#L40).
 
@@ -20,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : self.ItemIndices.Take(0);
 ```
 
-## Line 62
+### Line 62
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 62](../../../../../stdlib/geometry/spatial-structures.library.plato#L62).
 

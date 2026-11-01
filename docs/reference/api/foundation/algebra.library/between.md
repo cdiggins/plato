@@ -3,11 +3,74 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The displacement from a to b (b - a), matching the IDifference orientation.
+
+## Signature
+
+```plato
+Between(a: IOriginBased<$D>, b: IOriginBased<$D>): $D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_AddBetweenAreInverse2D
+
+[stdlib/tests/foundation.laws.plato, line 126](../../../../../stdlib/tests/foundation.laws.plato#L126)
+
+```plato
+// The orientation contract, stated exactly as the interface documents it:
+// a.Add(a.Between(b)) == b. Between and Add are inverse.
+Law_AddBetweenAreInverse2D(a: Point2D, b: Point2D): Boolean
+    => a.Add(a.Between(b)).Distance(b) <= 1e-4;
+```
+
+### Law_AddBetweenAreInverse3D
+
+[stdlib/tests/foundation.laws.plato, line 129](../../../../../stdlib/tests/foundation.laws.plato#L129)
+
+```plato
+Law_AddBetweenAreInverse3D(a: Point3D, b: Point3D): Boolean
+    => a.Add(a.Between(b)).Distance(b) <= 1e-4;
+```
+
+### Law_AddBetweenAreInverseInstant
+
+[stdlib/tests/foundation.laws.plato, line 133](../../../../../stdlib/tests/foundation.laws.plato#L133)
+
+```plato
+// The same law on the time line, where the delta is a Duration rather than a vector.
+Law_AddBetweenAreInverseInstant(a: Instant, b: Instant): Boolean
+    => a.Add(a.Between(b)).SecondsSinceEpoch.LawEq(b.SecondsSinceEpoch);
+```
+
+### Law_SubtractIsReversedBetween2D
+
+[stdlib/tests/foundation.laws.plato, line 140](../../../../../stdlib/tests/foundation.laws.plato#L140)
+
+```plato
+// The `-` spelling agrees with Between: a - b is the displacement from b to a.
+// This is the derivation that replaced the per-type `Subtract(a, b) => Between(b, a)`.
+// Compared as deltas: `a - b` and `Between` both yield a Vector2D, and Distance is declared
+// between Points, not between displacements.
+Law_SubtractIsReversedBetween2D(a: Point2D, b: Point2D): Boolean
+    => ((a - b) - b.Between(a)).Magnitude <= 1e-4;
+```
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.library](../algebra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 120
+### Line 120
 
 **Source:** [stdlib/foundation/algebra.library.plato, line 120](../../../../../stdlib/foundation/algebra.library.plato#L120).
 

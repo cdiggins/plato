@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The two bodies after one visit to one axis of a ball-and-socket: drive the
+> relative anchor velocity along `axis` to the speed that closes the anchor
+> gap's component on that axis.
+
+## Signature
+
+```plato
+SolveBallSocketAxis(bodies: Array<SolverBody3D>, joint: BallSocketJoint, axis: Vector3D,
+    stiffness: Number, seconds: Number): Array<SolverBody3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 128](../../../../../stdlib/future/joints.library.plato#L128): dependency. It costs iterations, not correctness: the fixed point of the
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [joints.library](../joints.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 114
+### Line 114
 
 **Source:** [stdlib/future/joints.library.plato, line 114](../../../../../stdlib/future/joints.library.plato#L114).
 

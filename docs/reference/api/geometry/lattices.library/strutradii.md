@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One radius per strut, all the same. The uniform case in the shape the
+> graded operators produce, so the two feed the same consumers.
+
+## Signature
+
+```plato
+StrutRadii(struts: Array<Line3D>, radius: Number): Array<Number>
+StrutRadii(struts: Array<Line3D>, radius: IScalarField3D): Array<Number>
+StrutRadii(struts: Array<Line3D>, grading: IScalarField3D, range: NumberInterval): Array<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 487
+### Line 487
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 487](../../../../../stdlib/geometry/lattices.library.plato#L487).
 
@@ -27,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => struts.Map(s => radius);
 ```
 
-## Line 500
+### Line 500
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 500](../../../../../stdlib/geometry/lattices.library.plato#L500).
 
@@ -39,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => struts.Map(s => radius.Eval(s.Centroid));
 ```
 
-## Line 505
+### Line 505
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 505](../../../../../stdlib/geometry/lattices.library.plato#L505).
 

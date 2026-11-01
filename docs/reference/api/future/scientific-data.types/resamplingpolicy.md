@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> How samples are interpolated when a series is resampled onto new times.
+> (https://en.wikipedia.org/wiki/Sample-rate\_conversion)
+
+## Signature
+
+```plato
+type ResamplingPolicy = Nearest | Linear | CubicSpline | HoldPrevious | HoldNext
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.types](../scientific-data.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 170
+### Line 170
 
 **Source:** [stdlib/future/scientific-data.types.plato, line 170](../../../../../stdlib/future/scientific-data.types.plato#L170).
 

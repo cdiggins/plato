@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The intersection of two planar distance fields: the pointwise maximum. A
+> lower bound.
+
+## Signature
+
+```plato
+Intersection(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
+Intersection(a: ScalarFunctionField3D, b: ScalarFunctionField3D): ScalarFunctionField3D
+Intersection(a: FunctionSdf2D, b: FunctionSdf2D): FunctionSdf2D
+Intersection(a: FunctionSdf3D, b: FunctionSdf3D): FunctionSdf3D
+Intersection(a: FunctionRegion2D, b: FunctionRegion2D): FunctionRegion2D
+Intersection(a: FunctionVolume3D, b: FunctionVolume3D): FunctionVolume3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 551
+### Line 551
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 551](../../../../../stdlib/geometry/fields-implicits.library.plato#L551).
 
@@ -19,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Combine(b, (x, y) => x.Max(y));
 ```
 
-## Line 556
+### Line 556
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 556](../../../../../stdlib/geometry/fields-implicits.library.plato#L556).
 
@@ -31,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Combine(b, (x, y) => x.Max(y));
 ```
 
-## Line 760
+### Line 760
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 760](../../../../../stdlib/geometry/fields-implicits.library.plato#L760).
 
@@ -43,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => a.Eval(p).Max(b.Eval(p)));
 ```
 
-## Line 765
+### Line 765
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 765](../../../../../stdlib/geometry/fields-implicits.library.plato#L765).
 
@@ -55,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => a.Eval(p).Max(b.Eval(p)));
 ```
 
-## Line 902
+### Line 902
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 902](../../../../../stdlib/geometry/fields-implicits.library.plato#L902).
 
@@ -66,7 +92,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionRegion2D(p => a.Eval(p) && b.Eval(p));
 ```
 
-## Line 918
+### Line 918
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 918](../../../../../stdlib/geometry/fields-implicits.library.plato#L918).
 

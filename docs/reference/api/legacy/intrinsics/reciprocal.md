@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Reciprocal(self: Vector8): Vector8
+Reciprocal(self: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 225
+### Line 225
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 225](../../../../../legacy/stdlib-legacy/intrinsics.plato#L225).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Reciprocal(self: Vector8): Vector8;
 ```
 
-## Line 342
+### Line 342
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 342](../../../../../legacy/stdlib-legacy/intrinsics.plato#L342).
 

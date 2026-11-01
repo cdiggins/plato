@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The sum of the positions of the boundary neighbours of a boundary vertex, as
+> a vector. There are exactly two on a well-formed border, so the Loop and
+> Catmull-Clark crease rules read it directly.
+
+## Signature
+
+```plato
+BoundaryNeighborSum(self: TriangleMesh3D, topology: TriangleMeshTopology, boundary: Array<Boolean>, v: Integer): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 783
+### Line 783
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 783](../../../../../stdlib/geometry/remeshing.library.plato#L783).
 

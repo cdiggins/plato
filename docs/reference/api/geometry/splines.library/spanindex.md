@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The index of the span containing the canonical parameter t, clamped into
+> \[0, SpanCount - 1\] so that t = 1 lands on the last span rather than one
+> past it. Precondition: count >= 2.
+
+## Signature
+
+```plato
+SpanIndex(count: Integer, closed: Boolean, t: Number): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 286
+### Line 286
 
 **Source:** [stdlib/geometry/splines.library.plato, line 286](../../../../../stdlib/geometry/splines.library.plato#L286).
 

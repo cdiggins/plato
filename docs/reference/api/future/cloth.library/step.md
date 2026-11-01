@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One whole step: `SubStepCount` substeps of `TimeStep / SubStepCount`
+> each. Substepping is the cheapest accuracy there is here — n substeps of
+> one iteration converge better than one substep of n iterations, because
+> each substep also re-reads the forces.
+
+## Signature
+
+```plato
+Step(self: Cloth3D, forces: ParticleForces3D, settings: ClothSolverSettings, time: Number): Cloth3D
+Step(self: ClothMesh3D, forces: ParticleForces3D, settings: ClothSolverSettings, time: Number): ClothMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 695
+### Line 695
 
 **Source:** [stdlib/future/cloth.library.plato, line 695](../../../../../stdlib/future/cloth.library.plato#L695).
 
@@ -26,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 707
+### Line 707
 
 **Source:** [stdlib/future/cloth.library.plato, line 707](../../../../../stdlib/future/cloth.library.plato#L707).
 

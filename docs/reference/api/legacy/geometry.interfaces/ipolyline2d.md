@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Polygonal\_chain
+> Also known as a PolygonalChain
+
+## Signature
+
+```plato
+interface IPolyLine2D
+    inherits IPointGeometry2D, IOpenClosedShape, ICurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IPointGeometry2D](ipointgeometry2d.md), [IOpenClosedShape](iopenclosedshape.md), [ICurve2D](icurve2d.md).
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 155
+### Line 155
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 155](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L155).
 

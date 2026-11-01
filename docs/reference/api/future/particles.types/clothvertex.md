@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One vertex of a position-based cloth or rope. PreviousPosition is the
+> position at the last step (Verlet state); InverseMass is in units of one
+> per kilogram, with 0 meaning infinite mass; Pinned freezes the vertex
+> regardless of mass.
+> (https://en.wikipedia.org/wiki/Verlet\_integration)
+
+## Signature
+
+```plato
+type ClothVertex
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.types](../particles.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 238
+### Line 238
 
 **Source:** [stdlib/future/particles.types.plato, line 238](../../../../../stdlib/future/particles.types.plato#L238).
 

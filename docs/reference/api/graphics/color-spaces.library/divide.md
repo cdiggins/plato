@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Divide every component. Precondition: scalar is non-zero.
+
+## Signature
+
+```plato
+Divide(a: ColorXYZ, scalar: Number): ColorXYZ
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [color-spaces.library](../color-spaces.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/graphics/color-spaces.library.plato, line 93](../../../../../stdlib/graphics/color-spaces.library.plato#L93).
 

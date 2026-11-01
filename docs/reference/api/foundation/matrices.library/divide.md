@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every element divided.
+
+## Signature
+
+```plato
+Divide(self: Matrix2x2, scalar: Number): Matrix2x2
+Divide(self: Matrix3x3, scalar: Number): Matrix3x3
+Divide(self: Matrix4x3, scalar: Number): Matrix4x3
+Divide(self: MatrixN, scalar: Number): MatrixN
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 69
+### Line 69
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 69](../../../../../stdlib/foundation/matrices.library.plato#L69).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Row1 / scalar, self.Row2 / scalar);
 ```
 
-## Line 113
+### Line 113
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 113](../../../../../stdlib/foundation/matrices.library.plato#L113).
 
@@ -29,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Row1 / scalar, self.Row2 / scalar, self.Row3 / scalar);
 ```
 
-## Line 217
+### Line 217
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 217](../../../../../stdlib/foundation/matrices.library.plato#L217).
 
@@ -40,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Row1 / scalar, self.Row2 / scalar, self.Row3 / scalar, self.Row4 / scalar);
 ```
 
-## Line 265
+### Line 265
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 265](../../../../../stdlib/foundation/matrices.library.plato#L265).
 

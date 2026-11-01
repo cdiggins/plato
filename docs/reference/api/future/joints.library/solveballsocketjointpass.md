@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One pass over every ball-and-socket joint.
+
+## Signature
+
+```plato
+SolveBallSocketJointPass(bodies: Array<SolverBody3D>, joints: Array<BallSocketJoint>,
+    stiffness: Number, seconds: Number): Array<SolverBody3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [joints.library](../joints.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 219
+### Line 219
 
 **Source:** [stdlib/future/joints.library.plato, line 219](../../../../../stdlib/future/joints.library.plato#L219).
 

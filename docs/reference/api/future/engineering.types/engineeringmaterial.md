@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An isotropic engineering material. PoissonRatio is dimensionless (typically
+> 0 to 0.5); ThermalExpansion is the linear coefficient in reciprocal kelvin;
+> SpecificHeat is in joules per kilogram-kelvin.
+> (https://en.wikipedia.org/wiki/List\_of\_materials\_properties)
+
+## Signature
+
+```plato
+type EngineeringMaterial
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [engineering.types](../engineering.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 163
+### Line 163
 
 **Source:** [stdlib/future/engineering.types.plato, line 163](../../../../../stdlib/future/engineering.types.plato#L163).
 

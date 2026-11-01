@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Whether the text is a number in the P21 real forms: an optional sign, digits with
+> an optional point and more digits (at least one digit in all), then an optional
+> exponent E or e with an optional sign and digits. "1.", ".5" and "1.E-06" are
+> numbers. Anything else is not: "", ".", "1e", "NaN", "Infinity", "0x10", " 1", and
+> a text whose value rounds to infinity ("1e999"). The form is checked by hand so
+> that every runtime agrees on it; ParseNumber in text.library.plato pairs this with
+> NumberFromText. Witness: IsNumberText("1.E-06") and not IsNumberText("1e").
+
+## Signature
+
+```plato
+IsNumberText(s: String): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics.library](../intrinsics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 186
+### Line 186
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 186](../../../../../stdlib/foundation/intrinsics.library.plato#L186).
 

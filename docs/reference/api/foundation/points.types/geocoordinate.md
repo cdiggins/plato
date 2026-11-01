@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A position on a planet's surface: geodetic latitude, longitude, and altitude
+> above the reference ellipsoid
+> (https://en.wikipedia.org/wiki/Geographic\_coordinate\_system).
+
+## Signature
+
+```plato
+type GeoCoordinate
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [points.types](../points.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 101
+### Line 101
 
 **Source:** [stdlib/foundation/points.types.plato, line 101](../../../../../stdlib/foundation/points.types.plato#L101).
 

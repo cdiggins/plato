@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+type AnglePair
+    implements IInterval<Angle>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IInterval](../core.interfaces/iinterval.md).
+
+## Source
+
 **File:** [core.types](../core.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 33
+### Line 33
 
 **Source:** [legacy/stdlib-legacy/core.types.plato, line 33](../../../../../legacy/stdlib-legacy/core.types.plato#L33).
 

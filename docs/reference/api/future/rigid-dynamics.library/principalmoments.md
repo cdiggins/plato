@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The principal moments a diagonal tensor was built from. Reading only the
+> diagonal is exact when the tensor IS diagonal — which is the case for every
+> shape in this section — and is the principal-frame approximation otherwise.
+
+## Signature
+
+```plato
+PrincipalMoments(tensor: SymmetricMatrix3x3): Vector3D
+PrincipalMoments(s: Sphere, mass: Mass): Vector3D
+PrincipalMoments(b: Box3D, mass: Mass): Vector3D
+PrincipalMoments(c: Cylinder, mass: Mass): Vector3D
+PrincipalMoments(c: Capsule3D, mass: Mass): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 181
+### Line 181
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 181](../../../../../stdlib/future/rigid-dynamics.library.plato#L181).
 
@@ -20,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Vector3D(tensor.M11, tensor.M22, tensor.M33);
 ```
 
-## Line 228
+### Line 228
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 228](../../../../../stdlib/future/rigid-dynamics.library.plato#L228).
 
@@ -36,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 237
+### Line 237
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 237](../../../../../stdlib/future/rigid-dynamics.library.plato#L237).
 
@@ -54,7 +80,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 248
+### Line 248
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 248](../../../../../stdlib/future/rigid-dynamics.library.plato#L248).
 
@@ -71,7 +97,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 258
+### Line 258
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 258](../../../../../stdlib/future/rigid-dynamics.library.plato#L258).
 

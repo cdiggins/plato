@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Circle(t: Angle, center: Point2D, radius: Number): Point2D
+
+type Circle
+   implements IAngularCurve2D, IClosedCurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IAngularCurve2D](iangularcurve2d.md), [IClosedCurve2D](../geometry.interfaces/iclosedcurve2d.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 163
+### Line 163
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 163](../../../../../legacy/stdlib-legacy/curves.plato#L163).
 
@@ -17,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> t.UnitCircle * radius + center;
 ```
 
-## Line 231
+### Line 231
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 231](../../../../../legacy/stdlib-legacy/curves.plato#L231).
 

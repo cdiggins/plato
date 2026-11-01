@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A partition of vertices into connected components. ComponentLabels\[v\] is the
+> zero-based component of vertex v, in \[0, ComponentCount).
+> (https://en.wikipedia.org/wiki/Component\_(graph\_theory))
+
+## Signature
+
+```plato
+type ConnectedComponents
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Graph data and graph summaries](../../../library/foundation/graphs.md)
+
+## Source
+
 **File:** [graphs.types](../graphs.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 158
+### Line 158
 
 **Source:** [stdlib/foundation/graphs.types.plato, line 158](../../../../../stdlib/foundation/graphs.types.plato#L158).
 

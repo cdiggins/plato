@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The cubic (4-point) Bezier at t:
+> (1-t)^3\*a + 3(1-t)^2\*t\*b + 3(1-t)t^2\*c + t^3\*d.
+
+## Signature
+
+```plato
+CubicBezier(a: INumerical, b: INumerical, c: INumerical, d: INumerical, t: Number): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Find a root with Newton's method](../../../cookbook/newton-root.md)
+- [Polynomials, series and basis functions](../../../library/foundation/polynomials.md)
+
+## Source
+
 **File:** [polynomials.library](../polynomials.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 104
+### Line 104
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 104](../../../../../stdlib/foundation/polynomials.library.plato#L104).
 

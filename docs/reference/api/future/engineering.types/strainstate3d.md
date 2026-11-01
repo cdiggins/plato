@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A full 3D strain state at a point, as a symmetric tensor of dimensionless
+> tensor strains. Off-diagonal entries are tensor shears (half the engineering
+> shear strains).
+> (https://en.wikipedia.org/wiki/Infinitesimal\_strain\_theory)
+
+## Signature
+
+```plato
+type StrainState3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [engineering.types](../engineering.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 251
+### Line 251
 
 **Source:** [stdlib/future/engineering.types.plato, line 251](../../../../../stdlib/future/engineering.types.plato#L251).
 

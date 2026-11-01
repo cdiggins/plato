@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A tagged reference to one light: the case picks the typed array of
+> SceneLightSet and IIndex is the position within that array.
+
+## Signature
+
+```plato
+type SceneLightBinding
+    implements IValue
+    = Directional(Index: ItemIndex)
+    | Point(Index: ItemIndex)
+    | Spot(Index: ItemIndex)
+    | Area(Index: ItemIndex)
+    | Disk(Index: ItemIndex)
+    | Sphere(Index: ItemIndex)
+    | Tube(Index: ItemIndex)
+    | Environment(Index: ItemIndex)
+    | ProceduralSkyLight(Index: ItemIndex)
+    | Ambient(Index: ItemIndex)
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [scene3d.types](../scene3d.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 61
+### Line 61
 
 **Source:** [stdlib/graphics/scene3d.types.plato, line 61](../../../../../stdlib/graphics/scene3d.types.plato#L61).
 

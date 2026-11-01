@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One triangle of a full-grid tessellation over a cols x cols vertex
+> lattice (cols = resolution + 1): triangles 2\*cell and 2\*cell + 1 split
+> grid cell `k / 2` along its low-UV-to-high-UV diagonal.
+
+## Signature
+
+```plato
+GridTriangleFace(k: Integer, cols: Integer): TriangleFace
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 268](../../../../../stdlib/geometry/brep.library.plato#L268): The exact-to-discrete seam for BREP shells: sampling each face's surface
+- [Line 269](../../../../../stdlib/geometry/brep.library.plato#L269): over the full unit UV square into an indexed triangle mesh. Like the C#
+- [Line 271](../../../../../stdlib/geometry/brep.library.plato#L271): — exact for the faceted Planar / Bilinear cases whose loops span the whole
+- [Line 272](../../../../../stdlib/geometry/brep.library.plato#L272): patch (Box does), approximate once trimming loops arrive. Triangles wind
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [brep.library](../brep.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 264
+### Line 264
 
 **Source:** [stdlib/geometry/brep.library.plato, line 264](../../../../../stdlib/geometry/brep.library.plato#L264).
 

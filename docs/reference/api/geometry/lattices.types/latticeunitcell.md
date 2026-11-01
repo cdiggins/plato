@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The repeating unit of a strut lattice: nodes in normalized cell coordinates
+> (the unit cube) plus the struts joining them. The same cell tiles at any size,
+> so nothing here carries a world dimension.
+
+## Signature
+
+```plato
+type LatticeUnitCell
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.types](../lattices.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 43
+### Line 43
 
 **Source:** [stdlib/geometry/lattices.types.plato, line 43](../../../../../stdlib/geometry/lattices.types.plato#L43).
 

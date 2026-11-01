@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Segments in space over a shared vertex pool, each spelled as a vertex pair:
+> the storage form of a wireframe. `LineSet3D` is the concrete type.
+
+## Signature
+
+```plato
+interface IIndexedSegmentGeometry3D
+    inherits IIndexedGeometry<Point3D, Line3D, VertexPair>, ISegmentGeometry3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IIndexedGeometry](iindexedgeometry.md), [ISegmentGeometry3D](isegmentgeometry3d.md).
+
+Implemented in this tier by: [LineSet3D](../meshes.types/lineset3d.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.concepts](../meshes.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 185
+### Line 185
 
 **Source:** [stdlib/geometry/meshes.concepts.plato, line 185](../../../../../stdlib/geometry/meshes.concepts.plato#L185).
 

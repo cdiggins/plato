@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The finite-difference step, in the field's input units.
+
+## Signature
+
+```plato
+CurlStep(self: CurlNoise2D): Number
+CurlStep(self: CurlNoise3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 763](../../../../../stdlib/geometry/noise.library.plato#L763): divergence of a curl is identically zero), which is exactly what advecting
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 758
+### Line 758
 
 **Source:** [stdlib/geometry/noise.library.plato, line 758](../../../../../stdlib/geometry/noise.library.plato#L758).
 
@@ -28,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
     CurlStep(self: CurlNoise2D): Number => 0.001;
 ```
 
-## Line 772
+### Line 772
 
 **Source:** [stdlib/geometry/noise.library.plato, line 772](../../../../../stdlib/geometry/noise.library.plato#L772).
 

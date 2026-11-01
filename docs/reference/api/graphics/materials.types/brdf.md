@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The reflectance model a renderer should evaluate.
+> (https://en.wikipedia.org/wiki/Bidirectional\_reflectance\_distribution\_function)
+
+## Signature
+
+```plato
+type Brdf = Lambert | OrenNayar | GgxMetallicRoughness | Disney | Phong | BlinnPhong
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [materials.types](../materials.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 35
+### Line 35
 
 **Source:** [stdlib/graphics/materials.types.plato, line 35](../../../../../stdlib/graphics/materials.types.plato#L35).
 

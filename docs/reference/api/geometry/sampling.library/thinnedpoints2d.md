@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The points thinned evenly down to `count`: point i survives when it is the
+> last one mapping to its slot of the target count, which drops a uniform
+> fraction spread through the whole scan instead of a block of it. Exactly
+> `count` points come back when there are at least that many; a shorter input
+> comes back unchanged. Thinning cannot make a set less blue in the way a
+> prefix would — every surviving pair is still at least a radius apart — but
+> it does leave the set no longer maximal, which the low-frequency end of the
+> spectrum registers.
+
+## Signature
+
+```plato
+ThinnedPoints2D(count: Integer, points: Array<Point2D>): Array<Point2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 736
+### Line 736
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 736](../../../../../stdlib/geometry/sampling.library.plato#L736).
 

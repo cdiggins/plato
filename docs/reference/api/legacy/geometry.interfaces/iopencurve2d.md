@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A 2D curve which is known to be open
+
+## Signature
+
+```plato
+interface IOpenCurve2D
+	inherits ICurve2D, IOpenShape2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICurve2D](icurve2d.md), [IOpenShape2D](iopenshape2d.md).
+
+Implemented in this tier by: [Spiral](../curves/spiral.md), [QuadraticBezier2D](../curves/quadraticbezier2d.md), [CubicBezier2D](../curves/cubicbezier2d.md).
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 103
+### Line 103
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 103](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L103).
 

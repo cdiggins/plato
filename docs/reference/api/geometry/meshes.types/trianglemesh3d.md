@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An indexed triangle mesh in 3D
+> (https://en.wikipedia.org/wiki/Triangle\_mesh): the workhorse interchange
+> representation for surface geometry. Faces index into Positions.
+
+## Signature
+
+```plato
+type TriangleMesh3D
+    implements IValue, ITriangulatedGeometry3D, IIndexedTriangleGeometry3D, IMeshElementCounts, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [ITriangulatedGeometry3D](../meshes.concepts/itriangulatedgeometry3d.md), [IIndexedTriangleGeometry3D](../meshes.concepts/iindexedtrianglegeometry3d.md), [IMeshElementCounts](../topology.concepts/imeshelementcounts.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.types](../meshes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 49
+### Line 49
 
 **Source:** [stdlib/geometry/meshes.types.plato, line 49](../../../../../stdlib/geometry/meshes.types.plato#L49).
 

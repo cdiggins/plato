@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The pieces of one polygon after cutting by every plane in turn: a
+> plane-arrangement subdivision of the polygon, so no piece crosses any of
+> the planes. O(count^2) pieces in the worst case, not 2^count.
+
+## Signature
+
+```plato
+FragmentAgainst(p: Polygon3D, planes: Array<Plane>, tolerance: Number): Array<Polygon3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 194
+### Line 194
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 194](../../../../../stdlib/geometry/solids-csg.library.plato#L194).
 

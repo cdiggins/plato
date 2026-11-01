@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How one region A relates to another region B: no shared points, an overlap
+> without full containment, A fully containing B, or A lying fully inside B.
+
+## Signature
+
+```plato
+type Containment = Disjoint | Intersects | Contains | Within
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.types](../spatial-structures.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 184
+### Line 184
 
 **Source:** [stdlib/geometry/spatial-structures.types.plato, line 184](../../../../../stdlib/geometry/spatial-structures.types.plato#L184).
 

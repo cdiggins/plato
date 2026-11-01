@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The orthographic projection of an arbitrary box given by its edges.
+> Preconditions (unchecked): left != right, bottom != top, zNearPlane != zFarPlane.
+
+## Signature
+
+```plato
+CreateOrthographicOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 610
+### Line 610
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 610](../../../../../stdlib/foundation/matrices-ops.library.plato#L610).
 

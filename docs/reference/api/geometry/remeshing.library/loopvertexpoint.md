@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Where an old vertex moves under Loop. An interior vertex of valence n keeps
+> 1 - n\*beta of itself and spreads beta over each neighbour; a boundary vertex
+> takes the 3/4, 1/8, 1/8 rule over its two boundary neighbours, which keeps
+> the border a cubic B-spline of itself. A vertex with fewer than three
+> neighbours has no rule and stays put.
+
+## Signature
+
+```plato
+LoopVertexPoint(self: TriangleMesh3D, topology: TriangleMeshTopology, neighbors: Array<Array<VertexIndex>>,
+                boundary: Array<Boolean>, v: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 764
+### Line 764
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 764](../../../../../stdlib/geometry/remeshing.library.plato#L764).
 

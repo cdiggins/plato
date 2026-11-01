@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A simplex in N-dimensional space: K + 1 affinely independent vertices span
+> a K-simplex (the vertex count sets the simplex dimension).
+> (https://en.wikipedia.org/wiki/Simplex)
+
+## Signature
+
+```plato
+type SimplexN
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [higher-dimensions.types](../higher-dimensions.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 37
+### Line 37
 
 **Source:** [stdlib/future/higher-dimensions.types.plato, line 37](../../../../../stdlib/future/higher-dimensions.types.plato#L37).
 

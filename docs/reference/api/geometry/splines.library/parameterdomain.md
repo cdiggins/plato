@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The domain of a plane B-spline: its knot vector restricted by its degree.
+
+## Signature
+
+```plato
+ParameterDomain(self: BSplineCurve2D): NumberInterval
+ParameterDomain(self: BSplineCurve3D): NumberInterval
+ParameterDomain(self: NurbsCurve2D): NumberInterval
+ParameterDomain(self: NurbsCurve3D): NumberInterval
+ParameterDomain(self: NaturalCubicSpline1D): NumberInterval
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 139
+### Line 139
 
 **Source:** [stdlib/geometry/splines.library.plato, line 139](../../../../../stdlib/geometry/splines.library.plato#L139).
 
@@ -18,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Knots.Domain(self.Degree);
 ```
 
-## Line 143
+### Line 143
 
 **Source:** [stdlib/geometry/splines.library.plato, line 143](../../../../../stdlib/geometry/splines.library.plato#L143).
 
@@ -29,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Knots.Domain(self.Degree);
 ```
 
-## Line 147
+### Line 147
 
 **Source:** [stdlib/geometry/splines.library.plato, line 147](../../../../../stdlib/geometry/splines.library.plato#L147).
 
@@ -40,7 +64,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Knots.Domain(self.Degree);
 ```
 
-## Line 151
+### Line 151
 
 **Source:** [stdlib/geometry/splines.library.plato, line 151](../../../../../stdlib/geometry/splines.library.plato#L151).
 
@@ -51,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Knots.Domain(self.Degree);
 ```
 
-## Line 585
+### Line 585
 
 **Source:** [stdlib/geometry/splines.library.plato, line 585](../../../../../stdlib/geometry/splines.library.plato#L585).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The shape a stroke takes at the open end of a contour: flat at the
+> endpoint (Butt), a semicircular cap (Round), or flat but extended past the
+> endpoint by half the stroke width (Square).
+
+## Signature
+
+```plato
+type LineCap = Butt | Round | Square
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [vector-styling.types](../vector-styling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 110
+### Line 110
 
 **Source:** [stdlib/graphics/vector-styling.types.plato, line 110](../../../../../stdlib/graphics/vector-styling.types.plato#L110).
 

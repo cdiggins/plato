@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Jittered-grid scattering through a volume: one point per grid cell,
+> displaced from the cell center by JitterAmount in \[0, 1\].
+
+## Signature
+
+```plato
+type JitteredGridPattern3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 271
+### Line 271
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 271](../../../../../stdlib/geometry/sampling.types.plato#L271).
 

@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One Gauss-Seidel sweep over every bend constraint, folded exactly as the
+> distance sweep is.
+
+## Signature
+
+```plato
+SweepBend(vertices: Array<ClothVertex>, constraints: Array<ClothBendConstraint>, stiffness: Number): Array<ClothVertex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 330
+### Line 330
 
 **Source:** [stdlib/future/cloth.library.plato, line 330](../../../../../stdlib/future/cloth.library.plato#L330).
 

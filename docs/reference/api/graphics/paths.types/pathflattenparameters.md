@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Controls for flattening curved segments into line segments. Tolerance is
+> the maximum allowed deviation from the true curve, in path units.
+> MaxSegmentCount caps the lines produced per curve; -1 means no cap.
+
+## Signature
+
+```plato
+type PathFlattenParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [paths.types](../paths.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 104
+### Line 104
 
 **Source:** [stdlib/graphics/paths.types.plato, line 104](../../../../../stdlib/graphics/paths.types.plato#L104).
 

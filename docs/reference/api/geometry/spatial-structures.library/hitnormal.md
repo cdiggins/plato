@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The surface normal at the first hit, pointing against the ray. Precondition: hits.
+
+## Signature
+
+```plato
+HitNormal(self: IRaycast2D, query: RayQuery2D): Direction2D
+HitNormal(self: IRaycast3D, query: RayQuery3D): Direction3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 429
+### Line 429
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 429](../../../../../stdlib/geometry/spatial-structures.library.plato#L429).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Raycast(query).Normal;
 ```
 
-## Line 469
+### Line 469
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 469](../../../../../stdlib/geometry/spatial-structures.library.plato#L469).
 

@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An idealized rope over two pulleys: lengthA + Ratio \* lengthB stays
+> constant, where lengthA runs from GroundAnchorA (world space) to AnchorA
+> and lengthB from GroundAnchorB to AnchorB. Ratio is dimensionless.
+> (https://en.wikipedia.org/wiki/Pulley)
+
+## Signature
+
+```plato
+type PulleyJoint
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [joints.types](../joints.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 158
+### Line 158
 
 **Source:** [stdlib/future/joints.types.plato, line 158](../../../../../stdlib/future/joints.types.plato#L158).
 

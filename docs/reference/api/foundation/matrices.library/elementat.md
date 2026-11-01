@@ -3,11 +3,45 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Element (row, column), zero-based; column indexes into the row vector.
+> Precondition: 0 \<= row \< 2 and 0 \<= column \< 2.
+
+## Signature
+
+```plato
+ElementAt(self: Matrix2x2, row: Integer, column: Integer): Number
+ElementAt(self: Matrix3x3, row: Integer, column: Integer): Number
+ElementAt(self: Matrix4x4, row: Integer, column: Integer): Number
+ElementAt(self: Matrix3x2, row: Integer, column: Integer): Number
+ElementAt(self: Matrix4x3, row: Integer, column: Integer): Number
+ElementAt(self: MatrixN, row: Integer, column: Integer): Number
+ElementAt(self: SparseMatrix, row: Integer, column: Integer): Number
+ElementAt(self: BandedMatrix, row: Integer, column: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 281](../../../../../stdlib/foundation/matrices.library.plato#L281): concatenating two entry lists is exactly matrix addition.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 8 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 38
+### Line 38
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 38](../../../../../stdlib/foundation/matrices.library.plato#L38).
 
@@ -21,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : (column == 0 ? self.Row2.X : self.Row2.Y);
 ```
 
-## Line 86
+### Line 86
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 86](../../../../../stdlib/foundation/matrices.library.plato#L86).
 
@@ -35,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
                      : self.RowElement(self.Row3, column));
 ```
 
-## Line 133
+### Line 133
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 133](../../../../../stdlib/foundation/matrices.library.plato#L133).
 
@@ -50,7 +84,7 @@ Copied from source, comments included. A comment records intent. The body is the
                      : self.RowElement(self.Row4, column)));
 ```
 
-## Line 165
+### Line 165
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 165](../../../../../stdlib/foundation/matrices.library.plato#L165).
 
@@ -64,7 +98,7 @@ Copied from source, comments included. A comment records intent. The body is the
                      : (column == 0 ? self.Row3.X : self.Row3.Y));
 ```
 
-## Line 189
+### Line 189
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 189](../../../../../stdlib/foundation/matrices.library.plato#L189).
 
@@ -79,7 +113,7 @@ Copied from source, comments included. A comment records intent. The body is the
                      : self.RowElement(self.Row4, column)));
 ```
 
-## Line 238
+### Line 238
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 238](../../../../../stdlib/foundation/matrices.library.plato#L238).
 
@@ -91,7 +125,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Components[row * self.NumColumns + column];
 ```
 
-## Line 273
+### Line 273
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 273](../../../../../stdlib/foundation/matrices.library.plato#L273).
 
@@ -122,7 +156,7 @@ Copied from source, comments included. A comment records intent. The body is the
             total + (e.Row == row && e.Column == column ? e.Value : 0.0));
 ```
 
-## Line 374
+### Line 374
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 374](../../../../../stdlib/foundation/matrices.library.plato#L374).
 

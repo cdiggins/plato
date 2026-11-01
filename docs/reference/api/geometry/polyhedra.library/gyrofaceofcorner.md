@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The pentagon a corner contributes: the face centroid, this corner's
+> one-third point, its twin's (the two-thirds point of the same edge), the
+> vertex the corner points at, and the next corner's one-third point. The
+> twin's point is what makes gyro CHIRAL — swapping it for the previous
+> corner's gives the mirror operator.
+
+## Signature
+
+```plato
+GyroFaceOfCorner(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 701
+### Line 701
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 701](../../../../../stdlib/geometry/polyhedra.library.plato#L701).
 

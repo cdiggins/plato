@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The regularized LOWER incomplete gamma function P(a, x), the CDF of the
+> gamma distribution with shape a and unit scale: 0 at x = 0 rising to 1.
+> Series representation below the split x = a + 1, complement of the
+> continued fraction above it. Precondition: a > 0, x >= 0.
+> Expected accuracy: ~1e-13 relative for moderate a.
+> https://en.wikipedia.org/wiki/Incomplete\_gamma\_function#Regularized\_gamma\_functions\_and\_Poisson\_random\_variables
+
+## Signature
+
+```plato
+RegularizedGammaP(a: Number, x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 688
+### Line 688
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 688](../../../../../stdlib/foundation/numbers.library.plato#L688).
 

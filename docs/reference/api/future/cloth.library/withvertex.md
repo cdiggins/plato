@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The vertex array with one vertex replaced.
+
+## Signature
+
+```plato
+WithVertex(self: Array<ClothVertex>, index: VertexIndex, vertex: ClothVertex): Array<ClothVertex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 115](../../../../../stdlib/future/cloth.library.plato#L115): That is the whole cost of doing this purely, and it is worth stating
+- [Line 122](../../../../../stdlib/future/cloth.library.plato#L122): the in-place cost back and stay pure by uniqueness, but it cannot drive
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 106
+### Line 106
 
 **Source:** [stdlib/future/cloth.library.plato, line 106](../../../../../stdlib/future/cloth.library.plato#L106).
 

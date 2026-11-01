@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Pack an array of rows into a JaggedArray: Offsets is the exclusive prefix
+> sum of the row lengths (hence Count + 1 entries, last equal to the total),
+> Values is the rows flattened in order.
+> C# oracle: `Ara3D.Geometry.Primitives.PolygonMesh3D`.
+> The fold runs over integer row LENGTHS rather than over the rows: a lambda
+> parameter that is itself a collection binds Count ambiguously (Array vs the
+> unique List builder), which the checker rejects.
+
+## Signature
+
+```plato
+FromRows(rows: Array<Array<$T>>): JaggedArray<$T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.library](../collections.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 348
+### Line 348
 
 **Source:** [stdlib/foundation/collections.library.plato, line 348](../../../../../stdlib/foundation/collections.library.plato#L348).
 

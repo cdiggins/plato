@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The second derivative of Cubic: 6\*a\*x + 2\*b.
+
+## Signature
+
+```plato
+CubicSecondDerivative(a: INumerical, b: INumerical, c: INumerical, d: INumerical, x: Number): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Find a root with Newton's method](../../../cookbook/newton-root.md)
+- [Polynomials, series and basis functions](../../../library/foundation/polynomials.md)
+
+## Source
+
 **File:** [polynomials.library](../polynomials.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 66
+### Line 66
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 66](../../../../../stdlib/foundation/polynomials.library.plato#L66).
 

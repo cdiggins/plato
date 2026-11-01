@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The link condition (https://en.wikipedia.org/wiki/Edge\_contraction): an edge
+> may be contracted without changing the surface's topology exactly when the
+> vertices adjacent to BOTH its endpoints are precisely the apexes of the
+> triangles sharing it — two in the interior, one on a boundary. Two joined
+> vertices with a third common neighbour elsewhere form a tunnel one edge
+> wide, and contracting that pinches the surface shut.
+>
+> Cheap, despite appearances: with a neighbour table already built, the test
+> is the product of two valences, so it costs about the same as reading the
+> edge.
+
+## Signature
+
+```plato
+SatisfiesLinkCondition(topology: TriangleMeshTopology, neighbors: Array<Array<VertexIndex>>, e: Integer): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 452
+### Line 452
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 452](../../../../../stdlib/geometry/remeshing.library.plato#L452).
 

@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Equals(a: Matrix3x2, b: Matrix3x2): Boolean
+Equals(a: Vector8, b: Vector8): Vector8
+Equals(a: Number, b: Number): Boolean
+Equals(a: IOrderable, b: IOrderable): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 78
+### Line 78
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 78](../../../../../legacy/stdlib-legacy/intrinsics.plato#L78).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Equals(a: Matrix3x2, b: Matrix3x2): Boolean;
 ```
 
-## Line 244
+### Line 244
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 244](../../../../../legacy/stdlib-legacy/intrinsics.plato#L244).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Equals(a: Vector8, b: Vector8): Vector8;
 ```
 
-## Line 359
+### Line 359
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 359](../../../../../legacy/stdlib-legacy/intrinsics.plato#L359).
 
@@ -32,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Equals(a: Number, b: Number): Boolean;
 ```
 
-## Line 369
+### Line 369
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 369](../../../../../legacy/stdlib-legacy/intrinsics.plato#L369).
 

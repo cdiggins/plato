@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when no entry lies off the main diagonal.
+
+## Signature
+
+```plato
+IsDiagonalMatrix(self: SparseMatrix): Boolean
+IsDiagonalMatrix(self: BandedMatrix): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 344
+### Line 344
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 344](../../../../../stdlib/foundation/matrices.library.plato#L344).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Entries.All(e => e.IsDiagonal);
 ```
 
-## Line 390
+### Line 390
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 390](../../../../../stdlib/foundation/matrices.library.plato#L390).
 

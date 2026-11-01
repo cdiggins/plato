@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Multiply(m: Matrix4x4, v: Vector3): Vector3
+Multiply(q: Quaternion, v: Vector3): Vector3
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [vectors](../vectors.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 133
+### Line 133
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 133](../../../../../legacy/stdlib-legacy/vectors.plato#L133).
 
@@ -17,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => m.Transform(v);
 ```
 
-## Line 145
+### Line 145
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 145](../../../../../legacy/stdlib-legacy/vectors.plato#L145).
 

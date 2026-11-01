@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Barr's superellipsoid: the spherical product of two superellipses, scaled by
+> SemiAxes. LatitudeExponent (Barr's e1) shapes the pole-to-pole profile and
+> LongitudeExponent (e2) the horizontal section; both equal to 1 gives the
+> ellipsoid, smaller exponents square it off and larger ones pinch it
+> (https://en.wikipedia.org/wiki/Superellipsoid).
+
+## Signature
+
+```plato
+type Superellipsoid
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.types](../surfaces-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 98
+### Line 98
 
 **Source:** [stdlib/geometry/surfaces-shapes.types.plato, line 98](../../../../../stdlib/geometry/surfaces-shapes.types.plato#L98).
 

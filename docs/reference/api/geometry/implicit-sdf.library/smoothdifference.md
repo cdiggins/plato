@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Smooth difference over blendRadius; bounds stay those of `a` grown by
+> blendRadius — subtraction only shrinks the solid, but the fillet rounds
+> outward at the lip of the cut. Precondition: blendRadius is positive.
+
+## Signature
+
+```plato
+SmoothDifference(a: BoundedSdf2D, b: BoundedSdf2D, blendRadius: Number): BoundedSdf2D
+SmoothDifference(a: BoundedSdf3D, b: BoundedSdf3D, blendRadius: Number): BoundedSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 190
+### Line 190
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 190](../../../../../stdlib/geometry/implicit-sdf.library.plato#L190).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Sdf.SmoothDifference(b.Sdf, blendRadius), GrowBounds(a.Bounds, blendRadius));
 ```
 
-## Line 196
+### Line 196
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 196](../../../../../stdlib/geometry/implicit-sdf.library.plato#L196).
 

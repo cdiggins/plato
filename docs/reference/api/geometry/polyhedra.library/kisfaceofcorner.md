@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The triangle a corner contributes: its own edge, closed onto its face's
+> apex. Wound counter-clockwise seen from outside, like the face it replaces.
+
+## Signature
+
+```plato
+KisFaceOfCorner(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 541](../../../../../stdlib/geometry/polyhedra.library.plato#L541): exact on a mesh whose face planes pass near the origin.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 534
+### Line 534
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 534](../../../../../stdlib/geometry/polyhedra.library.plato#L534).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Marks a shape that contains the entire straight segment between any two of
+> its points. (https://en.wikipedia.org/wiki/Convex\_set)
+
+## Signature
+
+```plato
+interface IConvexShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [HalfSpace](../lines.types/halfspace.md), [HalfPlane2D](../lines.types/halfplane2d.md), [Slab2D](../lines.types/slab2d.md), [Slab3D](../lines.types/slab3d.md), [RoundedRect2D](../planar.types/roundedrect2d.md), [OrientedBox2D](../planar.types/orientedbox2d.md), [RegularPolygon](../planar.types/regularpolygon.md), [Circle](../planar.types/circle.md), [CircularSegment](../planar.types/circularsegment.md), [Capsule2D](../planar.types/capsule2d.md), [Ellipse](../planar.types/ellipse.md), [Triangle2D](../planar.types/triangle2d.md), [Parallelogram2D](../planar.types/parallelogram2d.md), [ConvexPolygon2D](../polygons.types/convexpolygon2d.md), [Box3D](../spatial-primitives.types/box3d.md), [RoundedBox3D](../spatial-primitives.types/roundedbox3d.md), [Cylinder](../spatial-primitives.types/cylinder.md), [Cone](../spatial-primitives.types/cone.md), [ConicalFrustum](../spatial-primitives.types/conicalfrustum.md), [Capsule3D](../spatial-primitives.types/capsule3d.md), [Disk3D](../spatial-primitives.types/disk3d.md), [Triangle3D](../spatial-primitives.types/triangle3d.md), [Tetrahedron](../spatial-primitives.types/tetrahedron.md), [Wedge](../spatial-primitives.types/wedge.md), [ConvexVolume](../spatial-primitives.types/convexvolume.md), [Sphere](../spatial-primitives.types/sphere.md), [SphericalCap](../spatial-primitives.types/sphericalcap.md), [Ellipsoid](../spatial-primitives.types/ellipsoid.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 64
+### Line 64
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 64](../../../../../stdlib/geometry/geometry.concepts.plato#L64).
 

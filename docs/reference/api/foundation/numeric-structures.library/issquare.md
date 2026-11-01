@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the matrix has equal row and column counts.
+
+## Signature
+
+```plato
+IsSquare(self: IMatrix): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 526](../../../../../stdlib/foundation/numeric-structures.library.plato#L526): TODO(interface-gap): Transpose remains blocked — it must CONSTRUCT a matrix, and
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 510
+### Line 510
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 510](../../../../../stdlib/foundation/numeric-structures.library.plato#L510).
 

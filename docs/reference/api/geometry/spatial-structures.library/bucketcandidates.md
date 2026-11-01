@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Bucket b's items when its cell meets the query, and nothing when it does not.
+
+## Signature
+
+```plato
+BucketCandidates(self: BinningGrid2D, bounds: Bounds2D, b: Integer): Array<ItemIndex>
+BucketCandidates(self: BinningGrid3D, bounds: Bounds3D, b: Integer): Array<ItemIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 100
+### Line 100
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 100](../../../../../stdlib/geometry/spatial-structures.library.plato#L100).
 
@@ -20,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : self.ItemIndices.Take(0);
 ```
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 136](../../../../../stdlib/geometry/spatial-structures.library.plato#L136).
 

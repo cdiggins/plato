@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The valence of a vertex, reading the "none" index as the regular six. A
+> boundary edge has no far apex, and the caller rejects such an edge anyway —
+> this only keeps the arithmetic below off a -1 subscript, because `And` is an
+> ordinary function and therefore does not short-circuit.
+
+## Signature
+
+```plato
+ValenceOrRegular(valences: Array<Integer>, vertex: VertexIndex): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 695
+### Line 695
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 695](../../../../../stdlib/geometry/remeshing.library.plato#L695).
 

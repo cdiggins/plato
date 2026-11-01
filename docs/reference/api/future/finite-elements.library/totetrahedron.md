@@ -3,11 +3,31 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The cell as a standalone solid over a point pool.
+
+## Signature
+
+```plato
+ToTetrahedron(c: TetrahedronCell, positions: Array<Point3D>): Tetrahedron
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 353
+### Line 353
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 353](../../../../../stdlib/future/finite-elements.library.plato#L353).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Anything in the plane that can produce a triangulation of itself
+> (https://en.wikipedia.org/wiki/Polygon\_triangulation): polygons, planar
+> regions, 2D meshes.
+
+## Signature
+
+```plato
+interface IMesh2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [TriangleMesh2D](../meshes.types/trianglemesh2d.md), [Polygon2D](../polygons.types/polygon2d.md), [ConvexPolygon2D](../polygons.types/convexpolygon2d.md), [PolygonWithHoles2D](../polygons.types/polygonwithholes2d.md), [PolygonSet2D](../polygons.types/polygonset2d.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.concepts](../meshes.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 42
+### Line 42
 
 **Source:** [stdlib/geometry/meshes.concepts.plato, line 42](../../../../../stdlib/geometry/meshes.concepts.plato#L42).
 

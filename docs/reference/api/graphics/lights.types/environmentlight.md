@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> IImage-based lighting from a cube map (`texturing.types.plato`). Rotation spins the
+> environment about the world up axis. Intensity is a dimensionless scale on
+> stored texel radiance; Tint multiplies it per channel (white = unchanged).
+> (https://en.wikipedia.org/wiki/IImage-based\_lighting)
+
+## Signature
+
+```plato
+type EnvironmentLight
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [lights.types](../lights.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 133
+### Line 133
 
 **Source:** [stdlib/graphics/lights.types.plato, line 133](../../../../../stdlib/graphics/lights.types.plato#L133).
 

@@ -3,11 +3,46 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The scale, rotation and translation the matrix is the product of, paired
+> with whether the extraction succeeded. Ported from System.Numerics: the
+> three linear rows give the scales; the rows are then visited longest-first,
+> each degenerate one (scale below 1e-4) rebuilt from a canonical axis or a
+> cross product so the basis stays complete; a negative determinant means a
+> mirrored basis, so the dominant axis and its scale are flipped. Extraction
+> fails — returning the identity rotation and `false` — when the repaired
+> basis is still not orthonormal (its determinant is not 1), which is what a
+> sheared matrix produces.
+> https://en.wikipedia.org/wiki/Polar\_decomposition
+
+## Signature
+
+```plato
+Decompose(self: Matrix4x4): Tuple4<Number3, Quaternion, Vector3D, Boolean>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 388](../../../../../stdlib/foundation/matrices-ops.library.plato#L388): aligned with the dominant one, so the product cannot be degenerate.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 362
+### Line 362
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 362](../../../../../stdlib/foundation/matrices-ops.library.plato#L362).
 

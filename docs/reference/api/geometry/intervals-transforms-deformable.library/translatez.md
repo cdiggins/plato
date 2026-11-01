@@ -3,11 +3,27 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Translate along +Z by `distance`.
+
+## Signature
+
+```plato
+TranslateZ(self: IDeformable3D, distance: Number): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intervals-transforms-deformable.library](../intervals-transforms-deformable.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 139
+### Line 139
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 139](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L139).
 

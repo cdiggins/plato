@@ -3,11 +3,54 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An affine position measured as a displacement from a distinguished origin.
+> Fixing an origin makes the position space and its delta space interchangeable
+> (in the language of https://en.wikipedia.org/wiki/Torsor, a trivialized
+> torsor), which is what lets Add and Between themselves be derived rather than
+> declared: an implementing type owes only the two conversions below.
+>
+> A Point's origin is (0, 0\[, 0\]); an Instant's is its epoch. Both were already
+> spelling these conversions by hand under other names — PositionVector/ToPoint
+> on the point types, SecondsSinceEpoch on Instant.
+>
+> This is deliberately OPTIONAL and deliberately a SUBTYPE. Optional, because a
+> position type whose delta conversion is not a cheap relabeling — a homogeneous
+> point, where recovering the Cartesian delta needs a divide by W — implements
+> `IDifference` directly and writes Add/Between itself. A subtype, so that a type
+> declares one interface rather than two and cannot claim the conversions while
+> forgetting the affine API they serve.
+
+## Signature
+
+```plato
+interface IOriginBased<TDelta>
+    inherits IDifference<TDelta>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IDifference](idifference.md).
+
+Implemented in this tier by: [Point2D](../points.types/point2d.md), [Point3D](../points.types/point3d.md), [PointN](../points.types/pointn.md), [UvCoordinate](../points.types/uvcoordinate.md), [UvwCoordinate](../points.types/uvwcoordinate.md), [Instant](../time.types/instant.md).
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.concepts](../algebra.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/foundation/algebra.concepts.plato, line 67](../../../../../stdlib/foundation/algebra.concepts.plato#L67).
 

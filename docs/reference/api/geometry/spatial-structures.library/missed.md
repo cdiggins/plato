@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the query strikes nothing.
+
+## Signature
+
+```plato
+Missed(self: IRaycast2D, query: RayQuery2D): Boolean
+Missed(self: IRaycast3D, query: RayQuery3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 417
+### Line 417
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 417](../../../../../stdlib/geometry/spatial-structures.library.plato#L417).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.DidHit(query).Not;
 ```
 
-## Line 457
+### Line 457
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 457](../../../../../stdlib/geometry/spatial-structures.library.plato#L457).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A pure planar space warp: maps every Point2D to a Point2D. Implements are
+> parametric structs (Shear2D, Taper2D, ...); apply with
+> `geom.Deform(d)` / `d.Eval(p)`.
+
+## Signature
+
+```plato
+interface IDeformation2D
+    inherits IProcedural<Point2D, Point2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IProcedural](../../foundation/functional.concepts/iprocedural.md).
+
+Implemented in this tier by: [Shear2D](../deformations.types/shear2d.md), [Taper2D](../deformations.types/taper2d.md), [Twist2D](../deformations.types/twist2d.md), [MappingDeformation2D](../deformations.types/mappingdeformation2d.md).
+
+## Source
+
 **File:** [deformations.concepts](../deformations.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/deformations.concepts.plato, line 1](../../../../../stdlib/geometry/deformations.concepts.plato#L1).
 

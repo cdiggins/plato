@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An instantaneous impulse applied to a planar body: the impulse in
+> newton-seconds and the world-space point of application in meters.
+
+## Signature
+
+```plato
+type AppliedImpulse2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 173
+### Line 173
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 173](../../../../../stdlib/future/rigid-dynamics.types.plato#L173).
 

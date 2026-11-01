@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A flat circular patch: the points of the plane through Center with the given
+> Normal that lie within Radius of Center.
+> (https://en.wikipedia.org/wiki/Disk\_(mathematics))
+
+## Signature
+
+```plato
+type Disk3D
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IManifold, IOrientable, IArea, IBounded3D, ICentered3D, INearestPoint3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IManifold](../geometry.concepts/imanifold.md), [IOrientable](../geometry.concepts/iorientable.md), [IArea](../geometry.concepts/iarea.md), [IBounded3D](../geometry.concepts/ibounded3d.md), [ICentered3D](../geometry.concepts/icentered3d.md), [INearestPoint3D](../geometry.concepts/inearestpoint3d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.types](../spatial-primitives.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 111
+### Line 111
 
 **Source:** [stdlib/geometry/spatial-primitives.types.plato, line 111](../../../../../stdlib/geometry/spatial-primitives.types.plato#L111).
 

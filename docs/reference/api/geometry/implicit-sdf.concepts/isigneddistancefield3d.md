@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A spatial scalar field whose value is the signed distance to a surface:
+> negative inside, zero on the surface, positive outside. The value may be
+> exact, a lower bound, or not a bound at all (fidelity, above).
+
+## Signature
+
+```plato
+interface ISignedDistanceField3D
+    inherits IScalarField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IScalarField3D](../fields.concepts/iscalarfield3d.md).
+
+Implemented in this tier by: [StrutSdf3D](../lattices.types/strutsdf3d.md), [GradedStrutSdf3D](../lattices.types/gradedstrutsdf3d.md), [TpmsNetwork3D](../lattices.types/tpmsnetwork3d.md), [TpmsSheet3D](../lattices.types/tpmssheet3d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.concepts](../implicit-sdf.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 60
+### Line 60
 
 **Source:** [stdlib/geometry/implicit-sdf.concepts.plato, line 60](../../../../../stdlib/geometry/implicit-sdf.concepts.plato#L60).
 

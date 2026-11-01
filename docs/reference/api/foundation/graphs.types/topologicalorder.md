@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A topological ordering of a directed graph. IsValid is false when the graph
+> contains a cycle, in which case OrderedVertexIndices is partial or empty.
+> (https://en.wikipedia.org/wiki/Topological\_sorting)
+
+## Signature
+
+```plato
+type TopologicalOrder
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Graph data and graph summaries](../../../library/foundation/graphs.md)
+
+## Source
+
 **File:** [graphs.types](../graphs.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 168
+### Line 168
 
 **Source:** [stdlib/foundation/graphs.types.plato, line 168](../../../../../stdlib/foundation/graphs.types.plato#L168).
 

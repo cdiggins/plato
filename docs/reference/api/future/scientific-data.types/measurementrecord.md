@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A single timestamped measurement. IValue and Uncertainty are both expressed
+> in Unit; Uncertainty is one standard deviation.
+> (https://en.wikipedia.org/wiki/Measurement\_uncertainty)
+
+## Signature
+
+```plato
+type MeasurementRecord
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.types](../scientific-data.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 44
+### Line 44
 
 **Source:** [stdlib/future/scientific-data.types.plato, line 44](../../../../../stdlib/future/scientific-data.types.plato#L44).
 

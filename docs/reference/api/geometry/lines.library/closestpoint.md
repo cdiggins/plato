@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point of the segment nearest to `point` (the projection clamped to the
+> segment's span).
+
+## Signature
+
+```plato
+ClosestPoint(s: Line2D, point: Point2D): Point2D
+ClosestPoint(s: Line3D, point: Point3D): Point3D
+ClosestPoint(l: InfiniteLine2D, point: Point2D): Point2D
+ClosestPoint(l: InfiniteLine3D, point: Point3D): Point3D
+ClosestPoint(r: Ray2D, point: Point2D): Point2D
+ClosestPoint(r: Ray3D, point: Point3D): Point3D
+ClosestPoint(pl: Plane, point: Point3D): Point3D
+ClosestPoint(h: HalfSpace, point: Point3D): Point3D
+ClosestPoint(h: HalfPlane2D, point: Point2D): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 70](../../../../../stdlib/geometry/lines.library.plato#L70): # Infinite lines and rays
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 9 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 51
+### Line 51
 
 **Source:** [stdlib/geometry/lines.library.plato, line 51](../../../../../stdlib/geometry/lines.library.plato#L51).
 
@@ -19,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ClosestPointOnSegment(s.A, s.B, point);
 ```
 
-## Line 56
+### Line 56
 
 **Source:** [stdlib/geometry/lines.library.plato, line 56](../../../../../stdlib/geometry/lines.library.plato#L56).
 
@@ -30,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ClosestPointOnSegment(s.A, s.B, point);
 ```
 
-## Line 68
+### Line 68
 
 **Source:** [stdlib/geometry/lines.library.plato, line 68](../../../../../stdlib/geometry/lines.library.plato#L68).
 
@@ -50,7 +86,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => l.Origin + l.Direction.Vector * l.Origin.Between(point).Dot(l.Direction.Vector);
 ```
 
-## Line 81
+### Line 81
 
 **Source:** [stdlib/geometry/lines.library.plato, line 81](../../../../../stdlib/geometry/lines.library.plato#L81).
 
@@ -61,7 +97,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => l.Origin + l.Direction.Vector * l.Origin.Between(point).Dot(l.Direction.Vector);
 ```
 
-## Line 85
+### Line 85
 
 **Source:** [stdlib/geometry/lines.library.plato, line 85](../../../../../stdlib/geometry/lines.library.plato#L85).
 
@@ -74,7 +110,7 @@ Copied from source, comments included. A comment records intent. The body is the
             * r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0);
 ```
 
-## Line 91
+### Line 91
 
 **Source:** [stdlib/geometry/lines.library.plato, line 91](../../../../../stdlib/geometry/lines.library.plato#L91).
 
@@ -87,7 +123,7 @@ Copied from source, comments included. A comment records intent. The body is the
             * r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0);
 ```
 
-## Line 264
+### Line 264
 
 **Source:** [stdlib/geometry/lines.library.plato, line 264](../../../../../stdlib/geometry/lines.library.plato#L264).
 
@@ -98,7 +134,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => point - pl.Normal.Vector * pl.SignedDistance(point);
 ```
 
-## Line 378
+### Line 378
 
 **Source:** [stdlib/geometry/lines.library.plato, line 378](../../../../../stdlib/geometry/lines.library.plato#L378).
 
@@ -110,7 +146,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => h.Contains(point) ? point : h.Boundary.ClosestPoint(point);
 ```
 
-## Line 387
+### Line 387
 
 **Source:** [stdlib/geometry/lines.library.plato, line 387](../../../../../stdlib/geometry/lines.library.plato#L387).
 

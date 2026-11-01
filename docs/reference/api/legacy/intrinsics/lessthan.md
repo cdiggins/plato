@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+LessThan(a: Vector8, b: Vector8): Vector8
+LessThan(a: Number, b: Number): Boolean
+LessThan(a: Integer, b: Integer): Boolean
+LessThan(a: Angle, b: Angle): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 246
+### Line 246
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 246](../../../../../legacy/stdlib-legacy/intrinsics.plato#L246).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     LessThan(a: Vector8, b: Vector8): Vector8;
 ```
 
-## Line 362
+### Line 362
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 362](../../../../../legacy/stdlib-legacy/intrinsics.plato#L362).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     LessThan(a: Number, b: Number): Boolean;
 ```
 
-## Line 396
+### Line 396
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 396](../../../../../legacy/stdlib-legacy/intrinsics.plato#L396).
 
@@ -31,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     LessThan(a: Integer, b: Integer): Boolean;
 ```
 
-## Line 433
+### Line 433
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 433](../../../../../legacy/stdlib-legacy/intrinsics.plato#L433).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The tangent: Sin / Cos. Undefined at odd multiples of a quarter turn.
+
+## Signature
+
+```plato
+Tan(self: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Angles and periodic values](../../../library/foundation/angles.md)
+
+## Source
+
 **File:** [angles.library](../angles.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 198
+### Line 198
 
 **Source:** [stdlib/foundation/angles.library.plato, line 198](../../../../../stdlib/foundation/angles.library.plato#L198).
 

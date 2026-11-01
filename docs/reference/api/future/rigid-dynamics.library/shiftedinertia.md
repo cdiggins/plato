@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The inertia tensor of the same body about an axis system displaced by
+> `offset` from the centre of mass: the parallel-axis (Huygens-Steiner)
+> theorem, I' = I + m (|d|^2 E - d d^T). Note that the shifted tensor has
+> off-diagonal terms even when the original does not — a displaced body is not
+> principal about the displaced axes, which is exactly why a compound body
+> needs the full tensor and a primitive does not.
+> (https://en.wikipedia.org/wiki/Parallel\_axis\_theorem)
+
+## Signature
+
+```plato
+ShiftedInertia(tensor: SymmetricMatrix3x3, mass: Mass, offset: Vector3D): SymmetricMatrix3x3
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 187
+### Line 187
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 187](../../../../../stdlib/future/rigid-dynamics.library.plato#L187).
 

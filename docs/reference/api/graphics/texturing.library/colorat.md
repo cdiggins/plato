@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Which of the two colors covers this UV coordinate.
+
+## Signature
+
+```plato
+ColorAt(self: CheckerTexture, uv: UvCoordinate): Color
+ColorAt(self: GradientTexture, uv: UvCoordinate): Color
+ColorAt(self: NoiseTexture, uv: UvCoordinate): Color
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [texturing.library](../texturing.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 32
+### Line 32
 
 **Source:** [stdlib/graphics/texturing.library.plato, line 32](../../../../../stdlib/graphics/texturing.library.plato#L32).
 
@@ -28,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 65
+### Line 65
 
 **Source:** [stdlib/graphics/texturing.library.plato, line 65](../../../../../stdlib/graphics/texturing.library.plato#L65).
 
@@ -41,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Gradient.ColorAtParameter(self.GradientParameter(uv));
 ```
 
-## Line 84
+### Line 84
 
 **Source:** [stdlib/graphics/texturing.library.plato, line 84](../../../../../stdlib/graphics/texturing.library.plato#L84).
 

@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A zero-based index of a body within an external body array (the simulation
+> world's body list). -1 means "none" / "the static environment".
+
+## Signature
+
+```plato
+type BodyIndex
+    implements IValue, IHashable, IComparable, IIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IHashable](../../foundation/core.concepts/ihashable.md), [IComparable](../../foundation/core.concepts/icomparable.md), [IIndex](../../foundation/collections.concepts/iindex.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 1](../../../../../stdlib/future/rigid-dynamics.types.plato#L1).
 

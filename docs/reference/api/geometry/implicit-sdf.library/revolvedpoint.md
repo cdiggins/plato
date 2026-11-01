@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The planar position at which to sample a source being revolved about the Y
+> axis: the distance from the axis, pulled in by offset, becomes the source's X
+> and the height becomes its Y. An offset of zero revolves the shape about its
+> own edge; a positive offset sweeps it around a ring of that radius. Exact
+> when the source is: the map is a rotation of the sampling plane.
+> (IQ: opRevolution.)
+
+## Signature
+
+```plato
+RevolvedPoint(p: Point3D, offset: Number): Point2D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_RevolvedCircleIsSphere
+
+[stdlib/tests/implicit-sdf.laws.plato, line 95](../../../../../stdlib/tests/implicit-sdf.laws.plato#L95)
+
+```plato
+// Revolving about the Y axis with no offset sends a point to its distance from
+// that axis, so a revolved planar circle centred on the axis is a sphere.
+Law_RevolvedCircleIsSphere(p: Point3D, radius: Number): Boolean
+    => DistanceToCircle(RevolvedPoint(p, 0.0), radius).LawEq(DistanceToSphere(p, radius));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 790
+### Line 790
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 790](../../../../../stdlib/geometry/implicit-sdf.library.plato#L790).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unit basis vector along this axis: X => (1,0), Y => (0,1).
+
+## Signature
+
+```plato
+Vector2D(self: Axis2D): Vector2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 84](../../../../../stdlib/foundation/axes.library.plato#L84): out to the geometric vocabulary — basis vector, unit direction, Number tuple,
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [axes.library](../axes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 79
+### Line 79
 
 **Source:** [stdlib/foundation/axes.library.plato, line 79](../../../../../stdlib/foundation/axes.library.plato#L79).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A non-decreasing sequence of parameter values partitioning a B-spline or
+> NURBS domain (https://en.wikipedia.org/wiki/B-spline#Definition). For a
+> curve with N control points of degree D the knot count must be N + D + 1.
+
+## Signature
+
+```plato
+type KnotVector
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.types](../splines.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 80
+### Line 80
 
 **Source:** [stdlib/geometry/splines.types.plato, line 80](../../../../../stdlib/geometry/splines.types.plato#L80).
 

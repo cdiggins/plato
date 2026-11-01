@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the two vertices are already joined by an undirected edge.
+
+## Signature
+
+```plato
+AreAdjacent(edges: Array<VertexPair>, a: VertexIndex, b: VertexIndex): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 577](../../../../../stdlib/geometry/remeshing.library.plato#L577): costs nothing, because a rejected flip is simply reconsidered next pass.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 559
+### Line 559
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 559](../../../../../stdlib/geometry/remeshing.library.plato#L559).
 

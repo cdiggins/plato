@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The input to text layout: styled runs, paragraph settings, and wrapping
+> constraints. MaxWidth is in document units; a negative value means
+> unconstrained. MaxLineCount of -1 means unlimited. Overflow applies when
+> either constraint is exceeded. (https://en.wikipedia.org/wiki/Wrapping\_(text))
+
+## Signature
+
+```plato
+type TextLayout
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [text.types](../text.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 198
+### Line 198
 
 **Source:** [stdlib/graphics/text.types.plato, line 198](../../../../../stdlib/graphics/text.types.plato#L198).
 

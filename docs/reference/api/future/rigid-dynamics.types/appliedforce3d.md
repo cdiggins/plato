@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A force applied to a spatial body: the force in newtons and the world-space
+> point of application in meters.
+
+## Signature
+
+```plato
+type AppliedForce3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 164
+### Line 164
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 164](../../../../../stdlib/future/rigid-dynamics.types.plato#L164).
 

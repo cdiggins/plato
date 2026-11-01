@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unit gradient of spatial lattice cell (ix, iy, iz): a uniform point on
+> the sphere, height sampled first (Archimedes' theorem) and the azimuth
+> taken from a second mix of the same hash.
+
+## Signature
+
+```plato
+LatticeGradient3D(seed: Integer, ix: Integer, iy: Integer, iz: Integer): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 85
+### Line 85
 
 **Source:** [stdlib/geometry/noise.library.plato, line 85](../../../../../stdlib/geometry/noise.library.plato#L85).
 

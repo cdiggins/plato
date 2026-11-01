@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A surface that fully encapsulates a volume
+
+## Signature
+
+```plato
+interface ISolid
+    inherits IProceduralSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IProceduralSurface](iproceduralsurface.md).
+
+Implemented in this tier by: [Sphere](../solids/sphere.md), [Capsule](../solids/capsule.md), [Cone](../solids/cone.md), [ConeSegment](../solids/conesegment.md), [Box](../solids/box.md), [Pyramid](../solids/pyramid.md), [Torus](../solids/torus.md), [NPrism](../solids/nprism.md), [Tube](../solids/tube.md), [NPyramid](../solids/npyramid.md), [Ellipsoid](../solids/ellipsoid.md).
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 173
+### Line 173
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 173](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L173).
 

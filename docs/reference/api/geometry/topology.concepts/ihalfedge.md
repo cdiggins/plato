@@ -3,11 +3,45 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Constant-time navigation over a half-edge structure
+> (https://en.wikipedia.org/wiki/Doubly\_connected\_edge\_list). Callers must not
+> pass -1; boundary conditions surface as -1 results (e.g. TwinOf on a
+> boundary half-edge).
+>
+> Deliberately does NOT inherit MeshIncidence: answering an incidence query
+> from half-edges means walking a face loop or a vertex fan and materializing
+> an array, which is a build step rather than a constant-time read. A
+> half-edge type is free to implement both.
+
+## Signature
+
+```plato
+interface IHalfEdge
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [HalfEdgeMesh](../topology.types/halfedgemesh.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.concepts](../topology.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 55
+### Line 55
 
 **Source:** [stdlib/geometry/topology.concepts.plato, line 55](../../../../../stdlib/geometry/topology.concepts.plato#L55).
 

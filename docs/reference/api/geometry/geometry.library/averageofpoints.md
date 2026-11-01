@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The vertex centroid of a non-empty point list: the componentwise arithmetic
+> mean, treating every listed point as an equal point mass. Distinct from
+> PolygonAreaCentroid, which weights by enclosed area; the two agree only for
+> shapes whose vertices are uniformly distributed. Precondition: at least one point.
+
+## Signature
+
+```plato
+AverageOfPoints(points: Array<Point2D>): Point2D
+AverageOfPoints(points: Array<Point3D>): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 384
+### Line 384
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 384](../../../../../stdlib/geometry/geometry.library.plato#L384).
 
@@ -22,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
             SumOf(points.Map(p => p.Y)) / points.Count.ToNumber);
 ```
 
-## Line 392
+### Line 392
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 392](../../../../../stdlib/geometry/geometry.library.plato#L392).
 

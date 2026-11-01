@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The paint source a region is filled with: a single flat color, one of three
+> gradient kinds, or a texture. Exactly one source applies per paint.
+
+## Signature
+
+```plato
+type Paint
+    implements IValue
+    = Solid(Color: Color)                  // a single flat color
+    | Linear(Gradient: LinearGradient2D)   // linear (axial) gradient
+    | Radial(Gradient: RadialGradient2D)   // radial (two-circle) gradient
+    | Sweep(Gradient: SweepGradient2D)     // angular sweep gradient
+    | Texture(Paint: TexturePaint2D)
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [vector-styling.types](../vector-styling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 68
+### Line 68
 
 **Source:** [stdlib/graphics/vector-styling.types.plato, line 68](../../../../../stdlib/graphics/vector-styling.types.plato#L68).
 

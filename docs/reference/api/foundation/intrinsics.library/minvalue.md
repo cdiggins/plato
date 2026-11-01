@@ -3,11 +3,29 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Representation limits and the one constant that is not a formula over
+> another. Tau = 2 Pi and E = Exp(1) are derived.
+
+## Signature
+
+```plato
+MinValue(_: Number): Number
+MinValue(_: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics.library](../intrinsics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 89
+### Line 89
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 89](../../../../../stdlib/foundation/intrinsics.library.plato#L89).
 
@@ -18,7 +36,7 @@ Copied from source, comments included. A comment records intent. The body is the
     MinValue(_: Number): Number;
 ```
 
-## Line 126
+### Line 126
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 126](../../../../../stdlib/foundation/intrinsics.library.plato#L126).
 

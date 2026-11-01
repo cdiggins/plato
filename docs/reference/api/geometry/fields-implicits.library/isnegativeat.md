@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True where the field is strictly negative at the point. Note: near-zero
+> values classify by sign noise; use IsNearLevelAt around zero for balance.
+
+## Signature
+
+```plato
+IsNegativeAt(self: IScalarField2D, point: Point2D): Boolean
+IsNegativeAt(self: IScalarField3D, point: Point3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 57
+### Line 57
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 57](../../../../../stdlib/geometry/fields-implicits.library.plato#L57).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(point) < 0.0;
 ```
 
-## Line 83
+### Line 83
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 83](../../../../../stdlib/geometry/fields-implicits.library.plato#L83).
 

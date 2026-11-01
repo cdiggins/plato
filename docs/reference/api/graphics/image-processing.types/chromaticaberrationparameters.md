@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Chromatic aberration: radial separation of the color channels away from
+> Center (normalized UV), Strength in pixels at the frame corner.
+> (https://en.wikipedia.org/wiki/Chromatic\_aberration)
+
+## Signature
+
+```plato
+type ChromaticAberrationParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [image-processing.types](../image-processing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 394
+### Line 394
 
 **Source:** [stdlib/graphics/image-processing.types.plato, line 394](../../../../../stdlib/graphics/image-processing.types.plato#L394).
 

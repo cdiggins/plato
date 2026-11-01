@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A buoyancy force model for bodies in a liquid half-space. The fluid fills
+> everything below SurfaceHeight measured along UpAxis; FluidVelocity is the
+> current in meters per second used for relative drag.
+> (https://en.wikipedia.org/wiki/Buoyancy)
+
+## Signature
+
+```plato
+type BuoyancyModel
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 247
+### Line 247
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 247](../../../../../stdlib/future/rigid-dynamics.types.plato#L247).
 

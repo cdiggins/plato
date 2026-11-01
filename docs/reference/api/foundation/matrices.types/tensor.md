@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A dense multi-dimensional numeric array with arbitrary rank
+> (https://en.wikipedia.org/wiki/Tensor). Extents lists the size of each
+> dimension; storage is row-major.
+
+## Signature
+
+```plato
+type Tensor
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.types](../matrices.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 92
+### Line 92
 
 **Source:** [stdlib/foundation/matrices.types.plato, line 92](../../../../../stdlib/foundation/matrices.types.plato#L92).
 

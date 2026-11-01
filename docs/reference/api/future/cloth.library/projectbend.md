@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One bend constraint projected: all four vertices displaced along their
+> own gradients, each by its inverse-mass share, in a single rebuild.
+> The leading 4 is the coefficient of the cited derivation; callers who
+> tune bending by feel fold it into `stiffness`.
+>
+> A configuration exactly folded flat (cosine = -1 or +1) has a vanishing
+> gradient and asks for nothing, which is correct: the constraint has no
+> preferred direction to unfold in.
+
+## Signature
+
+```plato
+ProjectBend(vertices: Array<ClothVertex>, c: ClothBendConstraint, stiffness: Number): Array<ClothVertex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 290
+### Line 290
 
 **Source:** [stdlib/future/cloth.library.plato, line 290](../../../../../stdlib/future/cloth.library.plato#L290).
 

@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A time-frequency magnitude map from a short-time transform. The column
+> index of Magnitudes selects the time frame (frame j starts at j \* TimeStep)
+> and the row index selects the frequency bin (bin k at k \* BinWidth).
+> (https://en.wikipedia.org/wiki/Spectrogram)
+
+## Signature
+
+```plato
+type Spectrogram
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [signals.types](../signals.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 59
+### Line 59
 
 **Source:** [stdlib/future/signals.types.plato, line 59](../../../../../stdlib/future/signals.types.plato#L59).
 

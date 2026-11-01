@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True for every vertex that lies on the surface boundary. Boundary vertices
+> are pinned by the smoothing passes and refused by the collapse passes, which
+> is what stops a remesh from eroding an open border.
+
+## Signature
+
+```plato
+BoundaryVertexFlags(self: TriangleMesh3D, topology: TriangleMeshTopology): Array<Boolean>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 196
+### Line 196
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 196](../../../../../stdlib/geometry/remeshing.library.plato#L196).
 

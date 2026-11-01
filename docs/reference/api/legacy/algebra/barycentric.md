@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Barycentric interpolation (e.g. triangle): at uv=(0,0) -> v1, (1,0) -> v2, (0,1) -> v3
+
+## Signature
+
+```plato
+Barycentric(v1: INumerical, v2: INumerical, v3: INumerical, uv: Vector2): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [algebra](../algebra.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [legacy/stdlib-legacy/algebra.plato, line 1](../../../../../legacy/stdlib-legacy/algebra.plato#L1).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed volume the faces enclose, by the divergence theorem: one third
+> of the sum over faces of centroid . vectorArea
+> (https://en.wikipedia.org/wiki/Divergence\_theorem). Positive for a closed
+> mesh wound counter-clockwise seen from outside; a negative reading means
+> the winding is inverted, and a reading near zero on a mesh with faces means
+> it is not closed.
+
+## Signature
+
+```plato
+EnclosedVolume(self: PolygonMesh3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 868
+### Line 868
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 868](../../../../../stdlib/geometry/polyhedra.library.plato#L868).
 

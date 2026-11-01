@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The radical inverse of `index` in the given base: the base's digits of the
+> index, mirrored about the point. The van der Corput sequence, and the
+> one-dimensional building block of both Halton and Hammersley. Zero for a
+> non-positive index or a base below two.
+> https://en.wikipedia.org/wiki/Van\_der\_Corput\_sequence
+
+## Signature
+
+```plato
+RadicalInverse(index: Integer, base: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 314
+### Line 314
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 314](../../../../../stdlib/geometry/sampling.library.plato#L314).
 

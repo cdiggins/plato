@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The dimensionless mobility of a motion kind: 1 for a body that responds to
+> impulses, 0 for one that does not. The single place in this library that
+> reads `BodyMotion`, so that the solver itself has no case analysis and no
+> branch a static body can take by accident.
+
+## Signature
+
+```plato
+MobilityScale(motion: BodyMotion): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 339](../../../../../stdlib/future/rigid-dynamics.library.plato#L339): applying I^-1 is then a rotation into the principal frame, three multiplies,
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 333
+### Line 333
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 333](../../../../../stdlib/future/rigid-dynamics.library.plato#L333).
 

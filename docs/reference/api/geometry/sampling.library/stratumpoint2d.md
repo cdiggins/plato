@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The k-th sample of stratum `s`, counted row-major: uniform within the
+> stratum, its two coordinates from two independent streams of that
+> stratum's hash. Stratifying bounds the variance of a Monte Carlo estimate
+> without correlating the samples, which is why the draw stays uniform inside
+> the cell rather than being pulled toward its center.
+
+## Signature
+
+```plato
+StratumPoint2D(region: Bounds2D, strataCounts: IntegerVector2, seed: Integer,
+    s: Integer, k: Integer): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 491
+### Line 491
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 491](../../../../../stdlib/geometry/sampling.library.plato#L491).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The fitted value at x: Slope \* x + Intercept.
+
+## Signature
+
+```plato
+Predict(self: LinearFit, x: Number): Number
+Predict(self: PolynomialFit, x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Summarize a sample](../../../cookbook/sample-statistics.md)
+- [Statistics, covariance and fitted models](../../../library/foundation/statistics.md)
+
+## Source
+
 **File:** [statistics.library](../statistics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 234
+### Line 234
 
 **Source:** [stdlib/foundation/statistics.library.plato, line 234](../../../../../stdlib/foundation/statistics.library.plato#L234).
 
@@ -24,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Slope * x + self.Intercept;
 ```
 
-## Line 262
+### Line 262
 
 **Source:** [stdlib/foundation/statistics.library.plato, line 262](../../../../../stdlib/foundation/statistics.library.plato#L262).
 

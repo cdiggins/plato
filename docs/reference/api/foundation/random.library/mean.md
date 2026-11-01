@@ -3,11 +3,76 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The midpoint of the interval: (Min + Max) / 2.
+
+## Signature
+
+```plato
+Mean(self: UniformDistribution): Number
+Mean(self: LogNormalDistribution): Number
+Mean(self: ExponentialDistribution): Number
+Mean(self: GammaDistribution): Number
+Mean(self: BetaDistribution): Number
+Mean(self: ChiSquaredDistribution): Number
+Mean(self: StudentTDistribution): Number
+Mean(self: CauchyDistribution): Number
+Mean(self: LaplaceDistribution): Number
+Mean(self: WeibullDistribution): Number
+Mean(self: ParetoDistribution): Number
+Mean(self: TriangularDistribution): Number
+Mean(self: VonMisesDistribution): Number
+Mean(self: BernoulliDistribution): Number
+Mean(self: BinomialDistribution): Number
+Mean(self: GeometricDistribution): Number
+Mean(self: PoissonDistribution): Number
+Mean(self: DiscreteDistribution): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 120](../../../../../stdlib/foundation/random.library.plato#L120): Pdf and Mean here is exact; the Cdf of the two normal forms inherits the
+- [Line 127](../../../../../stdlib/foundation/random.library.plato#L127): Precondition: Min \< Max (the degenerate Min == Max case divides by zero).
+- [Line 177](../../../../../stdlib/foundation/random.library.plato#L177): of X. Support is x > 0. Precondition: LogStandardDeviation > 0.
+- [Line 209](../../../../../stdlib/foundation/random.library.plato#L209): Support is x >= 0. Precondition: Rate > 0.
+- [Line 242](../../../../../stdlib/foundation/random.library.plato#L242): The accuracy of each body is bounded by the accuracy stated on those
+- [Line 250](../../../../../stdlib/foundation/random.library.plato#L250): Precondition: Shape > 0 and Scale > 0.
+- [Line 281](../../../../../stdlib/foundation/random.library.plato#L281): interval \[0, 1\]. Precondition: Alpha > 0 and Beta > 0.
+- [Line 315](../../../../../stdlib/foundation/random.library.plato#L315): normals summed. Support is x > 0. Precondition: DegreesOfFreedom > 0.
+- [Line 349](../../../../../stdlib/foundation/random.library.plato#L349): Precondition: DegreesOfFreedom > 0.
+- [Line 389](../../../../../stdlib/foundation/random.library.plato#L389): here are exact closed forms except the von Mises CDF (which has no closed
+- [Line 393](../../../../../stdlib/foundation/random.library.plato#L393): their accuracy is bounded by the accuracy stated on those functions.
+- [Line 400](../../../../../stdlib/foundation/random.library.plato#L400): Cauchy distribution has none. Precondition: Scale > 0.
+- [Line 435](../../../../../stdlib/foundation/random.library.plato#L435): Precondition: Scale > 0.
+- [Line 461](../../../../../stdlib/foundation/random.library.plato#L461): Weibull with location 0, support x >= 0. Precondition: Shape > 0 and
+- [Line 495](../../../../../stdlib/foundation/random.library.plato#L495): x >= MinimumValue. Precondition: MinimumValue > 0 and Shape > 0.
+- [Line 528](../../../../../stdlib/foundation/random.library.plato#L528): support the closed interval \[a, b\]. Precondition: a \<= c \<= b and a \< b.
+- [Line 574](../../../../../stdlib/foundation/random.library.plato#L574): Pdf/Cdf take the angle in radians as a Number, per the type's doc comment.
+- [Line 640](../../../../../stdlib/foundation/random.library.plato#L640): CDFs sum the masses directly — exact in form and O(k) — because their closed
+- [Line 681](../../../../../stdlib/foundation/random.library.plato#L681): mass at the value rounded down. Precondition: TrialCount >= 0.
+- [Line 729](../../../../../stdlib/foundation/random.library.plato#L729): Precondition: SuccessProbability > 0.
+- [Line 759](../../../../../stdlib/foundation/random.library.plato#L759): window, not a per-unit-time rate to be multiplied by a duration. Support
+- [Line 761](../../../../../stdlib/foundation/random.library.plato#L761): Precondition: Rate > 0.
+
+## Used by
+
+- [Summarize a sample](../../../cookbook/sample-statistics.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.library](../random.library.md). Kind: function. 18 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 113
+### Line 113
 
 **Source:** [stdlib/foundation/random.library.plato, line 113](../../../../../stdlib/foundation/random.library.plato#L113).
 
@@ -34,7 +99,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Min + self.Max) / 2.0;
 ```
 
-## Line 171
+### Line 171
 
 **Source:** [stdlib/foundation/random.library.plato, line 171](../../../../../stdlib/foundation/random.library.plato#L171).
 
@@ -53,7 +118,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.LogMean + self.LogStandardDeviation.Square / 2.0).Exp;
 ```
 
-## Line 204
+### Line 204
 
 **Source:** [stdlib/foundation/random.library.plato, line 204](../../../../../stdlib/foundation/random.library.plato#L204).
 
@@ -71,7 +136,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 1.0 / self.Rate;
 ```
 
-## Line 232
+### Line 232
 
 **Source:** [stdlib/foundation/random.library.plato, line 232](../../../../../stdlib/foundation/random.library.plato#L232).
 
@@ -102,7 +167,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Shape * self.Scale;
 ```
 
-## Line 276
+### Line 276
 
 **Source:** [stdlib/foundation/random.library.plato, line 276](../../../../../stdlib/foundation/random.library.plato#L276).
 
@@ -120,7 +185,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Alpha / (self.Alpha + self.Beta);
 ```
 
-## Line 310
+### Line 310
 
 **Source:** [stdlib/foundation/random.library.plato, line 310](../../../../../stdlib/foundation/random.library.plato#L310).
 
@@ -138,7 +203,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.DegreesOfFreedom;
 ```
 
-## Line 343
+### Line 343
 
 **Source:** [stdlib/foundation/random.library.plato, line 343](../../../../../stdlib/foundation/random.library.plato#L343).
 
@@ -158,7 +223,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 0.0;
 ```
 
-## Line 380
+### Line 380
 
 **Source:** [stdlib/foundation/random.library.plato, line 380](../../../../../stdlib/foundation/random.library.plato#L380).
 
@@ -193,7 +258,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Location;
 ```
 
-## Line 429
+### Line 429
 
 **Source:** [stdlib/foundation/random.library.plato, line 429](../../../../../stdlib/foundation/random.library.plato#L429).
 
@@ -212,7 +277,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Location;
 ```
 
-## Line 456
+### Line 456
 
 **Source:** [stdlib/foundation/random.library.plato, line 456](../../../../../stdlib/foundation/random.library.plato#L456).
 
@@ -231,7 +296,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Scale * Gamma(1.0 + 1.0 / self.Shape);
 ```
 
-## Line 489
+### Line 489
 
 **Source:** [stdlib/foundation/random.library.plato, line 489](../../../../../stdlib/foundation/random.library.plato#L489).
 
@@ -251,7 +316,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Shape * self.MinimumValue / (self.Shape - 1.0);
 ```
 
-## Line 523
+### Line 523
 
 **Source:** [stdlib/foundation/random.library.plato, line 523](../../../../../stdlib/foundation/random.library.plato#L523).
 
@@ -269,7 +334,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Min + self.Mode + self.Max) / 3.0;
 ```
 
-## Line 568
+### Line 568
 
 **Source:** [stdlib/foundation/random.library.plato, line 568](../../../../../stdlib/foundation/random.library.plato#L568).
 
@@ -288,7 +353,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.MeanDirection.Radians;
 ```
 
-## Line 633
+### Line 633
 
 **Source:** [stdlib/foundation/random.library.plato, line 633](../../../../../stdlib/foundation/random.library.plato#L633).
 
@@ -317,7 +382,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.SuccessProbability.Value;
 ```
 
-## Line 675
+### Line 675
 
 **Source:** [stdlib/foundation/random.library.plato, line 675](../../../../../stdlib/foundation/random.library.plato#L675).
 
@@ -336,7 +401,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.TrialCount.ToNumber * self.SuccessProbability.Value;
 ```
 
-## Line 722
+### Line 722
 
 **Source:** [stdlib/foundation/random.library.plato, line 722](../../../../../stdlib/foundation/random.library.plato#L722).
 
@@ -356,7 +421,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (1.0 - self.SuccessProbability.Value) / self.SuccessProbability.Value;
 ```
 
-## Line 754
+### Line 754
 
 **Source:** [stdlib/foundation/random.library.plato, line 754](../../../../../stdlib/foundation/random.library.plato#L754).
 
@@ -376,7 +441,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Rate;
 ```
 
-## Line 808
+### Line 808
 
 **Source:** [stdlib/foundation/random.library.plato, line 808](../../../../../stdlib/foundation/random.library.plato#L808).
 

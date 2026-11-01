@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A heavy-tailed distribution with undefined moments: Mean and Variance
+> conventionally report Location and positive infinity.
+
+## Signature
+
+```plato
+type CauchyDistribution
+    implements IProbabilityDistribution
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IProbabilityDistribution](../random.concepts/iprobabilitydistribution.md).
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.types](../random.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 77
+### Line 77
 
 **Source:** [stdlib/foundation/random.types.plato, line 77](../../../../../stdlib/foundation/random.types.plato#L77).
 

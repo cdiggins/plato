@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Archimedean\_spiral
+
+## Signature
+
+```plato
+ArchimedeanSpiral(t: Angle, a: Number, b: Number): Number
+
+type ArchimedeanSpiral
+    implements IPolarCurve, IOpenShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IPolarCurve](ipolarcurve.md), [IOpenShape](../geometry.interfaces/iopenshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 355
+### Line 355
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 355](../../../../../legacy/stdlib-legacy/curves.plato#L355).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a + b * t.Turns;
 ```
 
-## Line 435
+### Line 435
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 435](../../../../../legacy/stdlib-legacy/curves.plato#L435).
 

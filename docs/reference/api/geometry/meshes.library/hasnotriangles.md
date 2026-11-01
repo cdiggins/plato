@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the geometry exposes no triangles. Kept as HasNoTriangles rather
+> than IsEmpty: TriangleMesh3D is both ITriangulatedGeometry3D and
+> IMeshElementCounts, so an IsEmpty here would collide with
+> IMeshElementCounts.IsEmpty (vertex-based).
+
+## Signature
+
+```plato
+HasNoTriangles(self: ITriangulatedGeometry3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 301
+### Line 301
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 301](../../../../../stdlib/geometry/meshes.library.plato#L301).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True where the value at the point is smaller at the later instant than the
+> earlier one.
+
+## Signature
+
+```plato
+HasDecreasedBetween(self: ITimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Boolean
+HasDecreasedBetween(self: ITimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1083
+### Line 1083
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1083](../../../../../stdlib/geometry/fields-implicits.library.plato#L1083).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.EvalAtTime(point, later) < self.EvalAtTime(point, earlier);
 ```
 
-## Line 1107
+### Line 1107
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1107](../../../../../stdlib/geometry/fields-implicits.library.plato#L1107).
 

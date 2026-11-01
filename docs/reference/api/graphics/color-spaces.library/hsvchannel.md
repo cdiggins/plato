@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One channel of the hexcone: the piecewise-linear wave for a channel offset
+> `shift` sectors around the wheel from red. `k` is the hue in sectors
+> (six per turn), and the wave is 1 at the channel's own sector, falling
+> linearly to 0 two sectors away.
+
+## Signature
+
+```plato
+HsvChannel(self: ColorHSV, shift: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [color-spaces.library](../color-spaces.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/color-spaces.library.plato, line 1](../../../../../stdlib/graphics/color-spaces.library.plato#L1).
 

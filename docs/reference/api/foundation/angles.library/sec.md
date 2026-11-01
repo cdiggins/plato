@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The secant: the reciprocal of the cosine.
+
+## Signature
+
+```plato
+Sec(x: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 106](../../../../../stdlib/foundation/angles.library.plato#L106): Each is undefined (division by zero) where the corresponding primary
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Angles and periodic values](../../../library/foundation/angles.md)
+
+## Source
+
 **File:** [angles.library](../angles.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 102
+### Line 102
 
 **Source:** [stdlib/foundation/angles.library.plato, line 102](../../../../../stdlib/foundation/angles.library.plato#L102).
 

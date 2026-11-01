@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Two half-edges per undirected edge on the interior, but only one along a
+> boundary — so the count is the number of half-edges less the twinned ones
+> halved: (halfEdges + boundaryHalfEdges) / 2, which is the same as counting
+> each half-edge once and each twinned pair once.
+
+## Signature
+
+```plato
+UndirectedEdgeCount(self: HalfEdgeMesh): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.library](../topology.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 70
+### Line 70
 
 **Source:** [stdlib/geometry/topology.library.plato, line 70](../../../../../stdlib/geometry/topology.library.plato#L70).
 

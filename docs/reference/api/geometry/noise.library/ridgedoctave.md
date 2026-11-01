@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The ridged contribution of octave k.
+
+## Signature
+
+```plato
+RidgedOctave(basis: NoiseBasis, seed: Integer, frequency: Number, lacunarity: Number, gain: Number, offset: Number, p: Point2D, k: Integer): Number
+RidgedOctave(basis: NoiseBasis, seed: Integer, frequency: Number, lacunarity: Number, gain: Number, offset: Number, p: Point3D, k: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 663
+### Line 663
 
 **Source:** [stdlib/geometry/noise.library.plato, line 663](../../../../../stdlib/geometry/noise.library.plato#L663).
 
@@ -29,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 678
+### Line 678
 
 **Source:** [stdlib/geometry/noise.library.plato, line 678](../../../../../stdlib/geometry/noise.library.plato#L678).
 

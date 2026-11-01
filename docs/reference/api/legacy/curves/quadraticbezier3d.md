@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/B%C3%A9zier\_curve
+
+## Signature
+
+```plato
+type QuadraticBezier3D
+    implements IOpenShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IOpenShape](../geometry.interfaces/iopenshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 517
+### Line 517
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 517](../../../../../legacy/stdlib-legacy/curves.plato#L517).
 

@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Replaces a solid with Count concentric shells spaced by Thickness, like
+> the layers of an onion. Count of 1 is equivalent to a single shell.
+
+## Signature
+
+```plato
+type SdfOnionModifier
+    implements IValue
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SingleOnionDepthIsThickness
+
+[stdlib/tests/implicit-sdf.laws.plato, line 295](../../../../../stdlib/tests/implicit-sdf.laws.plato#L295)
+
+```plato
+// An onion of one layer reaches exactly one thickness inward.
+Law_SingleOnionDepthIsThickness(thickness: Number): Boolean
+    => SdfOnionModifier(thickness, 1).TotalDepth.LawEq(thickness);
+```
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.types](../implicit-sdf.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 203
+### Line 203
 
 **Source:** [stdlib/geometry/implicit-sdf.types.plato, line 203](../../../../../stdlib/geometry/implicit-sdf.types.plato#L203).
 

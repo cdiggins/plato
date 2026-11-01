@@ -3,11 +3,45 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A one-element array when `present` and an empty one otherwise: the array
+> spelling of a maybe. Written as a range of length 0 or 1 rather than as a
+> literal because an EMPTY array literal carries no element type for the
+> checker to read.
+>
+> The value is evaluated either way — Plato is strict, and this is a function,
+> not a conditional — so every caller below must be able to compute a harmless
+> value in the absent case. That is why each pair test guards its divisions
+> rather than relying on the flag to skip them.
+
+## Signature
+
+```plato
+MaybeOne(present: Boolean, value: $T): Array<$T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 107](../../../../../stdlib/future/collision.library.plato#L107): refinements whose termination is a tolerance choice rather than a formula,
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 97
+### Line 97
 
 **Source:** [stdlib/future/collision.library.plato, line 97](../../../../../stdlib/future/collision.library.plato#L97).
 

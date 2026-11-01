@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The impulse increment that changes the relative speed along a direction from
+> `current` to `target`, given the pair's effective mass there. A pair with no
+> mobility along that direction has an infinite effective compliance and takes
+> no impulse.
+
+## Signature
+
+```plato
+ImpulseFor(target: Number, current: Number, effectiveMass: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 632](../../../../../stdlib/future/rigid-dynamics.library.plato#L632): contact exactly, in ignorance of the others.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 620
+### Line 620
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 620](../../../../../stdlib/future/rigid-dynamics.library.plato#L620).
 

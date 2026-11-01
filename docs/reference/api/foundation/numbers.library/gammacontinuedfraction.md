@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Legendre continued fraction for the upper function, evaluated
+> bottom-up: F(k) = x + 2k + 1 - a - (k+1)(k+1-a) / F(k+1), truncated at
+> a fixed depth of 120 levels. Q(a, x) then equals
+> exp(a\*ln(x) - x - LogGamma(a)) / F(0). Converges rapidly for the
+> x >= a + 1 region it is used in.
+
+## Signature
+
+```plato
+GammaContinuedFraction(a: Number, x: Number, k: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 676
+### Line 676
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 676](../../../../../stdlib/foundation/numbers.library.plato#L676).
 

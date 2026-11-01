@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Total order by seconds since the epoch.
+
+## Signature
+
+```plato
+LessThanOrEquals(a: Instant, b: Instant): Boolean
+LessThanOrEquals(a: FrameTime, b: FrameTime): Boolean
+LessThanOrEquals(a: BeatTime, b: BeatTime): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 61](../../../../../stdlib/foundation/time.library.plato#L61): FrameTime that is the FRAME NUMBER, not the wall-clock instant: comparing
+- [Line 62](../../../../../stdlib/foundation/time.library.plato#L62): two frame times under different rates would need a common time line, and
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [time.library](../time.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 39
+### Line 39
 
 **Source:** [stdlib/foundation/time.library.plato, line 39](../../../../../stdlib/foundation/time.library.plato#L39).
 
@@ -18,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.SecondsSinceEpoch <= b.SecondsSinceEpoch;
 ```
 
-## Line 56
+### Line 56
 
 **Source:** [stdlib/foundation/time.library.plato, line 56](../../../../../stdlib/foundation/time.library.plato#L56).
 
@@ -38,7 +67,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Frame <= b.Frame;
 ```
 
-## Line 69
+### Line 69
 
 **Source:** [stdlib/foundation/time.library.plato, line 69](../../../../../stdlib/foundation/time.library.plato#L69).
 

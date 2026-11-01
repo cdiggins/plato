@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Can be carried through any transform of the plane, yielding a new Self.
+> Transform2D is the widest 2D map (`transforms.types.plato`), so every other
+> representation reaches this one member by converting up to it.
+
+## Signature
+
+```plato
+interface ITransformable2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Point2D](../points.types/point2d.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.concepts](../transforms.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/transforms.concepts.plato, line 1](../../../../../stdlib/foundation/transforms.concepts.plato#L1).
 

@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A spatial vector field with first derivatives: the Jacobian, its trace
+> (divergence), and the curl vector
+> (https://en.wikipedia.org/wiki/Jacobian\_matrix\_and\_determinant).
+
+## Signature
+
+```plato
+interface IDifferentiableVectorField3D
+    inherits IVectorField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IVectorField3D](ivectorfield3d.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields.concepts](../fields.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 138
+### Line 138
 
 **Source:** [stdlib/geometry/fields.concepts.plato, line 138](../../../../../stdlib/geometry/fields.concepts.plato#L138).
 

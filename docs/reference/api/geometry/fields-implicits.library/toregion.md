@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The region a planar SDF induces: inside is where the distance is negative.
+> Discards the distance, keeping only membership — and `< 0.0` also excludes
+> the zero level set — so this stays an explicit ToX, never a conversion.
+
+## Signature
+
+```plato
+ToRegion(self: ISignedDistanceField2D): FunctionRegion2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 742
+### Line 742
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 742](../../../../../stdlib/geometry/fields-implicits.library.plato#L742).
 

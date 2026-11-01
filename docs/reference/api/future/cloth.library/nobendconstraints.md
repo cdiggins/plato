@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An empty bend-constraint array. The tree's constant idiom dispatches on
+> an ignored receiver of the result type; the result type here is a generic
+> `Array`, so its element type stands in, and it reads as
+> `ClothBendConstraint.NoBendConstraints`.
+
+## Signature
+
+```plato
+NoBendConstraints(_: ClothBendConstraint): Array<ClothBendConstraint>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 341
+### Line 341
 
 **Source:** [stdlib/future/cloth.library.plato, line 341](../../../../../stdlib/future/cloth.library.plato#L341).
 

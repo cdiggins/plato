@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True: the receiver is statically known to be a closed shape.
+
+## Signature
+
+```plato
+IsClosed(self: IClosedShape): Boolean
+IsClosed(self: IOpenShape): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 39
+### Line 39
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 39](../../../../../stdlib/geometry/geometry.library.plato#L39).
 
@@ -35,7 +56,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => true;
 ```
 
-## Line 60
+### Line 60
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 60](../../../../../stdlib/geometry/geometry.library.plato#L60).
 

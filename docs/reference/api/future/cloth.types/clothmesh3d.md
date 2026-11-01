@@ -3,11 +3,42 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A cloth together with the polygon face table it was built from. The table is
+> never touched by the solver — only positions move — so
+> `ToPolygonMesh` (`cloth.library.plato`) rebuilds the source mesh exactly,
+> with the simulated positions substituted in.
+>
+> Faces indexes into the same vertex numbering as `Cloth.Vertices`: vertex i of
+> the cloth is position i of the mesh.
+
+## Signature
+
+```plato
+type ClothMesh3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.types](../cloth.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 88
+### Line 88
 
 **Source:** [stdlib/future/cloth.types.plato, line 88](../../../../../stdlib/future/cloth.types.plato#L88).
 

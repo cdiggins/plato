@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The triangles of one cube, wound counter-clockwise seen from outside the
+> extracted region. Empty for the two uncut configurations.
+
+## Signature
+
+```plato
+MarchingCubesCell(table: Array<Integer>, cell: IntegerVector3, valueAt: Function3<Integer, Integer, Integer, Number>, pointAt: Function3<Integer, Integer, Integer, Point3D>, isoLevel: Number)
+    : Array<Triangle3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.library](../voxels.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 453
+### Line 453
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 453](../../../../../stdlib/geometry/voxels.library.plato#L453).
 

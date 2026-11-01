@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Gray-code accumulator behind the second Sobol dimension: bit k of the
+> index, when set, exclusive-ors in the k-th direction number, and the
+> direction numbers of the primitive polynomial x + 1 are generated from the
+> leading one by v -> v xor (v >> 1).
+
+## Signature
+
+```plato
+SobolGrayCode(index: Integer, direction: Integer, accumulated: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 342
+### Line 342
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 342](../../../../../stdlib/geometry/sampling.library.plato#L342).
 

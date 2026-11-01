@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The 2D unit vector along +X: (1, 0).
+
+## Signature
+
+```plato
+UnitX(_: Vector2D): Vector2D
+UnitX(_: Vector3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [constants.library](../constants.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 121
+### Line 121
 
 **Source:** [stdlib/foundation/constants.library.plato, line 121](../../../../../stdlib/foundation/constants.library.plato#L121).
 
@@ -24,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Vector2D(1.0, 0.0);
 ```
 
-## Line 135
+### Line 135
 
 **Source:** [stdlib/foundation/constants.library.plato, line 135](../../../../../stdlib/foundation/constants.library.plato#L135).
 

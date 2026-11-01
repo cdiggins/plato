@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+ClosedV(s: Sphere): Boolean
+ClosedV(s: Ellipsoid): Boolean
+ClosedV(s: Torus): Boolean
+ClosedV(s: Cylinder): Boolean
+ClosedV(s: Cone): Boolean
+ClosedV(s: ConicalFrustum): Boolean
+ClosedV(s: Capsule3D): Boolean
+ClosedV(s: CylindricalShell): Boolean
+ClosedV(s: RegularPrism): Boolean
+ClosedV(s: RegularPyramid): Boolean
+ClosedV(s: SquarePyramid): Boolean
+ClosedV(s: Box3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.library](../solids.library.md). Kind: function. 12 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 117
+### Line 117
 
 **Source:** [stdlib/geometry/solids.library.plato, line 117](../../../../../stdlib/geometry/solids.library.plato#L117).
 
@@ -15,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Sphere): Boolean => false;
 ```
 
-## Line 128
+### Line 128
 
 **Source:** [stdlib/geometry/solids.library.plato, line 128](../../../../../stdlib/geometry/solids.library.plato#L128).
 
@@ -23,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Ellipsoid): Boolean => false;
 ```
 
-## Line 141
+### Line 141
 
 **Source:** [stdlib/geometry/solids.library.plato, line 141](../../../../../stdlib/geometry/solids.library.plato#L141).
 
@@ -31,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Torus): Boolean => true;
 ```
 
-## Line 152
+### Line 152
 
 **Source:** [stdlib/geometry/solids.library.plato, line 152](../../../../../stdlib/geometry/solids.library.plato#L152).
 
@@ -39,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Cylinder): Boolean => false;
 ```
 
-## Line 163
+### Line 163
 
 **Source:** [stdlib/geometry/solids.library.plato, line 163](../../../../../stdlib/geometry/solids.library.plato#L163).
 
@@ -47,7 +78,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Cone): Boolean => false;
 ```
 
-## Line 174
+### Line 174
 
 **Source:** [stdlib/geometry/solids.library.plato, line 174](../../../../../stdlib/geometry/solids.library.plato#L174).
 
@@ -55,7 +86,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: ConicalFrustum): Boolean => false;
 ```
 
-## Line 196
+### Line 196
 
 **Source:** [stdlib/geometry/solids.library.plato, line 196](../../../../../stdlib/geometry/solids.library.plato#L196).
 
@@ -63,7 +94,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Capsule3D): Boolean => false;
 ```
 
-## Line 210
+### Line 210
 
 **Source:** [stdlib/geometry/solids.library.plato, line 210](../../../../../stdlib/geometry/solids.library.plato#L210).
 
@@ -71,7 +102,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: CylindricalShell): Boolean => false;
 ```
 
-## Line 226
+### Line 226
 
 **Source:** [stdlib/geometry/solids.library.plato, line 226](../../../../../stdlib/geometry/solids.library.plato#L226).
 
@@ -79,7 +110,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: RegularPrism): Boolean => false;
 ```
 
-## Line 237
+### Line 237
 
 **Source:** [stdlib/geometry/solids.library.plato, line 237](../../../../../stdlib/geometry/solids.library.plato#L237).
 
@@ -87,7 +118,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: RegularPyramid): Boolean => false;
 ```
 
-## Line 248
+### Line 248
 
 **Source:** [stdlib/geometry/solids.library.plato, line 248](../../../../../stdlib/geometry/solids.library.plato#L248).
 
@@ -95,7 +126,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: SquarePyramid): Boolean => false;
 ```
 
-## Line 262
+### Line 262
 
 **Source:** [stdlib/geometry/solids.library.plato, line 262](../../../../../stdlib/geometry/solids.library.plato#L262).
 

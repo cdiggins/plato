@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> An implicit solid/volume, where we are either inside (true) or outside (false).
+
+## Signature
+
+```plato
+interface IImplicitVolume
+    inherits IGeometry3D, IImplicitProcedural<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry3D](igeometry3d.md), [IImplicitProcedural](iimplicitprocedural.md).
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 150
+### Line 150
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 150](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L150).
 

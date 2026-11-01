@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Assures that every transform can be implicitly converted into a Matrix4x4
+
+## Signature
+
+```plato
+Matrix4x4(t: ITransform3D): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 288
+### Line 288
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 288](../../../../../legacy/stdlib-legacy/transforms.plato#L288).
 

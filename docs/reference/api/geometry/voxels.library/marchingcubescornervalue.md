@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The sampled value at corner `corner` of the cube whose minimum corner is
+> lattice node `cell`.
+
+## Signature
+
+```plato
+MarchingCubesCornerValue(cell: IntegerVector3, corner: Integer, valueAt: Function3<Integer, Integer, Integer, Number>): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 376](../../../../../stdlib/geometry/voxels.library.plato#L376): procedural field all share exactly this code.
+- [Line 393](../../../../../stdlib/geometry/voxels.library.plato#L393): configuration index needs. Caching would instead allocate on every cube,
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.library](../voxels.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 370
+### Line 370
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 370](../../../../../stdlib/geometry/voxels.library.plato#L370).
 

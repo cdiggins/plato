@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A space with a distance between any two of its values. (https://en.wikipedia.org/wiki/Metric\_space)
+
+## Signature
+
+```plato
+interface IMetricSpace
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Point2D](../points.types/point2d.md), [Point3D](../points.types/point3d.md), [PointN](../points.types/pointn.md).
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.concepts](../algebra.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 22
+### Line 22
 
 **Source:** [stdlib/foundation/algebra.concepts.plato, line 22](../../../../../stdlib/foundation/algebra.concepts.plato#L22).
 

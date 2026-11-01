@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The intersection of two 3D primitives: a flag plus the discrete
+> intersection points (empty when Intersects is false, or when the overlap
+> is a curve or region rather than isolated points).
+
+## Signature
+
+```plato
+type IntersectionResult3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.types](../spatial-structures.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 224
+### Line 224
 
 **Source:** [stdlib/geometry/spatial-structures.types.plato, line 224](../../../../../stdlib/geometry/spatial-structures.types.plato#L224).
 

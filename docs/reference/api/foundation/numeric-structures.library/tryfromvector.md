@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unit direction of v, or fallback when v has (near) zero length. Total.
+
+## Signature
+
+```plato
+TryFromVector(v: Vector2D, fallback: Direction2D): Direction2D
+TryFromVector(v: Vector3D, fallback: Direction3D): Direction3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 836
+### Line 836
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 836](../../../../../stdlib/foundation/numeric-structures.library.plato#L836).
 
@@ -18,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => v.MagnitudeSquared > 0.0 ? Direction2D(v.Normalize) : fallback;
 ```
 
-## Line 851
+### Line 851
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 851](../../../../../stdlib/foundation/numeric-structures.library.plato#L851).
 

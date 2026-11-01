@@ -3,11 +3,56 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The distance to the sphere's surface: negative inside the ball.
+
+## Signature
+
+```plato
+ToSdf(s: Sphere): FunctionSdf3D
+ToSdf(c: Circle): FunctionSdf2D
+ToSdf(c: Capsule3D): FunctionSdf3D
+ToSdf(c: Capsule2D): FunctionSdf2D
+ToSdf(a: Annulus): FunctionSdf2D
+ToSdf(pl: Plane): FunctionSdf3D
+ToSdf(h: HalfSpace): FunctionSdf3D
+ToSdf(h: HalfPlane2D): FunctionSdf2D
+ToSdf(l: Line2D): FunctionSdf2D
+ToSdf(l: Line2D, radius: Number): FunctionSdf2D
+ToSdf(l: Line3D): FunctionSdf3D
+ToSdf(l: Line3D, radius: Number): FunctionSdf3D
+ToSdf(t: Triangle2D): FunctionSdf2D
+ToSdf(q: Quad2D): FunctionSdf2D
+ToSdf(t: Triangle3D): FunctionSdf3D
+ToSdf(t: Triangle3D, thickness: Number): FunctionSdf3D
+ToSdf(q: Quad3D): FunctionSdf3D
+ToSdf(q: Quad3D, thickness: Number): FunctionSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 945](../../../../../stdlib/geometry/fields-implicits.library.plato#L945): that: every field here is EXACT (`implicit-sdf.concepts.plato`), except the
+- [Line 946](../../../../../stdlib/geometry/fields-implicits.library.plato#L946): quad patch in space, which is exact only while its four corners are coplanar
+- [Line 961](../../../../../stdlib/geometry/fields-implicits.library.plato#L961):    Minkowski sum with a ball and has an exact signed distance.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 18 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 930
+### Line 930
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 930](../../../../../stdlib/geometry/fields-implicits.library.plato#L930).
 
@@ -50,7 +95,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => s.Center.Between(p).Magnitude - s.Radius);
 ```
 
-## Line 966
+### Line 966
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 966](../../../../../stdlib/geometry/fields-implicits.library.plato#L966).
 
@@ -61,7 +106,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => c.Center.Between(p).Magnitude - c.Radius);
 ```
 
-## Line 970
+### Line 970
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 970](../../../../../stdlib/geometry/fields-implicits.library.plato#L970).
 
@@ -72,7 +117,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => DistanceToCapsule(p, c.A, c.B, c.Radius));
 ```
 
-## Line 974
+### Line 974
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 974](../../../../../stdlib/geometry/fields-implicits.library.plato#L974).
 
@@ -83,7 +128,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => DistanceToCapsule(p, c.A, c.B, c.Radius));
 ```
 
-## Line 978
+### Line 978
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 978](../../../../../stdlib/geometry/fields-implicits.library.plato#L978).
 
@@ -97,7 +142,7 @@ Copied from source, comments included. A comment records intent. The body is the
             - (a.OuterRadius - a.InnerRadius) * 0.5);
 ```
 
-## Line 985
+### Line 985
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 985](../../../../../stdlib/geometry/fields-implicits.library.plato#L985).
 
@@ -111,7 +156,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => pl.SignedDistance(p));
 ```
 
-## Line 992
+### Line 992
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 992](../../../../../stdlib/geometry/fields-implicits.library.plato#L992).
 
@@ -123,7 +168,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => h.Boundary.SignedDistance(p));
 ```
 
-## Line 997
+### Line 997
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 997](../../../../../stdlib/geometry/fields-implicits.library.plato#L997).
 
@@ -134,7 +179,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => h.SignedDistance(p));
 ```
 
-## Line 1001
+### Line 1001
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1001](../../../../../stdlib/geometry/fields-implicits.library.plato#L1001).
 
@@ -146,7 +191,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => DistanceToSegment(l.A, l.B, p));
 ```
 
-## Line 1006
+### Line 1006
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1006](../../../../../stdlib/geometry/fields-implicits.library.plato#L1006).
 
@@ -158,7 +203,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => DistanceToCapsule(p, l.A, l.B, radius));
 ```
 
-## Line 1011
+### Line 1011
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1011](../../../../../stdlib/geometry/fields-implicits.library.plato#L1011).
 
@@ -169,7 +214,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => DistanceToSegment(l.A, l.B, p));
 ```
 
-## Line 1015
+### Line 1015
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1015](../../../../../stdlib/geometry/fields-implicits.library.plato#L1015).
 
@@ -180,7 +225,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => DistanceToCapsule(p, l.A, l.B, radius));
 ```
 
-## Line 1019
+### Line 1019
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1019](../../../../../stdlib/geometry/fields-implicits.library.plato#L1019).
 
@@ -192,7 +237,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => DistanceToTriangle(p, t.A, t.B, t.C));
 ```
 
-## Line 1024
+### Line 1024
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1024](../../../../../stdlib/geometry/fields-implicits.library.plato#L1024).
 
@@ -204,7 +249,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => DistanceToQuad(p, q.A, q.B, q.C, q.D));
 ```
 
-## Line 1029
+### Line 1029
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1029](../../../../../stdlib/geometry/fields-implicits.library.plato#L1029).
 
@@ -219,7 +264,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => UnsignedDistanceToTriangle(p, t.A, t.B, t.C));
 ```
 
-## Line 1037
+### Line 1037
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1037](../../../../../stdlib/geometry/fields-implicits.library.plato#L1037).
 
@@ -232,7 +277,7 @@ Copied from source, comments included. A comment records intent. The body is the
             UnsignedDistanceToTriangle(p, t.A, t.B, t.C) - thickness * 0.5);
 ```
 
-## Line 1043
+### Line 1043
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1043](../../../../../stdlib/geometry/fields-implicits.library.plato#L1043).
 
@@ -244,7 +289,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => UnsignedDistanceToQuad(p, q.A, q.B, q.C, q.D));
 ```
 
-## Line 1048
+### Line 1048
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1048](../../../../../stdlib/geometry/fields-implicits.library.plato#L1048).
 

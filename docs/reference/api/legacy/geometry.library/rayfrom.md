@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+RayFrom(a: Point2D, dir: Vector2): Ray2D
+RayFrom(a: Point3D, dir: Vector3): Ray3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 14
+### Line 14
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 14](../../../../../legacy/stdlib-legacy/geometry.library.plato#L14).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     RayFrom(a: Point2D, dir: Vector2): Ray2D => (a, dir);
 ```
 
-## Line 33
+### Line 33
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 33](../../../../../legacy/stdlib-legacy/geometry.library.plato#L33).
 

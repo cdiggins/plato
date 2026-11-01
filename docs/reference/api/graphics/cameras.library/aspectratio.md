@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The image aspect ratio (width over height) of a physical camera, taken from
+> its sensor dimensions. Precondition: SensorSize.Height is positive.
+
+## Signature
+
+```plato
+AspectRatio(self: PhysicalCamera): Number
+AspectRatio(self: FisheyeCamera): Number
+AspectRatio(self: EquirectangularCamera): Number
+AspectRatio(self: PanoramicCamera): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [cameras.library](../cameras.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 45
+### Line 45
 
 **Source:** [stdlib/graphics/cameras.library.plato, line 45](../../../../../stdlib/graphics/cameras.library.plato#L45).
 
@@ -19,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.SensorSize.Width / self.SensorSize.Height;
 ```
 
-## Line 50
+### Line 50
 
 **Source:** [stdlib/graphics/cameras.library.plato, line 50](../../../../../stdlib/graphics/cameras.library.plato#L50).
 
@@ -32,7 +56,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 1.0;
 ```
 
-## Line 56
+### Line 56
 
 **Source:** [stdlib/graphics/cameras.library.plato, line 56](../../../../../stdlib/graphics/cameras.library.plato#L56).
 
@@ -45,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.LongitudeSweep.Extent.Radians / self.LatitudeSweep.Extent.Radians;
 ```
 
-## Line 62
+### Line 62
 
 **Source:** [stdlib/graphics/cameras.library.plato, line 62](../../../../../stdlib/graphics/cameras.library.plato#L62).
 

@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Depth-of-field rendering controls (https://en.wikipedia.org/wiki/Depth\_of\_field).
+> FocusDistance is the physical distance to the focal plane; FStop widens or
+> narrows the simulated aperture (smaller numbers focus more shallowly);
+> BladeCount shapes the bokeh polygon (0 means a perfect circle); BladeRotation
+> orients that polygon.
+
+## Signature
+
+```plato
+type DepthOfFieldSettings
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [cameras.types](../cameras.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 208
+### Line 208
 
 **Source:** [stdlib/graphics/cameras.types.plato, line 208](../../../../../stdlib/graphics/cameras.types.plato#L208).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A face's corners carried through a remap. A corner whose vertex was dropped
+> becomes the "none" index, which `IsDegenerateFace` then rejects.
+
+## Signature
+
+```plato
+RemappedFace(remap: VertexRemap, face: TriangleFace): TriangleFace
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 257
+### Line 257
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 257](../../../../../stdlib/geometry/remeshing.library.plato#L257).
 

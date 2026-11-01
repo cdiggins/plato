@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the two conservative domains overlap (touching counts). A
+> false result means the solids cannot intersect if each Bounds encloses
+> its non-positive region.
+
+## Signature
+
+```plato
+MayIntersect(a: IBoundedSignedDistanceField2D, b: IBoundedSignedDistanceField2D): Boolean
+MayIntersect(a: IBoundedSignedDistanceField3D, b: IBoundedSignedDistanceField3D): Boolean
+MayIntersect(self: IBoundedSignedDistanceField2D, query: Bounds2D): Boolean
+MayIntersect(self: IBoundedSignedDistanceField3D, query: Bounds3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 69
+### Line 69
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 69](../../../../../stdlib/geometry/implicit-sdf.library.plato#L69).
 
@@ -23,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Bounds.Overlaps(b.Bounds);
 ```
 
-## Line 78
+### Line 78
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 78](../../../../../stdlib/geometry/implicit-sdf.library.plato#L78).
 
@@ -34,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Bounds.Overlaps(b.Bounds);
 ```
 
-## Line 82
+### Line 82
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 82](../../../../../stdlib/geometry/implicit-sdf.library.plato#L82).
 
@@ -46,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Bounds.Overlaps(query);
 ```
 
-## Line 87
+### Line 87
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 87](../../../../../stdlib/geometry/implicit-sdf.library.plato#L87).
 

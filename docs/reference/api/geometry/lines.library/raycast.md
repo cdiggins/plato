@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Where the ray strikes the triangle. Misses when the ray is parallel to the
+> triangle's plane, when the crossing point falls outside the triangle, or when
+> it lies behind the ray origin. The reported normal is the triangle's own,
+> flipped when the ray arrives from behind it, so it always opposes the ray.
+> Face is 0 on a hit and -1 on a miss: a lone triangle is its own face 0.
+
+## Signature
+
+```plato
+Raycast(tri: Triangle3D, r: Ray3D): RayHit3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 352
+### Line 352
 
 **Source:** [stdlib/geometry/lines.library.plato, line 352](../../../../../stdlib/geometry/lines.library.plato#L352).
 

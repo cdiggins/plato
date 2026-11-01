@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A unitless scalar expected to lie in \[0, 1\]: blend weights, normalized
+> parameters, opacity.
+
+## Signature
+
+```plato
+type Proportion
+    implements INumerical, IComparable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [INumerical](../algebra.concepts/inumerical.md), [IComparable](../core.concepts/icomparable.md).
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.types](../numbers.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 31
+### Line 31
 
 **Source:** [stdlib/foundation/numbers.types.plato, line 31](../../../../../stdlib/foundation/numbers.types.plato#L31).
 

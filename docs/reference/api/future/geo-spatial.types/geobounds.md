@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A latitude-longitude aligned region: the latitude band \[South, North\] and
+> the longitude band traveling eastward from West to East. West greater than
+> East encodes a region crossing the antimeridian.
+
+## Signature
+
+```plato
+type GeoBounds
+    implements IGeoRegion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeoRegion](../geo-spatial.concepts/igeoregion.md).
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [geo-spatial.types](../geo-spatial.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/geo-spatial.types.plato, line 1](../../../../../stdlib/future/geo-spatial.types.plato#L1).
 

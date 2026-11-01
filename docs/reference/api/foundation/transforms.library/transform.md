@@ -3,11 +3,80 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Apply the affine map to a point (includes the translation row).
+
+## Signature
+
+```plato
+Transform(p: Point2D, a: AffineTransform2D): Point2D
+Transform(v: Vector2D, a: AffineTransform2D): Vector2D
+Transform(p: Point3D, a: AffineTransform3D): Point3D
+Transform(v: Vector3D, a: AffineTransform3D): Vector3D
+Transform(p: Point2D, t: Transform2D): Point2D
+Transform(p: Point3D, t: Transform3D): Point3D
+Transform(p: Point2D, t: Translation2D): Point2D
+Transform(v: Vector2D, t: Translation2D): Vector2D
+Transform(p: Point3D, t: Translation3D): Point3D
+Transform(v: Vector3D, t: Translation3D): Vector3D
+Transform(p: Point2D, s: Scaling2D): Point2D
+Transform(v: Vector2D, s: Scaling2D): Vector2D
+Transform(p: Point3D, s: Scaling3D): Point3D
+Transform(v: Vector3D, s: Scaling3D): Vector3D
+Transform(p: Point2D, s: UniformScaling2D): Point2D
+Transform(v: Vector2D, s: UniformScaling2D): Vector2D
+Transform(p: Point3D, s: UniformScaling3D): Point3D
+Transform(v: Vector3D, s: UniformScaling3D): Vector3D
+Transform(p: Point2D, r: Reflection2D): Point2D
+Transform(v: Vector2D, r: Reflection2D): Vector2D
+Transform(p: Point3D, r: Reflection3D): Point3D
+Transform(v: Vector3D, r: Reflection3D): Vector3D
+Transform(p: Point2D, r: RotationAbout2D): Point2D
+Transform(v: Vector2D, r: RotationAbout2D): Vector2D
+Transform(p: Point3D, r: RotationAbout3D): Point3D
+Transform(v: Vector3D, r: RotationAbout3D): Vector3D
+Transform(p: Point2D, s: ScalingAbout2D): Point2D
+Transform(v: Vector2D, s: ScalingAbout2D): Vector2D
+Transform(p: Point3D, s: ScalingAbout3D): Point3D
+Transform(v: Vector3D, s: ScalingAbout3D): Vector3D
+Transform(p: Point3D, m: Motor3D): Point3D
+Transform(v: Vector3D, m: Motor3D): Vector3D
+Transform(p: Point2D, pose: Pose2D): Point2D
+Transform(v: Vector2D, pose: Pose2D): Vector2D
+Transform(p: Point3D, pose: Pose3D): Point3D
+Transform(v: Vector3D, pose: Pose3D): Vector3D
+Transform(v: Vector2D, r: Rotation2D): Vector2D
+Transform(p: Point2D, r: Rotation2D): Point2D
+Transform(d: Direction2D, r: Rotation2D): Direction2D
+Transform(v: Vector2D, r: Rotor2D): Vector2D
+Transform(p: Point2D, r: Rotor2D): Point2D
+Transform(v: Vector3D, r: Rotor3D): Vector3D
+Transform(p: Point3D, r: Rotor3D): Point3D
+Transform(p: Point3D, q: Quaternion): Point3D
+Transform(d: Direction3D, q: Quaternion): Direction3D
+Transform(p: Point2D, t: TrsTransform2D): Point2D
+Transform(v: Vector2D, t: TrsTransform2D): Vector2D
+Transform(p: Point3D, t: TrsTransform3D): Point3D
+Transform(v: Vector3D, t: TrsTransform3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 49 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1](../../../../../stdlib/foundation/transforms.library.plato#L1).
 
@@ -46,7 +115,7 @@ library Transforms
         => p.PositionVector.Transform(a.Matrix).ToPoint;
 ```
 
-## Line 37
+### Line 37
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 37](../../../../../stdlib/foundation/transforms.library.plato#L37).
 
@@ -58,7 +127,7 @@ library Transforms
         => v.TransformNormal(a.Matrix);
 ```
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 93](../../../../../stdlib/foundation/transforms.library.plato#L93).
 
@@ -73,7 +142,7 @@ library Transforms
     }
 ```
 
-## Line 105
+### Line 105
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 105](../../../../../stdlib/foundation/transforms.library.plato#L105).
 
@@ -87,7 +156,7 @@ library Transforms
     }
 ```
 
-## Line 170
+### Line 170
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 170](../../../../../stdlib/foundation/transforms.library.plato#L170).
 
@@ -103,7 +172,7 @@ library Transforms
     }
 ```
 
-## Line 195
+### Line 195
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 195](../../../../../stdlib/foundation/transforms.library.plato#L195).
 
@@ -118,7 +187,7 @@ library Transforms
     }
 ```
 
-## Line 233
+### Line 233
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 233](../../../../../stdlib/foundation/transforms.library.plato#L233).
 
@@ -129,7 +198,7 @@ library Transforms
         => p + t.Vector;
 ```
 
-## Line 241
+### Line 241
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 241](../../../../../stdlib/foundation/transforms.library.plato#L241).
 
@@ -140,7 +209,7 @@ library Transforms
         => v;
 ```
 
-## Line 261
+### Line 261
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 261](../../../../../stdlib/foundation/transforms.library.plato#L261).
 
@@ -151,7 +220,7 @@ library Transforms
         => p + t.Vector;
 ```
 
-## Line 269
+### Line 269
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 269](../../../../../stdlib/foundation/transforms.library.plato#L269).
 
@@ -162,7 +231,7 @@ library Transforms
         => v;
 ```
 
-## Line 294
+### Line 294
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 294](../../../../../stdlib/foundation/transforms.library.plato#L294).
 
@@ -173,7 +242,7 @@ library Transforms
         => (p.PositionVector * s.Amount).ToPoint;
 ```
 
-## Line 302
+### Line 302
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 302](../../../../../stdlib/foundation/transforms.library.plato#L302).
 
@@ -184,7 +253,7 @@ library Transforms
         => v * s.Amount;
 ```
 
-## Line 322
+### Line 322
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 322](../../../../../stdlib/foundation/transforms.library.plato#L322).
 
@@ -195,7 +264,7 @@ library Transforms
         => (p.PositionVector * s.Amount).ToPoint;
 ```
 
-## Line 330
+### Line 330
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 330](../../../../../stdlib/foundation/transforms.library.plato#L330).
 
@@ -206,7 +275,7 @@ library Transforms
         => v * s.Amount;
 ```
 
-## Line 350
+### Line 350
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 350](../../../../../stdlib/foundation/transforms.library.plato#L350).
 
@@ -217,7 +286,7 @@ library Transforms
         => (p.PositionVector * s.Amount).ToPoint;
 ```
 
-## Line 358
+### Line 358
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 358](../../../../../stdlib/foundation/transforms.library.plato#L358).
 
@@ -228,7 +297,7 @@ library Transforms
         => v * s.Amount;
 ```
 
-## Line 378
+### Line 378
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 378](../../../../../stdlib/foundation/transforms.library.plato#L378).
 
@@ -239,7 +308,7 @@ library Transforms
         => (p.PositionVector * s.Amount).ToPoint;
 ```
 
-## Line 386
+### Line 386
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 386](../../../../../stdlib/foundation/transforms.library.plato#L386).
 
@@ -250,7 +319,7 @@ library Transforms
         => v * s.Amount;
 ```
 
-## Line 424
+### Line 424
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 424](../../../../../stdlib/foundation/transforms.library.plato#L424).
 
@@ -261,7 +330,7 @@ library Transforms
         => r.Origin + r.Origin.Between(p).Transform(r);
 ```
 
-## Line 432
+### Line 432
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 432](../../../../../stdlib/foundation/transforms.library.plato#L432).
 
@@ -273,7 +342,7 @@ library Transforms
         => v.Reflect(Vector2D(-r.Direction.Vector.Y, r.Direction.Vector.X));
 ```
 
-## Line 463
+### Line 463
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 463](../../../../../stdlib/foundation/transforms.library.plato#L463).
 
@@ -284,7 +353,7 @@ library Transforms
         => r.Origin + r.Origin.Between(p).Transform(r);
 ```
 
-## Line 471
+### Line 471
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 471](../../../../../stdlib/foundation/transforms.library.plato#L471).
 
@@ -296,7 +365,7 @@ library Transforms
         => v.Reflect(r.Normal.Vector);
 ```
 
-## Line 493
+### Line 493
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 493](../../../../../stdlib/foundation/transforms.library.plato#L493).
 
@@ -307,7 +376,7 @@ library Transforms
         => r.Center + r.Center.Between(p).Transform(r.Rotation);
 ```
 
-## Line 501
+### Line 501
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 501](../../../../../stdlib/foundation/transforms.library.plato#L501).
 
@@ -318,7 +387,7 @@ library Transforms
         => v.Transform(r.Rotation);
 ```
 
-## Line 526
+### Line 526
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 526](../../../../../stdlib/foundation/transforms.library.plato#L526).
 
@@ -329,7 +398,7 @@ library Transforms
         => r.Center + r.Center.Between(p).Transform(r.Rotation);
 ```
 
-## Line 534
+### Line 534
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 534](../../../../../stdlib/foundation/transforms.library.plato#L534).
 
@@ -340,7 +409,7 @@ library Transforms
         => v.Transform(r.Rotation);
 ```
 
-## Line 554
+### Line 554
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 554](../../../../../stdlib/foundation/transforms.library.plato#L554).
 
@@ -351,7 +420,7 @@ library Transforms
         => s.Center + s.Center.Between(p) * s.Amount;
 ```
 
-## Line 562
+### Line 562
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 562](../../../../../stdlib/foundation/transforms.library.plato#L562).
 
@@ -363,7 +432,7 @@ library Transforms
         => v * s.Amount;
 ```
 
-## Line 589
+### Line 589
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 589](../../../../../stdlib/foundation/transforms.library.plato#L589).
 
@@ -374,7 +443,7 @@ library Transforms
         => s.Center + s.Center.Between(p) * s.Amount;
 ```
 
-## Line 597
+### Line 597
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 597](../../../../../stdlib/foundation/transforms.library.plato#L597).
 
@@ -386,7 +455,7 @@ library Transforms
         => v * s.Amount;
 ```
 
-## Line 846
+### Line 846
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 846](../../../../../stdlib/foundation/transforms.library.plato#L846).
 
@@ -397,7 +466,7 @@ library Transforms
         => p.Transform(m.Pose3D);
 ```
 
-## Line 854
+### Line 854
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 854](../../../../../stdlib/foundation/transforms.library.plato#L854).
 
@@ -409,7 +478,7 @@ library Transforms
         => v.Transform(m.Real);
 ```
 
-## Line 938
+### Line 938
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 938](../../../../../stdlib/foundation/transforms.library.plato#L938).
 
@@ -430,7 +499,7 @@ library Transforms
         => pose.Position + p.PositionVector.Transform(pose.Rotation);
 ```
 
-## Line 956
+### Line 956
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 956](../../../../../stdlib/foundation/transforms.library.plato#L956).
 
@@ -442,7 +511,7 @@ library Transforms
         => v.Transform(pose.Rotation);
 ```
 
-## Line 992
+### Line 992
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 992](../../../../../stdlib/foundation/transforms.library.plato#L992).
 
@@ -453,7 +522,7 @@ library Transforms
         => pose.Position + p.PositionVector.Transform(pose.Orientation);
 ```
 
-## Line 1000
+### Line 1000
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1000](../../../../../stdlib/foundation/transforms.library.plato#L1000).
 
@@ -464,7 +533,7 @@ library Transforms
         => v.Transform(pose.Orientation);
 ```
 
-## Line 1125
+### Line 1125
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1125](../../../../../stdlib/foundation/transforms.library.plato#L1125).
 
@@ -479,7 +548,7 @@ library Transforms
     }
 ```
 
-## Line 1137
+### Line 1137
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1137](../../../../../stdlib/foundation/transforms.library.plato#L1137).
 
@@ -490,7 +559,7 @@ library Transforms
         => p.PositionVector.Transform(r).ToPoint;
 ```
 
-## Line 1145
+### Line 1145
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1145](../../../../../stdlib/foundation/transforms.library.plato#L1145).
 
@@ -501,7 +570,7 @@ library Transforms
         => Direction2D(d.Vector.Transform(r));
 ```
 
-## Line 1181
+### Line 1181
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1181](../../../../../stdlib/foundation/transforms.library.plato#L1181).
 
@@ -516,7 +585,7 @@ library Transforms
     }
 ```
 
-## Line 1193
+### Line 1193
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1193](../../../../../stdlib/foundation/transforms.library.plato#L1193).
 
@@ -527,7 +596,7 @@ library Transforms
         => p.PositionVector.Transform(r).ToPoint;
 ```
 
-## Line 1298
+### Line 1298
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1298](../../../../../stdlib/foundation/transforms.library.plato#L1298).
 
@@ -538,7 +607,7 @@ library Transforms
         => v.Transform(r.Quaternion);
 ```
 
-## Line 1306
+### Line 1306
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1306](../../../../../stdlib/foundation/transforms.library.plato#L1306).
 
@@ -549,7 +618,7 @@ library Transforms
         => p.PositionVector.Transform(r.Quaternion).ToPoint;
 ```
 
-## Line 1314
+### Line 1314
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1314](../../../../../stdlib/foundation/transforms.library.plato#L1314).
 
@@ -560,7 +629,7 @@ library Transforms
         => p.PositionVector.Transform(q).ToPoint;
 ```
 
-## Line 1322
+### Line 1322
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1322](../../../../../stdlib/foundation/transforms.library.plato#L1322).
 
@@ -571,7 +640,7 @@ library Transforms
         => Direction3D(d.Vector.Transform(q));
 ```
 
-## Line 1363
+### Line 1363
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1363](../../../../../stdlib/foundation/transforms.library.plato#L1363).
 
@@ -593,7 +662,7 @@ library Transforms
         => ((p.PositionVector * t.Scale).Transform(t.Rotation) + t.Translation).ToPoint;
 ```
 
-## Line 1382
+### Line 1382
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1382](../../../../../stdlib/foundation/transforms.library.plato#L1382).
 
@@ -605,7 +674,7 @@ library Transforms
         => (v * t.Scale).Transform(t.Rotation);
 ```
 
-## Line 1417
+### Line 1417
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1417](../../../../../stdlib/foundation/transforms.library.plato#L1417).
 
@@ -616,7 +685,7 @@ library Transforms
         => ((p.PositionVector * t.Scale).Transform(t.Rotation) + t.Translation).ToPoint;
 ```
 
-## Line 1425
+### Line 1425
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1425](../../../../../stdlib/foundation/transforms.library.plato#L1425).
 

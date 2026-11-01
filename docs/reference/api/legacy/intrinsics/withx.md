@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+WithX(self: Vector2, x: Number): Vector2
+WithX(self: Vector3, x: Number): Vector3
+WithX(self: Vector4, x: Number): Vector4
+WithX(self: Quaternion, x: Number): Quaternion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 98
+### Line 98
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 98](../../../../../legacy/stdlib-legacy/intrinsics.plato#L98).
 
@@ -16,7 +35,7 @@ Copied from source, comments included. A comment records intent. The body is the
     WithX(self: Vector2, x: Number): Vector2;
 ```
 
-## Line 136
+### Line 136
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 136](../../../../../legacy/stdlib-legacy/intrinsics.plato#L136).
 
@@ -25,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
     WithX(self: Vector3, x: Number): Vector3;
 ```
 
-## Line 175
+### Line 175
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 175](../../../../../legacy/stdlib-legacy/intrinsics.plato#L175).
 
@@ -34,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
     WithX(self: Vector4, x: Number): Vector4;
 ```
 
-## Line 283
+### Line 283
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 283](../../../../../legacy/stdlib-legacy/intrinsics.plato#L283).
 

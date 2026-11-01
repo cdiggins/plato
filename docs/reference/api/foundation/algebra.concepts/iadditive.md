@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An additive group: addition, subtraction, negation, and the identity element
+> (https://en.wikipedia.org/wiki/Additive\_group). Zero lives here rather than on
+> INumericalLimits because it is an algebraic property of the group, not a fact
+> about representation: a IQuantity or a IMatrix is an additive group without
+> being a number, and a `where T: IAdditive` bound must be able to name the
+> identity for any fold or accumulation seeded from it.
+
+## Signature
+
+```plato
+interface IAdditive
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.concepts](../algebra.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 142
+### Line 142
 
 **Source:** [stdlib/foundation/algebra.concepts.plato, line 142](../../../../../stdlib/foundation/algebra.concepts.plato#L142).
 

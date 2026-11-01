@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How one triangle re-triangulates when some of its edges carry a new midpoint.
+> v0, v1, v2 are the corners in winding order; m0 sits on v0-v1, m1 on v1-v2
+> and m2 on v2-v0, each the "none" index when that edge was not split. Every
+> emitted triangle keeps the original winding.
+> Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+
+## Signature
+
+```plato
+SplitFaceTriangles(v0: VertexIndex, v1: VertexIndex, v2: VertexIndex,
+                   m0: VertexIndex, m1: VertexIndex, m2: VertexIndex): Array<TriangleFace>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 353
+### Line 353
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 353](../../../../../stdlib/geometry/remeshing.library.plato#L353).
 

@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The convex hull of a 2D point set: the bounding polygon, wound
+> counter-clockwise, plus the index of the source point each hull vertex came
+> from. SourceIndices is index-aligned with the polygon's own Points.
+> (https://en.wikipedia.org/wiki/Convex\_hull\_algorithms)
+> Instances come from ConvexHull (geometry.library.plato) or from a host.
+
+## Signature
+
+```plato
+type ConvexHull2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.types](../geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 80
+### Line 80
 
 **Source:** [stdlib/geometry/geometry.types.plato, line 80](../../../../../stdlib/geometry/geometry.types.plato#L80).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Halton point of the given index: radical inverses in two bases, which
+> must be coprime or the two coordinates correlate.
+> https://en.wikipedia.org/wiki/Halton\_sequence
+
+## Signature
+
+```plato
+HaltonPoint2D(index: Integer, baseX: Integer, baseY: Integer): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 324
+### Line 324
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 324](../../../../../stdlib/geometry/sampling.library.plato#L324).
 

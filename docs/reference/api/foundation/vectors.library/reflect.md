@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The reflection of the vector off a line with the given normal:
+> v - 2 (v . n) n. Precondition: `normal` is unit length.
+> https://en.wikipedia.org/wiki/Reflection\_(mathematics)
+
+## Signature
+
+```plato
+Reflect(self: Vector2D, normal: Vector2D): Vector2D
+Reflect(self: Vector3D, normal: Vector3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [vectors.library](../vectors.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 73
+### Line 73
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 73](../../../../../stdlib/foundation/vectors.library.plato#L73).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self - normal * (2.0 * self.Dot(normal));
 ```
 
-## Line 192
+### Line 192
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 192](../../../../../stdlib/foundation/vectors.library.plato#L192).
 

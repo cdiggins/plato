@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The scalar speed at a time: the velocity's magnitude, in meters per second.
+
+## Signature
+
+```plato
+SpeedAt(self: IKinematic2D, time: Duration): Number
+SpeedAt(self: IKinematic3D, time: Duration): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.library](../kinematics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/kinematics.library.plato, line 1](../../../../../stdlib/future/kinematics.library.plato#L1).
 
@@ -36,7 +57,7 @@ library Kinematics
         => self.VelocityAt(time).Magnitude;
 ```
 
-## Line 46
+### Line 46
 
 **Source:** [stdlib/future/kinematics.library.plato, line 46](../../../../../stdlib/future/kinematics.library.plato#L46).
 

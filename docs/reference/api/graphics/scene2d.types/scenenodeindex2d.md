@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A zero-based index of a node within Scene2D's flat node array. -1 means
+> "none" (a root's parent, a hit-test miss).
+
+## Signature
+
+```plato
+type SceneNodeIndex2D
+    implements IValue, IHashable, IComparable, IIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IHashable](../../foundation/core.concepts/ihashable.md), [IComparable](../../foundation/core.concepts/icomparable.md), [IIndex](../../foundation/collections.concepts/iindex.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [scene2d.types](../scene2d.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 19
+### Line 19
 
 **Source:** [stdlib/graphics/scene2d.types.plato, line 19](../../../../../stdlib/graphics/scene2d.types.plato#L19).
 

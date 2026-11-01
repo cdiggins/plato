@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Flip(t: Triangle2D): Triangle2D
+Flip(t: Triangle3D): Triangle3D
+Flip(q: Quad2D): Quad2D
+Flip(q: Quad3D): Quad3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 84
+### Line 84
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 84](../../../../../legacy/stdlib-legacy/geometry.library.plato#L84).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
 	Flip(t: Triangle2D): Triangle2D => (t.C, t.B, t.A);
 ```
 
-## Line 97
+### Line 97
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 97](../../../../../legacy/stdlib-legacy/geometry.library.plato#L97).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Flip(t: Triangle3D): Triangle3D => (t.C, t.B, t.A);        
 ```
 
-## Line 122
+### Line 122
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 122](../../../../../legacy/stdlib-legacy/geometry.library.plato#L122).
 
@@ -35,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Flip(q: Quad2D): Quad2D => (q.D, q.C, q.B, q.A);        
 ```
 
-## Line 136
+### Line 136
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 136](../../../../../legacy/stdlib-legacy/geometry.library.plato#L136).
 

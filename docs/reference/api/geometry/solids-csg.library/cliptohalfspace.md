@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The convex polygon restricted to the plane's front half-space
+> (Sutherland-Hodgman against a single plane): each edge contributes its
+> kept endpoint and its crossing point, in ring order. May yield a ring of
+> fewer than three vertices when the polygon lies behind the plane.
+
+## Signature
+
+```plato
+ClipToHalfSpace(p: Polygon3D, pl: Plane): Polygon3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 118
+### Line 118
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 118](../../../../../stdlib/geometry/solids-csg.library.plato#L118).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Twists a spatial shape about the Z axis: each horizontal slice rotates by
+> AnglePerUnit times its height.
+
+## Signature
+
+```plato
+type SdfTwistModifier3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.types](../implicit-sdf.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 248
+### Line 248
 
 **Source:** [stdlib/geometry/implicit-sdf.types.plato, line 248](../../../../../stdlib/geometry/implicit-sdf.types.plato#L248).
 

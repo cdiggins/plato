@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when a grid slot holds the empty sentinel rather than an accepted point.
+
+## Signature
+
+```plato
+IsEmptyCell(p: Point2D, region: Bounds2D, radius: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 581
+### Line 581
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 581](../../../../../stdlib/geometry/sampling.library.plato#L581).
 

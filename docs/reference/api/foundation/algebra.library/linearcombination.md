@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The weighted sum a\*s + b\*t of two values with scalar weights.
+> (https://en.wikipedia.org/wiki/Linear\_combination)
+
+## Signature
+
+```plato
+LinearCombination(a: INumerical, b: INumerical, s: Number, t: Number): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.library](../algebra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 151
+### Line 151
 
 **Source:** [stdlib/foundation/algebra.library.plato, line 151](../../../../../stdlib/foundation/algebra.library.plato#L151).
 

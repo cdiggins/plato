@@ -3,11 +3,55 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed distance from a point to an axis-aligned box with the given
+> half-extents whose edges are rounded by radius. The rounding grows the box,
+> so halfExtents describes the box before rounding. Exact. (IQ: sdRoundBox.)
+
+## Signature
+
+```plato
+DistanceToRoundedBox(p: Point3D, halfExtents: Vector3D, radius: Number): Number
+DistanceToRoundedBox(p: Point2D, halfExtents: Vector2D, radius: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_RoundedBoxAtZeroRadiusIsBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 29](../../../../../stdlib/tests/implicit-sdf.laws.plato#L29)
+
+```plato
+// Rounding by zero leaves the box unchanged: the rounded-box body inflates the
+// half-extents and subtracts the radius back off, so a zero radius must cancel.
+Law_RoundedBoxAtZeroRadiusIsBox(p: Point3D, halfExtents: Vector3D): Boolean
+    => DistanceToRoundedBox(p, halfExtents, 0.0).LawEq(DistanceToBox(p, halfExtents));
+```
+
+### Law_RoundedBox2DAtZeroRadiusIsBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 33](../../../../../stdlib/tests/implicit-sdf.laws.plato#L33)
+
+```plato
+// The planar form of the same cancellation.
+Law_RoundedBox2DAtZeroRadiusIsBox(p: Point2D, halfExtents: Vector2D): Boolean
+    => DistanceToRoundedBox(p, halfExtents, 0.0).LawEq(DistanceToBox(p, halfExtents));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 859
+### Line 859
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 859](../../../../../stdlib/geometry/implicit-sdf.library.plato#L859).
 
@@ -27,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 1055
+### Line 1055
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 1055](../../../../../stdlib/geometry/implicit-sdf.library.plato#L1055).
 

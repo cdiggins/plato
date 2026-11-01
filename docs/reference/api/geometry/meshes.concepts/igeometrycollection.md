@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A finite ordered group of whole geometric elements treated as one shape:
+> scene parts, connected components, a batch of meshes drawn together. The
+> elements keep their own type; the collection adds no geometry of its own.
+
+## Signature
+
+```plato
+interface IGeometryCollection<TGeom>
+    inherits IGeometry
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry](../geometry.concepts/igeometry.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.concepts](../meshes.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 127
+### Line 127
 
 **Source:** [stdlib/geometry/meshes.concepts.plato, line 127](../../../../../stdlib/geometry/meshes.concepts.plato#L127).
 

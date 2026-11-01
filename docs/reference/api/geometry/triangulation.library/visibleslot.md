@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Eberly's refinement. The corner the ray reached is visible unless a reflex
+> vertex of the ring lies in the wedge between the ray and that corner; among
+> those that do, the bridge goes to the one whose direction from the hole makes
+> the smallest angle with the ray, ties going to the rightmost.
+
+## Signature
+
+```plato
+VisibleSlot(points: Array<Point2D>, nodes: Buffer<EarClipNode>, head: Integer,
+    seed: Integer, holeSlot: Integer, rayX: Number): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 315
+### Line 315
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 315](../../../../../stdlib/geometry/triangulation.library.plato#L315).
 

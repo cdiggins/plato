@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A continuous map from one real parameter to a value of TRange: the generic
+> root of every curve. Dimension-agnostic curve helpers constrain on this, so
+> an Eval-only derivation is written once instead of once per embedding
+> (see `Sample` in curves.library.plato). Mirrors the
+> `IField<TDomain, TValue>` root of `fields.concepts.plato`.
+
+## Signature
+
+```plato
+interface ICurve<TRange>
+    inherits IProcedural<Number, TRange>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IProcedural](../../foundation/functional.concepts/iprocedural.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.concepts](../curves.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/curves.concepts.plato, line 1](../../../../../stdlib/geometry/curves.concepts.plato#L1).
 

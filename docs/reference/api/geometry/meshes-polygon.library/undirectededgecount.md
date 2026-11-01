@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number of undirected edges: one per canonical corner. An interior edge
+> is named by the lower half of its twin pair, a boundary edge by its only
+> corner, so no edge is double-counted and none is missed. The canonical rule
+> itself is `IsCanonicalCorner`, below.
+
+## Signature
+
+```plato
+UndirectedEdgeCount(self: PolygonMesh3D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes-polygon.library](../meshes-polygon.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 39
+### Line 39
 
 **Source:** [stdlib/geometry/meshes-polygon.library.plato, line 39](../../../../../stdlib/geometry/meshes-polygon.library.plato#L39).
 

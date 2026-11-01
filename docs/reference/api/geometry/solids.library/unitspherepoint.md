@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The latitude/longitude point on the unit sphere: U wraps around the equator,
+> V runs from the north pole (V = 0) to the south pole (V = 1).
+
+## Signature
+
+```plato
+UnitSpherePoint(uv: UvCoordinate): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.library](../solids.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/geometry/solids.library.plato, line 75](../../../../../stdlib/geometry/solids.library.plato#L75).
 

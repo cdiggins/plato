@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The cumulative distribution function of the standard normal distribution.
+>
+> APPROXIMATION, NOT AN IDENTITY. There is no elementary closed form and
+> this tree declares no error function, so this is the Zelen & Severo
+> rational approximation, Abramowitz & Stegun "Handbook of Mathematical
+> Functions" formula 26.2.17: with t = 1 / (1 + 0.2316419\*|z|),
+>   Phi(|z|) = 1 - phi(|z|) \* (b1 t + b2 t^2 + b3 t^3 + b4 t^4 + b5 t^5)
+> and Phi(z) = 1 - Phi(-z) for z \< 0. The published absolute error bound is
+> |eps| \< 7.5e-8, uniformly in z. Do not rely on it beyond ~7 digits, and
+> note that far tail probabilities are accurate in absolute, not relative,
+> terms.
+> https://en.wikipedia.org/wiki/Normal\_distribution#Numerical\_approximations\_for\_the\_normal\_CDF\_and\_normal\_quantile\_function
+
+## Signature
+
+```plato
+StandardNormalCdf(z: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.library](../random.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 79
+### Line 79
 
 **Source:** [stdlib/foundation/random.library.plato, line 79](../../../../../stdlib/foundation/random.library.plato#L79).
 

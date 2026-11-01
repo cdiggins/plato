@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when this shape's bounds lie entirely within `outer`'s bounds (inclusive).
+
+## Signature
+
+```plato
+FitsInside(self: IBounded2D, outer: IBounded2D): Boolean
+FitsInside(self: IBounded3D, outer: IBounded3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 611
+### Line 611
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 611](../../../../../stdlib/geometry/geometry.library.plato#L611).
 
@@ -19,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         && self.Bounds.Max.X <= outer.Bounds.Max.X && self.Bounds.Max.Y <= outer.Bounds.Max.Y;
 ```
 
-## Line 660
+### Line 660
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 660](../../../../../stdlib/geometry/geometry.library.plato#L660).
 

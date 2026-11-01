@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point where the quadratic form is smallest, found by solving the 3x3
+> system that sets its gradient to zero. The system is expressed as the
+> quadric with its last COLUMN replaced by (0, 0, 0, 1), whose inverse carries
+> the answer in its translation row. A singular system — a flat or symmetric
+> neighbourhood — has no unique minimum, and the fallback is returned instead.
+
+## Signature
+
+```plato
+QuadricMinimizer(self: Quadric, fallback: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1355
+### Line 1355
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1355](../../../../../stdlib/geometry/remeshing.library.plato#L1355).
 

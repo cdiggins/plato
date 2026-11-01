@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The buoyant force on a body displacing `submerged` of fluid, given the local
+> gravitational acceleration: minus the weight of the displaced fluid, by
+> Archimedes' principle. The caller computes the submerged volume, because
+> that is a query against the body's shape and the fluid half-space.
+> (https://en.wikipedia.org/wiki/Archimedes%27\_principle)
+
+## Signature
+
+```plato
+BuoyantForce(self: BuoyancyModel, submerged: Volume, gravity: Vector3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 155
+### Line 155
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 155](../../../../../stdlib/future/rigid-dynamics.library.plato#L155).
 

@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Reflect (https://en.wikipedia.org/wiki/Chirality\_(mathematics)): the mirror
+> image through the yz plane, with every face loop reversed so the result is
+> still wound counter-clockwise seen from outside. Identity on an achiral
+> solid up to a rotation; on snub, gyro or propeller it is the other
+> enantiomer. V, E and F are unchanged.
+
+## Signature
+
+```plato
+Reflect(self: PolygonMesh3D): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 828
+### Line 828
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 828](../../../../../stdlib/geometry/polyhedra.library.plato#L828).
 

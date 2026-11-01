@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The worst distance from a face's own vertices to that face's plane. Zero
+> to rounding for every solid in the catalog above; non-zero is exactly the
+> damage `ProjectedToUnitSphere` does to a face-transitive Catalan.
+
+## Signature
+
+```plato
+FacePlanarityDeviation(self: PolygonMesh3D, face: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 904
+### Line 904
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 904](../../../../../stdlib/geometry/polyhedra.library.plato#L904).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The undirected edges of a mesh, extracted once and stored canonically:
+> each pair ordered A.Value \<= B.Value, pairs sorted lexicographically.
+> An edge's position in this array is its UndirectedEdgeIndex.
+
+## Signature
+
+```plato
+type UndirectedEdgeList
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.types](../topology.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 32
+### Line 32
 
 **Source:** [stdlib/geometry/topology.types.plato, line 32](../../../../../stdlib/geometry/topology.types.plato#L32).
 

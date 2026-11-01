@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The buffer with `value` added into one slot. The slot leads and the buffer
+> follows because a function dispatching on a `unique` type is dropped from
+> the emitted C# (plato-416).
+
+## Signature
+
+```plato
+AddAt(slot: Integer, into: Buffer<Number>, value: Number): Buffer<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 101
+### Line 101
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 101](../../../../../stdlib/future/finite-elements.library.plato#L101).
 

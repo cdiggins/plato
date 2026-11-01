@@ -3,11 +3,57 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+ClosedU(s: HyperbolicParaboloid): Boolean
+ClosedU(s: HyperboloidOfOneSheet): Boolean
+ClosedU(s: HyperboloidOfTwoSheets): Boolean
+ClosedU(s: Catenoid): Boolean
+ClosedU(s: Helicoid): Boolean
+ClosedU(s: Pseudosphere): Boolean
+ClosedU(s: Superellipsoid): Boolean
+ClosedU(s: Supertoroid): Boolean
+ClosedU(s: Superformula3D): Boolean
+ClosedU(s: DupinCyclide): Boolean
+ClosedU(s: SeashellSurface): Boolean
+ClosedU(s: SphericalHarmonicSurface): Boolean
+ClosedU(s: KleinBottle): Boolean
+ClosedU(s: RomanSurface): Boolean
+ClosedU(s: CrossCap): Boolean
+ClosedU(s: BoySurface): Boolean
+ClosedU(s: WhitneyUmbrella): Boolean
+ClosedU(s: BohemianDome): Boolean
+ClosedU(s: PluckerConoid): Boolean
+ClosedU(s: EnneperSurface): Boolean
+ClosedU(s: ScherkSurface): Boolean
+ClosedU(s: HennebergSurface): Boolean
+ClosedU(s: CatalanSurface): Boolean
+ClosedU(s: MonkeySaddle): Boolean
+ClosedU(s: DiniSurface): Boolean
+ClosedU(s: KuenSurface): Boolean
+ClosedU(s: BreatherSurface): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.library](../surfaces-shapes.library.md). Kind: function. 27 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 59
+### Line 59
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 59](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L59).
 
@@ -15,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: HyperbolicParaboloid): Boolean => false;
 ```
 
-## Line 71
+### Line 71
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 71](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L71).
 
@@ -24,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: HyperboloidOfOneSheet): Boolean => true;
 ```
 
-## Line 85
+### Line 85
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 85](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L85).
 
@@ -32,7 +78,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: HyperboloidOfTwoSheets): Boolean => true;
 ```
 
-## Line 99
+### Line 99
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 99](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L99).
 
@@ -40,7 +86,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: Catenoid): Boolean => true;
 ```
 
-## Line 111
+### Line 111
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 111](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L111).
 
@@ -49,7 +95,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: Helicoid): Boolean => false;
 ```
 
-## Line 123
+### Line 123
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 123](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L123).
 
@@ -57,7 +103,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: Pseudosphere): Boolean => true;
 ```
 
-## Line 149
+### Line 149
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 149](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L149).
 
@@ -66,7 +112,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: Superellipsoid): Boolean => true;
 ```
 
-## Line 164
+### Line 164
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 164](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L164).
 
@@ -74,7 +120,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: Supertoroid): Boolean => true;
 ```
 
-## Line 178
+### Line 178
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 178](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L178).
 
@@ -87,7 +133,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: Superformula3D): Boolean => false;
 ```
 
-## Line 206
+### Line 206
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 206](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L206).
 
@@ -95,7 +141,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: DupinCyclide): Boolean => true;
 ```
 
-## Line 221
+### Line 221
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 221](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L221).
 
@@ -103,7 +149,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: SeashellSurface): Boolean => true;
 ```
 
-## Line 237
+### Line 237
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 237](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L237).
 
@@ -114,7 +160,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: SphericalHarmonicSurface): Boolean => false;
 ```
 
-## Line 267
+### Line 267
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 267](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L267).
 
@@ -124,7 +170,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: KleinBottle): Boolean => true;
 ```
 
-## Line 278
+### Line 278
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 278](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L278).
 
@@ -132,7 +178,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: RomanSurface): Boolean => true;
 ```
 
-## Line 291
+### Line 291
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 291](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L291).
 
@@ -140,7 +186,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: CrossCap): Boolean => true;
 ```
 
-## Line 306
+### Line 306
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 306](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L306).
 
@@ -152,7 +198,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: BoySurface): Boolean => false;
 ```
 
-## Line 324
+### Line 324
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 324](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L324).
 
@@ -160,7 +206,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: WhitneyUmbrella): Boolean => false;
 ```
 
-## Line 337
+### Line 337
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 337](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L337).
 
@@ -168,7 +214,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: BohemianDome): Boolean => true;
 ```
 
-## Line 350
+### Line 350
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 350](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L350).
 
@@ -178,7 +224,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: PluckerConoid): Boolean => true;
 ```
 
-## Line 377
+### Line 377
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 377](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L377).
 
@@ -186,7 +232,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: EnneperSurface): Boolean => false;
 ```
 
-## Line 388
+### Line 388
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 388](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L388).
 
@@ -194,7 +240,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: ScherkSurface): Boolean => false;
 ```
 
-## Line 403
+### Line 403
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 403](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L403).
 
@@ -202,7 +248,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: HennebergSurface): Boolean => false;
 ```
 
-## Line 416
+### Line 416
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 416](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L416).
 
@@ -210,7 +256,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: CatalanSurface): Boolean => false;
 ```
 
-## Line 427
+### Line 427
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 427](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L427).
 
@@ -218,7 +264,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: MonkeySaddle): Boolean => false;
 ```
 
-## Line 444
+### Line 444
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 444](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L444).
 
@@ -228,7 +274,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: DiniSurface): Boolean => false;
 ```
 
-## Line 460
+### Line 460
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 460](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L460).
 
@@ -236,7 +282,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: KuenSurface): Boolean => false;
 ```
 
-## Line 480
+### Line 480
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 480](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L480).
 

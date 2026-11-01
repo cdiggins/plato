@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The mass properties of a solid ball of uniform density, in a body frame
+> centred on the ball: the centre of mass is the origin of that frame.
+
+## Signature
+
+```plato
+MassPropertiesOf(s: Sphere, density: Density): MassProperties3D
+MassPropertiesOf(b: Box3D, density: Density): MassProperties3D
+MassPropertiesOf(c: Cylinder, density: Density): MassProperties3D
+MassPropertiesOf(c: Capsule3D, density: Density): MassProperties3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 278
+### Line 278
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 278](../../../../../stdlib/future/rigid-dynamics.library.plato#L278).
 
@@ -22,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 286
+### Line 286
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 286](../../../../../stdlib/future/rigid-dynamics.library.plato#L286).
 
@@ -37,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 294
+### Line 294
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 294](../../../../../stdlib/future/rigid-dynamics.library.plato#L294).
 
@@ -52,7 +76,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 302
+### Line 302
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 302](../../../../../stdlib/future/rigid-dynamics.library.plato#L302).
 

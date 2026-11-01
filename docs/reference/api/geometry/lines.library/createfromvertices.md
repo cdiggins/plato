@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The plane through three points, facing the side from which the winding
+> point1 -> point2 -> point3 reads counter-clockwise: the normal is the unit
+> cross product (point2 - point1) x (point3 - point1) under the right-hand
+> rule, and Distance is Dot(normal, point1), the offset from the world origin.
+> Undefined for collinear points, where the cross product is zero.
+
+## Signature
+
+```plato
+CreateFromVertices(_: Plane, point1: Point3D, point2: Point3D, point3: Point3D): Plane
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 419
+### Line 419
 
 **Source:** [stdlib/geometry/lines.library.plato, line 419](../../../../../stdlib/geometry/lines.library.plato#L419).
 

@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A matrix whose non-zeros lie within a band about the main diagonal:
+> element (r, c) may be non-zero only when -LowerBandwidth \<= c - r \<=
+> UpperBandwidth. Values holds the band in row-major order, each row
+> contributing LowerBandwidth + UpperBandwidth + 1 slots (positions off the
+> matrix are stored and ignored), which is the layout that lets banded solvers
+> run in linear time. Both bandwidths are non-negative; zero and zero is a
+> diagonal matrix, one and one is tridiagonal.
+> (https://en.wikipedia.org/wiki/Band\_matrix)
+
+## Signature
+
+```plato
+type BandedMatrix
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.types](../matrices.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 140
+### Line 140
 
 **Source:** [stdlib/foundation/matrices.types.plato, line 140](../../../../../stdlib/foundation/matrices.types.plato#L140).
 

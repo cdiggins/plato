@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The +Z sheet of the two-sheet hyperboloid, (a sinh t cos u, b sinh t sin u,
+> c cosh t), with t sweeping ParameterRange. The opposite sheet is this one
+> mirrored through the origin; one type carries one sheet so that the surface
+> it denotes is connected (https://en.wikipedia.org/wiki/Hyperboloid).
+
+## Signature
+
+```plato
+type HyperboloidOfTwoSheets
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.types](../surfaces-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 49
+### Line 49
 
 **Source:** [stdlib/geometry/surfaces-shapes.types.plato, line 49](../../../../../stdlib/geometry/surfaces-shapes.types.plato#L49).
 

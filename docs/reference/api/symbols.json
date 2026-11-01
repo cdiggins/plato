@@ -283,7 +283,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Algebra"
+          "declaration": "IsUnit(x: INormed, tolerance: Number): Boolean"
         }
       ]
     },
@@ -1200,7 +1200,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Angles"
+          "declaration": "Turns(x: Number): Angle"
         },
         {
           "line": 49,
@@ -1754,7 +1754,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Axes"
+          "declaration": "Vector3D(self: Axis3D): Vector3D"
         },
         {
           "line": 161,
@@ -2250,7 +2250,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Collections"
+          "declaration": "Take(self: ISliceable, count: Integer): ISliceable"
         }
       ]
     },
@@ -2912,7 +2912,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Colors"
+          "declaration": "Add(a: Color, b: Color): Color"
         }
       ]
     },
@@ -5342,7 +5342,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Constants"
+          "declaration": "GoldenRatio(_: Number): Number"
         }
       ]
     },
@@ -5845,7 +5845,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Core"
+          "declaration": "NotEquals(a: IEquatable, b: IEquatable): Boolean"
         }
       ]
     },
@@ -6100,7 +6100,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library FunctionalProcedural"
+          "declaration": "EvalAll(self: IProcedural<$TDomain, $TRange>, inputs: Array<$TDomain>): Array<$TRange>"
         }
       ]
     },
@@ -6310,7 +6310,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Graphs"
+          "declaration": "IsUndirected(self: IGraph): Boolean"
         }
       ]
     },
@@ -6798,7 +6798,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Hashing"
+          "declaration": "CombineHash(acc: Integer, next: Integer): Integer"
         }
       ]
     },
@@ -6843,7 +6843,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Intervals"
+          "declaration": "Hash(self: IntegerSize2D): Integer"
         },
         {
           "line": 23,
@@ -7684,7 +7684,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Intrinsics"
+          "declaration": "Add(a: Number, b: Number): Number;"
         },
         {
           "line": 102,
@@ -8582,7 +8582,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library MatricesOps"
+          "declaration": "Determinant(self: Matrix3x2): Number"
         },
         {
           "line": 166,
@@ -9288,7 +9288,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Matrices"
+          "declaration": "RowCount(self: Matrix2x2): Integer => 2;"
         },
         {
           "line": 77,
@@ -10049,7 +10049,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Numbers"
+          "declaration": "Add(a: Complex, b: Complex): Complex"
         },
         {
           "line": 83,
@@ -11027,7 +11027,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library NumericStructures"
+          "declaration": "Add(a: IVector, b: IVector): IVector"
         }
       ]
     },
@@ -12815,7 +12815,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Polynomials"
+          "declaration": "Linear(m: INumerical, b: INumerical, x: Number): INumerical"
         }
       ]
     },
@@ -13496,7 +13496,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Primitives"
+          "declaration": "ToNumber(self: Number): Number"
         }
       ]
     },
@@ -14973,7 +14973,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Quantities"
+          "declaration": "Add(a: IQuantity, b: IQuantity): IQuantity"
         }
       ]
     },
@@ -16340,7 +16340,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Random"
+          "declaration": "Factorial(n: Integer): Number"
         }
       ]
     },
@@ -17209,7 +17209,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library RotationsOps"
+          "declaration": "Dot(self: Quaternion, quaternion2: Quaternion): Number"
         }
       ]
     },
@@ -17678,7 +17678,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Sorting"
+          "declaration": "SortedIndices(xs: Array<$T>, lessOrEqual: Function2<$T, $T, Boolean>): Array<Integer>"
         }
       ]
     },
@@ -17708,7 +17708,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Statistics"
+          "declaration": "BinCount(self: Histogram): Integer"
         }
       ]
     },
@@ -18515,7 +18515,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Text"
+          "declaration": "ParseNumber(s: String): NumberParse"
         }
       ]
     },
@@ -18575,7 +18575,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Time"
+          "declaration": "Offset(t: Instant): Duration"
         }
       ]
     },
@@ -18928,7 +18928,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Transforms"
+          "declaration": "Transform(p: Point2D, a: AffineTransform2D): Point2D"
         },
         {
           "line": 37,
@@ -20796,7 +20796,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Vectors"
+          "declaration": "Length(self: Vector2D): Number"
         },
         {
           "line": 136,
@@ -21648,7 +21648,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Brep"
+          "declaration": "Eval(c: BrepCurve, t: Number): Point3D =>"
         },
         {
           "line": 34,
@@ -22182,7 +22182,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library CurvesShapes"
+          "declaration": "CirclePoint(theta: Angle, radius: Number): Vector2D"
         }
       ]
     },
@@ -23416,7 +23416,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Curves"
+          "declaration": "ValueAt(self: ICurve1D, t: Number): Number"
         }
       ]
     },
@@ -24406,7 +24406,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Deformations"
+          "declaration": "RotateAboutAxis(origin: Point3D, axis: Direction3D, angle: Angle, point: Point3D): Point3D"
         }
       ]
     },
@@ -25011,7 +25011,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library FieldsGraphs"
+          "declaration": "EvalNode(node: ScalarFieldNode2D, graph: ScalarFieldGraph2D, sources: Array<ScalarFunctionField2D>, point: Point2D): Number =>"
         },
         {
           "line": 50,
@@ -25068,7 +25068,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library FieldsImplicits"
+          "declaration": "ValueAt(self: IField<$TDomain, $TValue>, point: $TDomain): $TValue"
         }
       ]
     },
@@ -27596,7 +27596,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library GeometryTraits"
+          "declaration": "EmbeddingDimension(self: IGeometry2D): Integer"
         },
         {
           "line": 35,
@@ -29002,7 +29002,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library ImplicitSdf"
+          "declaration": "Eval(self: BoundedSdf2D, point: Point2D): Number"
         },
         {
           "line": 36,
@@ -30959,7 +30959,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library IntervalsTransformsDeformable"
+          "declaration": "Translate(self: IDeformable2D, offset: Vector2D): Self"
         },
         {
           "line": 64,
@@ -31225,7 +31225,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Lattices"
+          "declaration": "Strut(a: Integer, b: Integer): LatticeStrut"
         }
       ]
     },
@@ -32308,7 +32308,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Lines"
+          "declaration": "Points(s: Line2D): Array<Point2D>"
         },
         {
           "line": 31,
@@ -33055,7 +33055,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library MeshesPolygon"
+          "declaration": "VertexCount(self: PolygonMesh3D): Integer"
         }
       ]
     },
@@ -33944,7 +33944,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Meshes"
+          "declaration": "Deform(self: RichMesh3D, mapping: Function1<Point3D, Point3D>): RichMesh3D"
         },
         {
           "line": 66,
@@ -35645,7 +35645,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Noise"
+          "declaration": "NoiseMix(x: Integer): Integer {"
         }
       ]
     },
@@ -36601,7 +36601,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Planar"
+          "declaration": "EffectiveCornerRadius(r: RoundedRect2D): Number"
         }
       ]
     },
@@ -37509,7 +37509,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library PointClouds"
+          "declaration": "Deform(self: OrientedPointCloud3D, mapping: Function1<Point3D, Point3D>): OrientedPointCloud3D"
         },
         {
           "line": 16,
@@ -37600,7 +37600,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Polygons"
+          "declaration": "SignedArea(p: Polygon2D): Number"
         }
       ]
     },
@@ -38525,7 +38525,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Polyhedra"
+          "declaration": "Cuboctahedron(_: PolygonMesh3D): PolygonMesh3D"
         }
       ]
     },
@@ -39962,7 +39962,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Remeshing"
+          "declaration": "CornerFace(corner: CornerIndex): FaceIndex"
         }
       ]
     },
@@ -42025,7 +42025,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Sampling"
+          "declaration": "Deform(self: SampledCurve2D, mapping: Function1<Point2D, Point2D>): SampledCurve2D"
         },
         {
           "line": 33,
@@ -43600,7 +43600,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library SolidsCsg"
+          "declaration": "KeptFragments(a: PolygonSoup3D, b: PolygonSoup3D, keepInside: Boolean): Array<Polygon3D>"
         }
       ]
     },
@@ -43945,7 +43945,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Solids"
+          "declaration": "PointOnCircle(a: Angle, radius: Number): Point2D"
         }
       ]
     },
@@ -44660,7 +44660,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library SpatialPrimitives"
+          "declaration": "LocalOffset(center: Point3D, orientation: Quaternion, point: Point3D): Vector3D"
         }
       ]
     },
@@ -45768,7 +45768,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library SpatialStructures"
+          "declaration": "CellBounds(self: SpatialHashGrid2D, i: Integer): Bounds2D {"
         },
         {
           "line": 54,
@@ -47564,7 +47564,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Splines"
+          "declaration": "DeCasteljau(xs: Array<$T>, t: Number): $T where $T: IInterpolatable"
         }
       ]
     },
@@ -48644,7 +48644,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library SurfacesShapes"
+          "declaration": "SignedPower(x: Number, exponent: Number): Number"
         }
       ]
     },
@@ -49556,7 +49556,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Surfaces"
+          "declaration": "AnyPerpendicular(v: Vector3D): Vector3D {"
         }
       ]
     },
@@ -50521,7 +50521,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Topology"
+          "declaration": "Values(self: VertexAdjacency): Array<VertexIndex>"
         },
         {
           "line": 27,
@@ -50979,7 +50979,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Triangulation"
+          "declaration": "RingCount(holeStarts: Array<Integer>): Integer"
         }
       ]
     },
@@ -51685,7 +51685,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Voxels"
+          "declaration": "CellCenter(origin: Point3D, cellSize: Number, i: Integer, j: Integer, k: Integer): Point3D"
         },
         {
           "line": 32,
@@ -52159,7 +52159,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Cameras"
+          "declaration": "EyePosition(self: ICamera): Point3D"
         }
       ]
     },
@@ -52531,7 +52531,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library ColorSpaces"
+          "declaration": "HsvChannel(self: ColorHSV, shift: Number): Number"
         }
       ]
     },
@@ -53161,7 +53161,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Easing"
+          "declaration": "Progress(self: IEasingFunction, t: Number): Number"
         }
       ]
     },
@@ -54013,7 +54013,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Images"
+          "declaration": "Width(self: IImage): Integer"
         }
       ]
     },
@@ -54508,7 +54508,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Lights"
+          "declaration": "IsShadowCaster(self: ILightSource): Boolean"
         }
       ]
     },
@@ -55063,7 +55063,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library MotionGraphics"
+          "declaration": "Sample(self: Tween<$T>, time: Duration): $T {"
         },
         {
           "line": 71,
@@ -55412,7 +55412,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Paths"
+          "declaration": "ContourCount(self: IPath): Integer"
         }
       ]
     },
@@ -56312,7 +56312,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library TextFonts"
+          "declaration": "LessThanOrEquals(a: FontWeight, b: FontWeight): Boolean"
         }
       ]
     },
@@ -56627,7 +56627,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Texturing"
+          "declaration": "OpacityAt(self: IProceduralTexture, uv: UvCoordinate): Number"
         }
       ]
     },
@@ -56980,7 +56980,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library TimeVaryingValues"
+          "declaration": "ValueAt(self: ITimeVarying<$TValue>, time: Duration): $TValue"
         }
       ]
     },
@@ -57280,7 +57280,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Cloth"
+          "declaration": "Velocity(self: ClothVertex, dt: Duration): Vector3D"
         }
       ]
     },
@@ -58314,7 +58314,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Collision"
+          "declaration": "Combine(kind: MaterialCombine, a: Number, b: Number): Number"
         }
       ]
     },
@@ -59009,7 +59009,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library EngineeringMaterials"
+          "declaration": "LessThanOrEquals(a: SafetyFactor, b: SafetyFactor): Boolean"
         }
       ]
     },
@@ -59504,7 +59504,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library FiniteElements"
+          "declaration": "SystemDot(a: Array<Number>, b: Array<Number>): Number"
         }
       ]
     },
@@ -60652,7 +60652,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library GeoSpatial"
+          "declaration": "ExcludesCoordinate(self: IGeoRegion, coordinate: GeoCoordinate): Boolean"
         }
       ]
     },
@@ -61140,7 +61140,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Joints"
+          "declaration": "WorldAnchor(body: SolverBody3D, local: Point3D): Point3D"
         }
       ]
     },
@@ -61909,7 +61909,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Kinematics"
+          "declaration": "SpeedAt(self: IKinematic2D, time: Duration): Number"
         },
         {
           "line": 46,
@@ -62598,7 +62598,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Particles"
+          "declaration": "AccelerationAt(self: ParticleGravity): Vector3D"
         },
         {
           "line": 33,
@@ -63141,7 +63141,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library RigidDynamics"
+          "declaration": "ForceMagnitudeOn(self: IForceModel2D, body: RigidBody2D): Number"
         },
         {
           "line": 92,
@@ -64451,7 +64451,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library ScientificData"
+          "declaration": "IsEmpty(self: ITimeSampled): Boolean"
         }
       ]
     },
@@ -65450,7 +65450,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library UncertaintyMeasurement"
+          "declaration": "AgeSince(self: Measurement<$T>, reference: Instant): Duration"
         }
       ]
     },
@@ -66125,7 +66125,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Algebra"
+          "declaration": "Barycentric(v1: INumerical, v2: INumerical, v3: INumerical, uv: Vector2): INumerical"
         }
       ]
     },
@@ -66500,7 +66500,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Angles"
+          "declaration": "Turns(x: Integer): Angle => x.Number.Turns;"
         },
         {
           "line": 9,
@@ -66712,7 +66712,7 @@
       "declarations": [
         {
           "line": 30,
-          "declaration": "library ArrayLibrary"
+          "declaration": "At(xs: IArrayLike<$T>, n: Integer): $T"
         }
       ]
     },
@@ -66934,7 +66934,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library IBounds"
+          "declaration": "Size(x: IBounds<$T, $D>): $D"
         }
       ]
     },
@@ -67066,7 +67066,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library ColorConstants"
+          "declaration": "AliceBlue(): ByteRGB => (240, 248, 255);"
         }
       ]
     },
@@ -69316,7 +69316,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Constants"
+          "declaration": "Zero(): Number => 0.0;"
         }
       ]
     },
@@ -70306,7 +70306,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Core"
+          "declaration": "AlmostEqual(x: Number, y: Number): Boolean => (x-y).Abs <= x.MultiplyEpsilon(y);"
         },
         {
           "line": 75,
@@ -71649,7 +71649,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Curves"
+          "declaration": "Sample(curve: ICurve2D, numPoints: Integer): IArray<Point2D>"
         },
         {
           "line": 9,
@@ -71730,7 +71730,7 @@
         },
         {
           "line": 154,
-          "declaration": "library AngularCurves2D"
+          "declaration": "Eval(curve: IAngularCurve2D, t: Number): Point2D"
         },
         {
           "line": 166,
@@ -71770,7 +71770,7 @@
         },
         {
           "line": 495,
-          "declaration": "library Curves3D"
+          "declaration": "Eval(curve: QuadraticBezier3D, t: Number): Point3D"
         },
         {
           "line": 503,
@@ -71778,7 +71778,7 @@
         },
         {
           "line": 535,
-          "declaration": "library AngularCurves3D"
+          "declaration": "Eval(curve: IAngularCurve3D, t: Number): Point3D"
         },
         {
           "line": 550,
@@ -71948,7 +71948,7 @@
       "declarations": [
         {
           "line": 101,
-          "declaration": "library Curves2D"
+          "declaration": "Spiral(t: Number, R: Number, r: Number, numTurns: Number): Point2D"
         },
         {
           "line": 119,
@@ -72209,7 +72209,7 @@
       "declarations": [
         {
           "line": 304,
-          "declaration": "library PolarCurves"
+          "declaration": "EvalPolar(curve: IPolarCurve, t: Angle): PolarCoordinate"
         }
       ]
     },
@@ -72685,7 +72685,7 @@
       "declarations": [
         {
           "line": 14,
-          "declaration": "library ScalarFields3D"
+          "declaration": "Eval(self: ScalarField3D, p: Vector3): Number"
         }
       ]
     },
@@ -73450,7 +73450,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Geometry"
+          "declaration": "Origin2D(): Point2D => (0.0, 0.0);"
         }
       ]
     },
@@ -75233,7 +75233,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Integers"
+          "declaration": "PlusOne(x: Integer): Integer"
         }
       ]
     },
@@ -75323,7 +75323,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library IInterval"
+          "declaration": "Size(x: IInterval<$T>): $T"
         }
       ]
     },
@@ -75632,7 +75632,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Intrinsics"
+          "declaration": "Row1(self: Matrix4x4): Vector4;"
         },
         {
           "line": 57,
@@ -79442,7 +79442,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Measures"
+          "declaration": "Multiply(x: Time, s: Number): Time => new Time(x.Seconds * s);"
         }
       ]
     },
@@ -79502,7 +79502,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Meshes"
+          "declaration": "Line(self: IArray<Point3D>, index: Integer2): Line3D => (self[index.A], self[index.B]);"
         },
         {
           "line": 7,
@@ -80654,7 +80654,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Sdf3D"
+          "declaration": "SdSphere(p: Vector3, r: Number): Number"
         }
       ]
     },
@@ -80999,7 +80999,7 @@
       "declarations": [
         {
           "line": 90,
-          "declaration": "library Solids"
+          "declaration": "NGonPoint(t: Number, n: Integer): Point2D"
         }
       ]
     },
@@ -81708,7 +81708,7 @@
       "declarations": [
         {
           "line": 259,
-          "declaration": "library Transforms"
+          "declaration": "Multiply(x: ITransform3D, v: Point3D): Point3D"
         },
         {
           "line": 267,
@@ -82138,7 +82138,7 @@
       "declarations": [
         {
           "line": 1,
-          "declaration": "library Vectors"
+          "declaration": "Vector2(s: Number): Vector2 => (s, s);"
         }
       ]
     },

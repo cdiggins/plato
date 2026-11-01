@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A linear morph from the first planar shape to the second. A lower
+> bound, exact only where the two operands agree.
+> Precondition: t lies in \[0, 1\].
+
+## Signature
+
+```plato
+Morph(a: FunctionSdf2D, b: FunctionSdf2D, t: Number): FunctionSdf2D
+Morph(a: FunctionSdf3D, b: FunctionSdf3D, t: Number): FunctionSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 787
+### Line 787
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 787](../../../../../stdlib/geometry/fields-implicits.library.plato#L787).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => MorphDistance(a.Eval(p), b.Eval(p), t));
 ```
 
-## Line 793
+### Line 793
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 793](../../../../../stdlib/geometry/fields-implicits.library.plato#L793).
 

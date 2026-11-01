@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The face a corner belongs to: the number of face starts at or before it.
+> Precondition: the corner is present.
+
+## Signature
+
+```plato
+CornerFace(self: PolygonMesh3D, corner: CornerIndex): FaceIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes-polygon.library](../meshes-polygon.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 160
+### Line 160
 
 **Source:** [stdlib/geometry/meshes-polygon.library.plato, line 160](../../../../../stdlib/geometry/meshes-polygon.library.plato#L160).
 

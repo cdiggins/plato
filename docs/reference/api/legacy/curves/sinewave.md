@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Sine\_wave
+> y = amplitude \* sin(2pi \* (x\*frequency + phase)); frequency and phase scale/shift the ARGUMENT
+
+## Signature
+
+```plato
+SineWave(x: Number, amplitude: Number, frequency: Number, phase: Number): Number
+
+type SineWave
+    implements IRealFunction, IOpenShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IRealFunction](irealfunction.md), [IOpenShape](../geometry.interfaces/iopenshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 27
+### Line 27
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 27](../../../../../legacy/stdlib-legacy/curves.plato#L27).
 
@@ -19,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> amplitude * (x * frequency + phase).Turns.Sin;
 ```
 
-## Line 93
+### Line 93
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 93](../../../../../legacy/stdlib-legacy/curves.plato#L93).
 

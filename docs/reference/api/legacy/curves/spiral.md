@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Spiral(t: Number, R: Number, r: Number, numTurns: Number): Point2D
+
+type Spiral
+   	implements IOpenCurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IOpenCurve2D](../geometry.interfaces/iopencurve2d.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 101
+### Line 101
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 101](../../../../../legacy/stdlib-legacy/curves.plato#L101).
 
@@ -22,7 +45,7 @@ library Curves2D
         => new Vector2((t.Turns * numTurns).Cos, (t.Turns * numTurns).Sin) * r.Lerp(R, t);
 ```
 
-## Line 119
+### Line 119
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 119](../../../../../legacy/stdlib-legacy/curves.plato#L119).
 

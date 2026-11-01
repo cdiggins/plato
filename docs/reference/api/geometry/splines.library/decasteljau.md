@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The de Casteljau reduction of a control polygon at t.
+> Precondition: xs is non-empty.
+>
+> Written ONCE, over `$T`. The body needs Lerp on a bare element, and the `where` clause is
+> what promises it: the element type of the array must be IInterpolatable, so the call is
+> licensed at the declaration, every call site is checked against the bound (an
+> `Array<String>` is rejected), and the emitted C# carries the matching constraint instead of
+> a throwing stub. Before plato-393 this was five hand-copied bodies — Point2D, Point3D,
+> Vector2D, Vector3D, Number — because a bound could only be inherited from a constructed type
+> in the signature, and the only one here is `Array<T>`, which is unbounded and must stay so.
+
+## Signature
+
+```plato
+DeCasteljau(xs: Array<$T>, t: Number): $T where $T: IInterpolatable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/splines.library.plato, line 1](../../../../../stdlib/geometry/splines.library.plato#L1).
 

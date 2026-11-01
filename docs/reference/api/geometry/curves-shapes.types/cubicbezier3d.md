@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A cubic Bezier arc in space: interpolates P0 to P3, shaped by the interior
+> control points P1 and P2 (https://en.wikipedia.org/wiki/B%C3%A9zier\_curve).
+
+## Signature
+
+```plato
+type CubicBezier3D
+    implements ICurve3D, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICurve3D](../curves.concepts/icurve3d.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.types](../curves-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 431
+### Line 431
 
 **Source:** [stdlib/geometry/curves-shapes.types.plato, line 431](../../../../../stdlib/geometry/curves-shapes.types.plato#L431).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A strut lattice: one unit cell tiled Counts times per axis across Bounds,
+> with struts of the given world-space radius. Radius is nominal — the graded
+> operators in `lattices.library.plato` produce a per-strut radius array from a
+> field instead, and leave this value alone.
+
+## Signature
+
+```plato
+type StrutLattice3D
+    implements IValue, IBounded3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IBounded3D](../geometry.concepts/ibounded3d.md).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.types](../lattices.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 53
+### Line 53
 
 **Source:** [stdlib/geometry/lattices.types.plato, line 53](../../../../../stdlib/geometry/lattices.types.plato#L53).
 

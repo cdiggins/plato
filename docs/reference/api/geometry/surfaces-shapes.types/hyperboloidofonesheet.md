@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The one-sheet hyperboloid (a cosh t cos u, b cosh t sin u, c sinh t), with
+> SemiAxes = (a, b, c) and t sweeping ParameterRange. Doubly ruled, connected,
+> and the shape of a cooling tower (https://en.wikipedia.org/wiki/Hyperboloid).
+
+## Signature
+
+```plato
+type HyperboloidOfOneSheet
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.types](../surfaces-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 39
+### Line 39
 
 **Source:** [stdlib/geometry/surfaces-shapes.types.plato, line 39](../../../../../stdlib/geometry/surfaces-shapes.types.plato#L39).
 

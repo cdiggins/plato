@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A corner's vertex pulled toward its face's centroid by `shrink` (1 keeps
+> it in place, 0 collapses the face) and rotated by `twist` about the face's
+> outward normal, staying in the face plane. The in-plane rotation is
+> u \* cos + (n x u) \* sin for offset u and unit normal n.
+
+## Signature
+
+```plato
+TwistedCornerPoint(self: PolygonMesh3D, corner: CornerIndex, shrink: Number, twist: Angle): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 371](../../../../../stdlib/geometry/polyhedra.library.plato#L371): numbering is the CORNER numbering of `meshes-polygon.library.plato`, exactly
+- [Line 387](../../../../../stdlib/geometry/polyhedra.library.plato#L387): normalizes the result onto the unit sphere.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 360
+### Line 360
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 360](../../../../../stdlib/geometry/polyhedra.library.plato#L360).
 

@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Lima%C3%A7on
+
+## Signature
+
+```plato
+Limacon(t: Angle, a: Number, b: Number): Number
+
+type Limacon
+    implements IPolarCurve, IOpenShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IPolarCurve](ipolarcurve.md), [IOpenShape](../geometry.interfaces/iopenshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 326
+### Line 326
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 326](../../../../../legacy/stdlib-legacy/curves.plato#L326).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a * t.Cos + b;
 ```
 
-## Line 417
+### Line 417
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 417](../../../../../legacy/stdlib-legacy/curves.plato#L417).
 

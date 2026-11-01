@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The knot parameter a unit curve parameter names.
+
+## Signature
+
+```plato
+KnotParameter(domain: NumberInterval, t: Number): Number
+KnotParameter(self: NaturalCubicSpline1D, index: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 201](../../../../../stdlib/geometry/splines.library.plato#L201): `Eval` takes the unit parameter every ICurve2D / ICurve3D takes, so it is
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 197
+### Line 197
 
 **Source:** [stdlib/geometry/splines.library.plato, line 197](../../../../../stdlib/geometry/splines.library.plato#L197).
 
@@ -26,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => domain.Lerp(t.Clamp(0.0, 1.0));
 ```
 
-## Line 577
+### Line 577
 
 **Source:** [stdlib/geometry/splines.library.plato, line 577](../../../../../stdlib/geometry/splines.library.plato#L577).
 

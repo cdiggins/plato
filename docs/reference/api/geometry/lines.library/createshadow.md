@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The matrix that flattens points onto the plane along `lightDirection`,
+> turning geometry into its own shadow. The projection of p is p - s L with
+> s = (Dot(N, p) - Distance) / Dot(N, L); the matrix carries that expression
+> multiplied through by Dot(N, L), leaving the divide to the homogeneous w
+> component (w' = Dot(N, L)). Row-vector form, so column j of row i is the
+> i-th component's contribution. Degenerate when the light runs parallel to
+> the plane (Dot(N, L) = 0), where the shadow is not defined.
+
+## Signature
+
+```plato
+CreateShadow(_: Matrix4x4, lightDirection: Vector3D, plane: Plane): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 488
+### Line 488
 
 **Source:** [stdlib/geometry/lines.library.plato, line 488](../../../../../stdlib/geometry/lines.library.plato#L488).
 

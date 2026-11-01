@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The result of sweeping a shape through the plane. Hit says whether anything
+> was struck; Fraction is the normalized sweep parameter in \[0, 1\] at first
+> contact; Position and Normal describe the world hit point in meters and the
+> surface normal there; BodyIndex is the struck body (-1 = none).
+
+## Signature
+
+```plato
+type ShapeCastResult2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.types](../collision.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 304
+### Line 304
 
 **Source:** [stdlib/future/collision.types.plato, line 304](../../../../../stdlib/future/collision.types.plato#L304).
 

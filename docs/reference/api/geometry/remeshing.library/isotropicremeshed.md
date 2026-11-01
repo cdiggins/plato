@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A mesh remeshed toward uniform edges of the given length. One pass halves an
+> over-long edge and takes one non-adjacent round of short edges out, so a mesh
+> far from the target needs several: five iterations to refine, ten or more to
+> coarsen (collapses conflict where splits do not). The boundary is preserved
+> throughout.
+
+## Signature
+
+```plato
+IsotropicRemeshed(self: TriangleMesh3D, targetEdgeLength: Number, iterations: Integer): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1492
+### Line 1492
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1492](../../../../../stdlib/geometry/remeshing.library.plato#L1492).
 

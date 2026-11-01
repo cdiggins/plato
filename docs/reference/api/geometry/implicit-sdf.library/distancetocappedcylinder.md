@@ -3,11 +3,56 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed distance from a point to a cylinder centred at the origin with
+> its axis along Y, capped flat at plus or minus halfHeight. Exact.
+> (IQ: sdCappedCylinder.)
+
+## Signature
+
+```plato
+DistanceToCappedCylinder(p: Point3D, halfHeight: Number, radius: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_EqualRadiusCappedConeIsCylinder
+
+[stdlib/tests/implicit-sdf.laws.plato, line 67](../../../../../stdlib/tests/implicit-sdf.laws.plato#L67)
+
+```plato
+// A capped cone with equal radii IS a capped cylinder.
+Law_EqualRadiusCappedConeIsCylinder(p: Point3D, halfHeight: Number, radius: Number): Boolean
+    => DistanceToCappedCone(p, halfHeight, radius, radius)
+        .LawEq(DistanceToCappedCylinder(p, halfHeight, radius));
+```
+
+### Law_ExtrudedCircleIsCappedCylinder
+
+[stdlib/tests/implicit-sdf.laws.plato, line 89](../../../../../stdlib/tests/implicit-sdf.laws.plato#L89)
+
+```plato
+// Extruding a circle along Z is a capped cylinder about Z — the same solid the
+// spatial primitive describes about Y, so the axes are swapped to compare.
+Law_ExtrudedCircleIsCappedCylinder(p: Point3D, radius: Number, halfHeight: Number): Boolean
+    => ExtrudedDistance(DistanceToCircle(Point2D(p.X, p.Y), radius), p.Z, halfHeight)
+        .LawEq(DistanceToCappedCylinder(Point3D(p.X, p.Z, p.Y), halfHeight, radius));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 887
+### Line 887
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 887](../../../../../stdlib/geometry/implicit-sdf.library.plato#L887).
 

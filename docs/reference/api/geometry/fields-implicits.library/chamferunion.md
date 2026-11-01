@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The union of two planar SDFs with a 45-degree chamfer of the given width
+> across the seam. Precondition: width is positive.
+
+## Signature
+
+```plato
+ChamferUnion(a: FunctionSdf2D, b: FunctionSdf2D, width: Number): FunctionSdf2D
+ChamferUnion(a: FunctionSdf3D, b: FunctionSdf3D, width: Number): FunctionSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 799
+### Line 799
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 799](../../../../../stdlib/geometry/fields-implicits.library.plato#L799).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => ChamferUnionDistance(a.Eval(p), b.Eval(p), width));
 ```
 
-## Line 804
+### Line 804
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 804](../../../../../stdlib/geometry/fields-implicits.library.plato#L804).
 

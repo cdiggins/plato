@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The world-space size of one cell on each axis: the bounds extent divided
+> by the repetition count. Cells are cubic only when the bounds are
+> proportional to the counts.
+
+## Signature
+
+```plato
+CellSize(self: StrutLattice3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 340](../../../../../stdlib/geometry/lattices.library.plato#L340): (i + 1) \* cellSize, so they land on the same world position exactly rather
+- [Line 341](../../../../../stdlib/geometry/lattices.library.plato#L341): than within a tolerance.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 332
+### Line 332
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 332](../../../../../stdlib/geometry/lattices.library.plato#L332).
 

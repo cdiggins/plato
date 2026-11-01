@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The named scheme applied `levels` times. Each level multiplies the face
+> count by roughly four, and the cost of a level is quadratic in the corner
+> count, so the cost of the last level dominates everything before it.
+
+## Signature
+
+```plato
+Subdivided(self: PolygonMesh3D, scheme: SubdivisionScheme, levels: Integer): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1111
+### Line 1111
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1111](../../../../../stdlib/geometry/remeshing.library.plato#L1111).
 

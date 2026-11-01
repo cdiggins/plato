@@ -3,11 +3,50 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Linear interpolation by amount; t is unclamped, so it extrapolates.
+
+## Signature
+
+```plato
+Lerp(a: IQuantity, b: IQuantity, t: Number): IQuantity
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_LerpAtZeroIsStart2D
+
+[stdlib/tests/foundation.laws.plato, line 166](../../../../../stdlib/tests/foundation.laws.plato#L166)
+
+```plato
+// Lerp endpoints, now derived from Add + Between rather than written per type.
+Law_LerpAtZeroIsStart2D(a: Point2D, b: Point2D): Boolean
+    => a.Lerp(b, 0.0).Distance(a) <= 1e-4;
+```
+
+### Law_LerpAtOneIsEnd2D
+
+[stdlib/tests/foundation.laws.plato, line 169](../../../../../stdlib/tests/foundation.laws.plato#L169)
+
+```plato
+Law_LerpAtOneIsEnd2D(a: Point2D, b: Point2D): Boolean
+    => a.Lerp(b, 1.0).Distance(b) <= 1e-4;
+```
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [quantities.library](../quantities.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 86
+### Line 86
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 86](../../../../../stdlib/foundation/quantities.library.plato#L86).
 

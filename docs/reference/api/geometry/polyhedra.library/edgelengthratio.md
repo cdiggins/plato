@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The longest edge divided by the shortest: one for a solid with all edges
+> equal, which is what the uniformity constants of the expand and snub
+> catalog entries above are chosen to achieve. Undefined (division by zero)
+> on a mesh with a degenerate edge.
+
+## Signature
+
+```plato
+EdgeLengthRatio(self: PolygonMesh3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 892
+### Line 892
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 892](../../../../../stdlib/geometry/polyhedra.library.plato#L892).
 

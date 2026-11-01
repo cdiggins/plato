@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An oriented plane element in 2D (the single XY component); the generator of
+> 2D rotations in geometric algebra (https://en.wikipedia.org/wiki/Bivector).
+
+## Signature
+
+```plato
+type Bivector2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [rotations.types](../rotations.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 56
+### Line 56
 
 **Source:** [stdlib/foundation/rotations.types.plato, line 56](../../../../../stdlib/foundation/rotations.types.plato#L56).
 

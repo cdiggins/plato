@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Converts to the general 2D affine transform: the common ground for composing
+> 2D transforms of different kinds.
+> https://en.wikipedia.org/wiki/Affine\_transformation
+
+## Signature
+
+```plato
+interface IAffine2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [AffineTransform2D](../transforms.types/affinetransform2d.md), [TrsTransform2D](../transforms.types/trstransform2d.md), [Scaling2D](../transforms.types/scaling2d.md), [UniformScaling2D](../transforms.types/uniformscaling2d.md), [Reflection2D](../transforms.types/reflection2d.md), [ScalingAbout2D](../transforms.types/scalingabout2d.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.concepts](../transforms.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/foundation/transforms.concepts.plato, line 75](../../../../../stdlib/foundation/transforms.concepts.plato#L75).
 

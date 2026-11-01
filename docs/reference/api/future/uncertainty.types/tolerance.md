@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An asymmetric engineering tolerance about a nominal value. The acceptable
+> range is \[Nominal - Minus, Nominal + Plus\]; Plus and Minus are
+> non-negative magnitudes.
+> (https://en.wikipedia.org/wiki/Engineering\_tolerance)
+> Convention: see CONVENTIONS.md - Floating-point comparison (this is an
+> acceptance allowance, explicitly NOT the ComparisonTolerance epsilon record).
+
+## Signature
+
+```plato
+type Tolerance
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty.types](../uncertainty.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/future/uncertainty.types.plato, line 67](../../../../../stdlib/future/uncertainty.types.plato#L67).
 

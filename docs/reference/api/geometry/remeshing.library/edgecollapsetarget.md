@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Where the collapse of an edge should put its surviving vertex: the minimizer
+> of the summed quadric, falling back to the midpoint where the system is
+> singular.
+
+## Signature
+
+```plato
+EdgeCollapseTarget(self: TriangleMesh3D, topology: TriangleMeshTopology, quadrics: Array<Quadric>, e: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 1384](../../../../../stdlib/geometry/remeshing.library.plato#L1384): Coarsening driven by the error quadrics above: an edge's cost is the value
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1380
+### Line 1380
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1380](../../../../../stdlib/geometry/remeshing.library.plato#L1380).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The neighbours of each vertex, packed vertex by vertex.
+
+## Signature
+
+```plato
+Values(self: VertexAdjacency): Array<VertexIndex>
+Values(self: FaceAdjacency): Array<FaceIndex>
+Values(self: VertexFaceAdjacency): Array<FaceIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.library](../topology.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/topology.library.plato, line 1](../../../../../stdlib/geometry/topology.library.plato#L1).
 
@@ -40,7 +63,7 @@ library Topology
         => self.Neighbors;
 ```
 
-## Line 27
+### Line 27
 
 **Source:** [stdlib/geometry/topology.library.plato, line 27](../../../../../stdlib/geometry/topology.library.plato#L27).
 
@@ -51,7 +74,7 @@ library Topology
         => self.Neighbors;
 ```
 
-## Line 31
+### Line 31
 
 **Source:** [stdlib/geometry/topology.library.plato, line 31](../../../../../stdlib/geometry/topology.library.plato#L31).
 

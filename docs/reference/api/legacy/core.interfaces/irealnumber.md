@@ -3,11 +3,37 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Represents a continuous one dimensional value.
+> https://en.wikipedia.org/wiki/Real\_float
+> It supports all arithmetic operations.
+> The "Number" type is currently the only example of a IRealNumber
+
+## Signature
+
+```plato
+interface IRealNumber
+    inherits IInterpolatable, IArithmetic, IScalarArithmetic, IOrderable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IInterpolatable](iinterpolatable.md), [IArithmetic](iarithmetic.md), [IScalarArithmetic](iscalararithmetic.md), [IOrderable](iorderable.md).
+
+Implemented in this tier by: [Number](../primitives/number.md).
+
+## Source
+
 **File:** [core.interfaces](../core.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 119
+### Line 119
 
 **Source:** [legacy/stdlib-legacy/core.interfaces.plato, line 119](../../../../../legacy/stdlib-legacy/core.interfaces.plato#L119).
 

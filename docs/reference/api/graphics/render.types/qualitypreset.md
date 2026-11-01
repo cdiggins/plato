@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An overall speed-versus-fidelity preset a renderer maps onto its own knobs.
+
+## Signature
+
+```plato
+type QualityPreset = Draft | Preview | Production
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [render.types](../render.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 134
+### Line 134
 
 **Source:** [stdlib/graphics/render.types.plato, line 134](../../../../../stdlib/graphics/render.types.plato#L134).
 

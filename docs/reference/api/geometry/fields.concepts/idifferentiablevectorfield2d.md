@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar vector field with first derivatives: the Jacobian, its trace
+> (divergence), and the scalar 2D curl (rotation about the plane normal)
+> (https://en.wikipedia.org/wiki/Divergence,
+> https://en.wikipedia.org/wiki/Curl\_(mathematics)).
+
+## Signature
+
+```plato
+interface IDifferentiableVectorField2D
+    inherits IVectorField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IVectorField2D](ivectorfield2d.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields.concepts](../fields.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 126
+### Line 126
 
 **Source:** [stdlib/geometry/fields.concepts.plato, line 126](../../../../../stdlib/geometry/fields.concepts.plato#L126).
 

@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The angle of the given number of degrees; 360 degrees is one turn.
+> (https://en.wikipedia.org/wiki/Degree\_(angle))
+
+## Signature
+
+```plato
+Degrees(x: Number): Angle
+Degrees(x: Integer): Angle
+Degrees(x: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Angles and periodic values](../../../library/foundation/angles.md)
+
+## Source
+
 **File:** [angles.library](../angles.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 29
+### Line 29
 
 **Source:** [stdlib/foundation/angles.library.plato, line 29](../../../../../stdlib/foundation/angles.library.plato#L29).
 
@@ -19,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (x / 360.0).Turns;
 ```
 
-## Line 59
+### Line 59
 
 **Source:** [stdlib/foundation/angles.library.plato, line 59](../../../../../stdlib/foundation/angles.library.plato#L59).
 
@@ -30,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => x.ToNumber.Degrees;
 ```
 
-## Line 86
+### Line 86
 
 **Source:** [stdlib/foundation/angles.library.plato, line 86](../../../../../stdlib/foundation/angles.library.plato#L86).
 

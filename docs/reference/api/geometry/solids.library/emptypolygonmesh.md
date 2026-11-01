@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The empty polygon mesh: the explicit "nothing" mesh (no dispatch arm
+> returns it any more, but callers may still want the zero element).
+> Detect it with `MeshIsEmpty` or `VertexCount == 0`.
+
+## Signature
+
+```plato
+EmptyPolygonMesh(_: PolygonMesh3D): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.library](../solids.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 304
+### Line 304
 
 **Source:** [stdlib/geometry/solids.library.plato, line 304](../../../../../stdlib/geometry/solids.library.plato#L304).
 

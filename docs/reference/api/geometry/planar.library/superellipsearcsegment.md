@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The arc length of the local-frame superellipse graph from x = 0 to the
+> "half-way" point x = a (1/2)^(1/n) (where (x/a)^n = (y/b)^n = 1/2), by
+> composite Simpson with 96 panels. The split keeps the singular tangent at
+> the far axis OUT of the integration range; the other half of the quarter
+> arc is this same function with the axes swapped.
+
+## Signature
+
+```plato
+SuperEllipseArcSegment(a: Number, b: Number, n: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 553
+### Line 553
 
 **Source:** [stdlib/geometry/planar.library.plato, line 553](../../../../../stdlib/geometry/planar.library.plato#L553).
 

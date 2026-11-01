@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An 8-bit-per-channel RGBA color with components in \[0, 255\]; storage and
+> interop form, typically sRGB-encoded (https://en.wikipedia.org/wiki/SRGB).
+
+## Signature
+
+```plato
+type Color8
+    implements IValue, IHashable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IHashable](../core.concepts/ihashable.md).
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+
+## Source
+
 **File:** [color.types](../color.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 22
+### Line 22
 
 **Source:** [stdlib/foundation/color.types.plato, line 22](../../../../../stdlib/foundation/color.types.plato#L22).
 

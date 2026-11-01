@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An SMPTE-style timecode under a given frame rate
+> (https://en.wikipedia.org/wiki/SMPTE\_timecode).
+
+## Signature
+
+```plato
+type Timecode
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [time.types](../time.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 46
+### Line 46
 
 **Source:** [stdlib/foundation/time.types.plato, line 46](../../../../../stdlib/foundation/time.types.plato#L46).
 

@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A calibration mapping from raw readings to physical values as a piecewise
+> linear function. InputValues is strictly increasing and parallel to
+> OutputValues; inputs are in InputUnit, outputs in OutputUnit.
+> (https://en.wikipedia.org/wiki/Calibration\_curve)
+
+## Signature
+
+```plato
+type CalibrationCurve
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.types](../scientific-data.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 87
+### Line 87
 
 **Source:** [stdlib/future/scientific-data.types.plato, line 87](../../../../../stdlib/future/scientific-data.types.plato#L87).
 

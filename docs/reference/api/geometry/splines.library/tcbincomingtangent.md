@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The arriving tangent at knot i.
+
+## Signature
+
+```plato
+TcbIncomingTangent(self: TcbSpline2D, i: Integer): Vector2D
+TcbIncomingTangent(self: TcbSpline3D, i: Integer): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 461
+### Line 461
 
 **Source:** [stdlib/geometry/splines.library.plato, line 461](../../../../../stdlib/geometry/splines.library.plato#L461).
 
@@ -25,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
                                              self.Biases.AtWrapped(i, self.Closed));
 ```
 
-## Line 493
+### Line 493
 
 **Source:** [stdlib/geometry/splines.library.plato, line 493](../../../../../stdlib/geometry/splines.library.plato#L493).
 

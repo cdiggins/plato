@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The barycentric coordinates (U, V, W) of `point` with respect to the triangle:
+> the weights on A, B, C, computed as ratios of sub-triangle signed areas. They
+> sum to 1 for any point, are all non-negative exactly inside the closed
+> triangle, and are winding-independent (the common denominator carries the
+> sign). Undefined (0/0) only for a degenerate triangle.
+> https://en.wikipedia.org/wiki/Barycentric\_coordinate\_system
+
+## Signature
+
+```plato
+Barycentric(t: Triangle2D, point: Point2D): BarycentricCoordinate
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 719
+### Line 719
 
 **Source:** [stdlib/geometry/planar.library.plato, line 719](../../../../../stdlib/geometry/planar.library.plato#L719).
 

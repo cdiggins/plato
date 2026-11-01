@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Pow3(x: Number): Number
+Pow3(x: IVectorLike): IVectorLike
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [core.library](../core.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 25
+### Line 25
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 25](../../../../../legacy/stdlib-legacy/core.library.plato#L25).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Pow3(x: Number): Number => x * x * x;
 ```
 
-## Line 91
+### Line 91
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 91](../../../../../legacy/stdlib-legacy/core.library.plato#L91).
 

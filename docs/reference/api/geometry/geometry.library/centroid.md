@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The centroid of a centre-symmetric planar shape: its stored centre.
+
+## Signature
+
+```plato
+Centroid(self: ICentered2D): Point2D
+Centroid(self: ICentered3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 552](../../../../../stdlib/geometry/geometry.library.plato#L552):   \* Measures are unit-agnostic Numbers in coordinate units (see README.md).
+- [Line 556](../../../../../stdlib/geometry/geometry.library.plato#L556):   \* P1: Half(IScalable), AlmostZero(IReal, tolerance).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 538
+### Line 538
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 538](../../../../../stdlib/geometry/geometry.library.plato#L538).
 
@@ -44,7 +72,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Center;
 ```
 
-## Line 568
+### Line 568
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 568](../../../../../stdlib/geometry/geometry.library.plato#L568).
 

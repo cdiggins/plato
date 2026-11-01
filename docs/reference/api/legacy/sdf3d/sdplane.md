@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Plane with unit normal n at signed offset h from the origin: dot(p, n) + h.
+
+## Signature
+
+```plato
+SdPlane(p: Vector3, n: Vector3, h: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [sdf3d](../sdf3d.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 49
+### Line 49
 
 **Source:** [legacy/stdlib-legacy/sdf3d.plato, line 49](../../../../../legacy/stdlib-legacy/sdf3d.plato#L49).
 

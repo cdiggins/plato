@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A 2D curve with a defined first derivative. TangentAt is the (not necessarily
+> unit-length) velocity; CurvatureAt is the signed plane curvature (positive
+> turning left, negative turning right)
+> (https://en.wikipedia.org/wiki/Curvature).
+
+## Signature
+
+```plato
+interface IDifferentiableCurve2D
+    inherits ICurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICurve2D](icurve2d.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.concepts](../curves.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 103
+### Line 103
 
 **Source:** [stdlib/geometry/curves.concepts.plato, line 103](../../../../../stdlib/geometry/curves.concepts.plato#L103).
 

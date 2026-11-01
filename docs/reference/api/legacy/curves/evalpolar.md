@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Get the polar coordinates of a point on a polar curve.
+
+## Signature
+
+```plato
+EvalPolar(curve: IPolarCurve, t: Angle): PolarCoordinate
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 304
+### Line 304
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 304](../../../../../legacy/stdlib-legacy/curves.plato#L304).
 

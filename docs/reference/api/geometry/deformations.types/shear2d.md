@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Planar shear: translates each point by Rate \* t, where t is signed distance
+> from Origin along Axis.
+
+## Signature
+
+```plato
+type Shear2D
+    implements IValue, IDeformation2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IDeformation2D](../deformations.concepts/ideformation2d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [deformations.types](../deformations.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 70
+### Line 70
 
 **Source:** [stdlib/geometry/deformations.types.plato, line 70](../../../../../stdlib/geometry/deformations.types.plato#L70).
 

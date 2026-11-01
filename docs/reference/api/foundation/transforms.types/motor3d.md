@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A rigid motion (rotation plus translation) as a geometric-algebra motor,
+> stored in dual-quaternion form: IReal is the rotation, Dual encodes the
+> translation as Dual = 0.5 \* t \* IReal, where t is the translation as a pure
+> quaternion. Unit dual quaternions are isomorphic to the motors of 3D PGA.
+> https://en.wikipedia.org/wiki/Dual\_quaternion
+
+## Signature
+
+```plato
+type Motor3D
+    implements IValue, IMultiplicative, IRigid3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IMultiplicative](../algebra.concepts/imultiplicative.md), [IRigid3D](../transforms.concepts/irigid3d.md).
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.types](../transforms.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 101
+### Line 101
 
 **Source:** [stdlib/foundation/transforms.types.plato, line 101](../../../../../stdlib/foundation/transforms.types.plato#L101).
 

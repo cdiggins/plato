@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when this cell emits the node. A node on the far face of an axis
+> belongs to the next cell along, which describes it on its near face.
+
+## Signature
+
+```plato
+OwnsNode(self: StrutLattice3D, cell: IntegerVector3, node: Point3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 403
+### Line 403
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 403](../../../../../stdlib/geometry/lattices.library.plato#L403).
 

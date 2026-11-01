@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The canonical corner that names an undirected edge, or the "none" index if
+> no corner does. The inverse of `CornerUndirectedEdge`.
+> Convention: see CONVENTIONS.md - Typed indices - -1 means none.
+
+## Signature
+
+```plato
+CanonicalCornerOfUndirectedEdge(self: PolygonMesh3D, edge: UndirectedEdgeIndex): CornerIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 315](../../../../../stdlib/geometry/meshes-polygon.library.plato#L315): requires a closed manifold: every body is a corner scan, and a boundary edge —
+- [Line 318](../../../../../stdlib/geometry/meshes-polygon.library.plato#L318): Cost: `CornerUndirectedEdge` is already quadratic in corner count, so the
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes-polygon.library](../meshes-polygon.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 304
+### Line 304
 
 **Source:** [stdlib/geometry/meshes-polygon.library.plato, line 304](../../../../../stdlib/geometry/meshes-polygon.library.plato#L304).
 

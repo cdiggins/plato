@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The corner farthest along `direction`: each local axis independently takes
+> the sign of the direction's component on it.
+
+## Signature
+
+```plato
+Support(b: Box3D, direction: Direction3D): Point3D
+Support(b: RoundedBox3D, direction: Direction3D): Point3D
+Support(c: Capsule3D, direction: Direction3D): Point3D
+Support(c: Cylinder, direction: Direction3D): Point3D
+Support(c: Cone, direction: Direction3D): Point3D
+Support(s: Sphere, direction: Direction3D): Point3D
+Support(e: Ellipsoid, direction: Direction3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 7 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 157
+### Line 157
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 157](../../../../../stdlib/geometry/spatial-primitives.library.plato#L157).
 
@@ -26,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 244
+### Line 244
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 244](../../../../../stdlib/geometry/spatial-primitives.library.plato#L244).
 
@@ -47,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 313
+### Line 313
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 313](../../../../../stdlib/geometry/spatial-primitives.library.plato#L313).
 
@@ -60,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
             ? c.A : c.B) + direction.Vector * c.Radius;
 ```
 
-## Line 364
+### Line 364
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 364](../../../../../stdlib/geometry/spatial-primitives.library.plato#L364).
 
@@ -77,7 +104,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 454
+### Line 454
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 454](../../../../../stdlib/geometry/spatial-primitives.library.plato#L454).
 
@@ -94,7 +121,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 824
+### Line 824
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 824](../../../../../stdlib/geometry/spatial-primitives.library.plato#L824).
 
@@ -105,7 +132,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => s.Center + direction.Vector * s.Radius;
 ```
 
-## Line 957
+### Line 957
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 957](../../../../../stdlib/geometry/spatial-primitives.library.plato#L957).
 

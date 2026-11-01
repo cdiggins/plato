@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when x is strictly greater than zero.
+
+## Signature
+
+```plato
+IsPositive(x: IReal): Boolean
+IsPositive(x: IWhole): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.library](../algebra.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 177
+### Line 177
 
 **Source:** [stdlib/foundation/algebra.library.plato, line 177](../../../../../stdlib/foundation/algebra.library.plato#L177).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => x.Zero.LessThan(x);
 ```
 
-## Line 304
+### Line 304
 
 **Source:** [stdlib/foundation/algebra.library.plato, line 304](../../../../../stdlib/foundation/algebra.library.plato#L304).
 

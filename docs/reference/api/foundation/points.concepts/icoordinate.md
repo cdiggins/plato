@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A position in some coordinate space
+> (https://en.wikipedia.org/wiki/Coordinate\_system). Marker interface for all
+> point-like types.
+
+## Signature
+
+```plato
+interface ICoordinate
+    inherits IValue, IEquatable, IInterpolatable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IValue](../core.concepts/ivalue.md), [IEquatable](../core.concepts/iequatable.md), [IInterpolatable](../algebra.concepts/iinterpolatable.md).
+
+Implemented in this tier by: [Point2D](../points.types/point2d.md), [Point3D](../points.types/point3d.md), [PointN](../points.types/pointn.md), [UvCoordinate](../points.types/uvcoordinate.md), [UvwCoordinate](../points.types/uvwcoordinate.md).
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [points.concepts](../points.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/points.concepts.plato, line 1](../../../../../stdlib/foundation/points.concepts.plato#L1).
 

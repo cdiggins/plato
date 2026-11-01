@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Contact-solver settings that let a stack settle: five millimetres of slop, a
+> fifth of the excess overlap removed per step, correction capped at three
+> meters per second, and no bounce below one meter per second of approach.
+
+## Signature
+
+```plato
+Settled(_: ContactSolverSettings): ContactSolverSettings
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 929
+### Line 929
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 929](../../../../../stdlib/future/rigid-dynamics.library.plato#L929).
 

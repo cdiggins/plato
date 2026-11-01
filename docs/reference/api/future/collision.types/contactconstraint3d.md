@@ -3,11 +3,46 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One point of one contact, in the form the velocity solver iterates. BodyA and
+> BodyB are indices into the solver's body array; Point is the world contact
+> position in meters; Normal points from A toward B; Tangent and Bitangent
+> complete a right-handed orthonormal frame with Normal and fix the friction
+> basis for the life of the row; Penetration is the positive overlap depth;
+> Friction is the combined dimensionless Coulomb coefficient and Restitution the
+> combined bounciness in \[0, 1\]; TargetSeparationSpeed is the separation speed
+> along Normal the solver aims for, in meters per second, already including
+> restitution and already zero for a resting contact; and the three impulses are
+> the accumulated solver output in newton-seconds along the three basis
+> directions (all zero in a fresh row).
+
+## Signature
+
+```plato
+type ContactConstraint3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.types](../collision.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 225
+### Line 225
 
 **Source:** [stdlib/future/collision.types.plato, line 225](../../../../../stdlib/future/collision.types.plato#L225).
 

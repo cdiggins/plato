@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The boolean (clipping) operation used when combining two paths.
+> IDifference is the first path minus the second.
+> (https://en.wikipedia.org/wiki/Boolean\_operations\_on\_polygons)
+
+## Signature
+
+```plato
+type PathBooleanOperation = Union | Intersection | Difference | ExclusiveOr
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [paths.types](../paths.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 88
+### Line 88
 
 **Source:** [stdlib/graphics/paths.types.plato, line 88](../../../../../stdlib/graphics/paths.types.plato#L88).
 

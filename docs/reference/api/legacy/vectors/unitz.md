@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+UnitZ(_: Vector3): Vector3
+UnitZ(_: Vector4): Vector4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [vectors](../vectors.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 60
+### Line 60
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 60](../../../../../legacy/stdlib-legacy/vectors.plato#L60).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     UnitZ(_: Vector3): Vector3 => (0.0, 0.0, 1.0);
 ```
 
-## Line 77
+### Line 77
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 77](../../../../../legacy/stdlib-legacy/vectors.plato#L77).
 

@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How closely a fitted shape matches the samples it was fitted to: the
+> root-mean-square of the point-to-shape distances, the largest single such
+> distance, and how many samples stand behind both. All distances are
+> non-negative and in coordinate units; MaximumError is never less than
+> RootMeanSquareError.
+> (https://en.wikipedia.org/wiki/Root-mean-square\_deviation)
+
+## Signature
+
+```plato
+type FitQuality
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.types](../geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/geometry.types.plato, line 1](../../../../../stdlib/geometry/geometry.types.plato#L1).
 

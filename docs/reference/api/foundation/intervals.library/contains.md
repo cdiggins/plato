@@ -3,11 +3,155 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when `p` lies within the closed box \[Min, Max\] on every axis (inclusive).
+
+## Signature
+
+```plato
+Contains(self: Bounds2D, p: Point2D): Boolean
+Contains(self: Bounds2D, other: Bounds2D): Boolean
+Contains(self: Bounds3D, p: Point3D): Boolean
+Contains(self: Bounds3D, other: Bounds3D): Boolean
+Contains(self: IInterval<$T>, value: $T): Boolean
+Contains(self: AngleInterval, a: Angle): Boolean
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ContainsStart
+
+[stdlib/tests/foundation.laws.plato, line 55](../../../../../stdlib/tests/foundation.laws.plato#L55)
+
+```plato
+// A forward interval contains its own Start endpoint (closed interval, inclusive).
+Law_ContainsStart(self: IInterval<$T>): Boolean
+    => self.IsReversed || self.Contains(self.Start);
+```
+
+### Law_ContainsEnd
+
+[stdlib/tests/foundation.laws.plato, line 59](../../../../../stdlib/tests/foundation.laws.plato#L59)
+
+```plato
+// A forward interval contains its own End endpoint.
+Law_ContainsEnd(self: IInterval<$T>): Boolean
+    => self.IsReversed || self.Contains(self.End);
+```
+
+### Law_ContainsCenter
+
+[stdlib/tests/foundation.laws.plato, line 63](../../../../../stdlib/tests/foundation.laws.plato#L63)
+
+```plato
+// A forward interval contains its own center.
+Law_ContainsCenter(self: IInterval<$T>): Boolean
+    => self.IsReversed || self.Contains(self.Center);
+```
+
+### Law_ContainsCenter
+
+[stdlib/tests/foundation.laws.plato, line 79](../../../../../stdlib/tests/foundation.laws.plato#L79)
+
+```plato
+// Same property, stated over AngleInterval's OWN surface.
+//
+// DOMAIN: AngleInterval reinterprets both Contains and Center as ARC operations
+// (intervals.library.plato), so the generic law above does
+// not describe this type. Worse, monomorphizing it produces a CHIMERA: the
+// interface's linear Center is inlined into the law body (resolution happens
+// against IInterval, where the specialization is invisible), while the
+// Contains call survives as a call and is re-bound by C# extension-method
+// overload resolution to the type's wrap-aware one (tracked as plato-374). Arc
+// Contains of a linear midpoint holds for neither reading, and it fails for
+// every interval whose stored End - Start exceeds a turn. Restated here on the
+// arc surface, where
+// the midpoint is Start + Span/2 and containment always holds.
+Law_ContainsCenter(self: AngleInterval): Boolean
+    => self.Contains(self.Center);
+```
+
+### Law_Bounds2DContainsCenter
+
+[stdlib/tests/foundation.laws.plato, line 86](../../../../../stdlib/tests/foundation.laws.plato#L86)
+
+```plato
+// A non-empty box contains its own center point.
+Law_Bounds2DContainsCenter(b: Bounds2D): Boolean
+    => b.IsEmpty || b.Contains(b.Center);
+```
+
+### Law_Bounds2DExpandContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 90](../../../../../stdlib/tests/foundation.laws.plato#L90)
+
+```plato
+// Expanding outward by a non-negative amount still contains the original box.
+Law_Bounds2DExpandContainsSelf(b: Bounds2D): Boolean
+    => b.IsEmpty || b.Expand(1.0).Contains(b);
+```
+
+### Law_Bounds2DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 94](../../../../../stdlib/tests/foundation.laws.plato#L94)
+
+```plato
+// A box is contained in its union with any other box.
+Law_Bounds2DUnionContainsSelf(b: Bounds2D, o: Bounds2D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+### Law_Bounds2DUnionContainsOther
+
+[stdlib/tests/foundation.laws.plato, line 98](../../../../../stdlib/tests/foundation.laws.plato#L98)
+
+```plato
+// The other operand is contained in the union too.
+Law_Bounds2DUnionContainsOther(b: Bounds2D, o: Bounds2D): Boolean
+    => o.IsEmpty || b.Union(o).Contains(o);
+```
+
+### Law_Bounds3DContainsCenter
+
+[stdlib/tests/foundation.laws.plato, line 104](../../../../../stdlib/tests/foundation.laws.plato#L104)
+
+```plato
+Law_Bounds3DContainsCenter(b: Bounds3D): Boolean
+    => b.IsEmpty || b.Contains(b.Center);
+```
+
+### Law_Bounds3DExpandContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 107](../../../../../stdlib/tests/foundation.laws.plato#L107)
+
+```plato
+Law_Bounds3DExpandContainsSelf(b: Bounds3D): Boolean
+    => b.IsEmpty || b.Expand(1.0).Contains(b);
+```
+
+### Law_Bounds3DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 110](../../../../../stdlib/tests/foundation.laws.plato#L110)
+
+```plato
+Law_Bounds3DUnionContainsSelf(b: Bounds3D, o: Bounds3D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 88
+### Line 88
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 88](../../../../../stdlib/foundation/intervals.library.plato#L88).
 
@@ -19,7 +163,7 @@ Copied from source, comments included. A comment records intent. The body is the
         && self.Min.Y <= p.Y && p.Y <= self.Max.Y;
 ```
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 93](../../../../../stdlib/foundation/intervals.library.plato#L93).
 
@@ -30,7 +174,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Contains(other.Min) && self.Contains(other.Max);
 ```
 
-## Line 127
+### Line 127
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 127](../../../../../stdlib/foundation/intervals.library.plato#L127).
 
@@ -43,7 +187,7 @@ Copied from source, comments included. A comment records intent. The body is the
         && self.Min.Z <= p.Z && p.Z <= self.Max.Z;
 ```
 
-## Line 133
+### Line 133
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 133](../../../../../stdlib/foundation/intervals.library.plato#L133).
 
@@ -54,7 +198,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Contains(other.Min) && self.Contains(other.Max);
 ```
 
-## Line 221
+### Line 221
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 221](../../../../../stdlib/foundation/intervals.library.plato#L221).
 
@@ -66,7 +210,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Start <= value && value <= self.End;
 ```
 
-## Line 358
+### Line 358
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 358](../../../../../stdlib/foundation/intervals.library.plato#L358).
 

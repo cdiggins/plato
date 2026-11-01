@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The trace: the sum of the diagonal entries.
+> (https://en.wikipedia.org/wiki/Trace\_(linear\_algebra))
+
+## Signature
+
+```plato
+DiagonalSum(self: SparseMatrix): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 348
+### Line 348
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 348](../../../../../stdlib/foundation/matrices.library.plato#L348).
 

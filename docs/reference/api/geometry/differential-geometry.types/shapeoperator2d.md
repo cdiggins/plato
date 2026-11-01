@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The shape (Weingarten) operator of a surface at a point, expressed as a 2x2
+> matrix in the (Xu, Xv) tangent basis. Its eigenvalues are the principal
+> curvatures; generally not symmetric in a non-orthonormal basis.
+> (https://en.wikipedia.org/wiki/Weingarten\_equations)
+
+## Signature
+
+```plato
+type ShapeOperator2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [differential-geometry.types](../differential-geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 262
+### Line 262
 
 **Source:** [stdlib/geometry/differential-geometry.types.plato, line 262](../../../../../stdlib/geometry/differential-geometry.types.plato#L262).
 

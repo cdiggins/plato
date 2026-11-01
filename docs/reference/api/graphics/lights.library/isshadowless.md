@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the light casts no shadows.
+
+## Signature
+
+```plato
+IsShadowless(self: ILightSource): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [lights.library](../lights.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 19
+### Line 19
 
 **Source:** [stdlib/graphics/lights.library.plato, line 19](../../../../../stdlib/graphics/lights.library.plato#L19).
 

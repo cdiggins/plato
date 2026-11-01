@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A spatial velocity: the linear velocity of a reference point in meters per
+> second, plus the angular velocity in radians per second about each axis.
+> Known as a twist in screw theory.
+> (https://en.wikipedia.org/wiki/Screw\_theory)
+
+## Signature
+
+```plato
+type SpatialVelocity3D
+    implements IValue, IInterpolatable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IInterpolatable](../../foundation/algebra.concepts/iinterpolatable.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.types](../kinematics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 106
+### Line 106
 
 **Source:** [stdlib/future/kinematics.types.plato, line 106](../../../../../stdlib/future/kinematics.types.plato#L106).
 

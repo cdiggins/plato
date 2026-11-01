@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The perspective projection of a symmetric frustum described by its
+> vertical field of view. Preconditions (unchecked):
+> 0 \< fieldOfView \< half a turn, 0 \< nearPlane \< farPlane.
+
+## Signature
+
+```plato
+CreatePerspectiveFieldOfView(_: Matrix4x4, fieldOfView: Angle, aspectRatio: Number, nearPlane: Number, farPlane: Number): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 563](../../../../../stdlib/foundation/matrices-ops.library.plato#L563): throw for degenerate arguments; here the preconditions are UNCHECKED (see
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 557
+### Line 557
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 557](../../../../../stdlib/foundation/matrices-ops.library.plato#L557).
 

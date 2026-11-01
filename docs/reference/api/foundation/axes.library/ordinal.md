@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The zero-based component index this axis selects: X => 0, Y => 1, Z => 2.
+
+## Signature
+
+```plato
+Ordinal(self: Axis3D): Integer
+Ordinal(self: Axis2D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [axes.library](../axes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 45
+### Line 45
 
 **Source:** [stdlib/foundation/axes.library.plato, line 45](../../../../../stdlib/foundation/axes.library.plato#L45).
 
@@ -22,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         };
 ```
 
-## Line 111
+### Line 111
 
 **Source:** [stdlib/foundation/axes.library.plato, line 111](../../../../../stdlib/foundation/axes.library.plato#L111).
 

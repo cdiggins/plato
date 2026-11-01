@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+PrependAndAppend(self: IArray<$T>, before: $T, after: $T): IArray<$T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 473
+### Line 473
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 473](../../../../../legacy/stdlib-legacy/intrinsics.plato#L473).
 

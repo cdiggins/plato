@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Hash(self: IntegerSize2D): Integer
+Hash(self: IntegerSize3D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 1](../../../../../stdlib/foundation/intervals.library.plato#L1).
 
@@ -36,7 +57,7 @@ library Intervals
         => self.Width.Hash * 31 + self.Height.Hash;
 ```
 
-## Line 23
+### Line 23
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 23](../../../../../stdlib/foundation/intervals.library.plato#L23).
 

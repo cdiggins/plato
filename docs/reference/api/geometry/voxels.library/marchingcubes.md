@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The isosurface at isoLevel through a dense scalar grid, bounding the region
+> where density is at or above isoLevel. Samples sit at CELL CENTERS, so a
+> grid of n cells along an axis marches n - 1 cubes and the extracted surface
+> spans the centers, not the full extent, of the grid.
+
+## Signature
+
+```plato
+MarchingCubes(self: DensityGrid3D, isoLevel: Number): TriangleArray3D
+MarchingCubes(self: LevelSetGrid3D): TriangleArray3D
+MarchingCubes(self: SampledSdf3D): TriangleArray3D
+MarchingCubes(self: IScalarField3D, bounds: Bounds3D, nodeCounts: IntegerVector3, isoLevel: Number): TriangleArray3D
+MarchingCubes(self: ISignedDistanceField3D, bounds: Bounds3D, nodeCounts: IntegerVector3): TriangleArray3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.library](../voxels.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 491
+### Line 491
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 491](../../../../../stdlib/geometry/voxels.library.plato#L491).
 
@@ -37,7 +64,7 @@ Copied from source, comments included. A comment records intent. The body is the
             isoLevel);
 ```
 
-## Line 514
+### Line 514
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 514](../../../../../stdlib/geometry/voxels.library.plato#L514).
 
@@ -54,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
             0.0);
 ```
 
-## Line 524
+### Line 524
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 524](../../../../../stdlib/geometry/voxels.library.plato#L524).
 
@@ -71,7 +98,7 @@ Copied from source, comments included. A comment records intent. The body is the
             0.0);
 ```
 
-## Line 534
+### Line 534
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 534](../../../../../stdlib/geometry/voxels.library.plato#L534).
 
@@ -89,7 +116,7 @@ Copied from source, comments included. A comment records intent. The body is the
             isoLevel);
 ```
 
-## Line 545
+### Line 545
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 545](../../../../../stdlib/geometry/voxels.library.plato#L545).
 

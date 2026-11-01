@@ -3,11 +3,82 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unit basis vector along this axis: X => (1,0,0), Y => (0,1,0), Z => (0,0,1).
+
+## Signature
+
+```plato
+Vector3D(self: Axis3D): Vector3D
+Vector3D(self: SignedAxis3D): Vector3D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_BoxIsBoxSlice
+
+[stdlib/tests/implicit-sdf.laws.plato, line 121](../../../../../stdlib/tests/implicit-sdf.laws.plato#L121)
+
+```plato
+// A rectangle is the z = 0 slice of the box with the same half-extents in x and
+// y. The slice's own half-extent in z is irrelevant at z = 0 as long as it is
+// not the nearest face, so it is taken larger than the others.
+Law_BoxIsBoxSlice(p: Point2D, halfExtents: Vector2D): Boolean {
+    var depth = halfExtents.X.Max(halfExtents.Y) + 1.0;
+    return DistanceToBox(p, halfExtents)
+        .LawEq(DistanceToBox(
+            Point3D(p.X, p.Y, 0.0),
+            Vector3D(halfExtents.X, halfExtents.Y, depth)));
+}
+```
+
+### Law_LineIsPlaneSlice
+
+[stdlib/tests/implicit-sdf.laws.plato, line 130](../../../../../stdlib/tests/implicit-sdf.laws.plato#L130)
+
+```plato
+// A line is the z = 0 slice of the plane with the same in-plane normal.
+Law_LineIsPlaneSlice(p: Point2D, normal: Vector2D, offset: Number): Boolean
+    => DistanceToLine(p, normal, offset)
+        .LawEq(DistanceToPlane(
+            Point3D(p.X, p.Y, 0.0),
+            Vector3D(normal.X, normal.Y, 0.0),
+            offset));
+```
+
+### Law_FlatQuadPatchIsFlatBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 346](../../../../../stdlib/tests/implicit-sdf.laws.plato#L346)
+
+```plato
+// The same rectangle as a patch in space is a box of zero depth, whose signed
+// distance is already the unsigned distance to the patch. Cross-checks the quad
+// patch's edge-vote branch against a formula with no votes in it.
+Law_FlatQuadPatchIsFlatBox(p: Point3D, halfExtents: Vector2D): Boolean
+    => halfExtents.X <= 0.0 || halfExtents.Y <= 0.0
+    || UnsignedDistanceToQuad(
+            p,
+            Point3D(halfExtents.X.Negative, halfExtents.Y.Negative, 0.0),
+            Point3D(halfExtents.X, halfExtents.Y.Negative, 0.0),
+            Point3D(halfExtents.X, halfExtents.Y, 0.0),
+            Point3D(halfExtents.X.Negative, halfExtents.Y, 0.0))
+        .LawEq(DistanceToBox(p, Vector3D(halfExtents.X, halfExtents.Y, 0.0)));
+```
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [axes.library](../axes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/axes.library.plato, line 1](../../../../../stdlib/foundation/axes.library.plato#L1).
 
@@ -38,7 +109,7 @@ library Axes
         };
 ```
 
-## Line 161
+### Line 161
 
 **Source:** [stdlib/foundation/axes.library.plato, line 161](../../../../../stdlib/foundation/axes.library.plato#L161).
 

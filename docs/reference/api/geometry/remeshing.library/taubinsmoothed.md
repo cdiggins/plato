@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Taubin's lambda/mu smoothing (https://doi.org/10.1145/218380.218473): a
+> shrinking step of `lambda` followed by an inflating step of `mu`. With
+> mu more negative than lambda is positive, the pass band leaves low
+> frequencies alone, so the volume survives where plain Laplacian smoothing
+> eats it.
+
+## Signature
+
+```plato
+TaubinSmoothed(self: TriangleMesh3D, weighting: LaplacianWeighting, lambda: Number, mu: Number, iterations: Integer): TriangleMesh3D
+TaubinSmoothed(self: TriangleMesh3D, iterations: Integer): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1242
+### Line 1242
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1242](../../../../../stdlib/geometry/remeshing.library.plato#L1242).
 
@@ -26,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 1254
+### Line 1254
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1254](../../../../../stdlib/geometry/remeshing.library.plato#L1254).
 

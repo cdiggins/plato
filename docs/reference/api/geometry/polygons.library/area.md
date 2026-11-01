@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The enclosed area, always non-negative.
+
+## Signature
+
+```plato
+Area(p: Polygon2D): Number
+Area(p: ConvexPolygon2D): Number
+Area(r: PolygonWithHoles2D): Number
+Area(s: PolygonSet2D): Number
+Area(s: RegularStar2D): Number
+Area(p: Polygon3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 335](../../../../../stdlib/geometry/polygons.library.plato#L335):   \* Polygon3D is assumed PLANAR (its declaration says so) and SIMPLE.
+- [Line 337](../../../../../stdlib/geometry/polygons.library.plato#L337):     plane, so a point exactly on a boundary edge is not classified reliably. The
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 45
+### Line 45
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 45](../../../../../stdlib/geometry/polygons.library.plato#L45).
 
@@ -18,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Points.ShoelaceArea.Abs;
 ```
 
-## Line 70
+### Line 70
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 70](../../../../../stdlib/geometry/polygons.library.plato#L70).
 
@@ -30,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Points.ShoelaceArea.Abs;
 ```
 
-## Line 108
+### Line 108
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 108](../../../../../stdlib/geometry/polygons.library.plato#L108).
 
@@ -44,7 +76,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Boundary.Area - SumOf(r.Holes.Map(h => h.Area));
 ```
 
-## Line 148
+### Line 148
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 148](../../../../../stdlib/geometry/polygons.library.plato#L148).
 
@@ -61,7 +93,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => SumOf(s.Polygons.Map(p => p.Area));
 ```
 
-## Line 191
+### Line 191
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 191](../../../../../stdlib/geometry/polygons.library.plato#L191).
 
@@ -74,7 +106,7 @@ Copied from source, comments included. A comment records intent. The body is the
         * (0.5 / s.PointCount.ToNumber).Turns.Sin;
 ```
 
-## Line 325
+### Line 325
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 325](../../../../../stdlib/geometry/polygons.library.plato#L325).
 

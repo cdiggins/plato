@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A chain of straight segments joining consecutive Points. When Closed, an
+> extra segment joins the last point back to the first. At least two points.
+
+## Signature
+
+```plato
+type Polyline2D
+    implements IGeometry2D, IConnected, IBounded2D, ILength, IPointSet2D, IDeformable2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry2D](../geometry.concepts/igeometry2d.md), [IConnected](../geometry.concepts/iconnected.md), [IBounded2D](../geometry.concepts/ibounded2d.md), [ILength](../geometry.concepts/ilength.md), [IPointSet2D](../geometry.concepts/ipointset2d.md), [IDeformable2D](../../foundation/transforms.concepts/ideformable2d.md).
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.types](../polygons.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 70
+### Line 70
 
 **Source:** [stdlib/geometry/polygons.types.plato, line 70](../../../../../stdlib/geometry/polygons.types.plato#L70).
 

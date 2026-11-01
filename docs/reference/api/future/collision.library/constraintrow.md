@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One manifold point as a solver row, with the friction basis and the
+> restitution target resolved. `approachSpeed` is the relative normal speed the
+> caller measured at the point before any solving.
+
+## Signature
+
+```plato
+ConstraintRow(m: ContactManifold3D, p: ContactPoint3D, approachSpeed: Number,
+    threshold: Speed): ContactConstraint3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 279
+### Line 279
 
 **Source:** [stdlib/future/collision.library.plato, line 279](../../../../../stdlib/future/collision.library.plato#L279).
 

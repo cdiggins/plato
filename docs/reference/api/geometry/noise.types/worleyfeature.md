@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Which feature-point distances Worley noise combines into its output:
+> F1 is the distance to the nearest feature point, F2 to the second nearest;
+> F2MinusF1 highlights cell borders.
+
+## Signature
+
+```plato
+type WorleyFeature = F1 | F2 | F2MinusF1 | F1PlusF2
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.types](../noise.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 30
+### Line 30
 
 **Source:** [stdlib/geometry/noise.types.plato, line 30](../../../../../stdlib/geometry/noise.types.plato#L30).
 

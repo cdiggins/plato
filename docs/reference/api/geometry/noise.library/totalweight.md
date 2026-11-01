@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The sum of the octave amplitudes, which every fractal sum divides by.
+> Returns one for a zero octave count so the division is still defined.
+
+## Signature
+
+```plato
+TotalWeight(gain: Number, octaves: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 595
+### Line 595
 
 **Source:** [stdlib/geometry/noise.library.plato, line 595](../../../../../stdlib/geometry/noise.library.plato#L595).
 

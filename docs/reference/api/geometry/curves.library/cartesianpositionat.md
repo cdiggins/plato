@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Cartesian position of the curve at the given angle:
+> (RadiusAt(angle)\*cos angle, RadiusAt(angle)\*sin angle). Note: evaluates
+> RadiusAt twice; concrete types with expensive radii should override.
+
+## Signature
+
+```plato
+CartesianPositionAt(self: IPolarCurve2D, angle: Angle): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 369
+### Line 369
 
 **Source:** [stdlib/geometry/curves.library.plato, line 369](../../../../../stdlib/geometry/curves.library.plato#L369).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A reconstruction filter used when resampling an image.
+> (https://en.wikipedia.org/wiki/Image\_scaling)
+
+## Signature
+
+```plato
+type ResampleFilter
+    = Nearest | Bilinear | Bicubic | Lanczos2 | Lanczos3 | Mitchell | CatmullRom | Box
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [image-processing.types](../image-processing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 316
+### Line 316
 
 **Source:** [stdlib/graphics/image-processing.types.plato, line 316](../../../../../stdlib/graphics/image-processing.types.plato#L316).
 

@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How many edge pairs violate that invariant.
+
+## Signature
+
+```plato
+SelfIntersectionCount(p: Polygon2D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 616
+### Line 616
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 616](../../../../../stdlib/geometry/polygons.library.plato#L616).
 

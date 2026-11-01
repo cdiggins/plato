@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The load vector in global degree-of-freedom order.
+
+## Signature
+
+```plato
+LoadVector(model: ElasticModel3D): Array<Number>
+LoadVector(model: ElasticModel2D): Array<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 492
+### Line 492
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 492](../../../../../stdlib/future/finite-elements.library.plato#L492).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => model.LoadContributions.ScatterLoads(model.DofCount);
 ```
 
-## Line 560
+### Line 560
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 560](../../../../../stdlib/future/finite-elements.library.plato#L560).
 

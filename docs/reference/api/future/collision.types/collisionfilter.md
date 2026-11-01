@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Broad-phase filter bits for a collider. CategoryBits says what the collider
+> is; MaskBits says what it collides with (two colliders interact when each
+> one's category intersects the other's mask). GroupIndex overrides the bits:
+> a shared positive group always collides, a shared negative group never
+> collides, 0 defers to the bits.
+> (https://en.wikipedia.org/wiki/Collision\_detection)
+
+## Signature
+
+```plato
+type CollisionFilter
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.types](../collision.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/collision.types.plato, line 1](../../../../../stdlib/future/collision.types.plato#L1).
 

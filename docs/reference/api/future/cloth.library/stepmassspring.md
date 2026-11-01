@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One whole explicit step, divided into `SubStepCount` substeps. Substeps
+> are the only lever this solver has against divergence, short of lowering
+> the stiffness.
+
+## Signature
+
+```plato
+StepMassSpring(self: Cloth3D, forces: ParticleForces3D, settings: MassSpringSettings, time: Number): Cloth3D
+StepMassSpring(self: ClothMesh3D, forces: ParticleForces3D, settings: MassSpringSettings, time: Number): ClothMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 772
+### Line 772
 
 **Source:** [stdlib/future/cloth.library.plato, line 772](../../../../../stdlib/future/cloth.library.plato#L772).
 
@@ -25,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 783
+### Line 783
 
 **Source:** [stdlib/future/cloth.library.plato, line 783](../../../../../stdlib/future/cloth.library.plato#L783).
 

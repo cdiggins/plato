@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One explicit substep: external accelerations plus spring accelerations,
+> integrated with the same Verlet step the position-based solver uses.
+> Bend constraints are ignored — this solver has no force form for them.
+
+## Signature
+
+```plato
+SubStepMassSpring(self: Cloth3D, forces: ParticleForces3D, settings: MassSpringSettings, time: Number, dt: Duration): Cloth3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 761
+### Line 761
 
 **Source:** [stdlib/future/cloth.library.plato, line 761](../../../../../stdlib/future/cloth.library.plato#L761).
 

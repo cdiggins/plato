@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A plane curve whose natural parameter is an angle: its defining equation
+> sweeps a bearing about a center or pole (circles, ellipses, roulettes,
+> figure curves). Implementors supply the angular evaluation; the bridge in
+> `curves.library.plato` derives the canonical evaluation, mapping
+> t in \[0,1\] to one full turn.
+
+## Signature
+
+```plato
+interface IAngularCurve2D
+    inherits ICurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICurve2D](icurve2d.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.concepts](../curves.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 59
+### Line 59
 
 **Source:** [stdlib/geometry/curves.concepts.plato, line 59](../../../../../stdlib/geometry/curves.concepts.plato#L59).
 

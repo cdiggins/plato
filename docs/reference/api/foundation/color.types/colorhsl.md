@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A color in hue-saturation-lightness form; Hue is an angle around the color wheel.
+> Same model family as HSV: https://en.wikipedia.org/wiki/HSL\_and\_HSV
+
+## Signature
+
+```plato
+type ColorHSL
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+
+## Source
+
 **File:** [color.types](../color.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 43
+### Line 43
 
 **Source:** [stdlib/foundation/color.types.plato, line 43](../../../../../stdlib/foundation/color.types.plato#L43).
 

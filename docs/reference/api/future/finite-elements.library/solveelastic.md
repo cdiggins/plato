@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The linear-elastic solve of a solid model: assemble, load, run the
+> constrained conjugate gradient, and read each node's displacement out of
+> the solution vector. The convergence report travels with the answer, so a
+> caller that ignores it still gets the last iterate rather than nothing.
+
+## Signature
+
+```plato
+SolveElastic(model: ElasticModel3D, settings: LinearSolveSettings): ElasticSolution3D
+SolveElastic(model: ElasticModel2D, settings: LinearSolveSettings): ElasticSolution2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 496
+### Line 496
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 496](../../../../../stdlib/future/finite-elements.library.plato#L496).
 
@@ -29,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 564
+### Line 564
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 564](../../../../../stdlib/future/finite-elements.library.plato#L564).
 

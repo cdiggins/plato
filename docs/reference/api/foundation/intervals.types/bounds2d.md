@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An axis-aligned bounding rectangle in 2D
+> (https://en.wikipedia.org/wiki/Axis-aligned\_bounding\_box). Inclusive on Min and
+> Max. An inverted box (Min greater than Max on either axis) is the EMPTY
+> encoding: it contains no point and is the identity for Union, so accumulation
+> can start from Empty(). Prefer Bounds2D for culling/containment; prefer Rect2D
+> (center+size) for layout. Convention: see CONVENTIONS.md - Bounds.
+
+## Signature
+
+```plato
+type Bounds2D
+    implements IBounds<Point2D, Vector2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IBounds](../intervals-bounds.concepts/ibounds.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.types](../intervals.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 57
+### Line 57
 
 **Source:** [stdlib/foundation/intervals.types.plato, line 57](../../../../../stdlib/foundation/intervals.types.plato#L57).
 

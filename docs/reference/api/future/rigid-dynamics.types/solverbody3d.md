@@ -3,11 +3,49 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One body as the integrator and the contact solver read it: field for field a
+> `RigidBody3D` with the two things a solver cannot use — the motion kind and the
+> inertia tensor — replaced by the two it can: a zeroable inverse mass, and the
+> reciprocals of the three principal moments.
+>
+> Center is the world position of the centre of mass, in meters; Orientation maps
+> the body's PRINCIPAL axes onto world axes; Velocity is the world-frame twist
+> ABOUT THE CENTRE OF MASS (linear in meters per second, angular in radians per
+> second); InverseMass is in reciprocal kilograms and InverseInertia holds the
+> reciprocals of the three principal moments, in reciprocal
+> kilogram-square-meters, with zero in either meaning "immovable in that
+> respect"; LinearDamping and AngularDamping are the exponential velocity decay
+> rates of the authoring record, in units of one per second; GravityScale is its
+> dimensionless gravity multiplier.
+
+## Signature
+
+```plato
+type SolverBody3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 278
+### Line 278
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 278](../../../../../stdlib/future/rigid-dynamics.types.plato#L278).
 

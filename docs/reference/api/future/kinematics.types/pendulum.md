@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The physical parameters of an ideal damped pendulum. Gravity is the local
+> gravitational acceleration; Damping is the angular velocity decay rate in
+> units of one per second (0 = undamped).
+> (https://en.wikipedia.org/wiki/Pendulum)
+
+## Signature
+
+```plato
+type Pendulum
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.types](../kinematics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 216
+### Line 216
 
 **Source:** [stdlib/future/kinematics.types.plato, line 216](../../../../../stdlib/future/kinematics.types.plato#L216).
 

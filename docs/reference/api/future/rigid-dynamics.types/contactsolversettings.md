@@ -3,11 +3,50 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The knobs of the contact solver, separate from `TimeStepSettings` because they
+> govern the QUALITY of a contact rather than the cadence of the step.
+> PenetrationSlop is the overlap deliberately left uncorrected, so a resting
+> stack settles instead of hunting about exact touching; BaumgarteFactor is the
+> fraction of the remaining overlap the position pass removes per step, in
+> \[0, 1\], where 0 disables positional correction entirely; MaxCorrectionSpeed
+> caps the correction so a deep initial overlap cannot fling a body across the
+> scene; RestitutionThreshold is the approach speed below which a collision does
+> not bounce at all, which is what stops a settling body from buzzing on the
+> floor.
+>
+> The correction these describe is applied as a SEPARATE pseudo-velocity pass
+> (`SolvePositions` in `rigid-dynamics.library.plato`), not as a bias inside the
+> velocity solve. Why that matters is argued there.
+> (https://en.wikipedia.org/wiki/Constraint\_(computational\_chemistry))
+
+## Signature
+
+```plato
+type ContactSolverSettings
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 331
+### Line 331
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 331](../../../../../stdlib/future/rigid-dynamics.types.plato#L331).
 

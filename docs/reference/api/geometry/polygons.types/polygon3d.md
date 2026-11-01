@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar polygon embedded in 3D: Points are coplanar boundary vertices in
+> order, the last implicitly joined to the first. The normal follows the
+> right-hand rule around the winding.
+
+## Signature
+
+```plato
+type Polygon3D
+    implements IGeometry3D, IClosedShape, IConnected, IManifold, IOrientable, IArea, IBounded3D, IPointSet3D, ICentroid3D, INearestPoint3D, IDeformable3D, IMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConnected](../geometry.concepts/iconnected.md), [IManifold](../geometry.concepts/imanifold.md), [IOrientable](../geometry.concepts/iorientable.md), [IArea](../geometry.concepts/iarea.md), [IBounded3D](../geometry.concepts/ibounded3d.md), [IPointSet3D](../geometry.concepts/ipointset3d.md), [ICentroid3D](../geometry.concepts/icentroid3d.md), [INearestPoint3D](../geometry.concepts/inearestpoint3d.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md), [IMesh3D](../meshes.concepts/imesh3d.md).
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.types](../polygons.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 105
+### Line 105
 
 **Source:** [stdlib/geometry/polygons.types.plato, line 105](../../../../../stdlib/geometry/polygons.types.plato#L105).
 

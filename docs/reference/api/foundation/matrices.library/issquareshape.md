@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the matrix has as many rows as columns.
+
+## Signature
+
+```plato
+IsSquareShape(self: SparseMatrix): Boolean
+IsSquareShape(self: BandedMatrix): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 340
+### Line 340
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 340](../../../../../stdlib/foundation/matrices.library.plato#L340).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.NumRows == self.NumColumns;
 ```
 
-## Line 386
+### Line 386
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 386](../../../../../stdlib/foundation/matrices.library.plato#L386).
 

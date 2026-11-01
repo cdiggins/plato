@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The rank of one cost among all of them, ties broken by position so that the
+> ranks are a permutation. This is how "the k cheapest" is selected without a
+> sort: an edge is among the k cheapest exactly when its rank is below k.
+> Quadratic in the edge count.
+
+## Signature
+
+```plato
+CostRank(costs: Array<Number>, i: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1412
+### Line 1412
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1412](../../../../../stdlib/geometry/remeshing.library.plato#L1412).
 

@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Uniform planar gravity: the same acceleration, in meters per second
+> squared, applied to every dynamic body regardless of position.
+
+## Signature
+
+```plato
+type UniformGravity2D
+    implements IValue, IForceModel2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IForceModel2D](../rigid-dynamics.concepts/iforcemodel2d.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 203
+### Line 203
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 203](../../../../../stdlib/future/rigid-dynamics.types.plato#L203).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Where an old vertex moves under Catmull-Clark: (F + 2R + (n - 3)P) / n, with
+> F the average of the adjacent face centroids, R the average of the incident
+> edge midpoints, and n the valence. A vertex of valence under three has no
+> rule and stays put.
+
+## Signature
+
+```plato
+CatmullClarkVertexPoint(self: PolygonMesh3D, faces: Array<FaceIndex>, destinations: Array<VertexIndex>, v: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 974
+### Line 974
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 974](../../../../../stdlib/geometry/remeshing.library.plato#L974).
 

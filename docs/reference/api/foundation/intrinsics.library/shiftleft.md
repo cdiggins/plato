@@ -3,11 +3,27 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+ShiftLeft(x: Integer, bits: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics.library](../intrinsics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 124
+### Line 124
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 124](../../../../../stdlib/foundation/intrinsics.library.plato#L124).
 

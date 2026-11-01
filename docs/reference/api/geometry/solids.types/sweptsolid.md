@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The solid swept by carrying a planar profile (with optional holes) along a
+> path in the path's rotation-minimizing frame, capped at both path ends.
+
+## Signature
+
+```plato
+type SweptSolid
+    implements ISolid
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ISolid](../surfaces-solids.concepts/isolid.md).
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.types](../solids.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 151
+### Line 151
 
 **Source:** [stdlib/geometry/solids.types.plato, line 151](../../../../../stdlib/geometry/solids.types.plato#L151).
 

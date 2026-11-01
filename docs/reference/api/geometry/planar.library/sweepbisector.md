@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Half the bisector direction of the sweep, as a unit displacement.
+
+## Signature
+
+```plato
+SweepBisector(sweep: AngleInterval): Vector2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 277](../../../../../stdlib/geometry/planar.library.plato#L277): A pie slice. Precondition throughout: Sweep is stored forward and spans at
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 273
+### Line 273
 
 **Source:** [stdlib/geometry/planar.library.plato, line 273](../../../../../stdlib/geometry/planar.library.plato#L273).
 

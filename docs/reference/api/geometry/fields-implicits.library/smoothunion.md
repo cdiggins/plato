@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The union of two spatial distance fields blended over blendRadius: the
+> polynomial smooth minimum. A lower bound.
+> Precondition: blendRadius is positive.
+
+## Signature
+
+```plato
+SmoothUnion(a: ScalarFunctionField3D, b: ScalarFunctionField3D, blendRadius: Number): ScalarFunctionField3D
+SmoothUnion(a: FunctionSdf2D, b: FunctionSdf2D, blendRadius: Number): FunctionSdf2D
+SmoothUnion(a: FunctionSdf3D, b: FunctionSdf3D, blendRadius: Number): FunctionSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 571
+### Line 571
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 571](../../../../../stdlib/geometry/fields-implicits.library.plato#L571).
 
@@ -20,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Combine(b, (x, y) => SmoothUnionDistance(x, y, blendRadius));
 ```
 
-## Line 837
+### Line 837
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 837](../../../../../stdlib/geometry/fields-implicits.library.plato#L837).
 
@@ -33,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => SmoothUnionDistance(a.Eval(p), b.Eval(p), blendRadius));
 ```
 
-## Line 843
+### Line 843
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 843](../../../../../stdlib/geometry/fields-implicits.library.plato#L843).
 

@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One key-value pair of dataset metadata (instrument id, operator, campaign).
+> (https://en.wikipedia.org/wiki/Metadata)
+
+## Signature
+
+```plato
+type MetadataEntry
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.types](../scientific-data.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 59
+### Line 59
 
 **Source:** [stdlib/future/scientific-data.types.plato, line 59](../../../../../stdlib/future/scientific-data.types.plato#L59).
 

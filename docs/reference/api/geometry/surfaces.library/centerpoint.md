@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The surface position at the centre of the UV domain, (0.5, 0.5).
+
+## Signature
+
+```plato
+CenterPoint(self: IParametricSurface): Point3D
+CenterPoint(self: IParametricVolume): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.library](../surfaces.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 380
+### Line 380
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 380](../../../../../stdlib/geometry/surfaces.library.plato#L380).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval((0.5, 0.5));
 ```
 
-## Line 475
+### Line 475
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 475](../../../../../stdlib/geometry/surfaces.library.plato#L475).
 

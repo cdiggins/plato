@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The remap that merges every group of vertices within `tolerance`. The raw
+> representatives can chain (a is within tolerance of b, b of c, but not a of
+> c), so they are resolved to fixed points before compaction.
+
+## Signature
+
+```plato
+WeldRemap(positions: Array<Point3D>, tolerance: Number): VertexRemap
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 305
+### Line 305
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 305](../../../../../stdlib/geometry/remeshing.library.plato#L305).
 

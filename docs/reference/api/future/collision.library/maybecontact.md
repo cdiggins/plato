@@ -3,11 +3,31 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A one-element contact array when `present`, empty otherwise.
+
+## Signature
+
+```plato
+MaybeContact(present: Boolean, point: ContactPoint3D): Array<ContactPoint3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 122
+### Line 122
 
 **Source:** [stdlib/future/collision.library.plato, line 122](../../../../../stdlib/future/collision.library.plato#L122).
 

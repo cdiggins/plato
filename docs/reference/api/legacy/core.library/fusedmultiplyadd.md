@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+FusedMultiplyAdd(self: IVectorLike, y: IVectorLike, z: IVectorLike): IVectorLike
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [core.library](../core.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 58
+### Line 58
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 58](../../../../../legacy/stdlib-legacy/core.library.plato#L58).
 

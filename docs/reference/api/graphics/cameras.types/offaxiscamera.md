@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An asymmetric-frustum (off-axis) camera: an eye point plus an arbitrary
+> projection rectangle in world space. Serves head-tracked displays, CAVEs,
+> portals, and tiled display walls.
+
+## Signature
+
+```plato
+type OffAxisCamera
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [cameras.types](../cameras.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 141
+### Line 141
 
 **Source:** [stdlib/graphics/cameras.types.plato, line 141](../../../../../stdlib/graphics/cameras.types.plato#L141).
 

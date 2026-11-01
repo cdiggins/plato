@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How many points come strictly before point i.
+
+## Signature
+
+```plato
+NeighborRank(self: KdTree2D, center: Point2D, i: Integer): Integer
+NeighborRank(self: KdTree3D, center: Point3D, i: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 248
+### Line 248
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 248](../../../../../stdlib/geometry/spatial-structures.library.plato#L248).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Points.Count.Range.Reduce(0, (acc, j) => self.NeighborPrecedes(center, j, i) ? acc + 1 : acc);
 ```
 
-## Line 325
+### Line 325
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 325](../../../../../stdlib/geometry/spatial-structures.library.plato#L325).
 

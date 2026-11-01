@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A field assigning a color to every point of space: solid procedural
+> textures such as wood, marble, and volumetric tints.
+
+## Signature
+
+```plato
+interface IColorField3D
+    inherits IField<Point3D, Color>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IField](ifield.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields.concepts](../fields.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 73
+### Line 73
 
 **Source:** [stdlib/geometry/fields.concepts.plato, line 73](../../../../../stdlib/geometry/fields.concepts.plato#L73).
 

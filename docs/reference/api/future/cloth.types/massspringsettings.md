@@ -3,11 +3,44 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Settings for the explicit mass-spring solver
+> (https://en.wikipedia.org/wiki/Soft-body\_dynamics). Every distance
+> constraint becomes a damped Hookean spring with these coefficients, and the
+> result is integrated explicitly.
+>
+> This solver is deliberately the unstable one: the stable step size falls as
+> the square root of Stiffness over the vertex mass, so a stiff cloth needs a
+> tiny TimeStep or a large SubStepCount and blows up without one. That failure
+> is the reason both solvers exist.
+
+## Signature
+
+```plato
+type MassSpringSettings
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.types](../cloth.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 69
+### Line 69
 
 **Source:** [stdlib/future/cloth.types.plato, line 69](../../../../../stdlib/future/cloth.types.plato#L69).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Electric potential, stored in volts (https://en.wikipedia.org/wiki/Voltage).
+
+## Signature
+
+```plato
+type Voltage implements IQuantity
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IQuantity](../quantities.concepts/iquantity.md).
+
+## Used by
+
+- [Angles and periodic values](../../../library/foundation/angles.md)
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [quantities.types](../quantities.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 70
+### Line 70
 
 **Source:** [stdlib/foundation/quantities.types.plato, line 70](../../../../../stdlib/foundation/quantities.types.plato#L70).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when `point` projects INSIDE the planar ring. Only the in-plane position
+> is tested: a point far off the plane whose projection lands inside reports
+> true, so callers must check the plane distance themselves when they care.
+> Exact for any simple planar polygon, convex or not.
+
+## Signature
+
+```plato
+PlanarPolygonContains(points: Array<Point3D>, normal: Vector3D, point: Point3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 252
+### Line 252
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 252](../../../../../stdlib/geometry/polygons.library.plato#L252).
 

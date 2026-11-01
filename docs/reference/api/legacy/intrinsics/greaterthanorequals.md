@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+GreaterThanOrEquals(a: Vector8, b: Vector8): Vector8
+GreaterThanOrEquals(a: Number, b: Number): Boolean
+GreaterThanOrEquals(a: Integer, b: Integer): Boolean
+GreaterThanOrEquals(a: Angle, b: Angle): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 249
+### Line 249
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 249](../../../../../legacy/stdlib-legacy/intrinsics.plato#L249).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GreaterThanOrEquals(a: Vector8, b: Vector8): Vector8;
 ```
 
-## Line 365
+### Line 365
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 365](../../../../../legacy/stdlib-legacy/intrinsics.plato#L365).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GreaterThanOrEquals(a: Number, b: Number): Boolean;
 ```
 
-## Line 395
+### Line 395
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 395](../../../../../legacy/stdlib-legacy/intrinsics.plato#L395).
 
@@ -31,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GreaterThanOrEquals(a: Integer, b: Integer): Boolean;
 ```
 
-## Line 432
+### Line 432
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 432](../../../../../legacy/stdlib-legacy/intrinsics.plato#L432).
 

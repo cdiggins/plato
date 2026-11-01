@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The exact geometry a BREP face carries, over the unit UV square. v1 is
+> faceted: a planar rectangle patch or a bilinear four-corner patch (both from
+> surfaces.types.plato). QuadGrid / cylindrical cases are future sum cases.
+
+## Signature
+
+```plato
+type BrepSurface
+    = Planar(Patch: PlanarPatch)
+    | Bilinear(Patch: BilinearPatch)
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [brep.types](../brep.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 52
+### Line 52
 
 **Source:** [stdlib/geometry/brep.types.plato, line 52](../../../../../stdlib/geometry/brep.types.plato#L52).
 

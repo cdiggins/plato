@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A scaling transformation in 2D space
+
+## Signature
+
+```plato
+type Scale2D
+    implements ITransform2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ITransform2D](itransform2d.md).
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 31
+### Line 31
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 31](../../../../../legacy/stdlib-legacy/transforms.plato#L31).
 

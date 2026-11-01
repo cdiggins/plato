@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A Coons patch: the surface blended from four boundary curves
+> (https://en.wikipedia.org/wiki/Coons\_patch). The curves must meet at the
+> patch corners (Bottom/Top run in U, Left/Right run in V).
+
+## Signature
+
+```plato
+type CoonsPatch
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.types](../surfaces.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 162
+### Line 162
 
 **Source:** [stdlib/geometry/surfaces.types.plato, line 162](../../../../../stdlib/geometry/surfaces.types.plato#L162).
 

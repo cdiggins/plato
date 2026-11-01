@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Euclidean length. https://en.wikipedia.org/wiki/Euclidean\_vector#Length
+
+## Signature
+
+```plato
+Length(self: Vector2D): Number
+Length(self: Vector3D): Number
+Length(self: Number2): Number
+Length(self: Number3): Number
+Length(self: Number4): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [vectors.library](../vectors.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 1](../../../../../stdlib/foundation/vectors.library.plato#L1).
 
@@ -45,7 +69,7 @@ library Vectors
         => self.LengthSquared.Sqrt;
 ```
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 136](../../../../../stdlib/foundation/vectors.library.plato#L136).
 
@@ -59,7 +83,7 @@ library Vectors
         => self.LengthSquared.Sqrt;
 ```
 
-## Line 292
+### Line 292
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 292](../../../../../stdlib/foundation/vectors.library.plato#L292).
 
@@ -70,7 +94,7 @@ library Vectors
         => self.LengthSquared.Sqrt;
 ```
 
-## Line 364
+### Line 364
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 364](../../../../../stdlib/foundation/vectors.library.plato#L364).
 
@@ -81,7 +105,7 @@ library Vectors
         => self.LengthSquared.Sqrt;
 ```
 
-## Line 438
+### Line 438
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 438](../../../../../stdlib/foundation/vectors.library.plato#L438).
 

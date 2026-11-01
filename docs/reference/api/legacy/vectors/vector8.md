@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Vector8(s: Number): Vector8
+Vector8(v1: Vector4, v2: Vector4): Vector8
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [vectors](../vectors.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 87
+### Line 87
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 87](../../../../../legacy/stdlib-legacy/vectors.plato#L87).
 
@@ -18,7 +35,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Vector8(s: Number): Vector8 => (s, s, s, s, s, s, s, s);
 ```
 
-## Line 91
+### Line 91
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 91](../../../../../legacy/stdlib-legacy/vectors.plato#L91).
 

@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> How uncertainty is propagated through a computation: first-order Taylor
+> (Linear), sampled with the given count and deterministic seed
+> (MonteCarlo), or sigma points (Unscented).
+> (https://en.wikipedia.org/wiki/Propagation\_of\_uncertainty)
+
+## Signature
+
+```plato
+type ErrorPropagation
+    = Linear
+    | MonteCarlo(SampleCount: Integer, Seed: Integer)
+    | Unscented
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty.types](../uncertainty.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 188
+### Line 188
 
 **Source:** [stdlib/future/uncertainty.types.plato, line 188](../../../../../stdlib/future/uncertainty.types.plato#L188).
 

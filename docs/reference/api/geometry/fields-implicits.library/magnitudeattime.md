@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The flow speed at the point at a given instant: the sampled vector's length.
+
+## Signature
+
+```plato
+MagnitudeAtTime(self: ITimeVaryingVectorField2D, point: Point2D, time: Instant): Number
+MagnitudeAtTime(self: ITimeVaryingVectorField3D, point: Point3D, time: Instant): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1123
+### Line 1123
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1123](../../../../../stdlib/geometry/fields-implicits.library.plato#L1123).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.EvalAtTime(point, time).Magnitude;
 ```
 
-## Line 1302
+### Line 1302
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1302](../../../../../stdlib/geometry/fields-implicits.library.plato#L1302).
 

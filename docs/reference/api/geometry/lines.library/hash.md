@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The IHashable obligation Plane inherits through IGeometry -> IValue. Both
+> fields participate in the digest, following the VertexPair / Chromaticity
+> pattern; the compiler does not derive Hash.
+
+## Signature
+
+```plato
+Hash(pl: Plane): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 508
+### Line 508
 
 **Source:** [stdlib/geometry/lines.library.plato, line 508](../../../../../stdlib/geometry/lines.library.plato#L508).
 

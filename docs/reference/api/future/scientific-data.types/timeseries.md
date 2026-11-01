@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A uniformly sampled time series: sample i occurs at Start plus i times
+> SamplePeriod. Values are in Unit.
+
+## Signature
+
+```plato
+type TimeSeries
+    implements ITimeSampled
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ITimeSampled](../scientific-data.concepts/itimesampled.md).
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.types](../scientific-data.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 119
+### Line 119
 
 **Source:** [stdlib/future/scientific-data.types.plato, line 119](../../../../../stdlib/future/scientific-data.types.plato#L119).
 

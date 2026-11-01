@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The smooth intersection: the smooth union of the negated distances,
+> negated. A lower bound, by the same weights-sum-to-one argument as the
+> smooth union. Precondition: blendRadius is positive.
+> (IQ: opSmoothIntersection.)
+
+## Signature
+
+```plato
+SmoothIntersectionDistance(a: Number, b: Number, blendRadius: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SmoothIntersectionIsDualOfSmoothUnion
+
+[stdlib/tests/implicit-sdf.laws.plato, line 192](../../../../../stdlib/tests/implicit-sdf.laws.plato#L192)
+
+```plato
+// Smooth intersection is the De Morgan dual of smooth union, which is how the
+// body is defined; asserting it here pins the negation from being dropped.
+Law_SmoothIntersectionIsDualOfSmoothUnion(a: Number, b: Number, blendRadius: Number): Boolean
+    => blendRadius <= 0.0
+    || SmoothIntersectionDistance(a, b, blendRadius)
+        .LawEq(SmoothUnionDistance(a.Negative, b.Negative, blendRadius).Negative);
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 647
+### Line 647
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 647](../../../../../stdlib/geometry/implicit-sdf.library.plato#L647).
 

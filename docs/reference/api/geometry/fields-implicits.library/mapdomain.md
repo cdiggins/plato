@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The field with its input position transformed by f before evaluation (a
+> domain warp): bending, twisting, tiling, and instancing are all domain warps.
+
+## Signature
+
+```plato
+MapDomain(self: ScalarFunctionField2D, f: Function1<Point2D, Point2D>): ScalarFunctionField2D
+MapDomain(self: ScalarFunctionField3D, f: Function1<Point3D, Point3D>): ScalarFunctionField3D
+MapDomain(self: FunctionSdf3D, f: Function1<Point3D, Point3D>): FunctionSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 516
+### Line 516
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 516](../../../../../stdlib/geometry/fields-implicits.library.plato#L516).
 
@@ -19,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ScalarFunctionField2D(p => self.Eval(f(p)));
 ```
 
-## Line 521
+### Line 521
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 521](../../../../../stdlib/geometry/fields-implicits.library.plato#L521).
 
@@ -30,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ScalarFunctionField3D(p => self.Eval(f(p)));
 ```
 
-## Line 889
+### Line 889
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 889](../../../../../stdlib/geometry/fields-implicits.library.plato#L889).
 

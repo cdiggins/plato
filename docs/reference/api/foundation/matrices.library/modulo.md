@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every element reduced modulo the scalar.
+
+## Signature
+
+```plato
+Modulo(self: Matrix2x2, scalar: Number): Matrix2x2
+Modulo(self: Matrix3x3, scalar: Number): Matrix3x3
+Modulo(self: Matrix4x4, scalar: Number): Matrix4x4
+Modulo(self: Matrix3x2, scalar: Number): Matrix3x2
+Modulo(self: Matrix4x3, scalar: Number): Matrix4x3
+Modulo(self: MatrixN, scalar: Number): MatrixN
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 73
+### Line 73
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 73](../../../../../stdlib/foundation/matrices.library.plato#L73).
 
@@ -18,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Row1 % scalar, self.Row2 % scalar);
 ```
 
-## Line 117
+### Line 117
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 117](../../../../../stdlib/foundation/matrices.library.plato#L117).
 
@@ -29,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Row1 % scalar, self.Row2 % scalar, self.Row3 % scalar);
 ```
 
-## Line 149
+### Line 149
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 149](../../../../../stdlib/foundation/matrices.library.plato#L149).
 
@@ -40,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Row1 % scalar, self.Row2 % scalar, self.Row3 % scalar, self.Row4 % scalar);
 ```
 
-## Line 176
+### Line 176
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 176](../../../../../stdlib/foundation/matrices.library.plato#L176).
 
@@ -51,7 +76,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Row1 % scalar, self.Row2 % scalar, self.Row3 % scalar);
 ```
 
-## Line 221
+### Line 221
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 221](../../../../../stdlib/foundation/matrices.library.plato#L221).
 
@@ -62,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Row1 % scalar, self.Row2 % scalar, self.Row3 % scalar, self.Row4 % scalar);
 ```
 
-## Line 269
+### Line 269
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 269](../../../../../stdlib/foundation/matrices.library.plato#L269).
 

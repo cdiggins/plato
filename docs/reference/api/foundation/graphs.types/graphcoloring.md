@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An assignment of colors to vertices such that adjacent vertices differ.
+> Colors are zero-based integers in \[0, ColorCount).
+> (https://en.wikipedia.org/wiki/Graph\_coloring)
+
+## Signature
+
+```plato
+type GraphColoring
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Graph data and graph summaries](../../../library/foundation/graphs.md)
+
+## Source
+
 **File:** [graphs.types](../graphs.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 178
+### Line 178
 
 **Source:** [stdlib/foundation/graphs.types.plato, line 178](../../../../../stdlib/foundation/graphs.types.plato#L178).
 

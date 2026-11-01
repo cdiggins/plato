@@ -3,11 +3,65 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The smallest box containing both operands (component-wise Min of mins, Max of
+> maxs). Union with Empty() returns the other operand unchanged.
+
+## Signature
+
+```plato
+Union(self: Bounds2D, other: Bounds2D): Bounds2D
+Union(self: Bounds2D, p: Point2D): Bounds2D
+Union(self: Bounds3D, other: Bounds3D): Bounds3D
+Union(self: Bounds3D, p: Point3D): Bounds3D
+Union(self: IInterval<$T>, other: IInterval<$T>): Self
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_Bounds2DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 94](../../../../../stdlib/tests/foundation.laws.plato#L94)
+
+```plato
+// A box is contained in its union with any other box.
+Law_Bounds2DUnionContainsSelf(b: Bounds2D, o: Bounds2D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+### Law_Bounds2DUnionContainsOther
+
+[stdlib/tests/foundation.laws.plato, line 98](../../../../../stdlib/tests/foundation.laws.plato#L98)
+
+```plato
+// The other operand is contained in the union too.
+Law_Bounds2DUnionContainsOther(b: Bounds2D, o: Bounds2D): Boolean
+    => o.IsEmpty || b.Union(o).Contains(o);
+```
+
+### Law_Bounds3DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 110](../../../../../stdlib/tests/foundation.laws.plato#L110)
+
+```plato
+Law_Bounds3DUnionContainsSelf(b: Bounds3D, o: Bounds3D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 102
+### Line 102
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 102](../../../../../stdlib/foundation/intervals.library.plato#L102).
 
@@ -20,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Point2D(self.Max.X.Max(other.Max.X), self.Max.Y.Max(other.Max.Y)));
 ```
 
-## Line 108
+### Line 108
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 108](../../../../../stdlib/foundation/intervals.library.plato#L108).
 
@@ -32,7 +86,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Point2D(self.Max.X.Max(p.X), self.Max.Y.Max(p.Y)));
 ```
 
-## Line 143
+### Line 143
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 143](../../../../../stdlib/foundation/intervals.library.plato#L143).
 
@@ -44,7 +98,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Point3D(self.Max.X.Max(other.Max.X), self.Max.Y.Max(other.Max.Y), self.Max.Z.Max(other.Max.Z)));
 ```
 
-## Line 148
+### Line 148
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 148](../../../../../stdlib/foundation/intervals.library.plato#L148).
 
@@ -56,7 +110,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Point3D(self.Max.X.Max(p.X), self.Max.Y.Max(p.Y), self.Max.Z.Max(p.Z)));
 ```
 
-## Line 242
+### Line 242
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 242](../../../../../stdlib/foundation/intervals.library.plato#L242).
 

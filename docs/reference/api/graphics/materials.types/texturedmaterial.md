@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A metallic-roughness material paired with its texture set.
+
+## Signature
+
+```plato
+type TexturedMaterial
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [materials.types](../materials.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/graphics/materials.types.plato, line 75](../../../../../stdlib/graphics/materials.types.plato#L75).
 

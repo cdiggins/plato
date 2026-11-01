@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The area centroid (NOT the mean of the vertices).
+
+## Signature
+
+```plato
+Centroid(p: Polygon2D): Point2D
+Centroid(p: ConvexPolygon2D): Point2D
+Centroid(r: PolygonWithHoles2D): Point2D
+Centroid(p: Polygon3D): Point3D
+Centroid(p: Prism3D): Point3D
+Centroid(y: Pyramid3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 53
+### Line 53
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 53](../../../../../stdlib/geometry/polygons.library.plato#L53).
 
@@ -18,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Points.PolygonAreaCentroid;
 ```
 
-## Line 79
+### Line 79
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 79](../../../../../stdlib/geometry/polygons.library.plato#L79).
 
@@ -29,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Points.PolygonAreaCentroid;
 ```
 
-## Line 119
+### Line 119
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 119](../../../../../stdlib/geometry/polygons.library.plato#L119).
 
@@ -53,7 +78,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 353
+### Line 353
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 353](../../../../../stdlib/geometry/polygons.library.plato#L353).
 
@@ -64,7 +89,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Points.PlanarPolygonCentroid;
 ```
 
-## Line 403
+### Line 403
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 403](../../../../../stdlib/geometry/polygons.library.plato#L403).
 
@@ -76,7 +101,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Base.Centroid + p.Offset * 0.5;
 ```
 
-## Line 443
+### Line 443
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 443](../../../../../stdlib/geometry/polygons.library.plato#L443).
 

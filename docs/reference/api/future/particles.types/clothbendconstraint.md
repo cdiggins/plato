@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A bending constraint over two triangles sharing the edge (VertexA,
+> VertexB), with wing vertices VertexC and VertexD: it drives the dihedral
+> angle between them toward RestAngle. Compliance is the inverse stiffness in
+> radians per newton-meter; 0 makes the fold rigid.
+
+## Signature
+
+```plato
+type ClothBendConstraint
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.types](../particles.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 275
+### Line 275
 
 **Source:** [stdlib/future/particles.types.plato, line 275](../../../../../stdlib/future/particles.types.plato#L275).
 

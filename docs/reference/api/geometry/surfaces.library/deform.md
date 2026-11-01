@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every corner carried through the mapping.
+
+## Signature
+
+```plato
+Deform(self: BilinearPatch, mapping: Function1<Point3D, Point3D>): BilinearPatch
+Deform(self: BezierPatch, mapping: Function1<Point3D, Point3D>): BezierPatch
+Deform(self: BSplineSurface, mapping: Function1<Point3D, Point3D>): BSplineSurface
+Deform(self: NurbsSurface, mapping: Function1<Point3D, Point3D>): NurbsSurface
+Deform(self: LoftedSurface, mapping: Function1<Point3D, Point3D>): LoftedSurface
+Deform(self: SubdivisionSurface, mapping: Function1<Point3D, Point3D>): SubdivisionSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 493](../../../../../stdlib/geometry/surfaces.library.plato#L493): mapping, and the parameter-domain data — weights, knots, degrees, the
+- [Line 494](../../../../../stdlib/geometry/surfaces.library.plato#L494): subdivision scheme and level — passes through untouched. Exact for an
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.library](../surfaces.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 479
+### Line 479
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 479](../../../../../stdlib/geometry/surfaces.library.plato#L479).
 
@@ -42,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (mapping(self.P00), mapping(self.P10), mapping(self.P01), mapping(self.P11));
 ```
 
-## Line 507
+### Line 507
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 507](../../../../../stdlib/geometry/surfaces.library.plato#L507).
 
@@ -53,7 +85,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => BezierPatch(self.ControlPoints.Map(mapping));
 ```
 
-## Line 511
+### Line 511
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 511](../../../../../stdlib/geometry/surfaces.library.plato#L511).
 
@@ -64,7 +96,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.ControlPoints.Map(mapping), self.UDegree, self.VDegree, self.UKnots, self.VKnots);
 ```
 
-## Line 515
+### Line 515
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 515](../../../../../stdlib/geometry/surfaces.library.plato#L515).
 
@@ -75,7 +107,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.ControlPoints.Map(mapping), self.Weights, self.UDegree, self.VDegree, self.UKnots, self.VKnots);
 ```
 
-## Line 519
+### Line 519
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 519](../../../../../stdlib/geometry/surfaces.library.plato#L519).
 
@@ -87,7 +119,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Sections.Map(section => section.Deform(mapping)), self.Closed);
 ```
 
-## Line 524
+### Line 524
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 524](../../../../../stdlib/geometry/surfaces.library.plato#L524).
 

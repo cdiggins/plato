@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A zero-based index of a node within a CSG tree's flat node array.
+> -1 means "none" (a leaf's missing children).
+
+## Signature
+
+```plato
+type CsgNodeIndex
+    implements IValue, IHashable, IComparable, IIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IHashable](../../foundation/core.concepts/ihashable.md), [IComparable](../../foundation/core.concepts/icomparable.md), [IIndex](../../foundation/collections.concepts/iindex.md).
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.types](../solids.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 34
+### Line 34
 
 **Source:** [stdlib/geometry/solids.types.plato, line 34](../../../../../stdlib/geometry/solids.types.plato#L34).
 

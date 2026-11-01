@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Normal(t: Triangle3D): Vector3
+Normal(q: Quad3D): Vector3
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 98
+### Line 98
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 98](../../../../../legacy/stdlib-legacy/geometry.library.plato#L98).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Normal(t: Triangle3D): Vector3 => t.CrossProductA.Normalize;
 ```
 
-## Line 150
+### Line 150
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 150](../../../../../legacy/stdlib-legacy/geometry.library.plato#L150).
 

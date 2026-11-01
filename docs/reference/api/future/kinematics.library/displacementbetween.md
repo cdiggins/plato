@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The straight-line displacement from the earlier to the later time.
+
+## Signature
+
+```plato
+DisplacementBetween(self: IKinematic2D, earlier: Duration, later: Duration): Vector2D
+DisplacementBetween(self: IKinematic3D, earlier: Duration, later: Duration): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.library](../kinematics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 23
+### Line 23
 
 **Source:** [stdlib/future/kinematics.library.plato, line 23](../../../../../stdlib/future/kinematics.library.plato#L23).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.PositionAt(earlier).Between(self.PositionAt(later));
 ```
 
-## Line 55
+### Line 55
 
 **Source:** [stdlib/future/kinematics.library.plato, line 55](../../../../../stdlib/future/kinematics.library.plato#L55).
 

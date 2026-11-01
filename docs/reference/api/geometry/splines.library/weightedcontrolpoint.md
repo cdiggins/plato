@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The de-homogenized control point of a NURBS curve: the control point
+> scaled by its weight, the form Cox-de Boor consumes.
+
+## Signature
+
+```plato
+WeightedControlPoint(self: NurbsCurve2D, index: Integer): Vector2D
+WeightedControlPoint(self: NurbsCurve3D, index: Integer): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 155
+### Line 155
 
 **Source:** [stdlib/geometry/splines.library.plato, line 155](../../../../../stdlib/geometry/splines.library.plato#L155).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ControlPoints[index].PositionVector * self.Weights[index];
 ```
 
-## Line 160
+### Line 160
 
 **Source:** [stdlib/geometry/splines.library.plato, line 160](../../../../../stdlib/geometry/splines.library.plato#L160).
 

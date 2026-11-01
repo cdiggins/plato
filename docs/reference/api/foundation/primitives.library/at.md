@@ -3,11 +3,115 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The cell at a row-major flat index. Precondition: 0 \<= n \< Count.
+
+## Signature
+
+```plato
+At(self: Array2D<$T>, n: Integer): $T
+At(self: Array2D<$T>, column: Integer, row: Integer): $T
+At(self: Array3D<$T>, n: Integer): $T
+At(self: Array3D<$T>, column: Integer, row: Integer, layer: Integer): $T
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_FromCharactersOfCharactersIsIdentity
+
+[stdlib/tests/text.laws.plato, line 14](../../../../../stdlib/tests/text.laws.plato#L14)
+
+```plato
+// The characters of a String, rebuilt, are the String.
+Law_FromCharactersOfCharactersIsIdentity(s: String): Boolean
+    => FromCharacters(MapRange(s.Count, i => s.At(i))) == s;
+```
+
+### Law_FromCharactersWitness
+
+[stdlib/tests/text.laws.plato, line 18](../../../../../stdlib/tests/text.laws.plato#L18)
+
+```plato
+// Two-line witness: the characters of "ab" in reverse order make "ba"; none make "".
+Law_FromCharactersWitness(): Boolean
+    => FromCharacters(["ab".At(1), "ab".At(0)]) == "ba"
+    && FromCharacters(MapRange(0, i => "ab".At(i))) == "";
+```
+
+### Law_CharacterWitness
+
+[stdlib/tests/text.laws.plato, line 26](../../../../../stdlib/tests/text.laws.plato#L26)
+
+```plato
+// Two-line witness: the character at an index, its code, and the code's character.
+Law_CharacterWitness(): Boolean
+    => "abc".At(1).ToInteger == 98 && "a".At(0).ToInteger == 97 && 97.ToCharacter.ToInteger == 97
+    && 97.ToCharacter == "a".At(0) && FromCharacters([10.ToCharacter, 13.ToCharacter]).Count == 2
+    && FromCharacters([10.ToCharacter, 13.ToCharacter]).At(0).ToInteger == 10;
+```
+
+### Law_AtReadsWhatFromCharactersWrote
+
+[stdlib/tests/text.laws.plato, line 32](../../../../../stdlib/tests/text.laws.plato#L32)
+
+```plato
+// At reads what FromCharacters wrote, at every index.
+Law_AtReadsWhatFromCharactersWrote(s: String): Boolean
+    => FromCharacters(MapRange(s.Count, i => s.At(i))).Count == s.Count
+    && s.Count.Range.All(i => s.At(i).ToInteger.ToCharacter == s.At(i));
+```
+
+### Law_StringLiteralKeepsBackslashAndNonAscii
+
+[stdlib/tests/text.laws.plato, line 45](../../../../../stdlib/tests/text.laws.plato#L45)
+
+```plato
+// "André\x" is seven characters: the e acute (233), a backslash (92) and an x.
+Law_StringLiteralKeepsBackslashAndNonAscii(): Boolean
+    => "André\x".Count == 7 && "André\x".At(4).ToInteger == 233
+    && "André\x".At(5).ToInteger == 92 && "André\x".At(6).ToInteger == 120
+    && "André\x" == FromCharacters([65.ToCharacter, 110.ToCharacter, 100.ToCharacter, 114.ToCharacter, 233.ToCharacter, 92.ToCharacter, 120.ToCharacter]);
+```
+
+### Law_SubstringCharactersAreTheSourceCharacters
+
+[stdlib/tests/text.laws.plato, line 59](../../../../../stdlib/tests/text.laws.plato#L59)
+
+```plato
+// Each character is the source character at the same offset from the clamped start.
+Law_SubstringCharactersAreTheSourceCharacters(s: String, start: Integer, count: Integer): Boolean
+    => Substring(s, start, count).Count.Range.All(i =>
+        Substring(s, start, count).At(i) == s.At(start.Max(0) + i));
+```
+
+### Law_PrefixPrecedesExtension
+
+[stdlib/tests/text.laws.plato, line 180](../../../../../stdlib/tests/text.laws.plato#L180)
+
+```plato
+// A prefix precedes its extension, for the runner's Strings and a character after it.
+Law_PrefixPrecedesExtension(s: String, a: Integer): Boolean
+    => s < FromCharacters(MapRange(s.Count + 1, i => i < s.Count ? s.At(i) : Code(a).ToCharacter))
+    && !(FromCharacters(MapRange(s.Count + 1, i => i < s.Count ? s.At(i) : Code(a).ToCharacter)) <= s);
+```
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [primitives.library](../primitives.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 243
+### Line 243
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 243](../../../../../stdlib/foundation/primitives.library.plato#L243).
 
@@ -18,7 +122,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Elements[n];
 ```
 
-## Line 247
+### Line 247
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 247](../../../../../stdlib/foundation/primitives.library.plato#L247).
 
@@ -29,7 +133,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Elements[row * self.ColumnCount + column];
 ```
 
-## Line 293
+### Line 293
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 293](../../../../../stdlib/foundation/primitives.library.plato#L293).
 
@@ -40,7 +144,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Elements[n];
 ```
 
-## Line 297
+### Line 297
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 297](../../../../../stdlib/foundation/primitives.library.plato#L297).
 

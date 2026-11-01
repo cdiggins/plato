@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A point on the regular N-gon inscribed in the unit circle, walked at constant
+> rate: t in \[0,1\] covers the whole perimeter, linear between vertices.
+
+## Signature
+
+```plato
+NGonPoint(t: Number, n: Integer): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 96](../../../../../legacy/stdlib-legacy/solids.plato#L96): rate with flat sides (linear between vertices), so a UV quad grid meshes them exactly.
+
+## Source
+
 **File:** [solids](../solids.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 90
+### Line 90
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 90](../../../../../legacy/stdlib-legacy/solids.plato#L90).
 

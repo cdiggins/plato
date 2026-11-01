@@ -3,11 +3,52 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A new Array holding f applied to each element in index order.
+> (https://en.wikipedia.org/wiki/Map\_(higher-order\_function))
+
+## Signature
+
+```plato
+Map(xs: IIndexable<$T>, f: Function1<$T, $U>): Array<$U>
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SortedIndicesIsStable
+
+[stdlib/tests/sorting.laws.plato, line 27](../../../../../stdlib/tests/sorting.laws.plato#L27)
+
+```plato
+// Stability: when two elements compare equal, their source order survives.
+// Keys are folded into a handful of buckets so the pseudorandom input
+// actually produces ties for the law to bite on.
+Law_SortedIndicesIsStable(xs: Array<Integer>): Boolean
+{
+    var keys = xs.Map(x => x % 4);
+    var perm = keys.SortedIndices((a, b) => a <= b);
+    return (perm.Count - 1).Greater(0).MapRange(i =>
+        keys[perm[i]] != keys[perm[i + 1]] || perm[i] < perm[i + 1]).All(b => b);
+}
+```
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.library](../collections.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 293
+### Line 293
 
 **Source:** [stdlib/foundation/collections.library.plato, line 293](../../../../../stdlib/foundation/collections.library.plato#L293).
 

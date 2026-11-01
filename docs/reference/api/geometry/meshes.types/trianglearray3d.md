@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Independent triangles in space, each carrying its own three corner positions.
+> IFace order is authored order; `ToTriangleMesh` welds nothing, it only supplies
+> the identity index table.
+
+## Signature
+
+```plato
+type TriangleArray3D
+    implements IValue, ITriangleGeometry3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [ITriangleGeometry3D](../meshes.concepts/itrianglegeometry3d.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.types](../meshes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 205
+### Line 205
 
 **Source:** [stdlib/geometry/meshes.types.plato, line 205](../../../../../stdlib/geometry/meshes.types.plato#L205).
 

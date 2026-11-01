@@ -3,11 +3,75 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Builds a binary BVH over primitive bounds by median split: each node
+> sorts its range of the permutation by centroid along the widest axis of
+> the centroid extents and splits at the middle, until a range fits
+> maxLeafSize (clamped to at least 1). Deterministic, and the split
+> recurses on strictly smaller non-empty ranges, so it terminates. The
+> permutation ends in leaf order, as the queries above require.
+
+## Signature
+
+```plato
+BuildBvh(primitiveBounds: Array<Bounds3D>, maxLeafSize: Integer): Bvh3D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_BvhPermutationIsComplete
+
+[stdlib/tests/spatial-structures.laws.plato, line 55](../../../../../stdlib/tests/spatial-structures.laws.plato#L55)
+
+```plato
+// The permutation names every primitive exactly once.
+Law_BvhPermutationIsComplete(bounds: Array<Bounds3D>): Boolean
+    => bounds.BuildBvh(4).PrimitiveIndices.IsItemPermutation(bounds.Count);
+```
+
+### Law_BvhLeavesPartitionThePermutation
+
+[stdlib/tests/spatial-structures.laws.plato, line 60](../../../../../stdlib/tests/spatial-structures.laws.plato#L60)
+
+```plato
+// The leaves partition the permutation: every position of it lies in
+// exactly one leaf range, and internal ranges are empty.
+Law_BvhLeavesPartitionThePermutation(bounds: Array<Bounds3D>): Boolean
+    => bounds.BuildBvh(4).Nodes.LeavesPartition(
+        bounds.Count, n => n.LeftChild.Value < 0 && n.RightChild.Value < 0,
+        n2 => n2.Primitives);
+```
+
+### Law_BvhIsAFullBinaryTree
+
+[stdlib/tests/spatial-structures.laws.plato, line 67](../../../../../stdlib/tests/spatial-structures.laws.plato#L67)
+
+```plato
+// A binary tree with a two-way split at every internal node has exactly
+// 2L - 1 nodes for L leaves.
+Law_BvhIsAFullBinaryTree(bounds: Array<Bounds3D>): Boolean
+{
+    var tree = bounds.BuildBvh(4);
+    var leafCount = tree.Nodes.Reduce(0, (acc, n) =>
+        n.LeftChild.Value < 0 && n.RightChild.Value < 0 ? acc + 1 : acc);
+    return tree.Nodes.Count == (bounds.Count == 0 ? 0 : leafCount * 2 - 1);
+}
+```
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 823
+### Line 823
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 823](../../../../../stdlib/geometry/spatial-structures.library.plato#L823).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> sRGB (240, 248, 255), opaque.
+
+## Signature
+
+```plato
+AliceBlue(_: Color8): Color8
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 121](../../../../../stdlib/foundation/color.library.plato#L121): constants you must decode explicitly through the sRGB transfer function - the
+- [Line 134](../../../../../stdlib/foundation/color.library.plato#L134): Read as `Color8.CornflowerBlue`. Exact duplicates in the standard are
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+
+## Source
+
 **File:** [color.library](../color.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 108
+### Line 108
 
 **Source:** [stdlib/foundation/color.library.plato, line 108](../../../../../stdlib/foundation/color.library.plato#L108).
 

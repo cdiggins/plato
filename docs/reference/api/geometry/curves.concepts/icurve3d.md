@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A continuous map from a parameter to a position in space
+> (https://en.wikipedia.org/wiki/Differential\_geometry\_of\_curves).
+
+## Signature
+
+```plato
+interface ICurve3D
+    inherits IGeometry3D, ICurve<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry3D](../geometry.concepts/igeometry3d.md), [ICurve](icurve.md).
+
+Implemented in this tier by: [QuadraticBezier3D](../curves-shapes.types/quadraticbezier3d.md), [CubicBezier3D](../curves-shapes.types/cubicbezier3d.md), [Helix](../curves-shapes.types/helix.md), [ConicalSpiral3D](../curves-shapes.types/conicalspiral3d.md), [SphericalSpiral3D](../curves-shapes.types/sphericalspiral3d.md), [BezierCurve3D](../splines.types/beziercurve3d.md), [RationalBezierCurve3D](../splines.types/rationalbeziercurve3d.md), [CompositeBezier3D](../splines.types/compositebezier3d.md), [BSplineCurve3D](../splines.types/bsplinecurve3d.md), [NurbsCurve3D](../splines.types/nurbscurve3d.md), [HermiteCurve3D](../splines.types/hermitecurve3d.md), [HermiteSpline3D](../splines.types/hermitespline3d.md), [CatmullRomCurve3D](../splines.types/catmullromcurve3d.md), [TcbSpline3D](../splines.types/tcbspline3d.md), [LinearSpline3D](../splines.types/linearspline3d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.concepts](../curves.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 42
+### Line 42
 
 **Source:** [stdlib/geometry/curves.concepts.plato, line 42](../../../../../stdlib/geometry/curves.concepts.plato#L42).
 

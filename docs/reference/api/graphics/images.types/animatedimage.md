@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A frame-sequence image (animated GIF/WebP style). FrameDurations pairs
+> one-to-one with Frames; LoopCount is the replay count, 0 meaning forever.
+
+## Signature
+
+```plato
+type AnimatedImage
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [images.types](../images.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 162
+### Line 162
 
 **Source:** [stdlib/graphics/images.types.plato, line 162](../../../../../stdlib/graphics/images.types.plato#L162).
 

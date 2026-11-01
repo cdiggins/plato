@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Linear\_equation#Equation\_of\_a\_line
+
+## Signature
+
+```plato
+type LinearEquation
+    implements IRealFunction
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IRealFunction](irealfunction.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 60
+### Line 60
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 60](../../../../../legacy/stdlib-legacy/curves.plato#L60).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A central-difference estimate of the second derivative at t using step h
+> (divides by h squared). Precondition: h > 0 and h chosen so t +/- h stays
+> within the domain of interest.
+
+## Signature
+
+```plato
+SecondDerivativeAt(self: ICurve1D, t: Number, h: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 60
+### Line 60
 
 **Source:** [stdlib/geometry/curves.library.plato, line 60](../../../../../stdlib/geometry/curves.library.plato#L60).
 

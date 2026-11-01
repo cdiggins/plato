@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The remapped face, or no face at all where the merge degenerated it. The
+> empty / singleton pair is how a filter is written over `FlatMap`.
+
+## Signature
+
+```plato
+SurvivingFaces(remap: VertexRemap, face: TriangleFace): Array<TriangleFace>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 274
+### Line 274
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 274](../../../../../stdlib/geometry/remeshing.library.plato#L274).
 

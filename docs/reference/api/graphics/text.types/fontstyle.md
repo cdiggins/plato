@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The slant style of a font face: upright, a designed italic face, or a
+> slanted version of the normal face.
+> (https://en.wikipedia.org/wiki/Italic\_type)
+
+## Signature
+
+```plato
+type FontStyle = Normal | Italic | Oblique
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [text.types](../text.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 25
+### Line 25
 
 **Source:** [stdlib/graphics/text.types.plato, line 25](../../../../../stdlib/graphics/text.types.plato#L25).
 

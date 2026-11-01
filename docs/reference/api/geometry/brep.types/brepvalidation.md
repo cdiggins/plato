@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The structural checks of one shell, each answered independently by
+> `Validate` (brep.library.plato). The connectivity and watertight answers are
+> only meaningful when both range flags are true.
+
+## Signature
+
+```plato
+type BrepValidation
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [brep.types](../brep.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 83
+### Line 83
 
 **Source:** [stdlib/geometry/brep.types.plato, line 83](../../../../../stdlib/geometry/brep.types.plato#L83).
 

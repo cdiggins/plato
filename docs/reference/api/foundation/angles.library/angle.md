@@ -3,11 +3,83 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The angle of the given number of radians. The one cast into `Angle`;
+> other units go through the conversions below (`Turns`, `Degrees`, ...).
+
+## Signature
+
+```plato
+Angle(x: Number): Angle
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_VonMisesCdfZeroKappaIsUniform
+
+[stdlib/tests/special-numerics.laws.plato, line 46](../../../../../stdlib/tests/special-numerics.laws.plato#L46)
+
+```plato
+// At Concentration 0 the distribution is uniform on the circle and the CDF
+// of the wrapped angle is 1/2 + wrap(x)/(2 pi).
+Law_VonMisesCdfZeroKappaIsUniform(x: Number): Boolean
+    => VonMisesDistribution(Angle(0.0), 0.0).Cdf(x)
+        .SpecialEq(0.5 + x.WrapToPi / Number.Tau);
+```
+
+### Law_SuperEllipseUnitCirclePerimeter
+
+[stdlib/tests/special-numerics.laws.plato, line 114](../../../../../stdlib/tests/special-numerics.laws.plato#L114)
+
+```plato
+// The unit circle as a superellipse (a = b = 1, Exponent 2) has perimeter
+// 2 pi.
+Law_SuperEllipseUnitCirclePerimeter(t: Number): Boolean
+    => SuperEllipse(Point2D.Origin, Number2.One, Angle(0.0), 2.0)
+        .Perimeter.SpecialEq(Number.Tau);
+```
+
+### Law_CatenoidSatisfiesItsProfile
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 208](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L208)
+
+```plato
+// x^2 + y^2 = (WaistRadius cosh(z / WaistRadius))^2: the catenary profile,
+// recovered from the sample's own height.
+Law_CatenoidSatisfiesItsProfile(s: Catenoid, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var r = s.WaistRadius * (p.Z / s.WaistRadius).Angle.Cosh;
+    return p.SurfaceFinite.Not
+        || r.IsFinite.Not
+        || SurfaceEqNear(p.X * p.X + p.Y * p.Y, r * r, r * r);
+}
+```
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 161](../../../../../stdlib/foundation/angles.library.plato#L161): `Angle` (`quantities.types.plato`) stores radians, and the scalar
+- [Line 162](../../../../../stdlib/foundation/angles.library.plato#L162): trigonometric kernel is declared over radians-as-`Number` in
+- [Line 164](../../../../../stdlib/foundation/angles.library.plato#L164): them: every function here unwraps `Radians`, calls the scalar intrinsic, and
+- [Line 170](../../../../../stdlib/foundation/angles.library.plato#L170):     `Atan2`, ...) therefore returns `Angle`, delegating to the `*Radians`
+- [Line 175](../../../../../stdlib/foundation/angles.library.plato#L175):     `IQuantity` bodies give every quantity type; they exist because these exact
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Angles and periodic values](../../../library/foundation/angles.md)
+
+## Source
+
 **File:** [angles.library](../angles.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 157
+### Line 157
 
 **Source:** [stdlib/foundation/angles.library.plato, line 157](../../../../../stdlib/foundation/angles.library.plato#L157).
 

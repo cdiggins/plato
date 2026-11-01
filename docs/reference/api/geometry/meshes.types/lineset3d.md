@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Straight segments over shared vertices: wireframes
+> (https://en.wikipedia.org/wiki/Wire-frame\_model), edge overlays, debug
+> lines. Each VertexPair is one independent segment, in authored direction.
+
+## Signature
+
+```plato
+type LineSet3D
+    implements IValue, IIndexedSegmentGeometry3D, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IIndexedSegmentGeometry3D](../meshes.concepts/iindexedsegmentgeometry3d.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.types](../meshes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 239
+### Line 239
 
 **Source:** [stdlib/geometry/meshes.types.plato, line 239](../../../../../stdlib/geometry/meshes.types.plato#L239).
 

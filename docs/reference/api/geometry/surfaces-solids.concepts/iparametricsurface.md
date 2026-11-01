@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A surface evaluated from a rectangular UV parameter domain (canonically the
+> unit square). ClosedU/ClosedV report whether the surface seams shut across
+> the U or V direction (a cylinder closes in one, a torus in both)
+> (https://en.wikipedia.org/wiki/Parametric\_surface).
+
+## Signature
+
+```plato
+interface IParametricSurface
+    inherits ISurface, IProcedural<UvCoordinate, Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ISurface](isurface.md), [IProcedural](../../foundation/functional.concepts/iprocedural.md).
+
+Implemented in this tier by: [RegularPrism](../solids.types/regularprism.md), [RegularPyramid](../solids.types/regularpyramid.md), [SquarePyramid](../solids.types/squarepyramid.md), [Box3D](../spatial-primitives.types/box3d.md), [Cylinder](../spatial-primitives.types/cylinder.md), [CylindricalShell](../spatial-primitives.types/cylindricalshell.md), [Cone](../spatial-primitives.types/cone.md), [ConicalFrustum](../spatial-primitives.types/conicalfrustum.md), [Capsule3D](../spatial-primitives.types/capsule3d.md), [Sphere](../spatial-primitives.types/sphere.md), [Ellipsoid](../spatial-primitives.types/ellipsoid.md), [Torus](../spatial-primitives.types/torus.md), [HyperbolicParaboloid](../surfaces-shapes.types/hyperbolicparaboloid.md), [HyperboloidOfOneSheet](../surfaces-shapes.types/hyperboloidofonesheet.md), [HyperboloidOfTwoSheets](../surfaces-shapes.types/hyperboloidoftwosheets.md), [Catenoid](../surfaces-shapes.types/catenoid.md), [Helicoid](../surfaces-shapes.types/helicoid.md), [Pseudosphere](../surfaces-shapes.types/pseudosphere.md), [Superellipsoid](../surfaces-shapes.types/superellipsoid.md), [Supertoroid](../surfaces-shapes.types/supertoroid.md), [Superformula3D](../surfaces-shapes.types/superformula3d.md), [DupinCyclide](../surfaces-shapes.types/dupincyclide.md), [SeashellSurface](../surfaces-shapes.types/seashellsurface.md), [SphericalHarmonicSurface](../surfaces-shapes.types/sphericalharmonicsurface.md), [KleinBottle](../surfaces-shapes.types/kleinbottle.md), [RomanSurface](../surfaces-shapes.types/romansurface.md), [CrossCap](../surfaces-shapes.types/crosscap.md), [BoySurface](../surfaces-shapes.types/boysurface.md), [WhitneyUmbrella](../surfaces-shapes.types/whitneyumbrella.md), [BohemianDome](../surfaces-shapes.types/bohemiandome.md), [PluckerConoid](../surfaces-shapes.types/pluckerconoid.md), [EnneperSurface](../surfaces-shapes.types/ennepersurface.md), [ScherkSurface](../surfaces-shapes.types/scherksurface.md), [HennebergSurface](../surfaces-shapes.types/hennebergsurface.md), [CatalanSurface](../surfaces-shapes.types/catalansurface.md), [MonkeySaddle](../surfaces-shapes.types/monkeysaddle.md), [DiniSurface](../surfaces-shapes.types/dinisurface.md), [KuenSurface](../surfaces-shapes.types/kuensurface.md), [BreatherSurface](../surfaces-shapes.types/breathersurface.md), [SurfaceOfRevolution](../surfaces.types/surfaceofrevolution.md), [ExtrudedSurface](../surfaces.types/extrudedsurface.md), [RuledSurface](../surfaces.types/ruledsurface.md), [LoftedSurface](../surfaces.types/loftedsurface.md), [SweptSurface](../surfaces.types/sweptsurface.md), [TubeSurface](../surfaces.types/tubesurface.md), [OffsetSurface](../surfaces.types/offsetsurface.md), [BilinearPatch](../surfaces.types/bilinearpatch.md), [BezierPatch](../surfaces.types/bezierpatch.md), [BSplineSurface](../surfaces.types/bsplinesurface.md), [NurbsSurface](../surfaces.types/nurbssurface.md), [PlanarPatch](../surfaces.types/planarpatch.md), [CoonsPatch](../surfaces.types/coonspatch.md), [SphericalPatch](../surfaces.types/sphericalpatch.md), [MobiusStrip](../surfaces.types/mobiusstrip.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-solids.concepts](../surfaces-solids.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 26
+### Line 26
 
 **Source:** [stdlib/geometry/surfaces-solids.concepts.plato, line 26](../../../../../stdlib/geometry/surfaces-solids.concepts.plato#L26).
 

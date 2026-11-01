@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The inverse mass the solvers actually divide corrections by: zero for a
+> fixed vertex. Every projection below reads this instead of testing the
+> pin flag, so pinning is a mass of infinity and nothing more.
+
+## Signature
+
+```plato
+SolverInverseMass(self: ClothVertex): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 65
+### Line 65
 
 **Source:** [stdlib/future/cloth.library.plato, line 65](../../../../../stdlib/future/cloth.library.plato#L65).
 

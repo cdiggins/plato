@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Ken Perlin's quintic shaping function 6x^5 - 15x^4 + 10x^3, with zero first
+> AND second derivative at both ends. Assumes x is in \[0, 1\].
+> Same article family: https://en.wikipedia.org/wiki/Smoothstep
+
+## Signature
+
+```plato
+SmootherStep(x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.library](../algebra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 255
+### Line 255
 
 **Source:** [stdlib/foundation/algebra.library.plato, line 255](../../../../../stdlib/foundation/algebra.library.plato#L255).
 

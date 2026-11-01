@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number of lattice nodes along each axis. Both axes include their
+> endpoints, so a node count of n spans n - 1 cells.
+
+## Signature
+
+```plato
+NodeCounts(self: SampledSdf2D): IntegerVector2
+NodeCounts(self: SampledSdf3D): IntegerVector3
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 667
+### Line 667
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 667](../../../../../stdlib/geometry/fields-implicits.library.plato#L667).
 
@@ -31,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Values.ColumnCount, self.Values.RowCount);
 ```
 
-## Line 684
+### Line 684
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 684](../../../../../stdlib/geometry/fields-implicits.library.plato#L684).
 

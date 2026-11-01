@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The carrier integer's own digest.
+
+## Signature
+
+```plato
+Hash(self: MortonCode2D): Integer
+Hash(self: MortonCode3D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 161
+### Line 161
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 161](../../../../../stdlib/geometry/spatial-structures.library.plato#L161).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Value.Hash;
 ```
 
-## Line 169
+### Line 169
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 169](../../../../../stdlib/geometry/spatial-structures.library.plato#L169).
 

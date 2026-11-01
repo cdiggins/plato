@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed distance from the point to the boundary; a readable spelling of
+> Eval. Negative inside, zero on the boundary, positive outside.
+
+## Signature
+
+```plato
+DistanceAt(self: ISignedDistanceField2D, point: Point2D): Number
+DistanceAt(self: ISignedDistanceField3D, point: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 284
+### Line 284
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 284](../../../../../stdlib/geometry/fields-implicits.library.plato#L284).
 
@@ -33,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(point);
 ```
 
-## Line 331
+### Line 331
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 331](../../../../../stdlib/geometry/fields-implicits.library.plato#L331).
 

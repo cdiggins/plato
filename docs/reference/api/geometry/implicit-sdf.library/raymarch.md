@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Sphere-trace a ray against a spatial SDF. The hit normal is the field's own
+> unit gradient, so a field with an analytic gradient contributes it here
+> rather than being differenced again. Face, Barycentric and Uv are the
+> not-a-mesh values (`spatial-structures.types.plato`): an implicit surface has
+> no triangle to name. On a miss the normal faces back down the ray, matching
+> the broad-phase raycast convention. The reported normal is the true surface
+> normal only where the field is exact.
+> Precondition: the ray direction is unit length; tolerance and reach are
+> positive; the field is exact or a lower bound — one that is not a bound
+> tunnels.
+
+## Signature
+
+```plato
+RayMarch(self: IDifferentiableSignedDistanceField3D, ray: Ray3D, budget: Integer, tolerance: Number, reach: Number): RayHit3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 428
+### Line 428
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 428](../../../../../stdlib/geometry/implicit-sdf.library.plato#L428).
 

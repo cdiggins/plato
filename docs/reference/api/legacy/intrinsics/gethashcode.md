@@ -3,11 +3,42 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+GetHashCode(self: Matrix4x4): Integer
+GetHashCode(self: Matrix3x2): Integer
+GetHashCode(self: Vector2): Integer
+GetHashCode(self: Vector3): Integer
+GetHashCode(self: Vector4): Integer
+GetHashCode(self: Vector8): Integer
+GetHashCode(self: Plane): Integer
+GetHashCode(self: Quaternion): Integer
+GetHashCode(self: Number): Integer
+GetHashCode(self: Integer): Integer
+GetHashCode(self: Boolean): Integer
+GetHashCode(self: Angle): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 12 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 32
+### Line 32
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 32](../../../../../legacy/stdlib-legacy/intrinsics.plato#L32).
 
@@ -15,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Matrix4x4): Integer;
 ```
 
-## Line 81
+### Line 81
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 81](../../../../../legacy/stdlib-legacy/intrinsics.plato#L81).
 
@@ -23,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Matrix3x2): Integer;
 ```
 
-## Line 127
+### Line 127
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 127](../../../../../legacy/stdlib-legacy/intrinsics.plato#L127).
 
@@ -31,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Vector2): Integer;
 ```
 
-## Line 165
+### Line 165
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 165](../../../../../legacy/stdlib-legacy/intrinsics.plato#L165).
 
@@ -39,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Vector3): Integer;
 ```
 
-## Line 202
+### Line 202
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 202](../../../../../legacy/stdlib-legacy/intrinsics.plato#L202).
 
@@ -47,7 +78,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Vector4): Integer;
 ```
 
-## Line 254
+### Line 254
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 254](../../../../../legacy/stdlib-legacy/intrinsics.plato#L254).
 
@@ -55,7 +86,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Vector8): Integer;
 ```
 
-## Line 273
+### Line 273
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 273](../../../../../legacy/stdlib-legacy/intrinsics.plato#L273).
 
@@ -63,7 +94,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Plane): Integer;
 ```
 
-## Line 304
+### Line 304
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 304](../../../../../legacy/stdlib-legacy/intrinsics.plato#L304).
 
@@ -71,7 +102,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Quaternion): Integer;
 ```
 
-## Line 367
+### Line 367
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 367](../../../../../legacy/stdlib-legacy/intrinsics.plato#L367).
 
@@ -80,7 +111,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Number): Integer;
 ```
 
-## Line 393
+### Line 393
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 393](../../../../../legacy/stdlib-legacy/intrinsics.plato#L393).
 
@@ -88,7 +119,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Integer): Integer;
 ```
 
-## Line 414
+### Line 414
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 414](../../../../../legacy/stdlib-legacy/intrinsics.plato#L414).
 
@@ -96,7 +127,7 @@ Copied from source, comments included. A comment records intent. The body is the
     GetHashCode(self: Boolean): Integer;
 ```
 
-## Line 430
+### Line 430
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 430](../../../../../legacy/stdlib-legacy/intrinsics.plato#L430).
 

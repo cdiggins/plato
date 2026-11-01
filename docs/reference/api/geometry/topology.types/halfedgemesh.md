@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A 3D mesh in half-edge form, supporting constant-time neighborhood
+> navigation. FaceHalfEdges\[f\] is one half-edge on face f's loop;
+> VertexHalfEdges\[v\] is one half-edge leaving vertex v, -1 for an isolated
+> vertex. Requires a manifold (possibly bounded) surface.
+
+## Signature
+
+```plato
+type HalfEdgeMesh
+    implements IValue, IMeshElementCounts, IHalfEdge, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IMeshElementCounts](../topology.concepts/imeshelementcounts.md), [IHalfEdge](../topology.concepts/ihalfedge.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.types](../topology.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 148
+### Line 148
 
 **Source:** [stdlib/geometry/topology.types.plato, line 148](../../../../../stdlib/geometry/topology.types.plato#L148).
 

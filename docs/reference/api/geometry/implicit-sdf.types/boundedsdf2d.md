@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar function SDF with a conservative bounding rectangle. Outside
+> Bounds the solid may be treated as empty for culling; the stored distance
+> function is still evaluated on request.
+
+## Signature
+
+```plato
+type BoundedSdf2D
+    implements IValue, IBoundedSignedDistanceField2D, IDifferentiableSignedDistanceField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IBoundedSignedDistanceField2D](../implicit-sdf.concepts/iboundedsigneddistancefield2d.md), [IDifferentiableSignedDistanceField2D](../implicit-sdf.concepts/idifferentiablesigneddistancefield2d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.types](../implicit-sdf.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/implicit-sdf.types.plato, line 1](../../../../../stdlib/geometry/implicit-sdf.types.plato#L1).
 

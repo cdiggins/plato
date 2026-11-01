@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The out-of-plane normal stress that accompanies a plane state: zero under
+> plane stress by definition, and Poisson's ratio times the sum of the
+> in-plane normal stresses under plane strain, where it is the out-of-plane
+> STRAIN that is zero instead. This is the one reading a plane state cannot
+> supply on its own, and it is why von Mises stress in the plane needs the
+> idealization and the material as well as the stress.
+
+## Signature
+
+```plato
+OutOfPlaneStress(stress: StressState2D, condition: PlaneCondition,
+    poissonRatio: Number): Pressure
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 670
+### Line 670
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 670](../../../../../stdlib/future/finite-elements.library.plato#L670).
 

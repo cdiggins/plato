@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One bend constraint per interior edge. Boundary edges are folded out
+> rather than emitted with a "none" wing, so every constraint the solver
+> sees names four real vertices.
+
+## Signature
+
+```plato
+MeshBendConstraints(self: PolygonMesh3D, compliance: Number): Array<ClothBendConstraint>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 645
+### Line 645
 
 **Source:** [stdlib/future/cloth.library.plato, line 645](../../../../../stdlib/future/cloth.library.plato#L645).
 

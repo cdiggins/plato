@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A complete UV layout (https://en.wikipedia.org/wiki/Texture\_atlas): charts
+> packed into the unit UV square at the texel resolution AtlasSize, the seams
+> the unwrap introduced, and the padding (in texels) kept between charts to
+> avoid bleeding.
+
+## Signature
+
+```plato
+type UvAtlas
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.types](../meshes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 175
+### Line 175
 
 **Source:** [stdlib/geometry/meshes.types.plato, line 175](../../../../../stdlib/geometry/meshes.types.plato#L175).
 

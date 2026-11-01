@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Apply a 2D affine map, including the translation row (Row3).
+
+## Signature
+
+```plato
+Transform(self: Vector2D, matrix: Matrix3x2): Vector2D
+Transform(self: Vector2D, matrix: Matrix4x4): Vector2D
+Transform(self: Vector2D, rotation: Quaternion): Vector2D
+Transform(self: Vector3D, matrix: Matrix4x4): Vector3D
+Transform(self: Vector3D, rotation: Quaternion): Vector3D
+Transform(self: Number4, matrix: Matrix4x4): Number4
+Transform(self: Number4, rotation: Quaternion): Number4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [vectors.library](../vectors.library.md). Kind: function. 7 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 79
+### Line 79
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 79](../../../../../stdlib/foundation/vectors.library.plato#L79).
 
@@ -22,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
             self.X * matrix.Row1.Y + self.Y * matrix.Row2.Y + matrix.Row3.Y);
 ```
 
-## Line 91
+### Line 91
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 91](../../../../../stdlib/foundation/vectors.library.plato#L91).
 
@@ -35,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
             self.X * matrix.Row1.Y + self.Y * matrix.Row2.Y + matrix.Row4.Y);
 ```
 
-## Line 101
+### Line 101
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 101](../../../../../stdlib/foundation/vectors.library.plato#L101).
 
@@ -58,7 +84,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 198
+### Line 198
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 198](../../../../../stdlib/foundation/vectors.library.plato#L198).
 
@@ -75,7 +101,7 @@ Copied from source, comments included. A comment records intent. The body is the
             self.X * matrix.Row1.Z + self.Y * matrix.Row2.Z + self.Z * matrix.Row3.Z + matrix.Row4.Z);
 ```
 
-## Line 212
+### Line 212
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 212](../../../../../stdlib/foundation/vectors.library.plato#L212).
 
@@ -103,7 +129,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 508
+### Line 508
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 508](../../../../../stdlib/foundation/vectors.library.plato#L508).
 
@@ -127,7 +153,7 @@ Copied from source, comments included. A comment records intent. The body is the
             self.X * matrix.Row1.W + self.Y * matrix.Row2.W + self.Z * matrix.Row3.W + self.W * matrix.Row4.W);
 ```
 
-## Line 531
+### Line 531
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 531](../../../../../stdlib/foundation/vectors.library.plato#L531).
 

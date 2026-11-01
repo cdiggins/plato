@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The affine transform that applies `first`, then `second` (row-vector
+> matrix product).
+
+## Signature
+
+```plato
+Compose(first: AffineTransform2D, second: AffineTransform2D): AffineTransform2D
+Compose(first: AffineTransform3D, second: AffineTransform3D): AffineTransform3D
+Compose(first: Transform2D, second: Transform2D): Transform2D
+Compose(first: Transform3D, second: Transform3D): Transform3D
+Compose(first: Motor3D, second: Motor3D): Motor3D
+Compose(first: Pose2D, second: Pose2D): Pose2D
+Compose(first: Pose3D, second: Pose3D): Pose3D
+Compose(first: IRigid2D, second: IRigid2D): Pose2D
+Compose(first: IRigid3D, second: IRigid3D): Pose3D
+Compose(first: TrsTransform2D, second: TrsTransform2D): AffineTransform2D
+Compose(first: TrsTransform3D, second: TrsTransform3D): TrsTransform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 11 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 46
+### Line 46
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 46](../../../../../stdlib/foundation/transforms.library.plato#L46).
 
@@ -19,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(first.Matrix * second.Matrix);
 ```
 
-## Line 116
+### Line 116
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 116](../../../../../stdlib/foundation/transforms.library.plato#L116).
 
@@ -31,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (first.Matrix4x4 * second.Matrix4x4).AffineTransform3D;
 ```
 
-## Line 183
+### Line 183
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 183](../../../../../stdlib/foundation/transforms.library.plato#L183).
 
@@ -42,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform2D(first.Matrix * second.Matrix);
 ```
 
-## Line 207
+### Line 207
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 207](../../../../../stdlib/foundation/transforms.library.plato#L207).
 
@@ -53,7 +85,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform3D(first.Matrix * second.Matrix);
 ```
 
-## Line 829
+### Line 829
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 829](../../../../../stdlib/foundation/transforms.library.plato#L829).
 
@@ -64,7 +96,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => second * first;
 ```
 
-## Line 965
+### Line 965
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 965](../../../../../stdlib/foundation/transforms.library.plato#L965).
 
@@ -75,7 +107,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (first.Position.Transform(second), first.Rotation * second.Rotation);
 ```
 
-## Line 1008
+### Line 1008
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1008](../../../../../stdlib/foundation/transforms.library.plato#L1008).
 
@@ -86,7 +118,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (first.Position.Transform(second), first.Orientation.Concatenate(second.Orientation));
 ```
 
-## Line 1087
+### Line 1087
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1087](../../../../../stdlib/foundation/transforms.library.plato#L1087).
 
@@ -98,7 +130,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => first.Pose2D.Compose(second.Pose2D);
 ```
 
-## Line 1092
+### Line 1092
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1092](../../../../../stdlib/foundation/transforms.library.plato#L1092).
 
@@ -110,7 +142,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => first.Pose3D.Compose(second.Pose3D);
 ```
 
-## Line 1396
+### Line 1396
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1396](../../../../../stdlib/foundation/transforms.library.plato#L1396).
 
@@ -124,7 +156,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(first).Compose(AffineTransform2D(second));
 ```
 
-## Line 1438
+### Line 1438
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1438](../../../../../stdlib/foundation/transforms.library.plato#L1438).
 

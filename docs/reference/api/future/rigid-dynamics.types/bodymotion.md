@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> How a body participates in dynamics: never moves (Static), is moved
+> externally and treated as infinitely massive (Kinematic), or integrates
+> forces and impulses (Dynamic).
+
+## Signature
+
+```plato
+type BodyMotion = Static | Kinematic | Dynamic
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 24
+### Line 24
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 24](../../../../../stdlib/future/rigid-dynamics.types.plato#L24).
 

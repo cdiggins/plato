@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Uncorrelated planar random values: a distinct pseudo-random number per
+> point, with no spatial coherence. Ranges over \[0, 1\]
+> (https://en.wikipedia.org/wiki/White\_noise).
+
+## Signature
+
+```plato
+type WhiteNoise2D
+    implements IValue, IScalarField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IScalarField2D](../fields.concepts/iscalarfield2d.md).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.types](../noise.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 35
+### Line 35
 
 **Source:** [stdlib/geometry/noise.types.plato, line 35](../../../../../stdlib/geometry/noise.types.plato#L35).
 

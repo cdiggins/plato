@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A constructive solid geometry tree stored as a flat node array with child
+> indices (no pointers); Root is the index of the root node in Nodes
+> (https://en.wikipedia.org/wiki/Constructive\_solid\_geometry).
+
+## Signature
+
+```plato
+type CsgTree3D
+    implements ISolid
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ISolid](../surfaces-solids.concepts/isolid.md).
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.types](../solids.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 50
+### Line 50
 
 **Source:** [stdlib/geometry/solids.types.plato, line 50](../../../../../stdlib/geometry/solids.types.plato#L50).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Component-wise greatest representable value.
+
+## Signature
+
+```plato
+MaxValue(_: Complex): Complex
+MaxValue(_: Proportion): Proportion
+MaxValue(_: Percent): Percent
+MaxValue(_: Probability): Probability
+MaxValue(_: DualNumber): DualNumber
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 79
+### Line 79
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 79](../../../../../stdlib/foundation/numbers.library.plato#L79).
 
@@ -18,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Number.MaxValue, Number.MaxValue);
 ```
 
-## Line 157
+### Line 157
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 157](../../../../../stdlib/foundation/numbers.library.plato#L157).
 
@@ -28,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Proportion(Number.MaxValue);
 ```
 
-## Line 196
+### Line 196
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 196](../../../../../stdlib/foundation/numbers.library.plato#L196).
 
@@ -38,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Percent(Number.MaxValue);
 ```
 
-## Line 235
+### Line 235
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 235](../../../../../stdlib/foundation/numbers.library.plato#L235).
 
@@ -48,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Probability(Number.MaxValue);
 ```
 
-## Line 348
+### Line 348
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 348](../../../../../stdlib/foundation/numbers.library.plato#L348).
 

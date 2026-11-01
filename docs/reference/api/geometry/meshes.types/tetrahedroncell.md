@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The four vertex indices of one tetrahedron
+> (https://en.wikipedia.org/wiki/Tetrahedron), ordered so the signed volume is
+> positive (D on the counter-clockwise side of triangle A-B-C).
+
+## Signature
+
+```plato
+type TetrahedronCell
+    implements IValue, IHashable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IHashable](../../foundation/core.concepts/ihashable.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.types](../meshes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 315
+### Line 315
 
 **Source:** [stdlib/geometry/meshes.types.plato, line 315](../../../../../stdlib/geometry/meshes.types.plato#L315).
 

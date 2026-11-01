@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+CreateTranslation(_: Matrix4x4, position: Vector3): Matrix4x4
+CreateTranslation(_: Matrix3x2, xPosition: Number, yPosition: Number): Matrix3x2
+CreateTranslation(_: Matrix3x2, position: Vector2): Matrix3x2
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 36
+### Line 36
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 36](../../../../../legacy/stdlib-legacy/intrinsics.plato#L36).
 
@@ -16,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     CreateTranslation(_: Matrix4x4, position: Vector3): Matrix4x4;
 ```
 
-## Line 82
+### Line 82
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 82](../../../../../legacy/stdlib-legacy/intrinsics.plato#L82).
 
@@ -25,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
     CreateTranslation(_: Matrix3x2, xPosition: Number, yPosition: Number): Matrix3x2;
 ```
 
-## Line 84
+### Line 84
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 84](../../../../../legacy/stdlib-legacy/intrinsics.plato#L84).
 

@@ -3,11 +3,31 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The mass of a solid of the given volume at the given uniform density.
+
+## Signature
+
+```plato
+MassOf(volume: Volume, density: Density): Mass
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 224
+### Line 224
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 224](../../../../../stdlib/future/rigid-dynamics.library.plato#L224).
 

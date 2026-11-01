@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The rotor of a quaternion (the inverse of the isomorphism above).
+
+## Signature
+
+```plato
+Rotor3D(q: Quaternion): Rotor3D
+Rotor3D(aa: AxisAngle): Rotor3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1275
+### Line 1275
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1275](../../../../../stdlib/foundation/transforms.library.plato#L1275).
 
@@ -18,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (q.W, Bivector3D(q.X, q.Y, q.Z));
 ```
 
-## Line 1279
+### Line 1279
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1279](../../../../../stdlib/foundation/transforms.library.plato#L1279).
 

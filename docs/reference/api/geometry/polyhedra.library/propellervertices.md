@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The one-third points along every directed edge, then the original
+> vertices. The corner block leads, so `MovedFaceOfFace` names the rotated
+> inner copy of a face without any adjustment.
+
+## Signature
+
+```plato
+PropellerVertices(self: PolygonMesh3D): Array<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 779
+### Line 779
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 779](../../../../../stdlib/geometry/polyhedra.library.plato#L779).
 

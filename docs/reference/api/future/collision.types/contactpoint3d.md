@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A single spatial contact. Position is the world contact point in meters;
+> Normal points from body A toward body B; Penetration is the overlap depth;
+> NormalImpulse is the solver impulse along the normal in newton-seconds;
+> FrictionImpulse is the tangential impulse in newton-seconds (0 before
+> solving).
+> (https://en.wikipedia.org/wiki/Contact\_mechanics)
+
+## Signature
+
+```plato
+type ContactPoint3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.types](../collision.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 178
+### Line 178
 
 **Source:** [stdlib/future/collision.types.plato, line 178](../../../../../stdlib/future/collision.types.plato#L178).
 

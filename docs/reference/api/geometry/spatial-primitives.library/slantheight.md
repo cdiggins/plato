@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The slant height sqrt(r^2 + h^2).
+
+## Signature
+
+```plato
+SlantHeight(c: Cone): Number
+SlantHeight(f: ConicalFrustum): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 420
+### Line 420
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 420](../../../../../stdlib/geometry/spatial-primitives.library.plato#L420).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (c.Radius.Square + c.Height.Square).Sqrt;
 ```
 
-## Line 477
+### Line 477
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 477](../../../../../stdlib/geometry/spatial-primitives.library.plato#L477).
 

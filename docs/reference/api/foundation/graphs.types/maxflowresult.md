@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The result of a maximum-flow computation. EdgeFlows is parallel to the
+> network's edge array (same units as the capacities); SourceSideVertices\[v\]
+> is true when v lies on the source side of a minimum cut.
+> (https://en.wikipedia.org/wiki/Maximum\_flow\_problem)
+
+## Signature
+
+```plato
+type MaxFlowResult
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Graph data and graph summaries](../../../library/foundation/graphs.md)
+
+## Source
+
 **File:** [graphs.types](../graphs.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 215
+### Line 215
 
 **Source:** [stdlib/foundation/graphs.types.plato, line 215](../../../../../stdlib/foundation/graphs.types.plato#L215).
 

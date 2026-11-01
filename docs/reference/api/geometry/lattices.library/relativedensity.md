@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The fraction of the envelope the struts fill, treating each strut as a
+> cylinder of the given radius: sum of pi \* r^2 \* length over the envelope
+> volume (https://en.wikipedia.org/wiki/Relative\_density).
+>
+> This is the FIRST-ORDER estimate and an OVERESTIMATE: material where
+> struts meet at a node is counted once per strut, and the spherical joints
+> that close those meetings are not counted at all. It converges on the true
+> fraction as radius over strut length goes to zero, which is the slender
+> regime lattices are used in; at radii approaching a third of the strut
+> length it is no longer usable.
+
+## Signature
+
+```plato
+RelativeDensity(struts: Array<Line3D>, radius: Number, envelope: Bounds3D): Number
+RelativeDensity(struts: Array<Line3D>, radii: Array<Number>, envelope: Bounds3D): Number
+RelativeDensity(self: StrutLattice3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 461
+### Line 461
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 461](../../../../../stdlib/geometry/lattices.library.plato#L461).
 
@@ -27,7 +58,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Number.Pi * radius.Square * TotalLength(struts) / EnvelopeVolume(envelope);
 ```
 
-## Line 474
+### Line 474
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 474](../../../../../stdlib/geometry/lattices.library.plato#L474).
 
@@ -43,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 483
+### Line 483
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 483](../../../../../stdlib/geometry/lattices.library.plato#L483).
 

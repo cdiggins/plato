@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The first derivative (velocity) of the uniform Catmull-Rom segment:
+> 0.5 \* \[ (p2 - p0) + 2t\*(2\*p0 - 5\*p1 + 4\*p2 - p3) + 3t^2\*(3\*p1 - p0 - 3\*p2 + p3) \].
+
+## Signature
+
+```plato
+CatmullRomDerivative(p0: INumerical, p1: INumerical, p2: INumerical, p3: INumerical, t: Number): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Find a root with Newton's method](../../../cookbook/newton-root.md)
+- [Polynomials, series and basis functions](../../../library/foundation/polynomials.md)
+
+## Source
+
 **File:** [polynomials.library](../polynomials.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 165
+### Line 165
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 165](../../../../../stdlib/foundation/polynomials.library.plato#L165).
 

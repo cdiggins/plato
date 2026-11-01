@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A piecewise cubic Hermite spline in the plane: interpolates every point with
+> an explicit tangent per point (same count as Points). Closed joins the last
+> point back to the first
+> (https://en.wikipedia.org/wiki/Cubic\_Hermite\_spline).
+
+## Signature
+
+```plato
+type HermiteSpline2D
+    implements ICurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICurve2D](../curves.concepts/icurve2d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.types](../splines.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 193
+### Line 193
 
 **Source:** [stdlib/geometry/splines.types.plato, line 193](../../../../../stdlib/geometry/splines.types.plato#L193).
 

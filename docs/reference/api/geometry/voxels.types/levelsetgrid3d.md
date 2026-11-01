@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A dense narrow-band signed-distance raster
+> (https://en.wikipedia.org/wiki/Signed\_distance\_function): negative inside,
+> positive outside, in world units. Cells farther from the surface than
+> NarrowBandWidth hold BackgroundDistance with the correct sign.
+
+## Signature
+
+```plato
+type LevelSetGrid3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.types](../voxels.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/geometry/voxels.types.plato, line 75](../../../../../stdlib/geometry/voxels.types.plato#L75).
 

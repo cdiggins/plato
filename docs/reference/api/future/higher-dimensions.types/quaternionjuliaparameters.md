@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Parameters of a quaternion Julia set (a 4D fractal usually displayed as a
+> 3D slice): q maps to q^2 + C. Iteration stops at MaxIterations or when the
+> magnitude of q exceeds EscapeRadius (quaternion-space units).
+
+## Signature
+
+```plato
+type QuaternionJuliaParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [higher-dimensions.types](../higher-dimensions.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 86
+### Line 86
 
 **Source:** [stdlib/future/higher-dimensions.types.plato, line 86](../../../../../stdlib/future/higher-dimensions.types.plato#L86).
 

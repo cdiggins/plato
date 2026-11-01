@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The radius of curvature at t: the reciprocal of the unsigned curvature.
+> Precondition: the curvature is non-zero (a straight point has infinite
+> radius). See https://en.wikipedia.org/wiki/Radius\_of\_curvature.
+
+## Signature
+
+```plato
+RadiusOfCurvatureAt(self: IDifferentiableCurve2D, t: Number): Number
+RadiusOfCurvatureAt(self: IDifferentiableCurve3D, t: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 278
+### Line 278
 
 **Source:** [stdlib/geometry/curves.library.plato, line 278](../../../../../stdlib/geometry/curves.library.plato#L278).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 1.0 / self.CurvatureAt(t).Abs;
 ```
 
-## Line 308
+### Line 308
 
 **Source:** [stdlib/geometry/curves.library.plato, line 308](../../../../../stdlib/geometry/curves.library.plato#L308).
 

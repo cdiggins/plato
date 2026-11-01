@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A sample of the named basis noise at the given seed and frequency.
+
+## Signature
+
+```plato
+BasisValue2D(basis: NoiseBasis, seed: Integer, frequency: Number, p: Point2D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 181](../../../../../stdlib/geometry/noise.library.plato#L181): bases sum sensibly; the White and Worley shifts are not exact at the ends.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 171
+### Line 171
 
 **Source:** [stdlib/geometry/noise.library.plato, line 171](../../../../../stdlib/geometry/noise.library.plato#L171).
 

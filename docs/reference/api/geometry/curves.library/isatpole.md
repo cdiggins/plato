@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the curve passes through the pole at the given angle: radius
+> within the given non-negative tolerance of zero.
+
+## Signature
+
+```plato
+IsAtPole(self: IPolarCurve2D, angle: Angle, tolerance: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 379
+### Line 379
 
 **Source:** [stdlib/geometry/curves.library.plato, line 379](../../../../../stdlib/geometry/curves.library.plato#L379).
 

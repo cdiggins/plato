@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> `count` fixed steps. Substepping is the cheapest accuracy there is: halving
+> the step halves the integrator's error and doubles the effective stiffness of
+> every contact, at the same cost per unit of simulated time as one long step
+> with twice the iterations — and unlike more iterations it also fixes fast
+> bodies passing through thin ones.
+
+## Signature
+
+```plato
+StepMany(world: RigidWorld3D, count: Integer): RigidWorld3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 885
+### Line 885
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 885](../../../../../stdlib/future/rigid-dynamics.library.plato#L885).
 

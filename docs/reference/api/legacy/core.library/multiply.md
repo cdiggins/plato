@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Support for having the scalar on the left
+
+## Signature
+
+```plato
+Multiply(scalar: Number, x: IScalarArithmetic): IScalarArithmetic
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [core.library](../core.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 114
+### Line 114
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 114](../../../../../legacy/stdlib-legacy/core.library.plato#L114).
 

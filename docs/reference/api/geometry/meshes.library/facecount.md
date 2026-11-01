@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number of triangle faces.
+
+## Signature
+
+```plato
+FaceCount(self: TriangleMesh3D): Integer
+FaceCount(self: TriangleMesh2D): Integer
+FaceCount(self: QuadMesh3D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 483
+### Line 483
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 483](../../../../../stdlib/geometry/meshes.library.plato#L483).
 
@@ -18,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Faces.Count;
 ```
 
-## Line 537
+### Line 537
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 537](../../../../../stdlib/geometry/meshes.library.plato#L537).
 
@@ -29,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Faces.Count;
 ```
 
-## Line 577
+### Line 577
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 577](../../../../../stdlib/geometry/meshes.library.plato#L577).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The mutually nearest points of two infinite lines. For PARALLEL lines the
+> connector is anchored at the first line's origin (any common perpendicular has
+> the same length). Directions are unit, so the 2x2 normal system reduces to
+> denom = 1 - Dot(d1, d2)^2.
+
+## Signature
+
+```plato
+ClosestPoints(a: InfiniteLine3D, b: InfiniteLine3D): Line3D
+ClosestPoints(sa: Line3D, sb: Line3D): Line3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 183
+### Line 183
 
 **Source:** [stdlib/geometry/lines.library.plato, line 183](../../../../../stdlib/geometry/lines.library.plato#L183).
 
@@ -39,7 +64,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 208
+### Line 208
 
 **Source:** [stdlib/geometry/lines.library.plato, line 208](../../../../../stdlib/geometry/lines.library.plato#L208).
 

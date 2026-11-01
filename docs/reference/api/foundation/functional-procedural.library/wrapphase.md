@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Folds a domain value into the half-open interval \[0, Period). The extra
+> "+ Period then modulo" corrects the truncated remainder, which is negative
+> for negative t. Precondition: Period > 0.
+
+## Signature
+
+```plato
+WrapPhase(self: IPeriodic<$TPeriod>, t: $TPeriod): $TPeriod
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Functions as mathematical objects](../../../library/foundation/functions.md)
+
+## Source
+
 **File:** [functional-procedural.library](../functional-procedural.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 37
+### Line 37
 
 **Source:** [stdlib/foundation/functional-procedural.library.plato, line 37](../../../../../stdlib/foundation/functional-procedural.library.plato#L37).
 

@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Wraps v as a Direction2D WITHOUT normalizing. Unsafe: the caller asserts v
+> is already unit length; violating that silently breaks the Direction2D
+> invariant. Prefer FromVector unless the unit length is already established.
+
+## Signature
+
+```plato
+FromVectorUnchecked(v: Vector2D): Direction2D
+FromVectorUnchecked(v: Vector3D): Direction3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 840
+### Line 840
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 840](../../../../../stdlib/foundation/numeric-structures.library.plato#L840).
 
@@ -20,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Direction2D(v);
 ```
 
-## Line 855
+### Line 855
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 855](../../../../../stdlib/foundation/numeric-structures.library.plato#L855).
 

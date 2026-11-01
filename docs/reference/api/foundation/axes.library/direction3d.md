@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unit direction along this axis (the basis vector, already unit length).
+
+## Signature
+
+```plato
+Direction3D(self: Axis3D): Direction3D
+Direction3D(self: SignedAxis3D): Direction3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [axes.library](../axes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 25
+### Line 25
 
 **Source:** [stdlib/foundation/axes.library.plato, line 25](../../../../../stdlib/foundation/axes.library.plato#L25).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Direction3D(self.Vector3D);
 ```
 
-## Line 172
+### Line 172
 
 **Source:** [stdlib/foundation/axes.library.plato, line 172](../../../../../stdlib/foundation/axes.library.plato#L172).
 

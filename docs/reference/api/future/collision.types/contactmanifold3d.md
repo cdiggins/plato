@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The set of spatial contacts between one body pair in one step. BodyA and
+> BodyB are zero-based body indices (-1 = none); Normal is the shared contact
+> normal from A toward B; Friction is the combined dimensionless friction
+> coefficient; Restitution is the combined bounciness in \[0, 1\].
+> (https://en.wikipedia.org/wiki/Coefficient\_of\_restitution)
+
+## Signature
+
+```plato
+type ContactManifold3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.types](../collision.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 209
+### Line 209
 
 **Source:** [stdlib/future/collision.types.plato, line 209](../../../../../stdlib/future/collision.types.plato#L209).
 

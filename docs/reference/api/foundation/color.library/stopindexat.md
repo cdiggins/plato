@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The index of the last stop at or before the parameter, or 0 when the
+> parameter precedes every stop.
+
+## Signature
+
+```plato
+StopIndexAt(self: ColorGradient, t: Number): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 84](../../../../../stdlib/foundation/color.library.plato#L84): Sampling a stop list. Stops are assumed ordered by Position; a parameter
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+
+## Source
+
 **File:** [color.library](../color.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 80
+### Line 80
 
 **Source:** [stdlib/foundation/color.library.plato, line 80](../../../../../stdlib/foundation/color.library.plato#L80).
 

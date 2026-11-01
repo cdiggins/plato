@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Which nodal approximation a triply periodic surface uses. Each is the
+> classical short form: Gyroid is Schoen's gyroid, SchwarzPrimitive and
+> SchwarzDiamond are Schwarz's P and D surfaces, Neovius is the Neovius
+> surface, and IwpSurface is Schoen's I-WP.
+
+## Signature
+
+```plato
+type TpmsFamily = Gyroid | SchwarzPrimitive | SchwarzDiamond | Neovius | IwpSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.types](../lattices.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 108
+### Line 108
 
 **Source:** [stdlib/geometry/lattices.types.plato, line 108](../../../../../stdlib/geometry/lattices.types.plato#L108).
 

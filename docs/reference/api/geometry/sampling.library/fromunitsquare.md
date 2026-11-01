@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unit-square coordinate carried onto the region: (0, 0) lands on Min and
+> (1, 1) on Max.
+
+## Signature
+
+```plato
+FromUnitSquare(region: Bounds2D, u: Point2D): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 405](../../../../../stdlib/geometry/sampling.library.plato#L405): # Carrying a unit coordinate onto a region
+- [Line 407](../../../../../stdlib/geometry/sampling.library.plato#L407): Every sequence above lands in the unit square or cube; every pattern below
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 403
+### Line 403
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 403](../../../../../stdlib/geometry/sampling.library.plato#L403).
 

@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The eased progress at the temporal midpoint (t = 0.5): a one-number shape
+> summary distinguishing ease-in (\< 0.5) from ease-out (> 0.5).
+
+## Signature
+
+```plato
+ProgressAtMidpoint(self: IEasingFunction): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ProgressAtMidpointIsEvalAtHalf
+
+[stdlib/tests/easing.laws.plato, line 25](../../../../../stdlib/tests/easing.laws.plato#L25)
+
+```plato
+// Progress at the temporal midpoint is the evaluation at t = 0.5.
+Law_ProgressAtMidpointIsEvalAtHalf(f: IEasingFunction): Boolean
+    => f.ProgressAtMidpoint.LawEq(f.Eval(0.5));
+```
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [easing.library](../easing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 31
+### Line 31
 
 **Source:** [stdlib/graphics/easing.library.plato, line 31](../../../../../stdlib/graphics/easing.library.plato#L31).
 

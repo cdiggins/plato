@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How light strength decays with distance from the source. InverseSquare is
+> physically correct; Smooth is inverse-square with a windowed fade to zero
+> at Range. (https://en.wikipedia.org/wiki/Inverse-square\_law)
+
+## Signature
+
+```plato
+type Attenuation = None | Linear | Quadratic | InverseSquare | Smooth
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [lights.types](../lights.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/lights.types.plato, line 1](../../../../../stdlib/graphics/lights.types.plato#L1).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A sampled elevation surface: Heights holds regular samples over the ground
+> rectangle Domain in the XY plane (columns along X, rows along Y), with
+> bilinear interpolation between samples
+> (https://en.wikipedia.org/wiki/Heightmap). Terrain and displacement data.
+
+## Signature
+
+```plato
+type HeightField
+    implements IHeightFieldSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IHeightFieldSurface](../surfaces-solids.concepts/iheightfieldsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.types](../surfaces.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 207
+### Line 207
 
 **Source:** [stdlib/geometry/surfaces.types.plato, line 207](../../../../../stdlib/geometry/surfaces.types.plato#L207).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An empty face list. `MapRange` over zero never evaluates its body; the
+> expression exists only to fix the element type, which an empty literal cannot.
+
+## Signature
+
+```plato
+NoFaces(_: TriangleFace): Array<TriangleFace>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 605
+### Line 605
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 605](../../../../../stdlib/geometry/triangulation.library.plato#L605).
 

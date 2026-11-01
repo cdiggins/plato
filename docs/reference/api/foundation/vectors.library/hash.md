@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The combined hash of the components.
+
+## Signature
+
+```plato
+Hash(self: Vector2D): Integer
+Hash(self: Vector3D): Integer
+Hash(self: IntegerVector2): Integer
+Hash(self: IntegerVector3): Integer
+Hash(self: IntegerVector4): Integer
+Hash(self: Number2): Integer
+Hash(self: Number3): Integer
+Hash(self: Number4): Integer
+Hash(self: Number8): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [vectors.library](../vectors.library.md). Kind: function. 9 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 132
+### Line 132
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 132](../../../../../stdlib/foundation/vectors.library.plato#L132).
 
@@ -18,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X.Hash.CombineHash(self.Y.Hash);
 ```
 
-## Line 244
+### Line 244
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 244](../../../../../stdlib/foundation/vectors.library.plato#L244).
 
@@ -29,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X.Hash.CombineHash(self.Y.Hash).CombineHash(self.Z.Hash);
 ```
 
-## Line 248
+### Line 248
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 248](../../../../../stdlib/foundation/vectors.library.plato#L248).
 
@@ -45,7 +73,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X.Hash * 31 + self.Y.Hash;
 ```
 
-## Line 257
+### Line 257
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 257](../../../../../stdlib/foundation/vectors.library.plato#L257).
 
@@ -55,7 +83,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ((self.X.Hash * 31 + self.Y.Hash) * 31 + self.Z.Hash);
 ```
 
-## Line 260
+### Line 260
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 260](../../../../../stdlib/foundation/vectors.library.plato#L260).
 
@@ -65,7 +93,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (((self.X.Hash * 31 + self.Y.Hash) * 31 + self.Z.Hash) * 31 + self.W.Hash);
 ```
 
-## Line 353
+### Line 353
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 353](../../../../../stdlib/foundation/vectors.library.plato#L353).
 
@@ -76,7 +104,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X.Hash.CombineHash(self.Y.Hash);
 ```
 
-## Line 427
+### Line 427
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 427](../../../../../stdlib/foundation/vectors.library.plato#L427).
 
@@ -87,7 +115,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X.Hash.CombineHash(self.Y.Hash).CombineHash(self.Z.Hash);
 ```
 
-## Line 504
+### Line 504
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 504](../../../../../stdlib/foundation/vectors.library.plato#L504).
 
@@ -98,7 +126,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X.Hash.CombineHash(self.Y.Hash).CombineHash(self.Z.Hash).CombineHash(self.W.Hash);
 ```
 
-## Line 635
+### Line 635
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 635](../../../../../stdlib/foundation/vectors.library.plato#L635).
 

@@ -3,11 +3,46 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> TIGHT: the half-extent along a world axis is the sum of the three local
+> half-extents weighted by the absolute components of the rotated local axes —
+> the box's support function evaluated on that axis.
+
+## Signature
+
+```plato
+Bounds(b: Box3D): Bounds3D
+Bounds(b: RoundedBox3D): Bounds3D
+Bounds(c: Capsule3D): Bounds3D
+Bounds(c: Cylinder): Bounds3D
+Bounds(s: CylindricalShell): Bounds3D
+Bounds(c: Cone): Bounds3D
+Bounds(f: ConicalFrustum): Bounds3D
+Bounds(d: Disk3D): Bounds3D
+Bounds(w: Wedge): Bounds3D
+Bounds(s: Sphere): Bounds3D
+Bounds(s: SphericalShell): Bounds3D
+Bounds(c: SphericalCap): Bounds3D
+Bounds(e: Ellipsoid): Bounds3D
+Bounds(t: Torus): Bounds3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 14 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 117
+### Line 117
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 117](../../../../../stdlib/geometry/spatial-primitives.library.plato#L117).
 
@@ -30,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 223
+### Line 223
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 223](../../../../../stdlib/geometry/spatial-primitives.library.plato#L223).
 
@@ -42,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => b.Box.Bounds;
 ```
 
-## Line 289
+### Line 289
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 289](../../../../../stdlib/geometry/spatial-primitives.library.plato#L289).
 
@@ -58,7 +93,7 @@ Copied from source, comments included. A comment records intent. The body is the
                     c.A.Z.Max(c.B.Z) + c.Radius));
 ```
 
-## Line 341
+### Line 341
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 341](../../../../../stdlib/geometry/spatial-primitives.library.plato#L341).
 
@@ -79,7 +114,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 387
+### Line 387
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 387](../../../../../stdlib/geometry/spatial-primitives.library.plato#L387).
 
@@ -99,7 +134,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 438
+### Line 438
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 438](../../../../../stdlib/geometry/spatial-primitives.library.plato#L438).
 
@@ -111,7 +146,7 @@ Copied from source, comments included. A comment records intent. The body is the
             DiskBounds(c.BaseCenter, c.Axis.Vector, c.Radius));
 ```
 
-## Line 506
+### Line 506
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 506](../../../../../stdlib/geometry/spatial-primitives.library.plato#L506).
 
@@ -123,7 +158,7 @@ Copied from source, comments included. A comment records intent. The body is the
             DiskBounds(f.TopCenter, f.Axis.Vector, f.TopRadius));
 ```
 
-## Line 546
+### Line 546
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 546](../../../../../stdlib/geometry/spatial-primitives.library.plato#L546).
 
@@ -135,7 +170,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => DiskBounds(d.Center, d.Normal.Vector, d.Radius);
 ```
 
-## Line 756
+### Line 756
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 756](../../../../../stdlib/geometry/spatial-primitives.library.plato#L756).
 
@@ -146,7 +181,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => UnionOfBounds(w.Base.Bounds, w.Base.Bounds.TranslateBounds(w.Offset));
 ```
 
-## Line 808
+### Line 808
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 808](../../../../../stdlib/geometry/spatial-primitives.library.plato#L808).
 
@@ -158,7 +193,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => CenteredBounds(s.Center, s.Radius, s.Radius, s.Radius);
 ```
 
-## Line 840
+### Line 840
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 840](../../../../../stdlib/geometry/spatial-primitives.library.plato#L840).
 
@@ -170,7 +205,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => CenteredBounds(s.Center, s.OuterRadius, s.OuterRadius, s.OuterRadius);
 ```
 
-## Line 890
+### Line 890
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 890](../../../../../stdlib/geometry/spatial-primitives.library.plato#L890).
 
@@ -184,7 +219,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => c.Sphere.Bounds;
 ```
 
-## Line 935
+### Line 935
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 935](../../../../../stdlib/geometry/spatial-primitives.library.plato#L935).
 
@@ -204,7 +239,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 1006
+### Line 1006
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 1006](../../../../../stdlib/geometry/spatial-primitives.library.plato#L1006).
 

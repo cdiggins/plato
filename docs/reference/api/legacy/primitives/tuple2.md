@@ -3,11 +3,31 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+type Tuple2<T0, T1>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Source
+
 **File:** [primitives](../primitives.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 38
+### Line 38
 
 **Source:** [legacy/stdlib-legacy/primitives.plato, line 38](../../../../../legacy/stdlib-legacy/primitives.plato#L38).
 

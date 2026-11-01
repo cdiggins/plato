@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One reading of any measurable value, with its provenance: when it was taken,
+> what produced it, and a Quality in \[0, 1\] rating the reading's own
+> trustworthiness (sensor confidence, fit score, signal strength) — which is a
+> different thing from the value's uncertainty. Carry T as an UncertainNumber
+> or an UncertainQuantity when the reading has a known uncertainty.
+> (https://en.wikipedia.org/wiki/Measurement)
+
+## Signature
+
+```plato
+type Measurement<T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Language reference](../../../language/README.md)
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty.types](../uncertainty.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 200
+### Line 200
 
 **Source:** [stdlib/future/uncertainty.types.plato, line 200](../../../../../stdlib/future/uncertainty.types.plato#L200).
 

@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A camera parameterized like a real photographic body and lens. FocalLength
+> and FocusDistance are physical lengths (a 50mm lens is 0.05 meters);
+> SensorSize is in millimeters by photographic convention; FStop is the
+> aperture number N in f/N (https://en.wikipedia.org/wiki/F-number); Iso is
+> ISO 12232 sensitivity; ShutterTime is the exposure duration. IField of view
+> follows from FocalLength and SensorSize; exposure follows from FStop,
+> ShutterTime, and Iso.
+
+## Signature
+
+```plato
+type PhysicalCamera
+    implements ICamera
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICamera](../cameras.concepts/icamera.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [cameras.types](../cameras.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 51
+### Line 51
 
 **Source:** [stdlib/graphics/cameras.types.plato, line 51](../../../../../stdlib/graphics/cameras.types.plato#L51).
 

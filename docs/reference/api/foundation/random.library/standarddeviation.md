@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The standard deviation: the square root of the variance, in the same units
+> as the values. Precondition: the variance is non-negative
+> (https://en.wikipedia.org/wiki/Standard\_deviation).
+
+## Signature
+
+```plato
+StandardDeviation(self: IProbabilityDistribution): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 857](../../../../../stdlib/foundation/random.library.plato#L857): numerical approximations they need) stay in the `random*.library.plato`
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.library](../random.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 848
+### Line 848
 
 **Source:** [stdlib/foundation/random.library.plato, line 848](../../../../../stdlib/foundation/random.library.plato#L848).
 

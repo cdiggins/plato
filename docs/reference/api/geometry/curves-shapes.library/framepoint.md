@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point at the given local coordinates of an orthonormal frame:
+> Origin + x\*XAxis + y\*YAxis + z\*ZAxis. Places a curve written in its own
+> canonical position into world space.
+
+## Signature
+
+```plato
+FramePoint(f: Frame3D, x: Number, y: Number, z: Number): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 400](../../../../../stdlib/geometry/curves-shapes.library.plato#L400):   \* Every formula is written in the curve's own frame and placed with
+- [Line 401](../../../../../stdlib/geometry/curves-shapes.library.plato#L401):     `FramePoint` below, so the declaration comment "winds about the frame's
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.library](../curves-shapes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 389
+### Line 389
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 389](../../../../../stdlib/geometry/curves-shapes.library.plato#L389).
 

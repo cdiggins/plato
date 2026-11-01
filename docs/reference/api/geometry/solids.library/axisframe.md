@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A right-handed orthonormal frame at `center` whose Z axis is `axis`. The X
+> axis is chosen by crossing `axis` with whichever world axis it is least
+> aligned with, so the construction never degenerates; the resulting azimuth
+> is arbitrary but stable, which is all a UV seam requires.
+
+## Signature
+
+```plato
+AxisFrame(center: Point3D, axis: Direction3D): Frame3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.library](../solids.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 91
+### Line 91
 
 **Source:** [stdlib/geometry/solids.library.plato, line 91](../../../../../stdlib/geometry/solids.library.plato#L91).
 

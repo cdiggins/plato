@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A rectangular area emitter centered at Center. Orientation carries the
+> rectangle's local axes (it emits along its local forward axis) and Size its
+> extent. TwoSided emitters radiate from both faces.
+
+## Signature
+
+```plato
+type AreaLight
+    implements ILightSource
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ILightSource](../lights.concepts/ilightsource.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [lights.types](../lights.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 79
+### Line 79
 
 **Source:** [stdlib/graphics/lights.types.plato, line 79](../../../../../stdlib/graphics/lights.types.plato#L79).
 

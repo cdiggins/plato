@@ -3,11 +3,44 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The projection family used to flatten geodetic coordinates onto a plane.
+> The conic family carries its two standard parallels.
+> (https://en.wikipedia.org/wiki/Map\_projection)
+
+## Signature
+
+```plato
+type MapProjectionFamily
+    = Mercator
+    | WebMercator
+    | Utm
+    | LambertConformalConic(FirstStandardParallel: Angle, SecondStandardParallel: Angle)
+    | Stereographic
+    | Equirectangular
+    | AzimuthalEquidistant
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [geo-spatial.types](../geo-spatial.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 164
+### Line 164
 
 **Source:** [stdlib/future/geo-spatial.types.plato, line 164](../../../../../stdlib/future/geo-spatial.types.plato#L164).
 

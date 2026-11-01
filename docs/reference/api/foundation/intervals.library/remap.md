@@ -3,11 +3,44 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Remap `x` from the `from` interval onto the `to` interval: the two-inverse-lerp
+> composition At(to, ParameterOf(from, x)). Every shader/UI/animation
+> normalized-coordinate remap is this one call. Precondition: from is not
+> zero-width. Unclamped — pass x within `from`, or Clamp first, to stay inside `to`.
+
+## Signature
+
+```plato
+Remap(x: Number, from: NumberInterval, to: NumberInterval): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_RemapToSelfIsIdentity
+
+[stdlib/tests/foundation.laws.plato, line 48](../../../../../stdlib/tests/foundation.laws.plato#L48)
+
+```plato
+// Remapping an interval onto itself is the identity on any value in range.
+Law_RemapToSelfIsIdentity(i: NumberInterval, x: Number): Boolean
+    => i.Start.LawEq(i.End) || x.Remap(i, i).LawEq(x);
+```
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 323
+### Line 323
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 323](../../../../../stdlib/foundation/intervals.library.plato#L323).
 

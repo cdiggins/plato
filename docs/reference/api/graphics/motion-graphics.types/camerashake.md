@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> IProcedural camera shake: seeded noise applied to the camera pose. Amplitude
+> is the peak displacement in scene units; Damping is the exponential decay
+> rate per second (0 shakes indefinitely).
+
+## Signature
+
+```plato
+type CameraShake
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [motion-graphics.types](../motion-graphics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 171
+### Line 171
 
 **Source:** [stdlib/graphics/motion-graphics.types.plato, line 171](../../../../../stdlib/graphics/motion-graphics.types.plato#L171).
 

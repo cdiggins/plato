@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Chamfered difference; bounds stay those of `a` grown by width.
+> Precondition: width is positive.
+
+## Signature
+
+```plato
+ChamferDifference(a: BoundedSdf2D, b: BoundedSdf2D, width: Number): BoundedSdf2D
+ChamferDifference(a: BoundedSdf3D, b: BoundedSdf3D, width: Number): BoundedSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 229
+### Line 229
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 229](../../../../../stdlib/geometry/implicit-sdf.library.plato#L229).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Sdf.ChamferDifference(b.Sdf, width), GrowBounds(a.Bounds, width));
 ```
 
-## Line 234
+### Line 234
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 234](../../../../../stdlib/geometry/implicit-sdf.library.plato#L234).
 

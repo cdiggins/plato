@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Drops every flat corner from the ring living in \[start, end), and empties a
+> ring that falls below three vertices. Repeats until a full pass changes
+> nothing, because removing one corner can flatten its neighbour. Also the heal
+> pass after bridging, whose slits leave duplicated vertices behind.
+> (earcut's `filterPoints`.)
+
+## Signature
+
+```plato
+FilterRing(points: Array<Point2D>, nodes: Buffer<EarClipNode>,
+    start: Integer, end: Integer): Buffer<EarClipNode>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 254
+### Line 254
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 254](../../../../../stdlib/geometry/triangulation.library.plato#L254).
 

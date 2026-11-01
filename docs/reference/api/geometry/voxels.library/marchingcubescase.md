@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The configuration index of a cube: the eight corner bits, corner c in bit
+> c. 0 and 255 are the two uncut cases.
+
+## Signature
+
+```plato
+MarchingCubesCase(cell: IntegerVector3, valueAt: Function3<Integer, Integer, Integer, Number>, isoLevel: Number): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.library](../voxels.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 416
+### Line 416
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 416](../../../../../stdlib/geometry/voxels.library.plato#L416).
 

@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Aims one bone at a world-space target. Aim is the bone-local axis to point at
+> the target; Up is the bone-local axis kept aligned to the world up to control
+> roll. Weight blends the constrained result over the input pose.
+
+## Signature
+
+```plato
+type LookAtConstraint
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [skeletal-animation.types](../skeletal-animation.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 167
+### Line 167
 
 **Source:** [stdlib/future/skeletal-animation.types.plato, line 167](../../../../../stdlib/future/skeletal-animation.types.plato#L167).
 

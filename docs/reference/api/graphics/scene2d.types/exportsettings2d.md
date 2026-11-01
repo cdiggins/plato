@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Settings for exporting a scene to a raster or document format.
+> DotsPerInch scales document units to physical output; Background is
+> composited beneath the scene (zero alpha for transparent output).
+> (https://en.wikipedia.org/wiki/Dots\_per\_inch)
+
+## Signature
+
+```plato
+type ExportSettings2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [scene2d.types](../scene2d.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 90
+### Line 90
 
 **Source:** [stdlib/graphics/scene2d.types.plato, line 90](../../../../../stdlib/graphics/scene2d.types.plato#L90).
 

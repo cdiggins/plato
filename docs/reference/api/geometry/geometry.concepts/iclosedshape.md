@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Marks a shape that closes on itself and separates inside from outside:
+> a circle, a polygon, a sphere, a solid.
+> (https://en.wikipedia.org/wiki/Jordan\_curve\_theorem)
+
+## Signature
+
+```plato
+interface IClosedShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [RoundedRect2D](../planar.types/roundedrect2d.md), [OrientedBox2D](../planar.types/orientedbox2d.md), [RegularPolygon](../planar.types/regularpolygon.md), [Circle](../planar.types/circle.md), [Annulus](../planar.types/annulus.md), [CircularSector](../planar.types/circularsector.md), [CircularSegment](../planar.types/circularsegment.md), [Capsule2D](../planar.types/capsule2d.md), [Ellipse](../planar.types/ellipse.md), [SuperEllipse](../planar.types/superellipse.md), [Triangle2D](../planar.types/triangle2d.md), [Quad2D](../planar.types/quad2d.md), [Parallelogram2D](../planar.types/parallelogram2d.md), [Polygon2D](../polygons.types/polygon2d.md), [ConvexPolygon2D](../polygons.types/convexpolygon2d.md), [PolygonWithHoles2D](../polygons.types/polygonwithholes2d.md), [PolygonSet2D](../polygons.types/polygonset2d.md), [RegularStar2D](../polygons.types/regularstar2d.md), [Polygon3D](../polygons.types/polygon3d.md), [Prism3D](../polygons.types/prism3d.md), [Pyramid3D](../polygons.types/pyramid3d.md), [Box3D](../spatial-primitives.types/box3d.md), [RoundedBox3D](../spatial-primitives.types/roundedbox3d.md), [Cylinder](../spatial-primitives.types/cylinder.md), [CylindricalShell](../spatial-primitives.types/cylindricalshell.md), [Cone](../spatial-primitives.types/cone.md), [ConicalFrustum](../spatial-primitives.types/conicalfrustum.md), [Capsule3D](../spatial-primitives.types/capsule3d.md), [Disk3D](../spatial-primitives.types/disk3d.md), [Tetrahedron](../spatial-primitives.types/tetrahedron.md), [Wedge](../spatial-primitives.types/wedge.md), [Sphere](../spatial-primitives.types/sphere.md), [SphericalShell](../spatial-primitives.types/sphericalshell.md), [SphericalCap](../spatial-primitives.types/sphericalcap.md), [Ellipsoid](../spatial-primitives.types/ellipsoid.md), [Torus](../spatial-primitives.types/torus.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 58
+### Line 58
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 58](../../../../../stdlib/geometry/geometry.concepts.plato#L58).
 

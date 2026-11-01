@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The polygon turned inside out: reversed winding flips its outward normal.
+
+## Signature
+
+```plato
+ReversedWinding(p: Polygon3D): Polygon3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 34
+### Line 34
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 34](../../../../../stdlib/geometry/solids-csg.library.plato#L34).
 

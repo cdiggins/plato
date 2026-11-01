@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The center of the bounding rectangle. Delegates to P4's Center(IBounds).
+
+## Signature
+
+```plato
+BoundsCenter(self: IBounded2D): Point2D
+BoundsCenter(self: IBounded3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 572
+### Line 572
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 572](../../../../../stdlib/geometry/geometry.library.plato#L572).
 
@@ -27,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Bounds.Center;
 ```
 
-## Line 621
+### Line 621
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 621](../../../../../stdlib/geometry/geometry.library.plato#L621).
 

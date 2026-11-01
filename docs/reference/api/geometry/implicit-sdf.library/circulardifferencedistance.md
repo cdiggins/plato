@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The first shape with the second subtracted, the cut filleted by a true arc.
+> Precondition: radius is positive.
+
+## Signature
+
+```plato
+CircularDifferenceDistance(a: Number, b: Number, radius: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 723
+### Line 723
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 723](../../../../../stdlib/geometry/implicit-sdf.library.plato#L723).
 

@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The six classical Keplerian orbital elements. Eccentricity is
+> dimensionless (0 = circular, less than 1 = elliptic, 1 = parabolic,
+> greater than 1 = hyperbolic); the four angles are in radians.
+> (https://en.wikipedia.org/wiki/Orbital\_elements)
+
+## Signature
+
+```plato
+type OrbitalElements
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 260
+### Line 260
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 260](../../../../../stdlib/future/rigid-dynamics.types.plato#L260).
 

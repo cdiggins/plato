@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A frame-local point mapped to world coordinates: the frame origin displaced
+> along its own axes by the local coordinates.
+
+## Signature
+
+```plato
+PointInFrame(f: Frame3D, local: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.library](../solids.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 84
+### Line 84
 
 **Source:** [stdlib/geometry/solids.library.plato, line 84](../../../../../stdlib/geometry/solids.library.plato#L84).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Component-wise (Hadamard) product.
+
+## Signature
+
+```plato
+Multiply(a: IVector, b: IVector): IVector
+Multiply(self: IVector, scalar: Number): IVector
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 36
+### Line 36
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 36](../../../../../stdlib/foundation/numeric-structures.library.plato#L36).
 
@@ -18,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.ZipComponents(b, (x, y) => x * y);
 ```
 
-## Line 52
+### Line 52
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 52](../../../../../stdlib/foundation/numeric-structures.library.plato#L52).
 

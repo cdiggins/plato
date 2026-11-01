@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A one-dimensional measured amount with an implicit unit.
+
+## Signature
+
+```plato
+interface IQuantity
+    inherits IValue, IComparable, IHashable, IAdditive, IScalable, IInterpolatable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IValue](../core.concepts/ivalue.md), [IComparable](../core.concepts/icomparable.md), [IHashable](../core.concepts/ihashable.md), [IAdditive](../algebra.concepts/iadditive.md), [IScalable](../algebra.concepts/iscalable.md), [IInterpolatable](../algebra.concepts/iinterpolatable.md).
+
+Implemented in this tier by: [ElectricCurrent](../quantities.types/electriccurrent.md), [ElectricCharge](../quantities.types/electriccharge.md), [Voltage](../quantities.types/voltage.md), [Resistance](../quantities.types/resistance.md), [Capacitance](../quantities.types/capacitance.md), [Inductance](../quantities.types/inductance.md), [Angle](../quantities.types/angle.md), [SolidAngle](../quantities.types/solidangle.md), [Length](../quantities.types/length.md), [Area](../quantities.types/area.md), [Volume](../quantities.types/volume.md), [WaveNumber](../quantities.types/wavenumber.md), [Curvature](../quantities.types/curvature.md), [Speed](../quantities.types/speed.md), [Acceleration](../quantities.types/acceleration.md), [Jerk](../quantities.types/jerk.md), [AngularVelocity](../quantities.types/angularvelocity.md), [AngularAcceleration](../quantities.types/angularacceleration.md), [Frequency](../quantities.types/frequency.md), [Pressure](../quantities.types/pressure.md), [Stiffness](../quantities.types/stiffness.md), [DampingCoefficient](../quantities.types/dampingcoefficient.md), [DynamicViscosity](../quantities.types/dynamicviscosity.md), [KinematicViscosity](../quantities.types/kinematicviscosity.md), [MassFlowRate](../quantities.types/massflowrate.md), [VolumetricFlowRate](../quantities.types/volumetricflowrate.md), [Strain](../quantities.types/strain.md), [Mass](../quantities.types/mass.md), [Density](../quantities.types/density.md), [ArealDensity](../quantities.types/arealdensity.md), [LinearDensity](../quantities.types/lineardensity.md), [Force](../quantities.types/force.md), [Torque](../quantities.types/torque.md), [Impulse](../quantities.types/impulse.md), [Momentum](../quantities.types/momentum.md), [AngularMomentum](../quantities.types/angularmomentum.md), [MomentOfInertia](../quantities.types/momentofinertia.md), [Energy](../quantities.types/energy.md), [Power](../quantities.types/power.md), [LuminousIntensity](../quantities.types/luminousintensity.md), [LuminousFlux](../quantities.types/luminousflux.md), [Illuminance](../quantities.types/illuminance.md), [Luminance](../quantities.types/luminance.md), [Irradiance](../quantities.types/irradiance.md), [Temperature](../quantities.types/temperature.md), [TemperatureDelta](../quantities.types/temperaturedelta.md), [HeatCapacity](../quantities.types/heatcapacity.md), [ThermalConductivity](../quantities.types/thermalconductivity.md), [AmountOfSubstance](../quantities.types/amountofsubstance.md), [Duration](../time.types/duration.md).
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [quantities.concepts](../quantities.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/quantities.concepts.plato, line 1](../../../../../stdlib/foundation/quantities.concepts.plato#L1).
 

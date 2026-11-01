@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The per-world-axis half-extents of a disk of `radius` whose unit normal is
+> `axis`: the support of the disk along world axis e is r\*sqrt(1 - (axis.e)^2).
+> The building block of every tight cylinder / cone / disk / torus box.
+> https://iquilezles.org/articles/diskbbox/
+
+## Signature
+
+```plato
+DiskHalfExtents(axis: Vector3D, radius: Number): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 67](../../../../../stdlib/geometry/spatial-primitives.library.plato#L67).
 

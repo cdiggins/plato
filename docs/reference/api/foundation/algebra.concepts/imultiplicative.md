@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A multiplicative operation between two values of the same type. (https://en.wikipedia.org/wiki/Multiplication)
+
+## Signature
+
+```plato
+interface IMultiplicative
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Matrix2x2](../matrices.types/matrix2x2.md), [Matrix3x3](../matrices.types/matrix3x3.md), [Matrix4x4](../matrices.types/matrix4x4.md), [Quaternion](../rotations.types/quaternion.md), [Rotation2D](../rotations.types/rotation2d.md), [Rotor2D](../rotations.types/rotor2d.md), [Rotor3D](../rotations.types/rotor3d.md), [Motor3D](../transforms.types/motor3d.md).
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.concepts](../algebra.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 163
+### Line 163
 
 **Source:** [stdlib/foundation/algebra.concepts.plato, line 163](../../../../../stdlib/foundation/algebra.concepts.plato#L163).
 

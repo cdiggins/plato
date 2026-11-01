@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The fixed probe direction for parity tests: an arbitrary irrational skew
+> direction (normalized (pi/6, ln 2, pi/4)), parallel to no axis-aligned
+> face and unlikely to graze an edge.
+
+## Signature
+
+```plato
+CsgProbeDirection(_: Direction3D): Direction3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 156](../../../../../stdlib/geometry/solids-csg.library.plato#L156): Robustness posture: exact floating point with a fixed skew probe direction
+- [Line 157](../../../../../stdlib/geometry/solids-csg.library.plato#L157): (the same posture as csg.js) — a probe ray is assumed to graze no edge and
+- [Line 158](../../../../../stdlib/geometry/solids-csg.library.plato#L158): parallel no face. Exactly coplanar faces of two solids sit on each other's
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 144
+### Line 144
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 144](../../../../../stdlib/geometry/solids-csg.library.plato#L144).
 

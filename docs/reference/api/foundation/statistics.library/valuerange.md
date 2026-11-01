@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The spread of the sample: Maximum - Minimum.
+
+## Signature
+
+```plato
+ValueRange(self: SummaryStatistics): Number
+ValueRange(self: FiveNumberSummary): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Summarize a sample](../../../cookbook/sample-statistics.md)
+- [Statistics, covariance and fitted models](../../../library/foundation/statistics.md)
+
+## Source
+
 **File:** [statistics.library](../statistics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 79
+### Line 79
 
 **Source:** [stdlib/foundation/statistics.library.plato, line 79](../../../../../stdlib/foundation/statistics.library.plato#L79).
 
@@ -26,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Maximum - self.Minimum;
 ```
 
-## Line 138
+### Line 138
 
 **Source:** [stdlib/foundation/statistics.library.plato, line 138](../../../../../stdlib/foundation/statistics.library.plato#L138).
 

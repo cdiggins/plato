@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The assembled global stiffness matrix: every cell's entries concatenated,
+> with no accumulation pass. Independent of the loads and the restraints, so
+> it may be built once and solved repeatedly.
+
+## Signature
+
+```plato
+StiffnessMatrix(model: ElasticModel3D): SparseMatrix
+StiffnessMatrix(model: ElasticModel2D): SparseMatrix
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 438
+### Line 438
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 438](../../../../../stdlib/future/finite-elements.library.plato#L438).
 
@@ -25,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 525
+### Line 525
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 525](../../../../../stdlib/future/finite-elements.library.plato#L525).
 

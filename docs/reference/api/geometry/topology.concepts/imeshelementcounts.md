@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Anything with counted mesh elements: vertices, undirected edges, and faces
+> (https://en.wikipedia.org/wiki/Polygon\_mesh). This is a census, not
+> connectivity: it says how many of each element there are and nothing about
+> which touches which. That is still enough for the Euler characteristic and,
+> on a closed connected manifold, the genus.
+>
+> UndirectedEdgeCount counts DEDUPLICATED undirected edges — one per pair of
+> half-edges, not one per directed side and not one per face corner. A
+> representation that cannot dedupe without building incidence should implement
+> IMeshIncidence and derive the count from it rather than guess: an over-count
+> silently corrupts every Euler-characteristic result.
+
+## Signature
+
+```plato
+interface IMeshElementCounts
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [TriangleMesh3D](../meshes.types/trianglemesh3d.md), [TriangleMesh2D](../meshes.types/trianglemesh2d.md), [QuadMesh3D](../meshes.types/quadmesh3d.md), [PolygonMesh3D](../meshes.types/polygonmesh3d.md), [HalfEdgeMesh](../topology.types/halfedgemesh.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.concepts](../topology.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/topology.concepts.plato, line 1](../../../../../stdlib/geometry/topology.concepts.plato#L1).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A dense 3D raster of arbitrary cell values over a regular grid
+> (https://en.wikipedia.org/wiki/Voxel). The grid dimensions are those of
+> Values.
+
+## Signature
+
+```plato
+type VoxelGrid3D<T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.types](../voxels.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/voxels.types.plato, line 1](../../../../../stdlib/geometry/voxels.types.plato#L1).
 

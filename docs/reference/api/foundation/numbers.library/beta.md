@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The complete beta function B(a, b) = Gamma(a) Gamma(b) / Gamma(a + b),
+> via the log form. Precondition: a > 0, b > 0. Overflows only when the
+> true value does.
+
+## Signature
+
+```plato
+Beta(a: Number, b: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 499
+### Line 499
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 499](../../../../../stdlib/foundation/numbers.library.plato#L499).
 

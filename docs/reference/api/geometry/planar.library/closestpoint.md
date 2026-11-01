@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The query point when it is inside, otherwise the query clamped to the box in
+> the box's own frame and mapped back to world.
+
+## Signature
+
+```plato
+ClosestPoint(b: OrientedBox2D, point: Point2D): Point2D
+ClosestPoint(c: Circle, point: Point2D): Point2D
+ClosestPoint(c: Capsule2D, point: Point2D): Point2D
+ClosestPoint(t: Triangle2D, point: Point2D): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 120
+### Line 120
 
 **Source:** [stdlib/geometry/planar.library.plato, line 120](../../../../../stdlib/geometry/planar.library.plato#L120).
 
@@ -25,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 234
+### Line 234
 
 **Source:** [stdlib/geometry/planar.library.plato, line 234](../../../../../stdlib/geometry/planar.library.plato#L234).
 
@@ -39,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         : c.Center + c.Center.Between(point).Normalize * c.Radius;
 ```
 
-## Line 412
+### Line 412
 
 **Source:** [stdlib/geometry/planar.library.plato, line 412](../../../../../stdlib/geometry/planar.library.plato#L412).
 
@@ -57,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 695
+### Line 695
 
 **Source:** [stdlib/geometry/planar.library.plato, line 695](../../../../../stdlib/geometry/planar.library.plato#L695).
 

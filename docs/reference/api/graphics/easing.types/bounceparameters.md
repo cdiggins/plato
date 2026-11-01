@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Shape parameters for the Bounce easing family. Bounces counts the rebounds
+> after the initial fall; Restitution is the fraction of height retained by
+> each successive bounce.
+> (https://en.wikipedia.org/wiki/Coefficient\_of\_restitution)
+
+## Signature
+
+```plato
+type BounceParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [easing.types](../easing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 95
+### Line 95
 
 **Source:** [stdlib/graphics/easing.types.plato, line 95](../../../../../stdlib/graphics/easing.types.plato#L95).
 

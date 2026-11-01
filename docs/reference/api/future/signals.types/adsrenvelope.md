@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An attack-decay-sustain-release amplitude envelope. Sustain is the level
+> held after decay as a proportion of peak; the other stages are durations.
+> (https://en.wikipedia.org/wiki/Envelope\_(music))
+
+## Signature
+
+```plato
+type AdsrEnvelope
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [signals.types](../signals.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 210
+### Line 210
 
 **Source:** [stdlib/future/signals.types.plato, line 210](../../../../../stdlib/future/signals.types.plato#L210).
 

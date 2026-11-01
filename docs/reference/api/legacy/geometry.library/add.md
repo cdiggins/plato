@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Add(p1: Point2D, p2: Vector2): Point2D
+Add(p1: Point2D, p2: Point2D): Point2D
+Add(p1: Point3D, p2: Vector3): Point3D
+Add(p1: Point3D, p2: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 17
+### Line 17
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 17](../../../../../legacy/stdlib-legacy/geometry.library.plato#L17).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Add(p1: Point2D, p2: Vector2): Point2D => p1.Vector2 + p2;
 ```
 
-## Line 18
+### Line 18
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 18](../../../../../legacy/stdlib-legacy/geometry.library.plato#L18).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Add(p1: Point2D, p2: Point2D): Point2D => p1.Vector2 + p2.Vector2;
 ```
 
-## Line 36
+### Line 36
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 36](../../../../../legacy/stdlib-legacy/geometry.library.plato#L36).
 
@@ -31,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Add(p1: Point3D, p2: Vector3): Point3D => p1.Vector3 + p2;
 ```
 
-## Line 37
+### Line 37
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 37](../../../../../legacy/stdlib-legacy/geometry.library.plato#L37).
 

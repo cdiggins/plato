@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The 2x2 symmetric covariance of a bivariate sample: Xx and Yy are the
+> variances of x and y; Xy is their covariance.
+
+## Signature
+
+```plato
+type Covariance2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Summarize a sample](../../../cookbook/sample-statistics.md)
+- [Statistics, covariance and fitted models](../../../library/foundation/statistics.md)
+
+## Source
+
 **File:** [statistics.types](../statistics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/foundation/statistics.types.plato, line 131](../../../../../stdlib/foundation/statistics.types.plato#L131).
 

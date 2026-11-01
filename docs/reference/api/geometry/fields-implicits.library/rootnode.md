@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The node producing the tree's final distance.
+
+## Signature
+
+```plato
+RootNode(self: SdfTree2D): SdfNode2D
+RootNode(self: SdfTree3D): SdfNode3D
+RootNode(self: ScalarFieldGraph2D): ScalarFieldNode2D
+RootNode(self: ScalarFieldGraph3D): ScalarFieldNode3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 630
+### Line 630
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 630](../../../../../stdlib/geometry/fields-implicits.library.plato#L630).
 
@@ -30,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Nodes[self.Root.Value];
 ```
 
-## Line 646
+### Line 646
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 646](../../../../../stdlib/geometry/fields-implicits.library.plato#L646).
 
@@ -41,7 +64,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Nodes[self.Root.Value];
 ```
 
-## Line 650
+### Line 650
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 650](../../../../../stdlib/geometry/fields-implicits.library.plato#L650).
 
@@ -61,7 +84,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Nodes[self.Root.Value];
 ```
 
-## Line 663
+### Line 663
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 663](../../../../../stdlib/geometry/fields-implicits.library.plato#L663).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Exposes the finite ordered set of defining points of a 3D entity.
+
+## Signature
+
+```plato
+interface IPointSet3D
+    inherits IGeometry3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry3D](igeometry3d.md).
+
+Implemented in this tier by: [Line3D](../lines.types/line3d.md), [Polyline3D](../polygons.types/polyline3d.md), [Polygon3D](../polygons.types/polygon3d.md), [Triangle3D](../spatial-primitives.types/triangle3d.md), [Quad3D](../spatial-primitives.types/quad3d.md), [Tetrahedron](../spatial-primitives.types/tetrahedron.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 140
+### Line 140
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 140](../../../../../stdlib/geometry/geometry.concepts.plato#L140).
 

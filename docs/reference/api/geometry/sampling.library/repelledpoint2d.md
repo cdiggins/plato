@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Where point `index` goes after one repulsion pass: the sum of the pushes
+> away from every neighbour inside `radius`, each falling linearly to zero at
+> that radius, scaled by `strength` and clamped back into the region.
+> Coincident points do not push each other, having no direction to push along.
+
+## Signature
+
+```plato
+RepelledPoint2D(region: Bounds2D, points: Array<Point2D>, radius: Number,
+    strength: Number, index: Integer): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 771
+### Line 771
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 771](../../../../../stdlib/geometry/sampling.library.plato#L771).
 

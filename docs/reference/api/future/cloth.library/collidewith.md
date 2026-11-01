@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Every cloth vertex pushed out of a sphere, by the cloth's own thickness.
+
+## Signature
+
+```plato
+CollideWith(self: Cloth3D, sphere: Sphere): Cloth3D
+CollideWith(self: Cloth3D, plane: Plane): Cloth3D
+CollideWith(self: Cloth3D, field: ISignedDistanceField3D, epsilon: Number): Cloth3D
+CollideWith(self: ClothMesh3D, sphere: Sphere): ClothMesh3D
+CollideWith(self: ClothMesh3D, plane: Plane): ClothMesh3D
+CollideWith(self: ClothMesh3D, field: ISignedDistanceField3D, epsilon: Number): ClothMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 413
+### Line 413
 
 **Source:** [stdlib/future/cloth.library.plato, line 413](../../../../../stdlib/future/cloth.library.plato#L413).
 
@@ -19,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
             v.MovedTo(sphere.ProjectOutOf(v.Position, self.Thickness.Meters))));
 ```
 
-## Line 418
+### Line 418
 
 **Source:** [stdlib/future/cloth.library.plato, line 418](../../../../../stdlib/future/cloth.library.plato#L418).
 
@@ -32,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
             v.MovedTo(plane.ProjectOutOf(v.Position, self.Thickness.Meters))));
 ```
 
-## Line 424
+### Line 424
 
 **Source:** [stdlib/future/cloth.library.plato, line 424](../../../../../stdlib/future/cloth.library.plato#L424).
 
@@ -44,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
             v.MovedTo(field.ProjectOutOf(v.Position, self.Thickness.Meters, epsilon))));
 ```
 
-## Line 429
+### Line 429
 
 **Source:** [stdlib/future/cloth.library.plato, line 429](../../../../../stdlib/future/cloth.library.plato#L429).
 
@@ -55,7 +80,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ClothMesh3D(self.Cloth.CollideWith(sphere), self.Faces);
 ```
 
-## Line 433
+### Line 433
 
 **Source:** [stdlib/future/cloth.library.plato, line 433](../../../../../stdlib/future/cloth.library.plato#L433).
 
@@ -66,7 +91,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ClothMesh3D(self.Cloth.CollideWith(plane), self.Faces);
 ```
 
-## Line 437
+### Line 437
 
 **Source:** [stdlib/future/cloth.library.plato, line 437](../../../../../stdlib/future/cloth.library.plato#L437).
 

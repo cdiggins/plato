@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Creates a rotation by rotating around the X axis by a given angle
+
+## Signature
+
+```plato
+RotateX(a: Angle): AxisAngle
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 418
+### Line 418
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 418](../../../../../legacy/stdlib-legacy/transforms.plato#L418).
 

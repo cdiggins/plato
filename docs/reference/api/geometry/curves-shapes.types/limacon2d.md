@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The limacon r = Offset + Amplitude \* cos theta. Offset > Amplitude gives a
+> dimpled oval, equality gives the cardioid, Offset \< Amplitude adds an inner
+> loop. Always closed (https://en.wikipedia.org/wiki/Lima%C3%A7on).
+
+## Signature
+
+```plato
+type Limacon2D
+    implements IClosedCurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IClosedCurve2D](../curves.concepts/iclosedcurve2d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.types](../curves-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 142
+### Line 142
 
 **Source:** [stdlib/geometry/curves-shapes.types.plato, line 142](../../../../../stdlib/geometry/curves-shapes.types.plato#L142).
 

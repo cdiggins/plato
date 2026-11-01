@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One iteration of the Botsch-Kobbelt loop at the given target edge length.
+
+## Signature
+
+```plato
+IsotropicRemeshPass(self: TriangleMesh3D, targetEdgeLength: Number): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 1482](../../../../../stdlib/geometry/remeshing.library.plato#L1482): costs four topology builds. That is the price of writing the loop as a
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1470
+### Line 1470
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1470](../../../../../stdlib/geometry/remeshing.library.plato#L1470).
 

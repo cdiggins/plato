@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Start advanced by index whole sample periods.
+
+## Signature
+
+```plato
+TimeAt(self: TimeSeries, index: Integer): Instant
+TimeAt(self: IrregularTimeSeries, index: Integer): Instant
+TimeAt(self: Vector3DTimeSeries, index: Integer): Instant
+TimeAt(self: EventLog, index: Integer): Instant
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.library](../scientific-data.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 59
+### Line 59
 
 **Source:** [stdlib/future/scientific-data.library.plato, line 59](../../../../../stdlib/future/scientific-data.library.plato#L59).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Start + self.SamplePeriod * index.ToNumber;
 ```
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/future/scientific-data.library.plato, line 67](../../../../../stdlib/future/scientific-data.library.plato#L67).
 
@@ -29,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Times[index];
 ```
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/future/scientific-data.library.plato, line 75](../../../../../stdlib/future/scientific-data.library.plato#L75).
 
@@ -40,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Start + self.SamplePeriod * index.ToNumber;
 ```
 
-## Line 83
+### Line 83
 
 **Source:** [stdlib/future/scientific-data.library.plato, line 83](../../../../../stdlib/future/scientific-data.library.plato#L83).
 

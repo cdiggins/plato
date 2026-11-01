@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The dimension of the space this entity is embedded in: 2 for a planar entity.
+
+## Signature
+
+```plato
+EmbeddingDimension(self: IGeometry2D): Integer
+EmbeddingDimension(self: IGeometry3D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 1](../../../../../stdlib/geometry/geometry.library.plato#L1).
 
@@ -48,7 +69,7 @@ library GeometryTraits
         => 2;
 ```
 
-## Line 35
+### Line 35
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 35](../../../../../stdlib/geometry/geometry.library.plato#L35).
 

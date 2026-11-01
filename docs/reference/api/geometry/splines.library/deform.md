@@ -3,11 +3,53 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every control point carried through the mapping.
+
+## Signature
+
+```plato
+Deform(self: BezierCurve2D, mapping: Function1<Point2D, Point2D>): BezierCurve2D
+Deform(self: BezierCurve3D, mapping: Function1<Point3D, Point3D>): BezierCurve3D
+Deform(self: RationalBezierCurve2D, mapping: Function1<Point2D, Point2D>): RationalBezierCurve2D
+Deform(self: RationalBezierCurve3D, mapping: Function1<Point3D, Point3D>): RationalBezierCurve3D
+Deform(self: CompositeBezier2D, mapping: Function1<Point2D, Point2D>): CompositeBezier2D
+Deform(self: CompositeBezier3D, mapping: Function1<Point3D, Point3D>): CompositeBezier3D
+Deform(self: BSplineCurve2D, mapping: Function1<Point2D, Point2D>): BSplineCurve2D
+Deform(self: BSplineCurve3D, mapping: Function1<Point3D, Point3D>): BSplineCurve3D
+Deform(self: NurbsCurve2D, mapping: Function1<Point2D, Point2D>): NurbsCurve2D
+Deform(self: NurbsCurve3D, mapping: Function1<Point3D, Point3D>): NurbsCurve3D
+Deform(self: CatmullRomCurve2D, mapping: Function1<Point2D, Point2D>): CatmullRomCurve2D
+Deform(self: CatmullRomCurve3D, mapping: Function1<Point3D, Point3D>): CatmullRomCurve3D
+Deform(self: TcbSpline2D, mapping: Function1<Point2D, Point2D>): TcbSpline2D
+Deform(self: TcbSpline3D, mapping: Function1<Point3D, Point3D>): TcbSpline3D
+Deform(self: LinearSpline2D, mapping: Function1<Point2D, Point2D>): LinearSpline2D
+Deform(self: LinearSpline3D, mapping: Function1<Point3D, Point3D>): LinearSpline3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 689](../../../../../stdlib/geometry/splines.library.plato#L689): mapping and everything else — weights, knots, degree, the shape
+- [Line 691](../../../../../stdlib/geometry/splines.library.plato#L691): geometry. Exact for an affine mapping, which commutes with each basis;
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 16 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 684
+### Line 684
 
 **Source:** [stdlib/geometry/splines.library.plato, line 684](../../../../../stdlib/geometry/splines.library.plato#L684).
 
@@ -29,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => BezierCurve2D(self.ControlPoints.Map(mapping));
 ```
 
-## Line 699
+### Line 699
 
 **Source:** [stdlib/geometry/splines.library.plato, line 699](../../../../../stdlib/geometry/splines.library.plato#L699).
 
@@ -40,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => BezierCurve3D(self.ControlPoints.Map(mapping));
 ```
 
-## Line 703
+### Line 703
 
 **Source:** [stdlib/geometry/splines.library.plato, line 703](../../../../../stdlib/geometry/splines.library.plato#L703).
 
@@ -51,7 +93,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.ControlPoints.Map(mapping), self.Weights);
 ```
 
-## Line 707
+### Line 707
 
 **Source:** [stdlib/geometry/splines.library.plato, line 707](../../../../../stdlib/geometry/splines.library.plato#L707).
 
@@ -62,7 +104,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.ControlPoints.Map(mapping), self.Weights);
 ```
 
-## Line 711
+### Line 711
 
 **Source:** [stdlib/geometry/splines.library.plato, line 711](../../../../../stdlib/geometry/splines.library.plato#L711).
 
@@ -74,7 +116,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => CompositeBezier2D(self.Segments.Map(seg => seg.Deform(mapping)));
 ```
 
-## Line 716
+### Line 716
 
 **Source:** [stdlib/geometry/splines.library.plato, line 716](../../../../../stdlib/geometry/splines.library.plato#L716).
 
@@ -85,7 +127,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => CompositeBezier3D(self.Segments.Map(seg => seg.Deform(mapping)));
 ```
 
-## Line 720
+### Line 720
 
 **Source:** [stdlib/geometry/splines.library.plato, line 720](../../../../../stdlib/geometry/splines.library.plato#L720).
 
@@ -96,7 +138,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.ControlPoints.Map(mapping), self.Degree, self.Knots);
 ```
 
-## Line 724
+### Line 724
 
 **Source:** [stdlib/geometry/splines.library.plato, line 724](../../../../../stdlib/geometry/splines.library.plato#L724).
 
@@ -107,7 +149,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.ControlPoints.Map(mapping), self.Degree, self.Knots);
 ```
 
-## Line 728
+### Line 728
 
 **Source:** [stdlib/geometry/splines.library.plato, line 728](../../../../../stdlib/geometry/splines.library.plato#L728).
 
@@ -118,7 +160,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.ControlPoints.Map(mapping), self.Weights, self.Degree, self.Knots);
 ```
 
-## Line 732
+### Line 732
 
 **Source:** [stdlib/geometry/splines.library.plato, line 732](../../../../../stdlib/geometry/splines.library.plato#L732).
 
@@ -129,7 +171,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.ControlPoints.Map(mapping), self.Weights, self.Degree, self.Knots);
 ```
 
-## Line 736
+### Line 736
 
 **Source:** [stdlib/geometry/splines.library.plato, line 736](../../../../../stdlib/geometry/splines.library.plato#L736).
 
@@ -141,7 +183,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Points.Map(mapping), self.Alpha, self.Closed);
 ```
 
-## Line 741
+### Line 741
 
 **Source:** [stdlib/geometry/splines.library.plato, line 741](../../../../../stdlib/geometry/splines.library.plato#L741).
 
@@ -152,7 +194,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Points.Map(mapping), self.Alpha, self.Closed);
 ```
 
-## Line 745
+### Line 745
 
 **Source:** [stdlib/geometry/splines.library.plato, line 745](../../../../../stdlib/geometry/splines.library.plato#L745).
 
@@ -164,7 +206,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Points.Map(mapping), self.Tensions, self.Continuities, self.Biases, self.Closed);
 ```
 
-## Line 750
+### Line 750
 
 **Source:** [stdlib/geometry/splines.library.plato, line 750](../../../../../stdlib/geometry/splines.library.plato#L750).
 
@@ -175,7 +217,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Points.Map(mapping), self.Tensions, self.Continuities, self.Biases, self.Closed);
 ```
 
-## Line 754
+### Line 754
 
 **Source:** [stdlib/geometry/splines.library.plato, line 754](../../../../../stdlib/geometry/splines.library.plato#L754).
 
@@ -188,7 +230,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Points.Map(mapping), self.Closed);
 ```
 
-## Line 760
+### Line 760
 
 **Source:** [stdlib/geometry/splines.library.plato, line 760](../../../../../stdlib/geometry/splines.library.plato#L760).
 

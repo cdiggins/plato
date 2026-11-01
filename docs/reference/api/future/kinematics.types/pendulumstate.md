@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The instantaneous state of a pendulum: signed deflection from the rest
+> (hanging) direction and its rate of change.
+
+## Signature
+
+```plato
+type PendulumState
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.types](../kinematics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 228
+### Line 228
 
 **Source:** [stdlib/future/kinematics.types.plato, line 228](../../../../../stdlib/future/kinematics.types.plato#L228).
 

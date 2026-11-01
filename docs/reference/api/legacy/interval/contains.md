@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Contains(x: IInterval<$T>, value: $T): Boolean
+Contains(x: IInterval<$T>, y: IInterval<$T>): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [interval](../interval.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 15
+### Line 15
 
 **Source:** [legacy/stdlib-legacy/interval.plato, line 15](../../../../../legacy/stdlib-legacy/interval.plato#L15).
 
@@ -17,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => value.Between(x.Start, x.End);
 ```
 
-## Line 18
+### Line 18
 
 **Source:** [legacy/stdlib-legacy/interval.plato, line 18](../../../../../legacy/stdlib-legacy/interval.plato#L18).
 

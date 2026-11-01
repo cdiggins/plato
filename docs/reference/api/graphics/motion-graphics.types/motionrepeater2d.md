@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Duplicates a layer with a cumulative transform: copy i applies Offset i
+> times, fading opacity toward EndOpacity across the run of copies.
+
+## Signature
+
+```plato
+type MotionRepeater2D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [motion-graphics.types](../motion-graphics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 88
+### Line 88
 
 **Source:** [stdlib/graphics/motion-graphics.types.plato, line 88](../../../../../stdlib/graphics/motion-graphics.types.plato#L88).
 

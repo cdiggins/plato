@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The change in value at the point from the earlier instant to the later one.
+
+## Signature
+
+```plato
+ChangeBetween(self: ITimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Number
+ChangeBetween(self: ITimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Number
+ChangeBetween(self: ITimeVaryingVectorField2D, point: Point2D, earlier: Instant, later: Instant): Vector2D
+ChangeBetween(self: ITimeVaryingVectorField3D, point: Point3D, earlier: Instant, later: Instant): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1074
+### Line 1074
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1074](../../../../../stdlib/geometry/fields-implicits.library.plato#L1074).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
 ```
 
-## Line 1098
+### Line 1098
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1098](../../../../../stdlib/geometry/fields-implicits.library.plato#L1098).
 
@@ -29,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
 ```
 
-## Line 1127
+### Line 1127
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1127](../../../../../stdlib/geometry/fields-implicits.library.plato#L1127).
 
@@ -40,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
 ```
 
-## Line 1306
+### Line 1306
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1306](../../../../../stdlib/geometry/fields-implicits.library.plato#L1306).
 

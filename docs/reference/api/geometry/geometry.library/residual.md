@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The perpendicular distance from a sample to the fitted line.
+
+## Signature
+
+```plato
+Residual(self: LineFit2D, sample: Point2D): Number
+Residual(self: LineFit3D, sample: Point3D): Number
+Residual(self: PlaneFit3D, sample: Point3D): Number
+Residual(self: CircleFit2D, sample: Point2D): Number
+Residual(self: SphereFit3D, sample: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 157
+### Line 157
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 157](../../../../../stdlib/geometry/geometry.library.plato#L157).
 
@@ -23,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Line.DistanceTo(sample);
 ```
 
-## Line 166
+### Line 166
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 166](../../../../../stdlib/geometry/geometry.library.plato#L166).
 
@@ -34,7 +58,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Line.DistanceTo(sample);
 ```
 
-## Line 170
+### Line 170
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 170](../../../../../stdlib/geometry/geometry.library.plato#L170).
 
@@ -45,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Plane.SignedDistance(sample).Abs;
 ```
 
-## Line 174
+### Line 174
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 174](../../../../../stdlib/geometry/geometry.library.plato#L174).
 
@@ -57,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (sample.Distance(self.Circle.Center) - self.Circle.Radius).Abs;
 ```
 
-## Line 179
+### Line 179
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 179](../../../../../stdlib/geometry/geometry.library.plato#L179).
 

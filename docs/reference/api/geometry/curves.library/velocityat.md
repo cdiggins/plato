@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A finite-difference velocity estimate at t using step h: the secant over
+> \[t - h, t + h\] divided by its width. Precondition: h > 0 and h chosen so
+> t +/- h stays within the domain of interest.
+
+## Signature
+
+```plato
+VelocityAt(self: ICurve2D, t: Number, h: Number): Vector2D
+VelocityAt(self: ICurve3D, t: Number, h: Number): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 101
+### Line 101
 
 **Source:** [stdlib/geometry/curves.library.plato, line 101](../../../../../stdlib/geometry/curves.library.plato#L101).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Eval(t - h).Between(self.Eval(t + h)) / (2.0 * h);
 ```
 
-## Line 141
+### Line 141
 
 **Source:** [stdlib/geometry/curves.library.plato, line 141](../../../../../stdlib/geometry/curves.library.plato#L141).
 

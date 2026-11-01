@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A Bezier curve of arbitrary degree in the plane: degree = control point
+> count - 1 (https://en.wikipedia.org/wiki/B%C3%A9zier\_curve). Interpolates
+> the first and last control points.
+
+## Signature
+
+```plato
+type BezierCurve2D
+    implements ICurve2D, IDeformable2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICurve2D](../curves.concepts/icurve2d.md), [IDeformable2D](../../foundation/transforms.concepts/ideformable2d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.types](../splines.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/splines.types.plato, line 1](../../../../../stdlib/geometry/splines.types.plato#L1).
 

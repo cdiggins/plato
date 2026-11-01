@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Clamp(x: IInterval<$T>, y: IInterval<$T>): IInterval<$T>
+Clamp(x: IInterval<$T>, value: $T): $T
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [interval](../interval.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 48
+### Line 48
 
 **Source:** [legacy/stdlib-legacy/interval.plato, line 48](../../../../../legacy/stdlib-legacy/interval.plato#L48).
 
@@ -17,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (x.Clamp(y.Start), x.Clamp(y.End));
 ```
 
-## Line 51
+### Line 51
 
 **Source:** [legacy/stdlib-legacy/interval.plato, line 51](../../../../../legacy/stdlib-legacy/interval.plato#L51).
 

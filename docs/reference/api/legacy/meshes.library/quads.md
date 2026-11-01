@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Quads(xs: Quads3D): IArray<Quad3D>
+Quads(self: QuadMesh3D): IArray<Quad3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 43
+### Line 43
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 43](../../../../../legacy/stdlib-legacy/meshes.library.plato#L43).
 
@@ -16,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Quads(xs: Quads3D): IArray<Quad3D> => xs.Primitives;
 ```
 
-## Line 45
+### Line 45
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 45](../../../../../legacy/stdlib-legacy/meshes.library.plato#L45).
 

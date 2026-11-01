@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The core physically-based material (glTF 2.0 metallic-roughness). BaseColor
+> carries albedo for dielectrics, reflectance for metals, and the surface
+> alpha. Metallic and Roughness follow the standard MR parameterization.
+> EmissiveStrength is a dimensionless multiplier on EmissiveColor; physical
+> pipelines may read the product as nits. NormalScale scales a bound normal
+> map; OcclusionStrength scales a bound occlusion map (both bind via
+> MaterialTextureSet). (https://en.wikipedia.org/wiki/Physically\_based\_rendering)
+
+## Signature
+
+```plato
+type Material
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [materials.types](../materials.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 39
+### Line 39
 
 **Source:** [stdlib/graphics/materials.types.plato, line 39](../../../../../stdlib/graphics/materials.types.plato#L39).
 

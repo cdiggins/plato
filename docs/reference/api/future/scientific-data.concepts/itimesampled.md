@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The family of time-indexed collections: a sample count and a time for each
+> zero-based sample index.
+> (https://en.wikipedia.org/wiki/Time\_series)
+
+## Signature
+
+```plato
+interface ITimeSampled
+    inherits IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IValue](../../foundation/core.concepts/ivalue.md).
+
+Implemented in this tier by: [TimeSeries](../scientific-data.types/timeseries.md), [IrregularTimeSeries](../scientific-data.types/irregulartimeseries.md), [Vector3DTimeSeries](../scientific-data.types/vector3dtimeseries.md), [EventLog](../scientific-data.types/eventlog.md).
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.concepts](../scientific-data.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/scientific-data.concepts.plato, line 1](../../../../../stdlib/future/scientific-data.concepts.plato#L1).
 

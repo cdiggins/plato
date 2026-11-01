@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Triangles in the plane over a shared vertex pool: concretely
+> `TriangleMesh2D`, and the form a UV domain takes when it shares its index
+> table with the spatial mesh it parameterizes.
+
+## Signature
+
+```plato
+interface IIndexedTriangleGeometry2D
+    inherits IIndexedGeometry<Point2D, Triangle2D, TriangleFace>, ITriangleGeometry2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IIndexedGeometry](iindexedgeometry.md), [ITriangleGeometry2D](itrianglegeometry2d.md).
+
+Implemented in this tier by: [TriangleMesh2D](../meshes.types/trianglemesh2d.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.concepts](../meshes.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 217
+### Line 217
 
 **Source:** [stdlib/geometry/meshes.concepts.plato, line 217](../../../../../stdlib/geometry/meshes.concepts.plato#L217).
 

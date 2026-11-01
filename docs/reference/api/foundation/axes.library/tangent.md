@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The next axis in the right-handed cycle X => Y => Z => X. Together with
+> Bitangent this gives an oriented frame around the axis.
+
+## Signature
+
+```plato
+Tangent(self: Axis3D): Axis3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [axes.library](../axes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 61
+### Line 61
 
 **Source:** [stdlib/foundation/axes.library.plato, line 61](../../../../../stdlib/foundation/axes.library.plato#L61).
 

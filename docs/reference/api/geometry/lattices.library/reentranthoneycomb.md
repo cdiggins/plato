@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The three-dimensional re-entrant honeycomb, the standard auxetic cell: the
+> twelve cube edges each replaced by a two-segment rib that folds INWARD by
+> `reentrancy` at its midpoint. Stretching the cell along an axis unfolds
+> those ribs and pushes the other axes outward, which is the negative
+> Poisson ratio (https://en.wikipedia.org/wiki/Auxetics). The corner nodes
+> reach coordination 24; the twelve rib nodes are 2-valent hinges, which is
+> the mechanism and not a defect. `reentrancy` of 0 collapses the cell back
+> to `SimpleCubic` with each edge split in two; useful values are well below
+> 0.5, where opposite ribs would meet.
+
+## Signature
+
+```plato
+ReentrantHoneycomb(reentrancy: Number): LatticeUnitCell
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 197
+### Line 197
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 197](../../../../../stdlib/geometry/lattices.library.plato#L197).
 

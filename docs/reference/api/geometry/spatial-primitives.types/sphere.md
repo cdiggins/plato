@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The ball of all points within Radius of Center; its boundary is the sphere
+> proper. Radius is non-negative. (https://en.wikipedia.org/wiki/Sphere)
+
+## Signature
+
+```plato
+type Sphere
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IVolume, IBounded3D, ICentered3D, IContainsPoint3D, INearestPoint3D, ISupport3D, IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IVolume](../geometry.concepts/ivolume.md), [IBounded3D](../geometry.concepts/ibounded3d.md), [ICentered3D](../geometry.concepts/icentered3d.md), [IContainsPoint3D](../geometry.concepts/icontainspoint3d.md), [INearestPoint3D](../geometry.concepts/inearestpoint3d.md), [ISupport3D](../geometry.concepts/isupport3d.md), [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.types](../spatial-primitives.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 197
+### Line 197
 
 **Source:** [stdlib/geometry/spatial-primitives.types.plato, line 197](../../../../../stdlib/geometry/spatial-primitives.types.plato#L197).
 

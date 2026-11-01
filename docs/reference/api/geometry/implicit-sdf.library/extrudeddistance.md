@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The extruded distance: a planar shape swept along Z from -halfHeight to
+> +halfHeight. planarDistance is the source's distance at (p.X, p.Y) and z is
+> p.Z. Exact wherever the planar distance is, except in the wedge outside a rim
+> where the wall and cap meet, which is a lower bound — the two constraints are
+> combined, not measured jointly. (IQ: opExtrusion.)
+
+## Signature
+
+```plato
+ExtrudedDistance(planarDistance: Number, z: Number, halfHeight: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ExtrudedCircleIsCappedCylinder
+
+[stdlib/tests/implicit-sdf.laws.plato, line 89](../../../../../stdlib/tests/implicit-sdf.laws.plato#L89)
+
+```plato
+// Extruding a circle along Z is a capped cylinder about Z — the same solid the
+// spatial primitive describes about Y, so the axes are swapped to compare.
+Law_ExtrudedCircleIsCappedCylinder(p: Point3D, radius: Number, halfHeight: Number): Boolean
+    => ExtrudedDistance(DistanceToCircle(Point2D(p.X, p.Y), radius), p.Z, halfHeight)
+        .LawEq(DistanceToCappedCylinder(Point3D(p.X, p.Z, p.Y), halfHeight, radius));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 768
+### Line 768
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 768](../../../../../stdlib/geometry/implicit-sdf.library.plato#L768).
 

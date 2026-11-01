@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The inverse affine map, paired with whether one exists. The linear block is
+> inverted by the 2x2 adjugate and the translation row carried back through
+> it. When the determinant is smaller than Number.Epsilon the matrix is
+> singular: the all-NaN matrix and `false` are returned.
+> https://en.wikipedia.org/wiki/Invertible\_matrix
+
+## Signature
+
+```plato
+Invert(self: Matrix3x2): Tuple2<Matrix3x2, Boolean>
+Invert(self: Matrix4x4): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 47
+### Line 47
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 47](../../../../../stdlib/foundation/matrices-ops.library.plato#L47).
 
@@ -36,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 314
+### Line 314
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 314](../../../../../stdlib/foundation/matrices-ops.library.plato#L314).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Quadrilaterals in the plane, wound counter-clockwise: structured grid cells
+> and quad-dominant planar layouts.
+
+## Signature
+
+```plato
+interface IQuadGeometry2D
+    inherits IGeometry2D, IPrimitiveGeometry<Point2D, Quad2D>, IPointSet2D, IBounded2D, IDeformable2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry2D](../geometry.concepts/igeometry2d.md), [IPrimitiveGeometry](iprimitivegeometry.md), [IPointSet2D](../geometry.concepts/ipointset2d.md), [IBounded2D](../geometry.concepts/ibounded2d.md), [IDeformable2D](../../foundation/transforms.concepts/ideformable2d.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.concepts](../meshes.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 179
+### Line 179
 
 **Source:** [stdlib/geometry/meshes.concepts.plato, line 179](../../../../../stdlib/geometry/meshes.concepts.plato#L179).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the segment from `a` towards the vertex at `b` leaves `a` into the
+> ring's interior. Reads only the sector at `a`, so `b` may belong to another
+> ring — which is what the bridge search needs.
+
+## Signature
+
+```plato
+LocallyInside(points: Array<Point2D>, nodes: Buffer<EarClipNode>,
+    a: Integer, b: Integer): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 149
+### Line 149
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 149](../../../../../stdlib/geometry/triangulation.library.plato#L149).
 

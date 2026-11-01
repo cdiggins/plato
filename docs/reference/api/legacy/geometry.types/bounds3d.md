@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Axis-Aligned bounding box
+
+## Signature
+
+```plato
+type Bounds3D
+    implements IBounds<Point3D, Vector3>, IDeformable3D, IArrayLike<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IBounds](../core.interfaces/ibounds.md), [IDeformable3D](../geometry.interfaces/ideformable3d.md), [IArrayLike](../core.interfaces/iarraylike.md).
+
+## Source
+
 **File:** [geometry.types](../geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 130
+### Line 130
 
 **Source:** [legacy/stdlib-legacy/geometry.types.plato, line 130](../../../../../legacy/stdlib-legacy/geometry.types.plato#L130).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The solid interpolating an ordered stack of planar closed cross-sections,
+> capped by the first and last sections (https://en.wikipedia.org/wiki/Loft\_(3D)).
+> Sections must share point counts; Closed joins the last section back to the
+> first into a ring instead.
+
+## Signature
+
+```plato
+type LoftedSolid
+    implements ISolid, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ISolid](../surfaces-solids.concepts/isolid.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.types](../solids.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 140
+### Line 140
 
 **Source:** [stdlib/geometry/solids.types.plato, line 140](../../../../../stdlib/geometry/solids.types.plato#L140).
 

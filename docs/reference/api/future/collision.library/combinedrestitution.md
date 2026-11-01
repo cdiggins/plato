@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The bounciness of a contact between two materials, merged under A's
+> RestitutionCombine rule.
+
+## Signature
+
+```plato
+CombinedRestitution(a: PhysicsMaterial, b: PhysicsMaterial): Proportion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 63
+### Line 63
 
 **Source:** [stdlib/future/collision.library.plato, line 63](../../../../../stdlib/future/collision.library.plato#L63).
 

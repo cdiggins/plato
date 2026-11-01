@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The straight-line distance from a query point to the nearest point of the shape.
+
+## Signature
+
+```plato
+DistanceTo(self: INearestPoint2D, point: Point2D): Number
+DistanceTo(self: INearestPoint3D, point: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 846
+### Line 846
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 846](../../../../../stdlib/geometry/geometry.library.plato#L846).
 
@@ -23,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ClosestPoint(point).Between(point).Magnitude;
 ```
 
-## Line 865
+### Line 865
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 865](../../../../../stdlib/geometry/geometry.library.plato#L865).
 

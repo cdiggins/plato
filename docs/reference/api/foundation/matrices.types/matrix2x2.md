@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A 2x2 matrix: 2D linear maps (rotation, scale, shear).
+
+## Signature
+
+```plato
+type Matrix2x2
+    implements IMatrix, IMultiplicative
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IMatrix](../matrices.concepts/imatrix.md), [IMultiplicative](../algebra.concepts/imultiplicative.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.types](../matrices.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/matrices.types.plato, line 1](../../../../../stdlib/foundation/matrices.types.plato#L1).
 

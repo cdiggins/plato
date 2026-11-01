@@ -3,11 +3,54 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unsigned distance from a point to the quadrilateral patch with the given
+> vertices in ring order. Exact for a planar quad. For a non-planar one the
+> plane branch measures against the plane through A, B and D, which the fourth
+> corner has left — that is NOT a bound, so prefer the two triangles of the
+> patch's triangulation when the corners are not coplanar. (IQ: udQuad.)
+
+## Signature
+
+```plato
+UnsignedDistanceToQuad(p: Point3D, a: Point3D, b: Point3D, c: Point3D, d: Point3D): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_FlatQuadPatchIsFlatBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 346](../../../../../stdlib/tests/implicit-sdf.laws.plato#L346)
+
+```plato
+// The same rectangle as a patch in space is a box of zero depth, whose signed
+// distance is already the unsigned distance to the patch. Cross-checks the quad
+// patch's edge-vote branch against a formula with no votes in it.
+Law_FlatQuadPatchIsFlatBox(p: Point3D, halfExtents: Vector2D): Boolean
+    => halfExtents.X <= 0.0 || halfExtents.Y <= 0.0
+    || UnsignedDistanceToQuad(
+            p,
+            Point3D(halfExtents.X.Negative, halfExtents.Y.Negative, 0.0),
+            Point3D(halfExtents.X, halfExtents.Y.Negative, 0.0),
+            Point3D(halfExtents.X, halfExtents.Y, 0.0),
+            Point3D(halfExtents.X.Negative, halfExtents.Y, 0.0))
+        .LawEq(DistanceToBox(p, Vector3D(halfExtents.X, halfExtents.Y, 0.0)));
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 998
+### Line 998
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 998](../../../../../stdlib/geometry/implicit-sdf.library.plato#L998).
 

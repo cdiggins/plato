@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Doo-Sabin's new vertex at one corner: the average of the corner's own
+> position, the midpoints of the two face edges meeting there, and the face
+> centroid. For a quadrilateral this is the classic 9/16, 3/16, 3/16, 1/16
+> mask.
+
+## Signature
+
+```plato
+DooSabinCornerPoint(self: PolygonMesh3D, faces: Array<FaceIndex>, destinations: Array<VertexIndex>, corner: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1031
+### Line 1031
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1031](../../../../../stdlib/geometry/remeshing.library.plato#L1031).
 

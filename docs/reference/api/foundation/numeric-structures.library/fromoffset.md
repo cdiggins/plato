@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The parameter at the given displacement from the UV origin.
+
+## Signature
+
+```plato
+FromOffset(_: UvCoordinate, v: Vector2D): UvCoordinate
+FromOffset(_: UvwCoordinate, v: Vector3D): UvwCoordinate
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 458
+### Line 458
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 458](../../../../../stdlib/foundation/numeric-structures.library.plato#L458).
 
@@ -18,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (v.X, v.Y);
 ```
 
-## Line 466
+### Line 466
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 466](../../../../../stdlib/foundation/numeric-structures.library.plato#L466).
 

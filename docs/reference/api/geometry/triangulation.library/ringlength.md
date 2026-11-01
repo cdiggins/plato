@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number of nodes in the ring through `head`. Precondition: head is live.
+
+## Signature
+
+```plato
+RingLength(head: Integer, nodes: Buffer<EarClipNode>): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 181
+### Line 181
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 181](../../../../../stdlib/geometry/triangulation.library.plato#L181).
 

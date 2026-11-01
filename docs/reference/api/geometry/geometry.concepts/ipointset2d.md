@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Exposes the finite ordered set of defining points of a 2D entity: the vertices
+> of a polygon, the endpoints of a segment, the samples of a scatter.
+
+## Signature
+
+```plato
+interface IPointSet2D
+    inherits IGeometry2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry2D](igeometry2d.md).
+
+Implemented in this tier by: [Line2D](../lines.types/line2d.md), [Triangle2D](../planar.types/triangle2d.md), [Quad2D](../planar.types/quad2d.md), [Polygon2D](../polygons.types/polygon2d.md), [ConvexPolygon2D](../polygons.types/convexpolygon2d.md), [Polyline2D](../polygons.types/polyline2d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 129
+### Line 129
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 129](../../../../../stdlib/geometry/geometry.concepts.plato#L129).
 

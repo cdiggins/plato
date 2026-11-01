@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The three corner vertex indices in winding order.
+
+## Signature
+
+```plato
+Vertices(self: TriangleFace): Array<VertexIndex>
+Vertices(self: QuadFace): Array<VertexIndex>
+Vertices(self: TriangleMesh3D): Array<Point3D>
+Vertices(self: TriangleMesh2D): Array<Point2D>
+Vertices(self: QuadMesh3D): Array<Point3D>
+Vertices(self: LineSet3D): Array<Point3D>
+Vertices(self: LineSet2D): Array<Point2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 7 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 132
+### Line 132
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 132](../../../../../stdlib/geometry/meshes.library.plato#L132).
 
@@ -18,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => [self.A, self.B, self.C];
 ```
 
-## Line 149
+### Line 149
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 149](../../../../../stdlib/geometry/meshes.library.plato#L149).
 
@@ -29,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => [self.A, self.B, self.C, self.D];
 ```
 
-## Line 516
+### Line 516
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 516](../../../../../stdlib/geometry/meshes.library.plato#L516).
 
@@ -40,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Positions;
 ```
 
-## Line 556
+### Line 556
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 556](../../../../../stdlib/geometry/meshes.library.plato#L556).
 
@@ -51,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Positions;
 ```
 
-## Line 596
+### Line 596
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 596](../../../../../stdlib/geometry/meshes.library.plato#L596).
 
@@ -62,7 +88,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Positions;
 ```
 
-## Line 656
+### Line 656
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 656](../../../../../stdlib/geometry/meshes.library.plato#L656).
 
@@ -76,7 +102,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Positions;
 ```
 
-## Line 672
+### Line 672
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 672](../../../../../stdlib/geometry/meshes.library.plato#L672).
 

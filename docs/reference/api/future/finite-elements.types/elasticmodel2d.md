@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A linear-elastic analysis of a plate meshed into constant-strain triangles,
+> under one of the two plane idealizations. Thickness is uniform and is the
+> out-of-plane extent the element measure multiplies by.
+> (https://en.wikipedia.org/wiki/Plane\_stress)
+
+## Signature
+
+```plato
+type ElasticModel2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.types](../finite-elements.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/future/finite-elements.types.plato, line 131](../../../../../stdlib/future/finite-elements.types.plato#L131).
 

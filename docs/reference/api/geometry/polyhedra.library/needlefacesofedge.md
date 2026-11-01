@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The two needles of an edge: each endpoint joined to both neighbouring
+> apexes, wound so the pair share the apex-to-apex edge in opposite senses.
+> Precondition: `corner` is canonical.
+
+## Signature
+
+```plato
+NeedleFacesOfEdge(self: PolygonMesh3D, corner: CornerIndex): Array<Array<VertexIndex>>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 581
+### Line 581
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 581](../../../../../stdlib/geometry/polyhedra.library.plato#L581).
 

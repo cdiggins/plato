@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The oppositely oriented axis along the same line: PosX \<=> NegX, etc.
+
+## Signature
+
+```plato
+Opposite(self: SignedAxis3D): SignedAxis3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [axes.library](../axes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 176
+### Line 176
 
 **Source:** [stdlib/foundation/axes.library.plato, line 176](../../../../../stdlib/foundation/axes.library.plato#L176).
 

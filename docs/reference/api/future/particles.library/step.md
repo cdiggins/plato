@@ -3,11 +3,43 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One step of a spatial particle under a given acceleration. Age advances
+> by the step; nothing here tests Lifetime, so a step never removes a
+> particle — `LiveParticles` does that.
+
+## Signature
+
+```plato
+Step(self: Particle3D, acceleration: Vector3D, dt: Duration): Particle3D
+Step(self: Particle2D, acceleration: Vector2D, dt: Duration): Particle2D
+Step(self: ParticleSystem3D, dt: Duration): ParticleSystem3D
+Step(self: ParticleSystem2D, dt: Duration): ParticleSystem2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 148](../../../../../stdlib/future/particles.library.plato#L148): (https://en.wikipedia.org/wiki/Semi-implicit\_Euler\_method). It costs
+- [Line 149](../../../../../stdlib/future/particles.library.plato#L149): exactly what explicit Euler costs and reads almost the same, but it
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.library](../particles.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 142
+### Line 142
 
 **Source:** [stdlib/future/particles.library.plato, line 142](../../../../../stdlib/future/particles.library.plato#L142).
 
@@ -45,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 173
+### Line 173
 
 **Source:** [stdlib/future/particles.library.plato, line 173](../../../../../stdlib/future/particles.library.plato#L173).
 
@@ -68,7 +100,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 218
+### Line 218
 
 **Source:** [stdlib/future/particles.library.plato, line 218](../../../../../stdlib/future/particles.library.plato#L218).
 
@@ -89,7 +121,7 @@ Copied from source, comments included. A comment records intent. The body is the
             self.Time + dt);
 ```
 
-## Line 232
+### Line 232
 
 **Source:** [stdlib/future/particles.library.plato, line 232](../../../../../stdlib/future/particles.library.plato#L232).
 

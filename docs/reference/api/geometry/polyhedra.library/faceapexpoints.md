@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One apex per face: the face centroid displaced along its outward unit
+> normal. Height is in model units, so scale the mesh first if a comparable
+> spike across several solids is wanted.
+
+## Signature
+
+```plato
+FaceApexPoints(self: PolygonMesh3D, height: Number): Array<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 518](../../../../../stdlib/geometry/polyhedra.library.plato#L518): normalizes the result onto the unit sphere.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 500
+### Line 500
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 500](../../../../../stdlib/geometry/polyhedra.library.plato#L500).
 

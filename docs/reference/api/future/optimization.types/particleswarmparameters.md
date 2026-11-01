@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Tuning of particle-swarm optimization: swarm size, the inertia retained
+> from each particle's velocity, the pulls toward the particle's own best
+> (cognitive) and the swarm's best (social), and the random seed.
+> (https://en.wikipedia.org/wiki/Particle\_swarm\_optimization)
+
+## Signature
+
+```plato
+type ParticleSwarmParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [optimization.types](../optimization.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 233
+### Line 233
 
 **Source:** [stdlib/future/optimization.types.plato, line 233](../../../../../stdlib/future/optimization.types.plato#L233).
 

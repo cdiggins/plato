@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The material's elastic constants re-expressed as the Lame pair. Explicit
+> rather than implicit: the result keeps only the two elastic constants and
+> drops the density, the strengths and the thermal properties, so it does
+> not denote the same object the argument does.
+> Convention: see CONVENTIONS.md - Conversions.
+
+## Signature
+
+```plato
+ToLameParameters(m: EngineeringMaterial): LameParameters
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [engineering-materials.library](../engineering-materials.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 58
+### Line 58
 
 **Source:** [stdlib/future/engineering-materials.library.plato, line 58](../../../../../stdlib/future/engineering-materials.library.plato#L58).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The occupied cells of one row, in column order. Rows are compacted as they
+> are finished rather than the whole grid at the end, which keeps every
+> intermediate array short.
+
+## Signature
+
+```plato
+PoissonRowPoints(region: Bounds2D, radius: Number, row: Array<Point2D>): Array<Point2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 671
+### Line 671
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 671](../../../../../stdlib/geometry/sampling.library.plato#L671).
 

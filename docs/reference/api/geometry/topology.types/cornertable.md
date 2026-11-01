@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Triangle-corner connectivity. Corner c belongs to triangle c / 3; its next
+> corner within the triangle is 3 \* (c / 3) + ((c + 1) mod 3). Corners\[c\] is
+> the vertex sitting at corner c. Opposites\[c\] is the corner facing the same
+> edge from the adjacent triangle, or -1 when that edge is on the boundary.
+
+## Signature
+
+```plato
+type CornerTable
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.types](../topology.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 169
+### Line 169
 
 **Source:** [stdlib/geometry/topology.types.plato, line 169](../../../../../stdlib/geometry/topology.types.plato#L169).
 

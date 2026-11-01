@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The four vertex indices of a cell, in stored order. (`Vertices` already
+> names this operation for a `TriangleFace` in `meshes.library.plato`; the
+> cell has no counterpart there yet.)
+
+## Signature
+
+```plato
+CellVertices(c: TetrahedronCell): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 345](../../../../../stdlib/future/finite-elements.library.plato#L345): needs no numerical integration at all, which is exactly what makes it the
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 337
+### Line 337
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 337](../../../../../stdlib/future/finite-elements.library.plato#L337).
 

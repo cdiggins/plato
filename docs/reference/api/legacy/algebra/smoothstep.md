@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Smoothstep
+
+## Signature
+
+```plato
+SmoothStep(x: INumerical): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [algebra](../algebra.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 147
+### Line 147
 
 **Source:** [legacy/stdlib-legacy/algebra.plato, line 147](../../../../../legacy/stdlib-legacy/algebra.plato#L147).
 

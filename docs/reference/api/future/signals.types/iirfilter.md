@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An infinite-impulse-response filter in direct form. Feedforward
+> coefficients (b) weight current and past inputs; feedback coefficients (a)
+> weight past outputs, with FeedbackCoefficients\[0\] normalized to 1.
+> (https://en.wikipedia.org/wiki/Infinite\_impulse\_response)
+
+## Signature
+
+```plato
+type IirFilter
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [signals.types](../signals.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 168
+### Line 168
 
 **Source:** [stdlib/future/signals.types.plato, line 168](../../../../../stdlib/future/signals.types.plato#L168).
 

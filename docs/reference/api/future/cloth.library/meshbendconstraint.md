@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The bend constraint across one interior edge, its rest angle the angle
+> the mesh already has there. Precondition: the edge is interior and both
+> its faces have a vertex off the edge.
+
+## Signature
+
+```plato
+MeshBendConstraint(self: PolygonMesh3D, edge: UndirectedEdgeIndex, compliance: Number): ClothBendConstraint
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 630
+### Line 630
 
 **Source:** [stdlib/future/cloth.library.plato, line 630](../../../../../stdlib/future/cloth.library.plato#L630).
 

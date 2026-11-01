@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> True when the body is (nearly) at rest at a time, within the given
+> non-negative speed tolerance.
+
+## Signature
+
+```plato
+IsStationaryAt(self: IKinematic2D, time: Duration, tolerance: Number): Boolean
+IsStationaryAt(self: IKinematic3D, time: Duration, tolerance: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.library](../kinematics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 41
+### Line 41
 
 **Source:** [stdlib/future/kinematics.library.plato, line 41](../../../../../stdlib/future/kinematics.library.plato#L41).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.VelocityAt(time).Magnitude <= tolerance;
 ```
 
-## Line 73
+### Line 73
 
 **Source:** [stdlib/future/kinematics.library.plato, line 73](../../../../../stdlib/future/kinematics.library.plato#L73).
 

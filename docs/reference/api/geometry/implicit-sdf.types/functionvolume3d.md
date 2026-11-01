@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A spatial volume defined by a stored membership predicate: true inside.
+> Carries no distance information.
+
+## Signature
+
+```plato
+type FunctionVolume3D
+    implements IImplicitVolume3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IImplicitVolume3D](../implicit-sdf.concepts/iimplicitvolume3d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.types](../implicit-sdf.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 123
+### Line 123
 
 **Source:** [stdlib/geometry/implicit-sdf.types.plato, line 123](../../../../../stdlib/geometry/implicit-sdf.types.plato#L123).
 

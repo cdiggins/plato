@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The tween's value at a time offset from the composition's start. Sampling
+> before Delay yields From, after Delay + Duration yields To; in between the
+> linear fraction is reshaped by Easing. A non-positive Duration is an
+> instantaneous switch at the delay.
+
+## Signature
+
+```plato
+Sample(self: Tween<$T>, time: Duration): $T
+Sample(self: Oscillator, time: Duration): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [motion-graphics.library](../motion-graphics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/motion-graphics.library.plato, line 1](../../../../../stdlib/graphics/motion-graphics.library.plato#L1).
 
@@ -46,7 +70,7 @@ library MotionGraphics
     }
 ```
 
-## Line 71
+### Line 71
 
 **Source:** [stdlib/graphics/motion-graphics.library.plato, line 71](../../../../../stdlib/graphics/motion-graphics.library.plato#L71).
 

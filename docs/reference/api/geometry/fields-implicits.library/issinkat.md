@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True where the field converges inward (negative divergence): a sink. Note:
+> near-zero divergence classifies by sign noise; use IsIncompressibleAt for a
+> balanced test.
+
+## Signature
+
+```plato
+IsSinkAt(self: IDifferentiableVectorField2D, point: Point2D): Boolean
+IsSinkAt(self: IDifferentiableVectorField3D, point: Point3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 241
+### Line 241
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 241](../../../../../stdlib/geometry/fields-implicits.library.plato#L241).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.DivergenceAt(point) < 0.0;
 ```
 
-## Line 269
+### Line 269
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 269](../../../../../stdlib/geometry/fields-implicits.library.plato#L269).
 

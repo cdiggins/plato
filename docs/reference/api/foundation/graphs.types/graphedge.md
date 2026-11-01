@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A connection between two vertices, by zero-based index. In an undirected
+> graph the Source/Target order carries no meaning.
+
+## Signature
+
+```plato
+type GraphEdge
+    implements IValue, IHashable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IHashable](../core.concepts/ihashable.md).
+
+## Used by
+
+- [Graph data and graph summaries](../../../library/foundation/graphs.md)
+
+## Source
+
 **File:** [graphs.types](../graphs.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 30
+### Line 30
 
 **Source:** [stdlib/foundation/graphs.types.plato, line 30](../../../../../stdlib/foundation/graphs.types.plato#L30).
 

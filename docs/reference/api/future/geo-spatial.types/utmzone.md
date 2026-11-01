@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> One zone of the Universal Transverse Mercator grid: ZoneNumber is 1 to 60
+> (each spanning 6 degrees of longitude), split into a northern and a
+> southern hemisphere half.
+> (https://en.wikipedia.org/wiki/Universal\_Transverse\_Mercator\_coordinate\_system)
+
+## Signature
+
+```plato
+type UtmZone
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [geo-spatial.types](../geo-spatial.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 189
+### Line 189
 
 **Source:** [stdlib/future/geo-spatial.types.plato, line 189](../../../../../stdlib/future/geo-spatial.types.plato#L189).
 

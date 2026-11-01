@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Counts of values falling into uniform bins across Range. Counts\[i\] tallies
+> the half-open bin \[Start + i\*w, Start + (i+1)\*w), where w is the Range
+> length divided by the bin count; the final bin also includes the Range End.
+> Values outside Range are not counted.
+
+## Signature
+
+```plato
+type Histogram
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Summarize a sample](../../../cookbook/sample-statistics.md)
+- [Statistics, covariance and fitted models](../../../library/foundation/statistics.md)
+
+## Source
+
 **File:** [statistics.types](../statistics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 53
+### Line 53
 
 **Source:** [stdlib/foundation/statistics.types.plato, line 53](../../../../../stdlib/foundation/statistics.types.plato#L53).
 

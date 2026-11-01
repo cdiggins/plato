@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The additive identity: 0 + 0i.
+
+## Signature
+
+```plato
+Zero(_: Complex): Complex
+Zero(_: Proportion): Proportion
+Zero(_: Percent): Percent
+Zero(_: Probability): Probability
+Zero(_: DualNumber): DualNumber
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 67](../../../../../stdlib/foundation/numbers.library.plato#L67).
 
@@ -18,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (0.0, 0.0);
 ```
 
-## Line 148
+### Line 148
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 148](../../../../../stdlib/foundation/numbers.library.plato#L148).
 
@@ -28,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Proportion(0.0);
 ```
 
-## Line 187
+### Line 187
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 187](../../../../../stdlib/foundation/numbers.library.plato#L187).
 
@@ -38,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Percent(0.0);
 ```
 
-## Line 226
+### Line 226
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 226](../../../../../stdlib/foundation/numbers.library.plato#L226).
 
@@ -48,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Probability(0.0);
 ```
 
-## Line 295
+### Line 295
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 295](../../../../../stdlib/foundation/numbers.library.plato#L295).
 

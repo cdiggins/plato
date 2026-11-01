@@ -3,11 +3,42 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Inside the latitude band and inside the longitude band. West greater than
+> East encodes a band crossing the antimeridian, so that case tests the
+> union of the two pieces rather than their (empty) intersection.
+
+## Signature
+
+```plato
+ContainsCoordinate(self: GeoBounds, coordinate: GeoCoordinate): Boolean
+ContainsCoordinate(self: GeoPolygon, coordinate: GeoCoordinate): Boolean
+ContainsCoordinate(self: GeoCircle, coordinate: GeoCoordinate): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 32](../../../../../stdlib/future/geo-spatial.library.plato#L32): tests are exact; the polygon test treats the rings as straight in
+- [Line 36](../../../../../stdlib/future/geo-spatial.library.plato#L36): No ring test is antimeridian-aware: a ring whose longitudes wrap must be
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [geo-spatial.library](../geo-spatial.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 27
+### Line 27
 
 **Source:** [stdlib/future/geo-spatial.library.plato, line 27](../../../../../stdlib/future/geo-spatial.library.plato#L27).
 
@@ -41,7 +72,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 80
+### Line 80
 
 **Source:** [stdlib/future/geo-spatial.library.plato, line 80](../../../../../stdlib/future/geo-spatial.library.plato#L80).
 
@@ -53,7 +84,7 @@ Copied from source, comments included. A comment records intent. The body is the
            && self.Holes.All(hole => hole.RingContainsCoordinate(coordinate).Not);
 ```
 
-## Line 105
+### Line 105
 
 **Source:** [stdlib/future/geo-spatial.library.plato, line 105](../../../../../stdlib/future/geo-spatial.library.plato#L105).
 

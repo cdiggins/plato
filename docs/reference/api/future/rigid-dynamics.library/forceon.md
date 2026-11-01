@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Weight: the same acceleration on every body, scaled by its mass and its own
+> gravity multiplier. Static and kinematic bodies are not exempted here —
+> `SolverBody3D` exempts them by having no inverse mass, and a caller working
+> in `RigidBody3D` reads the motion kind through `MobilityScale`.
+> (https://en.wikipedia.org/wiki/Gravity\_of\_Earth)
+
+## Signature
+
+```plato
+ForceOn(self: UniformGravity2D, body: RigidBody2D): Vector2D
+ForceOn(self: UniformGravity3D, body: RigidBody3D): Vector3D
+ForceOn(self: PointGravity, body: RigidBody3D): Vector3D
+ForceOn(self: DragModel, body: RigidBody3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 106
+### Line 106
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 106](../../../../../stdlib/future/rigid-dynamics.library.plato#L106).
 
@@ -36,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Acceleration * (body.MassProperties.Mass.Amount * body.GravityScale);
 ```
 
-## Line 128
+### Line 128
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 128](../../../../../stdlib/future/rigid-dynamics.library.plato#L128).
 
@@ -47,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Acceleration * (body.MassProperties.Mass.Amount * body.GravityScale);
 ```
 
-## Line 132
+### Line 132
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 132](../../../../../stdlib/future/rigid-dynamics.library.plato#L132).
 
@@ -67,7 +94,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 145
+### Line 145
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 145](../../../../../stdlib/future/rigid-dynamics.library.plato#L145).
 

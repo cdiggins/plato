@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The plane a planar polygon lies in, facing the polygon's outward normal.
+
+## Signature
+
+```plato
+SupportingPlane(p: Polygon3D): Plane
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 74
+### Line 74
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 74](../../../../../stdlib/geometry/solids-csg.library.plato#L74).
 

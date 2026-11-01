@@ -3,11 +3,48 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when every component is finite (no infinity, no NaN).
+
+## Signature
+
+```plato
+IsFinite(self: IVector): Boolean
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_CatenoidSatisfiesItsProfile
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 208](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L208)
+
+```plato
+// x^2 + y^2 = (WaistRadius cosh(z / WaistRadius))^2: the catenary profile,
+// recovered from the sample's own height.
+Law_CatenoidSatisfiesItsProfile(s: Catenoid, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    var r = s.WaistRadius * (p.Z / s.WaistRadius).Angle.Cosh;
+    return p.SurfaceFinite.Not
+        || r.IsFinite.Not
+        || SurfaceEqNear(p.X * p.X + p.Y * p.Y, r * r, r * r);
+}
+```
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 172
+### Line 172
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 172](../../../../../stdlib/foundation/numeric-structures.library.plato#L172).
 

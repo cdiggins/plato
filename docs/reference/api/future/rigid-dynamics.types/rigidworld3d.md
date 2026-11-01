@@ -3,11 +3,45 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A simulation island: the bodies, the contact rows standing between them,
+> uniform gravity in meters per second squared, and the two settings blocks.
+> Constraints index into Bodies by their BodyA / BodyB fields; a row naming an
+> index outside the array is ill-formed rather than "attached to the world" —
+> the static world is an ordinary body with zero inverse mass.
+>
+> The constraint array is part of the state because sequential impulses ACCUMULATE
+> into it: the impulse a row carries out of one step is the warm start of the
+> next (`WarmStartFrom`), and discarding it between frames is exactly what makes
+> a stack of boxes sink and jitter.
+
+## Signature
+
+```plato
+type RigidWorld3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 355
+### Line 355
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 355](../../../../../stdlib/future/rigid-dynamics.types.plato#L355).
 

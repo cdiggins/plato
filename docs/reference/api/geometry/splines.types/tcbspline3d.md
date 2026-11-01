@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A Kochanek-Bartels (TCB) spline in space: per-point Tension, Continuity,
+> and Bias arrays (same count as Points) shape the tangents at each knot
+> (https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels\_spline).
+
+## Signature
+
+```plato
+type TcbSpline3D
+    implements ICurve3D, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICurve3D](../curves.concepts/icurve3d.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.types](../splines.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 267
+### Line 267
 
 **Source:** [stdlib/geometry/splines.types.plato, line 267](../../../../../stdlib/geometry/splines.types.plato#L267).
 

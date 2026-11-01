@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The polygon's vertices in its own plane, in ring order. The basis is the one
+> `polygons.library.plato` already uses for planar containment, and it is
+> right-handed about the polygon's normal — u x v = n — so a counter-clockwise
+> face in the plane is counter-clockwise about that normal in space, which is what
+> makes the faces below obey the winding convention.
+> Precondition: non-degenerate area, so the normal exists.
+
+## Signature
+
+```plato
+PlanarProjection(p: Polygon3D): Array<Point2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 644
+### Line 644
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 644](../../../../../stdlib/geometry/triangulation.library.plato#L644).
 

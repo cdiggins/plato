@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Whether every edge curve starts and ends at its named vertices, within
+> an absolute distance tolerance. Precondition: EdgesInRange holds.
+
+## Signature
+
+```plato
+CurveEndpointsMatch(b: Brep3D, tolerance: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [brep.library](../brep.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 120
+### Line 120
 
 **Source:** [stdlib/geometry/brep.library.plato, line 120](../../../../../stdlib/geometry/brep.library.plato#L120).
 

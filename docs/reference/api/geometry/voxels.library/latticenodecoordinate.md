@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The world coordinate of node index i along one axis of a lattice of
+> nodeCount nodes spanning \[min, max\] inclusively: node 0 sits on min and
+> node nodeCount - 1 on max. A single-node lattice degenerates to min.
+
+## Signature
+
+```plato
+LatticeNodeCoordinate(min: Number, max: Number, i: Integer, nodeCount: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.library](../voxels.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 40
+### Line 40
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 40](../../../../../stdlib/geometry/voxels.library.plato#L40).
 

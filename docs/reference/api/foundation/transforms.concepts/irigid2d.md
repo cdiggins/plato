@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An orientation-preserving isometry of the plane: converts to a rigid pose.
+> Distances and angles survive it, and the family is closed under composition
+> and inversion, neither of which holds for IAffine2D.
+> https://en.wikipedia.org/wiki/Rigid\_transformation
+
+## Signature
+
+```plato
+interface IRigid2D
+    inherits IAffine2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IAffine2D](iaffine2d.md).
+
+Implemented in this tier by: [Rotation2D](../rotations.types/rotation2d.md), [Frame2D](../transforms.types/frame2d.md), [Pose2D](../transforms.types/pose2d.md), [Translation2D](../transforms.types/translation2d.md), [RotationAbout2D](../transforms.types/rotationabout2d.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.concepts](../transforms.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 107
+### Line 107
 
 **Source:** [stdlib/foundation/transforms.concepts.plato, line 107](../../../../../stdlib/foundation/transforms.concepts.plato#L107).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The offset from a query to its nearest point on one edge, given the edge
+> vector and the vector from that edge's start to the query: the projection
+> parameter clamped to the segment. The shared step of the two patch bodies
+> above, kept apart so neither repeats it three or four times.
+
+## Signature
+
+```plato
+EdgeOffset(edge: Vector3D, toQuery: Vector3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1025
+### Line 1025
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 1025](../../../../../stdlib/geometry/implicit-sdf.library.plato#L1025).
 

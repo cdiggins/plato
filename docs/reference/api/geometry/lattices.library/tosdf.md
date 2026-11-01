@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The struts as a solid: the union of capsules of one radius. Explicit
+> rather than implicit, because it settles the radius and discards the cell
+> and the counts (Convention: see CONVENTIONS.md - Conversions).
+
+## Signature
+
+```plato
+ToSdf(struts: Array<Line3D>, radius: Number): StrutSdf3D
+ToSdf(struts: Array<Line3D>, radii: Array<Number>): GradedStrutSdf3D
+ToSdf(self: StrutLattice3D): StrutSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 577
+### Line 577
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 577](../../../../../stdlib/geometry/lattices.library.plato#L577).
 
@@ -20,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => StrutSdf3D(struts, radius);
 ```
 
-## Line 583
+### Line 583
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 583](../../../../../stdlib/geometry/lattices.library.plato#L583).
 
@@ -31,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => GradedStrutSdf3D(struts, radii);
 ```
 
-## Line 587
+### Line 587
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 587](../../../../../stdlib/geometry/lattices.library.plato#L587).
 

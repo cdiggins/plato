@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Count(xs: IArray2D<$T>): Integer
+Count(xs: IArray3D<$T>): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 500
+### Line 500
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 500](../../../../../legacy/stdlib-legacy/intrinsics.plato#L500).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Count(xs: IArray2D<$T>): Integer;
 ```
 
-## Line 501
+### Line 501
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 501](../../../../../legacy/stdlib-legacy/intrinsics.plato#L501).
 

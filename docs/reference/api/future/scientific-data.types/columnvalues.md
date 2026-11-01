@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The typed values of a table column: exactly one element type, carried by
+> the matching case.
+
+## Signature
+
+```plato
+type ColumnValues
+    = Numbers(Values: Array<Number>)
+    | Integers(Values: Array<Integer>)
+    | Strings(Values: Array<String>)
+    | Booleans(Values: Array<Boolean>)
+    | Instants(Values: Array<Instant>)
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [scientific-data.types](../scientific-data.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/future/scientific-data.types.plato, line 1](../../../../../stdlib/future/scientific-data.types.plato#L1).
 

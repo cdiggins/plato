@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An analytic (Hilbert) representation of a real signal: parallel in-phase
+> and quadrature sample arrays, from which instantaneous amplitude and
+> phase follow.
+> (https://en.wikipedia.org/wiki/Analytic\_signal)
+
+## Signature
+
+```plato
+type AnalyticSignal
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [signals.types](../signals.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 100
+### Line 100
 
 **Source:** [stdlib/future/signals.types.plato, line 100](../../../../../stdlib/future/signals.types.plato#L100).
 

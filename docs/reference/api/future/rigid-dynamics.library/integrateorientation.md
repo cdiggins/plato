@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The orientation after spinning at `angular` radians per second for
+> `seconds`, renormalized. The quaternion rate is half the angular velocity,
+> as a pure quaternion, multiplied onto the current orientation from the left.
+
+## Signature
+
+```plato
+IntegrateOrientation(orientation: Quaternion, angular: Vector3D, seconds: Number): Quaternion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 544](../../../../../stdlib/future/rigid-dynamics.library.plato#L544): winding up. It costs exactly the same arithmetic. There is no case for
+- [Line 550](../../../../../stdlib/future/rigid-dynamics.library.plato#L550): accuracy those methods buy is spent on the smooth part of a simulation whose
+- [Line 555](../../../../../stdlib/future/rigid-dynamics.library.plato#L555): renormalization is what keeps repeated products on the unit sphere.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 528
+### Line 528
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 528](../../../../../stdlib/future/rigid-dynamics.library.plato#L528).
 

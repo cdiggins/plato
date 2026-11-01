@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The butterfly curve over its full 12-pi period:
+>   x = sin u \* f(u), y = cos u \* f(u),
+>   f(u) = exp(cos u) - 2 cos(4u) - sin(u / 12)^5,  u = 6 \* pi \* t.
+> https://en.wikipedia.org/wiki/Butterfly\_curve\_(transcendental)
+
+## Signature
+
+```plato
+ButterflyFactor(u: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.library](../curves-shapes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 204
+### Line 204
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 204](../../../../../stdlib/geometry/curves-shapes.library.plato#L204).
 

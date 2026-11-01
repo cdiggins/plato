@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The order-j modified Bessel function I\_j(x) via the ascending series:
+> (x/2)^j / j! \* sum\_k (x^2/4)^k / (k! (k+j)!), reusing the fixed-60-term
+> `BesselISeriesSum` kernel with the order-j prefactor spelled through
+> `Gamma(j + 1)`. LOCAL to the von Mises CDF below: full double accuracy
+> only for |x| \<= 15 (the series regime of the Bessel bodies); the
+> stable general-purpose route for higher orders is downward recurrence,
+> which this deliberately does not attempt.
+
+## Signature
+
+```plato
+VonMisesBesselI(j: Integer, x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.library](../random.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 594
+### Line 594
 
 **Source:** [stdlib/foundation/random.library.plato, line 594](../../../../../stdlib/foundation/random.library.plato#L594).
 

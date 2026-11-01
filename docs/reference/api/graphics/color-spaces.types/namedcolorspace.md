@@ -3,11 +3,46 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A well-known RGB color space, for when a name is enough and the full
+> RgbColorSpace record is not needed.
+
+## Signature
+
+```plato
+type NamedColorSpace
+    = SRGB
+    | LinearSRGB
+    | DisplayP3
+    | AdobeRGB
+    | ProPhotoRGB
+    | Rec709
+    | Rec2020
+    | ACEScg
+    | ACES2065
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [color-spaces.types](../color-spaces.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 82
+### Line 82
 
 **Source:** [stdlib/graphics/color-spaces.types.plato, line 82](../../../../../stdlib/graphics/color-spaces.types.plato#L82).
 

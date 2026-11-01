@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Ray3D(x: Line3D): Ray3D
+Ray3D(v: Vector3): Ray3D
+Ray3D(x: Ray2D): Ray3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 64
+### Line 64
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 64](../../../../../legacy/stdlib-legacy/geometry.library.plato#L64).
 
@@ -15,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
 	Ray3D(x: Line3D): Ray3D => (x.A, x.Direction.Normalize);
 ```
 
-## Line 71
+### Line 71
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 71](../../../../../legacy/stdlib-legacy/geometry.library.plato#L71).
 
@@ -27,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Ray3D(v: Vector3): Ray3D => (Origin3D, v);
 ```
 
-## Line 210
+### Line 210
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 210](../../../../../legacy/stdlib-legacy/geometry.library.plato#L210).
 

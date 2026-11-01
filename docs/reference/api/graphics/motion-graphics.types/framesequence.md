@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A playable range of frames under a fixed frame rate: the in point is shown
+> first and the out point is exclusive. Both frame times carry Rate.
+> (https://en.wikipedia.org/wiki/Frame\_rate)
+
+## Signature
+
+```plato
+type FrameSequence
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [motion-graphics.types](../motion-graphics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 211
+### Line 211
 
 **Source:** [stdlib/graphics/motion-graphics.types.plato, line 211](../../../../../stdlib/graphics/motion-graphics.types.plato#L211).
 

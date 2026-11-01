@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when collapsing an edge would drag a boundary vertex into the interior
+> or an interior vertex onto the boundary. Refusing those is what keeps an open
+> border where the author put it.
+
+## Signature
+
+```plato
+CrossesBoundary(boundary: Array<Boolean>, pair: VertexPair): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 531
+### Line 531
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 531](../../../../../stdlib/geometry/remeshing.library.plato#L531).
 

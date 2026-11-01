@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> (x^2)' = 2\*x\*x'.
+
+## Signature
+
+```plato
+Square(x: DualNumber): DualNumber
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SuperEllipseExponentOnePerimeterIsDiamond
+
+[stdlib/tests/special-numerics.laws.plato, line 107](../../../../../stdlib/tests/special-numerics.laws.plato#L107)
+
+```plato
+// At Exponent 1 the superellipse is the diamond with vertices on the axes,
+// whose perimeter is exactly 4 sqrt(a^2 + b^2).
+Law_SuperEllipseExponentOnePerimeterIsDiamond(se: SuperEllipse): Boolean
+    => se.SuperEllipseOutOfRegime
+    || SuperEllipse(se.Center, se.SemiAxes, se.Rotation, 1.0).Perimeter
+        .SpecialEq(4.0 * (se.SemiAxes.X.Square + se.SemiAxes.Y.Square).Sqrt);
+```
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 352
+### Line 352
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 352](../../../../../stdlib/foundation/numbers.library.plato#L352).
 

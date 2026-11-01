@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The projector onto the free degrees of freedom, as a per-degree-of-freedom
+> multiplier: 0 where the model prescribes a value and 1 everywhere else.
+> Projection is then `SystemProduct`, and a residual multiplied by it can no
+> longer move a restrained degree of freedom.
+
+## Signature
+
+```plato
+FreeDofMultipliers(dofCount: Integer, constraints: Array<PrescribedDisplacement>): Array<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 163](../../../../../stdlib/future/finite-elements.library.plato#L163): matrix. A constrained degree of freedom is held at its prescribed value and
+- [Line 169](../../../../../stdlib/future/finite-elements.library.plato#L169): model with many constraints costs no more per constraint than one with few.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 158
+### Line 158
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 158](../../../../../stdlib/future/finite-elements.library.plato#L158).
 

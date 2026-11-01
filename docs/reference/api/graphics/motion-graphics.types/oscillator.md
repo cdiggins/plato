@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A periodic scalar signal for procedural animation:
+> Bias + Amplitude \* wave(Frequency \* time + Phase). Phase shifts the waveform;
+> Bias recenters it. (https://en.wikipedia.org/wiki/Oscillation)
+
+## Signature
+
+```plato
+type Oscillator
+    implements IValue, ITimeVarying<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [ITimeVarying](../time-varying.concepts/itimevarying.md).
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [motion-graphics.types](../motion-graphics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 120
+### Line 120
 
 **Source:** [stdlib/graphics/motion-graphics.types.plato, line 120](../../../../../stdlib/graphics/motion-graphics.types.plato#L120).
 

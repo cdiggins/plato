@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The central-difference gradient of a signed distance field, sampled at
+> +/- epsilon on each axis: six evaluations. For an EXACT distance field
+> the normalized result is the outward surface normal; for a field that is
+> only a lower bound it is a direction that leaves the surface, which is
+> all the projection below needs. A field that reports its own gradient
+> (`IDifferentiableSignedDistanceField3D`) should be asked for it instead.
+
+## Signature
+
+```plato
+NumericalGradientAt(self: ISignedDistanceField3D, point: Point3D, epsilon: Number): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 388
+### Line 388
 
 **Source:** [stdlib/future/cloth.library.plato, line 388](../../../../../stdlib/future/cloth.library.plato#L388).
 

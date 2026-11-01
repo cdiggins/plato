@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An octree (https://en.wikipedia.org/wiki/Octree) over a cubic 3D region.
+> Node 0 is the root and covers Bounds; each level splits its cube into eight
+> equal octants, to at most MaxDepth levels below the root. Instances come
+> from BuildOctree (spatial-structures.library.plato) or from a host that
+> emits the same encoding.
+
+## Signature
+
+```plato
+type Octree3D
+    implements IValue, ISpatialIndex3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [ISpatialIndex3D](../spatial.concepts/ispatialindex3d.md).
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.types](../spatial-structures.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 528
+### Line 528
 
 **Source:** [stdlib/geometry/spatial-structures.types.plato, line 528](../../../../../stdlib/geometry/spatial-structures.types.plato#L528).
 

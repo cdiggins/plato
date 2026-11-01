@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The distance from `point` to the segment \[a, b\].
+
+## Signature
+
+```plato
+DistanceToSegment(a: Point2D, b: Point2D, point: Point2D): Number
+DistanceToSegment(a: Point3D, b: Point3D, point: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 511
+### Line 511
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 511](../../../../../stdlib/geometry/geometry.library.plato#L511).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ClosestPointOnSegment(a, b, point).Between(point).Magnitude;
 ```
 
-## Line 515
+### Line 515
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 515](../../../../../stdlib/geometry/geometry.library.plato#L515).
 

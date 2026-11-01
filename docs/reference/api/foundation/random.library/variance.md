@@ -3,11 +3,57 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The variance of a uniform variable: (Max - Min)^2 / 12.
+
+## Signature
+
+```plato
+Variance(self: UniformDistribution): Number
+Variance(self: NormalDistribution): Number
+Variance(self: LogNormalDistribution): Number
+Variance(self: ExponentialDistribution): Number
+Variance(self: GammaDistribution): Number
+Variance(self: BetaDistribution): Number
+Variance(self: ChiSquaredDistribution): Number
+Variance(self: StudentTDistribution): Number
+Variance(self: CauchyDistribution): Number
+Variance(self: LaplaceDistribution): Number
+Variance(self: WeibullDistribution): Number
+Variance(self: ParetoDistribution): Number
+Variance(self: TriangularDistribution): Number
+Variance(self: VonMisesDistribution): Number
+Variance(self: BernoulliDistribution): Number
+Variance(self: BinomialDistribution): Number
+Variance(self: GeometricDistribution): Number
+Variance(self: PoissonDistribution): Number
+Variance(self: DiscreteDistribution): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 153](../../../../../stdlib/foundation/random.library.plato#L153): NOT sigma squared. Precondition: StandardDeviation > 0. `Mean` is already
+
+## Used by
+
+- [Summarize a sample](../../../cookbook/sample-statistics.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Statistics, covariance and fitted models](../../../library/foundation/statistics.md)
+
+## Source
+
 **File:** [random.library](../random.library.md). Kind: function. 19 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 133
+### Line 133
 
 **Source:** [stdlib/foundation/random.library.plato, line 133](../../../../../stdlib/foundation/random.library.plato#L133).
 
@@ -18,7 +64,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Max - self.Min).Square / 12.0;
 ```
 
-## Line 148
+### Line 148
 
 **Source:** [stdlib/foundation/random.library.plato, line 148](../../../../../stdlib/foundation/random.library.plato#L148).
 
@@ -37,7 +83,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.StandardDeviation.Square;
 ```
 
-## Line 183
+### Line 183
 
 **Source:** [stdlib/foundation/random.library.plato, line 183](../../../../../stdlib/foundation/random.library.plato#L183).
 
@@ -50,7 +96,7 @@ Copied from source, comments included. A comment records intent. The body is the
          * (2.0 * self.LogMean + self.LogStandardDeviation.Square).Exp;
 ```
 
-## Line 215
+### Line 215
 
 **Source:** [stdlib/foundation/random.library.plato, line 215](../../../../../stdlib/foundation/random.library.plato#L215).
 
@@ -61,7 +107,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 1.0 / self.Rate.Square;
 ```
 
-## Line 256
+### Line 256
 
 **Source:** [stdlib/foundation/random.library.plato, line 256](../../../../../stdlib/foundation/random.library.plato#L256).
 
@@ -72,7 +118,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Shape * self.Scale.Square;
 ```
 
-## Line 287
+### Line 287
 
 **Source:** [stdlib/foundation/random.library.plato, line 287](../../../../../stdlib/foundation/random.library.plato#L287).
 
@@ -84,7 +130,7 @@ Copied from source, comments included. A comment records intent. The body is the
          / ((self.Alpha + self.Beta).Square * (self.Alpha + self.Beta + 1.0));
 ```
 
-## Line 321
+### Line 321
 
 **Source:** [stdlib/foundation/random.library.plato, line 321](../../../../../stdlib/foundation/random.library.plato#L321).
 
@@ -95,7 +141,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 2.0 * self.DegreesOfFreedom;
 ```
 
-## Line 356
+### Line 356
 
 **Source:** [stdlib/foundation/random.library.plato, line 356](../../../../../stdlib/foundation/random.library.plato#L356).
 
@@ -107,7 +153,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.DegreesOfFreedom / (self.DegreesOfFreedom - 2.0);
 ```
 
-## Line 408
+### Line 408
 
 **Source:** [stdlib/foundation/random.library.plato, line 408](../../../../../stdlib/foundation/random.library.plato#L408).
 
@@ -124,7 +170,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 1.0 / 0.0;
 ```
 
-## Line 441
+### Line 441
 
 **Source:** [stdlib/foundation/random.library.plato, line 441](../../../../../stdlib/foundation/random.library.plato#L441).
 
@@ -135,7 +181,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 2.0 * self.Scale.Square;
 ```
 
-## Line 468
+### Line 468
 
 **Source:** [stdlib/foundation/random.library.plato, line 468](../../../../../stdlib/foundation/random.library.plato#L468).
 
@@ -147,7 +193,7 @@ Copied from source, comments included. A comment records intent. The body is the
          * (Gamma(1.0 + 2.0 / self.Shape) - Gamma(1.0 + 1.0 / self.Shape).Square);
 ```
 
-## Line 502
+### Line 502
 
 **Source:** [stdlib/foundation/random.library.plato, line 502](../../../../../stdlib/foundation/random.library.plato#L502).
 
@@ -160,7 +206,7 @@ Copied from source, comments included. A comment records intent. The body is the
          / ((self.Shape - 1.0).Square * (self.Shape - 2.0));
 ```
 
-## Line 534
+### Line 534
 
 **Source:** [stdlib/foundation/random.library.plato, line 534](../../../../../stdlib/foundation/random.library.plato#L534).
 
@@ -173,7 +219,7 @@ Copied from source, comments included. A comment records intent. The body is the
          / 18.0;
 ```
 
-## Line 580
+### Line 580
 
 **Source:** [stdlib/foundation/random.library.plato, line 580](../../../../../stdlib/foundation/random.library.plato#L580).
 
@@ -186,7 +232,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 1.0 - BesselI1(self.Concentration) / BesselI0(self.Concentration);
 ```
 
-## Line 655
+### Line 655
 
 **Source:** [stdlib/foundation/random.library.plato, line 655](../../../../../stdlib/foundation/random.library.plato#L655).
 
@@ -197,7 +243,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.SuccessProbability.Value * (1.0 - self.SuccessProbability.Value);
 ```
 
-## Line 687
+### Line 687
 
 **Source:** [stdlib/foundation/random.library.plato, line 687](../../../../../stdlib/foundation/random.library.plato#L687).
 
@@ -209,7 +255,7 @@ Copied from source, comments included. A comment records intent. The body is the
          * (1.0 - self.SuccessProbability.Value);
 ```
 
-## Line 735
+### Line 735
 
 **Source:** [stdlib/foundation/random.library.plato, line 735](../../../../../stdlib/foundation/random.library.plato#L735).
 
@@ -221,7 +267,7 @@ Copied from source, comments included. A comment records intent. The body is the
          / self.SuccessProbability.Value.Square;
 ```
 
-## Line 767
+### Line 767
 
 **Source:** [stdlib/foundation/random.library.plato, line 767](../../../../../stdlib/foundation/random.library.plato#L767).
 
@@ -232,7 +278,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Rate;
 ```
 
-## Line 815
+### Line 815
 
 **Source:** [stdlib/foundation/random.library.plato, line 815](../../../../../stdlib/foundation/random.library.plato#L815).
 

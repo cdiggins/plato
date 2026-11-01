@@ -3,11 +3,31 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Points(t: Triangle2D): IArray<Point2D>
+Points(x: Rect2D): IArray<Point2D>
+Points(q: Quad2D): IArray<Point2D>
+Points(q: Quad3D): IArray<Point3D>
+Points(x: RegularPolygon): IArray<Point2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 90
+### Line 90
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 90](../../../../../legacy/stdlib-legacy/geometry.library.plato#L90).
 
@@ -15,7 +35,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Points(t: Triangle2D): IArray<Point2D> => t.Components;
 ```
 
-## Line 121
+### Line 121
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 121](../../../../../legacy/stdlib-legacy/geometry.library.plato#L121).
 
@@ -23,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Points(x: Rect2D): IArray<Point2D> => x.Quad2D.Points;
 ```
 
-## Line 135
+### Line 135
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 135](../../../../../legacy/stdlib-legacy/geometry.library.plato#L135).
 
@@ -31,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Points(q: Quad2D): IArray<Point2D> => q.Components;
 ```
 
-## Line 148
+### Line 148
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 148](../../../../../legacy/stdlib-legacy/geometry.library.plato#L148).
 
@@ -39,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Points(q: Quad3D): IArray<Point3D> => q.Components;
 ```
 
-## Line 190
+### Line 190
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 190](../../../../../legacy/stdlib-legacy/geometry.library.plato#L190).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The twenty-four struts joining each face center (indices 8-13) to the four
+> corners of its own face. Shared by the face-centered cubic and octet cells.
+
+## Signature
+
+```plato
+FaceDiagonalStruts(_: LatticeUnitCell): Array<LatticeStrut>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 115
+### Line 115
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 115](../../../../../stdlib/geometry/lattices.library.plato#L115).
 

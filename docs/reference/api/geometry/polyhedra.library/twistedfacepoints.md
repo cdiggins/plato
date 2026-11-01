@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every corner's moved vertex, in corner order: the vertex table shared by
+> expand and snub. The corner numbering therefore IS the result's vertex
+> numbering, and no lookup table is built.
+
+## Signature
+
+```plato
+TwistedFacePoints(self: PolygonMesh3D, shrink: Number, twist: Angle): Array<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 406
+### Line 406
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 406](../../../../../stdlib/geometry/polyhedra.library.plato#L406).
 

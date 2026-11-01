@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The two principal curvatures of a surface at a point (reciprocal world units,
+> Minimum \<= Maximum) and their orthogonal unit directions in the tangent plane.
+> (https://en.wikipedia.org/wiki/Principal\_curvature)
+
+## Signature
+
+```plato
+type PrincipalCurvatures
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [differential-geometry.types](../differential-geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 201
+### Line 201
 
 **Source:** [stdlib/geometry/differential-geometry.types.plato, line 201](../../../../../stdlib/geometry/differential-geometry.types.plato#L201).
 

@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Multiply(a: Point2D, n: Number): Point2D
+Multiply(a: Point2D, v: Vector2): Point2D
+Multiply(a: Point3D, n: Number): Point3D
+Multiply(a: Point3D, v: Vector3): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 19
+### Line 19
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 19](../../../../../legacy/stdlib-legacy/geometry.library.plato#L19).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(a: Point2D, n: Number): Point2D => (a.X * n, a.Y * n);
 ```
 
-## Line 21
+### Line 21
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 21](../../../../../legacy/stdlib-legacy/geometry.library.plato#L21).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(a: Point2D, v: Vector2): Point2D => a.Vector2 * v;
 ```
 
-## Line 38
+### Line 38
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 38](../../../../../legacy/stdlib-legacy/geometry.library.plato#L38).
 
@@ -31,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(a: Point3D, n: Number): Point3D => (a.X * n, a.Y * n, a.Z * n);
 ```
 
-## Line 40
+### Line 40
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 40](../../../../../legacy/stdlib-legacy/geometry.library.plato#L40).
 

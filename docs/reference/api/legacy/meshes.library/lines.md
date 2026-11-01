@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Lines(x: Triangle2D): IArray<Line2D>
+Lines(x: Triangle3D): IArray<Line3D>
+Lines(x: Quad2D): IArray<Line2D>
+Lines(x: Quad3D): IArray<Line3D>
+Lines(xs: Lines3D): IArray<Line3D>
+Lines(xs: Triangles3D): IArray<Line3D>
+Lines(xs: Quads3D): IArray<Line3D>
+Lines(xs: PolyLine3D): IArray<Line3D>
+Lines(self: LineMesh3D): IArray<Line3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 9 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 27
+### Line 27
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 27](../../../../../legacy/stdlib-legacy/meshes.library.plato#L27).
 
@@ -16,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Lines(x: Triangle2D): IArray<Line2D> => [x.LineA, x.LineB, x.LineC];
 ```
 
-## Line 29
+### Line 29
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 29](../../../../../legacy/stdlib-legacy/meshes.library.plato#L29).
 
@@ -24,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Lines(x: Triangle3D): IArray<Line3D> => [x.LineA, x.LineB, x.LineC];
 ```
 
-## Line 30
+### Line 30
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 30](../../../../../legacy/stdlib-legacy/meshes.library.plato#L30).
 
@@ -32,7 +56,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Lines(x: Quad2D): IArray<Line2D> => [x.LineA, x.LineB, x.LineC, x.LineD];
 ```
 
-## Line 31
+### Line 31
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 31](../../../../../legacy/stdlib-legacy/meshes.library.plato#L31).
 
@@ -40,7 +64,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Lines(x: Quad3D): IArray<Line3D> => [x.LineA, x.LineB, x.LineC, x.LineD];
 ```
 
-## Line 32
+### Line 32
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 32](../../../../../legacy/stdlib-legacy/meshes.library.plato#L32).
 
@@ -48,7 +72,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Lines(xs: Lines3D): IArray<Line3D> => xs.Primitives;
 ```
 
-## Line 33
+### Line 33
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 33](../../../../../legacy/stdlib-legacy/meshes.library.plato#L33).
 
@@ -56,7 +80,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Lines(xs: Triangles3D): IArray<Line3D> => xs.Triangles.FlatMap(x => x.Lines);
 ```
 
-## Line 34
+### Line 34
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 34](../../../../../legacy/stdlib-legacy/meshes.library.plato#L34).
 
@@ -64,7 +88,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Lines(xs: Quads3D): IArray<Line3D> => xs.Quads.FlatMap(x => x.Lines);
 ```
 
-## Line 35
+### Line 35
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 35](../../../../../legacy/stdlib-legacy/meshes.library.plato#L35).
 
@@ -72,7 +96,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Lines(xs: PolyLine3D): IArray<Line3D> => xs.Points.WithNext((a, b) => new Line3D(a, b), xs.Closed);  
 ```
 
-## Line 36
+### Line 36
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 36](../../../../../legacy/stdlib-legacy/meshes.library.plato#L36).
 

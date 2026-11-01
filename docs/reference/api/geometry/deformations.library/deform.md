@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> # Apply lifts
+>
+> Bridge Deformation\* into the existing Deformable\* seam and point sugar.
+> Weighted forms take a scalar field; weight 0 is identity, 1 is full warp.
+> Apply a planar deformation to deformable geometry.
+
+## Signature
+
+```plato
+Deform(self: IDeformable2D, d: IDeformation2D): Self
+Deform(self: IDeformable3D, d: IDeformation3D): Self
+Deform(p: Point2D, d: IDeformation2D): Point2D
+Deform(p: Point3D, d: IDeformation3D): Point3D
+Deform(self: IDeformable2D, d: IDeformation2D, weight: IScalarField2D): Self
+Deform(self: IDeformable3D, d: IDeformation3D, weight: IScalarField3D): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [deformations.library](../deformations.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 137
+### Line 137
 
 **Source:** [stdlib/geometry/deformations.library.plato, line 137](../../../../../stdlib/geometry/deformations.library.plato#L137).
 
@@ -23,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => d.Eval(p));
 ```
 
-## Line 146
+### Line 146
 
 **Source:** [stdlib/geometry/deformations.library.plato, line 146](../../../../../stdlib/geometry/deformations.library.plato#L146).
 
@@ -34,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => d.Eval(p));
 ```
 
-## Line 150
+### Line 150
 
 **Source:** [stdlib/geometry/deformations.library.plato, line 150](../../../../../stdlib/geometry/deformations.library.plato#L150).
 
@@ -45,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => d.Eval(p);
 ```
 
-## Line 154
+### Line 154
 
 **Source:** [stdlib/geometry/deformations.library.plato, line 154](../../../../../stdlib/geometry/deformations.library.plato#L154).
 
@@ -56,7 +85,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => d.Eval(p);
 ```
 
-## Line 158
+### Line 158
 
 **Source:** [stdlib/geometry/deformations.library.plato, line 158](../../../../../stdlib/geometry/deformations.library.plato#L158).
 
@@ -67,7 +96,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Lerp(d.Eval(p), weight.Eval(p)));
 ```
 
-## Line 162
+### Line 162
 
 **Source:** [stdlib/geometry/deformations.library.plato, line 162](../../../../../stdlib/geometry/deformations.library.plato#L162).
 

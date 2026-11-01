@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The same plane facing the other way: both Normal and Distance negated, so the
+> point set Dot(Normal, p) = Distance is unchanged while its front side flips.
+> The teachable one-liner that keeps the two fields in step.
+
+## Signature
+
+```plato
+Flip(pl: Plane): Plane
+Flip(h: HalfSpace): HalfSpace
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 281
+### Line 281
 
 **Source:** [stdlib/geometry/lines.library.plato, line 281](../../../../../stdlib/geometry/lines.library.plato#L281).
 
@@ -20,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Direction3D(pl.Normal.Vector * -1.0), -pl.Distance);
 ```
 
-## Line 287
+### Line 287
 
 **Source:** [stdlib/geometry/lines.library.plato, line 287](../../../../../stdlib/geometry/lines.library.plato#L287).
 

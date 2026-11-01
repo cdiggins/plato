@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Two rows.
+
+## Signature
+
+```plato
+RowCount(self: Matrix2x2): Integer
+RowCount(self: Matrix3x3): Integer
+RowCount(self: Matrix4x4): Integer
+RowCount(self: Matrix3x2): Integer
+RowCount(self: Matrix4x3): Integer
+RowCount(self: MatrixN): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 230](../../../../../stdlib/foundation/matrices.library.plato#L230): result shape from the left operand. Precondition on Add and Subtract: both
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices.library](../matrices.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 1](../../../../../stdlib/foundation/matrices.library.plato#L1).
 
@@ -48,7 +79,7 @@ library Matrices
     RowCount(self: Matrix2x2): Integer => 2;
 ```
 
-## Line 77
+### Line 77
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 77](../../../../../stdlib/foundation/matrices.library.plato#L77).
 
@@ -61,7 +92,7 @@ library Matrices
     RowCount(self: Matrix3x3): Integer => 3;
 ```
 
-## Line 121
+### Line 121
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 121](../../../../../stdlib/foundation/matrices.library.plato#L121).
 
@@ -77,7 +108,7 @@ library Matrices
     RowCount(self: Matrix4x4): Integer => 4;
 ```
 
-## Line 153
+### Line 153
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 153](../../../../../stdlib/foundation/matrices.library.plato#L153).
 
@@ -93,7 +124,7 @@ library Matrices
     RowCount(self: Matrix3x2): Integer => 3;
 ```
 
-## Line 180
+### Line 180
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 180](../../../../../stdlib/foundation/matrices.library.plato#L180).
 
@@ -106,7 +137,7 @@ library Matrices
     RowCount(self: Matrix4x3): Integer => 4;
 ```
 
-## Line 225
+### Line 225
 
 **Source:** [stdlib/foundation/matrices.library.plato, line 225](../../../../../stdlib/foundation/matrices.library.plato#L225).
 

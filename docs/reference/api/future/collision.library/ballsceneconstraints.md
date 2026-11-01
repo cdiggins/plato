@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The constraint rows for the next step of a ball scene: detect, flatten, and
+> carry last step's accumulated impulses across. This is the whole per-frame
+> narrow phase of such a scene, and the result is what a caller puts in
+> `RigidWorld3D.Constraints` before stepping.
+
+## Signature
+
+```plato
+BallSceneConstraints(world: RigidWorld3D, radii: Array<Number>, ground: Plane,
+    groundBody: BodyIndex, friction: Number, restitution: Proportion,
+    matchTolerance: Length): Array<ContactConstraint3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 413
+### Line 413
 
 **Source:** [stdlib/future/collision.library.plato, line 413](../../../../../stdlib/future/collision.library.plato#L413).
 

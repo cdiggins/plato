@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How texture coordinates outside \[0, 1\] are handled along one axis.
+
+## Signature
+
+```plato
+type WrapMode
+    = Repeat | ClampToEdge | MirroredRepeat | ClampToBorder | MirrorClampToEdge
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [texturing.types](../texturing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 120
+### Line 120
 
 **Source:** [stdlib/graphics/texturing.types.plato, line 120](../../../../../stdlib/graphics/texturing.types.plato#L120).
 

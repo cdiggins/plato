@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The rectangle grown by `amount` on every side (the Minkowski sum with a
+> square of half-width `amount`; https://en.wikipedia.org/wiki/Minkowski\_addition).
+
+## Signature
+
+```plato
+GrowBounds(b: Bounds2D, amount: Number): Bounds2D
+GrowBounds(b: Bounds3D, amount: Number): Bounds3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 420
+### Line 420
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 420](../../../../../stdlib/geometry/geometry.library.plato#L420).
 
@@ -20,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Point2D(b.Max.X + amount, b.Max.Y + amount));
 ```
 
-## Line 426
+### Line 426
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 426](../../../../../stdlib/geometry/geometry.library.plato#L426).
 

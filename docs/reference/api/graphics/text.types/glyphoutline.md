@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A glyph converted to vector geometry: its outline as a path (already
+> scaled to the em size in use) and its advance.
+
+## Signature
+
+```plato
+type GlyphOutline
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [text.types](../text.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 111
+### Line 111
 
 **Source:** [stdlib/graphics/text.types.plato, line 111](../../../../../stdlib/graphics/text.types.plato#L111).
 

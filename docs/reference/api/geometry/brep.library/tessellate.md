@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The face's surface sampled on a (resolution + 1)^2 UV grid, two
+> triangles per cell. Precondition: resolution >= 1. Vertices are not
+> welded across faces; per-shell welding is future work.
+
+## Signature
+
+```plato
+Tessellate(f: BrepFace, resolution: Integer): TriangleMesh3D
+Tessellate(b: Brep3D, resolution: Integer): Array<TriangleMesh3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [brep.library](../brep.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 292
+### Line 292
 
 **Source:** [stdlib/geometry/brep.library.plato, line 292](../../../../../stdlib/geometry/brep.library.plato#L292).
 
@@ -29,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 307
+### Line 307
 
 **Source:** [stdlib/geometry/brep.library.plato, line 307](../../../../../stdlib/geometry/brep.library.plato#L307).
 

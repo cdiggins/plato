@@ -3,11 +3,43 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The effective mass along `direction` for an impulse applied at `anchorA` on A
+> and at `anchorB` on B: the scalar that turns an impulse magnitude into the
+> relative speed change it buys, so the impulse needed for a wanted speed
+> change is that change divided by this. Made of the two inverse masses plus
+> what each body's rotation contributes through its own lever arm.
+> Precondition: `direction` is unit.
+>
+> The two anchors are separate because a JOINT holds two points that are
+> supposed to coincide and generally do not; a CONTACT is the special case
+> where both are the contact point.
+
+## Signature
+
+```plato
+DirectionalMass(a: SolverBody3D, b: SolverBody3D, anchorA: Point3D, anchorB: Point3D,
+    direction: Vector3D): Number
+
+DirectionalMass(a: SolverBody3D, b: SolverBody3D, point: Point3D, direction: Vector3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 407
+### Line 407
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 407](../../../../../stdlib/future/rigid-dynamics.library.plato#L407).
 
@@ -34,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 427
+### Line 427
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 427](../../../../../stdlib/future/rigid-dynamics.library.plato#L427).
 

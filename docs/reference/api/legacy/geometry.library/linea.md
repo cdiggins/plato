@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+LineA(t: Triangle2D): Line2D
+LineA(t: Triangle3D): Line3D
+LineA(q: Quad2D): Line2D
+LineA(q: Quad3D): Line3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 87
+### Line 87
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 87](../../../../../legacy/stdlib-legacy/geometry.library.plato#L87).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     LineA(t: Triangle2D): Line2D => (t.A, t.B);        
 ```
 
-## Line 101
+### Line 101
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 101](../../../../../legacy/stdlib-legacy/geometry.library.plato#L101).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     LineA(t: Triangle3D): Line3D => (t.A, t.B);        
 ```
 
-## Line 128
+### Line 128
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 128](../../../../../legacy/stdlib-legacy/geometry.library.plato#L128).
 
@@ -31,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     LineA(q: Quad2D): Line2D => (q.A, q.B);        
 ```
 
-## Line 142
+### Line 142
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 142](../../../../../legacy/stdlib-legacy/geometry.library.plato#L142).
 

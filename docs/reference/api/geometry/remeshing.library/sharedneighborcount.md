@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How many vertices neighbour BOTH ends of an edge.
+
+## Signature
+
+```plato
+SharedNeighborCount(neighbors: Array<Array<VertexIndex>>, pair: VertexPair): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 446
+### Line 446
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 446](../../../../../stdlib/geometry/remeshing.library.plato#L446).
 

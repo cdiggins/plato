@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A rectangular region of interest within an image, in pixel coordinates.
+> Contains Min, excludes Max (half-open, like IntegerBounds2D).
+> (https://en.wikipedia.org/wiki/Region\_of\_interest)
+
+## Signature
+
+```plato
+type ImageRegion
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [images.types](../images.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 172
+### Line 172
 
 **Source:** [stdlib/graphics/images.types.plato, line 172](../../../../../stdlib/graphics/images.types.plato#L172).
 

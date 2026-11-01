@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The solver's view of an authored body, with its shape's principal moments
+> supplied by the caller (from `PrincipalMoments`) and its principal
+> orientation folded into the pose. A static or kinematic body loses both
+> inverses, which is the whole of how the solver knows not to move it.
+
+## Signature
+
+```plato
+SolverBody(body: RigidBody3D, principalMoments: Vector3D): SolverBody3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 444
+### Line 444
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 444](../../../../../stdlib/future/rigid-dynamics.library.plato#L444).
 

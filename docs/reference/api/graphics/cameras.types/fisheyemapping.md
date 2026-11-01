@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The radial mapping of a fisheye lens: how the angle from the optical axis
+> maps to distance from the image center. Stereographic is the same projection
+> used on the sphere (https://en.wikipedia.org/wiki/Stereographic\_projection).
+
+## Signature
+
+```plato
+type FisheyeMapping = Equidistant | EquisolidAngle | Orthographic | Stereographic
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [cameras.types](../cameras.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 72
+### Line 72
 
 **Source:** [stdlib/graphics/cameras.types.plato, line 72](../../../../../stdlib/graphics/cameras.types.plato#L72).
 

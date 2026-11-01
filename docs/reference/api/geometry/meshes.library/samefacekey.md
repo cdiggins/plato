@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when two faces have the same corner set.
+
+## Signature
+
+```plato
+SameFaceKey(a: TriangleFace, b: TriangleFace): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 927
+### Line 927
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 927](../../../../../stdlib/geometry/meshes.library.plato#L927).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The population variance implied by the stored sample variance:
+> s^2 \* (n - 1) / n. Precondition: Count > 0.
+> https://en.wikipedia.org/wiki/Bessel%27s\_correction
+
+## Signature
+
+```plato
+PopulationVariance(self: SummaryStatistics): Number
+PopulationVariance(self: RunningStatistics): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Summarize a sample](../../../cookbook/sample-statistics.md)
+- [Statistics, covariance and fitted models](../../../library/foundation/statistics.md)
+
+## Source
+
 **File:** [statistics.library](../statistics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 112
+### Line 112
 
 **Source:** [stdlib/foundation/statistics.library.plato, line 112](../../../../../stdlib/foundation/statistics.library.plato#L112).
 
@@ -20,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Variance * (self.Count - 1).ToNumber / self.Count.ToNumber;
 ```
 
-## Line 130
+### Line 130
 
 **Source:** [stdlib/foundation/statistics.library.plato, line 130](../../../../../stdlib/foundation/statistics.library.plato#L130).
 

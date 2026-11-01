@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A sphere fitted to points in space, with its residual statistics. Residuals
+> are radial, as for CircleFit2D.
+
+## Signature
+
+```plato
+type SphereFit3D
+    implements IValue, IFitted
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IFitted](../geometry.concepts/ifitted.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.types](../geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 71
+### Line 71
 
 **Source:** [stdlib/geometry/geometry.types.plato, line 71](../../../../../stdlib/geometry/geometry.types.plato#L71).
 

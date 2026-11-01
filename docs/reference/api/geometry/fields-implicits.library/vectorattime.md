@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The vector at the point at a given instant; a readable spelling of
+> EvalAtTime.
+
+## Signature
+
+```plato
+VectorAtTime(self: ITimeVaryingVectorField2D, point: Point2D, time: Instant): Vector2D
+VectorAtTime(self: ITimeVaryingVectorField3D, point: Point3D, time: Instant): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1112
+### Line 1112
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1112](../../../../../stdlib/geometry/fields-implicits.library.plato#L1112).
 
@@ -25,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.EvalAtTime(point, time);
 ```
 
-## Line 1291
+### Line 1291
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1291](../../../../../stdlib/geometry/fields-implicits.library.plato#L1291).
 

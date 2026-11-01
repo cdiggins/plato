@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A triangular prism: the Base triangle swept by Offset. Offset need not be
+> perpendicular to the base (an oblique wedge).
+> NOT Deformable3D: the sweep VECTOR has no principled image under a point
+> mapping (see Prism3D in `polygons.types.plato`).
+> (https://en.wikipedia.org/wiki/Wedge\_(geometry))
+
+## Signature
+
+```plato
+type Wedge
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IVolume, IBounded3D, ICentroid3D, IContainsPoint3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IVolume](../geometry.concepts/ivolume.md), [IBounded3D](../geometry.concepts/ibounded3d.md), [ICentroid3D](../geometry.concepts/icentroid3d.md), [IContainsPoint3D](../geometry.concepts/icontainspoint3d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.types](../spatial-primitives.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 173
+### Line 173
 
 **Source:** [stdlib/geometry/spatial-primitives.types.plato, line 173](../../../../../stdlib/geometry/spatial-primitives.types.plato#L173).
 

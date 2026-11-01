@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The total weight; the normalizing constant for every other body here.
+
+## Signature
+
+```plato
+TotalWeight(self: DiscreteDistribution): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 801](../../../../../stdlib/foundation/random.library.plato#L801): normalized. Pdf reads the mass at the value rounded down. Precondition:
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.library](../random.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 795
+### Line 795
 
 **Source:** [stdlib/foundation/random.library.plato, line 795](../../../../../stdlib/foundation/random.library.plato#L795).
 

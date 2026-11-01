@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The cotangent Laplacian at a vertex: the weighted average offset to its
+> neighbours. Obtuse triangles give negative weights, so the normalizing sum
+> can vanish; that vertex then does not move.
+
+## Signature
+
+```plato
+CotangentLaplacian(self: TriangleMesh3D, topology: TriangleMeshTopology, weights: Array<Number>, v: Integer): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1171
+### Line 1171
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1171](../../../../../stdlib/geometry/remeshing.library.plato#L1171).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The k-th face of a tetrahedron (k in 0..3), wound so its normal points OUT
+> of a positively oriented cell.
+
+## Signature
+
+```plato
+TetrahedronFace(cell: TetrahedronCell, k: Integer): TriangleFace
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 900](../../../../../stdlib/geometry/meshes.library.plato#L900): faces belonging to exactly ONE cell. An interior face is shared by two
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 895
+### Line 895
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 895](../../../../../stdlib/geometry/meshes.library.plato#L895).
 

@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Rose\_(mathematics)
+> r = cos(k\*theta)
+
+## Signature
+
+```plato
+Rose(t: Angle, k: Number): Number
+
+type Rose
+    implements IPolarCurve, IClosedShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IPolarCurve](ipolarcurve.md), [IClosedShape](../geometry.interfaces/iclosedshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 347
+### Line 347
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 347](../../../../../legacy/stdlib-legacy/curves.plato#L347).
 
@@ -19,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (t * k).Cos;
 ```
 
-## Line 429
+### Line 429
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 429](../../../../../legacy/stdlib-legacy/curves.plato#L429).
 

@@ -3,11 +3,79 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Builds an octree over a point set: the root is the smallest cube
+> containing the points, an overfull node partitions its range into the
+> eight octants around its center (stably, so source order survives within
+> an octant), and splitting stops at maxDepth (clamped to at least 0) or
+> when a range fits maxLeafSize (clamped to at least 1). Every internal
+> node carries all eight children, empty octants as empty leaves; items
+> land only in leaves. The depth cap is what guarantees termination when
+> coincident points cannot be separated.
+
+## Signature
+
+```plato
+BuildOctree(points: Array<Point3D>, maxDepth: Integer, maxLeafSize: Integer): Octree3D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_OctreePermutationIsComplete
+
+[stdlib/tests/spatial-structures.laws.plato, line 79](../../../../../stdlib/tests/spatial-structures.laws.plato#L79)
+
+```plato
+// The permutation names every point exactly once.
+Law_OctreePermutationIsComplete(points: Array<Point3D>): Boolean
+    => points.BuildOctree(8, 4).ItemIndices.IsItemPermutation(points.Count);
+```
+
+### Law_OctreeLeavesPartitionThePermutation
+
+[stdlib/tests/spatial-structures.laws.plato, line 83](../../../../../stdlib/tests/spatial-structures.laws.plato#L83)
+
+```plato
+// The leaves partition the permutation; internal ranges are empty.
+Law_OctreeLeavesPartitionThePermutation(points: Array<Point3D>): Boolean
+    => points.BuildOctree(8, 4).Nodes.LeavesPartition(
+        points.Count, n => n.FirstChild.Value < 0, n2 => n2.Items);
+```
+
+### Law_OctreeChildrenAreConsecutiveAndPresent
+
+[stdlib/tests/spatial-structures.laws.plato, line 88](../../../../../stdlib/tests/spatial-structures.laws.plato#L88)
+
+```plato
+// Every internal node's eight children exist in the node array.
+Law_OctreeChildrenAreConsecutiveAndPresent(points: Array<Point3D>): Boolean
+{
+    var tree = points.BuildOctree(8, 4);
+    return tree.Nodes.All(n => n.FirstChild.Value < 0
+        || (n.FirstChild.Value > 0 && n.FirstChild.Value + 8 <= tree.Nodes.Count));
+}
+```
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 963](../../../../../stdlib/geometry/spatial-structures.library.plato#L963): The union with the exact extents absorbs the floating-point dust the
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 933
+### Line 933
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 933](../../../../../stdlib/geometry/spatial-structures.library.plato#L933).
 

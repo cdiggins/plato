@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The quaternion of an axis-angle rotation.
+> https://en.wikipedia.org/wiki/Axis%E2%80%93angle\_representation
+
+## Signature
+
+```plato
+Quaternion(aa: AxisAngle): Quaternion
+Quaternion(e: EulerAngles): Quaternion
+Quaternion(r: Rotor3D): Quaternion
+Quaternion(m: Matrix4x4): Quaternion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1218
+### Line 1218
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1218](../../../../../stdlib/foundation/transforms.library.plato#L1218).
 
@@ -19,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Quaternion.CreateFromAxisAngle(aa.Axis.Vector, aa.Angle);
 ```
 
-## Line 1249
+### Line 1249
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1249](../../../../../stdlib/foundation/transforms.library.plato#L1249).
 
@@ -34,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Quaternion.CreateRotationZ(e.Roll));
 ```
 
-## Line 1269
+### Line 1269
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1269](../../../../../stdlib/foundation/transforms.library.plato#L1269).
 
@@ -47,7 +72,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (r.Bivector.YZ, r.Bivector.ZX, r.Bivector.XY, r.Scalar);
 ```
 
-## Line 1346
+### Line 1346
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1346](../../../../../stdlib/foundation/transforms.library.plato#L1346).
 

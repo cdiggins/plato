@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The capability marker for boundary-representation solids: an exact shell of
+> vertices, curve-carrying undirected edges, and surface-carrying faces bounded
+> by oriented edge-uses. Implementations stay resolution-independent until
+> explicitly tessellated.
+
+## Signature
+
+```plato
+interface IBoundaryRepresentation
+    inherits ISolid
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ISolid](../surfaces-solids.concepts/isolid.md).
+
+Implemented in this tier by: [Brep3D](../brep.types/brep3d.md).
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [brep.concepts](../brep.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/brep.concepts.plato, line 1](../../../../../stdlib/geometry/brep.concepts.plato#L1).
 

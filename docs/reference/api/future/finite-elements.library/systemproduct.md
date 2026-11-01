@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The component-wise product of two system vectors. This one function is
+> both the diagonal preconditioner and the projection onto the free degrees
+> of freedom, because both are diagonal operators.
+
+## Signature
+
+```plato
+SystemProduct(a: Array<Number>, b: Array<Number>): Array<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 65
+### Line 65
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 65](../../../../../stdlib/future/finite-elements.library.plato#L65).
 

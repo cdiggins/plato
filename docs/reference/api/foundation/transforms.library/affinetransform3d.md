@@ -3,11 +3,45 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The affine part of a homogeneous matrix. Precondition: the matrix has no
+> projective component (its fourth column is 0, 0, 0, 1).
+
+## Signature
+
+```plato
+AffineTransform3D(m: Matrix4x4): AffineTransform3D
+AffineTransform3D(t: TrsTransform3D): AffineTransform3D
+AffineTransform3D(pose: Pose3D): AffineTransform3D
+AffineTransform3D(q: Quaternion): AffineTransform3D
+AffineTransform3D(t: Translation3D): AffineTransform3D
+AffineTransform3D(s: Scaling3D): AffineTransform3D
+AffineTransform3D(s: UniformScaling3D): AffineTransform3D
+AffineTransform3D(r: Reflection3D): AffineTransform3D
+AffineTransform3D(r: RotationAbout3D): AffineTransform3D
+AffineTransform3D(s: ScalingAbout3D): AffineTransform3D
+AffineTransform3D(f: Frame3D): AffineTransform3D
+AffineTransform3D(b: Basis3D): AffineTransform3D
+AffineTransform3D(x: IRigid3D): AffineTransform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 13 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 84
+### Line 84
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 84](../../../../../stdlib/foundation/transforms.library.plato#L84).
 
@@ -23,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Number3(m.Row4.X, m.Row4.Y, m.Row4.Z)));
 ```
 
-## Line 133
+### Line 133
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 133](../../../../../stdlib/foundation/transforms.library.plato#L133).
 
@@ -34,7 +68,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => t.Matrix4x4.AffineTransform3D;
 ```
 
-## Line 137
+### Line 137
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 137](../../../../../stdlib/foundation/transforms.library.plato#L137).
 
@@ -45,7 +79,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => pose.Matrix4x4.AffineTransform3D;
 ```
 
-## Line 141
+### Line 141
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 141](../../../../../stdlib/foundation/transforms.library.plato#L141).
 
@@ -56,7 +90,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => q.Matrix4x4.AffineTransform3D;
 ```
 
-## Line 257
+### Line 257
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 257](../../../../../stdlib/foundation/transforms.library.plato#L257).
 
@@ -67,7 +101,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreateTranslation(t.Vector).AffineTransform3D;
 ```
 
-## Line 318
+### Line 318
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 318](../../../../../stdlib/foundation/transforms.library.plato#L318).
 
@@ -78,7 +112,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreateScale(s.Amount).AffineTransform3D;
 ```
 
-## Line 374
+### Line 374
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 374](../../../../../stdlib/foundation/transforms.library.plato#L374).
 
@@ -89,7 +123,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreateScale(s.Amount).AffineTransform3D;
 ```
 
-## Line 445
+### Line 445
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 445](../../../../../stdlib/foundation/transforms.library.plato#L445).
 
@@ -114,7 +148,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 517
+### Line 517
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 517](../../../../../stdlib/foundation/transforms.library.plato#L517).
 
@@ -130,7 +164,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 580
+### Line 580
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 580](../../../../../stdlib/foundation/transforms.library.plato#L580).
 
@@ -146,7 +180,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 686
+### Line 686
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 686](../../../../../stdlib/foundation/transforms.library.plato#L686).
 
@@ -157,7 +191,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => f.Matrix4x4.AffineTransform3D;
 ```
 
-## Line 697
+### Line 697
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 697](../../../../../stdlib/foundation/transforms.library.plato#L697).
 
@@ -173,7 +207,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Number3(0.0, 0.0, 0.0)));
 ```
 
-## Line 1083
+### Line 1083
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1083](../../../../../stdlib/foundation/transforms.library.plato#L1083).
 

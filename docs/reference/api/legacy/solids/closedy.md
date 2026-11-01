@@ -3,11 +3,37 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+ClosedY(s: Sphere): Boolean
+ClosedY(s: Ellipsoid): Boolean
+ClosedY(s: Torus): Boolean
+ClosedY(s: Cone): Boolean
+ClosedY(s: ConeSegment): Boolean
+ClosedY(s: Capsule): Boolean
+ClosedY(s: Tube): Boolean
+ClosedY(s: NPrism): Boolean
+ClosedY(s: NPyramid): Boolean
+ClosedY(s: Box): Boolean
+ClosedY(s: Pyramid): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [solids](../solids.md). Kind: function. 11 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 145
+### Line 145
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 145](../../../../../legacy/stdlib-legacy/solids.plato#L145).
 
@@ -15,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedY(s: Sphere): Boolean => false;
 ```
 
-## Line 150
+### Line 150
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 150](../../../../../legacy/stdlib-legacy/solids.plato#L150).
 
@@ -23,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedY(s: Ellipsoid): Boolean => false;
 ```
 
-## Line 163
+### Line 163
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 163](../../../../../legacy/stdlib-legacy/solids.plato#L163).
 
@@ -31,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedY(s: Torus): Boolean => true;
 ```
 
-## Line 171
+### Line 171
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 171](../../../../../legacy/stdlib-legacy/solids.plato#L171).
 
@@ -39,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedY(s: Cone): Boolean => false;
 ```
 
-## Line 179
+### Line 179
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 179](../../../../../legacy/stdlib-legacy/solids.plato#L179).
 
@@ -47,7 +73,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedY(s: ConeSegment): Boolean => false;
 ```
 
-## Line 198
+### Line 198
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 198](../../../../../legacy/stdlib-legacy/solids.plato#L198).
 
@@ -55,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedY(s: Capsule): Boolean => false;
 ```
 
-## Line 209
+### Line 209
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 209](../../../../../legacy/stdlib-legacy/solids.plato#L209).
 
@@ -63,7 +89,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedY(s: Tube): Boolean => false;
 ```
 
-## Line 221
+### Line 221
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 221](../../../../../legacy/stdlib-legacy/solids.plato#L221).
 
@@ -71,7 +97,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedY(s: NPrism): Boolean => false;
 ```
 
-## Line 229
+### Line 229
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 229](../../../../../legacy/stdlib-legacy/solids.plato#L229).
 
@@ -79,7 +105,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedY(s: NPyramid): Boolean => false;
 ```
 
-## Line 237
+### Line 237
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 237](../../../../../legacy/stdlib-legacy/solids.plato#L237).
 
@@ -87,7 +113,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedY(s: Box): Boolean => false;
 ```
 
-## Line 245
+### Line 245
 
 **Source:** [legacy/stdlib-legacy/solids.plato, line 245](../../../../../legacy/stdlib-legacy/solids.plato#L245).
 

@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A dense uniform binning grid over a bounded 2D region: every cell has a
+> bucket. Cells linearize row-major with X varying fastest: cell (i, j) is
+> bucket j \* CellCounts.Width + i. Bucket b's items are
+> ItemIndices\[BucketOffsets\[b\] .. BucketOffsets\[b+1\]) (half-open CSR).
+
+## Signature
+
+```plato
+type BinningGrid2D
+    implements IValue, ISpatialIndex2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [ISpatialIndex2D](../spatial.concepts/ispatialindex2d.md).
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.types](../spatial-structures.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 48
+### Line 48
 
 **Source:** [stdlib/geometry/spatial-structures.types.plato, line 48](../../../../../stdlib/geometry/spatial-structures.types.plato#L48).
 

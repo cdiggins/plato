@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A position-based cloth: vertices, the constraints binding them, and the
+> triangles used for rendering and collision. Thickness is the collision
+> shell radius.
+> (https://en.wikipedia.org/wiki/Cloth\_modeling)
+
+## Signature
+
+```plato
+type Cloth3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.types](../particles.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 290
+### Line 290
 
 **Source:** [stdlib/future/particles.types.plato, line 290](../../../../../stdlib/future/particles.types.plato#L290).
 

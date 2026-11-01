@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Hermite Spline
+> https://en.wikipedia.org/wiki/Cubic\_Hermite\_spline
+>    Given two endpoints (p0, p1) and two tangents (m0, m1)
+>    Standard Cubic Hermite form:
+>    H(t) = (2t^3 - 3t^2 + 1)\*p0
+>         + (t^3 - 2t^2 + t)\*m0
+>         + (-2t^3 + 3t^2)\*p1
+>         + (t^3 - t^2)\*m1
+
+## Signature
+
+```plato
+Hermite(p0: INumerical, p1: INumerical, m0: INumerical, m1: INumerical, t: Number): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [algebra](../algebra.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 96
+### Line 96
 
 **Source:** [legacy/stdlib-legacy/algebra.plato, line 96](../../../../../legacy/stdlib-legacy/algebra.plato#L96).
 

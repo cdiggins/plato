@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A univariate probability distribution over the real line
+> (https://en.wikipedia.org/wiki/Probability\_distribution). Pdf is the
+> probability density (or mass, for discrete distributions) at a value;
+> Cdf is the cumulative probability of drawing at most that value.
+
+## Signature
+
+```plato
+interface IProbabilityDistribution
+    inherits IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IValue](../core.concepts/ivalue.md).
+
+Implemented in this tier by: [UniformDistribution](../random.types/uniformdistribution.md), [NormalDistribution](../random.types/normaldistribution.md), [LogNormalDistribution](../random.types/lognormaldistribution.md), [ExponentialDistribution](../random.types/exponentialdistribution.md), [CauchyDistribution](../random.types/cauchydistribution.md), [LaplaceDistribution](../random.types/laplacedistribution.md), [WeibullDistribution](../random.types/weibulldistribution.md), [ParetoDistribution](../random.types/paretodistribution.md), [TriangularDistribution](../random.types/triangulardistribution.md), [VonMisesDistribution](../random.types/vonmisesdistribution.md), [GammaDistribution](../random.types/gammadistribution.md), [BetaDistribution](../random.types/betadistribution.md), [ChiSquaredDistribution](../random.types/chisquareddistribution.md), [StudentTDistribution](../random.types/studenttdistribution.md), [BernoulliDistribution](../random.types/bernoullidistribution.md), [BinomialDistribution](../random.types/binomialdistribution.md), [GeometricDistribution](../random.types/geometricdistribution.md), [PoissonDistribution](../random.types/poissondistribution.md), [DiscreteDistribution](../random.types/discretedistribution.md).
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.concepts](../random.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/random.concepts.plato, line 1](../../../../../stdlib/foundation/random.concepts.plato#L1).
 

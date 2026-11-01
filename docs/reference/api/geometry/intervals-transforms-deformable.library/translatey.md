@@ -3,11 +3,28 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Translate along +Y by `distance`.
+
+## Signature
+
+```plato
+TranslateY(self: IDeformable2D, distance: Number): Self
+TranslateY(self: IDeformable3D, distance: Number): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intervals-transforms-deformable.library](../intervals-transforms-deformable.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 60
+### Line 60
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 60](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L60).
 
@@ -18,7 +35,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Translate(Vector2D.UnitY * distance);
 ```
 
-## Line 135
+### Line 135
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 135](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L135).
 

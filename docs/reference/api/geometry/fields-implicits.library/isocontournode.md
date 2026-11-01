@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The world position of lattice node (i, j) of an iso-contour grid: the
+> domain corners are sampled, so node 0 sits on the low edge and node
+> resolution - 1 on the high edge.
+
+## Signature
+
+```plato
+IsoContourNode(domain: Bounds2D, resolution: IntegerVector2, i: Integer, j: Integer): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1283
+### Line 1283
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 1283](../../../../../stdlib/geometry/fields-implicits.library.plato#L1283).
 

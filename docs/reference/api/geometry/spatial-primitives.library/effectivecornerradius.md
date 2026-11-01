@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> CornerRadius clamped to the declaration's stated range: never negative, never
+> more than half the smallest extent. Every body below reads this.
+
+## Signature
+
+```plato
+EffectiveCornerRadius(b: RoundedBox3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 175](../../../../../stdlib/geometry/spatial-primitives.library.plato#L175): gives the volume and area below exactly:
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.library](../spatial-primitives.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 169
+### Line 169
 
 **Source:** [stdlib/geometry/spatial-primitives.library.plato, line 169](../../../../../stdlib/geometry/spatial-primitives.library.plato#L169).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+ToNumber(self: Integer): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_CbrtOfExactCubeIsTheRootBitwise
+
+[stdlib/tests/text.laws.plato, line 194](../../../../../stdlib/tests/text.laws.plato#L194)
+
+```plato
+// Cbrt inverts the cube bitwise on exactly representable cubes: the small integers and halves
+// (a half cubed is an eighth, still exact), either sign, and zero keeps its sign.
+Law_CbrtOfExactCubeIsTheRootBitwise(n: Integer): Boolean
+    => CbrtRootsBack(n.ToNumber) && CbrtRootsBack(n.ToNumber * 0.5) && CbrtRootsBack(-(n.ToNumber));
+```
+
+## Source
+
 **File:** [intrinsics.library](../intrinsics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 129
+### Line 129
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 129](../../../../../stdlib/foundation/intrinsics.library.plato#L129).
 

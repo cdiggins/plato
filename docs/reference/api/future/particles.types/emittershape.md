@@ -3,11 +3,42 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The region a particle emitter spawns from; Cone carries the half-angle of
+> its emission cone.
+
+## Signature
+
+```plato
+type EmitterShape
+    = Point
+    | Sphere
+    | Box
+    | Cone(HalfAngle: Angle)
+    | Circle
+    | Mesh
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.types](../particles.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 149
+### Line 149
 
 **Source:** [stdlib/future/particles.types.plato, line 149](../../../../../stdlib/future/particles.types.plato#L149).
 

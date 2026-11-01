@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The angle spanning the given fraction of a full revolution.
+> 1.0.Turns is a full circle. (https://en.wikipedia.org/wiki/Turn\_(angle))
+
+## Signature
+
+```plato
+Turns(x: Number): Angle
+Turns(x: Integer): Angle
+Turns(x: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 54](../../../../../stdlib/foundation/angles.library.plato#L54): (`90.Degrees`, `2.Turns`).
+- [Line 81](../../../../../stdlib/foundation/angles.library.plato#L81): report negative unit counts.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Angles and periodic values](../../../library/foundation/angles.md)
+
+## Source
+
 **File:** [angles.library](../angles.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/angles.library.plato, line 1](../../../../../stdlib/foundation/angles.library.plato#L1).
 
@@ -42,7 +73,7 @@ library Angles
         => Angle(x * Number.Tau);
 ```
 
-## Line 49
+### Line 49
 
 **Source:** [stdlib/foundation/angles.library.plato, line 49](../../../../../stdlib/foundation/angles.library.plato#L49).
 
@@ -59,7 +90,7 @@ library Angles
         => x.ToNumber.Turns;
 ```
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/foundation/angles.library.plato, line 75](../../../../../stdlib/foundation/angles.library.plato#L75).
 

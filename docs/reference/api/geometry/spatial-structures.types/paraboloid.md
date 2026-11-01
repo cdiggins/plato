@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An infinite circular paraboloid surface opening along Axis from Vertex
+> (https://en.wikipedia.org/wiki/Paraboloid): points at height h above the
+> vertex plane lie at radius r with r \* r = 4 \* FocalLength \* h. The reflector
+> shape: rays parallel to Axis converge at the focus.
+
+## Signature
+
+```plato
+type Paraboloid
+    implements IGeometry3D, IConnected, IManifold, IOrientable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IConnected](../geometry.concepts/iconnected.md), [IManifold](../geometry.concepts/imanifold.md), [IOrientable](../geometry.concepts/iorientable.md).
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.types](../spatial-structures.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 95
+### Line 95
 
 **Source:** [stdlib/geometry/spatial-structures.types.plato, line 95](../../../../../stdlib/geometry/spatial-structures.types.plato#L95).
 

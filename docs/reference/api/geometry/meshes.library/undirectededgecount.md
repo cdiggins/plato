@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number of deduplicated undirected edges in a directed edge list:
+> one per first occurrence. Quadratic in the edge count — a census for
+> correctness, not a hot path; an incidence-backed representation should
+> derive its count from IMeshIncidence instead.
+
+## Signature
+
+```plato
+UndirectedEdgeCount(edges: Array<VertexPair>): Integer
+UndirectedEdgeCount(self: TriangleMesh3D): Integer
+UndirectedEdgeCount(self: TriangleMesh2D): Integer
+UndirectedEdgeCount(self: QuadMesh3D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 207
+### Line 207
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 207](../../../../../stdlib/geometry/meshes.library.plato#L207).
 
@@ -23,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
             .Reduce(0, (acc, hit) => acc + hit);
 ```
 
-## Line 487
+### Line 487
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 487](../../../../../stdlib/geometry/meshes.library.plato#L487).
 
@@ -35,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Faces.DirectedEdges.UndirectedEdgeCount;
 ```
 
-## Line 541
+### Line 541
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 541](../../../../../stdlib/geometry/meshes.library.plato#L541).
 
@@ -47,7 +73,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Faces.DirectedEdges.UndirectedEdgeCount;
 ```
 
-## Line 581
+### Line 581
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 581](../../../../../stdlib/geometry/meshes.library.plato#L581).
 

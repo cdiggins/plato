@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The figure-eight knot (the unique four-crossing knot) in its canonical
+> parametric form scaled by Scale
+> (https://en.wikipedia.org/wiki/Figure-eight\_knot\_(mathematics)).
+
+## Signature
+
+```plato
+type FigureEightKnot
+    implements IClosedCurve3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IClosedCurve3D](../curves.concepts/iclosedcurve3d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.types](../curves-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 508
+### Line 508
 
 **Source:** [stdlib/geometry/curves-shapes.types.plato, line 508](../../../../../stdlib/geometry/curves-shapes.types.plato#L508).
 

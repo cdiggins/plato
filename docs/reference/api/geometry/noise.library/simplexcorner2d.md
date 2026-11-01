@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One corner's contribution: the quartic falloff times the gradient dot the
+> offset, or zero once the query point leaves the corner's radius of
+> influence.
+
+## Signature
+
+```plato
+SimplexCorner2D(seed: Integer, i: Integer, j: Integer, dx: Number, dy: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 348](../../../../../stdlib/geometry/noise.library.plato#L348): unit vectors where his table holds vectors of length sqrt(2).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 337
+### Line 337
 
 **Source:** [stdlib/geometry/noise.library.plato, line 337](../../../../../stdlib/geometry/noise.library.plato#L337).
 

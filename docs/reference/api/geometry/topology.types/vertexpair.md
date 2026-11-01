@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An undirected edge named by its two endpoint vertices. The canonical form
+> orders the pair so that A.Value \<= B.Value; producers emit canonical pairs
+> unless documented otherwise (LineSet segments preserve authored direction).
+
+## Signature
+
+```plato
+type VertexPair
+    implements IValue, IHashable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IHashable](../../foundation/core.concepts/ihashable.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.types](../topology.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/topology.types.plato, line 1](../../../../../stdlib/geometry/topology.types.plato#L1).
 

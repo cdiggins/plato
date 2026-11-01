@@ -3,11 +3,52 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Pi(_: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_VonMisesCdfStartsAtZero
+
+[stdlib/tests/special-numerics.laws.plato, line 65](../../../../../stdlib/tests/special-numerics.laws.plato#L65)
+
+```plato
+// The CDF starts at 0 at the cut (the antipode of the mean direction).
+//
+// DOMAIN: the law states the RIGHT-hand limit, a fixed margin inside the arc,
+// because the cut itself is a JUMP and is therefore not a testable point in
+// floating point. F is 0 at mu - pi and 1 immediately below it, while the
+// argument the law can actually build, `mu - pi`, is a rounded float: for
+// mu = 9.965367 it lands exactly one ulp BELOW the cut, where F = 1 is the
+// correct answer, not a defect in the series. (Measured: the rounding goes the
+// wrong way for roughly a quarter of random mean directions.)
+//
+// At `margin` inside the arc F is bounded by margin times the antipodal
+// density, which is at most 1/(2 pi) for every kappa -- so F < margin / 6, and
+// asserting F < margin has better than a 6x margin over the true value while
+// still separating 0 from the 1 that the seam bug would produce. margin = 1e-4
+// is three decades above the ~1e-7 rounding noise of the argument itself.
+Law_VonMisesCdfStartsAtZero(d: VonMisesDistribution): Boolean
+    => d.VonMisesOutOfRegime
+    || d.Cdf(d.MeanDirection.Radians - Number.Pi + 1e-4) < 1e-4;
+```
+
+## Source
+
 **File:** [intrinsics.library](../intrinsics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 95
+### Line 95
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 95](../../../../../stdlib/foundation/intrinsics.library.plato#L95).
 

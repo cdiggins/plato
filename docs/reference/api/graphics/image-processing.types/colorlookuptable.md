@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A 3D color lookup table: a Size-cubed lattice of output colors indexed by
+> input RGB. Colors holds Size cubed entries, red-fastest then green then
+> blue; intermediate inputs interpolate trilinearly.
+> (https://en.wikipedia.org/wiki/3D\_lookup\_table)
+
+## Signature
+
+```plato
+type ColorLookupTable
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [image-processing.types](../image-processing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 130
+### Line 130
 
 **Source:** [stdlib/graphics/image-processing.types.plato, line 130](../../../../../stdlib/graphics/image-processing.types.plato#L130).
 

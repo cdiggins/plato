@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Enneper's minimal surface (u - u^3/3 + u v^2, v - v^3/3 + v u^2, u^2 - v^2)
+> over Domain, scaled by Scale. Minimal everywhere, and self-intersecting once
+> the parameter disc grows past radius sqrt 3
+> (https://en.wikipedia.org/wiki/Enneper\_surface).
+
+## Signature
+
+```plato
+type EnneperSurface
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.types](../surfaces-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 272
+### Line 272
 
 **Source:** [stdlib/geometry/surfaces-shapes.types.plato, line 272](../../../../../stdlib/geometry/surfaces-shapes.types.plato#L272).
 

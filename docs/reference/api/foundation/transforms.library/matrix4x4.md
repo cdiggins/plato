@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The 3D affine matrix widened to homogeneous form (fourth column 0,0,0,1).
+
+## Signature
+
+```plato
+Matrix4x4(a: AffineTransform3D): Matrix4x4
+Matrix4x4(f: Frame3D): Matrix4x4
+Matrix4x4(m: Motor3D): Matrix4x4
+Matrix4x4(pose: Pose3D): Matrix4x4
+Matrix4x4(q: Quaternion): Matrix4x4
+Matrix4x4(aa: AxisAngle): Matrix4x4
+Matrix4x4(e: EulerAngles): Matrix4x4
+Matrix4x4(r: Rotor3D): Matrix4x4
+Matrix4x4(t: TrsTransform3D): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 9 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 75](../../../../../stdlib/foundation/transforms.library.plato#L75).
 
@@ -23,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 659
+### Line 659
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 659](../../../../../stdlib/foundation/transforms.library.plato#L659).
 
@@ -43,7 +72,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 863
+### Line 863
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 863](../../../../../stdlib/foundation/transforms.library.plato#L863).
 
@@ -54,7 +83,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => m.Pose3D.Matrix4x4;
 ```
 
-## Line 1026
+### Line 1026
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1026](../../../../../stdlib/foundation/transforms.library.plato#L1026).
 
@@ -65,7 +94,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => pose.Orientation.Matrix4x4 * Matrix4x4.CreateTranslation(pose.Position.PositionVector);
 ```
 
-## Line 1342
+### Line 1342
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1342](../../../../../stdlib/foundation/transforms.library.plato#L1342).
 
@@ -76,7 +105,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreateFromQuaternion(q);
 ```
 
-## Line 1351
+### Line 1351
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1351](../../../../../stdlib/foundation/transforms.library.plato#L1351).
 
@@ -87,7 +116,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreateFromAxisAngle(aa.Axis.Vector, aa.Angle);
 ```
 
-## Line 1355
+### Line 1355
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1355](../../../../../stdlib/foundation/transforms.library.plato#L1355).
 
@@ -98,7 +127,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => e.Quaternion.Matrix4x4;
 ```
 
-## Line 1359
+### Line 1359
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1359](../../../../../stdlib/foundation/transforms.library.plato#L1359).
 
@@ -109,7 +138,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Quaternion.Matrix4x4;
 ```
 
-## Line 1433
+### Line 1433
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1433](../../../../../stdlib/foundation/transforms.library.plato#L1433).
 

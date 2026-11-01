@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Can be deformed by an arbitrary 2D point mapping. Strictly stronger than
+> ITransformable2D — a named transform is one particular point mapping — so the
+> Transform member is derived from Deform in `intervals.library.plato` and an
+> implementor supplies Deform alone.
+
+## Signature
+
+```plato
+interface IDeformable2D
+    inherits ITransformable2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ITransformable2D](itransformable2d.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.concepts](../transforms.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 57
+### Line 57
 
 **Source:** [stdlib/foundation/transforms.concepts.plato, line 57](../../../../../stdlib/foundation/transforms.concepts.plato#L57).
 

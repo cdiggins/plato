@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Where every vertex of a mesh goes when the mesh is rebuilt: Targets has one
+> entry per OLD vertex holding its index in the new mesh, with -1 for a vertex
+> that is dropped outright, and RemappedPositions is the new position array,
+> already compacted so that Targets indexes it directly. The two travel together
+> because neither is meaningful alone — a target array whose surviving positions
+> were chosen by somebody else describes no particular mesh.
+> Convention: see CONVENTIONS.md - Typed indices (-1 means "none").
+
+## Signature
+
+```plato
+type VertexRemap
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.types](../remeshing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 58
+### Line 58
 
 **Source:** [stdlib/geometry/remeshing.types.plato, line 58](../../../../../stdlib/geometry/remeshing.types.plato#L58).
 

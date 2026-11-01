@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The wind's velocity at a point and time. Gusts are a travelling
+> sinusoid: the phase advances with time at GustFrequency and lags with
+> distance downwind, so a gust front crosses the scene at the mean speed
+> instead of the whole scene pulsing at once. Turbulence is the gust
+> amplitude as a proportion of Speed, so 0 is a steady wind.
+
+## Signature
+
+```plato
+VelocityAt(self: WindModel, position: Point3D, time: Number): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.library](../particles.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 71
+### Line 71
 
 **Source:** [stdlib/future/particles.library.plato, line 71](../../../../../stdlib/future/particles.library.plato#L71).
 

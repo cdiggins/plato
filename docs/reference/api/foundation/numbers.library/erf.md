@@ -3,11 +3,44 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The error function erf(x) = (2/sqrt(pi)) \* integral of exp(-t^2) from
+> 0 to x: odd, erf(0) = 0, approaching +/-1. Expected accuracy: ~1e-13
+> relative; near +/-1 the error is absolute (use Erfc for tail ratios).
+
+## Signature
+
+```plato
+Erf(x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 549](../../../../../stdlib/foundation/numbers.library.plato#L549): via the exact identities erf(x) = P(1/2, x^2) and erfc(x) = Q(1/2, x^2)
+- [Line 551](../../../../../stdlib/foundation/numbers.library.plato#L551): rational approximation is used: the incomplete-gamma route above is
+- [Line 554](../../../../../stdlib/foundation/numbers.library.plato#L554): RELATIVE accuracy in the far right tail because Q is computed by the
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 544
+### Line 544
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 544](../../../../../stdlib/foundation/numbers.library.plato#L544).
 

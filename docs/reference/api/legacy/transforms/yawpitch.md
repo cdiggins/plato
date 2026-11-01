@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A rotational transform expressed by only two rotation components: yaw (left-right) and pitch (up-down). Useful for cameras.
+
+## Signature
+
+```plato
+type YawPitch
+    implements IRotation3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IRotation3D](irotation3d.md).
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 213
+### Line 213
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 213](../../../../../legacy/stdlib-legacy/transforms.plato#L213).
 

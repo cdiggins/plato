@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The distance between two planar offsets under the chosen Worley metric.
+> Minkowski is the p = 3 member of the family, the usual stand-in for the
+> "rounded Manhattan" look.
+> https://en.wikipedia.org/wiki/Minkowski\_distance
+
+## Signature
+
+```plato
+WorleyLength(d: Vector2D, metric: WorleyDistance): Number
+WorleyLength(d: Vector3D, metric: WorleyDistance): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 124
+### Line 124
 
 **Source:** [stdlib/geometry/noise.library.plato, line 124](../../../../../stdlib/geometry/noise.library.plato#L124).
 
@@ -29,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         };
 ```
 
-## Line 139
+### Line 139
 
 **Source:** [stdlib/geometry/noise.library.plato, line 139](../../../../../stdlib/geometry/noise.library.plato#L139).
 

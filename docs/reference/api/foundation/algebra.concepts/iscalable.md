@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Can be multiplied and divided by a unitless scalar (https://en.wikipedia.org/wiki/Scalar\_multiplication).
+> Vectors, quantities, and colors are scalable even when they cannot multiply
+> among themselves.
+
+## Signature
+
+```plato
+interface IScalable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Generics, inference variables, and bounds](../../../language/generics.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.concepts](../algebra.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 192
+### Line 192
 
 **Source:** [stdlib/foundation/algebra.concepts.plato, line 192](../../../../../stdlib/foundation/algebra.concepts.plato#L192).
 

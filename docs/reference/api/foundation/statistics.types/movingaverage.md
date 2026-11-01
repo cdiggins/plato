@@ -3,11 +3,44 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A moving-average smoother, each kind carrying exactly its own controls
+> (https://en.wikipedia.org/wiki/Moving\_average): a flat window of WindowSize
+> samples (Simple), an exponential smoother with alpha in (0, 1\]
+> (Exponential), or a Gaussian-weighted window with its standard deviation in
+> samples (Gaussian).
+
+## Signature
+
+```plato
+type MovingAverage
+    = Simple(WindowSize: Integer)
+    | Exponential(Alpha: Proportion)
+    | Gaussian(WindowSize: Integer, StandardDeviation: Number)
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Summarize a sample](../../../cookbook/sample-statistics.md)
+- [Statistics, covariance and fitted models](../../../library/foundation/statistics.md)
+
+## Source
+
 **File:** [statistics.types](../statistics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 108
+### Line 108
 
 **Source:** [stdlib/foundation/statistics.types.plato, line 108](../../../../../stdlib/foundation/statistics.types.plato#L108).
 

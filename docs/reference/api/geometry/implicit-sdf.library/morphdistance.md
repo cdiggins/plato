@@ -3,11 +3,53 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A linear morph from the first shape (t = 0) to the second (t = 1). Exact
+> only where the two operands agree; in between it is a lower bound, since
+> interpolating two distance functions does not interpolate their surfaces at
+> unit gradient.
+
+## Signature
+
+```plato
+MorphDistance(a: Number, b: Number, t: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_MorphAtZeroIsFirst
+
+[stdlib/tests/implicit-sdf.laws.plato, line 258](../../../../../stdlib/tests/implicit-sdf.laws.plato#L258)
+
+```plato
+// A morph at its endpoints recovers each operand exactly.
+Law_MorphAtZeroIsFirst(a: Number, b: Number): Boolean
+    => MorphDistance(a, b, 0.0).LawEq(a);
+```
+
+### Law_MorphAtOneIsSecond
+
+[stdlib/tests/implicit-sdf.laws.plato, line 261](../../../../../stdlib/tests/implicit-sdf.laws.plato#L261)
+
+```plato
+Law_MorphAtOneIsSecond(a: Number, b: Number): Boolean
+    => MorphDistance(a, b, 1.0).LawEq(b);
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 669
+### Line 669
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 669](../../../../../stdlib/geometry/implicit-sdf.library.plato#L669).
 

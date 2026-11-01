@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Mass per area, stored in kilograms per square meter
+> (https://en.wikipedia.org/wiki/Area\_density).
+
+## Signature
+
+```plato
+type ArealDensity implements IQuantity
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IQuantity](../quantities.concepts/iquantity.md).
+
+## Used by
+
+- [Angles and periodic values](../../../library/foundation/angles.md)
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [quantities.types](../quantities.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 202
+### Line 202
 
 **Source:** [stdlib/foundation/quantities.types.plato, line 202](../../../../../stdlib/foundation/quantities.types.plato#L202).
 

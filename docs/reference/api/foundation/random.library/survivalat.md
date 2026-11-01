@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The survival function at value: the probability of drawing more than
+> value, 1 - Cdf(value)
+> (https://en.wikipedia.org/wiki/Survival\_function).
+
+## Signature
+
+```plato
+SurvivalAt(self: IProbabilityDistribution, value: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.library](../random.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 880
+### Line 880
 
 **Source:** [stdlib/foundation/random.library.plato, line 880](../../../../../stdlib/foundation/random.library.plato#L880).
 

@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar vector field stored on grid nodes; evaluation interpolates each
+> component bilinearly. Backs 2D flow fields and displacement maps.
+
+## Signature
+
+```plato
+type SampledVectorGrid2D
+    implements IValue, IVectorField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IVectorField2D](../fields.concepts/ivectorfield2d.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 74
+### Line 74
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 74](../../../../../stdlib/geometry/sampling.types.plato#L74).
 

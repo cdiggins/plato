@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The face every corner belongs to, in corner order.
+
+## Signature
+
+```plato
+PolygonCornerFaces(self: PolygonMesh3D): Array<FaceIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 904](../../../../../stdlib/geometry/remeshing.library.plato#L904): Precondition for the vertex-side rules of both: a closed manifold. The
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 885
+### Line 885
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 885](../../../../../stdlib/geometry/remeshing.library.plato#L885).
 

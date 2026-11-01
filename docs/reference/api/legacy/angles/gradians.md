@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Gradians(x: Integer): Angle
+Gradians(x: Number): Angle
+Gradians(x: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [angles](../angles.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 6
+### Line 6
 
 **Source:** [legacy/stdlib-legacy/angles.plato, line 6](../../../../../legacy/stdlib-legacy/angles.plato#L6).
 
@@ -15,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
 	Gradians(x: Integer): Angle => x.Number.Gradians;
 ```
 
-## Line 12
+### Line 12
 
 **Source:** [legacy/stdlib-legacy/angles.plato, line 12](../../../../../legacy/stdlib-legacy/angles.plato#L12).
 
@@ -23,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
 	Gradians(x: Number): Angle => (x / 400.0).Turns;
 ```
 
-## Line 18
+### Line 18
 
 **Source:** [legacy/stdlib-legacy/angles.plato, line 18](../../../../../legacy/stdlib-legacy/angles.plato#L18).
 

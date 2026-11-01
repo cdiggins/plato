@@ -3,11 +3,61 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One dual vertex per face, one dual face per vertex.
+
+## Signature
+
+```plato
+Dual(self: PolygonMesh3D): PolygonMesh3D
+Dual(self: PlatonicSolid): PlatonicSolid
+Dual(self: ArchimedeanSolid): CatalanSolid
+Dual(self: CatalanSolid): ArchimedeanSolid
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_PlatonicDualIsInvolution
+
+[stdlib/tests/polyhedra.laws.plato, line 14](../../../../../stdlib/tests/polyhedra.laws.plato#L14)
+
+```plato
+Law_PlatonicDualIsInvolution(k: PlatonicSolid): Boolean
+    => k.Dual.Dual == k;
+```
+
+### Law_ArchimedeanDualIsInvolution
+
+[stdlib/tests/polyhedra.laws.plato, line 17](../../../../../stdlib/tests/polyhedra.laws.plato#L17)
+
+```plato
+Law_ArchimedeanDualIsInvolution(k: ArchimedeanSolid): Boolean
+    => k.Dual.Dual == k;
+```
+
+### Law_CatalanDualIsInvolution
+
+[stdlib/tests/polyhedra.laws.plato, line 20](../../../../../stdlib/tests/polyhedra.laws.plato#L20)
+
+```plato
+Law_CatalanDualIsInvolution(k: CatalanSolid): Boolean
+    => k.Dual.Dual == k;
+```
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 284
+### Line 284
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 284](../../../../../stdlib/geometry/polyhedra.library.plato#L284).
 
@@ -20,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
             self.VertexCount.MapRange(v => self.DualFaceOfVertex(VertexIndex(v))));
 ```
 
-## Line 937
+### Line 937
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 937](../../../../../stdlib/geometry/polyhedra.library.plato#L937).
 
@@ -51,7 +101,7 @@ Copied from source, comments included. A comment records intent. The body is the
         };
 ```
 
-## Line 961
+### Line 961
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 961](../../../../../stdlib/geometry/polyhedra.library.plato#L961).
 
@@ -77,7 +127,7 @@ Copied from source, comments included. A comment records intent. The body is the
         };
 ```
 
-## Line 980
+### Line 980
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 980](../../../../../stdlib/geometry/polyhedra.library.plato#L980).
 

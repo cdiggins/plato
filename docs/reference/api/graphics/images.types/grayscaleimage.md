@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A single-channel image of unbounded scalars: luminance, heights, weights,
+> or soft (fractional) masks. (https://en.wikipedia.org/wiki/Grayscale)
+
+## Signature
+
+```plato
+type GrayscaleImage
+    implements IImage
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IImage](../images.concepts/iimage.md).
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [images.types](../images.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 57
+### Line 57
 
 **Source:** [stdlib/graphics/images.types.plato, line 57](../../../../../stdlib/graphics/images.types.plato#L57).
 

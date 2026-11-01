@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A dense scalar raster in space: smoke, medical volumes, distance samples,
+> occupancy probabilities. Values are unitless; interpretation is the
+> producer's contract.
+
+## Signature
+
+```plato
+type DensityGrid3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.types](../voxels.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 54
+### Line 54
 
 **Source:** [stdlib/geometry/voxels.types.plato, line 54](../../../../../stdlib/geometry/voxels.types.plato#L54).
 

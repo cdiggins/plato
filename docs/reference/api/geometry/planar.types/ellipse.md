@@ -3,11 +3,64 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An ellipse region with semi-axis lengths SemiAxes (a along local X, b along
+> local Y), rotated by Rotation about Center. A circle when a equals b.
+> (https://en.wikipedia.org/wiki/Ellipse)
+
+## Signature
+
+```plato
+type Ellipse
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SuperEllipseExponentTwoPerimeterIsEllipse
+
+[stdlib/tests/special-numerics.laws.plato, line 99](../../../../../stdlib/tests/special-numerics.laws.plato#L99)
+
+```plato
+// At Exponent 2 the superellipse IS the ellipse, so its numerically integrated
+// perimeter must match the ellipse's.
+//
+// TOLERANCE: set by the WEAKER of the two sides, which is the ellipse. Its
+// Perimeter is Ramanujan's second approximation, whose relative error is not
+// symmetric in the axis ratio: it is below 1e-9 for b/a >= 0.4 but grows to
+// -1.2e-5 at b/a = 0.1 and to -4.0e-4 in the degenerate limit b/a -> 0
+// (measured against a converged arc-length integral). The Simpson integral on
+// the superellipse side tracks the true perimeter to float32 precision
+// (~4e-7 relative), so 1e-3 is the tightest tolerance this identity supports
+// over the whole semi-axis regime, where b/a reaches 0.001. Do not read it as
+// the accuracy of either body; the guard is the ellipse approximation, and
+// tightening it means improving Ellipse.Perimeter (tracked, see plato-373).
+Law_SuperEllipseExponentTwoPerimeterIsEllipse(se: SuperEllipse): Boolean
+    => se.SuperEllipseOutOfRegime
+    || SuperEllipse(se.Center, se.SemiAxes, se.Rotation, 2.0).Perimeter
+        .SpecialEqWithin(Ellipse(se.Center, se.SemiAxes, se.Rotation).Perimeter,
+                         1e-3);
+```
+
+## Concepts
+
+Implements: [IGeometry2D](../geometry.concepts/igeometry2d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IArea](../geometry.concepts/iarea.md), [IBounded2D](../geometry.concepts/ibounded2d.md), [ICentroid2D](../geometry.concepts/icentroid2d.md), [IContainsPoint2D](../geometry.concepts/icontainspoint2d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [planar.types](../planar.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 110
+### Line 110
 
 **Source:** [stdlib/geometry/planar.types.plato, line 110](../../../../../stdlib/geometry/planar.types.plato#L110).
 

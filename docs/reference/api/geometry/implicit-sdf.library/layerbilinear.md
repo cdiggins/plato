@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The bilinear interpolation within one layer of a spatial lattice: the shared
+> inner step of the trilinear evaluation below, applied to two adjacent layers.
+
+## Signature
+
+```plato
+LayerBilinear(self: SampledSdf3D, column: Integer, row: Integer, layer: Integer, fu: Number, fv: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1162
+### Line 1162
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 1162](../../../../../stdlib/geometry/implicit-sdf.library.plato#L1162).
 

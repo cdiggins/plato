@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A geodesic (locally shortest path) traced on a surface, approximated as a
+> polyline of surface points. TotalLength is the arc length in world units.
+> (https://en.wikipedia.org/wiki/Geodesic)
+
+## Signature
+
+```plato
+type GeodesicPath3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [differential-geometry.types](../differential-geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 125
+### Line 125
 
 **Source:** [stdlib/geometry/differential-geometry.types.plato, line 125](../../../../../stdlib/geometry/differential-geometry.types.plato#L125).
 

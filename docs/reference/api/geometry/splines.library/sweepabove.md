@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The super-diagonal coefficient of interior equation j.
+
+## Signature
+
+```plato
+SweepAbove(self: NaturalCubicSpline1D, j: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 618
+### Line 618
 
 **Source:** [stdlib/geometry/splines.library.plato, line 618](../../../../../stdlib/geometry/splines.library.plato#L618).
 

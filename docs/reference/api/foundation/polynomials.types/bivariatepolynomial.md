@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A dense polynomial in two variables. The column index of Coefficients is
+> the power of x and the row index is the power of y, so the entry at
+> (i, j) multiplies x^i \* y^j.
+
+## Signature
+
+```plato
+type BivariatePolynomial
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Find a root with Newton's method](../../../cookbook/newton-root.md)
+- [Polynomials, series and basis functions](../../../library/foundation/polynomials.md)
+
+## Source
+
 **File:** [polynomials.types](../polynomials.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 189
+### Line 189
 
 **Source:** [stdlib/foundation/polynomials.types.plato, line 189](../../../../../stdlib/foundation/polynomials.types.plato#L189).
 

@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A spatial motion that can be sampled at any time. PositionAt returns the
+> position in meters at the given time since the motion's start; VelocityAt
+> returns the velocity in meters per second.
+> (https://en.wikipedia.org/wiki/Kinematics)
+
+## Signature
+
+```plato
+interface IKinematic3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.concepts](../kinematics.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 16
+### Line 16
 
 **Source:** [stdlib/future/kinematics.concepts.plato, line 16](../../../../../stdlib/future/kinematics.concepts.plato#L16).
 

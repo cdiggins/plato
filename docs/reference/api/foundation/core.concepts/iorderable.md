@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Has a total order. LessThanOrEquals is reflexive, antisymmetric, and transitive.
+> (https://en.wikipedia.org/wiki/Total\_order)
+
+## Signature
+
+```plato
+interface IOrderable
+    inherits IEquatable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IEquatable](iequatable.md).
+
+Implemented in this tier by: [Boolean](../primitives/boolean.md), [Character](../primitives/character.md), [String](../primitives/string.md).
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [core.concepts](../core.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 37
+### Line 37
 
 **Source:** [stdlib/foundation/core.concepts.plato, line 37](../../../../../stdlib/foundation/core.concepts.plato#L37).
 

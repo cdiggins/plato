@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A right antiprism: two parallel regular SideCount-gons rotated a half step
+> against each other and joined by a band of 2 \* SideCount triangles
+> (https://en.wikipedia.org/wiki/Antiprism).
+
+## Signature
+
+```plato
+type Antiprism
+    implements IConvexSolid, IPolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IConvexSolid](../surfaces-solids.concepts/iconvexsolid.md), [IPolygonMesh3D](../meshes.concepts/ipolygonmesh3d.md).
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.types](../solids.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 213
+### Line 213
 
 **Source:** [stdlib/geometry/solids.types.plato, line 213](../../../../../stdlib/geometry/solids.types.plato#L213).
 

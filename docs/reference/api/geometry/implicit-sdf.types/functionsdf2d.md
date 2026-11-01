@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar signed distance field defined by a stored distance function:
+> negative inside the boundary curve, zero on it, positive outside.
+
+## Signature
+
+```plato
+type FunctionSdf2D
+    implements IDifferentiableSignedDistanceField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IDifferentiableSignedDistanceField2D](../implicit-sdf.concepts/idifferentiablesigneddistancefield2d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.types](../implicit-sdf.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 83
+### Line 83
 
 **Source:** [stdlib/geometry/implicit-sdf.types.plato, line 83](../../../../../stdlib/geometry/implicit-sdf.types.plato#L83).
 

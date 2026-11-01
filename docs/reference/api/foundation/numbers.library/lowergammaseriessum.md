@@ -3,11 +3,47 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The tail of the lower-gamma power series from term index n onward,
+> where `term` carries the current term value x^n / (a \* (a+1) \* ... \*
+> (a+n)). Seed with n = 0, term = 1/a; the full series then satisfies
+> P(a, x) = exp(a\*ln(x) - x - LogGamma(a)) \* sum. Converges geometrically
+> once n exceeds x, so 200 terms is far past double-precision saturation
+> for the x \< a + 1 region this is used in.
+
+## Signature
+
+```plato
+LowerGammaSeriesSum(a: Number, x: Number, n: Integer, term: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 653](../../../../../stdlib/foundation/numbers.library.plato#L653): Both evaluations are run to a FIXED depth instead of an epsilon exit —
+- [Line 656](../../../../../stdlib/foundation/numbers.library.plato#L656): for either region. Expected accuracy: ~1e-13 relative for moderate a
+- [Line 657](../../../../../stdlib/foundation/numbers.library.plato#L657): (a \<= ~100); for very large a the split point x = a + 1 costs a few more
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 645
+### Line 645
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 645](../../../../../stdlib/foundation/numbers.library.plato#L645).
 

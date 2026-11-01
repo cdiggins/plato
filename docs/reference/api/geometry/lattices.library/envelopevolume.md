@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The volume of an axis-aligned box; the denominator of relative density.
+> Zero or negative for an empty (inverted) box.
+> Convention: see CONVENTIONS.md - Bounds.
+
+## Signature
+
+```plato
+EnvelopeVolume(b: Bounds3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 455
+### Line 455
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 455](../../../../../stdlib/geometry/lattices.library.plato#L455).
 

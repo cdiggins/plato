@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The three vertex indices of one triangle, wound counter-clockwise when
+> viewed from the front side. IFace supplies IValue, IHashable, and the
+> IIndexable\<VertexIndex> corner surface (Count/At bodies in
+> `meshes.library.plato`).
+
+## Signature
+
+```plato
+type TriangleFace
+    implements IFace
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IFace](../meshes.concepts/iface.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [meshes.types](../meshes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/meshes.types.plato, line 1](../../../../../stdlib/geometry/meshes.types.plato#L1).
 

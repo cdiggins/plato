@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when `point` lies within `tolerance` of this geometry.
+
+## Signature
+
+```plato
+IsNear(self: IClosestPoint2D, point: Point2D, tolerance: Number): Boolean
+IsNear(self: IClosestPoint3D, point: Point3D, tolerance: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 498
+### Line 498
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 498](../../../../../stdlib/geometry/spatial-structures.library.plato#L498).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.DistanceTo(point) <= tolerance;
 ```
 
-## Line 513
+### Line 513
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 513](../../../../../stdlib/geometry/spatial-structures.library.plato#L513).
 

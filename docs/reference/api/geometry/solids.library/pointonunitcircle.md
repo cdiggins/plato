@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point at angle `a` on the unit circle centered at the origin.
+> Local helper: the point at angle `a` on the unit circle centered at the origin.
+> Defined here so this library is self-contained; if `curves-shapes.types.plato`
+> later grows a canonical unit-circle evaluator, prefer that and delete this.
+
+## Signature
+
+```plato
+PointOnUnitCircle(a: Angle): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.library](../solids.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 41
+### Line 41
 
 **Source:** [stdlib/geometry/solids.library.plato, line 41](../../../../../stdlib/geometry/solids.library.plato#L41).
 

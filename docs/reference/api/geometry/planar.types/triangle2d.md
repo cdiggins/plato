@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Three vertices, counter-clockwise for positive area
+> (https://en.wikipedia.org/wiki/Triangle). Degenerate when the vertices are
+> collinear.
+
+## Signature
+
+```plato
+type Triangle2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, IDeformable2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry2D](../geometry.concepts/igeometry2d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IArea](../geometry.concepts/iarea.md), [IBounded2D](../geometry.concepts/ibounded2d.md), [IPointSet2D](../geometry.concepts/ipointset2d.md), [ICentroid2D](../geometry.concepts/icentroid2d.md), [IContainsPoint2D](../geometry.concepts/icontainspoint2d.md), [INearestPoint2D](../geometry.concepts/inearestpoint2d.md), [IDeformable2D](../../foundation/transforms.concepts/ideformable2d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [planar.types](../planar.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 141
+### Line 141
 
 **Source:** [stdlib/geometry/planar.types.plato, line 141](../../../../../stdlib/geometry/planar.types.plato#L141).
 

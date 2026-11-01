@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Supports linear interpolation (https://en.wikipedia.org/wiki/Linear\_interpolation).
+> The parameter t is unclamped: 0 yields a, 1 yields b, values outside \[0,1\]
+> extrapolate.
+
+## Signature
+
+```plato
+interface IInterpolatable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Quaternion](../rotations.types/quaternion.md), [Rotation2D](../rotations.types/rotation2d.md), [Pose2D](../transforms.types/pose2d.md), [Pose3D](../transforms.types/pose3d.md).
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.concepts](../algebra.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 202
+### Line 202
 
 **Source:** [stdlib/foundation/algebra.concepts.plato, line 202](../../../../../stdlib/foundation/algebra.concepts.plato#L202).
 

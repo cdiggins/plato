@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A concentrated nodal force resolved onto the three degrees of freedom of
+> its node.
+
+## Signature
+
+```plato
+LoadContributions(f: NodalForce3D): Array<DofLoad>
+LoadContributions(t: FaceTraction3D, positions: Array<Point3D>): Array<DofLoad>
+LoadContributions(model: ElasticModel3D): Array<DofLoad>
+LoadContributions(f: NodalForce2D): Array<DofLoad>
+LoadContributions(model: ElasticModel2D): Array<DofLoad>
+LoadContributions(load: BeamLoad, b: Beam, elementCount: Integer): Array<DofLoad>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 449
+### Line 449
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 449](../../../../../stdlib/future/finite-elements.library.plato#L449).
 
@@ -22,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
             DofLoad(DofIndex(f.Node.Value * 3 + 2), f.Force.Z)];
 ```
 
-## Line 471
+### Line 471
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 471](../../../../../stdlib/future/finite-elements.library.plato#L471).
 
@@ -40,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 482
+### Line 482
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 482](../../../../../stdlib/future/finite-elements.library.plato#L482).
 
@@ -57,7 +83,7 @@ Copied from source, comments included. A comment records intent. The body is the
                 t.LoadContributions(model.Mesh.Positions)));
 ```
 
-## Line 534
+### Line 534
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 534](../../../../../stdlib/future/finite-elements.library.plato#L534).
 
@@ -71,7 +97,7 @@ Copied from source, comments included. A comment records intent. The body is the
             DofLoad(DofIndex(f.Node.Value * 2 + 1), f.Force.Y)];
 ```
 
-## Line 553
+### Line 553
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 553](../../../../../stdlib/future/finite-elements.library.plato#L553).
 
@@ -85,7 +111,7 @@ Copied from source, comments included. A comment records intent. The body is the
                     model.Material.Density, model.Gravity)));
 ```
 
-## Line 909
+### Line 909
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 909](../../../../../stdlib/future/finite-elements.library.plato#L909).
 

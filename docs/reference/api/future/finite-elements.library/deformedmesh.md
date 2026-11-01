@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The mesh with every position moved by its displacement, exaggerated by
+> `scale`. A scale of 1 is the true deformed shape, which for a working
+> structure is far too small to see; anything larger is a picture, not a
+> geometry, and should say so.
+
+## Signature
+
+```plato
+DeformedMesh(mesh: TetrahedralMesh3D, solution: ElasticSolution3D,
+    scale: Number): TetrahedralMesh3D
+
+DeformedMesh(mesh: TriangleMesh2D, solution: ElasticSolution2D,
+    scale: Number): TriangleMesh2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 733
+### Line 733
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 733](../../../../../stdlib/future/finite-elements.library.plato#L733).
 
@@ -24,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
             mesh.Cells);
 ```
 
-## Line 743
+### Line 743
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 743](../../../../../stdlib/future/finite-elements.library.plato#L743).
 

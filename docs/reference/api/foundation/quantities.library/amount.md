@@ -3,11 +3,89 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Angle \<-> a raw amount in radians.
+
+## Signature
+
+```plato
+Amount(x: Angle): Number
+Amount(x: SolidAngle): Number
+Amount(x: Length): Number
+Amount(x: Area): Number
+Amount(x: Volume): Number
+Amount(x: Speed): Number
+Amount(x: Acceleration): Number
+Amount(x: Jerk): Number
+Amount(x: AngularVelocity): Number
+Amount(x: AngularAcceleration): Number
+Amount(x: WaveNumber): Number
+Amount(x: Curvature): Number
+Amount(x: Mass): Number
+Amount(x: Density): Number
+Amount(x: ArealDensity): Number
+Amount(x: LinearDensity): Number
+Amount(x: Force): Number
+Amount(x: Torque): Number
+Amount(x: Impulse): Number
+Amount(x: Momentum): Number
+Amount(x: AngularMomentum): Number
+Amount(x: MomentOfInertia): Number
+Amount(x: Energy): Number
+Amount(x: Power): Number
+Amount(x: Pressure): Number
+Amount(x: Stiffness): Number
+Amount(x: DampingCoefficient): Number
+Amount(x: DynamicViscosity): Number
+Amount(x: KinematicViscosity): Number
+Amount(x: MassFlowRate): Number
+Amount(x: VolumetricFlowRate): Number
+Amount(x: Strain): Number
+Amount(x: Temperature): Number
+Amount(x: TemperatureDelta): Number
+Amount(x: HeatCapacity): Number
+Amount(x: ThermalConductivity): Number
+Amount(x: Frequency): Number
+Amount(x: ElectricCurrent): Number
+Amount(x: ElectricCharge): Number
+Amount(x: Voltage): Number
+Amount(x: Resistance): Number
+Amount(x: Capacitance): Number
+Amount(x: Inductance): Number
+Amount(x: AmountOfSubstance): Number
+Amount(x: LuminousIntensity): Number
+Amount(x: LuminousFlux): Number
+Amount(x: Illuminance): Number
+Amount(x: Luminance): Number
+Amount(x: Irradiance): Number
+Amount(x: Duration): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 109](../../../../../stdlib/foundation/quantities.library.plato#L109): two lines per concrete quantity type, naming its canonical-unit field and
+- [Line 110](../../../../../stdlib/foundation/quantities.library.plato#L110): rebuilding a value from a raw amount in that same unit. Split out of that
+- [Line 117](../../../../../stdlib/foundation/quantities.library.plato#L117): Two lines per concrete type: read the canonical-unit field, and rebuild
+- [Line 118](../../../../../stdlib/foundation/quantities.library.plato#L118): from a raw amount in that same unit. The unit named here is the one in
+
+## Used by
+
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [quantities.library](../quantities.library.md). Kind: function. 50 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 104
+### Line 104
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 104](../../../../../stdlib/foundation/quantities.library.plato#L104).
 
@@ -37,7 +115,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Angle): Number => x.Radians;
 ```
 
-## Line 128
+### Line 128
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 128](../../../../../stdlib/foundation/quantities.library.plato#L128).
 
@@ -47,7 +125,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: SolidAngle): Number => x.Steradians;
 ```
 
-## Line 132
+### Line 132
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 132](../../../../../stdlib/foundation/quantities.library.plato#L132).
 
@@ -57,7 +135,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Length): Number => x.Meters;
 ```
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 136](../../../../../stdlib/foundation/quantities.library.plato#L136).
 
@@ -67,7 +145,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Area): Number => x.SquareMeters;
 ```
 
-## Line 140
+### Line 140
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 140](../../../../../stdlib/foundation/quantities.library.plato#L140).
 
@@ -77,7 +155,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Volume): Number => x.CubicMeters;
 ```
 
-## Line 144
+### Line 144
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 144](../../../../../stdlib/foundation/quantities.library.plato#L144).
 
@@ -87,7 +165,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Speed): Number => x.MetersPerSecond;
 ```
 
-## Line 148
+### Line 148
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 148](../../../../../stdlib/foundation/quantities.library.plato#L148).
 
@@ -97,7 +175,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Acceleration): Number => x.MetersPerSecondSquared;
 ```
 
-## Line 152
+### Line 152
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 152](../../../../../stdlib/foundation/quantities.library.plato#L152).
 
@@ -107,7 +185,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Jerk): Number => x.MetersPerSecondCubed;
 ```
 
-## Line 156
+### Line 156
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 156](../../../../../stdlib/foundation/quantities.library.plato#L156).
 
@@ -117,7 +195,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: AngularVelocity): Number => x.RadiansPerSecond;
 ```
 
-## Line 160
+### Line 160
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 160](../../../../../stdlib/foundation/quantities.library.plato#L160).
 
@@ -127,7 +205,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: AngularAcceleration): Number => x.RadiansPerSecondSquared;
 ```
 
-## Line 164
+### Line 164
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 164](../../../../../stdlib/foundation/quantities.library.plato#L164).
 
@@ -137,7 +215,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: WaveNumber): Number => x.CyclesPerMeter;
 ```
 
-## Line 168
+### Line 168
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 168](../../../../../stdlib/foundation/quantities.library.plato#L168).
 
@@ -147,7 +225,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Curvature): Number => x.PerMeter;
 ```
 
-## Line 172
+### Line 172
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 172](../../../../../stdlib/foundation/quantities.library.plato#L172).
 
@@ -160,7 +238,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Mass): Number => x.Kilograms;
 ```
 
-## Line 179
+### Line 179
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 179](../../../../../stdlib/foundation/quantities.library.plato#L179).
 
@@ -170,7 +248,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Density): Number => x.KilogramsPerCubicMeter;
 ```
 
-## Line 183
+### Line 183
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 183](../../../../../stdlib/foundation/quantities.library.plato#L183).
 
@@ -180,7 +258,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: ArealDensity): Number => x.KilogramsPerSquareMeter;
 ```
 
-## Line 187
+### Line 187
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 187](../../../../../stdlib/foundation/quantities.library.plato#L187).
 
@@ -190,7 +268,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: LinearDensity): Number => x.KilogramsPerMeter;
 ```
 
-## Line 191
+### Line 191
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 191](../../../../../stdlib/foundation/quantities.library.plato#L191).
 
@@ -200,7 +278,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Force): Number => x.Newtons;
 ```
 
-## Line 195
+### Line 195
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 195](../../../../../stdlib/foundation/quantities.library.plato#L195).
 
@@ -210,7 +288,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Torque): Number => x.NewtonMeters;
 ```
 
-## Line 199
+### Line 199
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 199](../../../../../stdlib/foundation/quantities.library.plato#L199).
 
@@ -220,7 +298,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Impulse): Number => x.NewtonSeconds;
 ```
 
-## Line 203
+### Line 203
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 203](../../../../../stdlib/foundation/quantities.library.plato#L203).
 
@@ -230,7 +308,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Momentum): Number => x.KilogramMetersPerSecond;
 ```
 
-## Line 207
+### Line 207
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 207](../../../../../stdlib/foundation/quantities.library.plato#L207).
 
@@ -240,7 +318,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: AngularMomentum): Number => x.KilogramSquareMetersPerSecond;
 ```
 
-## Line 211
+### Line 211
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 211](../../../../../stdlib/foundation/quantities.library.plato#L211).
 
@@ -250,7 +328,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: MomentOfInertia): Number => x.KilogramSquareMeters;
 ```
 
-## Line 215
+### Line 215
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 215](../../../../../stdlib/foundation/quantities.library.plato#L215).
 
@@ -260,7 +338,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Energy): Number => x.Joules;
 ```
 
-## Line 219
+### Line 219
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 219](../../../../../stdlib/foundation/quantities.library.plato#L219).
 
@@ -270,7 +348,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Power): Number => x.Watts;
 ```
 
-## Line 223
+### Line 223
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 223](../../../../../stdlib/foundation/quantities.library.plato#L223).
 
@@ -280,7 +358,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Pressure): Number => x.Pascals;
 ```
 
-## Line 227
+### Line 227
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 227](../../../../../stdlib/foundation/quantities.library.plato#L227).
 
@@ -290,7 +368,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Stiffness): Number => x.NewtonsPerMeter;
 ```
 
-## Line 231
+### Line 231
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 231](../../../../../stdlib/foundation/quantities.library.plato#L231).
 
@@ -300,7 +378,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: DampingCoefficient): Number => x.NewtonSecondsPerMeter;
 ```
 
-## Line 235
+### Line 235
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 235](../../../../../stdlib/foundation/quantities.library.plato#L235).
 
@@ -310,7 +388,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: DynamicViscosity): Number => x.PascalSeconds;
 ```
 
-## Line 239
+### Line 239
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 239](../../../../../stdlib/foundation/quantities.library.plato#L239).
 
@@ -320,7 +398,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: KinematicViscosity): Number => x.SquareMetersPerSecond;
 ```
 
-## Line 243
+### Line 243
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 243](../../../../../stdlib/foundation/quantities.library.plato#L243).
 
@@ -330,7 +408,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: MassFlowRate): Number => x.KilogramsPerSecond;
 ```
 
-## Line 247
+### Line 247
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 247](../../../../../stdlib/foundation/quantities.library.plato#L247).
 
@@ -340,7 +418,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: VolumetricFlowRate): Number => x.CubicMetersPerSecond;
 ```
 
-## Line 251
+### Line 251
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 251](../../../../../stdlib/foundation/quantities.library.plato#L251).
 
@@ -350,7 +428,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Strain): Number => x.Ratio;
 ```
 
-## Line 255
+### Line 255
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 255](../../../../../stdlib/foundation/quantities.library.plato#L255).
 
@@ -363,7 +441,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Temperature): Number => x.Kelvin;
 ```
 
-## Line 262
+### Line 262
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 262](../../../../../stdlib/foundation/quantities.library.plato#L262).
 
@@ -373,7 +451,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: TemperatureDelta): Number => x.Kelvin;
 ```
 
-## Line 266
+### Line 266
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 266](../../../../../stdlib/foundation/quantities.library.plato#L266).
 
@@ -383,7 +461,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: HeatCapacity): Number => x.JoulesPerKelvin;
 ```
 
-## Line 270
+### Line 270
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 270](../../../../../stdlib/foundation/quantities.library.plato#L270).
 
@@ -393,7 +471,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: ThermalConductivity): Number => x.WattsPerMeterKelvin;
 ```
 
-## Line 274
+### Line 274
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 274](../../../../../stdlib/foundation/quantities.library.plato#L274).
 
@@ -403,7 +481,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Frequency): Number => x.Hertz;
 ```
 
-## Line 278
+### Line 278
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 278](../../../../../stdlib/foundation/quantities.library.plato#L278).
 
@@ -413,7 +491,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: ElectricCurrent): Number => x.Amperes;
 ```
 
-## Line 282
+### Line 282
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 282](../../../../../stdlib/foundation/quantities.library.plato#L282).
 
@@ -423,7 +501,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: ElectricCharge): Number => x.Coulombs;
 ```
 
-## Line 286
+### Line 286
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 286](../../../../../stdlib/foundation/quantities.library.plato#L286).
 
@@ -433,7 +511,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Voltage): Number => x.Volts;
 ```
 
-## Line 290
+### Line 290
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 290](../../../../../stdlib/foundation/quantities.library.plato#L290).
 
@@ -443,7 +521,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Resistance): Number => x.Ohms;
 ```
 
-## Line 294
+### Line 294
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 294](../../../../../stdlib/foundation/quantities.library.plato#L294).
 
@@ -453,7 +531,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Capacitance): Number => x.Farads;
 ```
 
-## Line 298
+### Line 298
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 298](../../../../../stdlib/foundation/quantities.library.plato#L298).
 
@@ -463,7 +541,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Inductance): Number => x.Henries;
 ```
 
-## Line 302
+### Line 302
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 302](../../../../../stdlib/foundation/quantities.library.plato#L302).
 
@@ -473,7 +551,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: AmountOfSubstance): Number => x.Moles;
 ```
 
-## Line 306
+### Line 306
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 306](../../../../../stdlib/foundation/quantities.library.plato#L306).
 
@@ -483,7 +561,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: LuminousIntensity): Number => x.Candelas;
 ```
 
-## Line 310
+### Line 310
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 310](../../../../../stdlib/foundation/quantities.library.plato#L310).
 
@@ -493,7 +571,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: LuminousFlux): Number => x.Lumens;
 ```
 
-## Line 314
+### Line 314
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 314](../../../../../stdlib/foundation/quantities.library.plato#L314).
 
@@ -503,7 +581,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Illuminance): Number => x.Lux;
 ```
 
-## Line 318
+### Line 318
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 318](../../../../../stdlib/foundation/quantities.library.plato#L318).
 
@@ -513,7 +591,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Luminance): Number => x.CandelasPerSquareMeter;
 ```
 
-## Line 322
+### Line 322
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 322](../../../../../stdlib/foundation/quantities.library.plato#L322).
 
@@ -523,7 +601,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Amount(x: Irradiance): Number => x.WattsPerSquareMeter;
 ```
 
-## Line 326
+### Line 326
 
 **Source:** [stdlib/foundation/quantities.library.plato, line 326](../../../../../stdlib/foundation/quantities.library.plato#L326).
 

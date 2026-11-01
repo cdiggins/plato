@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A zero-based index of one scalar unknown of the assembled system ("degree of
+> freedom"). -1 means "none".
+> Convention: see CONVENTIONS.md - Typed indices.
+
+## Signature
+
+```plato
+type DofIndex
+    implements IValue, IHashable, IComparable, IIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IHashable](../../foundation/core.concepts/ihashable.md), [IComparable](../../foundation/core.concepts/icomparable.md), [IIndex](../../foundation/collections.concepts/iindex.md).
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.types](../finite-elements.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 31
+### Line 31
 
 **Source:** [stdlib/future/finite-elements.types.plato, line 31](../../../../../stdlib/future/finite-elements.types.plato#L31).
 

@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point standing for an EMPTY cell: four radii outside the region's
+> minimum corner, so it is further than `radius` from every point of the
+> region and can never block a candidate. A sentinel and not a validity
+> record because the grid rows below are plain point arrays and nothing
+> outside this section ever sees one.
+
+## Signature
+
+```plato
+EmptyCellPoint(region: Bounds2D, radius: Number): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 573
+### Line 573
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 573](../../../../../stdlib/geometry/sampling.library.plato#L573).
 

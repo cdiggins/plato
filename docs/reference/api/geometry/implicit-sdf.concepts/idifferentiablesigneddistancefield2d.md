@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar SDF that reports a gradient as well as a distance. For an exact
+> distance field the unit gradient is the outward normal of the boundary curve,
+> and the gradient has unit length wherever the field is differentiable
+> (the eikonal property, https://en.wikipedia.org/wiki/Eikonal\_equation).
+> The gradient is undefined on the seam of a Min/Max combination, where the
+> implementor reports one side's gradient rather than failing.
+
+## Signature
+
+```plato
+interface IDifferentiableSignedDistanceField2D
+    inherits ISignedDistanceField2D, IDifferentiableScalarField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ISignedDistanceField2D](isigneddistancefield2d.md), [IDifferentiableScalarField2D](../fields.concepts/idifferentiablescalarfield2d.md).
+
+Implemented in this tier by: [BoundedSdf2D](../implicit-sdf.types/boundedsdf2d.md), [PlacedSdf2D](../implicit-sdf.types/placedsdf2d.md), [FunctionSdf2D](../implicit-sdf.types/functionsdf2d.md), [SampledSdf2D](../implicit-sdf.types/sampledsdf2d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.concepts](../implicit-sdf.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 82
+### Line 82
 
 **Source:** [stdlib/geometry/implicit-sdf.concepts.plato, line 82](../../../../../stdlib/geometry/implicit-sdf.concepts.plato#L82).
 

@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Solve `m u = loads` subject to the prescribed displacements. `m` is the
+> assembled stiffness matrix in coordinate-list form and is not modified.
+
+## Signature
+
+```plato
+SolveConstrained(m: SparseMatrix, loads: Array<Number>,
+    constraints: Array<PrescribedDisplacement>, settings: LinearSolveSettings): LinearSolveResult
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 243](../../../../../stdlib/future/finite-elements.library.plato#L243): definite: an unrestrained rigid-body motion, or a degenerate
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 202
+### Line 202
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 202](../../../../../stdlib/future/finite-elements.library.plato#L202).
 

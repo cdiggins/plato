@@ -3,11 +3,61 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Pointwise minimum distance; bounds are the union of the operands.
+
+## Signature
+
+```plato
+Union(a: BoundedSdf2D, b: BoundedSdf2D): BoundedSdf2D
+Union(a: BoundedSdf3D, b: BoundedSdf3D): BoundedSdf3D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_Bounds2DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 94](../../../../../stdlib/tests/foundation.laws.plato#L94)
+
+```plato
+// A box is contained in its union with any other box.
+Law_Bounds2DUnionContainsSelf(b: Bounds2D, o: Bounds2D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+### Law_Bounds2DUnionContainsOther
+
+[stdlib/tests/foundation.laws.plato, line 98](../../../../../stdlib/tests/foundation.laws.plato#L98)
+
+```plato
+// The other operand is contained in the union too.
+Law_Bounds2DUnionContainsOther(b: Bounds2D, o: Bounds2D): Boolean
+    => o.IsEmpty || b.Union(o).Contains(o);
+```
+
+### Law_Bounds3DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 110](../../../../../stdlib/tests/foundation.laws.plato#L110)
+
+```plato
+Law_Bounds3DUnionContainsSelf(b: Bounds3D, o: Bounds3D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 111
+### Line 111
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 111](../../../../../stdlib/geometry/implicit-sdf.library.plato#L111).
 
@@ -21,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Sdf.Union(b.Sdf), UnionOfBounds(a.Bounds, b.Bounds));
 ```
 
-## Line 118
+### Line 118
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 118](../../../../../stdlib/geometry/implicit-sdf.library.plato#L118).
 

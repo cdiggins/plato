@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The adjugate: the transpose of the cofactor matrix, so that
+> Adjugate \* (1 / Determinant) is the inverse. Defined for every matrix,
+> singular or not. https://en.wikipedia.org/wiki/Adjugate\_matrix
+
+## Signature
+
+```plato
+Adjugate(self: Matrix4x4): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 260
+### Line 260
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 260](../../../../../stdlib/foundation/matrices-ops.library.plato#L260).
 

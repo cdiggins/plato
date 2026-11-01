@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The first field with the second carved out of it: a against the negated b.
+> A lower bound.
+
+## Signature
+
+```plato
+Difference(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
+Difference(a: ScalarFunctionField3D, b: ScalarFunctionField3D): ScalarFunctionField3D
+Difference(a: FunctionSdf2D, b: FunctionSdf2D): FunctionSdf2D
+Difference(a: FunctionSdf3D, b: FunctionSdf3D): FunctionSdf3D
+Difference(a: FunctionRegion2D, b: FunctionRegion2D): FunctionRegion2D
+Difference(a: FunctionVolume3D, b: FunctionVolume3D): FunctionVolume3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 561
+### Line 561
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 561](../../../../../stdlib/geometry/fields-implicits.library.plato#L561).
 
@@ -19,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Combine(b, (x, y) => x.Max(y.Negative));
 ```
 
-## Line 566
+### Line 566
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 566](../../../../../stdlib/geometry/fields-implicits.library.plato#L566).
 
@@ -31,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Combine(b, (x, y) => x.Max(y.Negative));
 ```
 
-## Line 770
+### Line 770
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 770](../../../../../stdlib/geometry/fields-implicits.library.plato#L770).
 
@@ -42,7 +68,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => a.Eval(p).Max(b.Eval(p).Negative));
 ```
 
-## Line 774
+### Line 774
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 774](../../../../../stdlib/geometry/fields-implicits.library.plato#L774).
 
@@ -53,7 +79,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => a.Eval(p).Max(b.Eval(p).Negative));
 ```
 
-## Line 906
+### Line 906
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 906](../../../../../stdlib/geometry/fields-implicits.library.plato#L906).
 
@@ -64,7 +90,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionRegion2D(p => a.Eval(p) && b.Eval(p).Not);
 ```
 
-## Line 922
+### Line 922
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 922](../../../../../stdlib/geometry/fields-implicits.library.plato#L922).
 

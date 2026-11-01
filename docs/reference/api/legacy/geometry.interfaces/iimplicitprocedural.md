@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> An implicit procedural could represent a curve in 2D, a surface, solid, or volume in 3D.
+
+## Signature
+
+```plato
+interface IImplicitProcedural<TDomain>
+    inherits IProcedural<TDomain, Boolean>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IProcedural](../procedurals/iprocedural.md).
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 145
+### Line 145
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 145](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L145).
 

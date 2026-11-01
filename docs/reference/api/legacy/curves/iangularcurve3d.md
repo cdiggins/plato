@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+interface IAngularCurve3D
+    inherits ICurve3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICurve3D](../geometry.interfaces/icurve3d.md).
+
+Implemented in this tier by: [TorusKnot](torusknot.md), [TrefoilKnot](trefoilknot.md), [FigureEightKnot](figureeightknot.md), [Helix](helix.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 526
+### Line 526
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 526](../../../../../legacy/stdlib-legacy/curves.plato#L526).
 

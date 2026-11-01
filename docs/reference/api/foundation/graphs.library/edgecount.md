@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The number of stored edges.
+
+## Signature
+
+```plato
+EdgeCount(self: Graph): Integer
+EdgeCount(self: WeightedGraph): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Graph data and graph summaries](../../../library/foundation/graphs.md)
+
+## Source
+
 **File:** [graphs.library](../graphs.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 65
+### Line 65
 
 **Source:** [stdlib/foundation/graphs.library.plato, line 65](../../../../../stdlib/foundation/graphs.library.plato#L65).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Edges.Count;
 ```
 
-## Line 73
+### Line 73
 
 **Source:** [stdlib/foundation/graphs.library.plato, line 73](../../../../../stdlib/foundation/graphs.library.plato#L73).
 

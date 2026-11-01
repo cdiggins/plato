@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Representative chains resolved to their fixed points, which is what makes an
+> arbitrary "vertex i merges into vertex j" table usable by `CompactMerge`.
+> Each pass at least halves the longest remaining chain, so thirty-two passes
+> settle any chain a four-billion-vertex mesh could hold.
+
+## Signature
+
+```plato
+ResolvedRepresentatives(representatives: Array<VertexIndex>): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 250
+### Line 250
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 250](../../../../../stdlib/geometry/remeshing.library.plato#L250).
 

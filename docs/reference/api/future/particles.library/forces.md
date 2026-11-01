@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The force fields of a spatial system, bundled. The system stores the six
+> arrays inline; this is the projection onto the shared force vocabulary,
+> so a cloth and a particle system are driven by the same value.
+
+## Signature
+
+```plato
+Forces(self: ParticleSystem3D): ParticleForces3D
+Forces(self: ParticleSystem2D): ParticleForces3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.library](../particles.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/future/particles.library.plato, line 131](../../../../../stdlib/future/particles.library.plato#L131).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Gravities, self.Drags, self.Vortices, self.Attractors, self.Turbulences, self.Winds);
 ```
 
-## Line 137
+### Line 137
 
 **Source:** [stdlib/future/particles.library.plato, line 137](../../../../../stdlib/future/particles.library.plato#L137).
 

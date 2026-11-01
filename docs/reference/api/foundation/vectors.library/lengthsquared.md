@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The squared length: cheaper than Length, and enough for comparisons.
+
+## Signature
+
+```plato
+LengthSquared(self: Vector2D): Number
+LengthSquared(self: Vector3D): Number
+LengthSquared(self: Number2): Number
+LengthSquared(self: Number3): Number
+LengthSquared(self: Number4): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 273](../../../../../stdlib/foundation/vectors.library.plato#L273): what that substitution must compute.
+- [Line 279](../../../../../stdlib/foundation/vectors.library.plato#L279): by lane for exactly that reason.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [vectors.library](../vectors.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 32
+### Line 32
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 32](../../../../../stdlib/foundation/vectors.library.plato#L32).
 
@@ -18,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X.Square + self.Y.Square;
 ```
 
-## Line 143
+### Line 143
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 143](../../../../../stdlib/foundation/vectors.library.plato#L143).
 
@@ -29,7 +60,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X.Square + self.Y.Square + self.Z.Square;
 ```
 
-## Line 263
+### Line 263
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 263](../../../../../stdlib/foundation/vectors.library.plato#L263).
 
@@ -65,7 +96,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X * self.X + self.Y * self.Y;
 ```
 
-## Line 357
+### Line 357
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 357](../../../../../stdlib/foundation/vectors.library.plato#L357).
 
@@ -79,7 +110,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.X * self.X + self.Y * self.Y + self.Z * self.Z;
 ```
 
-## Line 431
+### Line 431
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 431](../../../../../stdlib/foundation/vectors.library.plato#L431).
 

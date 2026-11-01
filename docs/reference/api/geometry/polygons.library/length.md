@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The summed length of the chain; the wrap-around edge counts only when Closed.
+
+## Signature
+
+```plato
+Length(p: Polyline2D): Number
+Length(p: Polyline3D): Number
+Length(p: PolylineN): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 292
+### Line 292
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 292](../../../../../stdlib/geometry/polygons.library.plato#L292).
 
@@ -28,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Points.ChainLength(p.Closed);
 ```
 
-## Line 306
+### Line 306
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 306](../../../../../stdlib/geometry/polygons.library.plato#L306).
 
@@ -39,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Points.ChainLength(p.Closed);
 ```
 
-## Line 310
+### Line 310
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 310](../../../../../stdlib/geometry/polygons.library.plato#L310).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> First shape with the second carved out. Bounds stay those of `a`
+> (difference only shrinks the solid).
+
+## Signature
+
+```plato
+Difference(a: BoundedSdf2D, b: BoundedSdf2D): BoundedSdf2D
+Difference(a: BoundedSdf3D, b: BoundedSdf3D): BoundedSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 131](../../../../../stdlib/geometry/implicit-sdf.library.plato#L131).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Sdf.Difference(b.Sdf), a.Bounds);
 ```
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 136](../../../../../stdlib/geometry/implicit-sdf.library.plato#L136).
 

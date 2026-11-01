@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Quad(self: IArray<Point3D>, index: Integer4): Quad3D
+Quad(self: IPointGeometry3D, index: Integer4): Quad3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 6
+### Line 6
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 6](../../../../../legacy/stdlib-legacy/meshes.library.plato#L6).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Quad(self: IArray<Point3D>, index: Integer4): Quad3D => (self[index.A], self[index.B], self[index.C], self[index.D]);        
 ```
 
-## Line 10
+### Line 10
 
 **Source:** [legacy/stdlib-legacy/meshes.library.plato, line 10](../../../../../legacy/stdlib-legacy/meshes.library.plato#L10).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Planar curl noise: the 90-degree rotation of the gradient of a smooth
+> scalar potential, yielding a divergence-free vector field. Ideal for
+> advecting particles without sources or sinks
+> (https://en.wikipedia.org/wiki/Curl\_(mathematics)).
+
+## Signature
+
+```plato
+type CurlNoise2D
+    implements IValue, IVectorField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IVectorField2D](../fields.concepts/ivectorfield2d.md).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.types](../noise.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 314
+### Line 314
 
 **Source:** [stdlib/geometry/noise.types.plato, line 314](../../../../../stdlib/geometry/noise.types.plato#L314).
 

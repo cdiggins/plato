@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The pseudo-random integer belonging to planar lattice cell (ix, iy) of the
+> field with this seed. Each coordinate is mixed before folding so that
+> neighbouring cells do not share low bits.
+
+## Signature
+
+```plato
+LatticeHash(seed: Integer, ix: Integer, iy: Integer): Integer
+LatticeHash(seed: Integer, ix: Integer, iy: Integer, iz: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.library](../noise.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 43
+### Line 43
 
 **Source:** [stdlib/geometry/noise.library.plato, line 43](../../../../../stdlib/geometry/noise.library.plato#L43).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => NoiseMix(seed.CombineHash(NoiseMix(ix)).CombineHash(NoiseMix(iy)));
 ```
 
-## Line 49
+### Line 49
 
 **Source:** [stdlib/geometry/noise.library.plato, line 49](../../../../../stdlib/geometry/noise.library.plato#L49).
 

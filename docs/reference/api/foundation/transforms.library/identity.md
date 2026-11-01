@@ -3,11 +3,58 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The zero translation.
+
+## Signature
+
+```plato
+Identity(_: Translation2D): Translation2D
+Identity(_: Translation3D): Translation3D
+Identity(_: Scaling2D): Scaling2D
+Identity(_: Scaling3D): Scaling3D
+Identity(_: UniformScaling2D): UniformScaling2D
+Identity(_: UniformScaling3D): UniformScaling3D
+Identity(_: RotationAbout2D): RotationAbout2D
+Identity(_: RotationAbout3D): RotationAbout3D
+Identity(_: ScalingAbout2D): ScalingAbout2D
+Identity(_: ScalingAbout3D): ScalingAbout3D
+Identity(_: Rotation2D): Rotation2D
+Identity(_: Rotor2D): Rotor2D
+Identity(_: Quaternion): Quaternion
+Identity(_: Rotor3D): Rotor3D
+Identity(_: Motor3D): Motor3D
+Identity(_: Pose2D): Pose2D
+Identity(_: Pose3D): Pose3D
+Identity(_: TrsTransform2D): TrsTransform2D
+Identity(_: TrsTransform3D): TrsTransform3D
+Identity(_: Matrix3x2): Matrix3x2
+Identity(_: Matrix3x3): Matrix3x3
+Identity(_: Matrix4x3): Matrix4x3
+Identity(_: Matrix4x4): Matrix4x4
+Identity(_: AffineTransform2D): AffineTransform2D
+Identity(_: AffineTransform3D): AffineTransform3D
+Identity(_: Transform2D): Transform2D
+Identity(_: Transform3D): Transform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 27 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 253
+### Line 253
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 253](../../../../../stdlib/foundation/transforms.library.plato#L253).
 
@@ -18,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Translation2D(Vector2D.Zero);
 ```
 
-## Line 281
+### Line 281
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 281](../../../../../stdlib/foundation/transforms.library.plato#L281).
 
@@ -29,7 +76,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Translation3D(Vector3D.Zero);
 ```
 
-## Line 314
+### Line 314
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 314](../../../../../stdlib/foundation/transforms.library.plato#L314).
 
@@ -40,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Scaling2D(Number2.One);
 ```
 
-## Line 342
+### Line 342
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 342](../../../../../stdlib/foundation/transforms.library.plato#L342).
 
@@ -51,7 +98,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Scaling3D(Number3.One);
 ```
 
-## Line 370
+### Line 370
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 370](../../../../../stdlib/foundation/transforms.library.plato#L370).
 
@@ -62,7 +109,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => UniformScaling2D(1.0);
 ```
 
-## Line 398
+### Line 398
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 398](../../../../../stdlib/foundation/transforms.library.plato#L398).
 
@@ -73,7 +120,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => UniformScaling3D(1.0);
 ```
 
-## Line 513
+### Line 513
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 513](../../../../../stdlib/foundation/transforms.library.plato#L513).
 
@@ -84,7 +131,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Rotation2D.Identity, Point2D.Origin);
 ```
 
-## Line 546
+### Line 546
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 546](../../../../../stdlib/foundation/transforms.library.plato#L546).
 
@@ -95,7 +142,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Quaternion.Identity, Point3D.Origin);
 ```
 
-## Line 576
+### Line 576
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 576](../../../../../stdlib/foundation/transforms.library.plato#L576).
 
@@ -106,7 +153,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Number2.One, Point2D.Origin);
 ```
 
-## Line 611
+### Line 611
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 611](../../../../../stdlib/foundation/transforms.library.plato#L611).
 
@@ -117,7 +164,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Number3.One, Point3D.Origin);
 ```
 
-## Line 706
+### Line 706
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 706](../../../../../stdlib/foundation/transforms.library.plato#L706).
 
@@ -139,7 +186,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Rotation2D(0.0.Angle);
 ```
 
-## Line 721
+### Line 721
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 721](../../../../../stdlib/foundation/transforms.library.plato#L721).
 
@@ -150,7 +197,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (1.0, 0.0);
 ```
 
-## Line 725
+### Line 725
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 725](../../../../../stdlib/foundation/transforms.library.plato#L725).
 
@@ -161,7 +208,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (0.0, 0.0, 0.0, 1.0);
 ```
 
-## Line 729
+### Line 729
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 729](../../../../../stdlib/foundation/transforms.library.plato#L729).
 
@@ -172,7 +219,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (1.0, Bivector3D(0.0, 0.0, 0.0));
 ```
 
-## Line 733
+### Line 733
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 733](../../../../../stdlib/foundation/transforms.library.plato#L733).
 
@@ -183,7 +230,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Quaternion.Identity, Quaternion(0.0, 0.0, 0.0, 0.0));
 ```
 
-## Line 737
+### Line 737
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 737](../../../../../stdlib/foundation/transforms.library.plato#L737).
 
@@ -194,7 +241,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Point2D.Origin, Rotation2D.Identity);
 ```
 
-## Line 741
+### Line 741
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 741](../../../../../stdlib/foundation/transforms.library.plato#L741).
 
@@ -205,7 +252,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Point3D.Origin, Quaternion.Identity);
 ```
 
-## Line 745
+### Line 745
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 745](../../../../../stdlib/foundation/transforms.library.plato#L745).
 
@@ -216,7 +263,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Vector2D.Zero, Rotation2D.Identity, Number2.One);
 ```
 
-## Line 749
+### Line 749
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 749](../../../../../stdlib/foundation/transforms.library.plato#L749).
 
@@ -227,7 +274,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Vector3D.Zero, Quaternion.Identity, Number3.One);
 ```
 
-## Line 753
+### Line 753
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 753](../../../../../stdlib/foundation/transforms.library.plato#L753).
 
@@ -238,7 +285,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Number2(1.0, 0.0), Number2(0.0, 1.0), Number2(0.0, 0.0));
 ```
 
-## Line 757
+### Line 757
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 757](../../../../../stdlib/foundation/transforms.library.plato#L757).
 
@@ -249,7 +296,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Number3(1.0, 0.0, 0.0), Number3(0.0, 1.0, 0.0), Number3(0.0, 0.0, 1.0));
 ```
 
-## Line 761
+### Line 761
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 761](../../../../../stdlib/foundation/transforms.library.plato#L761).
 
@@ -260,7 +307,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Number3(1.0, 0.0, 0.0), Number3(0.0, 1.0, 0.0), Number3(0.0, 0.0, 1.0), Number3(0.0, 0.0, 0.0));
 ```
 
-## Line 765
+### Line 765
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 765](../../../../../stdlib/foundation/transforms.library.plato#L765).
 
@@ -271,7 +318,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Number4(1.0, 0.0, 0.0, 0.0), Number4(0.0, 1.0, 0.0, 0.0), Number4(0.0, 0.0, 1.0, 0.0), Number4(0.0, 0.0, 0.0, 1.0));
 ```
 
-## Line 769
+### Line 769
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 769](../../../../../stdlib/foundation/transforms.library.plato#L769).
 
@@ -282,7 +329,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform2D(Matrix3x2.Identity);
 ```
 
-## Line 773
+### Line 773
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 773](../../../../../stdlib/foundation/transforms.library.plato#L773).
 
@@ -293,7 +340,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => AffineTransform3D(Matrix4x3.Identity);
 ```
 
-## Line 777
+### Line 777
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 777](../../../../../stdlib/foundation/transforms.library.plato#L777).
 
@@ -304,7 +351,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Transform2D(Matrix3x3.Identity);
 ```
 
-## Line 781
+### Line 781
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 781](../../../../../stdlib/foundation/transforms.library.plato#L781).
 

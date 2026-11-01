@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Supplies the support mapping of a convex 2D shape: the farthest point of the
+> shape in a given direction. Ties may resolve to any extreme point. The basis
+> of GJK-style collision queries. (https://en.wikipedia.org/wiki/Support\_function)
+
+## Signature
+
+```plato
+interface ISupport2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [OrientedBox2D](../planar.types/orientedbox2d.md), [RegularPolygon](../planar.types/regularpolygon.md), [Circle](../planar.types/circle.md), [Capsule2D](../planar.types/capsule2d.md), [ConvexPolygon2D](../polygons.types/convexpolygon2d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 245
+### Line 245
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 245](../../../../../stdlib/geometry/geometry.concepts.plato#L245).
 

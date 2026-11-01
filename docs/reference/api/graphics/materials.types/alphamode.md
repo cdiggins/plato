@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How a material's alpha is interpreted when compositing: alpha ignored
+> (Opaque), a binary cutout discarding fragments below the carried Cutoff
+> threshold (Mask, conventionally 0.5), or alpha compositing (Blend).
+> (https://en.wikipedia.org/wiki/Alpha\_compositing)
+
+## Signature
+
+```plato
+type AlphaMode
+    = Opaque
+    | Mask(Cutoff: Proportion)
+    | Blend
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Scenes, materials and render settings](../../../library/graphics/scenes-rendering.md)
+
+## Source
+
 **File:** [materials.types](../materials.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/graphics/materials.types.plato, line 1](../../../../../stdlib/graphics/materials.types.plato#L1).
 

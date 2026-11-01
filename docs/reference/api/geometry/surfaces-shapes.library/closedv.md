@@ -3,11 +3,57 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+ClosedV(s: HyperbolicParaboloid): Boolean
+ClosedV(s: HyperboloidOfOneSheet): Boolean
+ClosedV(s: HyperboloidOfTwoSheets): Boolean
+ClosedV(s: Catenoid): Boolean
+ClosedV(s: Helicoid): Boolean
+ClosedV(s: Pseudosphere): Boolean
+ClosedV(s: Superellipsoid): Boolean
+ClosedV(s: Supertoroid): Boolean
+ClosedV(s: Superformula3D): Boolean
+ClosedV(s: DupinCyclide): Boolean
+ClosedV(s: SeashellSurface): Boolean
+ClosedV(s: SphericalHarmonicSurface): Boolean
+ClosedV(s: KleinBottle): Boolean
+ClosedV(s: RomanSurface): Boolean
+ClosedV(s: CrossCap): Boolean
+ClosedV(s: BoySurface): Boolean
+ClosedV(s: WhitneyUmbrella): Boolean
+ClosedV(s: BohemianDome): Boolean
+ClosedV(s: PluckerConoid): Boolean
+ClosedV(s: EnneperSurface): Boolean
+ClosedV(s: ScherkSurface): Boolean
+ClosedV(s: HennebergSurface): Boolean
+ClosedV(s: CatalanSurface): Boolean
+ClosedV(s: MonkeySaddle): Boolean
+ClosedV(s: DiniSurface): Boolean
+ClosedV(s: KuenSurface): Boolean
+ClosedV(s: BreatherSurface): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.library](../surfaces-shapes.library.md). Kind: function. 27 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 60
+### Line 60
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 60](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L60).
 
@@ -15,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: HyperbolicParaboloid): Boolean => false;
 ```
 
-## Line 73
+### Line 73
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 73](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L73).
 
@@ -23,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: HyperboloidOfOneSheet): Boolean => false;
 ```
 
-## Line 86
+### Line 86
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 86](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L86).
 
@@ -31,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: HyperboloidOfTwoSheets): Boolean => false;
 ```
 
-## Line 100
+### Line 100
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 100](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L100).
 
@@ -39,7 +85,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Catenoid): Boolean => false;
 ```
 
-## Line 113
+### Line 113
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 113](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L113).
 
@@ -47,7 +93,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Helicoid): Boolean => false;
 ```
 
-## Line 124
+### Line 124
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 124](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L124).
 
@@ -55,7 +101,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Pseudosphere): Boolean => false;
 ```
 
-## Line 151
+### Line 151
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 151](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L151).
 
@@ -63,7 +109,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Superellipsoid): Boolean => false;
 ```
 
-## Line 165
+### Line 165
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 165](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L165).
 
@@ -71,7 +117,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Supertoroid): Boolean => true;
 ```
 
-## Line 184
+### Line 184
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 184](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L184).
 
@@ -79,7 +125,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: Superformula3D): Boolean => false;
 ```
 
-## Line 207
+### Line 207
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 207](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L207).
 
@@ -87,7 +133,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: DupinCyclide): Boolean => true;
 ```
 
-## Line 222
+### Line 222
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 222](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L222).
 
@@ -95,7 +141,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: SeashellSurface): Boolean => false;
 ```
 
-## Line 241
+### Line 241
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 241](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L241).
 
@@ -103,7 +149,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: SphericalHarmonicSurface): Boolean => false;
 ```
 
-## Line 270
+### Line 270
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 270](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L270).
 
@@ -111,7 +157,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: KleinBottle): Boolean => true;
 ```
 
-## Line 279
+### Line 279
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 279](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L279).
 
@@ -119,7 +165,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: RomanSurface): Boolean => false;
 ```
 
-## Line 292
+### Line 292
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 292](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L292).
 
@@ -127,7 +173,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: CrossCap): Boolean => false;
 ```
 
-## Line 311
+### Line 311
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 311](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L311).
 
@@ -135,7 +181,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: BoySurface): Boolean => true;
 ```
 
-## Line 325
+### Line 325
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 325](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L325).
 
@@ -143,7 +189,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: WhitneyUmbrella): Boolean => false;
 ```
 
-## Line 338
+### Line 338
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 338](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L338).
 
@@ -151,7 +197,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: BohemianDome): Boolean => true;
 ```
 
-## Line 353
+### Line 353
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 353](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L353).
 
@@ -159,7 +205,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: PluckerConoid): Boolean => false;
 ```
 
-## Line 378
+### Line 378
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 378](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L378).
 
@@ -167,7 +213,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: EnneperSurface): Boolean => false;
 ```
 
-## Line 389
+### Line 389
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 389](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L389).
 
@@ -175,7 +221,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: ScherkSurface): Boolean => false;
 ```
 
-## Line 404
+### Line 404
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 404](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L404).
 
@@ -183,7 +229,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: HennebergSurface): Boolean => false;
 ```
 
-## Line 417
+### Line 417
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 417](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L417).
 
@@ -191,7 +237,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: CatalanSurface): Boolean => false;
 ```
 
-## Line 428
+### Line 428
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 428](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L428).
 
@@ -199,7 +245,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: MonkeySaddle): Boolean => false;
 ```
 
-## Line 447
+### Line 447
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 447](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L447).
 
@@ -207,7 +253,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: DiniSurface): Boolean => false;
 ```
 
-## Line 461
+### Line 461
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 461](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L461).
 
@@ -215,7 +261,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedV(s: KuenSurface): Boolean => false;
 ```
 
-## Line 481
+### Line 481
 
 **Source:** [stdlib/geometry/surfaces-shapes.library.plato, line 481](../../../../../stdlib/geometry/surfaces-shapes.library.plato#L481).
 

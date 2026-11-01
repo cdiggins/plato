@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A coordinate is a point in some space (e.g., a cartesian grid).
+> This also includes a time line, so a DateTime is considered a ICoordinate.
+
+## Signature
+
+```plato
+interface ICoordinate
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Color](../colors/color.md), [ByteRGB](../colors/bytergb.md), [ByteRGBA](../colors/bytergba.md), [ColorLUV](../colors/colorluv.md), [ColorLAB](../colors/colorlab.md), [ColorLCh](../colors/colorlch.md), [ColorHSV](../colors/colorhsv.md), [ColorHSL](../colors/colorhsl.md), [ColorYCbCr](../colors/colorycbcr.md), [SphericalCoordinate](../coordinates.types/sphericalcoordinate.md), [PolarCoordinate](../coordinates.types/polarcoordinate.md), [LogPolarCoordinate](../coordinates.types/logpolarcoordinate.md), [CylindricalCoordinate](../coordinates.types/cylindricalcoordinate.md), [HorizontalCoordinate](../coordinates.types/horizontalcoordinate.md), [GeoCoordinate](../coordinates.types/geocoordinate.md), [GeoCoordinateWithAltitude](../coordinates.types/geocoordinatewithaltitude.md), [Point2D](../geometry.types/point2d.md), [Point3D](../geometry.types/point3d.md).
+
+## Source
+
 **File:** [core.interfaces](../core.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 144
+### Line 144
 
 **Source:** [legacy/stdlib-legacy/core.interfaces.plato, line 144](../../../../../legacy/stdlib-legacy/core.interfaces.plato#L144).
 

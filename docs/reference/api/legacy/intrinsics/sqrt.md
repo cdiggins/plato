@@ -3,11 +3,31 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Sqrt(self: Vector2): Vector2
+Sqrt(self: Vector3): Vector3
+Sqrt(self: Vector4): Vector4
+Sqrt(self: Vector8): Vector8
+Sqrt(self: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 106
+### Line 106
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 106](../../../../../legacy/stdlib-legacy/intrinsics.plato#L106).
 
@@ -15,7 +35,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Sqrt(self: Vector2): Vector2;
 ```
 
-## Line 145
+### Line 145
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 145](../../../../../legacy/stdlib-legacy/intrinsics.plato#L145).
 
@@ -23,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Sqrt(self: Vector3): Vector3;
 ```
 
-## Line 185
+### Line 185
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 185](../../../../../legacy/stdlib-legacy/intrinsics.plato#L185).
 
@@ -31,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Sqrt(self: Vector4): Vector4;
 ```
 
-## Line 227
+### Line 227
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 227](../../../../../legacy/stdlib-legacy/intrinsics.plato#L227).
 
@@ -39,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Sqrt(self: Vector8): Vector8;
 ```
 
-## Line 350
+### Line 350
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 350](../../../../../legacy/stdlib-legacy/intrinsics.plato#L350).
 

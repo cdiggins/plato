@@ -3,11 +3,65 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The permutation that sorts `xs`: element k of the result is the index of
+> the k-th smallest element of `xs` under `lessOrEqual`. Stable: equal
+> elements keep their source order. `lessOrEqual` must be a total order's
+> comparison (transitive, total); a partial or inconsistent comparer
+> yields an arbitrary permutation, never an out-of-range index.
+
+## Signature
+
+```plato
+SortedIndices(xs: Array<$T>, lessOrEqual: Function2<$T, $T, Boolean>): Array<Integer>
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SortedIndicesIsAPermutation
+
+[stdlib/tests/sorting.laws.plato, line 12](../../../../../stdlib/tests/sorting.laws.plato#L12)
+
+```plato
+// The result of SortedIndices is a permutation of [0, n): right length, and
+// every position of the input named exactly once.
+Law_SortedIndicesIsAPermutation(xs: Array<Number>): Boolean
+    => xs.SortedIndices((a, b) => a <= b).IsPermutationOfRange(xs.Count);
+```
+
+### Law_SortedIndicesIsStable
+
+[stdlib/tests/sorting.laws.plato, line 27](../../../../../stdlib/tests/sorting.laws.plato#L27)
+
+```plato
+// Stability: when two elements compare equal, their source order survives.
+// Keys are folded into a handful of buckets so the pseudorandom input
+// actually produces ties for the law to bite on.
+Law_SortedIndicesIsStable(xs: Array<Integer>): Boolean
+{
+    var keys = xs.Map(x => x % 4);
+    var perm = keys.SortedIndices((a, b) => a <= b);
+    return (perm.Count - 1).Greater(0).MapRange(i =>
+        keys[perm[i]] != keys[perm[i + 1]] || perm[i] < perm[i + 1]).All(b => b);
+}
+```
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [sorting.library](../sorting.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/sorting.library.plato, line 1](../../../../../stdlib/foundation/sorting.library.plato#L1).
 

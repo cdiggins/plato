@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The surface sampled on an nCols x nRows grid of UV parameters and joined into
+> a quad mesh. A direction the surface reports closed seams shut — its last ring
+> of cells wraps back to the first sample rather than duplicating it — so a torus
+> tessellates watertight with no seam vertices.
+> (https://en.wikipedia.org/wiki/Parametric\_surface)
+> Preconditions: nCols > 1, nRows > 1.
+
+## Signature
+
+```plato
+ToQuadMesh(self: IParametricSurface, nCols: Integer, nRows: Integer): QuadMesh3D
+ToQuadMesh(self: IScalarField2D, domain: Bounds2D, nCols: Integer, nRows: Integer): QuadMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 389
+### Line 389
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 389](../../../../../stdlib/geometry/meshes.library.plato#L389).
 
@@ -24,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
             AllQuadFaceIndices(nCols, nRows, self.ClosedU, self.ClosedV).Elements);
 ```
 
-## Line 425
+### Line 425
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 425](../../../../../stdlib/geometry/meshes.library.plato#L425).
 

@@ -3,11 +3,51 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The source point a hull vertex came from. Precondition: vertex is a
+> valid position in the hull boundary.
+
+## Signature
+
+```plato
+SourceOf(self: ConvexHull2D, vertex: Integer): ItemIndex
+SourceOf(self: ConvexHull3D, vertex: Integer): ItemIndex
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_HullVerticesComeFromTheInput
+
+[stdlib/tests/spatial-structures.laws.plato, line 24](../../../../../stdlib/tests/spatial-structures.laws.plato#L24)
+
+```plato
+// Every hull vertex is one of the input points, at the position its
+// provenance names.
+Law_HullVerticesComeFromTheInput(points: Array<Point2D>): Boolean
+{
+    var hull = points.ConvexHull;
+    return hull.SourceIndices.Count == hull.HullVertexCount
+        && hull.SourceIndices.All(s => s.Value >= 0 && s.Value < points.Count)
+        && hull.HullVertexCount.MapRange(v =>
+            hull.Hull.Points[v].X == points[hull.SourceOf(v).Value].X
+            && hull.Hull.Points[v].Y == points[hull.SourceOf(v).Value].Y).All(b => b);
+}
+```
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 216
+### Line 216
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 216](../../../../../stdlib/geometry/geometry.library.plato#L216).
 
@@ -19,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.SourceIndices[vertex];
 ```
 
-## Line 304
+### Line 304
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 304](../../../../../stdlib/geometry/geometry.library.plato#L304).
 

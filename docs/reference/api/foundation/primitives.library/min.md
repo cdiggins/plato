@@ -3,11 +3,127 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The lesser of two integers.
+
+## Signature
+
+```plato
+Min(a: Integer, b: Integer): Integer
+Min(self: Number, other: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ZeroDepthGrooveIsUnchanged
+
+[stdlib/tests/implicit-sdf.laws.plato, line 269](../../../../../stdlib/tests/implicit-sdf.laws.plato#L269)
+
+```plato
+// A groove of zero depth removes nothing.
+Law_ZeroDepthGrooveIsUnchanged(a: Number, b: Number, halfWidth: Number): Boolean
+    => GrooveDistance(a, b, 0.0, halfWidth).LawEq(a.Max(a.Min(halfWidth - b.Abs)));
+```
+
+### Law_ZeroHeightTongueIsUnchanged
+
+[stdlib/tests/implicit-sdf.laws.plato, line 273](../../../../../stdlib/tests/implicit-sdf.laws.plato#L273)
+
+```plato
+// A tongue of zero height adds nothing.
+Law_ZeroHeightTongueIsUnchanged(a: Number, b: Number, halfWidth: Number): Boolean
+    => TongueDistance(a, b, 0.0, halfWidth).LawEq(a.Min(a.Max(b.Abs - halfWidth)));
+```
+
+### Law_HyperbolicParaboloidCoversItsDomain
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 295](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L295)
+
+```plato
+Law_HyperbolicParaboloidCoversItsDomain(s: HyperbolicParaboloid): Boolean {
+    var low = s.Eval((0.0, 0.0));
+    var high = s.Eval((1.0, 1.0));
+    return SurfaceEq(low.X, s.Domain.Min.X)
+        && SurfaceEq(low.Y, s.Domain.Min.Y)
+        && SurfaceEq(high.X, s.Domain.Max.X)
+        && SurfaceEq(high.Y, s.Domain.Max.Y);
+}
+```
+
+### Law_MonkeySaddleCoversItsDomain
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 304](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L304)
+
+```plato
+Law_MonkeySaddleCoversItsDomain(s: MonkeySaddle): Boolean {
+    var low = s.Eval((0.0, 0.0));
+    var high = s.Eval((1.0, 1.0));
+    return SurfaceEq(low.X, s.Domain.Min.X)
+        && SurfaceEq(low.Y, s.Domain.Min.Y)
+        && SurfaceEq(high.X, s.Domain.Max.X)
+        && SurfaceEq(high.Y, s.Domain.Max.Y);
+}
+```
+
+### Law_ScherkSurfaceCoversItsDomain
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 313](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L313)
+
+```plato
+Law_ScherkSurfaceCoversItsDomain(s: ScherkSurface): Boolean {
+    var low = s.Eval((0.0, 0.0));
+    var high = s.Eval((1.0, 1.0));
+    return SurfaceEq(low.X, s.Domain.Min.X)
+        && SurfaceEq(low.Y, s.Domain.Min.Y)
+        && SurfaceEq(high.X, s.Domain.Max.X)
+        && SurfaceEq(high.Y, s.Domain.Max.Y);
+}
+```
+
+### Law_WhitneyUmbrellaCoversItsDomain
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 325](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L325)
+
+```plato
+// Whitney's umbrella returns its first parameter as Y rather than as X, so its
+// domain law reads off the other component — the transposition the graph-form
+// laws above would have hidden.
+Law_WhitneyUmbrellaCoversItsDomain(s: WhitneyUmbrella): Boolean {
+    var low = s.Eval((0.0, 0.0));
+    var high = s.Eval((1.0, 1.0));
+    return SurfaceEq(low.Y, s.Domain.Min.X)
+        && SurfaceEq(high.Y, s.Domain.Max.X);
+}
+```
+
+### Law_SubstringCountIsTheClampedRange
+
+[stdlib/tests/text.laws.plato, line 54](../../../../../stdlib/tests/text.laws.plato#L54)
+
+```plato
+// The length is the size of the intersection of [start, start + count) with [0, Count).
+Law_SubstringCountIsTheClampedRange(s: String, start: Integer, count: Integer): Boolean
+    => Substring(s, start, count).Count
+        == (count <= 0 ? 0 : (start + count).Min(s.Count).Subtract(start.Max(0)).Max(0));
+```
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [primitives.library](../primitives.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 335
+### Line 335
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 335](../../../../../stdlib/foundation/primitives.library.plato#L335).
 
@@ -18,7 +134,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a <= b ? a : b;
 ```
 
-## Line 405
+### Line 405
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 405](../../../../../stdlib/foundation/primitives.library.plato#L405).
 

@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The outward unit normal of a face: its Newell vector area
+> (`polygons.library.plato`), normalized. Exact for a planar face,
+> and the least-squares plane normal of a nearly planar one.
+> Precondition: the face is non-degenerate.
+
+## Signature
+
+```plato
+FaceUnitNormal(self: PolygonMesh3D, face: Integer): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 237](../../../../../stdlib/geometry/polyhedra.library.plato#L237): Precondition for all three: a closed manifold mesh with convex faces.
+- [Line 239](../../../../../stdlib/geometry/polyhedra.library.plato#L239): NONE of them normalizes the result onto the unit sphere. That is deliberate:
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 215
+### Line 215
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 215](../../../../../stdlib/geometry/polyhedra.library.plato#L215).
 

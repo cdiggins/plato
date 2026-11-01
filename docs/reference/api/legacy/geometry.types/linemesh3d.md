@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+type LineMesh3D
+    implements IIndexedGeometry3D<Integer2>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IIndexedGeometry3D](../geometry.interfaces/iindexedgeometry3d.md).
+
+## Source
+
 **File:** [geometry.types](../geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 237
+### Line 237
 
 **Source:** [legacy/stdlib-legacy/geometry.types.plato, line 237](../../../../../legacy/stdlib-legacy/geometry.types.plato#L237).
 

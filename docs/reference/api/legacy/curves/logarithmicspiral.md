@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Logarithmic\_spiral
+
+## Signature
+
+```plato
+LogarithmicSpiral(t: Angle, a: Number, k: Number): Number
+
+type LogarithmicSpiral
+    implements IPolarCurve, IOpenShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IPolarCurve](ipolarcurve.md), [IOpenShape](../geometry.interfaces/iopenshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 405
+### Line 405
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 405](../../../../../legacy/stdlib-legacy/curves.plato#L405).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> a * (t.Radians * k).Exp;
 ```
 
-## Line 487
+### Line 487
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 487](../../../../../legacy/stdlib-legacy/curves.plato#L487).
 

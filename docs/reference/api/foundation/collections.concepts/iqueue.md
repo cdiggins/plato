@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> First-in-first-out access. Enqueue and Dequeue return new collections.
+> (https://en.wikipedia.org/wiki/Queue\_(abstract\_data\_type))
+
+## Signature
+
+```plato
+interface IQueue<T>
+    inherits ICountable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICountable](icountable.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.concepts](../collections.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 61
+### Line 61
 
 **Source:** [stdlib/foundation/collections.concepts.plato, line 61](../../../../../stdlib/foundation/collections.concepts.plato#L61).
 

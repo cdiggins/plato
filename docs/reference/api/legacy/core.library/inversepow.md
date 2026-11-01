@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+InversePow(x: Number, y: Number): Number
+InversePow(x: IVectorLike, y: IVectorLike): IVectorLike
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [core.library](../core.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 16
+### Line 16
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 16](../../../../../legacy/stdlib-legacy/core.library.plato#L16).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     InversePow(x: Number, y: Number): Number => x.Pow(y.Reciprocal);
 ```
 
-## Line 87
+### Line 87
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 87](../../../../../legacy/stdlib-legacy/core.library.plato#L87).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Translate every point by `offset`.
+
+## Signature
+
+```plato
+Translate(self: IDeformable2D, offset: Vector2D): Self
+Translate(self: IDeformable3D, offset: Vector3D): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 68](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L68): rather than merely assumed.
+
+## Source
+
 **File:** [intervals-transforms-deformable.library](../intervals-transforms-deformable.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 1](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L1).
 
@@ -33,7 +56,7 @@ library IntervalsTransformsDeformable
         => self.Deform(p => p + offset);
 ```
 
-## Line 64
+### Line 64
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 64](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L64).
 

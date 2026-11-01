@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Four vertices in order in space. Planar and convex in the ideal case;
+> otherwise interpreted as the bilinear patch over its corners.
+> (https://en.wikipedia.org/wiki/Bilinear\_interpolation)
+
+## Signature
+
+```plato
+type Quad3D
+    implements IGeometry3D, IConnected, IOrientable, IArea, IBounded3D, IPointSet3D, ICentroid3D, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IConnected](../geometry.concepts/iconnected.md), [IOrientable](../geometry.concepts/iorientable.md), [IArea](../geometry.concepts/iarea.md), [IBounded3D](../geometry.concepts/ibounded3d.md), [IPointSet3D](../geometry.concepts/ipointset3d.md), [ICentroid3D](../geometry.concepts/icentroid3d.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.types](../spatial-primitives.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 142
+### Line 142
 
 **Source:** [stdlib/geometry/spatial-primitives.types.plato, line 142](../../../../../stdlib/geometry/spatial-primitives.types.plato#L142).
 

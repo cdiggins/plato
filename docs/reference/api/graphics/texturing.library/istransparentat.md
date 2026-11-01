@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True where the sampled texel is fully transparent (alpha at or below 0).
+
+## Signature
+
+```plato
+IsTransparentAt(self: IProceduralTexture, uv: UvCoordinate): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [texturing.library](../texturing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 28
+### Line 28
 
 **Source:** [stdlib/graphics/texturing.library.plato, line 28](../../../../../stdlib/graphics/texturing.library.plato#L28).
 

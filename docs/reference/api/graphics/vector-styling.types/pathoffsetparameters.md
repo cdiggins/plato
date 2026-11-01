@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Controls for offsetting (insetting or outsetting) a path by a signed
+> distance. Positive distances offset to the left of each contour's direction
+> of travel, which expands counter-clockwise-wound closed contours. Join and
+> MiterLimit shape the corners of the offset result; Cap shapes the ends of
+> open contours. (https://en.wikipedia.org/wiki/Parallel\_curve)
+
+## Signature
+
+```plato
+type PathOffsetParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [vector-styling.types](../vector-styling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 170
+### Line 170
 
 **Source:** [stdlib/graphics/vector-styling.types.plato, line 170](../../../../../stdlib/graphics/vector-styling.types.plato#L170).
 

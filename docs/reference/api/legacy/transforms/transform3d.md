@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> An affine transform expressed by a 4x4 matrix.
+> There are no assurances made that the matrix is affine.
+
+## Signature
+
+```plato
+type Transform3D
+    implements ITransform3D
+
+Transform3D(x: ITransform3D): Transform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ITransform3D](itransform3d.md).
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: type. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 135
+### Line 135
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 135](../../../../../legacy/stdlib-legacy/transforms.plato#L135).
 
@@ -22,7 +46,7 @@ type Transform3D
 }
 ```
 
-## Line 273
+### Line 273
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 273](../../../../../legacy/stdlib-legacy/transforms.plato#L273).
 

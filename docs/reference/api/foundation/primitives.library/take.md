@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The first n elements. Precondition: 0 \<= n \<= Count.
+
+## Signature
+
+```plato
+Take(xs: Array<$T>, n: Integer): Array<$T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 141](../../../../../stdlib/foundation/primitives.library.plato#L141): Since TKT-350 (2026-10) MapRange is EAGER, so each one ALLOCATES AND FILLS
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [primitives.library](../primitives.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 136](../../../../../stdlib/foundation/primitives.library.plato#L136).
 

@@ -3,11 +3,35 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Hooke's law for an isotropic material: twice the shear modulus times the
+> strain, plus the first Lame parameter times the volumetric strain on the
+> diagonal.
+> (https://en.wikipedia.org/wiki/Hooke%27s\_law#Isotropic\_materials)
+
+## Signature
+
+```plato
+ToStressState(strain: StrainState3D, moduli: LameParameters): StressState3D
+ToStressState(strain: StrainState2D, moduli: LameParameters): StressState2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 614
+### Line 614
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 614](../../../../../stdlib/future/finite-elements.library.plato#L614).
 
@@ -29,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 659
+### Line 659
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 659](../../../../../stdlib/future/finite-elements.library.plato#L659).
 

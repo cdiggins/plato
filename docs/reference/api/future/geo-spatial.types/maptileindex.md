@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The address of one tile in the XYZ (slippy map) pyramid: zoom level 0 is a
+> single world tile; each level doubles the tile count per axis. Row 0 is the
+> northernmost row.
+> (https://en.wikipedia.org/wiki/Tiled\_web\_map)
+
+## Signature
+
+```plato
+type MapTileIndex
+    implements IValue, IHashable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IHashable](../../foundation/core.concepts/ihashable.md).
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [geo-spatial.types](../geo-spatial.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 122
+### Line 122
 
 **Source:** [stdlib/future/geo-spatial.types.plato, line 122](../../../../../stdlib/future/geo-spatial.types.plato#L122).
 

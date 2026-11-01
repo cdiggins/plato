@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The world position of a normalized cell coordinate inside a given cell.
+> The one place cell indices and normalized coordinates meet.
+
+## Signature
+
+```plato
+NodePosition(self: StrutLattice3D, cell: IntegerVector3, node: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 367
+### Line 367
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 367](../../../../../stdlib/geometry/lattices.library.plato#L367).
 

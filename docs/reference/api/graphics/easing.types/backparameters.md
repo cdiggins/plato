@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Shape parameter for the Back easing family. Overshoot controls how far the
+> curve pulls back before advancing (or overshoots past 1); the classic value
+> is 1.70158, which overshoots by about 10 percent.
+> (https://en.wikipedia.org/wiki/Overshoot\_(signal))
+
+## Signature
+
+```plato
+type BackParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [easing.types](../easing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 85
+### Line 85
 
 **Source:** [stdlib/graphics/easing.types.plato, line 85](../../../../../stdlib/graphics/easing.types.plato#L85).
 

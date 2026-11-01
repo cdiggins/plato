@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How many triangles the case table lists for configuration c: at most five,
+> found by the position of the terminating -1.
+
+## Signature
+
+```plato
+MarchingCubesTriangleCount(table: Array<Integer>, c: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.library](../voxels.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 428
+### Line 428
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 428](../../../../../stdlib/geometry/voxels.library.plato#L428).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Samples for a curvature comb visualization of a planar curve. CombTips and
+> CurvePoints are parallel arrays: each tip lies at the curve point offset along
+> the normal by curvature times Scale (Scale is in squared world units, mapping
+> reciprocal-world-unit curvature to a world-unit comb height).
+
+## Signature
+
+```plato
+type CurvatureComb2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [differential-geometry.types](../differential-geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 153
+### Line 153
 
 **Source:** [stdlib/geometry/differential-geometry.types.plato, line 153](../../../../../stdlib/geometry/differential-geometry.types.plato#L153).
 

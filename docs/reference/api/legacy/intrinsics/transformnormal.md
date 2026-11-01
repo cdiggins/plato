@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+TransformNormal(self: Vector2, matrix: Matrix3x2): Vector2
+TransformNormal(self: Vector2, matrix: Matrix4x4): Vector2
+TransformNormal(self: Vector3, matrix: Matrix4x4): Vector3
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 123
+### Line 123
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 123](../../../../../legacy/stdlib-legacy/intrinsics.plato#L123).
 
@@ -15,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
     TransformNormal(self: Vector2, matrix: Matrix3x2): Vector2;
 ```
 
-## Line 124
+### Line 124
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 124](../../../../../legacy/stdlib-legacy/intrinsics.plato#L124).
 
@@ -23,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
     TransformNormal(self: Vector2, matrix: Matrix4x4): Vector2;
 ```
 
-## Line 162
+### Line 162
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 162](../../../../../legacy/stdlib-legacy/intrinsics.plato#L162).
 

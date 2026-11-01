@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the curve is (near) straight at t: unsigned curvature within the
+> given non-negative tolerance of zero.
+
+## Signature
+
+```plato
+IsStraightAt(self: IDifferentiableCurve2D, t: Number, tolerance: Number): Boolean
+IsStraightAt(self: IDifferentiableCurve3D, t: Number, tolerance: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 288
+### Line 288
 
 **Source:** [stdlib/geometry/curves.library.plato, line 288](../../../../../stdlib/geometry/curves.library.plato#L288).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.CurvatureAt(t).Abs <= tolerance;
 ```
 
-## Line 313
+### Line 313
 
 **Source:** [stdlib/geometry/curves.library.plato, line 313](../../../../../stdlib/geometry/curves.library.plato#L313).
 

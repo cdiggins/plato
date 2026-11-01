@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How many endpoints of the strut land on `node` once the cell is tiled:
+> zero when a neighbouring cell owns the strut, otherwise 0, 1 or 2. Both
+> endpoints count when a strut runs from a node to its own periodic image,
+> which is exactly what a cube edge of the simple cubic cell does.
+
+## Signature
+
+```plato
+StrutIncidence(self: LatticeUnitCell, s: LatticeStrut, node: Point3D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 293
+### Line 293
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 293](../../../../../stdlib/geometry/lattices.library.plato#L293).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A digest of the generator state. Both fields are part of the value, so
+> they are combined with the classic 31-multiplier mix; Integer arithmetic
+> wraps, which is the intended behaviour for a hash.
+
+## Signature
+
+```plato
+Hash(self: RandomState): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+
+## Source
+
 **File:** [random.library](../random.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 104
+### Line 104
 
 **Source:** [stdlib/foundation/random.library.plato, line 104](../../../../../stdlib/foundation/random.library.plato#L104).
 

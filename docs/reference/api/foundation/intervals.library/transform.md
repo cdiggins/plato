@@ -3,11 +3,49 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Rotate a 2D shape about the origin.
+
+## Signature
+
+```plato
+Transform(self: IDeformable2D, transform: Rotation2D): Self
+Transform(self: IDeformable2D, transform: Rotor2D): Self
+Transform(self: IDeformable2D, transform: Pose2D): Self
+Transform(self: IDeformable2D, transform: TrsTransform2D): Self
+Transform(self: IDeformable2D, transform: AffineTransform2D): Self
+Transform(self: IDeformable2D, transform: Transform2D): Self
+Transform(self: IDeformable3D, transform: Quaternion): Self
+Transform(self: IDeformable3D, transform: Rotor3D): Self
+Transform(self: IDeformable3D, transform: Pose3D): Self
+Transform(self: IDeformable3D, transform: Motor3D): Self
+Transform(self: IDeformable3D, transform: TrsTransform3D): Self
+Transform(self: IDeformable3D, transform: AffineTransform3D): Self
+Transform(self: IDeformable3D, transform: Transform3D): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 489](../../../../../stdlib/foundation/intervals.library.plato#L489): declaration: InfiniteLine2D/3D and Ray2D/3D store a Direction, Circle,
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 13 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 410
+### Line 410
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 410](../../../../../stdlib/foundation/intervals.library.plato#L410).
 
@@ -33,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 429
+### Line 429
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 429](../../../../../stdlib/foundation/intervals.library.plato#L429).
 
@@ -44,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 433
+### Line 433
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 433](../../../../../stdlib/foundation/intervals.library.plato#L433).
 
@@ -55,7 +93,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 437
+### Line 437
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 437](../../../../../stdlib/foundation/intervals.library.plato#L437).
 
@@ -66,7 +104,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 441
+### Line 441
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 441](../../../../../stdlib/foundation/intervals.library.plato#L441).
 
@@ -78,7 +116,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 446
+### Line 446
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 446](../../../../../stdlib/foundation/intervals.library.plato#L446).
 
@@ -90,7 +128,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 451
+### Line 451
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 451](../../../../../stdlib/foundation/intervals.library.plato#L451).
 
@@ -101,7 +139,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 455
+### Line 455
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 455](../../../../../stdlib/foundation/intervals.library.plato#L455).
 
@@ -112,7 +150,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 459
+### Line 459
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 459](../../../../../stdlib/foundation/intervals.library.plato#L459).
 
@@ -123,7 +161,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 463
+### Line 463
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 463](../../../../../stdlib/foundation/intervals.library.plato#L463).
 
@@ -134,7 +172,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 467
+### Line 467
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 467](../../../../../stdlib/foundation/intervals.library.plato#L467).
 
@@ -145,7 +183,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 471
+### Line 471
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 471](../../../../../stdlib/foundation/intervals.library.plato#L471).
 
@@ -156,7 +194,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Deform(p => p.Transform(transform));
 ```
 
-## Line 475
+### Line 475
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 475](../../../../../stdlib/foundation/intervals.library.plato#L475).
 

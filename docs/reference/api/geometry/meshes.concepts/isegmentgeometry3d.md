@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Bounded segments in space over their own endpoints: wireframes, edge
+> overlays, sampled space curves.
+
+## Signature
+
+```plato
+interface ISegmentGeometry3D
+    inherits IGeometry3D, IPrimitiveGeometry<Point3D, Line3D>, IPointSet3D, IBounded3D, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IPrimitiveGeometry](iprimitivegeometry.md), [IPointSet3D](../geometry.concepts/ipointset3d.md), [IBounded3D](../geometry.concepts/ibounded3d.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.concepts](../meshes.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/geometry/meshes.concepts.plato, line 136](../../../../../stdlib/geometry/meshes.concepts.plato#L136).
 

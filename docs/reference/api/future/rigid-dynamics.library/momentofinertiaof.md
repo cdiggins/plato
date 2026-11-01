@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The moment of inertia of a solid disk about its centre: m r^2 / 2.
+
+## Signature
+
+```plato
+MomentOfInertiaOf(c: Circle, mass: Mass): MomentOfInertia
+MomentOfInertiaOf(b: OrientedBox2D, mass: Mass): MomentOfInertia
+MomentOfInertiaOf(c: Capsule2D, mass: Mass): MomentOfInertia
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 972](../../../../../stdlib/future/rigid-dynamics.library.plato#L972): moment, not a vector and a diagonal) rather than a degenerate use of the
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 965
+### Line 965
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 965](../../../../../stdlib/future/rigid-dynamics.library.plato#L965).
 
@@ -28,7 +56,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => MomentOfInertia.FromAmount(0.5 * mass.Amount * c.Radius.Square);
 ```
 
-## Line 979
+### Line 979
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 979](../../../../../stdlib/future/rigid-dynamics.library.plato#L979).
 
@@ -41,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
             mass.Amount * (b.Size.Width.Square + b.Size.Height.Square) / 12.0);
 ```
 
-## Line 985
+### Line 985
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 985](../../../../../stdlib/future/rigid-dynamics.library.plato#L985).
 

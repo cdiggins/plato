@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The angle of the given number of arc minutes; 60 arc minutes is one degree.
+> Arc minutes and arc seconds: https://en.wikipedia.org/wiki/Minute\_and\_second\_of\_arc
+
+## Signature
+
+```plato
+ArcMinutes(x: Number): Angle
+ArcMinutes(x: Integer): Angle
+ArcMinutes(x: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Angles and periodic values](../../../library/foundation/angles.md)
+
+## Source
+
 **File:** [angles.library](../angles.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 39
+### Line 39
 
 **Source:** [stdlib/foundation/angles.library.plato, line 39](../../../../../stdlib/foundation/angles.library.plato#L39).
 
@@ -19,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (x / 60.0).Degrees;
 ```
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/foundation/angles.library.plato, line 67](../../../../../stdlib/foundation/angles.library.plato#L67).
 
@@ -30,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => x.ToNumber.ArcMinutes;
 ```
 
-## Line 94
+### Line 94
 
 **Source:** [stdlib/foundation/angles.library.plato, line 94](../../../../../stdlib/foundation/angles.library.plato#L94).
 

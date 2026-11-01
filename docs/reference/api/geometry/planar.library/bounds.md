@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The underlying rectangle — the rounded shape touches all four sides, so this
+> is tight.
+
+## Signature
+
+```plato
+Bounds(r: RoundedRect2D): Bounds2D
+Bounds(b: OrientedBox2D): Bounds2D
+Bounds(g: RegularPolygon): Bounds2D
+Bounds(c: Circle): Bounds2D
+Bounds(a: Annulus): Bounds2D
+Bounds(s: CircularSector): Bounds2D
+Bounds(s: CircularSegment): Bounds2D
+Bounds(c: Capsule2D): Bounds2D
+Bounds(e: Ellipse): Bounds2D
+Bounds(se: SuperEllipse): Bounds2D
+Bounds(g: Parallelogram2D): Bounds2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 11 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/geometry/planar.library.plato, line 67](../../../../../stdlib/geometry/planar.library.plato#L67).
 
@@ -19,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => CenteredBounds(r.Rect.Center, r.Rect.Size.Width * 0.5, r.Rect.Size.Height * 0.5);
 ```
 
-## Line 99
+### Line 99
 
 **Source:** [stdlib/geometry/planar.library.plato, line 99](../../../../../stdlib/geometry/planar.library.plato#L99).
 
@@ -39,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 168
+### Line 168
 
 **Source:** [stdlib/geometry/planar.library.plato, line 168](../../../../../stdlib/geometry/planar.library.plato#L168).
 
@@ -52,7 +83,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => g.RegularPolygonVertices.BoundsOfPoints;
 ```
 
-## Line 224
+### Line 224
 
 **Source:** [stdlib/geometry/planar.library.plato, line 224](../../../../../stdlib/geometry/planar.library.plato#L224).
 
@@ -64,7 +95,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => CenteredBounds(c.Center, c.Radius, c.Radius);
 ```
 
-## Line 259
+### Line 259
 
 **Source:** [stdlib/geometry/planar.library.plato, line 259](../../../../../stdlib/geometry/planar.library.plato#L259).
 
@@ -76,7 +107,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => CenteredBounds(a.Center, a.OuterRadius, a.OuterRadius);
 ```
 
-## Line 307
+### Line 307
 
 **Source:** [stdlib/geometry/planar.library.plato, line 307](../../../../../stdlib/geometry/planar.library.plato#L307).
 
@@ -90,7 +121,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => s.Circle.Bounds;
 ```
 
-## Line 367
+### Line 367
 
 **Source:** [stdlib/geometry/planar.library.plato, line 367](../../../../../stdlib/geometry/planar.library.plato#L367).
 
@@ -102,7 +133,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => s.Circle.Bounds;
 ```
 
-## Line 402
+### Line 402
 
 **Source:** [stdlib/geometry/planar.library.plato, line 402](../../../../../stdlib/geometry/planar.library.plato#L402).
 
@@ -114,7 +145,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Point2D(c.A.X.Max(c.B.X) + c.Radius, c.A.Y.Max(c.B.Y) + c.Radius));
 ```
 
-## Line 483
+### Line 483
 
 **Source:** [stdlib/geometry/planar.library.plato, line 483](../../../../../stdlib/geometry/planar.library.plato#L483).
 
@@ -134,7 +165,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 504
+### Line 504
 
 **Source:** [stdlib/geometry/planar.library.plato, line 504](../../../../../stdlib/geometry/planar.library.plato#L504).
 
@@ -162,7 +193,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 837
+### Line 837
 
 **Source:** [stdlib/geometry/planar.library.plato, line 837](../../../../../stdlib/geometry/planar.library.plato#L837).
 

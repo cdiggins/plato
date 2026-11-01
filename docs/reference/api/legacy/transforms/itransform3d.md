@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Used for types that represent transformations in 3D space
+
+## Signature
+
+```plato
+interface ITransform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Transform3D](transform3d.md), [Scaling3D](scaling3d.md), [TRSTransform3D](trstransform3d.md), [Perspective3D](perspective3d.md), [Orthographic3D](orthographic3d.md), [PlaneProjection3D](planeprojection3d.md).
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 103
+### Line 103
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 103](../../../../../legacy/stdlib-legacy/transforms.plato#L103).
 

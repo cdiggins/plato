@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A 3D geometric-algebra rotor: scalar plus bivector part. Structurally a
+> quaternion, expressed in plane-based components
+> (https://en.wikipedia.org/wiki/Geometric\_algebra).
+
+## Signature
+
+```plato
+type Rotor3D
+    implements IValue, IMultiplicative, IRotational3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IMultiplicative](../algebra.concepts/imultiplicative.md), [IRotational3D](../transforms.concepts/irotational3d.md).
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [rotations.types](../rotations.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 84
+### Line 84
 
 **Source:** [stdlib/foundation/rotations.types.plato, line 84](../../../../../stdlib/foundation/rotations.types.plato#L84).
 

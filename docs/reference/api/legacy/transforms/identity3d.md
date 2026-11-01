@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A constant representing the identity transform
+
+## Signature
+
+```plato
+Identity3D(): IdentityTransform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 312
+### Line 312
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 312](../../../../../legacy/stdlib-legacy/transforms.plato#L312).
 

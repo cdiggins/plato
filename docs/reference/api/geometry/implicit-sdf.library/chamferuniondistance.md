@@ -3,11 +3,66 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The union of two distances with a 45-degree chamfer of the given width across
+> the seam. The third term is the distance to the bevel plane, which cuts the
+> corner the plain minimum would leave. Precondition: width is positive.
+> (hg\_sdf: fOpUnionChamfer.)
+
+## Signature
+
+```plato
+ChamferUnionDistance(a: Number, b: Number, width: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ChamferUnionIsNoGreaterThanUnion
+
+[stdlib/tests/implicit-sdf.laws.plato, line 203](../../../../../stdlib/tests/implicit-sdf.laws.plato#L203)
+
+```plato
+// A chamfer only ever removes material from the sharp corner, never adds: the
+// bevel plane term can lower the minimum but the leading Min keeps it from
+// rising. Guarded to the body's precondition.
+Law_ChamferUnionIsNoGreaterThanUnion(a: Number, b: Number, width: Number): Boolean
+    => width <= 0.0
+    || ChamferUnionDistance(a, b, width) <= UnionDistance(a, b) + 1e-4;
+```
+
+### Law_ChamferUnionIsCommutative
+
+[stdlib/tests/implicit-sdf.laws.plato, line 208](../../../../../stdlib/tests/implicit-sdf.laws.plato#L208)
+
+```plato
+// Chamfered union is symmetric.
+Law_ChamferUnionIsCommutative(a: Number, b: Number, width: Number): Boolean
+    => width <= 0.0
+    || ChamferUnionDistance(a, b, width).LawEq(ChamferUnionDistance(b, a, width));
+```
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 678](../../../../../stdlib/geometry/implicit-sdf.library.plato#L678): Chamfered and exactly-filleted CSG.
+- [Line 682](../../../../../stdlib/geometry/implicit-sdf.library.plato#L682): a 45-degree bevel, and a true circular arc. `SmoothUnionDistance` is cheaper
+- [Line 683](../../../../../stdlib/geometry/implicit-sdf.library.plato#L683): than either but its blend is a polynomial approximation of an arc, not an arc.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 676
+### Line 676
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 676](../../../../../stdlib/geometry/implicit-sdf.library.plato#L676).
 

@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The body with its pose advanced by its velocity PLUS a pseudo-velocity that
+> is not part of its motion: how the position pass's correction reaches the
+> pose without ever entering the body's real velocity.
+
+## Signature
+
+```plato
+IntegratePoseWith(self: SolverBody3D, correction: SpatialVelocity3D, seconds: Number): SolverBody3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 605
+### Line 605
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 605](../../../../../stdlib/future/rigid-dynamics.library.plato#L605).
 

@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The body after an impulse of `impulse` newton-seconds applied at world point
+> `point`. Position and orientation are untouched: an impulse changes velocity
+> only, and an immovable body changes not at all.
+> (https://en.wikipedia.org/wiki/Impulse\_(physics))
+
+## Signature
+
+```plato
+ApplyImpulse(self: SolverBody3D, impulse: Vector3D, point: Point3D): SolverBody3D
+ApplyImpulse(self: SolverBody3D, applied: AppliedImpulse3D): SolverBody3D
+ApplyImpulse(self: SolverBody3D, blast: RadialImpulse3D): SolverBody3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 379
+### Line 379
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 379](../../../../../stdlib/future/rigid-dynamics.library.plato#L379).
 
@@ -32,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
             self.GravityScale);
 ```
 
-## Line 502
+### Line 502
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 502](../../../../../stdlib/future/rigid-dynamics.library.plato#L502).
 
@@ -43,7 +68,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ApplyImpulse(self, applied.Impulse, applied.ApplicationPoint);
 ```
 
-## Line 506
+### Line 506
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 506](../../../../../stdlib/future/rigid-dynamics.library.plato#L506).
 

@@ -3,11 +3,30 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Length(self: Vector2): Number
+Length(self: Vector3): Number
+Length(self: Vector4): Number
+Length(self: Quaternion): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 103
+### Line 103
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 103](../../../../../legacy/stdlib-legacy/intrinsics.plato#L103).
 
@@ -15,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Length(self: Vector2): Number;
 ```
 
-## Line 142
+### Line 142
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 142](../../../../../legacy/stdlib-legacy/intrinsics.plato#L142).
 
@@ -23,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Length(self: Vector3): Number;
 ```
 
-## Line 182
+### Line 182
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 182](../../../../../legacy/stdlib-legacy/intrinsics.plato#L182).
 
@@ -31,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Length(self: Vector4): Number;
 ```
 
-## Line 288
+### Line 288
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 288](../../../../../legacy/stdlib-legacy/intrinsics.plato#L288).
 

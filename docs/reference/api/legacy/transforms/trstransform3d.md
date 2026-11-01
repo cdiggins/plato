@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A transform that applies, translation, rotation, and scale, in that order
+
+## Signature
+
+```plato
+type TRSTransform3D
+    implements ITransform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ITransform3D](itransform3d.md).
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 179
+### Line 179
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 179](../../../../../legacy/stdlib-legacy/transforms.plato#L179).
 

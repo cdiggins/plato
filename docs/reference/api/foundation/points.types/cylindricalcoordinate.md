@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A 3D position as planar polar coordinates plus height along Z
+> (https://en.wikipedia.org/wiki/Cylindrical\_coordinate\_system).
+
+## Signature
+
+```plato
+type CylindricalCoordinate
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [points.types](../points.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 81
+### Line 81
 
 **Source:** [stdlib/foundation/points.types.plato, line 81](../../../../../stdlib/foundation/points.types.plato#L81).
 

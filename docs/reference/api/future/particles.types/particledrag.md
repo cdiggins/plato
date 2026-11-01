@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Velocity-opposing deceleration of particles: acceleration =
+> -(LinearCoefficient \* v + QuadraticCoefficient \* |v| \* v).
+> LinearCoefficient is in units of one per second; QuadraticCoefficient is in
+> units of one per meter.
+> (https://en.wikipedia.org/wiki/Drag\_(physics))
+
+## Signature
+
+```plato
+type ParticleDrag
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.types](../particles.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 24
+### Line 24
 
 **Source:** [stdlib/future/particles.types.plato, line 24](../../../../../stdlib/future/particles.types.plato#L24).
 

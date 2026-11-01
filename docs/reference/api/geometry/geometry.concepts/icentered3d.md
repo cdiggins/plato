@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A solid or surface stored about a centre it is symmetric in: boxes,
+> spheres, cylinders, disks and their shells. Centroid is likewise derived.
+
+## Signature
+
+```plato
+interface ICentered3D
+    inherits ICentroid3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICentroid3D](icentroid3d.md).
+
+Implemented in this tier by: [Box3D](../spatial-primitives.types/box3d.md), [Cylinder](../spatial-primitives.types/cylinder.md), [CylindricalShell](../spatial-primitives.types/cylindricalshell.md), [Disk3D](../spatial-primitives.types/disk3d.md), [Sphere](../spatial-primitives.types/sphere.md), [SphericalShell](../spatial-primitives.types/sphericalshell.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 202
+### Line 202
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 202](../../../../../stdlib/geometry/geometry.concepts.plato#L202).
 

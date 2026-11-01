@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Conic\_section
+
+## Signature
+
+```plato
+ConicSection(t: Angle, semiLatusRectum: Number, eccentricity: Number): Number
+
+type ConicSection
+    implements IPolarCurve, IOpenShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IPolarCurve](ipolarcurve.md), [IOpenShape](../geometry.interfaces/iopenshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 362
+### Line 362
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 362](../../../../../legacy/stdlib-legacy/curves.plato#L362).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => semiLatusRectum / (1.0 - eccentricity * t.Cos);
 ```
 
-## Line 442
+### Line 442
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 442](../../../../../legacy/stdlib-legacy/curves.plato#L442).
 

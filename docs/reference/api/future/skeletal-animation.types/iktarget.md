@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The goal of an inverse-kinematics solve: where the chain's end effector
+> should be and how it should be oriented. The two weights blend the solved
+> result over the input pose per goal component.
+
+## Signature
+
+```plato
+type IkTarget
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [skeletal-animation.types](../skeletal-animation.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 139
+### Line 139
 
 **Source:** [stdlib/future/skeletal-animation.types.plato, line 139](../../../../../stdlib/future/skeletal-animation.types.plato#L139).
 

@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Dini's surface: a pseudosphere sheared into a helicoid, keeping constant
+> negative Gaussian curvature while it twists. Radius scales the tractrix
+> profile, Twist is the axial rise per turn, TurnCount how far the sweep goes,
+> and Inclinations the profile interval. Precondition: Inclinations stays
+> strictly inside (0, half a turn) (https://en.wikipedia.org/wiki/Dini%27s\_surface).
+
+## Signature
+
+```plato
+type DiniSurface
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.types](../surfaces-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 338
+### Line 338
 
 **Source:** [stdlib/geometry/surfaces-shapes.types.plato, line 338](../../../../../stdlib/geometry/surfaces-shapes.types.plato#L338).
 

@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A scaling transform: non-rigid
+
+## Signature
+
+```plato
+type Scaling3D
+    implements ITransform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ITransform3D](itransform3d.md).
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 172
+### Line 172
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 172](../../../../../legacy/stdlib-legacy/transforms.plato#L172).
 

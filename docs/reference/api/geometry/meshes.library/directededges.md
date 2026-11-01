@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every directed edge of every face, in face order then winding order.
+
+## Signature
+
+```plato
+DirectedEdges(faces: Array<TriangleFace>): Array<VertexPair>
+DirectedEdges(faces: Array<QuadFace>): Array<VertexPair>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 191
+### Line 191
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 191](../../../../../stdlib/geometry/meshes.library.plato#L191).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => faces.FlatMap(f => f.Edges);
 ```
 
-## Line 195
+### Line 195
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 195](../../../../../stdlib/geometry/meshes.library.plato#L195).
 

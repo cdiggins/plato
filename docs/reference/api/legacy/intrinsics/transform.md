@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Transform(self: Vector2, matrix: Matrix3x2): Vector2
+Transform(self: Vector2, matrix: Matrix4x4): Vector2
+Transform(self: Vector2, rotation: Quaternion): Vector2
+Transform(self: Vector3, matrix: Matrix4x4): Vector3
+Transform(self: Vector3, rotation: Quaternion): Vector3
+Transform(self: Vector4, matrix: Matrix4x4): Vector4
+Transform(self: Vector4, rotation: Quaternion): Vector4
+Transform(self: Plane, rotation: Quaternion): Plane
+Transform(self: Plane, matrix: Matrix4x4): Plane
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 9 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 120
+### Line 120
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 120](../../../../../legacy/stdlib-legacy/intrinsics.plato#L120).
 
@@ -15,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Transform(self: Vector2, matrix: Matrix3x2): Vector2;
 ```
 
-## Line 121
+### Line 121
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 121](../../../../../legacy/stdlib-legacy/intrinsics.plato#L121).
 
@@ -23,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Transform(self: Vector2, matrix: Matrix4x4): Vector2;
 ```
 
-## Line 122
+### Line 122
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 122](../../../../../legacy/stdlib-legacy/intrinsics.plato#L122).
 
@@ -31,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Transform(self: Vector2, rotation: Quaternion): Vector2;
 ```
 
-## Line 160
+### Line 160
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 160](../../../../../legacy/stdlib-legacy/intrinsics.plato#L160).
 
@@ -39,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Transform(self: Vector3, matrix: Matrix4x4): Vector3;
 ```
 
-## Line 161
+### Line 161
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 161](../../../../../legacy/stdlib-legacy/intrinsics.plato#L161).
 
@@ -47,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Transform(self: Vector3, rotation: Quaternion): Vector3;
 ```
 
-## Line 198
+### Line 198
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 198](../../../../../legacy/stdlib-legacy/intrinsics.plato#L198).
 
@@ -55,7 +79,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Transform(self: Vector4, matrix: Matrix4x4): Vector4;
 ```
 
-## Line 199
+### Line 199
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 199](../../../../../legacy/stdlib-legacy/intrinsics.plato#L199).
 
@@ -63,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Transform(self: Vector4, rotation: Quaternion): Vector4;
 ```
 
-## Line 271
+### Line 271
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 271](../../../../../legacy/stdlib-legacy/intrinsics.plato#L271).
 
@@ -71,7 +95,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Transform(self: Plane, rotation: Quaternion): Plane;
 ```
 
-## Line 272
+### Line 272
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 272](../../../../../legacy/stdlib-legacy/intrinsics.plato#L272).
 

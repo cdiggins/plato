@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> `count` evenly spaced parameters over \[0, 1), the upper end excluded.
+
+## Signature
+
+```plato
+LinearSpaceExclusive(count: Integer): Array<Number>
+LinearSpaceExclusive(a: IInterpolatable, b: IInterpolatable, count: Integer): Array<IInterpolatable>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.library](../collections.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 407
+### Line 407
 
 **Source:** [stdlib/foundation/collections.library.plato, line 407](../../../../../stdlib/foundation/collections.library.plato#L407).
 
@@ -18,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => count.FractionsExclusive;
 ```
 
-## Line 417
+### Line 417
 
 **Source:** [stdlib/foundation/collections.library.plato, line 417](../../../../../stdlib/foundation/collections.library.plato#L417).
 

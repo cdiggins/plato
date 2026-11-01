@@ -3,11 +3,32 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Dot(self: Vector2, right: Vector2): Number
+Dot(self: Vector3, right: Vector3): Number
+Dot(self: Vector4, right: Vector4): Number
+Dot(self: Vector8, other: Vector8): Number
+Dot(self: Plane, value: Vector4): Number
+Dot(self: Quaternion, quaternion2: Quaternion): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 115
+### Line 115
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 115](../../../../../legacy/stdlib-legacy/intrinsics.plato#L115).
 
@@ -15,7 +36,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Dot(self: Vector2, right: Vector2): Number;
 ```
 
-## Line 154
+### Line 154
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 154](../../../../../legacy/stdlib-legacy/intrinsics.plato#L154).
 
@@ -23,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Dot(self: Vector3, right: Vector3): Number;
 ```
 
-## Line 194
+### Line 194
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 194](../../../../../legacy/stdlib-legacy/intrinsics.plato#L194).
 
@@ -31,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Dot(self: Vector4, right: Vector4): Number;
 ```
 
-## Line 252
+### Line 252
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 252](../../../../../legacy/stdlib-legacy/intrinsics.plato#L252).
 
@@ -39,7 +60,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Dot(self: Vector8, other: Vector8): Number;
 ```
 
-## Line 268
+### Line 268
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 268](../../../../../legacy/stdlib-legacy/intrinsics.plato#L268).
 
@@ -47,7 +68,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Dot(self: Plane, value: Vector4): Number;
 ```
 
-## Line 301
+### Line 301
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 301](../../../../../legacy/stdlib-legacy/intrinsics.plato#L301).
 

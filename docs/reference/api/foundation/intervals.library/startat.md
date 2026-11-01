@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The interval shifted so it starts at `start`, keeping the same extent.
+
+## Signature
+
+```plato
+StartAt(self: IInterval<$T>, start: $T): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 257
+### Line 257
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 257](../../../../../stdlib/foundation/intervals.library.plato#L257).
 

@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Segments in the plane over a shared vertex pool. `LineSet2D` is the concrete
+> type.
+
+## Signature
+
+```plato
+interface IIndexedSegmentGeometry2D
+    inherits IIndexedGeometry<Point2D, Line2D, VertexPair>, ISegmentGeometry2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IIndexedGeometry](iindexedgeometry.md), [ISegmentGeometry2D](isegmentgeometry2d.md).
+
+Implemented in this tier by: [LineSet2D](../meshes.types/lineset2d.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.concepts](../meshes.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 211
+### Line 211
 
 **Source:** [stdlib/geometry/meshes.concepts.plato, line 211](../../../../../stdlib/geometry/meshes.concepts.plato#L211).
 

@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Rescale so the real part has unit magnitude, restoring the motor
+> invariant after repeated products. Precondition: the real part is not
+> zero.
+
+## Signature
+
+```plato
+Normalize(m: Motor3D): Motor3D
+Normalize(r: Rotor2D): Rotor2D
+Normalize(r: Rotor3D): Rotor3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 838
+### Line 838
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 838](../../../../../stdlib/foundation/transforms.library.plato#L838).
 
@@ -22,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 1174
+### Line 1174
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1174](../../../../../stdlib/foundation/transforms.library.plato#L1174).
 
@@ -36,7 +61,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 1293
+### Line 1293
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1293](../../../../../stdlib/foundation/transforms.library.plato#L1293).
 

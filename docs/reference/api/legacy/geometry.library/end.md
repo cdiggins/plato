@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+End(x: Line2D): Point2D
+End(x: Line3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Generics, inference variables, and bounds](../../../language/generics.md)
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 50
+### Line 50
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 50](../../../../../legacy/stdlib-legacy/geometry.library.plato#L50).
 
@@ -15,7 +37,7 @@ Copied from source, comments included. A comment records intent. The body is the
     End(x: Line2D): Point2D => x.B;
 ```
 
-## Line 68
+### Line 68
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 68](../../../../../legacy/stdlib-legacy/geometry.library.plato#L68).
 

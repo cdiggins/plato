@@ -3,11 +3,56 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The position folded onto the +X half-space. A source sampled there is mirrored
+> about the YZ plane, and only its +X half is ever seen. Exact when the source
+> is — a reflection preserves distance, and the folded copy is always the
+> nearer one. Shared by every Mirrored\* fold. (IQ: opSymX.)
+
+## Signature
+
+```plato
+MirroredX(p: Point3D): Point3D
+MirroredX(p: Point2D): Point2D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_MirrorXIsIdempotent
+
+[stdlib/tests/implicit-sdf.laws.plato, line 99](../../../../../stdlib/tests/implicit-sdf.laws.plato#L99)
+
+```plato
+// Folding is idempotent: a position already in the +X half-space does not move.
+Law_MirrorXIsIdempotent(p: Point3D): Boolean
+    => MirroredX(MirroredX(p)).X.LawEq(MirroredX(p).X);
+```
+
+### Law_MirrorXZIsBothFolds
+
+[stdlib/tests/implicit-sdf.laws.plato, line 103](../../../../../stdlib/tests/implicit-sdf.laws.plato#L103)
+
+```plato
+// Folding both axes at once is folding each in turn.
+Law_MirrorXZIsBothFolds(p: Point3D): Boolean
+    => MirroredXZ(p).X.LawEq(MirroredZ(MirroredX(p)).X)
+    && MirroredXZ(p).Z.LawEq(MirroredZ(MirroredX(p)).Z);
+```
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 799
+### Line 799
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 799](../../../../../stdlib/geometry/implicit-sdf.library.plato#L799).
 
@@ -21,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Point3D(p.X.Abs, p.Y, p.Z);
 ```
 
-## Line 820
+### Line 820
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 820](../../../../../stdlib/geometry/implicit-sdf.library.plato#L820).
 

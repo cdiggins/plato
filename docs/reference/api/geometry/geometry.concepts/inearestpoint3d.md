@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Can find the point of itself nearest to a query point in space.
+
+## Signature
+
+```plato
+interface INearestPoint3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Line3D](../lines.types/line3d.md), [InfiniteLine3D](../lines.types/infiniteline3d.md), [Ray3D](../lines.types/ray3d.md), [Plane](../lines.types/plane.md), [HalfSpace](../lines.types/halfspace.md), [Polygon3D](../polygons.types/polygon3d.md), [Box3D](../spatial-primitives.types/box3d.md), [Capsule3D](../spatial-primitives.types/capsule3d.md), [Disk3D](../spatial-primitives.types/disk3d.md), [Triangle3D](../spatial-primitives.types/triangle3d.md), [Sphere](../spatial-primitives.types/sphere.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 239
+### Line 239
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 239](../../../../../stdlib/geometry/geometry.concepts.plato#L239).
 

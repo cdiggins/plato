@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+TriangleA(q: Quad2D): Triangle2D
+TriangleA(q: Quad3D): Triangle3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 132
+### Line 132
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 132](../../../../../legacy/stdlib-legacy/geometry.library.plato#L132).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     TriangleA(q: Quad2D): Triangle2D => (q.A, q.B, q.C);        
 ```
 
-## Line 146
+### Line 146
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 146](../../../../../legacy/stdlib-legacy/geometry.library.plato#L146).
 

@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+To3D(x: Vector2): Vector3
+To3D(x: Point2D): Point3D
+To3D(x: Line2D): Line3D
+To3D(x: Triangle2D): Triangle3D
+To3D(x: Quad2D): Quad3D
+To3D(x: Bounds2D): Bounds3D
+To3D(x: Ray2D): Ray3D
+To3D(x: PolyLine2D): PolyLine3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 8 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 193
+### Line 193
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 193](../../../../../legacy/stdlib-legacy/geometry.library.plato#L193).
 
@@ -19,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
     To3D(x: Vector2): Vector3 => (x.X, x.Y, 0);
 ```
 
-## Line 198
+### Line 198
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 198](../../../../../legacy/stdlib-legacy/geometry.library.plato#L198).
 
@@ -27,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
     To3D(x: Point2D): Point3D => (x.X, x.Y, 0);
 ```
 
-## Line 199
+### Line 199
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 199](../../../../../legacy/stdlib-legacy/geometry.library.plato#L199).
 
@@ -35,7 +58,7 @@ Copied from source, comments included. A comment records intent. The body is the
     To3D(x: Line2D): Line3D => (x.A.To3D, x.B.To3D);
 ```
 
-## Line 200
+### Line 200
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 200](../../../../../legacy/stdlib-legacy/geometry.library.plato#L200).
 
@@ -43,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
     To3D(x: Triangle2D): Triangle3D => (x.A.To3D, x.B.To3D, x.C.To3D);
 ```
 
-## Line 201
+### Line 201
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 201](../../../../../legacy/stdlib-legacy/geometry.library.plato#L201).
 
@@ -51,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
     To3D(x: Quad2D): Quad3D => (x.A.To3D, x.B.To3D, x.C.To3D, x.D.To3D);
 ```
 
-## Line 202
+### Line 202
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 202](../../../../../legacy/stdlib-legacy/geometry.library.plato#L202).
 
@@ -59,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
     To3D(x: Bounds2D): Bounds3D => (x.Min.To3D, x.Max.To3D);
 ```
 
-## Line 203
+### Line 203
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 203](../../../../../legacy/stdlib-legacy/geometry.library.plato#L203).
 
@@ -67,7 +90,7 @@ Copied from source, comments included. A comment records intent. The body is the
     To3D(x: Ray2D): Ray3D => (x.Origin.To3D, x.Direction.To3D);
 ```
 
-## Line 204
+### Line 204
 
 **Source:** [legacy/stdlib-legacy/geometry.library.plato, line 204](../../../../../legacy/stdlib-legacy/geometry.library.plato#L204).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Floor(t / Period): the index of the period containing t (-1 for t just
+> below zero, not truncation). Precondition: Period > 0.
+
+## Signature
+
+```plato
+PeriodCount(self: IPeriodicCurve<$TRange>, t: Number): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.library](../curves.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 238
+### Line 238
 
 **Source:** [stdlib/geometry/curves.library.plato, line 238](../../../../../stdlib/geometry/curves.library.plato#L238).
 

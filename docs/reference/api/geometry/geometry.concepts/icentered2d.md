@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar shape stored about a centre it is symmetric in: boxes, circles,
+> annuli, regular polygons and stars. The centre IS the centroid for such a
+> shape, so Center is the only obligation and Centroid arrives derived.
+
+## Signature
+
+```plato
+interface ICentered2D
+    inherits ICentroid2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ICentroid2D](icentroid2d.md).
+
+Implemented in this tier by: [OrientedBox2D](../planar.types/orientedbox2d.md), [RegularPolygon](../planar.types/regularpolygon.md), [Circle](../planar.types/circle.md), [Annulus](../planar.types/annulus.md), [SuperEllipse](../planar.types/superellipse.md), [RegularStar2D](../polygons.types/regularstar2d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.concepts](../geometry.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 193
+### Line 193
 
 **Source:** [stdlib/geometry/geometry.concepts.plato, line 193](../../../../../stdlib/geometry/geometry.concepts.plato#L193).
 

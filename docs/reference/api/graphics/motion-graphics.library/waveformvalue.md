@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unit-amplitude waveform value at a phase angle, in \[-1, 1\].
+
+## Signature
+
+```plato
+WaveformValue(waveform: OscillatorWaveform, phase: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [motion-graphics.library](../motion-graphics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 33
+### Line 33
 
 **Source:** [stdlib/graphics/motion-graphics.library.plato, line 33](../../../../../stdlib/graphics/motion-graphics.library.plato#L33).
 

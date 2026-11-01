@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Identity(_: Matrix4x4): Matrix4x4
+Identity(_: Quaternion): Quaternion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [vectors](../vectors.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 136
+### Line 136
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 136](../../../../../legacy/stdlib-legacy/vectors.plato#L136).
 
@@ -17,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Vector4.UnitX, Vector4.UnitY, Vector4.UnitZ, Vector4.UnitW);
 ```
 
-## Line 154
+### Line 154
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 154](../../../../../legacy/stdlib-legacy/vectors.plato#L154).
 

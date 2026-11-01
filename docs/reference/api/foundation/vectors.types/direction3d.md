@@ -3,11 +3,44 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A 3D direction: a Vector3D with the invariant that its magnitude is one
+> (https://en.wikipedia.org/wiki/Unit\_vector).
+> The invariant is a promise of intent, not a runtime proof: an arbitrary
+> Vector3D may violate unit length after a non-rigid transform or manual
+> construction. Construct one via normalization of a non-zero displacement —
+> the validated factories `FromVector` / `TryFromVector` (and the explicitly
+> unsafe `FromVectorUnchecked`) in `numeric-structures.library.plato`; zero
+> input is undefined. Check unit length with `IsUnit`
+> (algebra.library.plato) for diagnostics.
+
+## Signature
+
+```plato
+type Direction3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [vectors.types](../vectors.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 78
+### Line 78
 
 **Source:** [stdlib/foundation/vectors.types.plato, line 78](../../../../../stdlib/foundation/vectors.types.plato#L78).
 

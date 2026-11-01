@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The world matrix that places an object at `position` facing `forward` with
+> `up` as its up direction — the inverse construction to CreateLookAt.
+> Preconditions (unchecked): `forward` is non-zero and not parallel to `up`.
+
+## Signature
+
+```plato
+CreateWorld(_: Matrix4x4, position: Point3D, forward: Vector3D, up: Vector3D): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 544
+### Line 544
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 544](../../../../../stdlib/foundation/matrices-ops.library.plato#L544).
 

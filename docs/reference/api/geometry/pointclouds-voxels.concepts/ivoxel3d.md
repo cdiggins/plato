@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Anything that can be conservatively rasterized into a binary voxel grid
+> (https://en.wikipedia.org/wiki/Voxel) at a caller-chosen cell size.
+
+## Signature
+
+```plato
+interface IVoxel3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [pointclouds-voxels.concepts](../pointclouds-voxels.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 14
+### Line 14
 
 **Source:** [stdlib/geometry/pointclouds-voxels.concepts.plato, line 14](../../../../../stdlib/geometry/pointclouds-voxels.concepts.plato#L14).
 

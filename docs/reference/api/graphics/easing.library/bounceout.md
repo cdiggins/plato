@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The decelerating bounce: four parabolic arcs of decreasing height over the
+> unit interval. The Bounce family is conventionally defined by this
+> out-phase shape, so the In shape below is its reversal rather than the
+> other way round.
+
+## Signature
+
+```plato
+BounceOut(t: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [easing.library](../easing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 90
+### Line 90
 
 **Source:** [stdlib/graphics/easing.library.plato, line 90](../../../../../stdlib/graphics/easing.library.plato#L90).
 

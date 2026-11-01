@@ -3,11 +3,45 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+ClosedU(s: BilinearPatch): Boolean
+ClosedU(s: BezierPatch): Boolean
+ClosedU(s: BSplineSurface): Boolean
+ClosedU(s: NurbsSurface): Boolean
+ClosedU(s: PlanarPatch): Boolean
+ClosedU(s: CoonsPatch): Boolean
+ClosedU(s: SphericalPatch): Boolean
+ClosedU(s: SurfaceOfRevolution): Boolean
+ClosedU(s: ExtrudedSurface): Boolean
+ClosedU(s: RuledSurface): Boolean
+ClosedU(s: LoftedSurface): Boolean
+ClosedU(s: SweptSurface): Boolean
+ClosedU(s: TubeSurface): Boolean
+ClosedU(s: OffsetSurface): Boolean
+ClosedU(s: MobiusStrip): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.library](../surfaces.library.md). Kind: function. 15 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 76
+### Line 76
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 76](../../../../../stdlib/geometry/surfaces.library.plato#L76).
 
@@ -15,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: BilinearPatch): Boolean => false;
 ```
 
-## Line 85
+### Line 85
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 85](../../../../../stdlib/geometry/surfaces.library.plato#L85).
 
@@ -23,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: BezierPatch): Boolean => false;
 ```
 
-## Line 103
+### Line 103
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 103](../../../../../stdlib/geometry/surfaces.library.plato#L103).
 
@@ -31,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: BSplineSurface): Boolean => false;
 ```
 
-## Line 128
+### Line 128
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 128](../../../../../stdlib/geometry/surfaces.library.plato#L128).
 
@@ -39,7 +73,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: NurbsSurface): Boolean => false;
 ```
 
-## Line 137
+### Line 137
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 137](../../../../../stdlib/geometry/surfaces.library.plato#L137).
 
@@ -47,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: PlanarPatch): Boolean => false;
 ```
 
-## Line 153
+### Line 153
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 153](../../../../../stdlib/geometry/surfaces.library.plato#L153).
 
@@ -55,7 +89,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: CoonsPatch): Boolean => false;
 ```
 
-## Line 167
+### Line 167
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 167](../../../../../stdlib/geometry/surfaces.library.plato#L167).
 
@@ -65,7 +99,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: SphericalPatch): Boolean => false;
 ```
 
-## Line 192
+### Line 192
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 192](../../../../../stdlib/geometry/surfaces.library.plato#L192).
 
@@ -75,7 +109,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (s.Angles.End.Turns - s.Angles.Start.Turns).Abs >= 1.0;
 ```
 
-## Line 205
+### Line 205
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 205](../../../../../stdlib/geometry/surfaces.library.plato#L205).
 
@@ -85,7 +119,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: ExtrudedSurface): Boolean => false;
 ```
 
-## Line 213
+### Line 213
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 213](../../../../../stdlib/geometry/surfaces.library.plato#L213).
 
@@ -93,7 +127,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: RuledSurface): Boolean => false;
 ```
 
-## Line 239
+### Line 239
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 239](../../../../../stdlib/geometry/surfaces.library.plato#L239).
 
@@ -101,7 +135,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: LoftedSurface): Boolean => false;
 ```
 
-## Line 258
+### Line 258
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 258](../../../../../stdlib/geometry/surfaces.library.plato#L258).
 
@@ -109,7 +143,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: SweptSurface): Boolean => false;
 ```
 
-## Line 275
+### Line 275
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 275](../../../../../stdlib/geometry/surfaces.library.plato#L275).
 
@@ -118,7 +152,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: TubeSurface): Boolean => true;
 ```
 
-## Line 292
+### Line 292
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 292](../../../../../stdlib/geometry/surfaces.library.plato#L292).
 
@@ -127,7 +161,7 @@ Copied from source, comments included. A comment records intent. The body is the
     ClosedU(s: OffsetSurface): Boolean => s.Base.ClosedU;
 ```
 
-## Line 337
+### Line 337
 
 **Source:** [stdlib/geometry/surfaces.library.plato, line 337](../../../../../stdlib/geometry/surfaces.library.plato#L337).
 

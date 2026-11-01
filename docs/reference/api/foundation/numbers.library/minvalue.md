@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Component-wise least representable value.
+
+## Signature
+
+```plato
+MinValue(_: Complex): Complex
+MinValue(_: Proportion): Proportion
+MinValue(_: Percent): Percent
+MinValue(_: Probability): Probability
+MinValue(_: DualNumber): DualNumber
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 75](../../../../../stdlib/foundation/numbers.library.plato#L75).
 
@@ -18,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Number.MinValue, Number.MinValue);
 ```
 
-## Line 154
+### Line 154
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 154](../../../../../stdlib/foundation/numbers.library.plato#L154).
 
@@ -28,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Proportion(Number.MinValue);
 ```
 
-## Line 193
+### Line 193
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 193](../../../../../stdlib/foundation/numbers.library.plato#L193).
 
@@ -38,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Percent(Number.MinValue);
 ```
 
-## Line 232
+### Line 232
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 232](../../../../../stdlib/foundation/numbers.library.plato#L232).
 
@@ -48,7 +75,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Probability(Number.MinValue);
 ```
 
-## Line 344
+### Line 344
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 344](../../../../../stdlib/foundation/numbers.library.plato#L344).
 

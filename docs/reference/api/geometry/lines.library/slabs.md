@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The three axis-aligned slabs of a box, one per world axis (X, Y, Z), each
+> spanning that axis' Min..Max coordinate. A point lies in the box exactly when
+> it lies in all three slabs, which is the standard slab reduction of a
+> ray/box or box/box test.
+> https://en.wikipedia.org/wiki/Slab\_method
+
+## Signature
+
+```plato
+Slabs(b: Bounds3D): Array<Slab3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 530
+### Line 530
 
 **Source:** [stdlib/geometry/lines.library.plato, line 530](../../../../../stdlib/geometry/lines.library.plato#L530).
 

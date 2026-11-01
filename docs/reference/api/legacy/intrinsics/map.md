@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Map(xs: IArray<$T1>, f: Function1<$T1, $T2>): IArray<$T2>
+Map(xs: IArray<$T1>, f: Function1<$T1, Integer, $T2>): IArray<$T2>
+Map(xs: IArray2D<$T1>, f: Function1<$T1, $T2>): IArray2D<$T2>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 464
+### Line 464
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 464](../../../../../legacy/stdlib-legacy/intrinsics.plato#L464).
 
@@ -15,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Map(xs: IArray<$T1>, f: Function1<$T1, $T2>): IArray<$T2>;
 ```
 
-## Line 465
+### Line 465
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 465](../../../../../legacy/stdlib-legacy/intrinsics.plato#L465).
 
@@ -23,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Map(xs: IArray<$T1>, f: Function1<$T1, Integer, $T2>): IArray<$T2>;
 ```
 
-## Line 502
+### Line 502
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 502](../../../../../legacy/stdlib-legacy/intrinsics.plato#L502).
 

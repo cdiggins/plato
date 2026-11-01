@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The world bounds of the i-th stored cell.
+
+## Signature
+
+```plato
+CellBounds(self: SpatialHashGrid2D, i: Integer): Bounds2D
+CellBounds(self: SpatialHashGrid3D, i: Integer): Bounds3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 1](../../../../../stdlib/geometry/spatial-structures.library.plato#L1).
 
@@ -53,7 +74,7 @@ library SpatialStructures
     }
 ```
 
-## Line 54
+### Line 54
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 54](../../../../../stdlib/geometry/spatial-structures.library.plato#L54).
 

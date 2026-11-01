@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The face-centered cubic cell: each face center joined to the four corners
+> of its own face. Coordination 12 at a corner and 4 at a face center. This
+> is the additive-manufacturing FCC cell, which is the octet truss below
+> with the octahedron left out.
+
+## Signature
+
+```plato
+FaceCenteredCubic(_: LatticeUnitCell): LatticeUnitCell
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 106
+### Line 106
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 106](../../../../../stdlib/geometry/lattices.library.plato#L106).
 

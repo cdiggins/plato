@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The IDeformable3D obligation: every polygon deformed vertex-wise.
+
+## Signature
+
+```plato
+Deform(self: PolygonSoup3D, mapping: Function1<Point3D, Point3D>): PolygonSoup3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 212](../../../../../stdlib/geometry/solids-csg.library.plato#L212): `brep.library.plato`), so re-tessellate first when exactness matters.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 204
+### Line 204
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 204](../../../../../stdlib/geometry/solids-csg.library.plato#L204).
 

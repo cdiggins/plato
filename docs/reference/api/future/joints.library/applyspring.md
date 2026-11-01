@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The two bodies after a spring has acted for one step: the spring force turned
+> into an impulse by multiplying by the step, and applied at the two anchors.
+> Coincident anchors have no line of action and the spring does nothing.
+
+## Signature
+
+```plato
+ApplySpring(bodies: Array<SolverBody3D>, joint: SpringJoint, seconds: Number): Array<SolverBody3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [joints.library](../joints.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 182
+### Line 182
 
 **Source:** [stdlib/future/joints.library.plato, line 182](../../../../../stdlib/future/joints.library.plato#L182).
 

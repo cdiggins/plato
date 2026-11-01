@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The stored value at node (i, j), with both indices edge-clamped.
+
+## Signature
+
+```plato
+NodeValue(self: SampledScalarGrid2D, i: Integer, j: Integer): Number
+NodeValue(self: SampledScalarGrid3D, i: Integer, j: Integer, k: Integer): Number
+NodeValue(self: SampledVectorGrid2D, i: Integer, j: Integer): Vector2D
+NodeValue(self: SampledVectorGrid3D, i: Integer, j: Integer, k: Integer): Vector3D
+NodeValue(self: SampledColorGrid2D, i: Integer, j: Integer): Color
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 86
+### Line 86
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 86](../../../../../stdlib/geometry/sampling.library.plato#L86).
 
@@ -18,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Values.Row(ClampIndex(j, self.NodeRows))[ClampIndex(i, self.NodeColumns)];
 ```
 
-## Line 123
+### Line 123
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 123](../../../../../stdlib/geometry/sampling.library.plato#L123).
 
@@ -35,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 163
+### Line 163
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 163](../../../../../stdlib/geometry/sampling.library.plato#L163).
 
@@ -46,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Values.Row(ClampIndex(j, self.NodeRows))[ClampIndex(i, self.NodeColumns)];
 ```
 
-## Line 195
+### Line 195
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 195](../../../../../stdlib/geometry/sampling.library.plato#L195).
 
@@ -63,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 240
+### Line 240
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 240](../../../../../stdlib/geometry/sampling.library.plato#L240).
 

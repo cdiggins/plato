@@ -3,11 +3,34 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A value is a read-only type which has the implicit rule that only Values are members
+> Currently everything is an IValue
+
+## Signature
+
+```plato
+interface IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [Integer2](../core.types/integer2.md), [Integer3](../core.types/integer3.md), [Integer4](../core.types/integer4.md), [ScalarField3D](../fields/scalarfield3d.md), [Ray2D](../geometry.types/ray2d.md), [Plane](../geometry.types/plane.md), [Ray3D](../geometry.types/ray3d.md), [Object](../primitives/object.md), [String](../primitives/string.md), [Boolean](../primitives/boolean.md), [Character](../primitives/character.md), [Matrix3x2](../primitives/matrix3x2.md), [Matrix4x4](../primitives/matrix4x4.md), [Quaternion](../primitives/quaternion.md).
+
+## Source
+
 **File:** [core.interfaces](../core.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 7
+### Line 7
 
 **Source:** [legacy/stdlib-legacy/core.interfaces.plato, line 7](../../../../../legacy/stdlib-legacy/core.interfaces.plato#L7).
 

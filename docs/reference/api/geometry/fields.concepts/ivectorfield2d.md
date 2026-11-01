@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A field assigning a 2D vector to every point of the plane: gradients,
+> flows, displacement maps, and wind over a surface
+> (https://en.wikipedia.org/wiki/Vector\_field).
+
+## Signature
+
+```plato
+interface IVectorField2D
+    inherits IField<Point2D, Vector2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IField](ifield.md).
+
+Implemented in this tier by: [ConstantVectorField2D](../fields.types/constantvectorfield2d.md), [VectorFunctionField2D](../fields.types/vectorfunctionfield2d.md), [CurlNoise2D](../noise.types/curlnoise2d.md), [SampledVectorGrid2D](../sampling.types/sampledvectorgrid2d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields.concepts](../fields.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 41
+### Line 41
 
 **Source:** [stdlib/geometry/fields.concepts.plato, line 41](../../../../../stdlib/geometry/fields.concepts.plato#L41).
 

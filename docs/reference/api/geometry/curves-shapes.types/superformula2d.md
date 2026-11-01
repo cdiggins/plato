@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Gielis superformula, a polar shape family covering polygons, stars,
+> and organic outlines. Symmetry is the lobe count m; Exponent1..3 are the
+> n1, n2, n3 shape exponents; XRadius and YRadius are the a and b scale
+> divisors. Closed when Symmetry is a whole number
+> (https://en.wikipedia.org/wiki/Superformula).
+
+## Signature
+
+```plato
+type Superformula2D
+    implements IPolarCurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IPolarCurve2D](../curves.concepts/ipolarcurve2d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.types](../curves-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 175
+### Line 175
 
 **Source:** [stdlib/geometry/curves-shapes.types.plato, line 175](../../../../../stdlib/geometry/curves-shapes.types.plato#L175).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Catalan's minimal surface over Domain, scaled by Scale: the minimal surface
+> that contains a cycloid as a geodesic
+> (https://en.wikipedia.org/wiki/Catalan%27s\_minimal\_surface).
+
+## Signature
+
+```plato
+type CatalanSurface
+    implements IParametricSurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IParametricSurface](../surfaces-solids.concepts/iparametricsurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-shapes.types](../surfaces-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 317
+### Line 317
 
 **Source:** [stdlib/geometry/surfaces-shapes.types.plato, line 317](../../../../../stdlib/geometry/surfaces-shapes.types.plato#L317).
 

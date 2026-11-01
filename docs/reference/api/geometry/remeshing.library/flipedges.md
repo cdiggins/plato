@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every masked edge flipped at once, subject to the legality and conflict
+> rules above. Positions are untouched and the face count is unchanged.
+
+## Signature
+
+```plato
+FlipEdges(self: TriangleMesh3D, topology: TriangleMeshTopology, flipMask: Array<Boolean>): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 674
+### Line 674
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 674](../../../../../stdlib/geometry/remeshing.library.plato#L674).
 

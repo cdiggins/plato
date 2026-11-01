@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The distance from the ray origin to the first hit. Precondition: the query hits.
+
+## Signature
+
+```plato
+HitDistance(self: IRaycast2D, query: RayQuery2D): Number
+HitDistance(self: IRaycast3D, query: RayQuery3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 421
+### Line 421
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 421](../../../../../stdlib/geometry/spatial-structures.library.plato#L421).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Raycast(query).Distance;
 ```
 
-## Line 461
+### Line 461
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 461](../../../../../stdlib/geometry/spatial-structures.library.plato#L461).
 

@@ -3,11 +3,36 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The per-sweep stiffness that makes `iterations` sweeps feel like one
+> application of `stiffness`: k' = 1 - (1 - k)^(1/n), so the residual after
+> n sweeps is (1 - k') ^ n = 1 - k regardless of n. Without it, raising the
+> iteration count silently stiffens the cloth, and a demo that exposes an
+> iteration slider changes two things at once.
+> (Müller et al., Position Based Dynamics, 2007.)
+
+## Signature
+
+```plato
+IterationStiffness(stiffness: Number, iterations: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 231
+### Line 231
 
 **Source:** [stdlib/future/cloth.library.plato, line 231](../../../../../stdlib/future/cloth.library.plato#L231).
 

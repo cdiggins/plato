@@ -3,11 +3,114 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every corner position, three per triangle, in face order.
+
+## Signature
+
+```plato
+Points(a: TriangleArray3D): Array<Point3D>
+Points(a: QuadArray3D): Array<Point3D>
+Points(self: IIndexedGeometry<$TPoint, $TPrim, $TIndex>): Array<$TPoint>
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_HullVerticesComeFromTheInput
+
+[stdlib/tests/spatial-structures.laws.plato, line 24](../../../../../stdlib/tests/spatial-structures.laws.plato#L24)
+
+```plato
+// Every hull vertex is one of the input points, at the position its
+// provenance names.
+Law_HullVerticesComeFromTheInput(points: Array<Point2D>): Boolean
+{
+    var hull = points.ConvexHull;
+    return hull.SourceIndices.Count == hull.HullVertexCount
+        && hull.SourceIndices.All(s => s.Value >= 0 && s.Value < points.Count)
+        && hull.HullVertexCount.MapRange(v =>
+            hull.Hull.Points[v].X == points[hull.SourceOf(v).Value].X
+            && hull.Hull.Points[v].Y == points[hull.SourceOf(v).Value].Y).All(b => b);
+}
+```
+
+### Law_HullIsConvexAndCounterClockwise
+
+[stdlib/tests/spatial-structures.laws.plato, line 36](../../../../../stdlib/tests/spatial-structures.laws.plato#L36)
+
+```plato
+// A non-degenerate hull turns strictly left at every corner: convex,
+// counter-clockwise, no collinear vertices.
+Law_HullIsConvexAndCounterClockwise(points: Array<Point2D>): Boolean
+{
+    var hull = points.ConvexHull;
+    var m = hull.HullVertexCount;
+    return hull.IsDegenerate
+        || m.MapRange(v => TwiceSignedArea(
+            hull.Hull.Points[v],
+            hull.Hull.Points[(v + 1) % m],
+            hull.Hull.Points[(v + 2) % m]) > 0.0).All(b => b);
+}
+```
+
+### Law_TriangulationFacesIndexInputPoints
+
+[stdlib/tests/triangulation.laws.plato, line 29](../../../../../stdlib/tests/triangulation.laws.plato#L29)
+
+```plato
+// Every face indexes a point that exists. The clipper carries VertexIndex values from the
+// pool it was handed, so a face can only ever name one of them; an out-of-range index would
+// mean a slot was read whose node had never been linked.
+Law_TriangulationFacesIndexInputPoints(p: Polygon2D): Boolean
+    => p.Triangulate.Faces.All(f => p.Points.FaceIsInRange(f));
+```
+
+### Law_TriangulationFaceCountIsBounded
+
+[stdlib/tests/triangulation.laws.plato, line 35](../../../../../stdlib/tests/triangulation.laws.plato#L35)
+
+```plato
+// A ring of n vertices admits at most n - 2 faces: the clipping pass runs exactly n - 2
+// steps and emits at most one face per step. Fewer is legitimate — a flat corner is clipped
+// without emitting — which is why this is a bound and not an equality.
+Law_TriangulationFaceCountIsBounded(p: Polygon2D): Boolean
+    => p.Triangulate.Faces.Count <= p.Points.Count.Greater(2) - 2;
+```
+
+### Law_TriangulationPreservesPositions
+
+[stdlib/tests/triangulation.laws.plato, line 40](../../../../../stdlib/tests/triangulation.laws.plato#L40)
+
+```plato
+// The mesh triangulation is over the polygon's own vertices: the positions come back
+// unchanged and in order, which is what makes the face indices meaningful to the caller.
+Law_TriangulationPreservesPositions(p: Polygon2D): Boolean
+    => p.Triangulate.Positions.Count == p.Points.Count;
+```
+
+### Law_ConvexTriangulationIsAFullFan
+
+[stdlib/tests/triangulation.laws.plato, line 68](../../../../../stdlib/tests/triangulation.laws.plato#L68)
+
+```plato
+Law_ConvexTriangulationIsAFullFan(p: ConvexPolygon2D): Boolean
+    => p.Triangulate.Faces.Count == p.Points.Count.Greater(2) - 2;
+```
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 41
+### Line 41
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 41](../../../../../stdlib/geometry/meshes.library.plato#L41).
 
@@ -31,7 +134,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Triangles.FlatMap(t => t.Points);
 ```
 
-## Line 77
+### Line 77
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 77](../../../../../stdlib/geometry/meshes.library.plato#L77).
 
@@ -45,7 +148,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Quads.FlatMap(q => q.Points);
 ```
 
-## Line 611
+### Line 611
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 611](../../../../../stdlib/geometry/meshes.library.plato#L611).
 

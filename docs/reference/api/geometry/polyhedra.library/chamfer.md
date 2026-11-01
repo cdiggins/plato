@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Chamfer (https://en.wikipedia.org/wiki/Chamfer\_(geometry)): every edge is
+> replaced by a hexagon and every original face survives as a shrunk copy of
+> itself, in its own plane. cC is the chamfered cube; iterating it is the
+> usual route to a Goldberg polyhedron.
+> V' = V + C, E' = 4E, F' = F + E.
+
+## Signature
+
+```plato
+Chamfer(self: PolygonMesh3D, shrink: Number): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 767
+### Line 767
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 767](../../../../../stdlib/geometry/polyhedra.library.plato#L767).
 

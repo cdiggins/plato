@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A spatial scalar field stored on grid nodes; evaluation interpolates
+> trilinearly. Backs voxel densities and simulation quantities.
+
+## Signature
+
+```plato
+type SampledScalarGrid3D
+    implements IValue, IScalarField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IScalarField3D](../fields.concepts/iscalarfield3d.md).
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.types](../sampling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 65
+### Line 65
 
 **Source:** [stdlib/geometry/sampling.types.plato, line 65](../../../../../stdlib/geometry/sampling.types.plato#L65).
 

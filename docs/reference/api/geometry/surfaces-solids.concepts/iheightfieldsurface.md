@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A surface expressed as an elevation over a ground plane: the domain is a
+> position in the plane (Point2D, not a normalized UV coordinate, because
+> height fields are defined over world-plane positions), and the result is the
+> height above that position (https://en.wikipedia.org/wiki/Heightmap).
+
+## Signature
+
+```plato
+interface IHeightFieldSurface
+    inherits ISurface, IProcedural<Point2D, Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ISurface](isurface.md), [IProcedural](../../foundation/functional.concepts/iprocedural.md).
+
+Implemented in this tier by: [HeightField](../surfaces.types/heightfield.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces-solids.concepts](../surfaces-solids.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 49
+### Line 49
 
 **Source:** [stdlib/geometry/surfaces-solids.concepts.plato, line 49](../../../../../stdlib/geometry/surfaces-solids.concepts.plato#L49).
 

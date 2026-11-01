@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The limit surface of a control mesh under a subdivision scheme, evaluated
+> (or approximated) at the given refinement level
+> (https://en.wikipedia.org/wiki/Subdivision\_surface).
+
+## Signature
+
+```plato
+type SubdivisionSurface
+    implements ISurface, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ISurface](../surfaces-solids.concepts/isurface.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.types](../surfaces.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 238
+### Line 238
 
 **Source:** [stdlib/geometry/surfaces.types.plato, line 238](../../../../../stdlib/geometry/surfaces.types.plato#L238).
 

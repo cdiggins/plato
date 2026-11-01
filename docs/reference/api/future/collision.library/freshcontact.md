@@ -3,11 +3,32 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A fresh contact point: the solver's accumulated impulses start at zero, and
+> `WarmStartFrom` is what puts a previous frame's values back.
+
+## Signature
+
+```plato
+FreshContact(position: Point3D, normal: Direction3D, penetration: Number): ContactPoint3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 126
+### Line 126
 
 **Source:** [stdlib/future/collision.library.plato, line 126](../../../../../stdlib/future/collision.library.plato#L126).
 

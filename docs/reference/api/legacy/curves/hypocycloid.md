@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> https://en.wikipedia.org/wiki/Hypocycloid
+> x = (R-r)cos t + r cos((R-r)/r t); y = (R-r)sin t - r sin((R-r)/r t)
+
+## Signature
+
+```plato
+Hypocycloid(t: Angle, R: Number, r: Number): Point2D
+
+type Hypocycloid
+    implements IAngularCurve2D, IOpenShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IAngularCurve2D](iangularcurve2d.md), [IOpenShape](../geometry.interfaces/iopenshape.md).
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 184
+### Line 184
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 184](../../../../../legacy/stdlib-legacy/curves.plato#L184).
 
@@ -20,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
 			(R - r) * t.Sin - r * ((R - r) / r * t).Sin);
 ```
 
-## Line 253
+### Line 253
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 253](../../../../../legacy/stdlib-legacy/curves.plato#L253).
 

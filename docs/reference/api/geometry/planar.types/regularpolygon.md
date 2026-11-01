@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A regular polygon with SideCount equal sides and vertices on the circle of
+> radius CircumRadius about Center; Rotation turns the first vertex away from
+> +X. Invariant: SideCount >= 3. (https://en.wikipedia.org/wiki/Regular\_polygon)
+
+## Signature
+
+```plato
+type RegularPolygon
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentered2D, IContainsPoint2D, ISupport2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry2D](../geometry.concepts/igeometry2d.md), [IClosedShape](../geometry.concepts/iclosedshape.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IArea](../geometry.concepts/iarea.md), [IBounded2D](../geometry.concepts/ibounded2d.md), [ICentered2D](../geometry.concepts/icentered2d.md), [IContainsPoint2D](../geometry.concepts/icontainspoint2d.md), [ISupport2D](../geometry.concepts/isupport2d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [planar.types](../planar.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 38
+### Line 38
 
 **Source:** [stdlib/geometry/planar.types.plato, line 38](../../../../../stdlib/geometry/planar.types.plato#L38).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The vertex every corner points AT, in corner order: the next corner of the
+> same face, wrapping at the end of the row.
+
+## Signature
+
+```plato
+PolygonCornerDestinations(self: PolygonMesh3D): Array<VertexIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 917
+### Line 917
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 917](../../../../../stdlib/geometry/remeshing.library.plato#L917).
 

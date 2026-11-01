@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unsigned axis this oriented axis lies along (drops the sign).
+
+## Signature
+
+```plato
+Axis3D(self: SignedAxis3D): Axis3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 137](../../../../../stdlib/foundation/axes.library.plato#L137): out to the geometric vocabulary — unsigned axis, sense, unit vector, unit
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [axes.library](../axes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 132
+### Line 132
 
 **Source:** [stdlib/foundation/axes.library.plato, line 132](../../../../../stdlib/foundation/axes.library.plato#L132).
 

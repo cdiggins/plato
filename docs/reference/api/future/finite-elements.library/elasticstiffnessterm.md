@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The (node i component r, node j component s) entry of an element stiffness
+> matrix. `measure` is the element's volume for a solid, or its area times a
+> thickness for a plane element.
+> (https://en.wikipedia.org/wiki/Linear\_elasticity)
+
+## Signature
+
+```plato
+ElasticStiffnessTerm(gi: Vector3D, gj: Vector3D, r: Integer, s: Integer,
+    moduli: LameParameters, measure: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 277](../../../../../stdlib/future/finite-elements.library.plato#L277): tetrahedron and the linear triangle share this code exactly.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 271
+### Line 271
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 271](../../../../../stdlib/future/finite-elements.library.plato#L271).
 

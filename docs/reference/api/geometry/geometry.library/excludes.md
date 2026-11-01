@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the point is NOT a member of the shape.
+
+## Signature
+
+```plato
+Excludes(self: IContainsPoint2D, point: Point2D): Boolean
+Excludes(self: IContainsPoint3D, point: Point3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 824
+### Line 824
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 824](../../../../../stdlib/geometry/geometry.library.plato#L824).
 
@@ -32,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Contains(point).Not;
 ```
 
-## Line 842
+### Line 842
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 842](../../../../../stdlib/geometry/geometry.library.plato#L842).
 

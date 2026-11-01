@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A uniformly sampled signal with multiple interleaved channels. Samples are
+> frame-interleaved (all channels of frame 0, then frame 1, ...); the sample
+> count is a multiple of ChannelCount.
+
+## Signature
+
+```plato
+type MultichannelSignal
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [signals.types](../signals.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 26
+### Line 26
 
 **Source:** [stdlib/future/signals.types.plato, line 26](../../../../../stdlib/future/signals.types.plato#L26).
 

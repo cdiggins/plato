@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The items of row i, copied out of the packed Values array.
+> Precondition: 0 \<= i \< RowCount.
+
+## Signature
+
+```plato
+Row(self: IJagged<$T>, i: Integer): Array<$T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [collections.library](../collections.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 334
+### Line 334
 
 **Source:** [stdlib/foundation/collections.library.plato, line 334](../../../../../stdlib/foundation/collections.library.plato#L334).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The graph of a hanging chain: y = Scale \* cosh(x / Scale). Scale is the
+> classic catenary constant a; the parameter is x, ranging over Domain
+> (https://en.wikipedia.org/wiki/Catenary).
+
+## Signature
+
+```plato
+type Catenary2D
+    implements ICurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICurve2D](../curves.concepts/icurve2d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.types](../curves-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 57
+### Line 57
 
 **Source:** [stdlib/geometry/curves-shapes.types.plato, line 57](../../../../../stdlib/geometry/curves-shapes.types.plato#L57).
 

@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A stereo camera pair derived from a single template camera
+> (https://en.wikipedia.org/wiki/Stereoscopy). The template's pose is the rig
+> center; each eye is offset by half of EyeSeparation along the pose's right
+> axis (typical human separation is 0.063 meters). ConvergenceDistance is where
+> the two view axes cross: the zero-parallax plane.
+
+## Signature
+
+```plato
+type StereoCameraRig
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [cameras.types](../cameras.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 153
+### Line 153
 
 **Source:** [stdlib/graphics/cameras.types.plato, line 153](../../../../../stdlib/graphics/cameras.types.plato#L153).
 

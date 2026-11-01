@@ -3,11 +3,46 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A thresholding operation for reducing an image to two (or clamped) levels.
+> The fixed-level kinds carry their normalized cutoff; Otsu computes its own
+> global level; the adaptive kinds carry the local window size and an offset
+> that biases the computed local level.
+> (https://en.wikipedia.org/wiki/Thresholding\_(image\_processing))
+
+## Signature
+
+```plato
+type Threshold
+    = Binary(Level: Proportion)
+    | BinaryInverted(Level: Proportion)
+    | Truncate(Level: Proportion)
+    | ToZero(Level: Proportion)
+    | Otsu
+    | AdaptiveMean(BlockSize: Integer, Offset: Number)
+    | AdaptiveGaussian(BlockSize: Integer, Offset: Number)
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [image-processing.types](../image-processing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 302
+### Line 302
 
 **Source:** [stdlib/graphics/image-processing.types.plato, line 302](../../../../../stdlib/graphics/image-processing.types.plato#L302).
 

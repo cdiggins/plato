@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+CreateRotation(_: Matrix3x2, radians: Number): Matrix3x2
+CreateRotation(_: Matrix3x2, radians: Number, centerPoint: Vector2): Matrix3x2
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 89
+### Line 89
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 89](../../../../../legacy/stdlib-legacy/intrinsics.plato#L89).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     CreateRotation(_: Matrix3x2, radians: Number): Matrix3x2;
 ```
 
-## Line 90
+### Line 90
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 90](../../../../../legacy/stdlib-legacy/intrinsics.plato#L90).
 

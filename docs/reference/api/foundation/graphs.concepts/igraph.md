@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The family of graph-shaped types: a vertex count, an edge count, and a
+> directedness flag. Vertices are the integers 0 through VertexCount - 1.
+> (https://en.wikipedia.org/wiki/Graph\_(discrete\_mathematics))
+
+## Signature
+
+```plato
+interface IGraph
+    inherits IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IValue](../core.concepts/ivalue.md).
+
+Implemented in this tier by: [Graph](../graphs.types/graph.md), [WeightedGraph](../graphs.types/weightedgraph.md).
+
+## Used by
+
+- [Graph data and graph summaries](../../../library/foundation/graphs.md)
+
+## Source
+
 **File:** [graphs.concepts](../graphs.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/graphs.concepts.plato, line 1](../../../../../stdlib/foundation/graphs.concepts.plato#L1).
 

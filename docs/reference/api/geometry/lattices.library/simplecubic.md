@@ -3,11 +3,42 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The simple cubic cell: the eight cube corners joined by the twelve cube
+> edges. Coordination 6, and bending-dominated — the softest of the cells
+> here, because nothing triangulates its square faces.
+> (https://en.wikipedia.org/wiki/Cubic\_crystal\_system)
+
+## Signature
+
+```plato
+SimpleCubic(_: LatticeUnitCell): LatticeUnitCell
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 76](../../../../../stdlib/geometry/lattices.library.plato#L76): # The standard unit cells
+- [Line 81](../../../../../stdlib/geometry/lattices.library.plato#L81): precondition in `lattices.types.plato`, so the tiling welds them without
+- [Line 85](../../../../../stdlib/geometry/lattices.library.plato#L85): how many struts meet at it in the infinite lattice, which is not the
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 74
+### Line 74
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 74](../../../../../stdlib/geometry/lattices.library.plato#L74).
 

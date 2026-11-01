@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A spatial SDF that reports a gradient as well as a distance. For an exact
+> distance field the unit gradient is the outward surface normal. Same seam
+> caveat as the planar form.
+
+## Signature
+
+```plato
+interface IDifferentiableSignedDistanceField3D
+    inherits ISignedDistanceField3D, IDifferentiableScalarField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ISignedDistanceField3D](isigneddistancefield3d.md), [IDifferentiableScalarField3D](../fields.concepts/idifferentiablescalarfield3d.md).
+
+Implemented in this tier by: [BoundedSdf3D](../implicit-sdf.types/boundedsdf3d.md), [PlacedSdf3D](../implicit-sdf.types/placedsdf3d.md), [FunctionSdf3D](../implicit-sdf.types/functionsdf3d.md), [SampledSdf3D](../implicit-sdf.types/sampledsdf3d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.concepts](../implicit-sdf.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 92
+### Line 92
 
 **Source:** [stdlib/geometry/implicit-sdf.concepts.plato, line 92](../../../../../stdlib/geometry/implicit-sdf.concepts.plato#L92).
 

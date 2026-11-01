@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The primitives under one node, once it is known to exist.
+
+## Signature
+
+```plato
+BvhNodeCandidates(self: Bvh2D, bounds: Bounds2D, n: BvhNode2D): Array<ItemIndex>
+BvhNodeCandidates(self: Bvh3D, bounds: Bounds3D, n: BvhNode3D): Array<ItemIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 585
+### Line 585
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 585](../../../../../stdlib/geometry/spatial-structures.library.plato#L585).
 
@@ -23,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
                       .Concatenate(self.BvhCandidates(bounds, n.RightChild)));
 ```
 
-## Line 614
+### Line 614
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 614](../../../../../stdlib/geometry/spatial-structures.library.plato#L614).
 

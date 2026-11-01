@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The result of reading a real number from text (`ParseNumber` in `text.library.plato`).
+> When Ok is true Value is the correctly rounded number the text spells; when Ok is
+> false the text was not a number in the P21 real forms and Value is 0 and means nothing.
+
+## Signature
+
+```plato
+type NumberParse
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+
+## Source
+
 **File:** [text.types](../text.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/text.types.plato, line 1](../../../../../stdlib/foundation/text.types.plato#L1).
 

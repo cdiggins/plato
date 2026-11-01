@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The natural logarithm of the gamma function, ln Gamma(x), computed in
+> log space so it stays finite far beyond where Gamma overflows (up to
+> x ~ 2.5e305). Precondition: x > 0 (the log-space reflection used below
+> 0.5 assumes sin(pi \* x) > 0, which holds only on (0, 1)).
+> Expected accuracy: ~1e-13 relative for x >= 0.5.
+> https://en.wikipedia.org/wiki/Gamma\_function#The\_log-gamma\_function
+
+## Signature
+
+```plato
+LogGamma(x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 629
+### Line 629
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 629](../../../../../stdlib/foundation/numbers.library.plato#L629).
 

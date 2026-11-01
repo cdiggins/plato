@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An immutable value type: identity is determined entirely by content.
+> Values can be freely copied, shared, and compared.
+> (https://en.wikipedia.org/wiki/Value\_type\_and\_reference\_type)
+
+## Signature
+
+```plato
+interface IValue
+    inherits IEquatable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IEquatable](iequatable.md).
+
+Implemented in this tier by: [JaggedArray](../collections-jagged.types/jaggedarray.md), [Color8](../color.types/color8.md), [ColorHSV](../color.types/colorhsv.md), [ColorHSL](../color.types/colorhsl.md), [ColorStop](../color.types/colorstop.md), [ColorGradient](../color.types/colorgradient.md), [GraphVertexIndex](../graphs.types/graphvertexindex.md), [GraphEdge](../graphs.types/graphedge.md), [WeightedEdge](../graphs.types/weightededge.md), [AdjacencyMatrix](../graphs.types/adjacencymatrix.md), [AdjacencyStructure](../graphs.types/adjacencystructure.md), [Hypergraph](../graphs.types/hypergraph.md), [GraphPath](../graphs.types/graphpath.md), [ShortestPathTree](../graphs.types/shortestpathtree.md), [SpanningTree](../graphs.types/spanningtree.md), [ConnectedComponents](../graphs.types/connectedcomponents.md), [TopologicalOrder](../graphs.types/topologicalorder.md), [GraphColoring](../graphs.types/graphcoloring.md), [GraphPartition](../graphs.types/graphpartition.md), [FlowNetwork](../graphs.types/flownetwork.md), [MaxFlowResult](../graphs.types/maxflowresult.md), [BipartiteMatching](../graphs.types/bipartitematching.md), [IntegerBounds2D](../intervals.types/integerbounds2d.md), [IntegerBounds3D](../intervals.types/integerbounds3d.md), [Rect2D](../intervals.types/rect2d.md), [Size2D](../intervals.types/size2d.md), [Size3D](../intervals.types/size3d.md), [IntegerSize2D](../intervals.types/integersize2d.md), [IntegerSize3D](../intervals.types/integersize3d.md), [SymmetricMatrix3x3](../matrices.types/symmetricmatrix3x3.md), [Tensor](../matrices.types/tensor.md), [SparseMatrixEntry](../matrices.types/sparsematrixentry.md), [SparseMatrix](../matrices.types/sparsematrix.md), [BandedMatrix](../matrices.types/bandedmatrix.md), [Rational](../numbers.types/rational.md), [ItemIndex](../numbers.types/itemindex.md), [Cardinal](../numbers.types/cardinal.md), [ComparisonTolerance](../numbers.types/comparisontolerance.md), [HomogeneousPoint2D](../points.types/homogeneouspoint2d.md), [HomogeneousPoint3D](../points.types/homogeneouspoint3d.md), [PolarCoordinate](../points.types/polarcoordinate.md), [CylindricalCoordinate](../points.types/cylindricalcoordinate.md), [SphericalCoordinate](../points.types/sphericalcoordinate.md), [GeoCoordinate](../points.types/geocoordinate.md), [BarycentricCoordinate](../points.types/barycentriccoordinate.md), [Polynomial](../polynomials.types/polynomial.md), [Monomial](../polynomials.types/monomial.md), [SparsePolynomial](../polynomials.types/sparsepolynomial.md), [QuadraticPolynomial](../polynomials.types/quadraticpolynomial.md), [CubicPolynomial](../polynomials.types/cubicpolynomial.md), [QuarticPolynomial](../polynomials.types/quarticpolynomial.md), [PolynomialRoots](../polynomials.types/polynomialroots.md), [RationalFunction](../polynomials.types/rationalfunction.md), [PiecewisePolynomial](../polynomials.types/piecewisepolynomial.md), [PadeApproximant](../polynomials.types/padeapproximant.md), [SturmChain](../polynomials.types/sturmchain.md), [PowerSeries](../polynomials.types/powerseries.md), [ChebyshevSeries](../polynomials.types/chebyshevseries.md), [LegendreSeries](../polynomials.types/legendreseries.md), [HermiteSeries](../polynomials.types/hermiteseries.md), [BernsteinPolynomial](../polynomials.types/bernsteinpolynomial.md), [BivariatePolynomial](../polynomials.types/bivariatepolynomial.md), [FourierSeries](../polynomials.types/fourierseries.md), [Boolean](../primitives/boolean.md), [Character](../primitives/character.md), [String](../primitives/string.md), [RandomState](../random.types/randomstate.md), [NormalDistribution2D](../random.types/normaldistribution2d.md), [NormalDistribution3D](../random.types/normaldistribution3d.md), [Quaternion](../rotations.types/quaternion.md), [AxisAngle](../rotations.types/axisangle.md), [EulerAngles](../rotations.types/eulerangles.md), [Rotation2D](../rotations.types/rotation2d.md), [Bivector2D](../rotations.types/bivector2d.md), [Bivector3D](../rotations.types/bivector3d.md), [Rotor2D](../rotations.types/rotor2d.md), [Rotor3D](../rotations.types/rotor3d.md), [SummaryStatistics](../statistics.types/summarystatistics.md), [RunningStatistics](../statistics.types/runningstatistics.md), [Histogram](../statistics.types/histogram.md), [Histogram2D](../statistics.types/histogram2d.md), [Quantiles](../statistics.types/quantiles.md), [FiveNumberSummary](../statistics.types/fivenumbersummary.md), [BoxPlotStatistics](../statistics.types/boxplotstatistics.md), [Covariance2D](../statistics.types/covariance2d.md), [Covariance3D](../statistics.types/covariance3d.md), [CorrelationCoefficient](../statistics.types/correlationcoefficient.md), [LinearFit](../statistics.types/linearfit.md), [PolynomialFit](../statistics.types/polynomialfit.md), [NumberParse](../text.types/numberparse.md), [IntegerParse](../text.types/integerparse.md), [Instant](../time.types/instant.md), [TimeInterval](../time.types/timeinterval.md), [FrameTime](../time.types/frametime.md), [BeatTime](../time.types/beattime.md), [AffineTransform2D](../transforms.types/affinetransform2d.md), [AffineTransform3D](../transforms.types/affinetransform3d.md), [Transform2D](../transforms.types/transform2d.md), [Transform3D](../transforms.types/transform3d.md), [Frame2D](../transforms.types/frame2d.md), [Frame3D](../transforms.types/frame3d.md), [Basis3D](../transforms.types/basis3d.md), [Motor3D](../transforms.types/motor3d.md), [Pose2D](../transforms.types/pose2d.md), [Pose3D](../transforms.types/pose3d.md), [TrsTransform2D](../transforms.types/trstransform2d.md), [TrsTransform3D](../transforms.types/trstransform3d.md), [Translation2D](../transforms.types/translation2d.md), [Translation3D](../transforms.types/translation3d.md), [Scaling2D](../transforms.types/scaling2d.md), [Scaling3D](../transforms.types/scaling3d.md), [UniformScaling2D](../transforms.types/uniformscaling2d.md), [UniformScaling3D](../transforms.types/uniformscaling3d.md), [Reflection2D](../transforms.types/reflection2d.md), [Reflection3D](../transforms.types/reflection3d.md), [RotationAbout2D](../transforms.types/rotationabout2d.md), [RotationAbout3D](../transforms.types/rotationabout3d.md), [ScalingAbout2D](../transforms.types/scalingabout2d.md), [ScalingAbout3D](../transforms.types/scalingabout3d.md), [Direction2D](../vectors.types/direction2d.md), [Direction3D](../vectors.types/direction3d.md), [IntegerVector2](../vectors.types/integervector2.md), [IntegerVector3](../vectors.types/integervector3.md), [IntegerVector4](../vectors.types/integervector4.md).
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [core.concepts](../core.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 22
+### Line 22
 
 **Source:** [stdlib/foundation/core.concepts.plato, line 22](../../../../../stdlib/foundation/core.concepts.plato#L22).
 

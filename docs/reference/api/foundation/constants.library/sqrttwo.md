@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The square root of two, approximately 1.414214.
+> (https://en.wikipedia.org/wiki/Square\_root\_of\_2)
+
+## Signature
+
+```plato
+SqrtTwo(_: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [constants.library](../constants.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 36
+### Line 36
 
 **Source:** [stdlib/foundation/constants.library.plato, line 36](../../../../../stdlib/foundation/constants.library.plato#L36).
 

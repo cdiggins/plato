@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The centroid (center of mass under uniform density) of the region enclosed by
+> a closed ring: Cx = 1/(6A) \* sum (x\_i + x\_i+1) \* cross\_i, and likewise for Cy,
+> where cross\_i is the shoelace term and A the signed area.
+> Precondition: non-zero signed area (a degenerate ring has no centroid).
+> https://en.wikipedia.org/wiki/Centroid#Of\_a\_polygon
+
+## Signature
+
+```plato
+PolygonAreaCentroid(points: Array<Point2D>): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 453
+### Line 453
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 453](../../../../../stdlib/geometry/geometry.library.plato#L453).
 

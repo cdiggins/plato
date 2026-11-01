@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The complete geometric description of how a path is stroked. Width is the
+> total stroke width. MiterLimit caps a miter join's reach as a multiple of
+> half the stroke width, as in SVG; joins beyond it fall back to bevel.
+
+## Signature
+
+```plato
+type StrokeStyle
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Paths, paint, strokes and text](../../../library/graphics/paths-text.md)
+
+## Source
+
 **File:** [vector-styling.types](../vector-styling.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 143
+### Line 143
 
 **Source:** [stdlib/graphics/vector-styling.types.plato, line 143](../../../../../stdlib/graphics/vector-styling.types.plato#L143).
 

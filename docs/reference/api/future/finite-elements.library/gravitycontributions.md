@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The weight of one cell shared equally among its four nodes. Equal sharing
+> is not an approximation: each linear shape function integrates to a quarter
+> of the cell volume, so this IS the consistent load vector of a uniform body
+> force.
+> (https://en.wikipedia.org/wiki/Body\_force)
+
+## Signature
+
+```plato
+GravityContributions(c: TetrahedronCell, positions: Array<Point3D>, density: Density,
+    gravity: Vector3D): Array<DofLoad>
+
+GravityContributions(f: TriangleFace, positions: Array<Point2D>, thickness: Length,
+    density: Density, gravity: Vector2D): Array<DofLoad>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.library](../finite-elements.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 457
+### Line 457
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 457](../../../../../stdlib/future/finite-elements.library.plato#L457).
 
@@ -28,7 +56,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 541
+### Line 541
 
 **Source:** [stdlib/future/finite-elements.library.plato, line 541](../../../../../stdlib/future/finite-elements.library.plato#L541).
 

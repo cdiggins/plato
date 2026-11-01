@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The clothoid is parameterized by signed arc length, so its arc length is
+> just the width of Domain.
+> https://en.wikipedia.org/wiki/Euler\_spiral
+
+## Signature
+
+```plato
+ArcLength(self: Clothoid2D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.library](../curves-shapes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 267
+### Line 267
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 267](../../../../../stdlib/geometry/curves-shapes.library.plato#L267).
 

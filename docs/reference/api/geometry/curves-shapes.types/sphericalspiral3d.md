@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A loxodrome: a spiral on a sphere of radius Radius crossing every meridian
+> at a constant angle, running pole to pole along the frame's Z axis and
+> completing TurnCount revolutions
+> (https://en.wikipedia.org/wiki/Rhumb\_line).
+
+## Signature
+
+```plato
+type SphericalSpiral3D
+    implements ICurve3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICurve3D](../curves.concepts/icurve3d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.types](../curves-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 469
+### Line 469
 
 **Source:** [stdlib/geometry/curves-shapes.types.plato, line 469](../../../../../stdlib/geometry/curves-shapes.types.plato#L469).
 

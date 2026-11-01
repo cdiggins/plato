@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A color in CIELAB: perceptual lightness L in \[0, 100\] with opponent axes
+> A (green-red) and B (blue-yellow), relative to a reference white.
+> (https://en.wikipedia.org/wiki/CIELAB\_color\_space)
+
+## Signature
+
+```plato
+type ColorLab
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Color and alpha](../../../library/foundation/color.md)
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [color-spaces.types](../color-spaces.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 147
+### Line 147
 
 **Source:** [stdlib/graphics/color-spaces.types.plato, line 147](../../../../../stdlib/graphics/color-spaces.types.plato#L147).
 

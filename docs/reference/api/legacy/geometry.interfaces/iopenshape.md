@@ -3,11 +3,33 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> A shape that is open (e.g., a line, curve, line set)
+
+## Signature
+
+```plato
+interface IOpenShape inherits IOpenClosedShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IOpenClosedShape](iopenclosedshape.md).
+
+Implemented in this tier by: [SineWave](../curves/sinewave.md), [Parabola](../curves/parabola.md), [Epicycloid](../curves/epicycloid.md), [Hypocycloid](../curves/hypocycloid.md), [Epitrochoid](../curves/epitrochoid.md), [Hypotrochoid](../curves/hypotrochoid.md), [ButterflyCurve](../curves/butterflycurve.md), [Lissajous](../curves/lissajous.md), [CycloidOfCeva](../curves/cycloidofceva.md), [Limacon](../curves/limacon.md), [TschirnhausenCubic](../curves/tschirnhausencubic.md), [ArchimedeanSpiral](../curves/archimedeanspiral.md), [ConicSection](../curves/conicsection.md), [LemniscateOfBernoulli](../curves/lemniscateofbernoulli.md), [TrisectrixOfMaclaurin](../curves/trisectrixofmaclaurin.md), [ConchoidOfDeSluze](../curves/conchoidofdesluze.md), [SinusoidalSpiral](../curves/sinusoidalspiral.md), [FermatsSpiral](../curves/fermatsspiral.md), [LogarithmicSpiral](../curves/logarithmicspiral.md), [CubicBezier3D](../curves/cubicbezier3d.md), [QuadraticBezier3D](../curves/quadraticbezier3d.md), [Helix](../curves/helix.md).
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 49
+### Line 49
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 49](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L49).
 

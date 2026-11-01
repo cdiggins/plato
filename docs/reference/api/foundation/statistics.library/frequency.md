@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The relative frequency of bin i: its count over the total count, in
+> \[0, 1\]. Precondition: the histogram tallied at least one value.
+
+## Signature
+
+```plato
+Frequency(self: Histogram, bin: Integer): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fit a line by least squares](../../../cookbook/fit-line.md)
+- [Summarize a sample](../../../cookbook/sample-statistics.md)
+- [Statistics, covariance and fitted models](../../../library/foundation/statistics.md)
+
+## Source
+
 **File:** [statistics.library](../statistics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 68
+### Line 68
 
 **Source:** [stdlib/foundation/statistics.library.plato, line 68](../../../../../stdlib/foundation/statistics.library.plato#L68).
 

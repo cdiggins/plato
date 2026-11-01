@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The remap that keeps every vertex that is its own representative, numbering
+> the survivors in ascending order, and sends every other vertex to its
+> representative's new number. `placement` supplies each surviving vertex's
+> position, taking its OLD number. Precondition: `representatives` is
+> idempotent — the representative of a representative is itself.
+
+## Signature
+
+```plato
+CompactMerge(representatives: Array<VertexIndex>, placement: Function1<Integer, Point3D>): VertexRemap
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 220
+### Line 220
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 220](../../../../../stdlib/geometry/remeshing.library.plato#L220).
 

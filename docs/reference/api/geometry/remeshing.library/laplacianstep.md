@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> One Laplacian step: every interior vertex moves `strength` of the way along
+> its Laplacian. A negative strength is the inflating half of Taubin's pair.
+
+## Signature
+
+```plato
+LaplacianStep(self: TriangleMesh3D, topology: TriangleMeshTopology, weighting: LaplacianWeighting, strength: Number): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1209
+### Line 1209
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1209](../../../../../stdlib/geometry/remeshing.library.plato#L1209).
 

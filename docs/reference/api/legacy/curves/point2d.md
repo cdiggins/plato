@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Convert polar coordinates to Cartesian
+> https://en.wikipedia.org/wiki/Polar\_coordinate\_system
+
+## Signature
+
+```plato
+Point2D(coord: PolarCoordinate): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [curves](../curves.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 310
+### Line 310
 
 **Source:** [legacy/stdlib-legacy/curves.plato, line 310](../../../../../legacy/stdlib-legacy/curves.plato#L310).
 

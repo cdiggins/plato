@@ -3,11 +3,117 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The polygon triangulated over its own vertices, by ear clipping.
+
+## Signature
+
+```plato
+Triangulate(p: Polygon2D): TriangleMesh2D
+Triangulate(p: ConvexPolygon2D): TriangleMesh2D
+Triangulate(r: PolygonWithHoles2D): TriangleMesh2D
+Triangulate(s: PolygonSet2D): TriangleMesh2D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_TriangulationFacesIndexInputPoints
+
+[stdlib/tests/triangulation.laws.plato, line 29](../../../../../stdlib/tests/triangulation.laws.plato#L29)
+
+```plato
+// Every face indexes a point that exists. The clipper carries VertexIndex values from the
+// pool it was handed, so a face can only ever name one of them; an out-of-range index would
+// mean a slot was read whose node had never been linked.
+Law_TriangulationFacesIndexInputPoints(p: Polygon2D): Boolean
+    => p.Triangulate.Faces.All(f => p.Points.FaceIsInRange(f));
+```
+
+### Law_TriangulationFaceCountIsBounded
+
+[stdlib/tests/triangulation.laws.plato, line 35](../../../../../stdlib/tests/triangulation.laws.plato#L35)
+
+```plato
+// A ring of n vertices admits at most n - 2 faces: the clipping pass runs exactly n - 2
+// steps and emits at most one face per step. Fewer is legitimate — a flat corner is clipped
+// without emitting — which is why this is a bound and not an equality.
+Law_TriangulationFaceCountIsBounded(p: Polygon2D): Boolean
+    => p.Triangulate.Faces.Count <= p.Points.Count.Greater(2) - 2;
+```
+
+### Law_TriangulationPreservesPositions
+
+[stdlib/tests/triangulation.laws.plato, line 40](../../../../../stdlib/tests/triangulation.laws.plato#L40)
+
+```plato
+// The mesh triangulation is over the polygon's own vertices: the positions come back
+// unchanged and in order, which is what makes the face indices meaningful to the caller.
+Law_TriangulationPreservesPositions(p: Polygon2D): Boolean
+    => p.Triangulate.Positions.Count == p.Points.Count;
+```
+
+### Law_TriangulationFacesHaveDistinctCorners
+
+[stdlib/tests/triangulation.laws.plato, line 46](../../../../../stdlib/tests/triangulation.laws.plato#L46)
+
+```plato
+// A face never repeats a vertex: the three corners of a clipped ear are three distinct
+// slots of the ring. (Two of them may still coincide in POSITION, where a bridge duplicated
+// a vertex, so this is an index property, not a geometric one.)
+Law_TriangulationFacesHaveDistinctCorners(p: Polygon2D): Boolean
+    => p.Triangulate.Faces.All(f => f.HasDistinctCorners);
+```
+
+### Law_HoledTriangulationFacesIndexInputPoints
+
+[stdlib/tests/triangulation.laws.plato, line 54](../../../../../stdlib/tests/triangulation.laws.plato#L54)
+
+```plato
+Law_HoledTriangulationFacesIndexInputPoints(r: PolygonWithHoles2D): Boolean
+    => r.Triangulate.Faces.All(f => r.PointPool.FaceIsInRange(f));
+```
+
+### Law_HoledTriangulationPreservesPositions
+
+[stdlib/tests/triangulation.laws.plato, line 57](../../../../../stdlib/tests/triangulation.laws.plato#L57)
+
+```plato
+Law_HoledTriangulationPreservesPositions(r: PolygonWithHoles2D): Boolean
+    => r.Triangulate.Positions.Count == r.PointPool.Count;
+```
+
+### Law_HoledTriangulationFacesHaveDistinctCorners
+
+[stdlib/tests/triangulation.laws.plato, line 60](../../../../../stdlib/tests/triangulation.laws.plato#L60)
+
+```plato
+Law_HoledTriangulationFacesHaveDistinctCorners(r: PolygonWithHoles2D): Boolean
+    => r.Triangulate.Faces.All(f => f.HasDistinctCorners);
+```
+
+### Law_ConvexTriangulationIsAFullFan
+
+[stdlib/tests/triangulation.laws.plato, line 68](../../../../../stdlib/tests/triangulation.laws.plato#L68)
+
+```plato
+Law_ConvexTriangulationIsAFullFan(p: ConvexPolygon2D): Boolean
+    => p.Triangulate.Faces.Count == p.Points.Count.Greater(2) - 2;
+```
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 573
+### Line 573
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 573](../../../../../stdlib/geometry/triangulation.library.plato#L573).
 
@@ -24,7 +130,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (p.Points, p.Points.TriangulateRings(0.Range));
 ```
 
-## Line 583
+### Line 583
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 583](../../../../../stdlib/geometry/triangulation.library.plato#L583).
 
@@ -38,7 +144,7 @@ Copied from source, comments included. A comment records intent. The body is the
             => TriangleFace(VertexIndex(0), VertexIndex(i + 1), VertexIndex(i + 2))));
 ```
 
-## Line 600
+### Line 600
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 600](../../../../../stdlib/geometry/triangulation.library.plato#L600).
 
@@ -50,7 +156,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (r.PointPool, r.PointPool.TriangulateRings(r.HoleStarts));
 ```
 
-## Line 637
+### Line 637
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 637](../../../../../stdlib/geometry/triangulation.library.plato#L637).
 

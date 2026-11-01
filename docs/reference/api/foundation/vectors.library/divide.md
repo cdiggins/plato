@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Uniform division. Dividing by zero yields infinite or NaN components.
+
+## Signature
+
+```plato
+Divide(left: Vector2D, scalar: Number): Vector2D
+Divide(left: Vector3D, scalar: Number): Vector3D
+Divide(left: Number2, right: Number2): Number2
+Divide(left: Number2, scalar: Number): Number2
+Divide(left: Number3, right: Number3): Number3
+Divide(left: Number3, scalar: Number): Number3
+Divide(left: Number4, right: Number4): Number4
+Divide(left: Number4, scalar: Number): Number4
+Divide(left: Number8, right: Number8): Number8
+Divide(left: Number8, scalar: Number): Number8
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [vectors.library](../vectors.library.md). Kind: function. 10 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 61
+### Line 61
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 61](../../../../../stdlib/foundation/vectors.library.plato#L61).
 
@@ -18,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X / scalar, left.Y / scalar);
 ```
 
-## Line 172
+### Line 172
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 172](../../../../../stdlib/foundation/vectors.library.plato#L172).
 
@@ -29,7 +58,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X / scalar, left.Y / scalar, left.Z / scalar);
 ```
 
-## Line 324
+### Line 324
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 324](../../../../../stdlib/foundation/vectors.library.plato#L324).
 
@@ -40,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X / right.X, left.Y / right.Y);
 ```
 
-## Line 328
+### Line 328
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 328](../../../../../stdlib/foundation/vectors.library.plato#L328).
 
@@ -51,7 +80,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X / scalar, left.Y / scalar);
 ```
 
-## Line 396
+### Line 396
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 396](../../../../../stdlib/foundation/vectors.library.plato#L396).
 
@@ -62,7 +91,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X / right.X, left.Y / right.Y, left.Z / right.Z);
 ```
 
-## Line 400
+### Line 400
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 400](../../../../../stdlib/foundation/vectors.library.plato#L400).
 
@@ -73,7 +102,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X / scalar, left.Y / scalar, left.Z / scalar);
 ```
 
-## Line 470
+### Line 470
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 470](../../../../../stdlib/foundation/vectors.library.plato#L470).
 
@@ -84,7 +113,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X / right.X, left.Y / right.Y, left.Z / right.Z, left.W / right.W);
 ```
 
-## Line 474
+### Line 474
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 474](../../../../../stdlib/foundation/vectors.library.plato#L474).
 
@@ -95,7 +124,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (left.X / scalar, left.Y / scalar, left.Z / scalar, left.W / scalar);
 ```
 
-## Line 591
+### Line 591
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 591](../../../../../stdlib/foundation/vectors.library.plato#L591).
 
@@ -107,7 +136,7 @@ Copied from source, comments included. A comment records intent. The body is the
                    left.X4 / right.X4, left.X5 / right.X5, left.X6 / right.X6, left.X7 / right.X7);
 ```
 
-## Line 596
+### Line 596
 
 **Source:** [stdlib/foundation/vectors.library.plato, line 596](../../../../../stdlib/foundation/vectors.library.plato#L596).
 

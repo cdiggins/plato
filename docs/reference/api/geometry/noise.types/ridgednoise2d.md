@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Planar ridged multifractal noise: octaves of inverted absolute basis noise
+> offset by Offset (typically 1), producing sharp ridge lines. Suited to
+> mountainous terrain and lightning-like filaments
+> (https://en.wikipedia.org/wiki/Multifractal\_system).
+
+## Signature
+
+```plato
+type RidgedNoise2D
+    implements IValue, IScalarField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IScalarField2D](../fields.concepts/iscalarfield2d.md).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.types](../noise.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 246
+### Line 246
 
 **Source:** [stdlib/geometry/noise.types.plato, line 246](../../../../../stdlib/geometry/noise.types.plato#L246).
 

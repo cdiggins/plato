@@ -3,11 +3,42 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The world with gravity and damping applied to every body's velocity, and no
+> other wrench. A caller with per-body forces calls `IntegrateVelocity` itself
+> with the wrench it assembled; this is the free-fall case, which is the one a
+> scene without actuators is in.
+
+## Signature
+
+```plato
+ApplyGravityAndDamping(world: RigidWorld3D): RigidWorld3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 836](../../../../../stdlib/future/rigid-dynamics.library.plato#L836): velocities must be final before positions move (semi-implicit Euler), and
+- [Line 837](../../../../../stdlib/future/rigid-dynamics.library.plato#L837): contacts must be solved before that, or the step would move bodies through
+- [Line 838](../../../../../stdlib/future/rigid-dynamics.library.plato#L838): each other and solve the interpenetration next frame.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 831
+### Line 831
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 831](../../../../../stdlib/future/rigid-dynamics.library.plato#L831).
 

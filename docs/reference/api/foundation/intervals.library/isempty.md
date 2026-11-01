@@ -3,11 +3,99 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the box is empty (inverted on either axis): no point lies inside.
+
+## Signature
+
+```plato
+IsEmpty(self: Bounds2D): Boolean
+IsEmpty(self: Bounds3D): Boolean
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_Bounds2DContainsCenter
+
+[stdlib/tests/foundation.laws.plato, line 86](../../../../../stdlib/tests/foundation.laws.plato#L86)
+
+```plato
+// A non-empty box contains its own center point.
+Law_Bounds2DContainsCenter(b: Bounds2D): Boolean
+    => b.IsEmpty || b.Contains(b.Center);
+```
+
+### Law_Bounds2DExpandContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 90](../../../../../stdlib/tests/foundation.laws.plato#L90)
+
+```plato
+// Expanding outward by a non-negative amount still contains the original box.
+Law_Bounds2DExpandContainsSelf(b: Bounds2D): Boolean
+    => b.IsEmpty || b.Expand(1.0).Contains(b);
+```
+
+### Law_Bounds2DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 94](../../../../../stdlib/tests/foundation.laws.plato#L94)
+
+```plato
+// A box is contained in its union with any other box.
+Law_Bounds2DUnionContainsSelf(b: Bounds2D, o: Bounds2D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+### Law_Bounds2DUnionContainsOther
+
+[stdlib/tests/foundation.laws.plato, line 98](../../../../../stdlib/tests/foundation.laws.plato#L98)
+
+```plato
+// The other operand is contained in the union too.
+Law_Bounds2DUnionContainsOther(b: Bounds2D, o: Bounds2D): Boolean
+    => o.IsEmpty || b.Union(o).Contains(o);
+```
+
+### Law_Bounds3DContainsCenter
+
+[stdlib/tests/foundation.laws.plato, line 104](../../../../../stdlib/tests/foundation.laws.plato#L104)
+
+```plato
+Law_Bounds3DContainsCenter(b: Bounds3D): Boolean
+    => b.IsEmpty || b.Contains(b.Center);
+```
+
+### Law_Bounds3DExpandContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 107](../../../../../stdlib/tests/foundation.laws.plato#L107)
+
+```plato
+Law_Bounds3DExpandContainsSelf(b: Bounds3D): Boolean
+    => b.IsEmpty || b.Expand(1.0).Contains(b);
+```
+
+### Law_Bounds3DUnionContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 110](../../../../../stdlib/tests/foundation.laws.plato#L110)
+
+```plato
+Law_Bounds3DUnionContainsSelf(b: Bounds3D, o: Bounds3D): Boolean
+    => b.IsEmpty || b.Union(o).Contains(b);
+```
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 84
+### Line 84
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 84](../../../../../stdlib/foundation/intervals.library.plato#L84).
 
@@ -18,7 +106,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Min.X > self.Max.X || self.Min.Y > self.Max.Y;
 ```
 
-## Line 123
+### Line 123
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 123](../../../../../stdlib/foundation/intervals.library.plato#L123).
 

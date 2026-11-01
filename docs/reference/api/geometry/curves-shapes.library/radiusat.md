@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> r = Radius \* cos(k \* theta).
+> https://en.wikipedia.org/wiki/Rose\_(mathematics)
+
+## Signature
+
+```plato
+RadiusAt(self: RoseCurve2D, angle: Angle): Number
+RadiusAt(self: Superformula2D, angle: Angle): Number
+RadiusAt(self: CycloidOfCeva2D, angle: Angle): Number
+RadiusAt(self: TschirnhausenCubic2D, angle: Angle): Number
+RadiusAt(self: ConchoidOfDeSluze2D, angle: Angle): Number
+RadiusAt(self: SinusoidalSpiral2D, angle: Angle): Number
+RadiusAt(self: TrisectrixOfMaclaurin2D, angle: Angle): Number
+RadiusAt(self: ArchimedeanSpiral2D, angle: Angle): Number
+RadiusAt(self: LogarithmicSpiral2D, angle: Angle): Number
+RadiusAt(self: FermatSpiral2D, angle: Angle): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.library](../curves-shapes.library.md). Kind: function. 10 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 136](../../../../../stdlib/geometry/curves-shapes.library.plato#L136).
 
@@ -22,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Radius * (angle * self.PetalFrequency).Cos;
 ```
 
-## Line 168
+### Line 168
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 168](../../../../../stdlib/geometry/curves-shapes.library.plato#L168).
 
@@ -36,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
            .Pow(-1.0 / self.Exponent1);
 ```
 
-## Line 175
+### Line 175
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 175](../../../../../stdlib/geometry/curves-shapes.library.plato#L175).
 
@@ -51,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Scale * (1.0 + 2.0 * (angle * 2.0).Cos);
 ```
 
-## Line 183
+### Line 183
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 183](../../../../../stdlib/geometry/curves-shapes.library.plato#L183).
 
@@ -63,7 +93,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Scale * (angle / 3.0).Sec.Cube;
 ```
 
-## Line 188
+### Line 188
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 188](../../../../../stdlib/geometry/curves-shapes.library.plato#L188).
 
@@ -75,7 +105,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => angle.Sec + self.Scale * angle.Cos;
 ```
 
-## Line 193
+### Line 193
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 193](../../../../../stdlib/geometry/curves-shapes.library.plato#L193).
 
@@ -88,7 +118,7 @@ Copied from source, comments included. A comment records intent. The body is the
            .Pow(1.0 / self.Exponent);
 ```
 
-## Line 199
+### Line 199
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 199](../../../../../stdlib/geometry/curves-shapes.library.plato#L199).
 
@@ -100,7 +130,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 2.0 * self.Scale / (angle / 3.0).Cos;
 ```
 
-## Line 216
+### Line 216
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 216](../../../../../stdlib/geometry/curves-shapes.library.plato#L216).
 
@@ -136,7 +166,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.StartRadius + self.GrowthRate * angle.Radians;
 ```
 
-## Line 249
+### Line 249
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 249](../../../../../stdlib/geometry/curves-shapes.library.plato#L249).
 
@@ -148,7 +178,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.StartRadius * (self.GrowthRate * angle.Radians).Exp;
 ```
 
-## Line 258
+### Line 258
 
 **Source:** [stdlib/geometry/curves-shapes.library.plato, line 258](../../../../../stdlib/geometry/curves-shapes.library.plato#L258).
 

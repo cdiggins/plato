@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The angular frequency of a period: one full cycle of the trigonometric
+> argument per Period of world distance. Precondition: period is positive.
+
+## Signature
+
+```plato
+TpmsFrequency(period: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 611](../../../../../stdlib/geometry/lattices.library.plato#L611): approximates a minimal surface repeating in all three axes
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 606
+### Line 606
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 606](../../../../../stdlib/geometry/lattices.library.plato#L606).
 

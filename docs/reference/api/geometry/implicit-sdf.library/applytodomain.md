@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The folded position for an elongated planar shape: the source is sampled at
+> the position pulled back toward the origin by up to Amount on each axis,
+> which inserts a straight section of that extent. The pull-back is a
+> translation, so this is exact when the source is. (IQ: opElongate.)
+
+## Signature
+
+```plato
+ApplyToDomain(self: SdfElongationModifier2D, point: Point2D): Point2D
+ApplyToDomain(self: SdfElongationModifier3D, point: Point3D): Point3D
+ApplyToDomain(self: SdfRepetitionModifier2D, point: Point2D): Point2D
+ApplyToDomain(self: SdfRepetitionModifier3D, point: Point3D): Point3D
+ApplyToDomain(self: SdfTwistModifier3D, point: Point3D): Point3D
+ApplyToDomain(self: SdfBendModifier3D, point: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 516
+### Line 516
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 516](../../../../../stdlib/geometry/implicit-sdf.library.plato#L516).
 
@@ -23,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
             point.Y - point.Y.Clamp(self.Amount.Y.Negative, self.Amount.Y));
 ```
 
-## Line 525
+### Line 525
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 525](../../../../../stdlib/geometry/implicit-sdf.library.plato#L525).
 
@@ -38,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
             point.Z - point.Z.Clamp(self.Amount.Z.Negative, self.Amount.Z));
 ```
 
-## Line 544
+### Line 544
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 544](../../../../../stdlib/geometry/implicit-sdf.library.plato#L544).
 
@@ -56,7 +84,7 @@ Copied from source, comments included. A comment records intent. The body is the
             RepeatedCoordinate(point.Y, self.Period.Y, self.Counts.Y));
 ```
 
-## Line 555
+### Line 555
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 555](../../../../../stdlib/geometry/implicit-sdf.library.plato#L555).
 
@@ -72,7 +100,7 @@ Copied from source, comments included. A comment records intent. The body is the
             RepeatedCoordinate(point.Z, self.Period.Z, self.Counts.Z));
 ```
 
-## Line 587
+### Line 587
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 587](../../../../../stdlib/geometry/implicit-sdf.library.plato#L587).
 
@@ -88,7 +116,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => RotatedAboutZ(point, self.AnglePerUnit * point.Z);
 ```
 
-## Line 596
+### Line 596
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 596](../../../../../stdlib/geometry/implicit-sdf.library.plato#L596).
 

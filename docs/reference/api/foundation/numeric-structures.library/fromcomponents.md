@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The 2-tuple built from the first two entries of xs.
+
+## Signature
+
+```plato
+FromComponents(_: Number2, xs: Array<Number>): Number2
+FromComponents(_: Number3, xs: Array<Number>): Number3
+FromComponents(_: Number4, xs: Array<Number>): Number4
+FromComponents(_: Number8, xs: Array<Number>): Number8
+FromComponents(_: Vector2D, xs: Array<Number>): Vector2D
+FromComponents(_: Vector3D, xs: Array<Number>): Vector3D
+FromComponents(_: VectorN, xs: Array<Number>): VectorN
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 7 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 304
+### Line 304
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 304](../../../../../stdlib/foundation/numeric-structures.library.plato#L304).
 
@@ -25,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (xs[0], xs[1]);
 ```
 
-## Line 319
+### Line 319
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 319](../../../../../stdlib/foundation/numeric-structures.library.plato#L319).
 
@@ -36,7 +63,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (xs[0], xs[1], xs[2]);
 ```
 
-## Line 327
+### Line 327
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 327](../../../../../stdlib/foundation/numeric-structures.library.plato#L327).
 
@@ -47,7 +74,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (xs[0], xs[1], xs[2], xs[3]);
 ```
 
-## Line 335
+### Line 335
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 335](../../../../../stdlib/foundation/numeric-structures.library.plato#L335).
 
@@ -59,7 +86,7 @@ Copied from source, comments included. A comment records intent. The body is the
                    xs[4], xs[5], xs[6], xs[7]);
 ```
 
-## Line 344
+### Line 344
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 344](../../../../../stdlib/foundation/numeric-structures.library.plato#L344).
 
@@ -70,7 +97,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (xs[0], xs[1]);
 ```
 
-## Line 352
+### Line 352
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 352](../../../../../stdlib/foundation/numeric-structures.library.plato#L352).
 
@@ -81,7 +108,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (xs[0], xs[1], xs[2]);
 ```
 
-## Line 360
+### Line 360
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 360](../../../../../stdlib/foundation/numeric-structures.library.plato#L360).
 

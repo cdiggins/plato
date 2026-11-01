@@ -3,11 +3,33 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The cloth's triangles as an indexed mesh, sharing the cloth's vertex
+> numbering.
+
+## Signature
+
+```plato
+ToTriangleMesh(self: Cloth3D): TriangleMesh3D
+ToTriangleMesh(self: ClothMesh3D): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [cloth.library](../cloth.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 799
+### Line 799
 
 **Source:** [stdlib/future/cloth.library.plato, line 799](../../../../../stdlib/future/cloth.library.plato#L799).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Positions, self.Faces);
 ```
 
-## Line 809
+### Line 809
 
 **Source:** [stdlib/future/cloth.library.plato, line 809](../../../../../stdlib/future/cloth.library.plato#L809).
 

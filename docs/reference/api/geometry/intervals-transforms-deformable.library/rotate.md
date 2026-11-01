@@ -3,11 +3,28 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Rotate every point about the origin by `angle` (counter-clockwise).
+
+## Signature
+
+```plato
+Rotate(self: IDeformable2D, angle: Angle): Self
+Rotate(self: IDeformable3D, rotation: Quaternion): Self
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intervals-transforms-deformable.library](../intervals-transforms-deformable.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 36
+### Line 36
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 36](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L36).
 
@@ -18,7 +35,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.RotateAbout(Point2D.Origin, angle);
 ```
 
-## Line 95
+### Line 95
 
 **Source:** [stdlib/geometry/intervals-transforms-deformable.library.plato, line 95](../../../../../stdlib/geometry/intervals-transforms-deformable.library.plato#L95).
 

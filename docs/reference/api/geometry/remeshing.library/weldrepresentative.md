@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The lowest-numbered vertex within `tolerance` of vertex i. Scans downwards
+> so the last match kept is the smallest, the same trick
+> `FirstCornerOfVertex` (`meshes-polygon.library.plato`) uses.
+
+## Signature
+
+```plato
+WeldRepresentative(positions: Array<Point3D>, i: Integer, tolerance: Number): VertexIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 293](../../../../../stdlib/geometry/remeshing.library.plato#L293): Two vertices merge when they are within `tolerance` of each other; the
+- [Line 297](../../../../../stdlib/geometry/remeshing.library.plato#L297): Cost: quadratic in the vertex count.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 287
+### Line 287
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 287](../../../../../stdlib/geometry/remeshing.library.plato#L287).
 

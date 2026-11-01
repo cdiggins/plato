@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The struts whose midpoint lies inside a box. Whole struts are kept or
+> dropped — nothing is clipped, so the trimmed lattice keeps its welding and
+> a strut straddling the boundary survives or vanishes entire.
+
+## Signature
+
+```plato
+Trimmed(struts: Array<Line3D>, region: Bounds3D): Array<Line3D>
+Trimmed(struts: Array<Line3D>, solid: ISignedDistanceField3D): Array<Line3D>
+Trimmed(struts: Array<Line3D>, volume: IImplicitVolume3D): Array<Line3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 513
+### Line 513
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 513](../../../../../stdlib/geometry/lattices.library.plato#L513).
 
@@ -20,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => struts.FlatMap(s => KeepSegment(region.Contains(s.Centroid), s));
 ```
 
-## Line 519
+### Line 519
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 519](../../../../../stdlib/geometry/lattices.library.plato#L519).
 
@@ -35,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => struts.FlatMap(s => KeepSegment(solid.Eval(s.Centroid) <= 0.0, s));
 ```
 
-## Line 527
+### Line 527
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 527](../../../../../stdlib/geometry/lattices.library.plato#L527).
 

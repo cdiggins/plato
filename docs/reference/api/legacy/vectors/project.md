@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Project(v: Vector3, p: Plane): Vector3
+Project(v: IVector, other: IVector): IVector
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [vectors](../vectors.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 52
+### Line 52
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 52](../../../../../legacy/stdlib-legacy/vectors.plato#L52).
 
@@ -16,7 +33,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Project(v: Vector3, p: Plane): Vector3  => v - p.Normal * p.Normal.Dot(v);
 ```
 
-## Line 169
+### Line 169
 
 **Source:** [legacy/stdlib-legacy/vectors.plato, line 169](../../../../../legacy/stdlib-legacy/vectors.plato#L169).
 

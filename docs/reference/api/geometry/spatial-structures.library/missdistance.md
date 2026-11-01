@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The parameter value standing for "no intersection". A finite literal rather
+> than `Number.MaxValue`: the limit constant does not survive `--scalar=float`
+> erasure inside a conditional, where one branch stays `Number` and the other
+> is already `float` and the C# writer cannot type the result (CS0172).
+> Nothing here needs the true maximum — only a value no scene extent reaches.
+
+## Signature
+
+```plato
+MissDistance(): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 629
+### Line 629
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 629](../../../../../stdlib/geometry/spatial-structures.library.plato#L629).
 

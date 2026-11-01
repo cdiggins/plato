@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The world position of the center of cell (i, j, k) of a grid with this
+> origin and cell size. Shared by every dense grid type.
+
+## Signature
+
+```plato
+CellCenter(origin: Point3D, cellSize: Number, i: Integer, j: Integer, k: Integer): Point3D
+CellCenter(self: DensityGrid3D, i: Integer, j: Integer, k: Integer): Point3D
+CellCenter(self: LevelSetGrid3D, i: Integer, j: Integer, k: Integer): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.library](../voxels.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 1](../../../../../stdlib/geometry/voxels.library.plato#L1).
 
@@ -45,7 +68,7 @@ library Voxels
             origin.Z + (k.ToNumber + 0.5) * cellSize);
 ```
 
-## Line 32
+### Line 32
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 32](../../../../../stdlib/geometry/voxels.library.plato#L32).
 
@@ -56,7 +79,7 @@ library Voxels
         => CellCenter(self.Origin, self.CellSize, i, j, k);
 ```
 
-## Line 36
+### Line 36
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 36](../../../../../stdlib/geometry/voxels.library.plato#L36).
 

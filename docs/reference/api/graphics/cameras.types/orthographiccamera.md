@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A parallel-projection camera. OrthoHeight is the vertical extent of the view
+> volume in scene units; the width is OrthoHeight times AspectRatio.
+> (https://en.wikipedia.org/wiki/Orthographic\_projection)
+
+## Signature
+
+```plato
+type OrthographicCamera
+    implements ICamera
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ICamera](../cameras.concepts/icamera.md).
+
+## Used by
+
+- [Cameras and lights](../../../library/graphics/cameras-lights.md)
+
+## Source
+
 **File:** [cameras.types](../cameras.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 38
+### Line 38
 
 **Source:** [stdlib/graphics/cameras.types.plato, line 38](../../../../../stdlib/graphics/cameras.types.plato#L38).
 

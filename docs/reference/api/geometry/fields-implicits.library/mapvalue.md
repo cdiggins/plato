@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The field with its output value transformed by f (a range warp).
+
+## Signature
+
+```plato
+MapValue(self: ScalarFunctionField2D, f: Function1<Number, Number>): ScalarFunctionField2D
+MapValue(self: ScalarFunctionField3D, f: Function1<Number, Number>): ScalarFunctionField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 508
+### Line 508
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 508](../../../../../stdlib/geometry/fields-implicits.library.plato#L508).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ScalarFunctionField2D(p => f(self.Eval(p)));
 ```
 
-## Line 512
+### Line 512
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 512](../../../../../stdlib/geometry/fields-implicits.library.plato#L512).
 

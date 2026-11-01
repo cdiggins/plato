@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The bounds of the outer boundary; the holes lie strictly inside it.
+
+## Signature
+
+```plato
+Bounds(r: PolygonWithHoles2D): Bounds2D
+Bounds(s: PolygonSet2D): Bounds2D
+Bounds(s: RegularStar2D): Bounds2D
+Bounds(p: Prism3D): Bounds3D
+Bounds(y: Pyramid3D): Bounds3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 5 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 136](../../../../../stdlib/geometry/polygons.library.plato#L136).
 
@@ -18,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Boundary.Bounds;
 ```
 
-## Line 162
+### Line 162
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 162](../../../../../stdlib/geometry/polygons.library.plato#L162).
 
@@ -31,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
             .Reduce(s.Polygons.First.Bounds, (acc, b) => UnionOfBounds(acc, b));
 ```
 
-## Line 206
+### Line 206
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 206](../../../../../stdlib/geometry/polygons.library.plato#L206).
 
@@ -43,7 +67,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => s.RegularStarVertices.BoundsOfPoints;
 ```
 
-## Line 408
+### Line 408
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 408](../../../../../stdlib/geometry/polygons.library.plato#L408).
 
@@ -54,7 +78,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => UnionOfBounds(p.Base.Bounds, p.Base.Bounds.TranslateBounds(p.Offset));
 ```
 
-## Line 449
+### Line 449
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 449](../../../../../stdlib/geometry/polygons.library.plato#L449).
 

@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Complex product: (a+bi)(c+di) = (ac-bd) + (ad+bc)i.
+
+## Signature
+
+```plato
+Multiply(a: Complex, b: Complex): Complex
+Multiply(z: Complex, scalar: Number): Complex
+Multiply(a: Rational, b: Rational): Rational
+Multiply(x: Proportion, scalar: Number): Proportion
+Multiply(x: Percent, scalar: Number): Percent
+Multiply(x: Probability, scalar: Number): Probability
+Multiply(a: DualNumber, b: DualNumber): DualNumber
+Multiply(x: DualNumber, scalar: Number): DualNumber
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 8 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 38
+### Line 38
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 38](../../../../../stdlib/foundation/numbers.library.plato#L38).
 
@@ -19,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
             a.Real * b.Imaginary + a.Imaginary * b.Real);
 ```
 
-## Line 43
+### Line 43
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 43](../../../../../stdlib/foundation/numbers.library.plato#L43).
 
@@ -30,7 +60,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (z.Real * scalar, z.Imaginary * scalar);
 ```
 
-## Line 105
+### Line 105
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 105](../../../../../stdlib/foundation/numbers.library.plato#L105).
 
@@ -41,7 +71,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Rational(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
 ```
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 136](../../../../../stdlib/foundation/numbers.library.plato#L136).
 
@@ -51,7 +81,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Proportion(x.Value * scalar);
 ```
 
-## Line 175
+### Line 175
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 175](../../../../../stdlib/foundation/numbers.library.plato#L175).
 
@@ -61,7 +91,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Percent(x.Value * scalar);
 ```
 
-## Line 214
+### Line 214
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 214](../../../../../stdlib/foundation/numbers.library.plato#L214).
 
@@ -71,7 +101,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Probability(x.Value * scalar);
 ```
 
-## Line 299
+### Line 299
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 299](../../../../../stdlib/foundation/numbers.library.plato#L299).
 
@@ -89,7 +119,7 @@ Copied from source, comments included. A comment records intent. The body is the
             a.Derivative * b.Value + a.Value * b.Derivative);
 ```
 
-## Line 310
+### Line 310
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 310](../../../../../stdlib/foundation/numbers.library.plato#L310).
 

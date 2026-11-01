@@ -3,11 +3,73 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point one unit along this axis from the origin.
+
+## Signature
+
+```plato
+Point2D(self: Axis2D): Point2D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_DegenerateCapsule2DIsCircle
+
+[stdlib/tests/implicit-sdf.laws.plato, line 43](../../../../../stdlib/tests/implicit-sdf.laws.plato#L43)
+
+```plato
+// A planar capsule with coincident endpoints is a circle.
+Law_DegenerateCapsule2DIsCircle(p: Point2D, radius: Number): Boolean
+    => DistanceToCapsule(p, Point2D(0.0, 0.0), Point2D(0.0, 0.0), radius)
+        .LawEq(DistanceToCircle(p, radius));
+```
+
+### Law_ExtrudedCircleIsCappedCylinder
+
+[stdlib/tests/implicit-sdf.laws.plato, line 89](../../../../../stdlib/tests/implicit-sdf.laws.plato#L89)
+
+```plato
+// Extruding a circle along Z is a capped cylinder about Z — the same solid the
+// spatial primitive describes about Y, so the axes are swapped to compare.
+Law_ExtrudedCircleIsCappedCylinder(p: Point3D, radius: Number, halfHeight: Number): Boolean
+    => ExtrudedDistance(DistanceToCircle(Point2D(p.X, p.Y), radius), p.Z, halfHeight)
+        .LawEq(DistanceToCappedCylinder(Point3D(p.X, p.Z, p.Y), halfHeight, radius));
+```
+
+### Law_AxisAlignedQuadIsBox
+
+[stdlib/tests/implicit-sdf.laws.plato, line 333](../../../../../stdlib/tests/implicit-sdf.laws.plato#L333)
+
+```plato
+// The quad on the four corners of an axis-aligned rectangle is that rectangle,
+// whose distance the box primitive computes from half-extents alone. Guarded to
+// a non-degenerate rectangle. (Counter-clockwise, as Quad2D expects.)
+Law_AxisAlignedQuadIsBox(p: Point2D, halfExtents: Vector2D): Boolean
+    => halfExtents.X <= 0.0 || halfExtents.Y <= 0.0
+    || DistanceToQuad(
+            p,
+            Point2D(halfExtents.X.Negative, halfExtents.Y.Negative),
+            Point2D(halfExtents.X, halfExtents.Y.Negative),
+            Point2D(halfExtents.X, halfExtents.Y),
+            Point2D(halfExtents.X.Negative, halfExtents.Y))
+        .LawEq(DistanceToBox(p, halfExtents));
+```
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [axes.library](../axes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 104
+### Line 104
 
 **Source:** [stdlib/foundation/axes.library.plato, line 104](../../../../../stdlib/foundation/axes.library.plato#L104).
 

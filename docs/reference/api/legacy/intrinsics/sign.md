@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Sign(self: Number): Integer
+Sign(self: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 349
+### Line 349
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 349](../../../../../legacy/stdlib-legacy/intrinsics.plato#L349).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Sign(self: Number): Integer;
 ```
 
-## Line 403
+### Line 403
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 403](../../../../../legacy/stdlib-legacy/intrinsics.plato#L403).
 

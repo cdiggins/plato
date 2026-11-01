@@ -3,11 +3,49 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The IDeformable3D obligation: the mesh deformed, every channel unchanged.
+
+## Signature
+
+```plato
+Deform(self: RichMesh3D, mapping: Function1<Point3D, Point3D>): RichMesh3D
+Deform(a: TriangleArray3D, mapping: Function1<Point3D, Point3D>): TriangleArray3D
+Deform(a: QuadArray3D, mapping: Function1<Point3D, Point3D>): QuadArray3D
+Deform(self: TriangleMesh3D, mapping: Function1<Point3D, Point3D>): TriangleMesh3D
+Deform(self: TriangleMesh2D, mapping: Function1<Point2D, Point2D>): TriangleMesh2D
+Deform(self: QuadMesh3D, mapping: Function1<Point3D, Point3D>): QuadMesh3D
+Deform(self: LineSet3D, mapping: Function1<Point3D, Point3D>): LineSet3D
+Deform(self: LineSet2D, mapping: Function1<Point2D, Point2D>): LineSet2D
+Deform(self: PointCloud3D, mapping: Function1<Point3D, Point3D>): PointCloud3D
+Deform(self: PointCloud2D, mapping: Function1<Point2D, Point2D>): PointCloud2D
+Deform(self: SegmentedMesh3D, mapping: Function1<Point3D, Point3D>): SegmentedMesh3D
+Deform(self: TetrahedralMesh3D, mapping: Function1<Point3D, Point3D>): TetrahedralMesh3D
+Deform(self: HexahedralMesh3D, mapping: Function1<Point3D, Point3D>): HexahedralMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 863](../../../../../stdlib/geometry/meshes.library.plato#L863): volume), exactly as it can flip the winding of a surface face.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 13 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 1](../../../../../stdlib/geometry/meshes.library.plato#L1).
 
@@ -50,7 +88,7 @@ library Meshes
             self.TangentChannels);
 ```
 
-## Line 66
+### Line 66
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 66](../../../../../stdlib/geometry/meshes.library.plato#L66).
 
@@ -64,7 +102,7 @@ library Meshes
         => TriangleArray3D(a.Triangles.Map(t => t.Deform(mapping)));
 ```
 
-## Line 99
+### Line 99
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 99](../../../../../stdlib/geometry/meshes.library.plato#L99).
 
@@ -76,7 +114,7 @@ library Meshes
         => QuadArray3D(a.Quads.Map(q => q.Deform(mapping)));
 ```
 
-## Line 511
+### Line 511
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 511](../../../../../stdlib/geometry/meshes.library.plato#L511).
 
@@ -88,7 +126,7 @@ library Meshes
         => (self.Positions.Map(mapping), self.Faces);
 ```
 
-## Line 551
+### Line 551
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 551](../../../../../stdlib/geometry/meshes.library.plato#L551).
 
@@ -100,7 +138,7 @@ library Meshes
         => (self.Positions.Map(mapping), self.Faces);
 ```
 
-## Line 591
+### Line 591
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 591](../../../../../stdlib/geometry/meshes.library.plato#L591).
 
@@ -112,7 +150,7 @@ library Meshes
         => (self.Positions.Map(mapping), self.Faces);
 ```
 
-## Line 630
+### Line 630
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 630](../../../../../stdlib/geometry/meshes.library.plato#L630).
 
@@ -132,7 +170,7 @@ library Meshes
         => (self.Positions.Map(mapping), self.Lines);
 ```
 
-## Line 643
+### Line 643
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 643](../../../../../stdlib/geometry/meshes.library.plato#L643).
 
@@ -144,7 +182,7 @@ library Meshes
         => (self.Positions.Map(mapping), self.Lines);
 ```
 
-## Line 648
+### Line 648
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 648](../../../../../stdlib/geometry/meshes.library.plato#L648).
 
@@ -155,7 +193,7 @@ library Meshes
         => PointCloud3D(self.Positions.Map(mapping));
 ```
 
-## Line 652
+### Line 652
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 652](../../../../../stdlib/geometry/meshes.library.plato#L652).
 
@@ -166,7 +204,7 @@ library Meshes
         => PointCloud2D(self.Positions.Map(mapping));
 ```
 
-## Line 683
+### Line 683
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 683](../../../../../stdlib/geometry/meshes.library.plato#L683).
 
@@ -185,7 +223,7 @@ library Meshes
         => (self.Mesh.Deform(mapping), self.Sections);
 ```
 
-## Line 855
+### Line 855
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 855](../../../../../stdlib/geometry/meshes.library.plato#L855).
 
@@ -206,7 +244,7 @@ library Meshes
         => (self.Positions.Map(mapping), self.Cells);
 ```
 
-## Line 869
+### Line 869
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 869](../../../../../stdlib/geometry/meshes.library.plato#L869).
 

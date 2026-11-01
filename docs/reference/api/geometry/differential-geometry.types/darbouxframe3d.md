@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Darboux frame of a curve lying on a surface: curve tangent, surface normal,
+> and tangent normal (surface normal cross tangent). Normal and geodesic
+> curvatures are in reciprocal world units; geodesic torsion likewise.
+> (https://en.wikipedia.org/wiki/Darboux\_frame)
+
+## Signature
+
+```plato
+type DarbouxFrame3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [differential-geometry.types](../differential-geometry.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 62
+### Line 62
 
 **Source:** [stdlib/geometry/differential-geometry.types.plato, line 62](../../../../../stdlib/geometry/differential-geometry.types.plato#L62).
 

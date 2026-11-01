@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The CCW angular width of the arc, reduced to \[0, one turn). Unlike the generic
+> Extent (raw End - Start, which can be negative or exceed a turn), Span is the
+> seam-stable sweep magnitude: a full-turn arc (Start == End) reads as 0.
+
+## Signature
+
+```plato
+Span(self: AngleInterval): Angle
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 351](../../../../../stdlib/foundation/intervals.library.plato#L351): that need a set operation must work in the reduced \[0, tau) parameter space.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 339
+### Line 339
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 339](../../../../../stdlib/foundation/intervals.library.plato#L339).
 

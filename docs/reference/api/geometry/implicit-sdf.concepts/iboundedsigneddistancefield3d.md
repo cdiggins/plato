@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A spatial SDF plus a conservative axis-aligned domain for culling. Same
+> semantics as the planar form: Bounds are acceleration hints, not a clamp
+> on distance evaluation.
+
+## Signature
+
+```plato
+interface IBoundedSignedDistanceField3D
+    inherits ISignedDistanceField3D, IBounded3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [ISignedDistanceField3D](isigneddistancefield3d.md), [IBounded3D](../geometry.concepts/ibounded3d.md).
+
+Implemented in this tier by: [BoundedSdf3D](../implicit-sdf.types/boundedsdf3d.md), [SampledSdf3D](../implicit-sdf.types/sampledsdf3d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.concepts](../implicit-sdf.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 75
+### Line 75
 
 **Source:** [stdlib/geometry/implicit-sdf.concepts.plato, line 75](../../../../../stdlib/geometry/implicit-sdf.concepts.plato#L75).
 

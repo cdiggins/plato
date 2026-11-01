@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An exposure adjustment in photographic stops: Stops multiplies linear light
+> by two to that power; Offset lifts blacks; GammaCorrection bends midtones.
+> (https://en.wikipedia.org/wiki/Exposure\_(photography))
+
+## Signature
+
+```plato
+type ExposureAdjustment
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [image-processing.types](../image-processing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 111
+### Line 111
 
 **Source:** [stdlib/graphics/image-processing.types.plato, line 111](../../../../../stdlib/graphics/image-processing.types.plato#L111).
 

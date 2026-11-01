@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A curve whose parameterization repeats: evaluating at t and t + Period yields
+> the same position. All closed curves may be traversed periodically; a periodic
+> curve makes the period explicit. TRange is the evaluated value type (Number,
+> Point2D, or Point3D); inheriting ICurve makes the wrapped evaluation
+> Eval(t mod Period) derivable (see EvalWrapped in curves.library.plato)
+> (https://en.wikipedia.org/wiki/Periodic\_function).
+
+## Signature
+
+```plato
+interface IPeriodicCurve<TRange>
+    inherits IPeriodic<Number>, ICurve<TRange>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IPeriodic](../../foundation/functional.concepts/iperiodic.md), [ICurve](icurve.md).
+
+No type in this tier lists it in `implements`.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves.concepts](../curves.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 83
+### Line 83
 
 **Source:** [stdlib/geometry/curves.concepts.plato, line 83](../../../../../stdlib/geometry/curves.concepts.plato#L83).
 

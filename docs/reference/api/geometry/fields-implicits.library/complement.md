@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The complement of a distance field: inside and outside swapped. Exact — only
+> the sign changes.
+
+## Signature
+
+```plato
+Complement(self: ScalarFunctionField2D): ScalarFunctionField2D
+Complement(self: ScalarFunctionField3D): ScalarFunctionField3D
+Complement(self: FunctionSdf2D): FunctionSdf2D
+Complement(self: FunctionSdf3D): FunctionSdf3D
+Complement(self: FunctionRegion2D): FunctionRegion2D
+Complement(self: FunctionVolume3D): FunctionVolume3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 588
+### Line 588
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 588](../../../../../stdlib/geometry/fields-implicits.library.plato#L588).
 
@@ -19,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.MapValue(x => x.Negative);
 ```
 
-## Line 593
+### Line 593
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 593](../../../../../stdlib/geometry/fields-implicits.library.plato#L593).
 
@@ -30,7 +56,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.MapValue(x => x.Negative);
 ```
 
-## Line 778
+### Line 778
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 778](../../../../../stdlib/geometry/fields-implicits.library.plato#L778).
 
@@ -42,7 +68,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf2D(p => ComplementDistance(self.Eval(p)));
 ```
 
-## Line 783
+### Line 783
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 783](../../../../../stdlib/geometry/fields-implicits.library.plato#L783).
 
@@ -53,7 +79,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionSdf3D(p => ComplementDistance(self.Eval(p)));
 ```
 
-## Line 910
+### Line 910
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 910](../../../../../stdlib/geometry/fields-implicits.library.plato#L910).
 
@@ -64,7 +90,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => FunctionRegion2D(p => self.Eval(p).Not);
 ```
 
-## Line 926
+### Line 926
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 926](../../../../../stdlib/geometry/fields-implicits.library.plato#L926).
 

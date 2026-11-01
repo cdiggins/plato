@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+ArcMinutes(x: Integer): Angle
+ArcMinutes(x: Number): Angle
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [angles](../angles.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 7
+### Line 7
 
 **Source:** [legacy/stdlib-legacy/angles.plato, line 7](../../../../../legacy/stdlib-legacy/angles.plato#L7).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
 	ArcMinutes(x: Integer): Angle => x.Number.ArcMinutes;
 ```
 
-## Line 13
+### Line 13
 
 **Source:** [legacy/stdlib-legacy/angles.plato, line 13](../../../../../legacy/stdlib-legacy/angles.plato#L13).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The axis-angle form of a quaternion: angle = 2 acos(w), axis = the
+> normalized vector part. Near the identity the axis is arbitrary and the
+> world X axis is returned.
+
+## Signature
+
+```plato
+AxisAngle(q: Quaternion): AxisAngle
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1223
+### Line 1223
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 1223](../../../../../stdlib/foundation/transforms.library.plato#L1223).
 

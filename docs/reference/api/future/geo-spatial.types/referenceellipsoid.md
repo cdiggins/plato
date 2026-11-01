@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An oblate spheroid model of the planet used as a geodetic reference:
+> equatorial semi-major axis plus the dimensionless inverse flattening
+> (a / (a - b); WGS84 uses 298.257223563).
+> (https://en.wikipedia.org/wiki/Earth\_ellipsoid)
+
+## Signature
+
+```plato
+type ReferenceEllipsoid
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [geo-spatial.types](../geo-spatial.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 134
+### Line 134
 
 **Source:** [stdlib/future/geo-spatial.types.plato, line 134](../../../../../stdlib/future/geo-spatial.types.plato#L134).
 

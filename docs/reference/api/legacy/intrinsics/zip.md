@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Zip(xs: IArray<$T1>, ys: IArray<$T2>, f: Function2<$T1, $T2, $T3>): IArray<$T3>
+Zip(xs: IArray<$T1>, ys: IArray<$T2>, zs: IArray<$T3>, f: Function3<$T1, $T2, $T3, $T4>): IArray<$T4>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 489
+### Line 489
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 489](../../../../../legacy/stdlib-legacy/intrinsics.plato#L489).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Zip(xs: IArray<$T1>, ys: IArray<$T2>, f: Function2<$T1, $T2, $T3>): IArray<$T3>;  
 ```
 
-## Line 490
+### Line 490
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 490](../../../../../legacy/stdlib-legacy/intrinsics.plato#L490).
 

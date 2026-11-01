@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The query point when it lies in the polygon, otherwise the nearest point of
+> the boundary.
+
+## Signature
+
+```plato
+ClosestPoint(p: Polygon2D, point: Point2D): Point2D
+ClosestPoint(p: ConvexPolygon2D, point: Point2D): Point2D
+ClosestPoint(p: Polygon3D, point: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 61
+### Line 61
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 61](../../../../../stdlib/geometry/polygons.library.plato#L61).
 
@@ -19,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Contains(point) ? point : p.Points.ClosestPointOnChain(true, point);
 ```
 
-## Line 89
+### Line 89
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 89](../../../../../stdlib/geometry/polygons.library.plato#L89).
 
@@ -31,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Contains(point) ? point : p.Points.ClosestPointOnChain(true, point);
 ```
 
-## Line 369
+### Line 369
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 369](../../../../../stdlib/geometry/polygons.library.plato#L369).
 

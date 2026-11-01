@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A compressed image file format; Hdr is Radiance HDR.
+> (https://en.wikipedia.org/wiki/Image\_file\_format)
+
+## Signature
+
+```plato
+type ImageCodec
+    = Png | Jpeg | WebP | Gif | Bmp | Tga | Tiff | Exr | Hdr | Ktx2 | Dds | Avif | Heic
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [images.types](../images.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 117
+### Line 117
 
 **Source:** [stdlib/graphics/images.types.plato, line 117](../../../../../stdlib/graphics/images.types.plato#L117).
 

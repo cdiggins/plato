@@ -3,11 +3,321 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The arity of a triangle face.
+
+## Signature
+
+```plato
+Count(self: TriangleFace): Integer
+Count(self: QuadFace): Integer
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_SortedIndicesIsAPermutation
+
+[stdlib/tests/sorting.laws.plato, line 12](../../../../../stdlib/tests/sorting.laws.plato#L12)
+
+```plato
+// The result of SortedIndices is a permutation of [0, n): right length, and
+// every position of the input named exactly once.
+Law_SortedIndicesIsAPermutation(xs: Array<Number>): Boolean
+    => xs.SortedIndices((a, b) => a <= b).IsPermutationOfRange(xs.Count);
+```
+
+### Law_SortPreservesCount
+
+[stdlib/tests/sorting.laws.plato, line 21](../../../../../stdlib/tests/sorting.laws.plato#L21)
+
+```plato
+// Sorting neither invents nor drops elements.
+Law_SortPreservesCount(xs: Array<Number>): Boolean
+    => xs.Sort((a, b) => a <= b).Count == xs.Count;
+```
+
+### Law_SortedIndicesIsStable
+
+[stdlib/tests/sorting.laws.plato, line 27](../../../../../stdlib/tests/sorting.laws.plato#L27)
+
+```plato
+// Stability: when two elements compare equal, their source order survives.
+// Keys are folded into a handful of buckets so the pseudorandom input
+// actually produces ties for the law to bite on.
+Law_SortedIndicesIsStable(xs: Array<Integer>): Boolean
+{
+    var keys = xs.Map(x => x % 4);
+    var perm = keys.SortedIndices((a, b) => a <= b);
+    return (perm.Count - 1).Greater(0).MapRange(i =>
+        keys[perm[i]] != keys[perm[i + 1]] || perm[i] < perm[i + 1]).All(b => b);
+}
+```
+
+### Law_HullVerticesComeFromTheInput
+
+[stdlib/tests/spatial-structures.laws.plato, line 24](../../../../../stdlib/tests/spatial-structures.laws.plato#L24)
+
+```plato
+// Every hull vertex is one of the input points, at the position its
+// provenance names.
+Law_HullVerticesComeFromTheInput(points: Array<Point2D>): Boolean
+{
+    var hull = points.ConvexHull;
+    return hull.SourceIndices.Count == hull.HullVertexCount
+        && hull.SourceIndices.All(s => s.Value >= 0 && s.Value < points.Count)
+        && hull.HullVertexCount.MapRange(v =>
+            hull.Hull.Points[v].X == points[hull.SourceOf(v).Value].X
+            && hull.Hull.Points[v].Y == points[hull.SourceOf(v).Value].Y).All(b => b);
+}
+```
+
+### Law_HullIsNoBiggerThanItsInput
+
+[stdlib/tests/spatial-structures.laws.plato, line 48](../../../../../stdlib/tests/spatial-structures.laws.plato#L48)
+
+```plato
+// The hull never has more vertices than the input has points.
+Law_HullIsNoBiggerThanItsInput(points: Array<Point2D>): Boolean
+    => points.ConvexHull.HullVertexCount <= points.Count;
+```
+
+### Law_BvhPermutationIsComplete
+
+[stdlib/tests/spatial-structures.laws.plato, line 55](../../../../../stdlib/tests/spatial-structures.laws.plato#L55)
+
+```plato
+// The permutation names every primitive exactly once.
+Law_BvhPermutationIsComplete(bounds: Array<Bounds3D>): Boolean
+    => bounds.BuildBvh(4).PrimitiveIndices.IsItemPermutation(bounds.Count);
+```
+
+### Law_BvhLeavesPartitionThePermutation
+
+[stdlib/tests/spatial-structures.laws.plato, line 60](../../../../../stdlib/tests/spatial-structures.laws.plato#L60)
+
+```plato
+// The leaves partition the permutation: every position of it lies in
+// exactly one leaf range, and internal ranges are empty.
+Law_BvhLeavesPartitionThePermutation(bounds: Array<Bounds3D>): Boolean
+    => bounds.BuildBvh(4).Nodes.LeavesPartition(
+        bounds.Count, n => n.LeftChild.Value < 0 && n.RightChild.Value < 0,
+        n2 => n2.Primitives);
+```
+
+### Law_BvhIsAFullBinaryTree
+
+[stdlib/tests/spatial-structures.laws.plato, line 67](../../../../../stdlib/tests/spatial-structures.laws.plato#L67)
+
+```plato
+// A binary tree with a two-way split at every internal node has exactly
+// 2L - 1 nodes for L leaves.
+Law_BvhIsAFullBinaryTree(bounds: Array<Bounds3D>): Boolean
+{
+    var tree = bounds.BuildBvh(4);
+    var leafCount = tree.Nodes.Reduce(0, (acc, n) =>
+        n.LeftChild.Value < 0 && n.RightChild.Value < 0 ? acc + 1 : acc);
+    return tree.Nodes.Count == (bounds.Count == 0 ? 0 : leafCount * 2 - 1);
+}
+```
+
+### Law_OctreePermutationIsComplete
+
+[stdlib/tests/spatial-structures.laws.plato, line 79](../../../../../stdlib/tests/spatial-structures.laws.plato#L79)
+
+```plato
+// The permutation names every point exactly once.
+Law_OctreePermutationIsComplete(points: Array<Point3D>): Boolean
+    => points.BuildOctree(8, 4).ItemIndices.IsItemPermutation(points.Count);
+```
+
+### Law_OctreeLeavesPartitionThePermutation
+
+[stdlib/tests/spatial-structures.laws.plato, line 83](../../../../../stdlib/tests/spatial-structures.laws.plato#L83)
+
+```plato
+// The leaves partition the permutation; internal ranges are empty.
+Law_OctreeLeavesPartitionThePermutation(points: Array<Point3D>): Boolean
+    => points.BuildOctree(8, 4).Nodes.LeavesPartition(
+        points.Count, n => n.FirstChild.Value < 0, n2 => n2.Items);
+```
+
+### Law_OctreeChildrenAreConsecutiveAndPresent
+
+[stdlib/tests/spatial-structures.laws.plato, line 88](../../../../../stdlib/tests/spatial-structures.laws.plato#L88)
+
+```plato
+// Every internal node's eight children exist in the node array.
+Law_OctreeChildrenAreConsecutiveAndPresent(points: Array<Point3D>): Boolean
+{
+    var tree = points.BuildOctree(8, 4);
+    return tree.Nodes.All(n => n.FirstChild.Value < 0
+        || (n.FirstChild.Value > 0 && n.FirstChild.Value + 8 <= tree.Nodes.Count));
+}
+```
+
+### Law_FromCharactersOfCharactersIsIdentity
+
+[stdlib/tests/text.laws.plato, line 14](../../../../../stdlib/tests/text.laws.plato#L14)
+
+```plato
+// The characters of a String, rebuilt, are the String.
+Law_FromCharactersOfCharactersIsIdentity(s: String): Boolean
+    => FromCharacters(MapRange(s.Count, i => s.At(i))) == s;
+```
+
+### Law_CharacterWitness
+
+[stdlib/tests/text.laws.plato, line 26](../../../../../stdlib/tests/text.laws.plato#L26)
+
+```plato
+// Two-line witness: the character at an index, its code, and the code's character.
+Law_CharacterWitness(): Boolean
+    => "abc".At(1).ToInteger == 98 && "a".At(0).ToInteger == 97 && 97.ToCharacter.ToInteger == 97
+    && 97.ToCharacter == "a".At(0) && FromCharacters([10.ToCharacter, 13.ToCharacter]).Count == 2
+    && FromCharacters([10.ToCharacter, 13.ToCharacter]).At(0).ToInteger == 10;
+```
+
+### Law_AtReadsWhatFromCharactersWrote
+
+[stdlib/tests/text.laws.plato, line 32](../../../../../stdlib/tests/text.laws.plato#L32)
+
+```plato
+// At reads what FromCharacters wrote, at every index.
+Law_AtReadsWhatFromCharactersWrote(s: String): Boolean
+    => FromCharacters(MapRange(s.Count, i => s.At(i))).Count == s.Count
+    && s.Count.Range.All(i => s.At(i).ToInteger.ToCharacter == s.At(i));
+```
+
+### Law_StringLiteralKeepsBackslashAndNonAscii
+
+[stdlib/tests/text.laws.plato, line 45](../../../../../stdlib/tests/text.laws.plato#L45)
+
+```plato
+// "André\x" is seven characters: the e acute (233), a backslash (92) and an x.
+Law_StringLiteralKeepsBackslashAndNonAscii(): Boolean
+    => "André\x".Count == 7 && "André\x".At(4).ToInteger == 233
+    && "André\x".At(5).ToInteger == 92 && "André\x".At(6).ToInteger == 120
+    && "André\x" == FromCharacters([65.ToCharacter, 110.ToCharacter, 100.ToCharacter, 114.ToCharacter, 233.ToCharacter, 92.ToCharacter, 120.ToCharacter]);
+```
+
+### Law_SubstringCountIsTheClampedRange
+
+[stdlib/tests/text.laws.plato, line 54](../../../../../stdlib/tests/text.laws.plato#L54)
+
+```plato
+// The length is the size of the intersection of [start, start + count) with [0, Count).
+Law_SubstringCountIsTheClampedRange(s: String, start: Integer, count: Integer): Boolean
+    => Substring(s, start, count).Count
+        == (count <= 0 ? 0 : (start + count).Min(s.Count).Subtract(start.Max(0)).Max(0));
+```
+
+### Law_SubstringCharactersAreTheSourceCharacters
+
+[stdlib/tests/text.laws.plato, line 59](../../../../../stdlib/tests/text.laws.plato#L59)
+
+```plato
+// Each character is the source character at the same offset from the clamped start.
+Law_SubstringCharactersAreTheSourceCharacters(s: String, start: Integer, count: Integer): Boolean
+    => Substring(s, start, count).Count.Range.All(i =>
+        Substring(s, start, count).At(i) == s.At(start.Max(0) + i));
+```
+
+### Law_SubstringOfTheWholeRangeIsIdentity
+
+[stdlib/tests/text.laws.plato, line 64](../../../../../stdlib/tests/text.laws.plato#L64)
+
+```plato
+// The whole String is its own substring from 0 for Count.
+Law_SubstringOfTheWholeRangeIsIdentity(s: String): Boolean
+    => Substring(s, 0, s.Count) == s;
+```
+
+### Law_ParseNumberRejectsLetters
+
+[stdlib/tests/text.laws.plato, line 89](../../../../../stdlib/tests/text.laws.plato#L89)
+
+```plato
+// A text of letters, the runner's String, is never a number.
+Law_ParseNumberRejectsLetters(s: String): Boolean
+    => s.Count == 0 || !ParseNumber(s).Ok;
+```
+
+### Law_ParseIntegerRejectsLetters
+
+[stdlib/tests/text.laws.plato, line 121](../../../../../stdlib/tests/text.laws.plato#L121)
+
+```plato
+// A text of letters, the runner's String, is never an integer.
+Law_ParseIntegerRejectsLetters(s: String): Boolean
+    => s.Count == 0 || !ParseInteger(s).Ok;
+```
+
+### Law_PrefixPrecedesExtension
+
+[stdlib/tests/text.laws.plato, line 180](../../../../../stdlib/tests/text.laws.plato#L180)
+
+```plato
+// A prefix precedes its extension, for the runner's Strings and a character after it.
+Law_PrefixPrecedesExtension(s: String, a: Integer): Boolean
+    => s < FromCharacters(MapRange(s.Count + 1, i => i < s.Count ? s.At(i) : Code(a).ToCharacter))
+    && !(FromCharacters(MapRange(s.Count + 1, i => i < s.Count ? s.At(i) : Code(a).ToCharacter)) <= s);
+```
+
+### Law_TriangulationFaceCountIsBounded
+
+[stdlib/tests/triangulation.laws.plato, line 35](../../../../../stdlib/tests/triangulation.laws.plato#L35)
+
+```plato
+// A ring of n vertices admits at most n - 2 faces: the clipping pass runs exactly n - 2
+// steps and emits at most one face per step. Fewer is legitimate — a flat corner is clipped
+// without emitting — which is why this is a bound and not an equality.
+Law_TriangulationFaceCountIsBounded(p: Polygon2D): Boolean
+    => p.Triangulate.Faces.Count <= p.Points.Count.Greater(2) - 2;
+```
+
+### Law_TriangulationPreservesPositions
+
+[stdlib/tests/triangulation.laws.plato, line 40](../../../../../stdlib/tests/triangulation.laws.plato#L40)
+
+```plato
+// The mesh triangulation is over the polygon's own vertices: the positions come back
+// unchanged and in order, which is what makes the face indices meaningful to the caller.
+Law_TriangulationPreservesPositions(p: Polygon2D): Boolean
+    => p.Triangulate.Positions.Count == p.Points.Count;
+```
+
+### Law_HoledTriangulationPreservesPositions
+
+[stdlib/tests/triangulation.laws.plato, line 57](../../../../../stdlib/tests/triangulation.laws.plato#L57)
+
+```plato
+Law_HoledTriangulationPreservesPositions(r: PolygonWithHoles2D): Boolean
+    => r.Triangulate.Positions.Count == r.PointPool.Count;
+```
+
+### Law_ConvexTriangulationIsAFullFan
+
+[stdlib/tests/triangulation.laws.plato, line 68](../../../../../stdlib/tests/triangulation.laws.plato#L68)
+
+```plato
+Law_ConvexTriangulationIsAFullFan(p: ConvexPolygon2D): Boolean
+    => p.Triangulate.Faces.Count == p.Points.Count.Greater(2) - 2;
+```
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 108
+### Line 108
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 108](../../../../../stdlib/geometry/meshes.library.plato#L108).
 
@@ -32,7 +342,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 3;
 ```
 
-## Line 136
+### Line 136
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 136](../../../../../stdlib/geometry/meshes.library.plato#L136).
 

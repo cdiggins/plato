@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Exponents of the seven SI base dimensions
+> (https://en.wikipedia.org/wiki/Dimensional\_analysis). A dimensionless value
+> has all zeros.
+
+## Signature
+
+```plato
+type Dimension
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Angles and periodic values](../../../library/foundation/angles.md)
+- [Quantities and time](../../../library/foundation/quantities-time.md)
+
+## Source
+
 **File:** [quantities.types](../quantities.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/foundation/quantities.types.plato, line 1](../../../../../stdlib/foundation/quantities.types.plato#L1).
 

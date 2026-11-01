@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The value one planar node produces, given the graph it belongs to and the
+> external field list its Source nodes index into.
+
+## Signature
+
+```plato
+EvalNode(node: ScalarFieldNode2D, graph: ScalarFieldGraph2D, sources: Array<ScalarFunctionField2D>, point: Point2D): Number
+EvalNode(node: ScalarFieldNode3D, graph: ScalarFieldGraph3D, sources: Array<ScalarFunctionField3D>, point: Point3D): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-graphs.library](../fields-graphs.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/fields-graphs.library.plato, line 1](../../../../../stdlib/geometry/fields-graphs.library.plato#L1).
 
@@ -55,7 +77,7 @@ library FieldsGraphs
         };
 ```
 
-## Line 50
+### Line 50
 
 **Source:** [stdlib/geometry/fields-graphs.library.plato, line 50](../../../../../stdlib/geometry/fields-graphs.library.plato#L50).
 

@@ -3,11 +3,51 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The box grown outward by `amount` on every side (negative shrinks / can empty it).
+
+## Signature
+
+```plato
+Expand(self: Bounds2D, amount: Number): Bounds2D
+Expand(self: Bounds3D, amount: Number): Bounds3D
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_Bounds2DExpandContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 90](../../../../../stdlib/tests/foundation.laws.plato#L90)
+
+```plato
+// Expanding outward by a non-negative amount still contains the original box.
+Law_Bounds2DExpandContainsSelf(b: Bounds2D): Boolean
+    => b.IsEmpty || b.Expand(1.0).Contains(b);
+```
+
+### Law_Bounds3DExpandContainsSelf
+
+[stdlib/tests/foundation.laws.plato, line 107](../../../../../stdlib/tests/foundation.laws.plato#L107)
+
+```plato
+Law_Bounds3DExpandContainsSelf(b: Bounds3D): Boolean
+    => b.IsEmpty || b.Expand(1.0).Contains(b);
+```
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 113
+### Line 113
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 113](../../../../../stdlib/foundation/intervals.library.plato#L113).
 
@@ -19,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Point2D(self.Max.X + amount, self.Max.Y + amount));
 ```
 
-## Line 153
+### Line 153
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 153](../../../../../stdlib/foundation/intervals.library.plato#L153).
 

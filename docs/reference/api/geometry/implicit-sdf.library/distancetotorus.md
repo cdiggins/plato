@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The signed distance from a point to a torus lying in the XZ plane, centred
+> at the origin: majorRadius is the ring radius, tubeRadius the tube radius.
+> Exact. (IQ: sdTorus.)
+
+## Signature
+
+```plato
+DistanceToTorus(p: Point3D, majorRadius: Number, tubeRadius: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 872
+### Line 872
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 872](../../../../../stdlib/geometry/implicit-sdf.library.plato#L872).
 

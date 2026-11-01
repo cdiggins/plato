@@ -3,11 +3,29 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Multiply(x: ITransform3D, v: Point3D): Point3D
+Multiply(x: ITransform3D, v: Vector3): Vector3
+Multiply(x: ITransform3D, m: Matrix4x4): Transform3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 259
+### Line 259
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 259](../../../../../legacy/stdlib-legacy/transforms.plato#L259).
 
@@ -22,7 +40,7 @@ library Transforms
         => x.TransformPoint(v);
 ```
 
-## Line 267
+### Line 267
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 267](../../../../../legacy/stdlib-legacy/transforms.plato#L267).
 
@@ -32,7 +50,7 @@ library Transforms
         => x.TransformNormal(v);
 ```
 
-## Line 270
+### Line 270
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 270](../../../../../legacy/stdlib-legacy/transforms.plato#L270).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The struck primitive's index in the caller's list (-1 when inapplicable).
+> Precondition: the query hits.
+
+## Signature
+
+```plato
+HitPrimitiveIndex(self: IRaycast2D, query: RayQuery2D): ItemIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 433
+### Line 433
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 433](../../../../../stdlib/geometry/spatial-structures.library.plato#L433).
 

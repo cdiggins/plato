@@ -3,11 +3,41 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The displaced state of a beam discretised into uniform elements. Positions
+> holds the node stations measured from the beam's start; Deflections and
+> Rotations hold the two degrees of freedom at each of them, in meters and in
+> radians. Deflection is positive in the direction transverse loads are positive
+> (downward), matching `BeamLoad` in `engineering.types.plato`.
+> (https://en.wikipedia.org/wiki/Euler%E2%80%93Bernoulli\_beam\_theory)
+
+## Signature
+
+```plato
+type BeamSolution
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [finite-elements.types](../finite-elements.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 211
+### Line 211
 
 **Source:** [stdlib/future/finite-elements.types.plato, line 211](../../../../../stdlib/future/finite-elements.types.plato#L211).
 

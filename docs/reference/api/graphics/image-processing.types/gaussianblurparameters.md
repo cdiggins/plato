@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Gaussian blur settings. Radius bounds the kernel extent in pixels; a Sigma
+> of 0 or less derives the standard deviation from Radius.
+> (https://en.wikipedia.org/wiki/Gaussian\_blur)
+
+## Signature
+
+```plato
+type GaussianBlurParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [image-processing.types](../image-processing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 227
+### Line 227
 
 **Source:** [stdlib/graphics/image-processing.types.plato, line 227](../../../../../stdlib/graphics/image-processing.types.plato#L227).
 

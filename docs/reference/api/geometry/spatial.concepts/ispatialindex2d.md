@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A queryable acceleration structure over indexed 2D primitives
+> (https://en.wikipedia.org/wiki/Spatial\_database). Candidate results are
+> indices into the caller's primitive list and may include false positives
+> (exact tests are the caller's second phase).
+
+## Signature
+
+```plato
+interface ISpatialIndex2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+It inherits no interface.
+
+Implemented in this tier by: [SpatialHashGrid2D](../spatial-structures.types/spatialhashgrid2d.md), [BinningGrid2D](../spatial-structures.types/binninggrid2d.md), [KdTree2D](../spatial-structures.types/kdtree2d.md), [Bvh2D](../spatial-structures.types/bvh2d.md), [Quadtree2D](../spatial-structures.types/quadtree2d.md).
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial.concepts](../spatial.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 51
+### Line 51
 
 **Source:** [stdlib/geometry/spatial.concepts.plato, line 51](../../../../../stdlib/geometry/spatial.concepts.plato#L51).
 

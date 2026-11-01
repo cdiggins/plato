@@ -3,11 +3,40 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An inverse-kinematics chain: a run of bones solved so the last reaches the
+> target. BoneIndices runs root-to-tip along a parent chain; PoleTarget pulls
+> the chain's bend plane (elbow or knee direction); Iterations bounds the
+> solver loop and Tolerance is the end-effector distance below which it stops
+> early. (https://en.wikipedia.org/wiki/Inverse\_kinematics)
+
+## Signature
+
+```plato
+type IkChain
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [skeletal-animation.types](../skeletal-animation.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 151
+### Line 151
 
 **Source:** [stdlib/future/skeletal-animation.types.plato, line 151](../../../../../stdlib/future/skeletal-animation.types.plato#L151).
 

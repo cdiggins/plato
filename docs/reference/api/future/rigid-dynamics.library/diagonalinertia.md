@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A diagonal inertia tensor from the three principal moments, in
+> kilogram-square-meters.
+
+## Signature
+
+```plato
+DiagonalInertia(moments: Vector3D): SymmetricMatrix3x3
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 168](../../../../../stdlib/future/rigid-dynamics.library.plato#L168): shape's own PRINCIPAL frame, where the tensor is diagonal and three numbers
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 163
+### Line 163
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 163](../../../../../stdlib/future/rigid-dynamics.library.plato#L163).
 

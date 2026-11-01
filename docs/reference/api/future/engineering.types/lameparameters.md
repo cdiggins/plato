@@ -3,11 +3,45 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The two independent elastic constants of a linear isotropic material
+> (https://en.wikipedia.org/wiki/Lam%C3%A9\_parameters): the first parameter
+> (lambda) and the shear modulus (mu, also called the second parameter).
+>
+> These two numbers ARE the constitutive matrix. The 6x6 matrix relating stress
+> to engineering strain in an isotropic solid holds only lambda + 2 mu on the
+> three normal diagonal entries, lambda on the six normal off-diagonal entries,
+> and mu on the three shear diagonal entries — so storing the matrix would be
+> storing thirty-six numbers to say two. Derive them from an
+> `EngineeringMaterial` with `ToLameParameters`.
+
+## Signature
+
+```plato
+type LameParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [engineering.types](../engineering.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 191
+### Line 191
 
 **Source:** [stdlib/future/engineering.types.plato, line 191](../../../../../stdlib/future/engineering.types.plato#L191).
 

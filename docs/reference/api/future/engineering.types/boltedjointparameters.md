@@ -3,11 +3,38 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Defining parameters of a preloaded bolted joint: fastener geometry plus the
+> installation preload and the torque that produces it.
+> (https://en.wikipedia.org/wiki/Bolted\_joint)
+
+## Signature
+
+```plato
+type BoltedJointParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [engineering.types](../engineering.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 102
+### Line 102
 
 **Source:** [stdlib/future/engineering.types.plato, line 102](../../../../../stdlib/future/engineering.types.plato#L102).
 

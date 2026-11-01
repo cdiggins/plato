@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The points under `node` inside the query bounds; -1 contributes nothing.
+
+## Signature
+
+```plato
+KdCandidates(self: KdTree2D, bounds: Bounds2D, node: SpatialNodeIndex): Array<ItemIndex>
+KdCandidates(self: KdTree3D, bounds: Bounds3D, node: SpatialNodeIndex): Array<ItemIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 200
+### Line 200
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 200](../../../../../stdlib/geometry/spatial-structures.library.plato#L200).
 
@@ -20,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
             : self.KdNodeCandidates(bounds, self.Nodes[node.Value]);
 ```
 
-## Line 282
+### Line 282
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 282](../../../../../stdlib/geometry/spatial-structures.library.plato#L282).
 

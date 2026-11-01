@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Count Halton points over the region. The sequence is taken from index one,
+> so no point lands on the region's minimum corner.
+
+## Signature
+
+```plato
+HaltonPoints2D(region: Bounds2D, count: Integer, baseX: Integer, baseY: Integer): Array<Point2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 430](../../../../../stdlib/geometry/sampling.library.plato#L430): any other, so each of these is one `MapRange` and costs the same whether a
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 425
+### Line 425
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 425](../../../../../stdlib/geometry/sampling.library.plato#L425).
 

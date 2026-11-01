@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Can produce a stable integer digest of itself, consistent with equality.
+> (https://en.wikipedia.org/wiki/Hash\_function)
+
+## Signature
+
+```plato
+interface IHashable
+    inherits IEquatable
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IEquatable](iequatable.md).
+
+Implemented in this tier by: [Color8](../color.types/color8.md), [GraphVertexIndex](../graphs.types/graphvertexindex.md), [GraphEdge](../graphs.types/graphedge.md), [IntegerSize2D](../intervals.types/integersize2d.md), [IntegerSize3D](../intervals.types/integersize3d.md), [ItemIndex](../numbers.types/itemindex.md), [Point2D](../points.types/point2d.md), [Point3D](../points.types/point3d.md), [RandomState](../random.types/randomstate.md), [IntegerVector2](../vectors.types/integervector2.md), [IntegerVector3](../vectors.types/integervector3.md), [IntegerVector4](../vectors.types/integervector4.md).
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [core.concepts](../core.concepts.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 29
+### Line 29
 
 **Source:** [stdlib/foundation/core.concepts.plato, line 29](../../../../../stdlib/foundation/core.concepts.plato#L29).
 

@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The modified Bessel function I0(x): even, I0(0) = 1, growing like
+> exp(x)/sqrt(2\*pi\*x). Series for |x| \<= 15, asymptotic beyond.
+
+## Signature
+
+```plato
+BesselI0(x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Probability distributions and random state](../../../library/foundation/probability.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.library](../numbers.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 453
+### Line 453
 
 **Source:** [stdlib/foundation/numbers.library.plato, line 453](../../../../../stdlib/foundation/numbers.library.plato#L453).
 

@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The smallest rectangle containing both operands.
+
+## Signature
+
+```plato
+UnionOfBounds(a: Bounds2D, b: Bounds2D): Bounds2D
+UnionOfBounds(a: Bounds3D, b: Bounds3D): Bounds3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 399
+### Line 399
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 399](../../../../../stdlib/geometry/geometry.library.plato#L399).
 
@@ -19,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
             Point2D(a.Max.X.Max(b.Max.X), a.Max.Y.Max(b.Max.Y)));
 ```
 
-## Line 404
+### Line 404
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 404](../../../../../stdlib/geometry/geometry.library.plato#L404).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True where the field's value at the point is within tolerance of level: a
+> balanced test for the level set. Precondition: tolerance is non-negative.
+
+## Signature
+
+```plato
+IsNearLevelAt(self: IScalarField2D, point: Point2D, level: Number, tolerance: Number): Boolean
+IsNearLevelAt(self: IScalarField3D, point: Point3D, level: Number, tolerance: Number): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 67
+### Line 67
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 67](../../../../../stdlib/geometry/fields-implicits.library.plato#L67).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self.Eval(point) - level).Abs <= tolerance;
 ```
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 93](../../../../../stdlib/geometry/fields-implicits.library.plato#L93).
 

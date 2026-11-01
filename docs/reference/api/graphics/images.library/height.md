@@ -3,11 +3,45 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The height of the image in whole pixels.
+
+## Signature
+
+```plato
+Height(self: IImage): Integer
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_PluckerConoidFitsItsBounds
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 230](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L230)
+
+```plato
+// The conoid's rays stop at Radius and its rise stops at Height.
+Law_PluckerConoidFitsItsBounds(s: PluckerConoid, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    return p.SurfaceFinite.Not
+        || ((p.X * p.X + p.Y * p.Y).Sqrt <= s.Radius.Abs + 1e-4
+            && p.Z.Abs <= s.Height.Abs + 1e-4);
+}
+```
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [images.library](../images.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 22
+### Line 22
 
 **Source:** [stdlib/graphics/images.library.plato, line 22](../../../../../stdlib/graphics/images.library.plato#L22).
 

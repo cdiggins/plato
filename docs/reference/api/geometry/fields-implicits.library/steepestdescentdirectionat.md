@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The direction of steepest decrease, unit length: the negated gradient.
+> Precondition: the gradient is non-zero at the point.
+
+## Signature
+
+```plato
+SteepestDescentDirectionAt(self: IDifferentiableScalarField2D, point: Point2D): Vector2D
+SteepestDescentDirectionAt(self: IDifferentiableScalarField3D, point: Point3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 173
+### Line 173
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 173](../../../../../stdlib/geometry/fields-implicits.library.plato#L173).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.GradientAt(point).Normalize.Negative;
 ```
 
-## Line 203
+### Line 203
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 203](../../../../../stdlib/geometry/fields-implicits.library.plato#L203).
 

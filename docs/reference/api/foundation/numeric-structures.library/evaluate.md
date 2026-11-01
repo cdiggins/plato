@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point at these weights on the triangle (a, b, c): the affine combination
+> U\*a + V\*b + W\*c on the support plane. Vertex binding U->a, V->b, W->c.
+
+## Signature
+
+```plato
+Evaluate(self: BarycentricCoordinate, a: Point2D, b: Point2D, c: Point2D): Point2D
+Evaluate(self: BarycentricCoordinate, a: Point3D, b: Point3D, c: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 470
+### Line 470
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 470](../../../../../stdlib/foundation/numeric-structures.library.plato#L470).
 
@@ -27,7 +50,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a + a.Between(b) * self.V + a.Between(c) * self.W;
 ```
 
-## Line 483
+### Line 483
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 483](../../../../../stdlib/foundation/numeric-structures.library.plato#L483).
 

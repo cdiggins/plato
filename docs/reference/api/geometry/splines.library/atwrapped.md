@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Element i of a chain: taken modulo the count when the chain is closed and
+> clamped to the ends when it is open. The "+ count then modulo" corrects
+> the truncated remainder, which is negative for i = -1. Lets one body
+> serve open and closed chains and both end conditions.
+
+## Signature
+
+```plato
+AtWrapped(xs: Array<$T>, i: Integer, closed: Boolean): $T
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 298
+### Line 298
 
 **Source:** [stdlib/geometry/splines.library.plato, line 298](../../../../../stdlib/geometry/splines.library.plato#L298).
 

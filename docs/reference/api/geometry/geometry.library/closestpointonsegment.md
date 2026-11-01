@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point of the segment \[a, b\] nearest to `point`: the projection parameter
+> clamped to \[0, 1\]. A degenerate segment (a equals b) returns a.
+
+## Signature
+
+```plato
+ClosestPointOnSegment(a: Point2D, b: Point2D, point: Point2D): Point2D
+ClosestPointOnSegment(a: Point3D, b: Point3D, point: Point3D): Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 492
+### Line 492
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 492](../../../../../stdlib/geometry/geometry.library.plato#L492).
 
@@ -24,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 502
+### Line 502
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 502](../../../../../stdlib/geometry/geometry.library.plato#L502).
 

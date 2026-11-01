@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when no vertex of the ring lies inside the corner at `slot`. Only reflex
+> vertices are tested: a convex vertex of a simple ring lies outside every
+> other corner's triangle. The corner's own neighbours are skipped — they are
+> its triangle's endpoints.
+
+## Signature
+
+```plato
+HasNoBlocker(points: Array<Point2D>, nodes: Buffer<EarClipNode>, slot: Integer): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 439](../../../../../stdlib/geometry/triangulation.library.plato#L439): The cost of the pass is the ear test, and it is paid per candidate: the test
+- [Line 446](../../../../../stdlib/geometry/triangulation.library.plato#L446): pass falls through to its degenerate-input path and emits OVERLAPPING
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [triangulation.library](../triangulation.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 430
+### Line 430
 
 **Source:** [stdlib/geometry/triangulation.library.plato, line 430](../../../../../stdlib/geometry/triangulation.library.plato#L430).
 

@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The 2D Sobol point of the given index: the base-2 radical inverse along X
+> and the Gray-code direction sum along Y. The accumulator is 24 bits wide —
+> the mantissa a single-precision backend carries exactly, so no two distinct
+> terms round together, and 2^23 is where its leading one starts.
+> https://en.wikipedia.org/wiki/Sobol\_sequence
+
+## Signature
+
+```plato
+SobolPoint2D(index: Integer): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 352
+### Line 352
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 352](../../../../../stdlib/geometry/sampling.library.plato#L352).
 

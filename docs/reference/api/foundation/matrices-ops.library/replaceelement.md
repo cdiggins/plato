@@ -3,11 +3,31 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A three-number triple with one element replaced.
+
+## Signature
+
+```plato
+ReplaceElement(values: Array<Number>, index: Integer, value: Number): Array<Number>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 356
+### Line 356
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 356](../../../../../stdlib/foundation/matrices-ops.library.plato#L356).
 

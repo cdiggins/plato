@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Three vertices in space; the fundamental rendering and meshing primitive.
+> The normal follows the right-hand rule around A, B, C.
+> (https://en.wikipedia.org/wiki/Triangle)
+
+## Signature
+
+```plato
+type Triangle3D
+    implements IGeometry3D, IConvexShape, IConnected, IManifold, IOrientable, IArea, IBounded3D, IPointSet3D, ICentroid3D, INearestPoint3D, IDeformable3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IGeometry3D](../geometry.concepts/igeometry3d.md), [IConvexShape](../geometry.concepts/iconvexshape.md), [IConnected](../geometry.concepts/iconnected.md), [IManifold](../geometry.concepts/imanifold.md), [IOrientable](../geometry.concepts/iorientable.md), [IArea](../geometry.concepts/iarea.md), [IBounded3D](../geometry.concepts/ibounded3d.md), [IPointSet3D](../geometry.concepts/ipointset3d.md), [ICentroid3D](../geometry.concepts/icentroid3d.md), [INearestPoint3D](../geometry.concepts/inearestpoint3d.md), [IDeformable3D](../../foundation/transforms.concepts/ideformable3d.md).
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [spatial-primitives.types](../spatial-primitives.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/geometry/spatial-primitives.types.plato, line 131](../../../../../stdlib/geometry/spatial-primitives.types.plato#L131).
 

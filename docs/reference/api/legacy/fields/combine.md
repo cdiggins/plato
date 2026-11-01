@@ -3,11 +3,27 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Combine two fields pointwise with a binary operator, producing a new field.
+
+## Signature
+
+```plato
+Combine(a: ScalarField3D, b: ScalarField3D, op: Function2<Number, Number, Number>): ScalarField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [fields](../fields.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 20
+### Line 20
 
 **Source:** [legacy/stdlib-legacy/fields.plato, line 20](../../../../../legacy/stdlib-legacy/fields.plato#L20).
 

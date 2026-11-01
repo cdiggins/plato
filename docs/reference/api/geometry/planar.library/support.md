@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The corner of the box farthest along `direction`: each local axis
+> independently takes the sign of the direction's component on it.
+
+## Signature
+
+```plato
+Support(b: OrientedBox2D, direction: Direction2D): Point2D
+Support(g: RegularPolygon, direction: Direction2D): Point2D
+Support(c: Circle, direction: Direction2D): Point2D
+Support(c: Capsule2D, direction: Direction2D): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [planar.library](../planar.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 131
+### Line 131
 
 **Source:** [stdlib/geometry/planar.library.plato, line 131](../../../../../stdlib/geometry/planar.library.plato#L131).
 
@@ -25,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 178
+### Line 178
 
 **Source:** [stdlib/geometry/planar.library.plato, line 178](../../../../../stdlib/geometry/planar.library.plato#L178).
 
@@ -42,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 241
+### Line 241
 
 **Source:** [stdlib/geometry/planar.library.plato, line 241](../../../../../stdlib/geometry/planar.library.plato#L241).
 
@@ -53,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => c.Center + direction.Vector * c.Radius;
 ```
 
-## Line 423
+### Line 423
 
 **Source:** [stdlib/geometry/planar.library.plato, line 423](../../../../../stdlib/geometry/planar.library.plato#L423).
 

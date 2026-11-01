@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Laplacian smoothing, repeated. Every step shrinks the surface a little; use
+> `TaubinSmoothed` where that matters.
+>
+> The connectivity is built ONCE and reused by every iteration, which is sound
+> precisely because smoothing moves vertices and never touches the face table.
+> That is the design decision paying off: because the topology is a derived,
+> read-only value rather than a structure being edited, an invariant pass can
+> simply keep it.
+
+## Signature
+
+```plato
+LaplacianSmoothed(self: TriangleMesh3D, weighting: LaplacianWeighting, strength: Number, iterations: Integer): TriangleMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1220
+### Line 1220
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 1220](../../../../../stdlib/geometry/remeshing.library.plato#L1220).
 

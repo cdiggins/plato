@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Spatial Gabor noise: sparse convolution of oriented Gabor kernels, giving
+> direct spectral control. Direction sets the dominant oscillation axis;
+> Bandwidth sets kernel falloff; Anisotropy in \[0, 1\] blends from isotropic
+> (0) to fully oriented (1)
+> (https://en.wikipedia.org/wiki/Gabor\_filter).
+
+## Signature
+
+```plato
+type GaborNoise3D
+    implements IValue, IScalarField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IScalarField3D](../fields.concepts/iscalarfield3d.md).
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [noise.types](../noise.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 166
+### Line 166
 
 **Source:** [stdlib/geometry/noise.types.plato, line 166](../../../../../stdlib/geometry/noise.types.plato#L166).
 

@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A rectangular tube (box section) of uniform wall thickness.
+> (https://en.wikipedia.org/wiki/Hollow\_structural\_section)
+
+## Signature
+
+```plato
+type RectangularTubeSection
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Engineering materials and finite elements](../../../library/future/engineering.md)
+
+## Source
+
 **File:** [engineering.types](../engineering.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 292
+### Line 292
 
 **Source:** [stdlib/future/engineering.types.plato, line 292](../../../../../stdlib/future/engineering.types.plato#L292).
 

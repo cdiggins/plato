@@ -3,11 +3,50 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Multiply(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4
+Multiply(value1: Matrix4x4, f: Number): Matrix4x4
+Multiply(f: Number, value1: Matrix4x4): Matrix4x4
+Multiply(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2
+Multiply(value1: Matrix3x2, scalar: Number): Matrix3x2
+Multiply(scalar: Number, value1: Matrix3x2): Matrix3x2
+Multiply(left: Vector2, right: Vector2): Vector2
+Multiply(left: Vector2, scalar: Number): Vector2
+Multiply(scalar: Number, right: Vector2): Vector2
+Multiply(left: Vector3, right: Vector3): Vector3
+Multiply(left: Vector3, scalar: Number): Vector3
+Multiply(scalar: Number, right: Vector3): Vector3
+Multiply(left: Vector4, right: Vector4): Vector4
+Multiply(left: Vector4, scalar: Number): Vector4
+Multiply(scalar: Number, right: Vector4): Vector4
+Multiply(left: Vector8, right: Vector8): Vector8
+Multiply(left: Vector8, scalar: Number): Vector8
+Multiply(scalar: Number, right: Vector8): Vector8
+Multiply(a: Quaternion, b: Quaternion): Quaternion
+Multiply(a: Quaternion, scalar: Number): Quaternion
+Multiply(a: Number, b: Number): Number
+Multiply(a: Integer, b: Integer): Integer
+Multiply(a: Angle, x: Number): Angle
+Multiply(x: Number, a: Angle): Angle
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 24 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 24
+### Line 24
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 24](../../../../../legacy/stdlib-legacy/intrinsics.plato#L24).
 
@@ -15,7 +54,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4;
 ```
 
-## Line 25
+### Line 25
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 25](../../../../../legacy/stdlib-legacy/intrinsics.plato#L25).
 
@@ -23,7 +62,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(value1: Matrix4x4, f: Number): Matrix4x4;
 ```
 
-## Line 26
+### Line 26
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 26](../../../../../legacy/stdlib-legacy/intrinsics.plato#L26).
 
@@ -31,7 +70,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(f: Number, value1: Matrix4x4): Matrix4x4;
 ```
 
-## Line 74
+### Line 74
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 74](../../../../../legacy/stdlib-legacy/intrinsics.plato#L74).
 
@@ -39,7 +78,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2;
 ```
 
-## Line 75
+### Line 75
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 75](../../../../../legacy/stdlib-legacy/intrinsics.plato#L75).
 
@@ -47,7 +86,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(value1: Matrix3x2, scalar: Number): Matrix3x2;
 ```
 
-## Line 76
+### Line 76
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 76](../../../../../legacy/stdlib-legacy/intrinsics.plato#L76).
 
@@ -55,7 +94,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(scalar: Number, value1: Matrix3x2): Matrix3x2;
 ```
 
-## Line 109
+### Line 109
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 109](../../../../../legacy/stdlib-legacy/intrinsics.plato#L109).
 
@@ -63,7 +102,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(left: Vector2, right: Vector2): Vector2;
 ```
 
-## Line 110
+### Line 110
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 110](../../../../../legacy/stdlib-legacy/intrinsics.plato#L110).
 
@@ -71,7 +110,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(left: Vector2, scalar: Number): Vector2;
 ```
 
-## Line 111
+### Line 111
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 111](../../../../../legacy/stdlib-legacy/intrinsics.plato#L111).
 
@@ -79,7 +118,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(scalar: Number, right: Vector2): Vector2;
 ```
 
-## Line 148
+### Line 148
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 148](../../../../../legacy/stdlib-legacy/intrinsics.plato#L148).
 
@@ -87,7 +126,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(left: Vector3, right: Vector3): Vector3;
 ```
 
-## Line 149
+### Line 149
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 149](../../../../../legacy/stdlib-legacy/intrinsics.plato#L149).
 
@@ -95,7 +134,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(left: Vector3, scalar: Number): Vector3;
 ```
 
-## Line 150
+### Line 150
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 150](../../../../../legacy/stdlib-legacy/intrinsics.plato#L150).
 
@@ -103,7 +142,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(scalar: Number, right: Vector3): Vector3;
 ```
 
-## Line 188
+### Line 188
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 188](../../../../../legacy/stdlib-legacy/intrinsics.plato#L188).
 
@@ -111,7 +150,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(left: Vector4, right: Vector4): Vector4;
 ```
 
-## Line 189
+### Line 189
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 189](../../../../../legacy/stdlib-legacy/intrinsics.plato#L189).
 
@@ -119,7 +158,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(left: Vector4, scalar: Number): Vector4;
 ```
 
-## Line 190
+### Line 190
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 190](../../../../../legacy/stdlib-legacy/intrinsics.plato#L190).
 
@@ -127,7 +166,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(scalar: Number, right: Vector4): Vector4;
 ```
 
-## Line 232
+### Line 232
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 232](../../../../../legacy/stdlib-legacy/intrinsics.plato#L232).
 
@@ -135,7 +174,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(left: Vector8, right: Vector8): Vector8;
 ```
 
-## Line 233
+### Line 233
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 233](../../../../../legacy/stdlib-legacy/intrinsics.plato#L233).
 
@@ -143,7 +182,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(left: Vector8, scalar: Number): Vector8;
 ```
 
-## Line 234
+### Line 234
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 234](../../../../../legacy/stdlib-legacy/intrinsics.plato#L234).
 
@@ -151,7 +190,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(scalar: Number, right: Vector8): Vector8;
 ```
 
-## Line 297
+### Line 297
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 297](../../../../../legacy/stdlib-legacy/intrinsics.plato#L297).
 
@@ -159,7 +198,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(a: Quaternion, b: Quaternion): Quaternion;
 ```
 
-## Line 298
+### Line 298
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 298](../../../../../legacy/stdlib-legacy/intrinsics.plato#L298).
 
@@ -167,7 +206,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(a: Quaternion, scalar: Number): Quaternion;
 ```
 
-## Line 356
+### Line 356
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 356](../../../../../legacy/stdlib-legacy/intrinsics.plato#L356).
 
@@ -175,7 +214,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(a: Number, b: Number): Number;
 ```
 
-## Line 399
+### Line 399
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 399](../../../../../legacy/stdlib-legacy/intrinsics.plato#L399).
 
@@ -183,7 +222,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(a: Integer, b: Integer): Integer;
 ```
 
-## Line 435
+### Line 435
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 435](../../../../../legacy/stdlib-legacy/intrinsics.plato#L435).
 
@@ -191,7 +230,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Multiply(a: Angle, x: Number): Angle;
 ```
 
-## Line 436
+### Line 436
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 436](../../../../../legacy/stdlib-legacy/intrinsics.plato#L436).
 

@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The mean nearest-neighbour distance as a fraction of `ReferenceSpacing`.
+> A Poisson process expects a mean nearest-neighbour distance of half the
+> reciprocal square root of the density, which puts this reading a little
+> under one half; it climbs toward 1 as a pattern approaches the hexagonal
+> packing. Reported beside the relative radius because the two disagree in
+> the interesting case: one close pair drags the radius to zero and leaves
+> the mean untouched, so a pattern that is evenly spaced APART FROM one
+> accident reads high here and low there.
+
+## Signature
+
+```plato
+RelativeMeanSpacing(region: Bounds2D, points: Array<Point2D>): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 995
+### Line 995
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 995](../../../../../stdlib/geometry/sampling.library.plato#L995).
 

@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> An ordered array of bones forming a forest. Bones are topologically ordered:
+> every bone's Parent index is less than its own index, so a single forward
+> pass composes local poses into model space.
+> (https://en.wikipedia.org/wiki/Skeletal\_animation)
+
+## Signature
+
+```plato
+type Skeleton
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [skeletal-animation.types](../skeletal-animation.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 35
+### Line 35
 
 **Source:** [stdlib/future/skeletal-animation.types.plato, line 35](../../../../../stdlib/future/skeletal-animation.types.plato#L35).
 

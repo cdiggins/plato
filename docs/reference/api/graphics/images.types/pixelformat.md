@@ -3,11 +3,43 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The in-memory layout of one pixel: channel set, bit depth, and encoding.
+> (https://en.wikipedia.org/wiki/Color\_depth)
+
+## Signature
+
+```plato
+type PixelFormat
+    = R8 | RG8 | RGB8 | RGBA8 | BGRA8 | SRGB8 | SRGBA8
+    | R16 | RG16 | RGBA16
+    | R16F | RG16F | RGBA16F
+    | R32F | RG32F | RGB32F | RGBA32F
+    | R10G10B10A2 | R11G11B10F
+    | Depth16 | Depth24Stencil8 | Depth32F
+    | BC1 | BC3 | BC5 | BC7
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Images, textures and color spaces](../../../library/graphics/images-textures.md)
+
+## Source
+
 **File:** [images.types](../images.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 24
+### Line 24
 
 **Source:** [stdlib/graphics/images.types.plato, line 24](../../../../../stdlib/graphics/images.types.plato#L24).
 

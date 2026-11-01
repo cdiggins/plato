@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A lattice whose cells are as near cubic as whole counts allow: the longest
+> axis of the bounds is divided `divisions` times and the other two follow
+> that cell size. The ergonomic way to place a cell in a box without working
+> out the counts by hand.
+
+## Signature
+
+```plato
+UniformLattice(cell: LatticeUnitCell, bounds: Bounds3D, divisions: Integer, radius: Number): StrutLattice3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Procedural noise and cellular lattices](../../../library/geometry/noise-lattices.md)
+
+## Source
+
 **File:** [lattices.library](../lattices.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 561
+### Line 561
 
 **Source:** [stdlib/geometry/lattices.library.plato, line 561](../../../../../stdlib/geometry/lattices.library.plato#L561).
 

@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The value added to itself: x + x. (Name overlaps C#'s Double type; unambiguous
+> here as a method and worth keeping for the additive-doubling idiom.)
+
+## Signature
+
+```plato
+Double(x: IAdditive): IAdditive
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Bibliography](../../../design/bibliography.md)
+- [Number profiles and scientific arithmetic](../../../language/numbers.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.library](../algebra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 312
+### Line 312
 
 **Source:** [stdlib/foundation/algebra.library.plato, line 312](../../../../../stdlib/foundation/algebra.library.plato#L312).
 

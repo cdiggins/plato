@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The instantaneous rotational motion of a spatial body. AngularVelocity is
+> in radians per second about each world axis (axis-scaled rotation rate);
+> AngularAcceleration is in radians per second squared about each world axis.
+> (https://en.wikipedia.org/wiki/Angular\_velocity)
+
+## Signature
+
+```plato
+type AngularState3D
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [kinematics.types](../kinematics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 51
+### Line 51
 
 **Source:** [stdlib/future/kinematics.types.plato, line 51](../../../../../stdlib/future/kinematics.types.plato#L51).
 

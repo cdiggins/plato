@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The manifold for a body pair from points a pair test already produced, with
+> the pair's coefficients given directly. Normal is taken from the first point,
+> which every test in this file fills with the shared pair normal; an empty
+> manifold reports +Z, a value nothing reads because a manifold with no points
+> contributes no constraint rows.
+
+## Signature
+
+```plato
+Manifold(bodyA: BodyIndex, bodyB: BodyIndex, points: Array<ContactPoint3D>,
+    friction: Number, restitution: Proportion): ContactManifold3D
+
+Manifold(bodyA: BodyIndex, bodyB: BodyIndex, points: Array<ContactPoint3D>,
+    materialA: PhysicsMaterial, materialB: PhysicsMaterial): ContactManifold3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [collision.library](../collision.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 225
+### Line 225
 
 **Source:** [stdlib/future/collision.library.plato, line 225](../../../../../stdlib/future/collision.library.plato#L225).
 
@@ -37,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
             restitution);
 ```
 
-## Line 248
+### Line 248
 
 **Source:** [stdlib/future/collision.library.plato, line 248](../../../../../stdlib/future/collision.library.plato#L248).
 

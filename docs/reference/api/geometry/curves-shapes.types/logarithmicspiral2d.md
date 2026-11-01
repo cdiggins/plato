@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The logarithmic (equiangular) spiral r = StartRadius \* exp(GrowthRate \*
+> theta), swept over Angles: self-similar coils, constant crossing angle
+> (https://en.wikipedia.org/wiki/Logarithmic\_spiral).
+
+## Signature
+
+```plato
+type LogarithmicSpiral2D
+    implements IPolarCurve2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IPolarCurve2D](../curves.concepts/ipolarcurve2d.md).
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [curves-shapes.types](../curves-shapes.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 283
+### Line 283
 
 **Source:** [stdlib/geometry/curves-shapes.types.plato, line 283](../../../../../stdlib/geometry/curves-shapes.types.plato#L283).
 

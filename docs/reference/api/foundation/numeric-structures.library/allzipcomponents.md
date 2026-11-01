@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the paired components of a and b all satisfy the predicate.
+
+## Signature
+
+```plato
+AllZipComponents(a: IVector, b: IVector, f: Function2<Number, Number, Boolean>): Boolean
+AllZipComponents(a: IVector, b: IVector, c: IVector, f: Function3<Number, Number, Number, Boolean>): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 230
+### Line 230
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 230](../../../../../stdlib/foundation/numeric-structures.library.plato#L230).
 
@@ -18,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.ComponentArray.Zip(b.ComponentArray, f).All(x => x);
 ```
 
-## Line 234
+### Line 234
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 234](../../../../../stdlib/foundation/numeric-structures.library.plato#L234).
 

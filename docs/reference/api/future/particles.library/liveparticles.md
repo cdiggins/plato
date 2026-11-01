@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The system's particles that have not reached their Lifetime, in order.
+> Kept separate from `Step` so a caller that wants a fixed population — a
+> cloth, a debug scene — never loses one.
+
+## Signature
+
+```plato
+LiveParticles(self: ParticleSystem3D): Array<Particle3D>
+LiveParticles(self: ParticleSystem2D): Array<Particle2D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [particles.library](../particles.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 250
+### Line 250
 
 **Source:** [stdlib/future/particles.library.plato, line 250](../../../../../stdlib/future/particles.library.plato#L250).
 
@@ -21,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
             (kept, p) => p.IsAlive ? kept.Append(p) : kept);
 ```
 
-## Line 257
+### Line 257
 
 **Source:** [stdlib/future/particles.library.plato, line 257](../../../../../stdlib/future/particles.library.plato#L257).
 

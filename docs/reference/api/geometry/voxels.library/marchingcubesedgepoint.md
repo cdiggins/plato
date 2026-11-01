@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Where the isosurface crosses cube edge e: the linear interpolation of the
+> edge's two corner positions at the parameter where the corner values reach
+> isoLevel. Equal corner values carry no crossing information, so they fall
+> back to the edge midpoint.
+
+## Signature
+
+```plato
+MarchingCubesEdgePoint(edge: Integer, cell: IntegerVector3, valueAt: Function3<Integer, Integer, Integer, Number>, pointAt: Function3<Integer, Integer, Integer, Point3D>, isoLevel: Number)
+    : Point3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [voxels.library](../voxels.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 437
+### Line 437
 
 **Source:** [stdlib/geometry/voxels.library.plato, line 437](../../../../../stdlib/geometry/voxels.library.plato#L437).
 

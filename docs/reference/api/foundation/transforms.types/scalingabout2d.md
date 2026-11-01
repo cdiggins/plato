@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> An axis-aligned scaling in the plane about an arbitrary center rather than the
+> origin; Center is the one fixed point
+> (https://en.wikipedia.org/wiki/Scaling\_(geometry)).
+
+## Signature
+
+```plato
+type ScalingAbout2D
+    implements IValue, IAffine2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IAffine2D](../transforms.concepts/iaffine2d.md).
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.types](../transforms.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 275
+### Line 275
 
 **Source:** [stdlib/foundation/transforms.types.plato, line 275](../../../../../stdlib/foundation/transforms.types.plato#L275).
 

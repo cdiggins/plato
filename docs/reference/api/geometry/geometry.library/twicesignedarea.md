@@ -3,11 +3,59 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Twice the signed area of triangle (a, b, c): the z component of
+> (b - a) x (c - a). Positive when a -> b -> c turns counter-clockwise, zero
+> when the three points are collinear. The primitive orientation predicate.
+> https://en.wikipedia.org/wiki/Curve\_orientation
+
+## Signature
+
+```plato
+TwiceSignedArea(a: Point2D, b: Point2D, c: Point2D): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_HullIsConvexAndCounterClockwise
+
+[stdlib/tests/spatial-structures.laws.plato, line 36](../../../../../stdlib/tests/spatial-structures.laws.plato#L36)
+
+```plato
+// A non-degenerate hull turns strictly left at every corner: convex,
+// counter-clockwise, no collinear vertices.
+Law_HullIsConvexAndCounterClockwise(points: Array<Point2D>): Boolean
+{
+    var hull = points.ConvexHull;
+    var m = hull.HullVertexCount;
+    return hull.IsDegenerate
+        || m.MapRange(v => TwiceSignedArea(
+            hull.Hull.Points[v],
+            hull.Hull.Points[(v + 1) % m],
+            hull.Hull.Points[(v + 2) % m]) > 0.0).All(b => b);
+}
+```
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 356](../../../../../stdlib/geometry/geometry.library.plato#L356):   \* Containment is the even-odd (crossing) rule and is exact only for a
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 327
+### Line 327
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 327](../../../../../stdlib/geometry/geometry.library.plato#L327).
 

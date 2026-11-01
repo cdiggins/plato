@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Zip (bitruncation): the Conway identity z = dk, which is truncate of the
+> dual. zC is the truncated octahedron, where tC is the truncated cube — the
+> two differ because zip cuts the DUAL's corners, not the seed's.
+> Precondition, inherited from `Dual`: no face plane passes through the origin.
+> V' = C, E' = 3E, F' = V + F.
+
+## Signature
+
+```plato
+Zip(self: PolygonMesh3D): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 810
+### Line 810
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 810](../../../../../stdlib/geometry/polyhedra.library.plato#L810).
 

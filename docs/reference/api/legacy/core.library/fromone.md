@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+FromOne(x: Number): Number
+FromOne(x: IVectorLike): IVectorLike
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [core.library](../core.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 15
+### Line 15
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 15](../../../../../legacy/stdlib-legacy/core.library.plato#L15).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     FromOne(x: Number): Number => 1.0 - x;
 ```
 
-## Line 86
+### Line 86
 
 **Source:** [legacy/stdlib-legacy/core.library.plato, line 86](../../../../../legacy/stdlib-legacy/core.library.plato#L86).
 

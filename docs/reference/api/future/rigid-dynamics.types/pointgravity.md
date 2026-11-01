@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Newtonian point gravity: bodies are attracted toward Center with
+> acceleration mu / r^2. GravitationalParameter is mu = G \* M in cubic meters
+> per second squared.
+> (https://en.wikipedia.org/wiki/Newton%27s\_law\_of\_universal\_gravitation)
+
+## Signature
+
+```plato
+type PointGravity
+    implements IValue, IForceModel3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IForceModel3D](../rigid-dynamics.concepts/iforcemodel3d.md).
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.types](../rigid-dynamics.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 225
+### Line 225
 
 **Source:** [stdlib/future/rigid-dynamics.types.plato, line 225](../../../../../stdlib/future/rigid-dynamics.types.plato#L225).
 

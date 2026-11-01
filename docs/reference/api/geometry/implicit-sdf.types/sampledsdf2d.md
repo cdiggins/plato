@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A planar SDF discretized on a regular lattice spanning Bounds. Values holds
+> one signed distance per lattice node, in row-major column/row order;
+> evaluation between nodes interpolates bilinearly. Implements the bounded
+> SDF interface: Bounds are the lattice domain (finite support), not merely
+> a culling hint.
+
+## Signature
+
+```plato
+type SampledSdf2D
+    implements IValue, IBoundedSignedDistanceField2D, IDifferentiableSignedDistanceField2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md), [IBoundedSignedDistanceField2D](../implicit-sdf.concepts/iboundedsigneddistancefield2d.md), [IDifferentiableSignedDistanceField2D](../implicit-sdf.concepts/idifferentiablesigneddistancefield2d.md).
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.types](../implicit-sdf.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 276
+### Line 276
 
 **Source:** [stdlib/geometry/implicit-sdf.types.plato, line 276](../../../../../stdlib/geometry/implicit-sdf.types.plato#L276).
 

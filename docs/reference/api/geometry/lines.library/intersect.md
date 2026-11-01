@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Where the infinite line crosses the plane. Misses (Hit false) only when the
+> line is parallel to the plane (Dot(Normal, Direction) = 0), including a line
+> lying in the plane -- there is then no single crossing point.
+
+## Signature
+
+```plato
+Intersect(l: InfiniteLine3D, pl: Plane): PlaneHit3D
+Intersect(r: Ray3D, pl: Plane): PlaneHit3D
+Intersect(s: Line3D, pl: Plane): PlaneHit3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 292
+### Line 292
 
 **Source:** [stdlib/geometry/lines.library.plato, line 292](../../../../../stdlib/geometry/lines.library.plato#L292).
 
@@ -26,7 +51,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 304
+### Line 304
 
 **Source:** [stdlib/geometry/lines.library.plato, line 304](../../../../../stdlib/geometry/lines.library.plato#L304).
 
@@ -44,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 315
+### Line 315
 
 **Source:** [stdlib/geometry/lines.library.plato, line 315](../../../../../stdlib/geometry/lines.library.plato#L315).
 

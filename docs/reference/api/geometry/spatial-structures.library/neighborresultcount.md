@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> How many results the query actually yields: at most NeighborCount, at most
+> the number of stored points, and — when MaxDistance is positive — at most
+> the number of points inside that radius.
+
+## Signature
+
+```plato
+NeighborResultCount(self: KdTree2D, query: KNearestQuery2D): Integer
+NeighborResultCount(self: KdTree3D, query: KNearestQuery3D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 256
+### Line 256
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 256](../../../../../stdlib/geometry/spatial-structures.library.plato#L256).
 
@@ -24,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 333
+### Line 333
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 333](../../../../../stdlib/geometry/spatial-structures.library.plato#L333).
 

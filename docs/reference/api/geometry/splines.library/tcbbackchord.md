@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The chord arriving at knot i (p\_i - p\_i-1).
+
+## Signature
+
+```plato
+TcbBackChord(self: TcbSpline2D, i: Integer): Vector2D
+TcbBackChord(self: TcbSpline3D, i: Integer): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Curves, arcs and splines](../../../library/geometry/curves.md)
+
+## Source
+
 **File:** [splines.library](../splines.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 440
+### Line 440
 
 **Source:** [stdlib/geometry/splines.library.plato, line 440](../../../../../stdlib/geometry/splines.library.plato#L440).
 
@@ -19,7 +40,7 @@ Copied from source, comments included. A comment records intent. The body is the
                .Between(self.Points.AtWrapped(i, self.Closed));
 ```
 
-## Line 472
+### Line 472
 
 **Source:** [stdlib/geometry/splines.library.plato, line 472](../../../../../stdlib/geometry/splines.library.plato#L472).
 

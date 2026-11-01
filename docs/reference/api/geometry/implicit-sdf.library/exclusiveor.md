@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Inside exactly one of the two shapes; bounds are the union of the operands,
+> since the symmetric difference cannot reach outside either.
+
+## Signature
+
+```plato
+ExclusiveOr(a: BoundedSdf2D, b: BoundedSdf2D): BoundedSdf2D
+ExclusiveOr(a: BoundedSdf3D, b: BoundedSdf3D): BoundedSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 150
+### Line 150
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 150](../../../../../stdlib/geometry/implicit-sdf.library.plato#L150).
 
@@ -19,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (a.Sdf.ExclusiveOr(b.Sdf), UnionOfBounds(a.Bounds, b.Bounds));
 ```
 
-## Line 155
+### Line 155
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 155](../../../../../stdlib/geometry/implicit-sdf.library.plato#L155).
 

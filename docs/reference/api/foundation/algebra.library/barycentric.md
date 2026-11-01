@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Barycentric blend of three values: at (u,v)=(0,0) yields a, (1,0) yields b,
+> (0,1) yields c. (https://en.wikipedia.org/wiki/Barycentric\_coordinate\_system)
+
+## Signature
+
+```plato
+Barycentric(a: INumerical, b: INumerical, c: INumerical, u: Number, v: Number): INumerical
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [algebra.library](../algebra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 156
+### Line 156
 
 **Source:** [stdlib/foundation/algebra.library.plato, line 156](../../../../../stdlib/foundation/algebra.library.plato#L156).
 

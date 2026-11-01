@@ -3,11 +3,52 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Weights relative to a triangle's vertices. Vertex binding: U -> the first
+> vertex (A), V -> the second (B), W -> the third (C), so the point recovered on
+> the triangle's support plane is U\*A + V\*B + W\*C (see `Evaluate` in
+> numeric-structures.library.plato).
+> See https://en.wikipedia.org/wiki/Barycentric\_coordinate\_system.
+>
+> Invariant: U + V + W = 1 identifies a point on the support plane (an affine
+> combination). Off-plane or non-normalized triples (U + V + W != 1) are
+> degenerate for triangle evaluation; `IsNormalized` tests the sum against a
+> tolerance. The three fields are kept deliberately (a two-component (V, W) form
+> with U = 1 - V - W was rejected): the redundant U reads directly, and the
+> invariant is documented rather than enforced by shape.
+>
+> Affine vs convex: U + V + W = 1 alone is an \*affine\* combination and
+> may place the point anywhere on the plane; the point lies \*inside\* the
+> triangle (a \*convex\* combination) exactly when additionally U, V, W >= 0.
+
+## Signature
+
+```plato
+type BarycentricCoordinate
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md).
+
+## Used by
+
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [points.types](../points.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 112
+### Line 112
 
 **Source:** [stdlib/foundation/points.types.plato, line 112](../../../../../stdlib/foundation/points.types.plato#L112).
 

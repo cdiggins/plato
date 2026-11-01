@@ -3,11 +3,48 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Every binned item, counted once per cell it was binned into.
+
+## Signature
+
+```plato
+ItemCount(self: SpatialHashGrid2D): Integer
+ItemCount(self: SpatialHashGrid3D): Integer
+ItemCount(self: BinningGrid2D): Integer
+ItemCount(self: BinningGrid3D): Integer
+ItemCount(self: KdTree2D): Integer
+ItemCount(self: KdTree3D): Integer
+ItemCount(self: Bvh2D): Integer
+ItemCount(self: Bvh3D): Integer
+ItemCount(self: Quadtree2D): Integer
+ItemCount(self: Octree3D): Integer
+ItemCount(self: LooseOctree3D): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 190](../../../../../stdlib/geometry/spatial-structures.library.plato#L190): selection costs O(n^2 + k n) against the descent's O(k log n); it is a
+- [Line 559](../../../../../stdlib/geometry/spatial-structures.library.plato#L559): miss the query prunes its entire subtree, so the cost is the size of the
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 11 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 50
+### Line 50
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 50](../../../../../stdlib/geometry/spatial-structures.library.plato#L50).
 
@@ -18,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ItemIndices.Count;
 ```
 
-## Line 72
+### Line 72
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 72](../../../../../stdlib/geometry/spatial-structures.library.plato#L72).
 
@@ -29,7 +66,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ItemIndices.Count;
 ```
 
-## Line 110
+### Line 110
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 110](../../../../../stdlib/geometry/spatial-structures.library.plato#L110).
 
@@ -40,7 +77,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ItemIndices.Count;
 ```
 
-## Line 146
+### Line 146
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 146](../../../../../stdlib/geometry/spatial-structures.library.plato#L146).
 
@@ -51,7 +88,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ItemIndices.Count;
 ```
 
-## Line 173
+### Line 173
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 173](../../../../../stdlib/geometry/spatial-structures.library.plato#L173).
 
@@ -85,7 +122,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.PointIndices.Count;
 ```
 
-## Line 275
+### Line 275
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 275](../../../../../stdlib/geometry/spatial-structures.library.plato#L275).
 
@@ -99,7 +136,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.PointIndices.Count;
 ```
 
-## Line 548
+### Line 548
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 548](../../../../../stdlib/geometry/spatial-structures.library.plato#L548).
 
@@ -130,7 +167,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.PrimitiveIndices.Count;
 ```
 
-## Line 601
+### Line 601
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 601](../../../../../stdlib/geometry/spatial-structures.library.plato#L601).
 
@@ -144,7 +181,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.PrimitiveIndices.Count;
 ```
 
-## Line 705
+### Line 705
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 705](../../../../../stdlib/geometry/spatial-structures.library.plato#L705).
 
@@ -162,7 +199,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ItemIndices.Count;
 ```
 
-## Line 738
+### Line 738
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 738](../../../../../stdlib/geometry/spatial-structures.library.plato#L738).
 
@@ -181,7 +218,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ItemIndices.Count;
 ```
 
-## Line 772
+### Line 772
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 772](../../../../../stdlib/geometry/spatial-structures.library.plato#L772).
 

@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The ease-in (accelerating from rest) shape of a family at normalized
+> time t. Every shape is pinned at f(0) = 0 and f(1) = 1; Back and Elastic
+> deliberately dip below zero on the way.
+
+## Signature
+
+```plato
+EaseIn(family: EasingFamily, t: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [easing.library](../easing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 116
+### Line 116
 
 **Source:** [stdlib/graphics/easing.library.plato, line 116](../../../../../stdlib/graphics/easing.library.plato#L116).
 

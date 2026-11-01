@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The total length of the chain joining consecutive points. When `closed`, the
+> edge from the last point back to the first is counted too.
+> Precondition: at least two points (at least one when closed).
+
+## Signature
+
+```plato
+ChainLength(points: Array<Point2D>, closed: Boolean): Number
+ChainLength(points: Array<Point3D>, closed: Boolean): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 431
+### Line 431
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 431](../../../../../stdlib/geometry/geometry.library.plato#L431).
 
@@ -21,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
             .MapRange(i => points[i].Between(points.AtModulo(i + 1)).Magnitude));
 ```
 
-## Line 438
+### Line 438
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 438](../../../../../stdlib/geometry/geometry.library.plato#L438).
 

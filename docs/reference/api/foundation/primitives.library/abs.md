@@ -3,11 +3,131 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The absolute value. Precondition: self is not MinValue, whose magnitude
+> is not representable.
+
+## Signature
+
+```plato
+Abs(self: Integer): Integer
+Abs(self: Number): Number
+```
+
+## Laws
+
+These are declared laws. Whether each one passes is recorded by the law runner ([stdlib/VERIFICATION.md](../../../../../stdlib/VERIFICATION.md)), not by this page.
+
+### Law_ZeroThicknessRingIsUnsignedCircle
+
+[stdlib/tests/implicit-sdf.laws.plato, line 55](../../../../../stdlib/tests/implicit-sdf.laws.plato#L55)
+
+```plato
+// A ring of zero thickness is the unsigned distance to its centre circle: the
+// ring is inside-out on both sides of the curve, so the sign cancels.
+Law_ZeroThicknessRingIsUnsignedCircle(p: Point2D, radius: Number): Boolean
+    => DistanceToRing(p, radius, 0.0).LawEq(DistanceToCircle(p, radius).Abs);
+```
+
+### Law_ZeroDepthGrooveIsUnchanged
+
+[stdlib/tests/implicit-sdf.laws.plato, line 269](../../../../../stdlib/tests/implicit-sdf.laws.plato#L269)
+
+```plato
+// A groove of zero depth removes nothing.
+Law_ZeroDepthGrooveIsUnchanged(a: Number, b: Number, halfWidth: Number): Boolean
+    => GrooveDistance(a, b, 0.0, halfWidth).LawEq(a.Max(a.Min(halfWidth - b.Abs)));
+```
+
+### Law_ZeroHeightTongueIsUnchanged
+
+[stdlib/tests/implicit-sdf.laws.plato, line 273](../../../../../stdlib/tests/implicit-sdf.laws.plato#L273)
+
+```plato
+// A tongue of zero height adds nothing.
+Law_ZeroHeightTongueIsUnchanged(a: Number, b: Number, halfWidth: Number): Boolean
+    => TongueDistance(a, b, 0.0, halfWidth).LawEq(a.Min(a.Max(b.Abs - halfWidth)));
+```
+
+### Law_VonMisesCdfSymmetry
+
+[stdlib/tests/special-numerics.laws.plato, line 71](../../../../../stdlib/tests/special-numerics.laws.plato#L71)
+
+```plato
+// Reflection symmetry about the mean: F(mu + t) + F(mu - t) = 1 for t
+// strictly inside (-pi, pi) (at the cut itself both sides wrap to 0).
+Law_VonMisesCdfSymmetry(d: VonMisesDistribution, x: Number): Boolean
+    => d.VonMisesOutOfRegime
+    || x.WrapToPi.Abs > 3.1
+    || (d.Cdf(d.MeanDirection.Radians + x.WrapToPi)
+        + d.Cdf(d.MeanDirection.Radians - x.WrapToPi)).SpecialEq(1.0);
+```
+
+### Law_PseudosphereFitsItsRadius
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 223](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L223)
+
+```plato
+// The pseudosphere's radius is Radius / cosh t, so it never exceeds Radius.
+Law_PseudosphereFitsItsRadius(s: Pseudosphere, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    return p.SurfaceFinite.Not
+        || (p.X * p.X + p.Y * p.Y).Sqrt <= s.Radius.Abs + 1e-4;
+}
+```
+
+### Law_PluckerConoidFitsItsBounds
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 230](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L230)
+
+```plato
+// The conoid's rays stop at Radius and its rise stops at Height.
+Law_PluckerConoidFitsItsBounds(s: PluckerConoid, uv: UvCoordinate): Boolean {
+    var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+    return p.SurfaceFinite.Not
+        || ((p.X * p.X + p.Y * p.Y).Sqrt <= s.Radius.Abs + 1e-4
+            && p.Z.Abs <= s.Height.Abs + 1e-4);
+}
+```
+
+### Law_HelicoidCoversItsRadii
+
+[stdlib/tests/surfaces-shapes.laws.plato, line 334](../../../../../stdlib/tests/surfaces-shapes.laws.plato#L334)
+
+```plato
+// The helicoid's radial parameter sweeps Radii: the V edges sit at the two ends
+// of that interval, measured from the axis.
+Law_HelicoidCoversItsRadii(s: Helicoid): Boolean {
+    var inner = s.Eval((0.0, 0.0));
+    var outer = s.Eval((0.0, 1.0));
+    return inner.SurfaceFinite.Not
+        || outer.SurfaceFinite.Not
+        || (SurfaceEq((inner.X * inner.X + inner.Y * inner.Y).Sqrt, s.Radii.Start.Abs)
+            && SurfaceEq((outer.X * outer.X + outer.Y * outer.Y).Sqrt, s.Radii.End.Abs));
+}
+```
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 379](../../../../../stdlib/foundation/primitives.library.plato#L379): Accuracy note: a native `Log10` or `Acos` is usually a few ulp better
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [primitives.library](../primitives.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 309
+### Line 309
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 309](../../../../../stdlib/foundation/primitives.library.plato#L309).
 
@@ -36,7 +156,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 0 <= self ? self : -self;
 ```
 
-## Line 364
+### Line 364
 
 **Source:** [stdlib/foundation/primitives.library.plato, line 364](../../../../../stdlib/foundation/primitives.library.plato#L364).
 

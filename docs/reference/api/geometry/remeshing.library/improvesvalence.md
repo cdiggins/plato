@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when flipping this edge lowers the total valence deviation of the four
+> vertices involved: the two endpoints each lose a neighbour and the two
+> apexes each gain one. Boundary-touching edges are left alone, because the
+> target valence of a boundary vertex is four rather than six.
+
+## Signature
+
+```plato
+ImprovesValence(self: TriangleMesh3D, topology: TriangleMeshTopology, valences: Array<Integer>,
+                boundary: Array<Boolean>, e: Integer): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 702
+### Line 702
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 702](../../../../../stdlib/geometry/remeshing.library.plato#L702).
 

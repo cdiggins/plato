@@ -3,11 +3,31 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> How many draws the ensemble holds.
+
+## Signature
+
+```plato
+DrawCount(self: Ensemble<$T>): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Scientific data, provenance and uncertainty](../../../library/future/scientific-data.md)
+
+## Source
+
 **File:** [uncertainty-measurement.library](../uncertainty-measurement.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 89
+### Line 89
 
 **Source:** [stdlib/future/uncertainty-measurement.library.plato, line 89](../../../../../stdlib/future/uncertainty-measurement.library.plato#L89).
 

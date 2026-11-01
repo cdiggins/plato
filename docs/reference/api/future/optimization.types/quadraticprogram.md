@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A quadratic program: minimize half of x' \* Quadratic \* x plus
+> Linear . x, under the same constraint and bound conventions as
+> LinearProgram. Quadratic is symmetric.
+> (https://en.wikipedia.org/wiki/Quadratic\_programming)
+
+## Signature
+
+```plato
+type QuadraticProgram
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [optimization.types](../optimization.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 130
+### Line 130
 
 **Source:** [stdlib/future/optimization.types.plato, line 130](../../../../../stdlib/future/optimization.types.plato#L130).
 

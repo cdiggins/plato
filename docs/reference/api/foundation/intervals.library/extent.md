@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The displacement spanning the region: Max - Min (the Min -> Max diagonal
+> vector). Now expressible via TPoint: IDifference\<TDelta>.
+
+## Signature
+
+```plato
+Extent(self: IBounds<$TPoint, $TDelta>): $TDelta
+Extent(self: IInterval<$T>): $T
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 170](../../../../../stdlib/foundation/intervals.library.plato#L170): T/T division) and the wrap-aware AngleInterval helpers (which must survive the
+- [Line 177](../../../../../stdlib/foundation/intervals.library.plato#L177):   \* Directed intervals: Contains/Overlaps/Union/Intersection/Clamp assume the
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [intervals.library](../intervals.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 55
+### Line 55
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 55](../../../../../stdlib/foundation/intervals.library.plato#L55).
 
@@ -19,7 +48,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Min.Between(self.Max);
 ```
 
-## Line 158
+### Line 158
 
 **Source:** [stdlib/foundation/intervals.library.plato, line 158](../../../../../stdlib/foundation/intervals.library.plato#L158).
 

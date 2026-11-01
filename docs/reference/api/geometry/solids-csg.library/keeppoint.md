@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A 0- or 1-element list: the point when `condition` holds, else empty.
+> The keep-or-drop building block inside a FlatMap (A1: no Optional\<T>).
+
+## Signature
+
+```plato
+KeepPoint(condition: Boolean, p: Point3D): Array<Point3D>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids-csg.library](../solids-csg.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 93
+### Line 93
 
 **Source:** [stdlib/geometry/solids-csg.library.plato, line 93](../../../../../stdlib/geometry/solids-csg.library.plato#L93).
 

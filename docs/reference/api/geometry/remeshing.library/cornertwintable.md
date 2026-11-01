@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The twin of every corner, in corner order.
+
+## Signature
+
+```plato
+CornerTwinTable(self: TriangleMesh3D): Array<CornerIndex>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 121](../../../../../stdlib/geometry/remeshing.library.plato#L121): Cost: quadratic in the corner count, and it dominates every pass built on it.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 107
+### Line 107
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 107](../../../../../stdlib/geometry/remeshing.library.plato#L107).
 

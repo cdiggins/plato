@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The face record at a typed face index. Precondition: the index is
+> present and within \[0, FaceCount).
+
+## Signature
+
+```plato
+FaceAt(self: TriangleMesh3D, face: FaceIndex): TriangleFace
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 496
+### Line 496
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 496](../../../../../stdlib/geometry/meshes.library.plato#L496).
 

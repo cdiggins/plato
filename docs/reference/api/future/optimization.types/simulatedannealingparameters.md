@@ -3,11 +3,39 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> Tuning of simulated annealing. Temperature starts at InitialTemperature
+> and is multiplied by CoolingRate (in (0, 1)) each iteration; Seed fixes
+> the random sequence.
+> (https://en.wikipedia.org/wiki/Simulated\_annealing)
+
+## Signature
+
+```plato
+type SimulatedAnnealingParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Animation, signals and optimization vocabulary](../../../library/future/animation-signals.md)
+
+## Source
+
 **File:** [optimization.types](../optimization.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 194
+### Line 194
 
 **Source:** [stdlib/future/optimization.types.plato, line 194](../../../../../stdlib/future/optimization.types.plato#L194).
 

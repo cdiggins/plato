@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The point at the given displacement from the origin.
+
+## Signature
+
+```plato
+FromOffset(_: Point2D, v: Vector2D): Point2D
+FromOffset(_: Point3D, v: Vector3D): Point3D
+FromOffset(_: PointN, v: VectorN): PointN
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Transform points by a rotation and a translation](../../../cookbook/transform-points.md)
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [transforms.library](../transforms.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 890
+### Line 890
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 890](../../../../../stdlib/foundation/transforms.library.plato#L890).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (v.X, v.Y);
 ```
 
-## Line 898
+### Line 898
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 898](../../../../../stdlib/foundation/transforms.library.plato#L898).
 
@@ -29,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (v.X, v.Y, v.Z);
 ```
 
-## Line 910
+### Line 910
 
 **Source:** [stdlib/foundation/transforms.library.plato, line 910](../../../../../stdlib/foundation/transforms.library.plato#L910).
 

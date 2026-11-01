@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The 3x2 matrix with every element NaN: what a failed inversion returns,
+> matching System.Numerics.
+
+## Signature
+
+```plato
+NotANumber(_: Matrix3x2): Matrix3x2
+NotANumber(_: Matrix4x4): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 40
+### Line 40
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 40](../../../../../stdlib/foundation/matrices-ops.library.plato#L40).
 
@@ -21,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 250
+### Line 250
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 250](../../../../../stdlib/foundation/matrices-ops.library.plato#L250).
 

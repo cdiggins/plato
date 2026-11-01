@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The Hammersley point of index i out of count: the index's own fraction
+> along X and its radical inverse along Y. Better distributed than Halton,
+> at the price of needing the count in advance.
+
+## Signature
+
+```plato
+HammersleyPoint2D(index: Integer, count: Integer, base: Integer): Point2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [sampling.library](../sampling.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 335
+### Line 335
 
 **Source:** [stdlib/geometry/sampling.library.plato, line 335](../../../../../stdlib/geometry/sampling.library.plato#L335).
 

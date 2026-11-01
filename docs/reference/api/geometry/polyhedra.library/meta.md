@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Meta (https://en.wikipedia.org/wiki/Conway\_polyhedron\_notation): every
+> n-gon becomes 2n triangles — the barycentric subdivision of the surface,
+> and the finest of the operators that keeps every original vertex. m = kj = db.
+> V' = V + E + F, E' = 6E, F' = 2C.
+
+## Signature
+
+```plato
+Meta(self: PolygonMesh3D): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [polyhedra.library](../polyhedra.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 671
+### Line 671
 
 **Source:** [stdlib/geometry/polyhedra.library.plato, line 671](../../../../../stdlib/geometry/polyhedra.library.plato#L671).
 

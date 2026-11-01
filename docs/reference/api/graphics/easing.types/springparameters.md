@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `graphics`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Parameters of a damped spring used for physical-feeling motion. All three are
+> unitless tuning values for animation feel, not physical quantities. The
+> spring is critically damped (no oscillation, fastest settle) when Damping
+> equals twice the square root of Stiffness times Mass.
+> (https://en.wikipedia.org/wiki/Damping)
+
+## Signature
+
+```plato
+type SpringParameters
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Easing and time-varying graphics](../../../library/graphics/motion.md)
+
+## Source
+
 **File:** [easing.types](../easing.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 61
+### Line 61
 
 **Source:** [stdlib/graphics/easing.types.plato, line 61](../../../../../stdlib/graphics/easing.types.plato#L61).
 

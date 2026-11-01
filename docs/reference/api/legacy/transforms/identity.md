@@ -3,11 +3,37 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> An identity translation is a zero vector
+
+## Signature
+
+```plato
+Identity(_: Translation3D): Translation3D
+Identity(_: Transform3D): Transform3D
+Identity(_: Rotation3D): Rotation3D
+Identity(_: LookDirection3D): LookDirection3D
+Identity(_: LookAt3D): LookAt3D
+Identity(_: Scaling3D): Scaling3D
+Identity(_: TRSTransform3D): TRSTransform3D
+Identity(_: Pose3D): Pose3D
+Identity(_: AxisAngle): AxisAngle
+Identity(_: YawPitchRoll): YawPitchRoll
+Identity(_: YawPitch): YawPitch
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: function. 11 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 323
+### Line 323
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 323](../../../../../legacy/stdlib-legacy/transforms.plato#L323).
 
@@ -18,7 +44,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Translation3D(Zero3);
 ```
 
-## Line 336
+### Line 336
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 336](../../../../../legacy/stdlib-legacy/transforms.plato#L336).
 
@@ -32,7 +58,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Transform3D(Matrix4x4.Identity);
 ```
 
-## Line 350
+### Line 350
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 350](../../../../../legacy/stdlib-legacy/transforms.plato#L350).
 
@@ -43,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Rotation3D(Quaternion.Identity);
 ```
 
-## Line 360
+### Line 360
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 360](../../../../../legacy/stdlib-legacy/transforms.plato#L360).
 
@@ -53,7 +79,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new LookDirection3D(Vector3.UnitY);        
 ```
 
-## Line 369
+### Line 369
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 369](../../../../../legacy/stdlib-legacy/transforms.plato#L369).
 
@@ -63,7 +89,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Origin3D, YAxis3D);        
 ```
 
-## Line 387
+### Line 387
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 387](../../../../../legacy/stdlib-legacy/transforms.plato#L387).
 
@@ -73,7 +99,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => new Scaling3D(Vector3.One);
 ```
 
-## Line 396
+### Line 396
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 396](../../../../../legacy/stdlib-legacy/transforms.plato#L396).
 
@@ -83,7 +109,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Translation3D.Identity, Rotation3D.Identity, Scaling3D.Identity);
 ```
 
-## Line 405
+### Line 405
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 405](../../../../../legacy/stdlib-legacy/transforms.plato#L405).
 
@@ -93,7 +119,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (Translation3D.Identity, Rotation3D.Identity);
 ```
 
-## Line 430
+### Line 430
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 430](../../../../../legacy/stdlib-legacy/transforms.plato#L430).
 
@@ -104,7 +130,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (ZAxis3D, 0.0);
 ```
 
-## Line 440
+### Line 440
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 440](../../../../../legacy/stdlib-legacy/transforms.plato#L440).
 
@@ -114,7 +140,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (0.0, 0.0, 0.0);
 ```
 
-## Line 449
+### Line 449
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 449](../../../../../legacy/stdlib-legacy/transforms.plato#L449).
 

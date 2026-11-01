@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the query rectangle lies entirely outside this field's
+> conservative domain: safe to skip for solid queries under the enclosure
+> invariant.
+
+## Signature
+
+```plato
+IsCulledBy(self: IBoundedSignedDistanceField2D, query: Bounds2D): Boolean
+IsCulledBy(self: IBoundedSignedDistanceField3D, query: Bounds3D): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 91
+### Line 91
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 91](../../../../../stdlib/geometry/implicit-sdf.library.plato#L91).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.MayIntersect(query).Not;
 ```
 
-## Line 97
+### Line 97
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 97](../../../../../stdlib/geometry/implicit-sdf.library.plato#L97).
 

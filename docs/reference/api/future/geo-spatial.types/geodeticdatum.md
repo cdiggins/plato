@@ -3,11 +3,37 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> A named geodetic datum: the reference ellipsoid against which latitude,
+> longitude, and altitude are expressed (for example "WGS84").
+> (https://en.wikipedia.org/wiki/Geodetic\_datum)
+
+## Signature
+
+```plato
+type GeodeticDatum
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Its declaration lists no implemented interface.
+
+## Used by
+
+- [Geospatial and higher-dimensional vocabulary](../../../library/future/geospatial.md)
+
+## Source
+
 **File:** [geo-spatial.types](../geo-spatial.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 155
+### Line 155
 
 **Source:** [stdlib/future/geo-spatial.types.plato, line 155](../../../../../stdlib/future/geo-spatial.types.plato#L155).
 

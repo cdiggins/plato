@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The spherical billboard at `objectPosition`: the object's +Z is turned to
+> face the camera outright. When the camera sits on the object (within 1e-4
+> squared units) the camera's own forward direction is used instead.
+
+## Signature
+
+```plato
+CreateBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, cameraUpVector: Vector3D, cameraForwardVector: Vector3D): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 623
+### Line 623
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 623](../../../../../stdlib/foundation/matrices-ops.library.plato#L623).
 

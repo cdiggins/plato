@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Two fields merged pointwise by a binary operator.
+
+## Signature
+
+```plato
+Combine(a: ScalarFunctionField2D, b: ScalarFunctionField2D, op: Function2<Number, Number, Number>): ScalarFunctionField2D
+Combine(a: ScalarFunctionField3D, b: ScalarFunctionField3D, op: Function2<Number, Number, Number>): ScalarFunctionField3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [fields-implicits.library](../fields-implicits.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 493
+### Line 493
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 493](../../../../../stdlib/geometry/fields-implicits.library.plato#L493).
 
@@ -25,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => ScalarFunctionField2D(p => op(a.Eval(p), b.Eval(p)));
 ```
 
-## Line 504
+### Line 504
 
 **Source:** [stdlib/geometry/fields-implicits.library.plato, line 504](../../../../../stdlib/geometry/fields-implicits.library.plato#L504).
 

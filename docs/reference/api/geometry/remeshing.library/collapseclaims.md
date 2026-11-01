@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The merge state after accepting every masked edge whose two endpoints AND
+> all their neighbours are still free. Entry v is -1 while vertex v is free,
+> -2 once it is blocked by a nearby collapse, and otherwise the vertex it has
+> been merged into — which for a collapse target is itself, so one array
+> records all three conditions.
+
+## Signature
+
+```plato
+CollapseClaims(edges: Array<VertexPair>, neighbors: Array<Array<VertexIndex>>,
+               collapseMask: Array<Boolean>, vertexCount: Integer): Array<Integer>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 470
+### Line 470
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 470](../../../../../stdlib/geometry/remeshing.library.plato#L470).
 

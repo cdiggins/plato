@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The IDeformable3D obligation: positions deformed; the parallel normals
+> are carried unchanged (stale after a non-rigid mapping).
+
+## Signature
+
+```plato
+Deform(self: OrientedPointCloud3D, mapping: Function1<Point3D, Point3D>): OrientedPointCloud3D
+Deform(self: ColoredPointCloud3D, mapping: Function1<Point3D, Point3D>): ColoredPointCloud3D
+Deform(self: AttributedPointCloud3D, mapping: Function1<Point3D, Point3D>): AttributedPointCloud3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Sampling, point clouds and voxels](../../../library/geometry/sampling-voxels.md)
+
+## Source
+
 **File:** [pointclouds.library](../pointclouds.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 1
+### Line 1
 
 **Source:** [stdlib/geometry/pointclouds.library.plato, line 1](../../../../../stdlib/geometry/pointclouds.library.plato#L1).
 
@@ -29,7 +52,7 @@ library PointClouds
         => (self.Positions.Map(mapping), self.Normals);
 ```
 
-## Line 16
+### Line 16
 
 **Source:** [stdlib/geometry/pointclouds.library.plato, line 16](../../../../../stdlib/geometry/pointclouds.library.plato#L16).
 
@@ -40,7 +63,7 @@ library PointClouds
         => (self.Positions.Map(mapping), self.Colors);
 ```
 
-## Line 20
+### Line 20
 
 **Source:** [stdlib/geometry/pointclouds.library.plato, line 20](../../../../../stdlib/geometry/pointclouds.library.plato#L20).
 

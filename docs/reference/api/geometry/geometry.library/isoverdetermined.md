@@ -3,11 +3,33 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when the fit stands on enough samples to be meaningful: the shape
+> needs at least the given count to be over-determined rather than merely
+> interpolated.
+
+## Signature
+
+```plato
+IsOverDetermined(self: IFitted, minimumSamples: Integer): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [geometry.library](../geometry.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 151
+### Line 151
 
 **Source:** [stdlib/geometry/geometry.library.plato, line 151](../../../../../stdlib/geometry/geometry.library.plato#L151).
 

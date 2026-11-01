@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A parametric surface restricted to a region of its UV domain: OuterLoop is
+> a closed counter-clockwise polyline in UV space, and Holes are closed
+> clockwise loops removed from it. Not a rectangular patch, so only ISurface.
+
+## Signature
+
+```plato
+type TrimmedSurface
+    implements ISurface
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [ISurface](../surfaces-solids.concepts/isurface.md).
+
+## Used by
+
+- [Surfaces and differential geometry](../../../library/geometry/surfaces.md)
+
+## Source
+
 **File:** [surfaces.types](../surfaces.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 184
+### Line 184
 
 **Source:** [stdlib/geometry/surfaces.types.plato, line 184](../../../../../stdlib/geometry/surfaces.types.plato#L184).
 

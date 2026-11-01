@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The view matrix of a camera at `cameraPosition` looking at `cameraTarget`.
+> The basis is built back-to-front (+Z points from the target to the camera)
+> and stored transposed, because a view matrix is the inverse of a camera
+> placement. Preconditions (unchecked): the camera is not at the target, and
+> `cameraUpVector` is not parallel to the view direction.
+
+## Signature
+
+```plato
+CreateLookAt(_: Matrix4x4, cameraPosition: Point3D, cameraTarget: Point3D, cameraUpVector: Vector3D): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+
+## Source
+
 **File:** [matrices-ops.library](../matrices-ops.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 523
+### Line 523
 
 **Source:** [stdlib/foundation/matrices-ops.library.plato, line 523](../../../../../stdlib/foundation/matrices-ops.library.plato#L523).
 

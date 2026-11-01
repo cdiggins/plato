@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The nearest points to the query centre, nearest first, paired with their
+> distances.
+
+## Signature
+
+```plato
+FindNearest(self: KdTree2D, query: KNearestQuery2D): NearestNeighbors
+FindNearest(self: KdTree3D, query: KNearestQuery3D): NearestNeighbors
+FindNearest(self: INearestNeighbor2D, center: Point2D, count: Integer): NearestNeighbors
+FindNearest(self: INearestNeighbor2D, center: Point2D): NearestNeighbors
+FindNearest(self: INearestNeighbor3D, center: Point3D, count: Integer): NearestNeighbors
+FindNearest(self: INearestNeighbor3D, center: Point3D): NearestNeighbors
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 266
+### Line 266
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 266](../../../../../stdlib/geometry/spatial-structures.library.plato#L266).
 
@@ -23,7 +49,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 341
+### Line 341
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 341](../../../../../stdlib/geometry/spatial-structures.library.plato#L341).
 
@@ -39,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
     }
 ```
 
-## Line 525
+### Line 525
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 525](../../../../../stdlib/geometry/spatial-structures.library.plato#L525).
 
@@ -50,7 +76,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.FindNearest(self.NearestQuery(center, count));
 ```
 
-## Line 529
+### Line 529
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 529](../../../../../stdlib/geometry/spatial-structures.library.plato#L529).
 
@@ -61,7 +87,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.FindNearest(center, 1);
 ```
 
-## Line 540
+### Line 540
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 540](../../../../../stdlib/geometry/spatial-structures.library.plato#L540).
 
@@ -72,7 +98,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.FindNearest(self.NearestQuery(center, count));
 ```
 
-## Line 544
+### Line 544
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 544](../../../../../stdlib/geometry/spatial-structures.library.plato#L544).
 

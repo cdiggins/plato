@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+AllZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, f: Function2<$T, $T, Boolean>): Boolean
+AllZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, c: IArrayLike<$T>, f: Function3<$T, $T, $T, Boolean>): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [array](../array.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 50
+### Line 50
 
 **Source:** [legacy/stdlib-legacy/array.plato, line 50](../../../../../legacy/stdlib-legacy/array.plato#L50).
 
@@ -17,7 +34,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Components.Zip(b.Components, f).All(x => x);
 ```
 
-## Line 53
+### Line 53
 
 **Source:** [legacy/stdlib-legacy/array.plato, line 53](../../../../../legacy/stdlib-legacy/array.plato#L53).
 

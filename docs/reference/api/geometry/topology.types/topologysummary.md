@@ -3,11 +3,41 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Aggregate topological measurements of a mesh. EulerCharacteristic equals
+> VertexCount - UndirectedEdgeCount + FaceCount
+> (https://en.wikipedia.org/wiki/Euler\_characteristic); a closed connected
+> manifold of genus g has Euler characteristic 2 - 2g. The edge count is of
+> DEDUPLICATED undirected edges — half the half-edge count on a closed
+> manifold — or the characteristic is wrong.
+
+## Signature
+
+```plato
+type TopologySummary
+    implements IValue
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../../foundation/core.concepts/ivalue.md).
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [topology.types](../topology.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 103
+### Line 103
 
 **Source:** [stdlib/geometry/topology.types.plato, line 103](../../../../../stdlib/geometry/topology.types.plato#L103).
 

@@ -3,11 +3,28 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+CreateFromYawPitchRoll(_: Matrix4x4, yaw: Angle, pitch: Angle, roll: Angle): Matrix4x4
+CreateFromYawPitchRoll(_: Quaternion, yaw: Angle, pitch: Angle, roll: Angle): Quaternion
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [intrinsics](../intrinsics.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 48
+### Line 48
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 48](../../../../../legacy/stdlib-legacy/intrinsics.plato#L48).
 
@@ -15,7 +32,7 @@ Copied from source, comments included. A comment records intent. The body is the
     CreateFromYawPitchRoll(_: Matrix4x4, yaw: Angle, pitch: Angle, roll: Angle): Matrix4x4;
 ```
 
-## Line 307
+### Line 307
 
 **Source:** [legacy/stdlib-legacy/intrinsics.plato, line 307](../../../../../legacy/stdlib-legacy/intrinsics.plato#L307).
 

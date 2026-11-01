@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The derivative of A\*x^2 + B\*x + C: 2\*A\*x + B.
+
+## Signature
+
+```plato
+Derivative(p: QuadraticPolynomial, x: Number): Number
+Derivative(p: CubicPolynomial, x: Number): Number
+Derivative(p: QuarticPolynomial, x: Number): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Find a root with Newton's method](../../../cookbook/newton-root.md)
+- [Polynomials, series and basis functions](../../../library/foundation/polynomials.md)
+
+## Source
+
 **File:** [polynomials.library](../polynomials.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 223
+### Line 223
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 223](../../../../../stdlib/foundation/polynomials.library.plato#L223).
 
@@ -18,7 +41,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 2.0 * p.A * x + p.B;
 ```
 
-## Line 227
+### Line 227
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 227](../../../../../stdlib/foundation/polynomials.library.plato#L227).
 
@@ -29,7 +52,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => 3.0 * p.A * x.Square + 2.0 * p.B * x + p.C;
 ```
 
-## Line 231
+### Line 231
 
 **Source:** [stdlib/foundation/polynomials.library.plato, line 231](../../../../../stdlib/foundation/polynomials.library.plato#L231).
 

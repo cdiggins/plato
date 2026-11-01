@@ -3,11 +3,36 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Zero-copy handoff of the accumulated elements to an immutable Array\<$T>.
+> Consumes: the builder is invalidated and any later use throws.
+
+## Signature
+
+```plato
+Freeze(xs: List<$T>): Array<$T>
+Freeze(xs: Buffer<$T>): Array<$T>
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [If you know C#](../../../compare/csharp.md)
+- [If you know Python](../../../compare/python.md)
+- [Locals, loops, and unique builders](../../../language/state-and-builders.md)
+- [Collections, indexing and builders](../../../library/foundation/collections.md)
+
+## Source
+
 **File:** [intrinsics.library](../intrinsics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 276
+### Line 276
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 276](../../../../../stdlib/foundation/intrinsics.library.plato#L276).
 
@@ -18,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
     Freeze(xs: List<$T>): Array<$T>;
 ```
 
-## Line 298
+### Line 298
 
 **Source:** [stdlib/foundation/intrinsics.library.plato, line 298](../../../../../stdlib/foundation/intrinsics.library.plato#L298).
 

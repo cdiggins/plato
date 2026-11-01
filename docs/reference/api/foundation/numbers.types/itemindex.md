@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> A zero-based position within a caller-supplied or owning item list:
+> primitives handed to a spatial structure, fields referenced by a graph,
+> entries of a scene pool. -1 means "none". The general-purpose index type;
+> domains with richer element vocabularies declare their own (VertexIndex,
+> BoneIndex, ...).
+
+## Signature
+
+```plato
+type ItemIndex
+    implements IValue, IHashable, IComparable, IIndex
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Implements: [IValue](../core.concepts/ivalue.md), [IHashable](../core.concepts/ihashable.md), [IComparable](../core.concepts/icomparable.md), [IIndex](../collections.concepts/iindex.md).
+
+## Used by
+
+- [Scalars and algebra](../../../library/foundation/scalars-algebra.md)
+
+## Source
+
 **File:** [numbers.types](../numbers.types.md). Kind: type. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 54
+### Line 54
 
 **Source:** [stdlib/foundation/numbers.types.plato, line 54](../../../../../stdlib/foundation/numbers.types.plato#L54).
 

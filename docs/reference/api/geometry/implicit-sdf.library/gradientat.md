@@ -3,11 +3,39 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The gradient of a stored planar distance function, differenced numerically:
+> a lambda cannot be differentiated symbolically.
+
+## Signature
+
+```plato
+GradientAt(self: FunctionSdf2D, point: Point2D): Vector2D
+GradientAt(self: FunctionSdf3D, point: Point3D): Vector3D
+GradientAt(self: BoundedSdf2D, point: Point2D): Vector2D
+GradientAt(self: BoundedSdf3D, point: Point3D): Vector3D
+GradientAt(self: SampledSdf2D, point: Point2D): Vector2D
+GradientAt(self: SampledSdf3D, point: Point3D): Vector3D
+GradientAt(self: PlacedSdf2D, point: Point2D): Vector2D
+GradientAt(self: PlacedSdf3D, point: Point3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 8 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 342
+### Line 342
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 342](../../../../../stdlib/geometry/implicit-sdf.library.plato#L342).
 
@@ -19,7 +47,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.NumericGradientAt(point, Number.SdfGradientStep);
 ```
 
-## Line 347
+### Line 347
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 347](../../../../../stdlib/geometry/implicit-sdf.library.plato#L347).
 
@@ -30,7 +58,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.NumericGradientAt(point, Number.SdfGradientStep);
 ```
 
-## Line 351
+### Line 351
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 351](../../../../../stdlib/geometry/implicit-sdf.library.plato#L351).
 
@@ -41,7 +69,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Sdf.GradientAt(point);
 ```
 
-## Line 355
+### Line 355
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 355](../../../../../stdlib/geometry/implicit-sdf.library.plato#L355).
 
@@ -52,7 +80,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Sdf.GradientAt(point);
 ```
 
-## Line 359
+### Line 359
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 359](../../../../../stdlib/geometry/implicit-sdf.library.plato#L359).
 
@@ -65,7 +93,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.NumericGradientAt(point, Number.SdfGradientStep);
 ```
 
-## Line 365
+### Line 365
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 365](../../../../../stdlib/geometry/implicit-sdf.library.plato#L365).
 
@@ -77,7 +105,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.NumericGradientAt(point, Number.SdfGradientStep);
 ```
 
-## Line 370
+### Line 370
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 370](../../../../../stdlib/geometry/implicit-sdf.library.plato#L370).
 
@@ -90,7 +118,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Source.GradientAt(self.SourcePoint(point)).Transform(self.Pose);
 ```
 
-## Line 376
+### Line 376
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 376](../../../../../stdlib/geometry/implicit-sdf.library.plato#L376).
 

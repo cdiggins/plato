@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The vector area of a closed ring: (1/2) \* sum of Pi x Pi+1 over the position
+> vectors. Its magnitude is the enclosed area and its direction is the
+> right-hand-rule normal, both independent of where the origin sits (the
+> origin-dependent terms cancel around a closed loop). Newell's method.
+> https://en.wikipedia.org/wiki/Polygon#Area
+
+## Signature
+
+```plato
+VectorArea(points: Array<Point3D>): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 216
+### Line 216
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 216](../../../../../stdlib/geometry/polygons.library.plato#L216).
 

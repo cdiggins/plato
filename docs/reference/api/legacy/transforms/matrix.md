@@ -3,11 +3,37 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+The source gives no summary for this name.
+
+## Signature
+
+```plato
+Matrix(r: IRotation3D): Matrix4x4
+Matrix(t: IdentityTransform3D): Matrix4x4
+Matrix(t: Translation3D): Matrix4x4
+Matrix(r: LookDirection3D): Matrix4x4
+Matrix(r: LookAt3D): Matrix4x4
+Matrix(s: Scaling3D): Matrix4x4
+Matrix(t: TRSTransform3D): Matrix4x4
+Matrix(p: Pose3D): Matrix4x4
+Matrix(p: Perspective3D): Matrix4x4
+Matrix(o: Orthographic3D): Matrix4x4
+Matrix(pp: PlaneProjection3D): Matrix4x4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Source
+
 **File:** [transforms](../transforms.md). Kind: function. 11 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 300
+### Line 300
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 300](../../../../../legacy/stdlib-legacy/transforms.plato#L300).
 
@@ -20,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => r.Quaternion.Matrix;
 ```
 
-## Line 306
+### Line 306
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 306](../../../../../legacy/stdlib-legacy/transforms.plato#L306).
 
@@ -33,7 +59,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> Matrix4x4.Identity;
 ```
 
-## Line 316
+### Line 316
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 316](../../../../../legacy/stdlib-legacy/transforms.plato#L316).
 
@@ -47,7 +73,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreateTranslation(t.Vector);
 ```
 
-## Line 354
+### Line 354
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 354](../../../../../legacy/stdlib-legacy/transforms.plato#L354).
 
@@ -60,7 +86,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreateWorld(0.0, r.Direction, ZAxis3D);
 ```
 
-## Line 363
+### Line 363
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 363](../../../../../legacy/stdlib-legacy/transforms.plato#L363).
 
@@ -73,7 +99,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreateWorld(0.0, r.Forward, ZAxis3D);
 ```
 
-## Line 378
+### Line 378
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 378](../../../../../legacy/stdlib-legacy/transforms.plato#L378).
 
@@ -86,7 +112,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreateScale(s.Amount.X, s.Amount.Y, s.Amount.Z);           
 ```
 
-## Line 390
+### Line 390
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 390](../../../../../legacy/stdlib-legacy/transforms.plato#L390).
 
@@ -99,7 +125,7 @@ Copied from source, comments included. A comment records intent. The body is the
 		=> (t.Translation * t.Rotation) * t.Scale.Matrix;
 ```
 
-## Line 399
+### Line 399
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 399](../../../../../legacy/stdlib-legacy/transforms.plato#L399).
 
@@ -112,7 +138,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => p.Translation.Matrix * p.Rotation.Matrix;
 ```
 
-## Line 452
+### Line 452
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 452](../../../../../legacy/stdlib-legacy/transforms.plato#L452).
 
@@ -125,7 +151,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreatePerspectiveFieldOfView(p.FOV.Radians, p.AspectRatio, p.Near, p.Far);
 ```
 
-## Line 458
+### Line 458
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 458](../../../../../legacy/stdlib-legacy/transforms.plato#L458).
 
@@ -138,7 +164,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => Matrix4x4.CreateOrthographic(o.Width, o.Height, o.Near, o.Far);
 ```
 
-## Line 464
+### Line 464
 
 **Source:** [legacy/stdlib-legacy/transforms.plato, line 464](../../../../../legacy/stdlib-legacy/transforms.plato#L464).
 

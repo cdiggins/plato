@@ -3,11 +3,32 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The index of the point of the given rank, or -1 when there is none.
+
+## Signature
+
+```plato
+NeighborAtRank(self: KdTree2D, center: Point2D, rank: Integer): Integer
+NeighborAtRank(self: KdTree3D, center: Point3D, rank: Integer): Integer
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [spatial-structures.library](../spatial-structures.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 252
+### Line 252
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 252](../../../../../stdlib/geometry/spatial-structures.library.plato#L252).
 
@@ -18,7 +39,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Points.Count.Range.Reduce(-1, (acc, i) => self.NeighborRank(center, i) == rank ? i : acc);
 ```
 
-## Line 329
+### Line 329
 
 **Source:** [stdlib/geometry/spatial-structures.library.plato, line 329](../../../../../stdlib/geometry/spatial-structures.library.plato#L329).
 

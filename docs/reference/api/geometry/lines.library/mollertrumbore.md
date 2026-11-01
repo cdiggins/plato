@@ -3,11 +3,40 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The unnormalized barycentric-and-distance solution of the ray/triangle system,
+> as (determinant, u, v, t). Meaningful only where the determinant is non-zero;
+> the containment and forward-facing tests are TriangleHit's, not this one's.
+
+## Signature
+
+```plato
+MollerTrumbore(r: Ray3D, t: Triangle3D): Number4
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 335](../../../../../stdlib/geometry/lines.library.plato#L335): ray direction, so it vanishes exactly when the ray is parallel to the
+
+## Used by
+
+- [Intersect a ray with a triangle](../../../cookbook/ray-triangle.md)
+- [Geometric capabilities, primitives and bounds](../../../library/geometry/primitives.md)
+
+## Source
+
 **File:** [lines.library](../lines.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 327
+### Line 327
 
 **Source:** [stdlib/geometry/lines.library.plato, line 327](../../../../../stdlib/geometry/lines.library.plato#L327).
 

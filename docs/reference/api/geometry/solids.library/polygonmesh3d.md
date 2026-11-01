@@ -3,11 +3,34 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The five Platonic seeds are already projected onto the unit sphere, so
+> they pass through directly.
+
+## Signature
+
+```plato
+PolygonMesh3D(s: PlatonicSolid): PolygonMesh3D
+PolygonMesh3D(s: ArchimedeanSolid): PolygonMesh3D
+PolygonMesh3D(s: CatalanSolid): PolygonMesh3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Solids, constructive geometry and boundary representation](../../../library/geometry/solids-brep.md)
+
+## Source
+
 **File:** [solids.library](../solids.library.md). Kind: function. 3 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 357
+### Line 357
 
 **Source:** [stdlib/geometry/solids.library.plato, line 357](../../../../../stdlib/geometry/solids.library.plato#L357).
 
@@ -32,7 +55,7 @@ Copied from source, comments included. A comment records intent. The body is the
         };
 ```
 
-## Line 375
+### Line 375
 
 **Source:** [stdlib/geometry/solids.library.plato, line 375](../../../../../stdlib/geometry/solids.library.plato#L375).
 
@@ -59,7 +82,7 @@ Copied from source, comments included. A comment records intent. The body is the
         };
 ```
 
-## Line 395
+### Line 395
 
 **Source:** [stdlib/geometry/solids.library.plato, line 395](../../../../../stdlib/geometry/solids.library.plato#L395).
 

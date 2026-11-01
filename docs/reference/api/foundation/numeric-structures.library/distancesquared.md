@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `foundation`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The squared Euclidean distance between two 2D positions; avoids the square root.
+
+## Signature
+
+```plato
+DistanceSquared(a: Point2D, b: Point2D): Number
+DistanceSquared(a: Point3D, b: Point3D): Number
+DistanceSquared(a: PointN, b: PointN): Number
+DistanceSquared(a: IVector, b: IVector): Number
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Matrices, rotations and transforms](../../../library/foundation/matrices-transforms.md)
+- [Points, vectors, directions and axes](../../../library/foundation/points-vectors.md)
+
+## Source
+
 **File:** [numeric-structures.library](../numeric-structures.library.md). Kind: function. 4 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 420
+### Line 420
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 420](../../../../../stdlib/foundation/numeric-structures.library.plato#L420).
 
@@ -18,7 +42,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Between(b).MagnitudeSquared;
 ```
 
-## Line 428
+### Line 428
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 428](../../../../../stdlib/foundation/numeric-structures.library.plato#L428).
 
@@ -29,7 +53,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Between(b).MagnitudeSquared;
 ```
 
-## Line 437
+### Line 437
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 437](../../../../../stdlib/foundation/numeric-structures.library.plato#L437).
 
@@ -41,7 +65,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => a.Between(b).MagnitudeSquared;
 ```
 
-## Line 706
+### Line 706
 
 **Source:** [stdlib/foundation/numeric-structures.library.plato, line 706](../../../../../stdlib/foundation/numeric-structures.library.plato#L706).
 

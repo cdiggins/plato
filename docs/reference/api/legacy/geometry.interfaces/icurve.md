@@ -3,11 +3,35 @@
 
 **Status:** Legacy (tier `legacy`). The older library, compiled separately. New vocabulary does not go there.
 
+## Summary
+
+> Curves map a single Number to a point in 1D, 2D, 3D, or higher space.
+> They are effectively functions.
+
+## Signature
+
+```plato
+interface ICurve<TRange>
+    inherits IProcedural<Number, TRange>, IOpenClosedShape
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Concepts
+
+Inherits: [IProcedural](../procedurals/iprocedural.md), [IOpenClosedShape](iopenclosedshape.md).
+
+No type in this tier lists it in `implements`.
+
+## Source
+
 **File:** [geometry.interfaces](../geometry.interfaces.md). Kind: interface. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 67
+### Line 67
 
 **Source:** [legacy/stdlib-legacy/geometry.interfaces.plato, line 67](../../../../../legacy/stdlib-legacy/geometry.interfaces.plato#L67).
 

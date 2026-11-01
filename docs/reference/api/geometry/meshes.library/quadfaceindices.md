@@ -3,11 +3,48 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The four vertex indices of the quad cell whose low corner is grid vertex
+> (col, row), wound counter-clockwise:
+>
+>     d -- c
+>     |    |
+>     a -- b
+>
+> where a == (col, row), b == (col+1, row), c == (col+1, row+1) and
+> d == (col, row+1). The +1 neighbours wrap via `%`, so this function alone
+> always produces a closed cell; openness is expressed by the CALLER stopping
+> one short (see AllQuadFaceIndices). Preconditions: nCols > 0, nRows > 0, and
+> 0 \<= col \< nCols, 0 \<= row \< nRows.
+
+## Signature
+
+```plato
+QuadFaceIndices(col: Integer, row: Integer, nCols: Integer, nRows: Integer): QuadFace
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 326](../../../../../stdlib/geometry/meshes.library.plato#L326): array, exactly the case README.md reserves the typed index types for, and it
+
+## Used by
+
+- [Meshes, attributes and topology](../../../library/geometry/meshes.md)
+
+## Source
+
 **File:** [meshes.library](../meshes.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 312
+### Line 312
 
 **Source:** [stdlib/geometry/meshes.library.plato, line 312](../../../../../stdlib/geometry/meshes.library.plato#L312).
 

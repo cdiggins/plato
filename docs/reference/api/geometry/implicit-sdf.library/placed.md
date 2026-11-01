@@ -3,11 +3,37 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> Place a planar function SDF by a rigid pose and a uniform scale.
+> Precondition: scale is positive.
+
+## Signature
+
+```plato
+Placed(self: FunctionSdf2D, pose: Pose2D, scale: Number): PlacedSdf2D
+Placed(self: FunctionSdf3D, pose: Pose3D, scale: Number): PlacedSdf3D
+Placed(self: FunctionSdf2D, pose: Pose2D): PlacedSdf2D
+Placed(self: FunctionSdf3D, pose: Pose3D): PlacedSdf3D
+Placed(self: ISignedDistanceField2D, pose: Pose2D, scale: Number): PlacedSdf2D
+Placed(self: ISignedDistanceField3D, pose: Pose3D, scale: Number): PlacedSdf3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Fields, signed distance and deformations](../../../library/geometry/fields.md)
+
+## Source
+
 **File:** [implicit-sdf.library](../implicit-sdf.library.md). Kind: function. 6 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 272
+### Line 272
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 272](../../../../../stdlib/geometry/implicit-sdf.library.plato#L272).
 
@@ -19,7 +45,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self, pose, scale);
 ```
 
-## Line 277
+### Line 277
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 277](../../../../../stdlib/geometry/implicit-sdf.library.plato#L277).
 
@@ -31,7 +57,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => (self, pose, scale);
 ```
 
-## Line 282
+### Line 282
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 282](../../../../../stdlib/geometry/implicit-sdf.library.plato#L282).
 
@@ -42,7 +68,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Placed(pose, 1.0);
 ```
 
-## Line 286
+### Line 286
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 286](../../../../../stdlib/geometry/implicit-sdf.library.plato#L286).
 
@@ -53,7 +79,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.Placed(pose, 1.0);
 ```
 
-## Line 290
+### Line 290
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 290](../../../../../stdlib/geometry/implicit-sdf.library.plato#L290).
 
@@ -65,7 +91,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.FunctionSdf2D.Placed(pose, scale);
 ```
 
-## Line 295
+### Line 295
 
 **Source:** [stdlib/geometry/implicit-sdf.library.plato, line 295](../../../../../stdlib/geometry/implicit-sdf.library.plato#L295).
 

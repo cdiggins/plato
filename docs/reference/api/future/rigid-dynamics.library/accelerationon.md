@@ -3,11 +3,34 @@
 
 **Status:** Experimental (tier `future`). Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#.
 
+## Summary
+
+> The acceleration this force imparts to the body: force over mass (F = m a),
+> in meters per second squared. Precondition: the body's mass is positive
+> (https://en.wikipedia.org/wiki/Newton%27s\_laws\_of\_motion).
+
+## Signature
+
+```plato
+AccelerationOn(self: IForceModel2D, body: RigidBody2D): Vector2D
+AccelerationOn(self: IForceModel3D, body: RigidBody3D): Vector3D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Dynamics, collision, particles and cloth](../../../library/future/dynamics.md)
+
+## Source
+
 **File:** [rigid-dynamics.library](../rigid-dynamics.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 81
+### Line 81
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 81](../../../../../stdlib/future/rigid-dynamics.library.plato#L81).
 
@@ -20,7 +43,7 @@ Copied from source, comments included. A comment records intent. The body is the
         => self.ForceOn(body) / body.MassProperties.Mass.Amount;
 ```
 
-## Line 96
+### Line 96
 
 **Source:** [stdlib/future/rigid-dynamics.library.plato, line 96](../../../../../stdlib/future/rigid-dynamics.library.plato#L96).
 

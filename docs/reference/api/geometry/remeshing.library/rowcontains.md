@@ -3,11 +3,38 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> True when a vertex appears in a neighbour row.
+
+## Signature
+
+```plato
+RowContains(row: Array<VertexIndex>, vertex: VertexIndex): Boolean
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Notes from the source
+
+Comment lines in this name's slices that state a limit, quoted as written.
+
+- [Line 429](../../../../../stdlib/geometry/remeshing.library.plato#L429): the cost of accepting fewer collapses per pass.
+- [Line 431](../../../../../stdlib/geometry/remeshing.library.plato#L431): On top of that, every candidate must satisfy the LINK CONDITION, which is
+
+## Used by
+
+- [Spatial search and mesh reconstruction](../../../library/geometry/search-remeshing.md)
+
+## Source
+
 **File:** [remeshing.library](../remeshing.library.md). Kind: function. 1 declaration in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 411
+### Line 411
 
 **Source:** [stdlib/geometry/remeshing.library.plato, line 411](../../../../../stdlib/geometry/remeshing.library.plato#L411).
 

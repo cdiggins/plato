@@ -3,11 +3,35 @@
 
 **Status:** Supported (tier `geometry`). In a shipping tier; the lint, type-check, and code-generation gates cover it. No release promises its signature yet.
 
+## Summary
+
+> The polygon in canonical form: no repeated vertices, no collinear midpoints,
+> counter-clockwise. Area-preserving, so it is safe to apply to any input; it does
+> not repair a self-intersecting ring, which cannot be repaired without changing
+> the region it describes.
+
+## Signature
+
+```plato
+Canonical(p: Polygon2D): Polygon2D
+Canonical(r: PolygonWithHoles2D): PolygonWithHoles2D
+```
+
+## Laws
+
+No declared law names this symbol.
+
+## Used by
+
+- [Polygons, holes and triangulation](../../../library/geometry/triangulation.md)
+
+## Source
+
 **File:** [polygons.library](../polygons.library.md). Kind: function. 2 declarations in source order.
 
 Copied from source, comments included. A comment records intent. The body is the algorithm. Neither is a proof that the result is correct. Names resolve in the whole compilation.
 
-## Line 640
+### Line 640
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 640](../../../../../stdlib/geometry/polygons.library.plato#L640).
 
@@ -22,7 +46,7 @@ Copied from source, comments included. A comment records intent. The body is the
             .RingWithoutCollinearVertices.CounterClockwiseRing);
 ```
 
-## Line 672
+### Line 672
 
 **Source:** [stdlib/geometry/polygons.library.plato, line 672](../../../../../stdlib/geometry/polygons.library.plato#L672).
 
