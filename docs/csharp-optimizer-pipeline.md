@@ -399,6 +399,30 @@ stays an expression. The ids come from `TirLoopLowerer.NextId`, reset per genera
 | `All`, `Any` | `All` / `Any` | loop that stops early |
 | `FlatMap` | `FlatMap` | append each returned collection to one result `List<T>` |
 | `Reverse`, `WithNext`, `MapPairs`, `MapTriplets`, `MapQuartets` | same name | fill |
+| `Sorting.Sort`, `Sorting.SortedIndices` (`--closure-free`) | `Sort` / `SortIdx` | bottom-up merge sort with the comparator inline |
+| `Primitives.MakeArray2D` (`--lower-more`) | `Make2D` | row-major nested loops into one `new T[cols * rows]`, then `new Array2D<T>(...)` |
+| `Primitives.MakeArray3D` (`--lower-more`) | `Make3D` | three nested loops into one presized array, then `new Array3D<T>(...)` |
+| `Primitives.CartesianProduct` (`--lower-more`) | `Cartesian` | nested loops over both lists, then `new Array2D<T>(...)` |
+| `Primitives.Filter` (`--lower-more`) | `Filter` | `new T[source.Count]`, append on the predicate, `Array.Resize` once if shorter |
+
+`--lower-more` (`CSharpWriter.LowerMore`, `LoopOptimizationOptions.LowerMore`, default off, requires
+`--loops`; lambda removal L3) adds the last four kinds. Without it a `MakeArray2D` call survives as a
+delegate even under `--loops`, because the stdlib body wraps `f` in a second lambda for its `MapRange`
+(`MapRange(columns * rows, i => f(i % columns, i / columns))`): in the STEP mesher that was 94 call sites,
+73 of them the grid builders in `Meshes.g.cs`. Lowered, the grid's element index is a running counter
+(no division or remainder per cell), the callback's parameters are the loop counters, and the record is
+constructed once from the filled array. A grid with a non-positive extent has no cell; the record still
+carries the extents as given. The one difference from the stdlib body is the ill-formed call with every
+extent negative (the body's `MapRange` count is then positive): the lowered grid is empty. `Filter` fills an
+array presized to the source's count (every element may pass) and trims it with one `Array.Resize` when
+fewer did, so the common case allocates once and never grows a `List`. The owner check (`Callee.OwnerType`
+is `Primitives`) keeps a same-named library function out. The element type must be renderable
+(`IsRenderableConcrete`) and, for the grid kinds, so must the record type; a generic site keeps its call.
+`TirLoopInvariantHoister` treats the new loops like any other lambda-callback loop: its hoisted locals go
+inside `if (n > 0)` around the whole loop nest, so an empty grid evaluates none of them. `--presize` is
+unaffected (it sizes `List` builders in source `while` loops; these loops allocate their array once).
+Pinned by `tests/PlatoTests/Optimization/LowerMoreTests.cs` (values and callback order equal on and off,
+the hoist interaction, the type-variable refusal, and the switch-off text).
 
 The result array is bound as `IReadOnlyList<T> _lp<id> = _a<id>;` because every Plato array is an
 `IReadOnlyList<T>` in the emitted C# (a `T[]` temp gave compile errors in TKT-505).
