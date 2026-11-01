@@ -1,0 +1,53 @@
+// Fixture of CountBoundsTests: each function builds one array whose count the test states.
+library CountBoundsProbe
+{
+    Opaque(n: Integer): Integer => n;
+
+    Literal(): Integer
+    {
+        var a = (5).MapRange(i => i);
+        return a[0];
+    }
+
+    Folded(): Integer
+    {
+        var a = (3 * 4 + 2).MapRange(i => i);
+        return a[0];
+    }
+
+    Overflowing(): Integer
+    {
+        var a = (65536 * 65536).MapRange(i => i);
+        return a[0];
+    }
+
+    Guarded(xs: Array<Integer>): Integer
+    {
+        var a = (xs.Count + 1).MapRange(i => i);
+        return a[0];
+    }
+
+    GuardedMap(xs: Array<Integer>): Integer
+    {
+        var a = xs.Map(x => x + 1);
+        return a[0];
+    }
+
+    Divided(n: Integer): Integer
+    {
+        var a = (n / 2).MapRange(i => i);
+        return a[0];
+    }
+
+    Called(n: Integer): Integer
+    {
+        var a = Opaque(n).MapRange(i => i);
+        return a[0];
+    }
+
+    Literals(): Integer
+    {
+        var a = [1, 2, 3];
+        return a[0];
+    }
+}
