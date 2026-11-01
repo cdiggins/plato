@@ -35,3 +35,18 @@ library CallbackProbe
     Applied(x: Number, k: Number): Number => Apply(a => a * k, x);
     StoredDoubled(x: Number): Number => x.Stored(a => a + a);
 }
+
+type PairA { X: Number; Y: Number; }
+type PairB { U: Number; V: Number; }
+
+library CallbackProbeGeneric
+{
+    // A generic callee over Array: one clone per element type, though the lambda shape is the same.
+    Agree(xs: Array<$T>, ys: Array<$T>, f: Function2<$T, $T, Boolean>): Boolean {
+        var first = f(xs[0], ys[0]);
+        var second = f(xs[1], ys[1]);
+        return first ? second : false;
+    }
+    AgreeA(xs: Array<PairA>, ys: Array<PairA>): Boolean => xs.Agree(ys, (p, q) => true);
+    AgreeB(xs: Array<PairB>, ys: Array<PairB>): Boolean => xs.Agree(ys, (p, q) => true);
+}

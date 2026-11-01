@@ -242,8 +242,17 @@ public static class TirCallbackSpecializer
             // The lambda shapes, with captures abstracted; shared captures are abstracted once.
             var captures = new List<Capture>();
             var captureIndex = new Dictionary<object, int>(ReferenceEqualityComparer.Instance);
+            // The key names the resolved callee, the receiver type and, for a generic callee, the signature
+            // the call site spells: the lambda shape `(x, y) => x.Equals(y)` is the same over every element
+            // type, and a clone over IReadOnlyList<BrepCurve> cannot serve a call over IReadOnlyList<Vertex>.
             var key = new StringBuilder($"F{_registry.Id(callee)}@{receiverTypeName}");
             var stable = new StringBuilder($"{callee.OwnerType?.Name}.{callee.Name}@{receiverTypeName}");
+            if (siteTypes != null)
+            {
+                var signature = $"<{string.Join(",", siteTypes)}>{returnType}";
+                key.Append(signature);
+                stable.Append(signature);
+            }
             var lambdas = new Dictionary<int, TirLambda>();
             foreach (var i in lambdaAt)
             {
