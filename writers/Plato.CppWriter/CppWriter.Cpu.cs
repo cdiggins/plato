@@ -36,6 +36,7 @@ namespace Ara3D.Geometry.CppWriter
     public partial class CppWriter
     {
         public CppCpuOptions CpuOptions { get; set; } = CppCpuOptions.Default;
+        internal CppTirPipeline CpuPipeline { get; } = new CppTirPipeline();
 
         public bool IsCpu => Dialect == CppDialect.Cpu;
 

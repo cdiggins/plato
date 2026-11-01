@@ -112,3 +112,5 @@ Verification lives in `../Plato.CppWriter.Tests` (gates run with `inlineCalls: t
 
 `CppWriter.cs` coordinates declarations and output. `TirCppBodyWriter.cs` renders typed intermediate representation (typed IR) function bodies, and `PlatoAnalyzer.cs` selects function implementations. `CppWriterExtensions.cs` provides the compilation entry point.
 `CppPrelude.cs` supplies target math and vector helpers; `CppDialect.cs` selects portable C++ or CUDA.
+
+CPU optimization context is owned by each CppWriter. Separate compilations may generate concurrently without sharing the cached optimization host or options. A single writer remains a mutable, single-operation emitter. The shared passes and their order are unchanged.

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-01T10:25:18-05:00",
+  "updated_at": "2026-11-01T11:15:43-05:00",
   "note": "Written by tools/record-gates.py at 2026-07-31T19:14:42-04:00.",
   "gates": [
     {
@@ -121,7 +121,7 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-11-01T10:25:18-05:00",
+    "updated_at": "2026-11-01T11:15:43-05:00",
     "targets": {
       "forward-conformance": {
         "built_at": "2026-08-02T15:27:35-04:00",
@@ -361,14 +361,28 @@
           "CS0108": 10,
           "CS0162": 1
         }
+      },
+      "cpp-pipeline-isolation": {
+        "built_at": "2026-11-01T11:15:43-05:00",
+        "project": "C:\\Users\\cdigg\\git\\plato-decoder-wave\\tests\\Plato.CppWriter.Tests\\Plato.CppWriter.Tests.csproj",
+        "log": "C:\\Users\\cdigg\\git\\plato-decoder-wave\\.temp\\csharp-build-logs\\cpp-pipeline-isolation.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 0,
+        "summary_errors": 0,
+        "summary_warnings": 0,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {}
       }
     },
-    "latest_target": "cpp-string-borrowing",
+    "latest_target": "cpp-pipeline-isolation",
     "latest": {
-      "target": "cpp-string-borrowing",
+      "target": "cpp-pipeline-isolation",
       "total_errors": 0,
-      "total_warnings": 11,
-      "built_at": "2026-11-01T10:25:18-05:00",
+      "total_warnings": 0,
+      "built_at": "2026-11-01T11:15:43-05:00",
       "exit_code": 0,
       "by_category": {},
       "by_code_top": {}

@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-11-01 — [compiler-539](issues/compiler-539.md) — Isolate native optimization context per writer — done: per-writer host and scoped counters; concurrent generation regression passed
 - 2026-10-25 — [compiler-535](issues/compiler-535.md) — Complete optimizer recipe exceeds BREP generation budget — done (6d64d604): bounded fold expansion; full BREP recipe generates and builds
 - 2026-10-25 — [compiler-522](issues/compiler-522.md) — Prepared-corpus optimizer performance benchmark for plato-brep — done (6bf68914c38a232a6210f39ca69c3feba712fe93)
 - 2026-10-25 — [docs-523](issues/docs-523.md) — Hierarchical language and standard-library reference with React reader — done (bf35c348ee3d6876cc8102d7ea064fa444b0879c)
