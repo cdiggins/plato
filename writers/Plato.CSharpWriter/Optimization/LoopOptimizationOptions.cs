@@ -34,4 +34,7 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     // --specialize-callbacks (plato-brep lambda removal L2): a lambda literal passed to a function-typed
     // parameter calls a clone of the callee with the lambda body substituted (TirCallbackSpecializer).
     public bool SpecializeCallbacks { get; init; }
+    // --specialize-callbacks-lean (requires --specialize-callbacks): no clones for validation bodies (`Check_`),
+    // and a lambda that uses its parameter twice gets a helper method instead of a refusal.
+    public bool SpecializeCallbacksLean { get; init; }
 }

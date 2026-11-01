@@ -680,6 +680,28 @@ syntactic call the sharing pass does not key, so two identical clone calls in on
 clone call (no callee body). `--cache-constants`: a clone call is never a closed constant. The inliner
 runs first and keeps every β-reduction it already made; the pass takes only what it refused.
 
+**`--specialize-callbacks-lean`** (requires `--specialize-callbacks`; with it off the output is byte-identical
+to `--specialize-callbacks` alone). Two changes, one per cost the switch showed on plato-brep.
+
+* *Validation callers.* A site whose enclosing body is a `Check_` member is refused as `validation body`
+  (the `Law_` pattern). Those bodies are validation code the mesher never runs, and the combinators they call
+  (`CheckAll`, `CheckGrid`, `CheckInstances`, ...) re-wrap their callbacks, so refusing the root site also
+  stops the chain of clones below it. On the shipped program (library cff5aaaed, the twenty-one flags) this
+  takes 3,391 sites into 2,676 clones, 3.03 MB, to 2,167 sites into 1,475 clones, 1.64 MB; no site whose
+  caller is not a `Check*` or `HoldsFor*` body is lost. The policy is the caller prefix only: a callee-family
+  rule (`Check*` callees) would drop seven more sites called from `DenseTopologyChecks`,
+  `RootIsLowestGrid` and the `IntegerValidation*Case` functions, validation too but not provably off the
+  mesher's path from a name.
+* *Parameter used twice.* When a lambda uses its parameter twice and the invocation argument is not cheap
+  to repeat, the clone no longer fails (`invocation argument used more than once`). The lambda body becomes
+  a helper method of the same file, `{Callee}_{hash}_L{position}`, taking the invocation's arguments then the
+  captures the lambda names, and the invocation calls it. The call binds the argument once, evaluated where
+  the invocation was and in the same order, so this is the let form without a statement to hoist it to (an
+  invocation can sit under a conditional or the right side of `&&`, where a hoisted `let` would evaluate the
+  argument eagerly). Helpers are clones in the registry (`AggressiveInlining`, the callee's context) and are
+  taken back with the clone if its build then fails. The 18 chordal sites of plato-brep
+  (`ElementWithinChordalShared`, `SplitWithinChordalSharedCounted` and the like) specialize.
+
 ## 8. Worked example
 
 Consider `Example` from section 4, with `Map` a bodiless signature in a self-contained test corpus,

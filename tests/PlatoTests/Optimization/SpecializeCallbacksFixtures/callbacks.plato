@@ -34,6 +34,20 @@ library CallbackProbe
     Doubled(x: Number): Number => x.Iterate(a => a + a);
     Applied(x: Number, k: Number): Number => Apply(a => a * k, x);
     StoredDoubled(x: Number): Number => x.Stored(a => a + a);
+    // Applies the callback to a computed argument: a lambda using its parameter twice cannot take it by
+    // substitution (the work would repeat), so --specialize-callbacks-lean calls a helper with it.
+    // A statement body, so the inliner leaves the call (and the work) in the argument.
+    Shifted(x: Number): Number {
+        var t = x * 2.0;
+        return t + 1.0;
+    }
+    ShiftThen(x: Number, f: Function1<Number, Number>): Number {
+        var y = f(x.Shifted);
+        return y + 1.0;
+    }
+    Squared(x: Number, k: Number): Number => x.ShiftThen(a => a * a + k);
+    // A validation caller: --specialize-callbacks-lean leaves its lambda alone.
+    Check_Tripled(x: Number): Number => x.Iterate(a => a * 3.0);
 }
 
 type PairA { X: Number; Y: Number; }

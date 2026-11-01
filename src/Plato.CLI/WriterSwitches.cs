@@ -46,6 +46,7 @@ public static class WriterSwitches
         new("primitive-compare", true),
         new("lower-more", true, "loops"),
         new("specialize-callbacks", true),
+        new("specialize-callbacks-lean", false, "specialize-callbacks"),
     };
 
     public static bool IsSwitch(string name) => Table.Any(s => s.Name == name);
@@ -97,6 +98,7 @@ public static class WriterSwitches
             SwitchMatch = s["switch-match"],
             LowerMore = s["lower-more"],
             SpecializeCallbacks = s["specialize-callbacks"],
+            SpecializeCallbacksLean = s["specialize-callbacks-lean"],
         };
 }
 
