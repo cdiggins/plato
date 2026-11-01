@@ -34,6 +34,9 @@ Plato source
   -> 4. TirLoopLowerer.Rewrite                           --loops
   -> 5. TirInPlaceUpdates.Rewrite                        --in-place
   -> 6. TirLoopInvariantHoister.Rewrite                --loops --hoist-invariants
+  -> (body writer entry, after its own TirLambdaCaptureRewriter.Rewrite)
+     7. TirStorageResolver.Resolve                       --owned-arrays (section 7f)
+     8. StorageChecker.Check                             --owned-arrays; a violation discards 7 for that body
   -> TirCSharpBodyWriter                                 always on; prints the final tree as C#
        scalar lowering (not a TIR pass)                 --lower-scalars
        TirExactOutput specialization                    --loops --exact-output
@@ -442,7 +445,8 @@ Pinned by `tests/PlatoTests/Optimization/LowerMoreTests.cs` (values and callback
 the hoist interaction, the type-variable refusal, and the switch-off text).
 
 The result array is bound as `IReadOnlyList<T> _lp<id> = _a<id>;` because every Plato array is an
-`IReadOnlyList<T>` in the emitted C# (a `T[]` temp gave compile errors in TKT-505).
+`IReadOnlyList<T>` in the emitted C# (a `T[]` temp gave compile errors in TKT-505). With `--owned-arrays`
+the plan may name the temporary Heap instead; it is then declared `T[] _lp<id> = _a<id>;` (section 7f).
 `FlatMap` exposes its result list through the same interface. Normally it evaluates the callback's
 collection and copies its elements. For a raw expression-bodied lambda whose body is a conditional,
 the emitter can append a raw singleton-array arm directly with `List<T>.Add`, avoiding that temporary
@@ -721,6 +725,42 @@ unrolled with its lambda. `--lower-scalars` prints the unrolled arithmetic on th
 unrelated body (`LastIndex`, `Middle`) prints as the literal `Unsafe.BitCast<int, Integer>(3)`; `--cache-constants`
 numbers its holder classes by emission order, so the flag renumbers some `_ConstN` names in files it does not otherwise
 change.
+
+## 7g. Owned array storage (`--owned-arrays`, TKT-1152)
+
+Every Plato array is an `IReadOnlyList<T>` in the emitted C#, and every read of one pays a run-time type test
+(`ConcreteArrayAccess.At`) because the printer once chose the representation per print site and TKT-505 forced the
+interface onto every lowered temporary. `--owned-arrays` makes the representation an explicit decision. At the body
+writer's entry, after its own capture rewrite, `TirStorageResolver.Resolve` records one `ArrayStorage` per binding in
+a `StoragePlan` (carried to the printer by a `TirStorageScope` root), inserts a `TirRepresent` node wherever a value's
+storage changes, and `StorageChecker.Check` verifies the result before anything prints: a violation prints that body
+with today's storage and counts a refusal (it throws under the tests' strict mode). The printer decides nothing: it
+reads `StoragePlan.Of(node)` and prints names, declarations and `TirRepresent` mechanically.
+
+Storage of a lowered-loop temporary in this chunk (C2b), by the rules of `TirStorageResolver`:
+
+- **Heap** (`T[]`): the loop kind fills its own array (`Map`, `MapIdx`, `MapRange`, `Zip2`, `Zip3`, `Reverse`,
+  `WithNext`, `MapPairs`, `MapTriplets`, `MapQuartets`, `Sort`, `SortIdx`, `Filter`), the name is declared once
+  (`TirOwnership`), no other array is assigned to it, and no `SetAt` updates it. The declaration is
+  `T[] _lp<id> = _a<id>;`.
+- **List** (`IReadOnlyList<T>`, today's form): every other temporary (a `Reduce` accumulator, a `FlatMap` result,
+  a grid record, an `All`/`Any` flag), and a producing temporary that fails a Heap condition. The refusal is
+  recorded on the plan with its reason.
+
+Where a Heap temporary is read, the printer writes `x[i]` and `x.Length`, with no `ConcreteArrayAccess` test: as the
+receiver of `Count` or `At`, and as the source of a lowered loop. Everywhere else (a return, a `Reduce` seed, a
+`FlatMap` source, a conditional or match arm, a binding, a call or constructor argument, a lambda result) the
+resolver wraps the reference in `TirRepresent(Heap -> List)`, printed `((IReadOnlyList<T>)x)`, the same object, no
+copy. The conversion table is `CSharpStorageRules.MayConvert`: Heap to List, Heap to Borrowed, Stack to Borrowed;
+Stack or Borrowed to List would be a hidden copy and is rejected by rule S2.
+
+An index outside a Heap array throws `IndexOutOfRangeException`; the interface form throws
+`ArgumentOutOfRangeException`. The law runner and the differential run treat any two faults alike, so verdicts are
+unchanged (plan open question 1, default: accepted). Tests:
+`tests/PlatoTests/Emission/OwnedArrayEmissionTests.cs` compiles each TKT-505 shape of
+`OwnedArrayFixtures/owned.plato` with Roslyn under the nineteen pinned flags plus `--owned-arrays`, and compares
+values with the flag off; `tests/Plato.Interpreter.Tests/OwnedArrayProgramTests.cs` runs the fixture's laws in the
+interpreter and compiled, flag off and on.
 
 ## 8. Worked example
 

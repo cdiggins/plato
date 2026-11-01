@@ -22,12 +22,16 @@ public partial class TirCSharpBodyWriter
         var srcCounts = new List<string>();
         // Under --concrete-arrays a source list's reads go through ConcreteArrayAccess.
         var srcLists = new List<bool>();
+        // Under --owned-arrays a source the plan holds as Heap is a T[] and reads as one.
+        var srcStorage = new List<ArrayStorage>();
         for (var s = 0; s < ll.Sources.Count; s++)
         {
             var name = ll.Sources.Count == 1 ? $"_s{k}" : $"_s{k}{(char)('a' + s)}";
             srcNames.Add(name);
             srcLists.Add(!ll.IndexSource && IsInterfaceList(ll.Sources[s]));
-            srcCounts.Add(srcLists[s] ? ListCount(name) : $"{name}.Count");
+            srcStorage.Add(ll.IndexSource ? ArrayStorage.List : StorageOf(ll.Sources[s]));
+            srcCounts.Add(srcStorage[s] != ArrayStorage.List ? ListCount(name, srcStorage[s])
+                : srcLists[s] ? ListCount(name) : $"{name}.Count");
             Write($"var {name} = ");
             // A count source (MapRange, or the index source of a fused chain) is an Integer: lowered,
             // the bare int, so the Max and the loop bound below convert nothing.
@@ -121,7 +125,8 @@ public partial class TirCSharpBodyWriter
             if (stages[st] is TirLambda sl)
                 foreach (var p in sl.Parameters)
                     _loopParamNames[p] = $"{CSharpTypeWriter.Identifier(p.Name)}_{k}s{st}";
-        string Src(int s, string index) => srcLists[s] ? ListAt(srcNames[s], index) : $"{srcNames[s]}[{index}]";
+        string Src(int s, string index) => srcStorage[s] != ArrayStorage.List ? ListAt(srcNames[s], index, srcStorage[s])
+            : srcLists[s] ? ListAt(srcNames[s], index) : $"{srcNames[s]}[{index}]";
         var count0 = ll.IndexSource ? $"System.Math.Max(0, (int){srcNames[0]})" : srcCounts[0];
         Operand Elem()
         {
@@ -446,7 +451,13 @@ public partial class TirCSharpBodyWriter
                 break;
         }
         if (TirLoopLowerer.ProducesArray(ll.Kind))
-            WriteLine($"IReadOnlyList<{elem}> {t} = {a};");
+        {
+            // The temporary the rest of the body reads: the interface every Array<T> value has, or, when the plan
+            // owns it (--owned-arrays), the array itself, which every consumer of another storage reaches
+            // through a TirRepresent.
+            _tempElementTypes[t] = elem;
+            WriteLine(_plan?.OfTemp(t) == ArrayStorage.Heap ? $"{elem}[] {t} = {a};" : $"IReadOnlyList<{elem}> {t} = {a};");
+        }
         if (lam != null)
             foreach (var p in lam.Parameters)
                 UnbindLoopParameter(p);

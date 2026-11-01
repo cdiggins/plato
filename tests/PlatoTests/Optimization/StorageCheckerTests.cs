@@ -320,12 +320,17 @@ public static class StorageCheckerTests
             OwnedArrays = ownedArrays, OwnedArraysStrict = ownedArrays,
         };
 
+    // A resolver that assigns List everywhere: the C2a contract, which later chunks widen (C2b gives owned
+    // lowered temporaries Heap), so the byte identity holds for the layer itself, not for the real resolver.
+    private static TirStorageScope ListOnly(TirNode body, FunctionDef owner) => new(body, new StoragePlan(owner));
+
     [Test]
-    public static void FlagOnPrintsTheSameBytesAsFlagOff()
+    public static void FlagOnWithAListOnlyResolverPrintsTheSameBytesAsFlagOff()
     {
         var off = PinnedWriter(false);
         off.WriteAll();
         var on = PinnedWriter(true);
+        on.StorageResolver = ListOnly;
         on.WriteAll();
 
         Assert.That(off.StorageBodiesChecked, Is.EqualTo(0), "off: the pass does not run");
@@ -339,7 +344,10 @@ public static class StorageCheckerTests
     [Test]
     public static void ResolverWrapsTheCaptureRewrittenBodyWithoutCopyingIt()
     {
+        // The identity is the layer's (List-only resolver); the real resolver may insert TirRepresent nodes,
+        // and ResolverTakesNoCaptureNumberAndPassesTheChecker covers it.
         var writer = PinnedWriter(true);
+        writer.StorageResolver = ListOnly;
         var target = new CSharpStorageTarget(writer);
         var probe = Compilation.Value.LibraryDefinitionsByName["OwnershipProbe"].Functions;
         Assert.That(probe, Is.Not.Empty);
@@ -360,6 +368,25 @@ public static class StorageCheckerTests
                 $"{function.Name}: the unwrapped body is the tree one rewrite gives (the counter restarted)");
             Assert.That(StorageChecker.Check(scope, target), Is.Empty, function.Name);
             Assert.That(scope.Plan.Slots, Is.Empty);
+            Assert.That(scope.Plan.Owner, Is.SameAs(tir.Original));
+        }
+    }
+
+    [Test]
+    public static void ResolverTakesNoCaptureNumberAndPassesTheChecker()
+    {
+        var writer = PinnedWriter(true);
+        var target = new CSharpStorageTarget(writer);
+        foreach (var function in Compilation.Value.LibraryDefinitionsByName["OwnershipProbe"].Functions)
+        {
+            var tir = writer.RunOptimizerPasses(writer.TryGetStaticTir(function), null);
+            SymbolRewriter.NextId = 0;
+            var rewritten = TirLambdaCaptureRewriter.Rewrite(tir.Body);
+            var counter = SymbolRewriter.NextId;
+            var scope = writer.ResolveStorage(tir, rewritten) as TirStorageScope;
+            Assert.That(SymbolRewriter.NextId, Is.EqualTo(counter), function.Name);
+            Assert.That(scope, Is.Not.Null, function.Name);
+            Assert.That(StorageChecker.Check(scope, target), Is.Empty, function.Name);
             Assert.That(scope.Plan.Owner, Is.SameAs(tir.Original));
         }
     }

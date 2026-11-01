@@ -676,9 +676,10 @@ namespace Ara3D.Geometry.CSharpWriter
         public int StorageBodiesChecked;
         public int StorageRefusals;
         public readonly List<string> StorageRefusalLog = new List<string>();
-        // The resolver to run; replaced only by tests that need a plan the checker refuses.
-        public System.Func<TirNode, FunctionDef, TirStorageScope> StorageResolver { get; set; } = TirStorageResolver.Resolve;
+        // The resolver to run in place of TirStorageResolver; set only by tests that need a plan the checker refuses.
+        public System.Func<TirNode, FunctionDef, TirStorageScope> StorageResolver { get; set; }
         private CSharpStorageTarget _storageTarget;
+        private TirArrayIdentity _storageIdentity;
 
         /// <summary>Passes 7 and 8 of the pipeline: resolves the storage of <paramref name="body"/> (already
         /// capture-rewritten) and checks it. Returns the <see cref="TirStorageScope"/> to print, or the body
@@ -687,7 +688,9 @@ namespace Ara3D.Geometry.CSharpWriter
         {
             if (!OwnedArrays || body == null)
                 return body;
-            var scope = StorageResolver(body, tir?.Original);
+            var scope = StorageResolver != null
+                ? StorageResolver(body, tir?.Original)
+                : TirStorageResolver.Resolve(body, tir?.Original, _storageIdentity ??= new TirArrayIdentity(Compilation));
             StorageBodiesChecked++;
             var violations = StorageChecker.Check(scope, _storageTarget ??= new CSharpStorageTarget(this));
             if (violations.Count == 0)
