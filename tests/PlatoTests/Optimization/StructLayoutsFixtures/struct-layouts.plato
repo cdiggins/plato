@@ -1,0 +1,27 @@
+// StructLayouts (TKT-1152 C4): one type per unmanaged case. A library function mentions each so the
+// compilation keeps it.
+type SlVec { X: Number; Y: Number; Z: Number; }
+
+type SlSegment { A: SlVec; B: SlVec; Tag: Boolean; }
+
+type SlTable { Name: Integer; Rows: Array<Number>; }
+
+type SlText { Id: Integer; Label: String; }
+
+interface ISlShape { }
+
+type SlHolder { Shape: ISlShape; }
+
+type SlBox<T> { Value: T; Count: Integer; }
+
+library StructLayoutsProbe
+{
+    Vec(v: SlVec): SlVec => v;
+    Segment(v: SlSegment): SlSegment => v;
+    Table(v: SlTable): SlTable => v;
+    Text(v: SlText): SlText => v;
+    Holder(v: SlHolder): SlHolder => v;
+    BoxNumber(v: SlBox<Number>): SlBox<Number> => v;
+    BoxVec(v: SlBox<SlVec>): SlBox<SlVec> => v;
+    BoxTable(v: SlBox<SlTable>): SlBox<SlTable> => v;
+}
