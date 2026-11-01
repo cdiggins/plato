@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-01T11:18:27-05:00",
+  "updated_at": "2026-11-01T11:23:32-05:00",
   "note": "Written by tools/record-gates.py at 2026-07-31T19:14:42-04:00.",
   "gates": [
     {
@@ -121,7 +121,7 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-11-01T11:18:27-05:00",
+    "updated_at": "2026-11-01T11:23:32-05:00",
     "targets": {
       "forward-conformance": {
         "built_at": "2026-08-02T15:27:35-04:00",
@@ -392,14 +392,36 @@
           "CS0108": 10,
           "CS0162": 1
         }
+      },
+      "bytes-json-parity": {
+        "built_at": "2026-11-01T11:23:32-05:00",
+        "project": "C:\\Users\\cdigg\\git\\plato-decoder-wave\\tests\\Plato.Intrinsics.Tests\\Plato.Intrinsics.Tests.csproj",
+        "log": "C:\\Users\\cdigg\\git\\plato-decoder-wave\\.temp\\csharp-build-logs\\bytes-json-parity.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 17,
+        "summary_errors": 0,
+        "summary_warnings": 17,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {
+          "CS8625": 7,
+          "CS8604": 3,
+          "CS8601": 2,
+          "NUNIT2007": 2,
+          "CS0162": 1,
+          "CS8603": 1,
+          "CS8607": 1
+        }
       }
     },
-    "latest_target": "cpp-scratch-lifetime",
+    "latest_target": "bytes-json-parity",
     "latest": {
-      "target": "cpp-scratch-lifetime",
+      "target": "bytes-json-parity",
       "total_errors": 0,
-      "total_warnings": 11,
-      "built_at": "2026-11-01T11:18:27-05:00",
+      "total_warnings": 17,
+      "built_at": "2026-11-01T11:23:32-05:00",
       "exit_code": 0,
       "by_category": {},
       "by_code_top": {}

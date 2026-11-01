@@ -29,6 +29,18 @@ int main()
     CHECK(big != nullptr);
     arena_reset();
 
+    // Bytes JSON must preserve Latin-1 values, including control bytes and UTF-8 encodings above 127.
+    uint8_t everyByte[256];
+    for (int i = 0; i < 256; ++i) everyByte[i] = static_cast<uint8_t>(i);
+    const auto byteValues = make_array(make_bytes(everyByte, 256), Bytes{});
+    const auto byteJson = json_dump(to_json(byteValues));
+    Json byteParsed;
+    CHECK(json_parse(byteJson, byteParsed));
+    Array<Bytes> byteRestored;
+    from_json(byteParsed, byteRestored);
+    CHECK(byteRestored.count == 2 && byteRestored.data[0] == byteValues.data[0] && byteRestored.data[1].count == 0);
+    CHECK(to_json(make_bytes(everyByte + 128, 1)).s == std::string("\xc2\x80"));
+
     // Range, Map, Reduce, FlatMap, Zip
     Array<int32_t> r = Range(5);
     CHECK(ToCount(r) == 5 && At(r, 4) == 4);

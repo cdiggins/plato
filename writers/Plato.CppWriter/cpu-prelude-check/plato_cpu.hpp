@@ -1207,6 +1207,27 @@ namespace plato
     inline void from_json(const Json& j, bool& v) { v = j.as_bool(); }
     inline void from_json(const Json& j, char& v) { v = j.is_string() && !j.s.empty() ? j.s[0] : '\0'; }
     inline void from_json(const Json& j, std::string& v) { v = j.is_string() ? j.s : std::string(); }
+    // Bytes use the managed Latin-1 JSON string representation; Json strings store UTF-8.
+    inline void from_json(const Json& j, Bytes& value)
+    {
+        if (!j.is_string() || j.s.size() > static_cast<size_t>(INT32_MAX)) std::abort();
+        auto* bytes = arena_alloc<uint8_t>(static_cast<int32_t>(j.s.size()));
+        int32_t count = 0;
+        for (size_t i = 0; i < j.s.size(); ++i)
+        {
+            const auto c = static_cast<uint8_t>(j.s[i]);
+            if (c < 128) bytes[count++] = c;
+            else
+            {
+                if ((c != 0xc2 && c != 0xc3) || ++i >= j.s.size()) std::abort();
+                const auto next = static_cast<uint8_t>(j.s[i]);
+                if (next < 0x80 || next > 0xbf) std::abort();
+                bytes[count++] = static_cast<uint8_t>(((c & 3) << 6) | (next & 0x3f));
+            }
+        }
+        value = { bytes, count };
+    }
+
     template <class T>
     inline void from_json(const Json& j, Array<T>& a)
     {
@@ -1222,6 +1243,17 @@ namespace plato
     inline Json to_json(bool v) { return Json::Bool(v); }
     inline Json to_json(char v) { return Json::String(std::string(1, v)); }
     inline Json to_json(const std::string& v) { return Json::String(v); }
+    inline Json to_json(const Bytes& value)
+    {
+        std::string utf8;
+        for (int32_t i = 0; i < value.count; ++i)
+        {
+            const auto c = value.data[i];
+            if (c >= 128) utf8.push_back(static_cast<char>(0xc0 | (c >> 6)));
+            utf8.push_back(static_cast<char>(c < 128 ? c : 0x80 | (c & 0x3f)));
+        }
+        return Json::String(std::move(utf8));
+    }
     template <class T>
     inline Json to_json(const Array<T>& a)
     {
