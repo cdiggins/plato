@@ -114,3 +114,5 @@ Verification lives in `../Plato.CppWriter.Tests` (gates run with `inlineCalls: t
 `CppPrelude.cs` supplies target math and vector helpers; `CppDialect.cs` selects portable C++ or CUDA.
 
 CPU optimization context is owned by each CppWriter. Separate compilations may generate concurrently without sharing the cached optimization host or options. A single writer remains a mutable, single-operation emitter. The shared passes and their order are unchanged.
+
+The CPU runtime defines PLATO_ARENA_LIFETIMES and owns nontrivial array element destruction. Hosts must use plato::arena_mark()/arena_rollback() rather than changing ArenaBlock.used directly: rollback destroys temporary elements in reverse order before storage reuse. Reset also destroys elements; thread exit releases elements and blocks. Marks cannot cross threads or reset. Array views must not outlive their region. Allocation-size overflow aborts. Constructors and destructors used in the no-exception runtime must not throw.
