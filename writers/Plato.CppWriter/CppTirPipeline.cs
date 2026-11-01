@@ -30,6 +30,7 @@ namespace Ara3D.Geometry.CppWriter
                 FuseCombinators = options.Fuse,
                 FuseConsumers = options.FuseConsumers,
                 ExactOutputAllocation = options.ExactOutput,
+                ShareCalls = options.ShareCalls,
             };
             _hostCompilation = w.Compilation;
             _hostOptions = options;
@@ -57,6 +58,7 @@ namespace Ara3D.Geometry.CppWriter
                 tir = TirInliner.Inline(tir, host, ownerTypeName, out _);
                 tir = TirFusion.Rewrite(tir, host);
                 tir = TirMultiConsumerFusion.Rewrite(tir, host);
+                tir = TirSharedCalls.Rewrite(tir, host);
                 return TirLoopLowerer.Rewrite(tir, host);
             }
             finally

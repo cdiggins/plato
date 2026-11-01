@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-01T11:23:32-05:00",
+  "updated_at": "2026-11-01T11:30:02-05:00",
   "note": "Written by tools/record-gates.py at 2026-07-31T19:14:42-04:00.",
   "gates": [
     {
@@ -121,7 +121,7 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-11-01T11:23:32-05:00",
+    "updated_at": "2026-11-01T11:30:02-05:00",
     "targets": {
       "forward-conformance": {
         "built_at": "2026-08-02T15:27:35-04:00",
@@ -414,14 +414,28 @@
           "CS8603": 1,
           "CS8607": 1
         }
+      },
+      "cpp-shared-calls": {
+        "built_at": "2026-11-01T11:30:02-05:00",
+        "project": "C:\\Users\\cdigg\\git\\plato-decoder-wave\\tests\\Plato.CppWriter.Tests\\Plato.CppWriter.Tests.csproj",
+        "log": "C:\\Users\\cdigg\\git\\plato-decoder-wave\\.temp\\csharp-build-logs\\cpp-shared-calls.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 0,
+        "summary_errors": 0,
+        "summary_warnings": 0,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {}
       }
     },
-    "latest_target": "bytes-json-parity",
+    "latest_target": "cpp-shared-calls",
     "latest": {
-      "target": "bytes-json-parity",
+      "target": "cpp-shared-calls",
       "total_errors": 0,
-      "total_warnings": 17,
-      "built_at": "2026-11-01T11:23:32-05:00",
+      "total_warnings": 0,
+      "built_at": "2026-11-01T11:30:02-05:00",
       "exit_code": 0,
       "by_category": {},
       "by_code_top": {}
