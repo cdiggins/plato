@@ -56,16 +56,17 @@ internal static class GenerateCommand
             SwitchMatch = args.Contains("--switch-match"),
             LowerMore = args.Contains("--lower-more"),
             SpecializeCallbacks = args.Contains("--specialize-callbacks"),
+            OwnedArrays = args.Contains("--owned-arrays"),
         };
         if (loopOptimizations.LowerMore && (!loops || typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--lower-more requires C# generation with --loops.");
             return 1;
         }
-        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks)
+        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks || loopOptimizations.OwnedArrays)
             && (typeScript || rust || glsl || cpp || cuda))
         {
-            Console.Error.WriteLine("--cache-constants, --primitive-compare and --specialize-callbacks apply to C# generation only.");
+            Console.Error.WriteLine("--cache-constants, --primitive-compare, --specialize-callbacks and --owned-arrays apply to C# generation only.");
             return 1;
         }
         if (loopOptimizations.HoistInvariants && (!loops || typeScript || rust || glsl || cpp || cuda))
@@ -259,6 +260,12 @@ internal static class GenerateCommand
             {
                 var s = output.Specializations;
                 logger.Log($"Callbacks specialized: {s.SitesSpecialized} sites into {s.Clones.Count} clones; refused: {string.Join(", ", s.Refusals.Select(r => $"{r.Key} {r.Value}"))}");
+            }
+            if (loopOptimizations.OwnedArrays)
+            {
+                logger.Log($"Owned arrays: {output.StorageBodiesChecked} bodies checked, {output.StorageRefusals} refused by the storage checker");
+                foreach (var refusal in output.StorageRefusalLog)
+                    logger.Log($"  storage refusal: {refusal}");
             }
             if (output.DegradedBodies.Count > 0)
             {

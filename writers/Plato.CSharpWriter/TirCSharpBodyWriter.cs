@@ -43,6 +43,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // --in-params (null when off): see LargeStructPassing.
     private LargeStructPassing _largeStructs => _tw.Writer.LargeStructs;
     private HashSet<VariableDef> _nonRefLocals;
+    // --owned-arrays: the storage plan of the body being written (null when the flag is off or the plan was refused).
+    private StoragePlan _plan;
 
     public TirCSharpBodyWriter(CSharpTypeWriter tw, TirFunction tir, bool isStatic = false,
         CSharpFunctionInfo fi = null)
@@ -248,7 +250,9 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
         // The reference writer hoists lambda-captured references into `var _var{N} = x;` blocks
         // before emitting (RewriteLambdasCapturingVars); mirror it, sharing the same counter.
-        var body = TirLambdaCaptureRewriter.Rewrite(_tir.Body);
+        var body = _tw.Writer.ResolveStorage(_tir, TirLambdaCaptureRewriter.Rewrite(_tir.Body));
+        if (body is TirStorageScope scope)
+            (_plan, body) = (scope.Plan, scope.Body);
         PlanLocalNames(body);
         var isBlock = body is TirBlock;
         if (_largeStructs != null)
