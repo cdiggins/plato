@@ -12,7 +12,7 @@ using Ara3D.Utils;
 namespace Ara3D.Geometry.CLI
 {
     // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|cpu64i32|gpu32]
-    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--concrete-arrays] [--lean-inlining] [--presize] [--in-place] [--share-calls] [--lower-scalars] [--sink-bindings] [--bind-scrutinee] [--share-calls-wide] [--closure-free] [--in-params] [--switch-match] [--lower-more] [--specialize-callbacks] [--owned-arrays] [--hoist-invariants] [--cache-constants] [--primitive-compare] [--filter=<text>[,<text>...]] [--laws-from=<file>]
+    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--concrete-arrays] [--lean-inlining] [--presize] [--in-place] [--share-calls] [--lower-scalars] [--sink-bindings] [--bind-scrutinee] [--share-calls-wide] [--closure-free] [--in-params] [--switch-match] [--lower-more] [--specialize-callbacks] [--owned-arrays] [--scalar-arrays] [--hoist-invariants] [--cache-constants] [--primitive-compare] [--filter=<text>[,<text>...]] [--laws-from=<file>]
     //                [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N]
     //                [--budget=<seconds per law>] [--abandon=<seconds>] [--witness-budget=<seconds per witness>]
     //                [--parallel=N] [--call=<Name>]
@@ -89,6 +89,7 @@ namespace Ara3D.Geometry.CLI
                 LowerMore = args.Contains("--lower-more"),
                 SpecializeCallbacks = args.Contains("--specialize-callbacks"),
                 OwnedArrays = args.Contains("--owned-arrays"),
+                ScalarArrays = args.Contains("--scalar-arrays"),
             };
             var backendName = args.Contains("--differential")
                 ? LawBackends.DifferentialName
@@ -121,7 +122,7 @@ namespace Ara3D.Geometry.CLI
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             if (folders.Count == 0 || (!laws && calls.Count == 0))
             {
-                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|cpu64i32|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--lean-inlining] [--in-place] [--share-calls] [--lower-scalars] [--closure-free] [--in-params] [--switch-match] [--lower-more] [--specialize-callbacks] [--owned-arrays] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
+                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|cpu64i32|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--lean-inlining] [--in-place] [--share-calls] [--lower-scalars] [--closure-free] [--in-params] [--switch-match] [--lower-more] [--specialize-callbacks] [--owned-arrays] [--scalar-arrays] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
                 return 1;
             }
 

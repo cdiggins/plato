@@ -12,7 +12,7 @@ internal static class GenerationArguments
         "--concrete-arrays", "--presize", "--in-place", "--share-calls", "--lower-scalars",
         "--sink-bindings", "--bind-scrutinee", "--share-calls-wide", "--closure-free", "--in-params", "--switch-match",
         "--hoist-invariants", "--cache-constants", "--primitive-compare", "--lower-more", "--specialize-callbacks",
-        "--owned-arrays"
+        "--owned-arrays", "--scalar-arrays"
     };
 
     private static readonly HashSet<string> ValueOptions = new(StringComparer.Ordinal)

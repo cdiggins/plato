@@ -39,4 +39,10 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     // (TirStorageResolver). Independent of the other switches; the resolver assigns List everywhere until
     // later chunks add owned storage, so the output is unchanged.
     public bool OwnedArrays { get; init; }
+
+    // --scalar-arrays (TKT-1152 chunk C0): the constant Count of a fixed-arity struct folds to a literal and
+    // the component arrays built over it are unrolled, so ComponentArray and its consumers need no array
+    // (ConstantCounts). Independent of the other switches; it unrolls through the literal rules, so it is
+    // useful with --fuse.
+    public bool ScalarArrays { get; init; }
 }

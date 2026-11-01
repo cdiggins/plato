@@ -57,16 +57,17 @@ internal static class GenerateCommand
             LowerMore = args.Contains("--lower-more"),
             SpecializeCallbacks = args.Contains("--specialize-callbacks"),
             OwnedArrays = args.Contains("--owned-arrays"),
+            ScalarArrays = args.Contains("--scalar-arrays"),
         };
         if (loopOptimizations.LowerMore && (!loops || typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--lower-more requires C# generation with --loops.");
             return 1;
         }
-        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks || loopOptimizations.OwnedArrays)
+        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks || loopOptimizations.OwnedArrays || loopOptimizations.ScalarArrays)
             && (typeScript || rust || glsl || cpp || cuda))
         {
-            Console.Error.WriteLine("--cache-constants, --primitive-compare, --specialize-callbacks and --owned-arrays apply to C# generation only.");
+            Console.Error.WriteLine("--cache-constants, --primitive-compare, --specialize-callbacks, --owned-arrays and --scalar-arrays apply to C# generation only.");
             return 1;
         }
         if (loopOptimizations.HoistInvariants && (!loops || typeScript || rust || glsl || cpp || cuda))

@@ -87,6 +87,8 @@ public sealed class CSharpProgram
         writer.CacheConstants = loopOptimizations?.CacheConstants ?? false;
         writer.PrimitiveCompare = loopOptimizations?.PrimitiveCompare ?? false;
         writer.OwnedArrays = loopOptimizations?.OwnedArrays ?? false;
+        writer.SpecializeCallbacks = loopOptimizations?.SpecializeCallbacks ?? false;
+        writer.ScalarArrays = loopOptimizations?.ScalarArrays ?? false;
         writer.WriteAll();
         var emit = sw.Elapsed;
 
