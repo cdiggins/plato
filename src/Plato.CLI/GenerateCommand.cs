@@ -64,6 +64,11 @@ internal static class GenerateCommand
             Console.Error.WriteLine("--cache-constants, --primitive-compare, --specialize-callbacks, --scalar-arrays and --owned-arrays apply to C# generation only.");
             return 1;
         }
+        if (loopOptimizations.SpanParams && (!loopOptimizations.OwnedArrays || statementInlining != null || typeScript || rust || glsl || cpp || cuda))
+        {
+            Console.Error.WriteLine("--span-params requires C# generation with --owned-arrays and cannot be combined with --inline-policy.");
+            return 1;
+        }
         if (loopOptimizations.HoistInvariants && (!loops || typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--hoist-invariants requires C# generation with --loops.");
@@ -251,6 +256,8 @@ internal static class GenerateCommand
             }
             if (loopOptimizations.HoistInvariants)
                 logger.Log($"Loop invariants hoisted: {output.HoistedInvariants} in {output.HoistedLoops} loops ({output.HoistExposingInlines} forwarding calls expanded)");
+            if (loopOptimizations.SpanParams)
+                logger.Log($"Span twins: {output.Borrowed.TwinsWritten} written borrowing {output.Borrowed.ParametersBorrowed} parameters; refused: {output.Borrowed.Refusals.Count}");
             if (loopOptimizations.SpecializeCallbacks || loopOptimizations.ScalarArrays || loopOptimizations.OwnedArrays)
             {
                 var s = output.Specializations;
