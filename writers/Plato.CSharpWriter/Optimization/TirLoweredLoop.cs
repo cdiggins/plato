@@ -11,8 +11,8 @@ namespace Ara3D.Geometry.CSharpWriter;
 /// <see cref="TirTempRef"/> to it. Printed by TirCSharpBodyWriter.WriteLoweredLoop.</summary>
 public class TirLoweredLoop : TirNode
 {
-    public string Kind { get; }                    // Map, MapIdx, MapRange, Zip2, Zip3, Reduce, All, Any, FlatMap, Reverse, WithNext, MapPairs, MapTriplets, MapQuartets
-    public IReadOnlyList<TirNode> Sources { get; } // list expressions (the count expression for MapRange)
+    public string Kind { get; }                    // Map, MapIdx, MapRange, Zip2, Zip3, Reduce, All, Any, FlatMap, Reverse, WithNext, MapPairs, MapTriplets, MapQuartets, Sort, SortIdx; --lower-more: Make2D, Make3D, Cartesian, Filter
+    public IReadOnlyList<TirNode> Sources { get; } // list expressions (the count expression for MapRange; the extents for Make2D and Make3D)
     public TirNode Fn { get; }                     // lambda literal or delegate-typed parameter/variable (null for Reverse)
     public TirNode Seed { get; }                   // Reduce only
     public TirNode IncludeFirst { get; }           // WithNext only

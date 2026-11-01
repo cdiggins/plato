@@ -27,4 +27,8 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
 
     // --switch-match (TKT-1148): a tag-test chain is a switch expression on the tag.
     public bool SwitchMatch { get; init; }
+
+    // --lower-more (lambda removal L3): with --loops, MakeArray2D, MakeArray3D, CartesianProduct and
+    // Filter call sites are lowered to loops with the callback inline too (TirLoopLowerer).
+    public bool LowerMore { get; init; }
 }

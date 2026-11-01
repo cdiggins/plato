@@ -54,7 +54,13 @@ internal static class GenerateCommand
         {
             InParameters = args.Contains("--in-params"),
             SwitchMatch = args.Contains("--switch-match"),
+            LowerMore = args.Contains("--lower-more"),
         };
+        if (loopOptimizations.LowerMore && (!loops || typeScript || rust || glsl || cpp || cuda))
+        {
+            Console.Error.WriteLine("--lower-more requires C# generation with --loops.");
+            return 1;
+        }
         if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare) && (typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--cache-constants and --primitive-compare apply to C# generation only.");
