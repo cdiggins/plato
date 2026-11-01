@@ -48,6 +48,15 @@ int main()
     CHECK(lit == make_array(1.0, 2.0, 3.0));
     const double raw[] = { 7.0, 8.0 };
     CHECK(At(make_array(raw, 2), 1) == 8.0);
+    List<int32_t> capacityHint{ 2 };
+    CHECK(capacityHint.count == 0 && capacityHint.cap == 2);
+    auto* reserved = capacityHint.items;
+    capacityHint = Add(capacityHint, 7);
+    capacityHint = Add(capacityHint, 8);
+    CHECK(capacityHint.items == reserved);
+    capacityHint = Add(capacityHint, 9);
+    CHECK(ToCount(capacityHint) == 3 && At(Freeze(capacityHint), 2) == 9);
+    CHECK(List<int32_t>{ -1 }.cap == 0 && List<int32_t>{ 0 }.items == nullptr);
     PlatoList<int32_t> l = EmptyList(r);
     for (int i = 0; i < 20; i++) l = Add(l, i);
     CHECK(ToCount(l) == 20 && At(Freeze(l), 19) == 19);

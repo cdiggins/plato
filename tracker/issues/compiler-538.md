@@ -29,3 +29,5 @@ remain String, and return values remain owned String values. Release build passe
 PrimitiveSignatureTests and StringBorrowingTests both passed, including generated
 native execution with temporary strings and retained return values (2026-11-01).
 Full matched BREP generation/compilation/corpus validation remains outstanding.
+
+Full frozen BREP candidate 85272cae compilation exposed two more runtime contract gaps: List<T>{capacity} was emitted but the native runtime only supplied aggregate pointer/count/capacity initialization; Bytes lacked JSON overloads. Capacity constructors now match managed semantics (nonpositive empty, positive preallocation, grow beyond hint) while preserving existing three-field initialization. The native runtime tests pass 2/2, including same-buffer appends within capacity and growth after it. Bytes JSON parity remains the next focused repair. Full candidate compilation did not pass; 14 objects were produced and no executable was linked.

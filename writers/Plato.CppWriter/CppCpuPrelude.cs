@@ -424,6 +424,10 @@ namespace plato
         T* items;
         int32_t count;
         int32_t cap;
+        PlatoList() : items(nullptr), count(0), cap(0) {}
+        explicit PlatoList(int32_t capacity)
+            : items(arena_alloc<T>(capacity)), count(0), cap(capacity > 0 ? capacity : 0) {}
+        PlatoList(T* data, int32_t size, int32_t capacity) : items(data), count(size), cap(capacity) {}
     };
     template <class T> using List = PlatoList<T>;
 
