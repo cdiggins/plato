@@ -546,8 +546,14 @@ public static class TirCallbackSpecializer
             string failure = null;
             var body = TirRewrite.Rewrite(calleeTir.Body, n =>
             {
-                if (n is TirInvoke invoke && TirRewrite.StripCoerce(invoke.Target) is TirLambda)
+                if (n is TirInvoke invoke && TirRewrite.StripCoerce(invoke.Target) is TirLambda target)
                 {
+                    // In a generic callee the invocation's arguments are typed by its type variables
+                    // (`xs[i] : $T`); the lambda body reads them at the call site's concrete types, and the
+                    // emitter decides field and method syntax from the receiver's type, so retype them.
+                    invoke = RetypeArguments(invoke, target, ref failure);
+                    if (failure != null)
+                        return n;
                     if (TirRewrite.TryBetaReduce(invoke, out var reduced, CheapToRepeat))
                         return reduced;
                     failure = "invocation argument used more than once";
@@ -598,6 +604,47 @@ public static class TirCallbackSpecializer
             };
             return null;
         }
+
+        /// <summary>The invocation with each argument whose type still holds a type variable retyped to
+        /// the lambda's parameter type (the concrete type the call site spelled). A node kind that cannot
+        /// be rebuilt with another type fails the clone.</summary>
+        private static TirInvoke RetypeArguments(TirInvoke invoke, TirLambda lambda, ref string failure)
+        {
+            var signature = lambda.Type?.TypeArgs;
+            if (signature == null || signature.Count != invoke.Args.Count + 1)
+                return invoke;
+            List<TirNode> args = null;
+            for (var i = 0; i < invoke.Args.Count; i++)
+            {
+                var arg = invoke.Args[i];
+                var target = signature[i];
+                if (arg?.Type == null || !HasTypeVariable(arg.Type) || target?.Def == null || HasTypeVariable(target))
+                    continue;
+                var retyped = Retype(arg, target);
+                if (retyped == null)
+                {
+                    failure = "open-typed invocation argument";
+                    return invoke;
+                }
+                args ??= invoke.Args.ToList();
+                args[i] = retyped;
+            }
+            return args == null ? invoke : new TirInvoke(invoke.Target, args, invoke.Type, invoke.Origin);
+        }
+
+        private static TirNode Retype(TirNode n, TypeExpression type)
+            => n switch
+            {
+                TirCoerce c => Retype(c.Inner, type) is { } inner ? new TirCoerce(inner, c.FromType, type, c.ConversionFn, c.Origin) : null,
+                TirCall c => new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, type, c.Args, type, c.Origin, c.Name),
+                TirParameter p => new TirParameter(p.Def, type, p.Origin),
+                TirVariable v => new TirVariable(v.Def, type, v.Origin),
+                TirInvoke i => new TirInvoke(i.Target, i.Args, type, i.Origin),
+                TirConditional c => Retype(c.IfTrue, type) is { } t && Retype(c.IfFalse, type) is { } f
+                    ? new TirConditional(c.Condition, t, f, type, c.Origin) : null,
+                TirSpecializedCall sc => new TirSpecializedCall(sc.Name, sc.Args, type, sc.Origin),
+                _ => null,
+            };
 
         /// <summary>An invocation argument the lambda body may evaluate more than once: the inliner's cheap
         /// projection (leaves, field reads, scalar operators), or one element read <c>xs[i]</c> whose list
