@@ -7,7 +7,7 @@ using Ara3D.Geometry.Laws;
 namespace Plato.Interpreter.Tests;
 
 /// <summary>
-/// TKT-1152 C2b: the fixture <c>tests/PlatoTests/Emission/OwnedArrayFixtures/owned.plato</c> states, as laws, the
+/// TKT-1152 C2b and C2c: the fixtures <c>tests/PlatoTests/Emission/OwnedArrayFixtures/owned.plato</c> and <c>owned-large.plato</c> state, as laws, the
 /// result the immutable meaning gives for each place a lowered-loop temporary can sit (read directly, seeding a
 /// Reduce, sourcing a FlatMap, joined by a conditional or a match, passed to a generic function, returned, captured,
 /// carried round a loop). Storage must never change a value: every ordinary law passes in the interpreter and in the
@@ -22,9 +22,11 @@ public class OwnedArrayProgramTests
 
     private static readonly Lazy<(IReadOnlyList<LawResult> Interpreted, IReadOnlyList<LawResult> Off, IReadOnlyList<LawResult> On)> Runs = new(() =>
     {
-        var path = Path.Combine(TestSupport.RepoRoot, "tests", "PlatoTests", "Emission", "OwnedArrayFixtures", "owned.plato");
-        var compilation = LawRunnerSelectionTests.CompileSource(File.ReadAllText(path));
-        var options = new LawRunOptions { Filters = new[] { "OwnedProbe" } };
+        // Both fixtures in one program: the lowered-loop shapes, and the owned array of large structs (--in-params).
+        var folder = Path.Combine(TestSupport.RepoRoot, "tests", "PlatoTests", "Emission", "OwnedArrayFixtures");
+        var source = File.ReadAllText(Path.Combine(folder, "owned.plato")) + System.Environment.NewLine + File.ReadAllText(Path.Combine(folder, "owned-large.plato"));
+        var compilation = LawRunnerSelectionTests.CompileSource(source);
+        var options = new LawRunOptions { Filters = new[] { "OwnedProbe", "OwnedLargeProbe" } };
         var interp = new Ara3D.Geometry.Interpreter.Interpreter(compilation, NumberProfile.Cpu64);
         var interpreted = new LawRunner(interp, options).RunAll();
 
@@ -55,7 +57,7 @@ public class OwnedArrayProgramTests
         var (interpreted, off, on) = Runs.Value;
         Assert.That(interpreted.Select(r => r.Name), Does.Contain(FaultingLaw));
         Assert.That(interpreted.Concat(off).Concat(on).Where(r => r.Name != FaultingLaw && r.Status != LawStatus.Pass).Select(r => r.Name), Is.Empty);
-        Assert.That(interpreted.Count(r => r.Name != FaultingLaw), Is.EqualTo(19));
+        Assert.That(interpreted.Count(r => r.Name != FaultingLaw), Is.EqualTo(27));
     }
 
     [Test]

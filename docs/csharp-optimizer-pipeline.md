@@ -754,6 +754,25 @@ resolver wraps the reference in `TirRepresent(Heap -> List)`, printed `((IReadOn
 copy. The conversion table is `CSharpStorageRules.MayConvert`: Heap to List, Heap to Borrowed, Stack to Borrowed;
 Stack or Borrowed to List would be a hidden copy and is rejected by rule S2.
 
+Named locals (C2c). The alias rule above is the general one: a `var` (`TirLet`) or lowerer alias (`TirInlineBinding`)
+whose value is a Heap temporary or a Heap local is Heap when `TirOwnership` shows one declaration, no assignment after
+it, no in-place update, and no reference under a printed lambda (the capture rewrite hoists a captured local into a
+List local after the resolver has run). It is declared `T[] name = ...;` (not `var`, so the element type is explicit
+for the cast of a later `TirRepresent`), and its reads print as a Heap temporary's do. A local that fails a condition
+stays List and the reason is on `StoragePlan.Refusals`. The sources of a `FlatMap` and of a `TirMultiReduction` are loop
+sources: they take their storage from the plan, so a Heap source needs no conversion there, `ExactOutput` omits its
+`source is T[]` test for a Heap source (the size test stays), and `StorageChecker` treats a multi-reduction's source as
+`LoopSource`. Still List by rule, not by omission: the region result of `TirInlineRegion`, the `Reduce` accumulator, the
+`FlatMap` result (a `List<T>` is built in its slow path) and every lambda result.
+
+Under `--in-params` a read `At(xs, i)` of a large element (256 bytes or more) from a Heap array prints as `x[i]`: a `ref
+readonly var w = ref x[i]` local, or the element itself as an argument or receiver, which C# passes by reference to an
+`in` parameter without a copy; the `RefAccess.RefAt` call and its type test are only for a List receiver.
+
+`TirCSharpBodyWriter.PrintsAsNode` lists the node classes the printer has a case for. Under the flag a body that holds any
+other node is refused by rule S8 (`StorageChecker.Rule.S8_Unprintable`), where the printer's `/*?*/` fall-through would
+leave a hole in the program; the list is extended with each new printer case (C8a adds `TirTwinCall`).
+
 An index outside a Heap array throws `IndexOutOfRangeException`; the interface form throws
 `ArgumentOutOfRangeException`. The law runner and the differential run treat any two faults alike, so verdicts are
 unchanged (plan open question 1, default: accepted). Tests:

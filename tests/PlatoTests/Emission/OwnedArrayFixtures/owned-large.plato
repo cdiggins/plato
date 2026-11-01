@@ -1,0 +1,80 @@
+// Fixture of the --owned-arrays tests (TKT-1152 C2c): an owned array of structs large enough for --in-params
+// (forty Integers, 320 bytes under cpu64), read by a reference local, an argument and a receiver.
+type OwnLarge
+{
+    A0: Integer;
+    A1: Integer;
+    A2: Integer;
+    A3: Integer;
+    A4: Integer;
+    A5: Integer;
+    A6: Integer;
+    A7: Integer;
+    A8: Integer;
+    A9: Integer;
+    A10: Integer;
+    A11: Integer;
+    A12: Integer;
+    A13: Integer;
+    A14: Integer;
+    A15: Integer;
+    A16: Integer;
+    A17: Integer;
+    A18: Integer;
+    A19: Integer;
+    A20: Integer;
+    A21: Integer;
+    A22: Integer;
+    A23: Integer;
+    A24: Integer;
+    A25: Integer;
+    A26: Integer;
+    A27: Integer;
+    A28: Integer;
+    A29: Integer;
+    A30: Integer;
+    A31: Integer;
+    A32: Integer;
+    A33: Integer;
+    A34: Integer;
+    A35: Integer;
+    A36: Integer;
+    A37: Integer;
+    A38: Integer;
+    A39: Integer;
+}
+
+library OwnedLargeProbe
+{
+    Make(i: Integer): OwnLarge
+        => OwnLarge(i, i + 1, i + 2, i + 3, i + 4, i + 5, i + 6, i + 7, i + 8, i + 9, i + 10, i + 11, i + 12, i + 13, i + 14, i + 15, i + 16, i + 17, i + 18, i + 19, i + 20, i + 21, i + 22, i + 23, i + 24, i + 25, i + 26, i + 27, i + 28, i + 29, i + 30, i + 31, i + 32, i + 33, i + 34, i + 35, i + 36, i + 37, i + 38, i + 39);
+
+    Ends(w: OwnLarge): Integer
+        => w.A0 + w.A39;
+
+    // A local initialised by an element read of an owned array is a ref readonly local.
+    ByRefLocal(n: Integer, k: Integer): Integer
+    {
+        var rows = n.MapRange(i => Make(i));
+        var w = rows[k];
+        return w.A3 + w.Ends;
+    }
+
+    // An element read passed as an argument.
+    ByArgument(n: Integer, k: Integer): Integer
+    {
+        var rows = n.MapRange(i => Make(i));
+        return Ends(rows[k]) + rows.Count;
+    }
+
+    // An element read used as a receiver.
+    ByReceiver(n: Integer, k: Integer): Integer
+    {
+        var rows = n.MapRange(i => Make(i));
+        return rows[k].Ends;
+    }
+
+    Law_ByRefLocal(): Boolean => ByRefLocal(4, 2).Equals(48);
+    Law_ByArgument(): Boolean => ByArgument(4, 2).Equals(47);
+    Law_ByReceiver(): Boolean => ByReceiver(4, 2).Equals(43);
+}

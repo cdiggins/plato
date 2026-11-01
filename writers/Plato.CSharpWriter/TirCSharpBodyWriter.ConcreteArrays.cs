@@ -74,6 +74,18 @@ public partial class TirCSharpBodyWriter
         Write(close);
     }
 
+    /// <summary>Whether the printer has a case for the node's class (as an expression or a statement), so printing it
+    /// never falls through to <c>/*?*/</c>. <see cref="StorageChecker"/> refuses a body under --owned-arrays that
+    /// holds a node for which this is false (rule S8): an array-bearing node without a case would otherwise print as a
+    /// comment and leave a hole in the program. A printer case for a new node class is added here.</summary>
+    public static bool PrintsAsNode(TirNode node)
+        => node is null or TirLiteral or TirParameter or TirVariable or TirTypeRef or TirLet or TirDefault or TirName
+            or TirCall or TirCoerce or TirSpecializedCall or TirInvoke or TirConditional or TirNew or TirArray or TirAssign
+            or TirLambda or TirComponentAccess or TirConstructorCall or TirTempRef or TirRepresent or TirInPlaceSet
+            or TirBooleanChain or TirUnresolved
+            or TirInlineRegion or TirInlineExit or TirInlineBinding or TirBlock or TirReturn or TirIf or TirGuardedLoop
+            or TirLoop or TirLoweredLoop or TirMultiReduction;
+
     /// <summary>Whether a node's emitted C# type is IReadOnlyList: a Plato Array that is not a
     /// struct coerced to one (a struct would be boxed by the helper's interface parameter).</summary>
     private static bool IsInterfaceList(TirNode node)

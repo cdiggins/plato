@@ -38,6 +38,48 @@ library OwnedProbe
     ReadAt(n: Integer, k: Integer): Integer
         => n.MapRange(i => i + 1).At(k);
 
+    //== Named locals that hold an owned array (C2c)
+
+    // A let-bound owned array read by two loops, a Count and an At: the local is the array itself.
+    TwoLoops(n: Integer): Integer
+    {
+        var kept = n.MapRange(i => i * 3);
+        var doubled = kept.Map(x => x * 2);
+        var shifted = kept.Map(x => x + 1);
+        return doubled[5] + shifted[2] + kept.Count;
+    }
+
+    // Two reductions over one owned local of Numbers: the paired loop reads the local directly.
+    Paired2(n: Integer, weight: Number): Number
+    {
+        var samples = n.MapRange(i => weight);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var squares = samples.Reduce(1.0, (acc, x) => acc + x * x);
+        return sum * 10.0 + squares;
+    }
+
+    // A FlatMap whose pieces vary in length, over an owned source (no exact output width).
+    FlatMapRagged(n: Integer): Array<Integer>
+    {
+        var kept = n.MapRange(i => i + 1);
+        return kept.FlatMap(x => x.MapRange(i => i * x));
+    }
+
+    // A FlatMap of fixed width over an owned local (exact output).
+    FlatMapExact(n: Integer): Array<Integer>
+    {
+        var kept = n.MapRange(i => i * i);
+        return kept.FlatMap(x => [x, x + 1]);
+    }
+
+    // An owned local that is reassigned stays the interface.
+    Reassigned(n: Integer): Integer
+    {
+        var kept = n.MapRange(i => i);
+        kept = kept.Map(x => x + 1);
+        return kept.Count + kept[1];
+    }
+
     //== Consumers that need the interface: the shapes of TKT-505
 
     // The temporary is the seed of a Reduce whose step returns an array.
@@ -131,6 +173,11 @@ library OwnedProbe
     Law_PickPlain(): Boolean => Digest(Pick(Plain(100), 2)).Equals(Digest([100, 101]));
     Law_GenericArgument(): Boolean => Digest(GenericArgument(3)).Equals(Digest([3, 4, 5]));
     Law_Returned(): Boolean => Digest(Returned(4)).Equals(Digest([0, 1, 4, 9]));
+    Law_TwoLoops(): Boolean => TwoLoops(6).Equals(43);
+    Law_Paired2(): Boolean => Paired2(3, 2.0).Equals(73.0);
+    Law_FlatMapRagged(): Boolean => Digest(FlatMapRagged(3)).Equals(Digest([0, 0, 2, 0, 3, 6]));
+    Law_FlatMapExact(): Boolean => Digest(FlatMapExact(3)).Equals(Digest([0, 1, 1, 2, 4, 5]));
+    Law_Reassigned(): Boolean => Reassigned(4).Equals(6);
     Law_Captured(): Boolean => Captured(4).Equals(5);
     Law_MadeInClosure(): Boolean => MadeInClosure(4).Equals(4);
     Law_Carried(): Boolean => Digest(Carried(4)).Equals(Digest([3, 4, 5, 6]));

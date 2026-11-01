@@ -40,26 +40,35 @@ public static class TirStorageResolver
             else
                 plan.Refuse(loop.TempName, refusal);
         }
-        // The lowerer's alias locals, in the order they are declared, so an alias of an alias is found too.
-        foreach (var binding in body.Descendants().OfType<TirInlineBinding>())
+        // Named locals that hold a Heap array under another name: the lowerer's alias locals (TirInlineBinding) and the
+        // user's own single-declaration locals (TirLet), in the order they are declared so an alias of an alias is found.
+        foreach (var (def, value) in body.Descendants().Select(Declaration).Where(d => d.Def != null))
         {
-            var aliased = TirRewrite.StripCoerce(binding.Value) switch
+            var aliased = TirRewrite.StripCoerce(value) switch
             {
                 TirTempRef t => plan.OfTemp(t.Name) == ArrayStorage.Heap,
                 TirVariable { Def: { } other } => plan.Of(other) == ArrayStorage.Heap,
                 _ => false,
             };
-            if (!aliased || binding.Def == null)
+            if (!aliased)
                 continue;
-            var refusal = Refusal(ownership.Of(binding.Def)) ?? AliasRefusal(ownership.Of(binding.Def));
+            var refusal = Refusal(ownership.Of(def)) ?? AliasRefusal(ownership.Of(def));
             if (refusal == null)
-                plan.Assign(binding.Def, ArrayStorage.Heap);
+                plan.Assign(def, ArrayStorage.Heap);
             else
-                plan.Refuse(binding.Def.Name, refusal);
+                plan.Refuse(def.Name, refusal);
         }
         var resolved = new Converter(plan, identity).Walk(body, false);
         return new TirStorageScope(resolved, plan);
     }
+
+    // The binding a node declares with the value it is initialised to, or (null, null) for any other node.
+    private static (VariableDef Def, TirNode Value) Declaration(TirNode n) => n switch
+    {
+        TirInlineBinding b => (b.Def, b.Value),
+        TirLet l => (l.Def, l.Value),
+        _ => (null, null),
+    };
 
     // A lowered loop of an array kind fills its own T[] (kinds are filtered by the caller). What remains is whether
     // anything could make the temporary something else than that array: a second declaration of the name, an
@@ -102,19 +111,21 @@ public static class TirStorageResolver
                     return observed ? n : new TirRepresent(n, ArrayStorage.Heap, ArrayStorage.List);
                 case TirVariable v when _plan.Of(v.Def) == ArrayStorage.Heap:
                     return observed ? n : new TirRepresent(n, ArrayStorage.Heap, ArrayStorage.List);
-                case TirInlineBinding binding when _plan.Of(binding.Def) == ArrayStorage.Heap:
-                    // The alias holds the very array: its value is taken as it is.
-                    return With(n, new[] { Walk(binding.Value, true) });
+                case TirInlineBinding or TirLet when _plan.Of(Declaration(n).Def) == ArrayStorage.Heap:
+                    // The local holds the very array: its value is taken as it is.
+                    return With(n, new[] { Walk(Declaration(n).Value, true) });
+                case TirMultiReduction pair:
+                    // The one source is read by the loop the printer writes. The source reference each reduction call
+                    // carries is never printed; it is converted like any other and costs nothing.
+                    return With(n, pair.Children.Select((child, i) => Walk(child, i == 0)).ToList());
                 case TirCoerce c when TirRewrite.IsListType(c.Type) && TirRewrite.IsListType(TirRewrite.StripCoerce(c.Inner)?.Type):
                     return With(n, new[] { Walk(c.Inner, observed) });
                 case TirCall call when call.Args.Count > 0 && _identity.IsObserver(call):
                     return With(n, call.Children.Select((child, i) => Walk(child, i == 0)).ToList());
                 case TirLoweredLoop loop:
                 {
-                    // A FlatMap source reaches the exact-output and multi-consumer printers, which read a source
-                    // through the List forms; the later chunk that teaches them Heap drops this exception.
-                    var sources = loop.Kind != "FlatMap";
-                    return With(n, loop.Children.Select((child, i) => Walk(child, sources && i < loop.Sources.Count)).ToList());
+                    // Every source is read by the loop the printer writes, its exact-output form included.
+                    return With(n, loop.Children.Select((child, i) => Walk(child, i < loop.Sources.Count)).ToList());
                 }
                 default:
                     return With(n, n.Children.Select(child => Walk(child, false)).ToList());

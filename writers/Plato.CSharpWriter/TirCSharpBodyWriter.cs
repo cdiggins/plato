@@ -366,7 +366,9 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     WriteLine(";");
                     return;
                 }
-                Write("var ");
+                // A local the plan holds as Heap is the array itself, typed as one so that every read is direct.
+                Write(LetDeclaredType(let));
+                Write(" ");
                 Write(LocalName(let.Def));
                 Write(" = ");
                 WriteNode(let.Value);
@@ -545,8 +547,24 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         return true;
     }
 
+    // `var`, or the array type of a local the plan holds as Heap, so that every read of it is direct.
+    private string LetDeclaredType(TirLet let)
+        => _plan?.Of(let.Def) == ArrayStorage.Heap
+            ? RecordHeapAlias(let.Def, HeapElementType(let.Value) ?? CSharpTypeName(TirRewrite.ListElementType(let.Type)))
+            : "var";
+
     private void WriteRefAt(TirCall read)
     {
+        if (StorageOf(read.Args[0]) != ArrayStorage.List)
+        {
+            // A Heap array element is a variable: `ref x[i]` needs no accessor, and an argument or receiver
+            // passed by `in` reads it in place. The caller supplies any `ref`.
+            WriteNode(read.Args[0]);
+            Write("[");
+            WriteIndexArgument(read.Args[1]);
+            Write("]");
+            return;
+        }
         Write($"{LargeStructPassing.HelperClass}.RefAt(");
         WriteNode(read.Args[0]);
         Write(", ");
@@ -615,7 +633,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // WriteStatement); the reference writes the same `var` form.
                 if (TryWriteRefLocal(let))
                     return;
-                Write($"var {LocalName(let.Def)} = ");
+                Write($"{LetDeclaredType(let)} {LocalName(let.Def)} = ");
                 WriteNode(let.Value);
                 return;
 
