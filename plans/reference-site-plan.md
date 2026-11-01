@@ -193,6 +193,34 @@ Rules every Wave 2 builder follows, in addition to the Wave 1 rules:
 Merge check: `build.py --check`, the builder and checker unit tests, and the reader's unit tests;
 budget 300 seconds while the machine is shared.
 
+### Wave 2 record
+
+Outcome: success.
+Gates: `build.py --check` passes; the builder tests and the reader's unit tests pass; the reader's
+production build succeeds. Checked in a browser on the dev server: the home page, the door
+header, a tour page's playground links, the playground with an edit, a share link opened fresh,
+and symbol search by signature shape. Not checked: phones, the dark theme, and the playground's
+Copy button, which this browser's clipboard policy blocks.
+Commits: contract `c0da7f90`; J `1df2af99`; K `a3c776aa`; I `1d686d45`; H `e24182ee` (builder);
+supervisor `b1d94aa7` (integration fixes), `9c60b542` (contract), `92828f0b` (regenerated name pages).
+Findings:
+- H could not commit the regenerated pages: three finished Wave 1 subagents' edit logs listed
+  them, recorded from other builders' concurrent writes. With the owner's approval those three
+  stale logs were removed, and the pages went in as one commit.
+- Browser QA found the tour in alphabetical order, the playground opening on an exercise answer,
+  signature results listed below page results, generator comments in search snippets, and
+  `library X` recorded as a file's first declaration; all fixed in `b1d94aa7`.
+- The machine was shared with heavy jobs from other sessions, so builds and checks ran many times
+  slower than when it was idle; the merge budget was not a useful signal this wave.
+- Open: the "Used by" sections are long for common names; H asked whether to cap them.
+
+| Merge | Chunk | Commit | Result | Note |
+|---|---|---|---|---|
+| 1 | J | `1df2af99` | pass | |
+| 2 | K | `a3c776aa` | pass | `navigate` meaning clarified in the contract |
+| 3 | I | `1d686d45` | pass | |
+| 4 | H | `e24182ee`, `92828f0b` | pass | pages committed by the supervisor |
+
 ## Wave 3: review and gate
 
 1. A `platonic:reviewer` subagent reads the integrated diff against the guidance with fresh
