@@ -42,21 +42,17 @@ internal static class GenerateCommand
 
         var staticAbstract = args.Contains("--static-abstract");
 
-        var loops = args.Contains("--loops");
-        var lowerScalars = args.Contains("--lower-scalars");
-
-        var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
-            args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"), LowerScalars: lowerScalars,
-            SinkBindings: args.Contains("--sink-bindings"), BindScrutinees: args.Contains("--bind-scrutinee"), ShareCallsWide: args.Contains("--share-calls-wide"),
-            ClosureFree: args.Contains("--closure-free"),
-            HoistInvariants: args.Contains("--hoist-invariants"), CacheConstants: args.Contains("--cache-constants"),
-            PrimitiveCompare: args.Contains("--primitive-compare"))
+        var unknownNegation = WriterSwitches.UnknownNegation(args);
+        if (unknownNegation != null)
         {
-            InParameters = args.Contains("--in-params"),
-            SwitchMatch = args.Contains("--switch-match"),
-            LowerMore = args.Contains("--lower-more"),
-            SpecializeCallbacks = args.Contains("--specialize-callbacks"),
-        };
+            Console.Error.WriteLine($"Unrecognized generation option '{unknownNegation}'.");
+            return 1;
+        }
+        var resolved = WriterSwitches.Resolve(args, !(typeScript || rust || glsl || cpp || cuda));
+        var loops = resolved["loops"];
+        var lowerScalars = resolved["lower-scalars"];
+
+        var loopOptimizations = WriterSwitches.ToLoopOptions(resolved);
         if (loopOptimizations.LowerMore && (!loops || typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--lower-more requires C# generation with --loops.");
@@ -113,7 +109,7 @@ internal static class GenerateCommand
             return 1;
         }
 
-        var fuse = args.Contains("--fuse");
+        var fuse = resolved["fuse"];
 
         var tirDumpDir = args.Where(a => a.StartsWith("--dump-tir="))
             .Select(a => a.Substring("--dump-tir=".Length)).LastOrDefault();
@@ -218,7 +214,7 @@ internal static class GenerateCommand
             var dialect = cuda ? CppDialect.Cuda : cpu ? CppDialect.Cpu : CppDialect.Cpp;
             logger.Log($"Writing {dialect.DisplayName()} Files");
             var cpuOptions = cpu
-                ? new CppCpuOptions(loops, fuse, args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
+                ? new CppCpuOptions(loops, fuse, resolved["fuse-consumers"], resolved["exact-output"],
                     (cppRoots ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
                 : null;
             var output = compilation.ToCpp(outputFolder, dialect, inline, cpuOptions);
