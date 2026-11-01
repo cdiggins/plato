@@ -12,10 +12,15 @@ using Ara3D.Utils;
 namespace Ara3D.Geometry.CLI
 {
     // Plato.CLI run <inputFolder>... [--laws] [--recursive] [--exclude=<file name>] [--profile=cpu64|cpu64i32|gpu32]
-    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--concrete-arrays] [--lean-inlining] [--presize] [--in-place] [--share-calls] [--lower-scalars] [--sink-bindings] [--bind-scrutinee] [--share-calls-wide] [--closure-free] [--in-params] [--switch-match] [--lower-more] [--specialize-callbacks] [--owned-arrays] [--scalar-arrays] [--hoist-invariants] [--cache-constants] [--primitive-compare] [--filter=<text>[,<text>...]] [--laws-from=<file>]
+    //                [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--concrete-arrays] [--lean-inlining] [--presize] [--in-place] [--share-calls] [--lower-scalars] [--sink-bindings] [--bind-scrutinee] [--share-calls-wide] [--closure-free] [--in-params] [--switch-match] [--lower-more] [--specialize-callbacks] [--scalar-arrays] [--owned-arrays] [--hoist-invariants] [--cache-constants] [--primitive-compare] [--no-<switch>] [--no-writer-defaults] [--filter=<text>[,<text>...]] [--laws-from=<file>]
     //                [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N]
     //                [--budget=<seconds per law>] [--abandon=<seconds>] [--witness-budget=<seconds per witness>]
     //                [--parallel=N] [--call=<Name>]
+    //
+    // The writer switches (--loops ... --specialize-callbacks, the table in WriterSwitches.cs) are on by
+    // default for the compiled arm (--backend=csharp|differential) and off for the interpreter; each
+    // has a --no-<name> spelling, and the last spelling wins. --no-writer-defaults turns every default
+    // off (the output before defaults existed); an explicit --<name> after it turns that one on.
     //
     // Compiles the input roots as one program (top-level files, or every subfolder with --recursive,
     // *.spec.plato always skipped) and runs it in this process. --backend=interpreter (the default)
@@ -69,28 +74,6 @@ namespace Ara3D.Geometry.CLI
                 Console.Error.WriteLine(e.Message);
                 return 1;
             }
-            // --loops: the compiled arm is written with the loop lowerer on (TKT-505), as the
-            // regeneration's --loops does.
-            var lowerLoops = args.Contains("--loops");
-            // --fuse: the compiled arm is written with combinator fusion on (TKT-506).
-            var fuse = args.Contains("--fuse");
-            // The other writer switches of the regeneration, for the compiled arm: the laws then
-            // run through the same emission a consumer gets.
-            var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
-                args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"),
-                LowerScalars: args.Contains("--lower-scalars"),
-                SinkBindings: args.Contains("--sink-bindings"), BindScrutinees: args.Contains("--bind-scrutinee"), ShareCallsWide: args.Contains("--share-calls-wide"),
-                ClosureFree: args.Contains("--closure-free"),
-                HoistInvariants: args.Contains("--hoist-invariants"),
-                CacheConstants: args.Contains("--cache-constants"), PrimitiveCompare: args.Contains("--primitive-compare"))
-            {
-                InParameters = args.Contains("--in-params"),
-                SwitchMatch = args.Contains("--switch-match"),
-                LowerMore = args.Contains("--lower-more"),
-                SpecializeCallbacks = args.Contains("--specialize-callbacks"),
-                OwnedArrays = args.Contains("--owned-arrays"),
-                ScalarArrays = args.Contains("--scalar-arrays"),
-            };
             var backendName = args.Contains("--differential")
                 ? LawBackends.DifferentialName
                 : Flags(args, "--backend=").LastOrDefault() ?? LawBackends.InterpreterName;
@@ -100,6 +83,19 @@ namespace Ara3D.Geometry.CLI
                 Console.Error.WriteLine($"Unknown --backend '{backendName}'; one of: {LawBackends.Names}");
                 return 1;
             }
+            var unknownNegation = WriterSwitches.UnknownNegation(args);
+            if (unknownNegation != null)
+            {
+                Console.Error.WriteLine($"Unrecognized run option '{unknownNegation}'.");
+                return 1;
+            }
+            // The writer switches of the regeneration, for the compiled arm: the laws then run through
+            // the same emission a consumer gets. They default on for the compiled arm (WriterSwitches).
+            var csharpArm = backendName is LawBackends.CSharpName or LawBackends.DifferentialName;
+            var resolved = WriterSwitches.Resolve(args, csharpArm);
+            var lowerLoops = resolved["loops"];
+            var fuse = resolved["fuse"];
+            var loopOptimizations = WriterSwitches.ToLoopOptions(resolved);
             var options = new LawRunOptions { Filters = filters };
             if (int.TryParse(Flags(args, "--trials=").LastOrDefault(), out var trials)) options.Trials = trials;
             if (int.TryParse(Flags(args, "--seed=").LastOrDefault(), out var seed)) options.Seed = seed;
@@ -122,7 +118,7 @@ namespace Ara3D.Geometry.CLI
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             if (folders.Count == 0 || (!laws && calls.Count == 0))
             {
-                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|cpu64i32|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--lean-inlining] [--in-place] [--share-calls] [--lower-scalars] [--closure-free] [--in-params] [--switch-match] [--lower-more] [--specialize-callbacks] [--owned-arrays] [--scalar-arrays] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
+                Console.Error.WriteLine("Usage: Plato.CLI run <inputFolder>... (--laws | --call=<Name>) [--recursive] [--exclude=<file>] [--profile=cpu64|cpu64i32|gpu32] [--backend=interpreter|csharp|differential] [--differential] [--loops] [--fuse] [--fuse-consumers] [--exact-output] [--lean-inlining] [--in-place] [--share-calls] [--lower-scalars] [--closure-free] [--in-params] [--switch-match] [--lower-more] [--specialize-callbacks] [--scalar-arrays] [--owned-arrays] [--no-<switch>] [--no-writer-defaults] [--filter=<text>[,<text>...]] [--laws-from=<file>] [--report=<file>] [--baseline=<file>] [--trials=N] [--seed=N] [--budget=<seconds>] [--abandon=<seconds>] [--witness-budget=<seconds>] [--parallel=N]");
                 return 1;
             }
 

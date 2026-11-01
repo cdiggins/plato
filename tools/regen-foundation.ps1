@@ -63,7 +63,7 @@ Get-ChildItem -Path $dest -Filter '*.g.cs' -File -ErrorAction SilentlyContinue |
 
 $generated = Run-Step "generate (stdlib\foundation, $Profile$(if ($Flags) { ' ' + ($Flags -join ' ') }))" {
     $out = & dotnet run --project (Join-Path $root 'src\Plato.CLI\Plato.CLI.csproj') -c Release -- `
-        $source $dest '--csharp-style=extensions' "--profile=$Profile" @Flags
+        $source $dest '--csharp-style=extensions' "--profile=$Profile" '--no-writer-defaults' @Flags
     $ok = ($LASTEXITCODE -eq 0)
     # Generate mode exits 0 when an individual body fails to lower — those become throwing stubs
     # and are only visible on this console line, so a silent green here would be a wrong green.

@@ -59,7 +59,7 @@ function Get-MinInput {
     return $minInput
 }
 
-$shape = @('--csharp-style=extensions')
+$shape = @('--csharp-style=extensions', '--no-writer-defaults')
 $opt   = @('--inline', '--optimize', '--optimize-arrays', '--loops')
 
 $variants = @()

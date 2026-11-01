@@ -42,32 +42,26 @@ internal static class GenerateCommand
 
         var staticAbstract = args.Contains("--static-abstract");
 
-        var loops = args.Contains("--loops");
-        var lowerScalars = args.Contains("--lower-scalars");
-
-        var loopOptimizations = new LoopOptimizationOptions(args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
-            args.Contains("--concrete-arrays"), args.Contains("--lean-inlining"), args.Contains("--presize"), args.Contains("--in-place"), args.Contains("--share-calls"), LowerScalars: lowerScalars,
-            SinkBindings: args.Contains("--sink-bindings"), BindScrutinees: args.Contains("--bind-scrutinee"), ShareCallsWide: args.Contains("--share-calls-wide"),
-            ClosureFree: args.Contains("--closure-free"),
-            HoistInvariants: args.Contains("--hoist-invariants"), CacheConstants: args.Contains("--cache-constants"),
-            PrimitiveCompare: args.Contains("--primitive-compare"))
+        var unknownNegation = WriterSwitches.UnknownNegation(args);
+        if (unknownNegation != null)
         {
-            InParameters = args.Contains("--in-params"),
-            SwitchMatch = args.Contains("--switch-match"),
-            LowerMore = args.Contains("--lower-more"),
-            SpecializeCallbacks = args.Contains("--specialize-callbacks"),
-            OwnedArrays = args.Contains("--owned-arrays"),
-            ScalarArrays = args.Contains("--scalar-arrays"),
-        };
+            Console.Error.WriteLine($"Unrecognized generation option '{unknownNegation}'.");
+            return 1;
+        }
+        var resolved = WriterSwitches.Resolve(args, !(typeScript || rust || glsl || cpp || cuda));
+        var loops = resolved["loops"];
+        var lowerScalars = resolved["lower-scalars"];
+
+        var loopOptimizations = WriterSwitches.ToLoopOptions(resolved);
         if (loopOptimizations.LowerMore && (!loops || typeScript || rust || glsl || cpp || cuda))
         {
             Console.Error.WriteLine("--lower-more requires C# generation with --loops.");
             return 1;
         }
-        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks || loopOptimizations.OwnedArrays || loopOptimizations.ScalarArrays)
+        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks || loopOptimizations.ScalarArrays || loopOptimizations.OwnedArrays)
             && (typeScript || rust || glsl || cpp || cuda))
         {
-            Console.Error.WriteLine("--cache-constants, --primitive-compare, --specialize-callbacks, --owned-arrays and --scalar-arrays apply to C# generation only.");
+            Console.Error.WriteLine("--cache-constants, --primitive-compare, --specialize-callbacks, --scalar-arrays and --owned-arrays apply to C# generation only.");
             return 1;
         }
         if (loopOptimizations.HoistInvariants && (!loops || typeScript || rust || glsl || cpp || cuda))
@@ -115,7 +109,7 @@ internal static class GenerateCommand
             return 1;
         }
 
-        var fuse = args.Contains("--fuse");
+        var fuse = resolved["fuse"];
 
         var tirDumpDir = args.Where(a => a.StartsWith("--dump-tir="))
             .Select(a => a.Substring("--dump-tir=".Length)).LastOrDefault();
@@ -220,7 +214,7 @@ internal static class GenerateCommand
             var dialect = cuda ? CppDialect.Cuda : cpu ? CppDialect.Cpu : CppDialect.Cpp;
             logger.Log($"Writing {dialect.DisplayName()} Files");
             var cpuOptions = cpu
-                ? new CppCpuOptions(loops, fuse, args.Contains("--fuse-consumers"), args.Contains("--exact-output"),
+                ? new CppCpuOptions(loops, fuse, resolved["fuse-consumers"], resolved["exact-output"],
                     (cppRoots ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
                 : null;
             var output = compilation.ToCpp(outputFolder, dialect, inline, cpuOptions);
@@ -257,16 +251,10 @@ internal static class GenerateCommand
             }
             if (loopOptimizations.HoistInvariants)
                 logger.Log($"Loop invariants hoisted: {output.HoistedInvariants} in {output.HoistedLoops} loops ({output.HoistExposingInlines} forwarding calls expanded)");
-            if (loopOptimizations.SpecializeCallbacks)
+            if (loopOptimizations.SpecializeCallbacks || loopOptimizations.ScalarArrays || loopOptimizations.OwnedArrays)
             {
                 var s = output.Specializations;
                 logger.Log($"Callbacks specialized: {s.SitesSpecialized} sites into {s.Clones.Count} clones; refused: {string.Join(", ", s.Refusals.Select(r => $"{r.Key} {r.Value}"))}");
-            }
-            if (loopOptimizations.OwnedArrays)
-            {
-                logger.Log($"Owned arrays: {output.StorageBodiesChecked} bodies checked, {output.StorageRefusals} refused by the storage checker");
-                foreach (var refusal in output.StorageRefusalLog)
-                    logger.Log($"  storage refusal: {refusal}");
             }
             if (output.DegradedBodies.Count > 0)
             {

@@ -26,6 +26,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Plato.Compiler\Plato.Compiler.csproj" />
     <ProjectReference Include="..\..\src\PlatoTypeInference\PlatoTypeInference.csproj" />
+    <!-- Command-line switch table and resolution (WriterSwitchesTests). -->
+    <ProjectReference Include="..\..\src\Plato.CLI\Plato.CLI.csproj" />
     <!-- Test-only: the emit-differential harness diffs the experimental TirCSharpBodyWriter against
          the current CSharpFunctionBodyWriter. Does NOT affect the default emit path. -->
     <ProjectReference Include="..\..\writers\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />

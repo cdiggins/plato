@@ -6,13 +6,7 @@ internal static class GenerationArguments
     private static readonly HashSet<string> Switches = new(StringComparer.Ordinal)
     {
         "--typescript", "--rust", "--glsl", "--cpp", "--cuda",
-        "--optimize", "--optimize-arrays", "--inline", "--static-abstract",
-        "--loops", "--fuse", "--inline-report", "--fuse-consumers", "--exact-output",
-        "--lean-inlining",
-        "--concrete-arrays", "--presize", "--in-place", "--share-calls", "--lower-scalars",
-        "--sink-bindings", "--bind-scrutinee", "--share-calls-wide", "--closure-free", "--in-params", "--switch-match",
-        "--hoist-invariants", "--cache-constants", "--primitive-compare", "--lower-more", "--specialize-callbacks",
-        "--owned-arrays", "--scalar-arrays"
+        "--optimize", "--optimize-arrays", "--inline", "--static-abstract", "--inline-report"
     };
 
     private static readonly HashSet<string> ValueOptions = new(StringComparer.Ordinal)
@@ -26,6 +20,6 @@ internal static class GenerationArguments
     private static bool IsKnown(string arg)
     {
         var separator = arg.IndexOf('=');
-        return Switches.Contains(arg) || separator >= 0 && ValueOptions.Contains(arg[..separator]);
+        return Switches.Contains(arg) || WriterSwitches.IsSpelling(arg) || separator >= 0 && ValueOptions.Contains(arg[..separator]);
     }
 }
