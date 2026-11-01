@@ -118,3 +118,9 @@ CPU optimization context is owned by each CppWriter. Separate compilations may g
 The CPU runtime defines PLATO_ARENA_LIFETIMES and owns nontrivial array element destruction. Hosts must use plato::arena_mark()/arena_rollback() rather than changing ArenaBlock.used directly: rollback destroys temporary elements in reverse order before storage reuse. Reset also destroys elements; thread exit releases elements and blocks. Marks cannot cross threads or reset. Array views must not outlive their region. Allocation-size overflow aborts. Constructors and destructors used in the no-exception runtime must not throw.
 
 CppCpuOptions.ShareCalls enables the same conservative TirSharedCalls pass as C#, after consumer fusion and before loops. It is opt-in through the writer API; the CLI and shipping defaults do not enable it yet. Branch-only calls, differing arguments and affine/array operations retain the shared pass's refusal rules. Wider sharing and BREP performance promotion require separate evidence.
+
+CPU array wire contract: `Array<T>{}` is the CLR-compatible null default;
+`Array<T>{data, count}` and array-producing operations construct present arrays,
+including `[]` when count is zero. JSON preserves this distinction recursively.
+The presence bit does not change element counts or array indexing. Hosts must use
+constructors rather than fill a default view's pointer/count fields directly.

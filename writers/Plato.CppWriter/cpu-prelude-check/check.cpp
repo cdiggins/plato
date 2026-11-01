@@ -41,6 +41,22 @@ int main()
     CHECK(byteRestored.count == 2 && byteRestored.data[0] == byteValues.data[0] && byteRestored.data[1].count == 0);
     CHECK(to_json(make_bytes(everyByte + 128, 1)).s == std::string("\xc2\x80"));
 
+    // Match CLR defaults without conflating null and constructed empty arrays.
+    Array<int32_t> absent;
+    const auto empty = make_array_empty<int32_t>();
+    CHECK(json_dump(to_json(absent)) == "null");
+    CHECK(json_dump(to_json(empty)) == "[]");
+    CHECK(json_dump(to_json(Range(0))) == "[]");
+    const auto nested = make_array(absent, empty, Range(2));
+    CHECK(json_dump(to_json(nested)) == "[null,[],[0,1]]");
+    Json nestedJson;
+    CHECK(json_parse("[null,[],[0,1]]", nestedJson));
+    Array<Array<int32_t>> restored;
+    from_json(nestedJson, restored);
+    CHECK(json_dump(to_json(restored)) == "[null,[],[0,1]]");
+    from_json(Json{}, restored);
+    CHECK(json_dump(to_json(restored)) == "null");
+
     // Range, Map, Reduce, FlatMap, Zip
     Array<int32_t> r = Range(5);
     CHECK(ToCount(r) == 5 && At(r, 4) == 4);

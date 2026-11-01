@@ -202,8 +202,12 @@ namespace plato
     template <class T>
     struct Array
     {
-        const T* data;
-        int32_t count;
+        const T* data = nullptr;
+        int32_t count = 0;
+        // CLR array defaults are null; an explicitly constructed empty view is [].
+        bool has_value = false;
+        Array() = default;
+        Array(const T* values, int32_t size) : data(values), count(size), has_value(true) {}
         const T& operator[](int32_t i) const
         {
             PLATO_ASSERT(i >= 0 && i < count);
@@ -1231,7 +1235,9 @@ namespace plato
     template <class T>
     inline void from_json(const Json& j, Array<T>& a)
     {
-        const int32_t n = j.is_array() ? j.size() : 0;
+        if (j.kind == Json::Kind::Null) { a = Array<T>{}; return; }
+        if (!j.is_array()) std::abort();
+        const int32_t n = j.size();
         T* p = arena_alloc<T>(n);
         for (int32_t i = 0; i < n; i++)
             from_json(j[i], p[i]);
@@ -1257,6 +1263,7 @@ namespace plato
     template <class T>
     inline Json to_json(const Array<T>& a)
     {
+        if (!a.has_value) return Json{};
         Json j = Json::Array();
         for (int32_t i = 0; i < a.count; i++)
             j.push(to_json(a.data[i]));
