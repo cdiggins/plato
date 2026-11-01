@@ -323,7 +323,9 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     WriteLine(";");
                     return;
                 }
-                Write(CSharpTypeName(binding.Type));
+                Write(HeapElementType(binding.Value) is { } heapElement && _plan?.Of(binding.Def) == ArrayStorage.Heap
+                    ? RecordHeapAlias(binding.Def, heapElement)
+                    : CSharpTypeName(binding.Type));
                 Write($" {CSharpTypeWriter.Identifier(binding.Def.Name)} = ");
                 WriteNode(binding.Value);
                 WriteLine(";");
@@ -783,6 +785,10 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write(tr.Name);
                 return;
 
+            case TirRepresent represent:
+                WriteRepresent(represent);
+                return;
+
             case TirInPlaceSet ips:
             {
                 // The element type is named so the value converts to it at the call, as a literal's
@@ -1087,6 +1093,14 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (name == "Count" && args.Count == 1
             && TirRewrite.StripCoerce(args[0])?.Type?.Name == "Array")
         {
+            if (StorageOf(args[0]) != ArrayStorage.List)
+            {
+                // A Heap, Stack or Borrowed receiver is a T[] or a span: its length, no type test.
+                Write("((Integer)");
+                WritePostfixReceiver(args[0]);
+                Write(".Length)");
+                return;
+            }
             if (_tw.Writer.ConcreteArrays && IsInterfaceList(args[0]))
             {
                 Write($"((Integer){CSharpWriter.ConcreteArrayAccessClass}.Count(");
@@ -1116,7 +1130,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write(")");
                 return;
             }
-            if (_tw.Writer.ConcreteArrays && args.Count == 2 && IsInterfaceList(args[0]))
+            if (_tw.Writer.ConcreteArrays && args.Count == 2 && StorageOf(args[0]) == ArrayStorage.List && IsInterfaceList(args[0]))
             {
                 Write($"{CSharpWriter.ConcreteArrayAccessClass}.At(");
                 WriteNode(args[0]);
