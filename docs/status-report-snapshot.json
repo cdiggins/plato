@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-01T10:18:28-05:00",
+  "updated_at": "2026-11-01T10:25:18-05:00",
   "note": "Written by tools/record-gates.py at 2026-07-31T19:14:42-04:00.",
   "gates": [
     {
@@ -121,7 +121,7 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-11-01T10:18:28-05:00",
+    "updated_at": "2026-11-01T10:25:18-05:00",
     "targets": {
       "forward-conformance": {
         "built_at": "2026-08-02T15:27:35-04:00",
@@ -344,14 +344,31 @@
         "warning_by_code": {
           "MSB3026": 10
         }
+      },
+      "cpp-string-borrowing": {
+        "built_at": "2026-11-01T10:25:18-05:00",
+        "project": "C:\\Users\\cdigg\\git\\plato-decoder-wave\\tests\\Plato.CppWriter.Tests\\Plato.CppWriter.Tests.csproj",
+        "log": "C:\\Users\\cdigg\\git\\plato-decoder-wave\\.temp\\csharp-build-logs\\cpp-string-borrowing.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 11,
+        "summary_errors": 0,
+        "summary_warnings": 11,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {
+          "CS0108": 10,
+          "CS0162": 1
+        }
       }
     },
-    "latest_target": "cpp-primitive-signatures",
+    "latest_target": "cpp-string-borrowing",
     "latest": {
-      "target": "cpp-primitive-signatures",
+      "target": "cpp-string-borrowing",
       "total_errors": 0,
-      "total_warnings": 10,
-      "built_at": "2026-11-01T10:18:28-05:00",
+      "total_warnings": 11,
+      "built_at": "2026-11-01T10:25:18-05:00",
       "exit_code": 0,
       "by_category": {},
       "by_code_top": {}

@@ -365,7 +365,7 @@ namespace Ara3D.Geometry.CppWriter
             if (!_claimedSignatures.Add(sigKey))
                 return;
 
-            var parameters = paramTypes.Zip(paramNames, (t, n) => $"{t} {n}").JoinStringsWithComma();
+            var parameters = paramTypes.Zip(paramNames, ParameterDeclaration).JoinStringsWithComma();
             var sig = $"PLATO_FN {ret} {FunctionName(fi.Name)}({parameters})";
             var a = paramNames.Count > 0 ? paramNames[0] : null;
             var b = paramNames.Count > 1 ? paramNames[1] : null;
@@ -829,7 +829,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                     foreach (var cs in s.Type.TypeDef.Cases)
                     {
                         var fieldTypes = cs.Fields.Select(f => FieldCppOrNull(new CppField(f.FlatName, f.Type))).ToList();
-                        var ps = fieldTypes.Select((t, i) => $"{t} p{i}").Prepend($"{n} _").JoinStringsWithComma();
+                        var ps = fieldTypes.Select((t, i) => ParameterDeclaration(t, $"p{i}")).Prepend($"{n} _").JoinStringsWithComma();
                         var sets = cs.Fields.Select((f, i) => $" r.{EscapeName(f.FlatName)} = p{i};").JoinStrings("");
                         AddGenerated(cs.Name, fieldTypes.Prepend(n).ToArray(), $"PLATO_FN {n} {FunctionName(cs.Name)}({ps})",
                             $" {{ {n} r{{}}; r.Kind = {n}::{cs.TagConstName};{sets} return r; }}");

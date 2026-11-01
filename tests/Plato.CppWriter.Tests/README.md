@@ -1,7 +1,8 @@
 # Plato.CppWriter.Tests
 
 The V1 gate for the C++ / CUDA backend: generate from real Plato source, then prove the generated
-code **compiles**. No runtime values are checked yet.
+code **compiles**. The CPU string borrowing regression also executes generated code
+to check temporary inputs and independently owned returned strings.
 
 ```
 dotnet test submodules\Plato\Plato.CppWriter.Tests -c Release
@@ -49,3 +50,7 @@ parent PATH exceeds cmd's line limit; the parent environment is unchanged.
 and compiles the resulting translation units. This catches collisions between
 runtime-provided conversions and emitted Plato bodies; it does not certify runtime
 values or the full BREP corpus.
+
+`StringBorrowingTests` checks the const-reference function signature and runs calls
+with stored and temporary strings. Returned strings remain values, so later input
+changes cannot alter a saved result. This does not validate the full BREP corpus.

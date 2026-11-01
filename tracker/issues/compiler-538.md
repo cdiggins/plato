@@ -22,3 +22,10 @@ links: []
 - Initial native test failures were SDK discovery failures from the inherited 8980-character PATH; standalone native syntax passed and the isolated rerun passed.
 - Optimizer documentation check is already stale at the starting pin across C# and CLI sources; this native-only change touches none of its monitored inputs.
 - Remaining: borrow String parameters without changing semantic signature keys, then regenerate and validate the BREP host.
+
+String parameter chunk: CPU declarations now borrow String as const String& in
+ordinary functions, bodiless functions and sum factories. Semantic signature keys
+remain String, and return values remain owned String values. Release build passed;
+PrimitiveSignatureTests and StringBorrowingTests both passed, including generated
+native execution with temporary strings and retained return values (2026-11-01).
+Full matched BREP generation/compilation/corpus validation remains outstanding.

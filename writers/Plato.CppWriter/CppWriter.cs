@@ -1550,6 +1550,9 @@ namespace Ara3D.Geometry.CppWriter
             });
         }
 
+        private string ParameterDeclaration(string type, string name)
+            => $"{(IsCpu && type == "String" ? "const String&" : type)} {name}";
+
         private void TryEmitFunction(FunctionInstance fi, ConcreteType ct)
         {
             var owner = ct.TypeDef.Name;
@@ -1618,7 +1621,7 @@ namespace Ara3D.Geometry.CppWriter
                 if (!_claimedSignatures.Add(sigKey))
                     return; // identical overload already emitted (first wins)
 
-                var parameters = paramTypes.Zip(paramNames, (t, n) => $"{t} {n}").JoinStringsWithComma();
+                var parameters = paramTypes.Zip(paramNames, ParameterDeclaration).JoinStringsWithComma();
                 var sig = $"{TemplateHeader(templateNames)}PLATO_FN {ret} {FunctionName(fi.Name)}({parameters})";
 
                 string definition;
