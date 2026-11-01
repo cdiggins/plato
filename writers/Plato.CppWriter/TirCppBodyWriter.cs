@@ -735,7 +735,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 var esc = CppWriter.EscapeCppStringPublic(raw);
                 if (UsesCpuLambdas)
                 {
-                    Write($"String(\"{esc}\")");
+                    Write($"make_string_n(\"{esc}\", {System.Text.Encoding.UTF8.GetByteCount(raw)})");
                     return;
                 }
                 Write($"make_string_n(\"{esc}\", {raw.Length})");

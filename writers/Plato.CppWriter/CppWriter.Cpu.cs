@@ -46,7 +46,7 @@ namespace Ara3D.Geometry.CppWriter
             { "Number", "double" },
             { "Integer", "int32_t" },
             { "Boolean", "bool" },
-            { "Character", "char" },
+            { "Character", "char16_t" },
         };
 
         /// <summary>C++ spelling of Number / Integer in this dialect ("float"/"int" in Cpp and Cuda).</summary>
@@ -56,7 +56,7 @@ namespace Ara3D.Geometry.CppWriter
         public bool IsNumberCpp(string cpp) => cpp == NumberCpp;
         public bool IsIntegerCpp(string cpp) => cpp == IntegerCpp;
         public bool IsScalarCpp(string cpp)
-            => cpp == NumberCpp || cpp == IntegerCpp || cpp == "bool" || cpp == "char";
+            => cpp == NumberCpp || cpp == IntegerCpp || cpp == "bool" || cpp == "char" || cpp == "char16_t";
 
         /// <summary>Vector2D/3D/4D are native float2/3/4 in Cpp and Cuda, ordinary structs in Cpu.</summary>
         public bool IsNativeVectorName(string name) => !IsCpu && NativeVectors.ContainsKey(name);
@@ -237,7 +237,7 @@ namespace Ara3D.Geometry.CppWriter
                 case "double": return "0.0";
                 case "int32_t": return "0";
                 case "bool": return "false";
-                case "char": return "'\\0'";
+                case "char16_t": return "'\\0'";
                 case "String": return "String()";
                 default: return $"{cppType}{{}}";
             }
@@ -620,9 +620,9 @@ inline int32_t mix_(int32_t h, int32_t v) { return (int32_t)(((uint32_t)h * 1677
 inline int32_t hash_(double x) { uint64_t u; std::memcpy(&u, &x, sizeof u); return (int32_t)(u ^ (u >> 32)); }
 inline int32_t hash_(int32_t x) { return x; }
 inline int32_t hash_(bool x) { return x ? 1 : 0; }
-inline int32_t hash_(char x) { return (int32_t)(unsigned char)x; }
+inline int32_t hash_(char16_t x) { return (int32_t)x; }
 inline int32_t hash_(const Bytes& b) { return Hash(b); }
-inline int32_t hash_(const String& s) { int32_t h = 17; for (char c : s) h = mix_(h, (int32_t)(unsigned char)c); return h; }
+inline int32_t hash_(const String& s) { int32_t h = 17; for (char16_t c : s) h = mix_(h, (int32_t)c); return h; }
 template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
 
 ");
@@ -790,7 +790,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 var n = s.Name;
                 AddGenerated("Equals", new[] { n, n }, $"PLATO_FN bool Equals(const {n}& a, const {n}& b)", " { return a == b; }");
                 AddGenerated("NotEquals", new[] { n, n }, $"PLATO_FN bool NotEquals(const {n}& a, const {n}& b)", " { return a != b; }");
-                AddGenerated("TypeName", new[] { n }, $"PLATO_FN String TypeName(const {n}& _)", $" {{ return String(\"{EscapeCppString(n)}\"); }}");
+                AddGenerated("TypeName", new[] { n }, $"PLATO_FN String TypeName(const {n}& _)", $" {{ return make_string_n(\"{EscapeCppString(n)}\", {System.Text.Encoding.UTF8.GetByteCount(n)}); }}");
 
                 string HashOf(CppField f)
                 {

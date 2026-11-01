@@ -124,3 +124,16 @@ CPU array wire contract: `Array<T>{}` is the CLR-compatible null default;
 including `[]` when count is zero. JSON preserves this distinction recursively.
 The presence bit does not change element counts or array indexing. Hosts must use
 constructors rather than fill a default view's pointer/count fields directly.
+
+CPU text contract: `Character` is an unsigned UTF-16 code unit (`char16_t`) and
+`String` owns UTF-16 code units (`std::u16string`). Count, indexing, substring,
+comparison and integer conversion use code units, matching C#. Supplementary
+characters occupy surrogate pairs. JSON and host byte streams use UTF-8;
+`StringFromUtf8` rejects malformed UTF-8, and `StringToUtf8` replaces unpaired
+surrogates with U+FFFD when serializing, as the managed JSON boundary does.
+`make_string_n` accepts an explicit UTF-8 byte length, preserving embedded NULs.
+`Bytes.ToText` maps bytes to Latin-1 code units; it does not decode UTF-8.
+
+This changes the native text ABI. Hosts must use `make_string_n` or explicit
+UTF-8 conversion at byte boundaries, and use UTF-16 literals for native language
+strings. JSON storage and byte-based number parsing retain their byte representation.

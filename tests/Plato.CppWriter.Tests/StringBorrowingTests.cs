@@ -19,13 +19,14 @@ public class StringBorrowingTests
             {
                 EchoText(text: String): String => text;
                 FirstText(text: String): Character => text[0];
+                UnicodeText(): String => "André Ω 😀";
             }
             """);
         var folder = PlatoSource.FindRepoFolder("stdlib/foundation");
         var asts = Directory.GetFiles(folder, "*.plato").Append(source).Select(PlatoSource.ParseFile).ToList();
         var compilation = new Compilation(Ara3D.Logging.Logger.Null, asts);
         Assert.That(compilation.CompletedCompilation, Is.True);
-        var options = new CppCpuOptions(true, true, false, false, new[] { "EchoText", "FirstText" });
+        var options = new CppCpuOptions(true, true, false, false, new[] { "EchoText", "FirstText", "UnicodeText" });
         var writer = compilation.ToCpp(new DirectoryPath(output), CppDialect.Cpu, true, options);
         Assert.That(writer.Files["plato_functions.hpp"].ToString(),
             Does.Contain("String EchoText(const String& text)"));
@@ -39,11 +40,12 @@ public class StringBorrowingTests
             {
                 using namespace plato;
                 String (*echo)(const String&) = EchoText;
-                String text = "first";
+                String text = u"first";
                 auto saved = echo(text);
                 text[0] = 'x';
-                if (saved != "first" || echo(String("temporary")) != "temporary") return 1;
-                if (FirstText(String("abc")) != 'a') return 2;
+                if (saved != u"first" || echo(String(u"temporary")) != u"temporary") return 1;
+                if (FirstText(String(u"abc")) != 'a') return 2;
+                if (UnicodeText() != u"Andr\u00e9 \u03a9 \U0001f600") return 3;
                 return 0;
             }
             """);
