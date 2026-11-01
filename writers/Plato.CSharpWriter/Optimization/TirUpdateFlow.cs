@@ -86,24 +86,18 @@ public sealed class TirUpdateFlow
         public bool Rejected;           // inside a lambda or an unrecognised construct
     }
 
-    private sealed class Variable
-    {
-        public int Declarations;
-        public bool DeclaredFresh;
-        public int[] DeclaredLoops = Array.Empty<int>();
-        public bool KeptByNonFresh;     // assigned something that is not provably a new array
-        public bool Captured;           // referenced inside a lambda that is not a loop callback
-        public readonly List<Use> Uses = new();
-    }
-
     private readonly TirArrayIdentity _identity;
-    private readonly Dictionary<VariableDef, Variable> _variables = new();
+    private readonly TirOwnership _ownership = new();
     private readonly HashSet<string> _freshTemps = new(StringComparer.Ordinal);
     private readonly List<int> _loops = new();
     private readonly Stack<Interval> _statements = new();
-    private int _time, _nextLoop, _lambdaDepth, _captureDepth, _opaqueDepth;
+    private int _time, _nextLoop, _lambdaDepth, _opaqueDepth;
+    private readonly List<IReadOnlyList<ParameterDef>> _realLambdas = new();   // enclosing lambdas that print as C# lambdas
 
     public List<Site> Sites { get; } = new();
+
+    /// <summary>The facts about every variable, parameter and lowered-loop temporary of the body.</summary>
+    public TirOwnership Ownership => _ownership;
 
     private TirUpdateFlow(TirArrayIdentity identity) => _identity = identity;
 
@@ -113,7 +107,7 @@ public sealed class TirUpdateFlow
         flow.FindFreshTemps(body);
         flow.Visit(body, true);
         if (TirRewrite.StripCoerce(body) is TirVariable { Def: { } def })
-            flow.Get(def).Uses.Add(new Use { Kind = UseKind.Escape, Leaf = flow._time, Consumer = flow._time, Loops = Array.Empty<int>() });
+            flow.Get(def).UseList.Add(new Use { Kind = UseKind.Escape, Leaf = flow._time, Consumer = flow._time, Loops = Array.Empty<int>() });
         return flow;
     }
 
@@ -149,11 +143,18 @@ public sealed class TirUpdateFlow
         };
     }
 
-    private Variable Get(VariableDef def)
+    private BindingFacts Get(VariableDef def) => _ownership.Get(def);
+
+    /// <summary>Whether a reference now being visited is under a lambda that prints as a C# lambda and the
+    /// binding is not that lambda's own parameter. <paramref name="owner"/> is the parameter, or null.</summary>
+    private bool IsCaptured(ParameterDef owner = null)
     {
-        if (!_variables.TryGetValue(def, out var v))
-            _variables[def] = v = new Variable();
-        return v;
+        var ownerIndex = -1;
+        if (owner != null)
+            for (var i = _realLambdas.Count - 1; i >= 0 && ownerIndex < 0; i--)
+                if (_realLambdas[i].Contains(owner))
+                    ownerIndex = i;
+        return _realLambdas.Count > ownerIndex + 1;
     }
 
     private void EnterLoop() => _loops.Add(_nextLoop++);
@@ -191,8 +192,18 @@ public sealed class TirUpdateFlow
                 return VisitTransparent(coerce, interval);
 
             case TirVariable v:
-                if (v.Def != null && _captureDepth > 0)
+                if (v.Def != null && IsCaptured())
                     Get(v.Def).Captured = true;
+                break;
+
+            case TirTempRef temp:
+                if (IsCaptured())
+                    _ownership.GetTemp(temp.Name).Captured = true;
+                break;
+
+            case TirParameter parameter:
+                if (parameter.Def != null && IsCaptured(parameter.Def))
+                    _ownership.GetParameter(parameter.Def).Captured = true;
                 break;
 
             case TirBlock block:
@@ -215,15 +226,22 @@ public sealed class TirUpdateFlow
 
             case TirLambda lambda:
                 _lambdaDepth++;
-                _captureDepth++;
+                _realLambdas.Add(lambda.Parameters);
                 EnterLoop();
                 VisitChild(n, 0, lambda.Body, true, pending);
                 ExitLoop();
-                _captureDepth--;
+                _realLambdas.RemoveAt(_realLambdas.Count - 1);
                 _lambdaDepth--;
                 break;
 
             case TirLoweredLoop lowered:
+                if (TirLoopLowerer.ProducesArray(lowered.Kind))
+                {
+                    var temp = _ownership.GetTemp(lowered.TempName);
+                    temp.Declarations++;
+                    temp.Fresh = _freshTemps.Contains(lowered.TempName);
+                    temp.DeclaredLoops = _loops.ToArray();
+                }
                 VisitLowered(lowered, pending);
                 break;
 
@@ -275,7 +293,7 @@ public sealed class TirUpdateFlow
             return;
         var variable = Get(def);
         variable.Declarations++;
-        variable.DeclaredFresh = IsFresh(value);
+        variable.Fresh = IsFresh(value);
         variable.DeclaredLoops = _loops.ToArray();
     }
 
@@ -299,8 +317,9 @@ public sealed class TirUpdateFlow
             var before = Sites.Count;
             VisitChild(assign, 1, assign.RValue, false, pending);
             var variable = Get(target);
+            variable.AddAssignment(_loops.ToArray());
             if (!IsFresh(assign.RValue))
-                variable.KeptByNonFresh = true;
+                variable.Aliased = true;
             if (statement && Sites.Count > before && TirRewrite.StripCoerce(assign.RValue) is TirCall call
                 && _identity.IsSetAt(call) && Sites[^1].Var == target)
                 Sites[^1].Threaded = true;
@@ -351,10 +370,17 @@ public sealed class TirUpdateFlow
         UseKind? forced = null)
     {
         var leaf = Visit(child, statement);
-        if (TirRewrite.StripCoerce(child) is TirVariable { Def: { } def })
+        var binding = TirRewrite.StripCoerce(child) switch
+        {
+            TirVariable { Def: { } def } => Get(def),
+            TirTempRef temp => _ownership.GetTemp(temp.Name),
+            TirParameter { Def: { } p } => _ownership.GetParameter(p),
+            _ => null,
+        };
+        if (binding != null)
         {
             var use = new Use { Kind = forced ?? Classify(parent, slot), Leaf = leaf, Loops = _loops.ToArray() };
-            Get(def).Uses.Add(use);
+            binding.UseList.Add(use);
             pending.Add(use);
         }
         return leaf;
@@ -398,8 +424,8 @@ public sealed class TirUpdateFlow
             return false;
         if (site.Var == null)
             return site.FreshReceiver;
-        if (!_variables.TryGetValue(site.Var, out var v)
-            || v.Declarations != 1 || !v.DeclaredFresh || v.KeptByNonFresh || v.Captured)
+        var v = _ownership.Of(site.Var);
+        if (v == null || v.Declarations != 1 || !v.Fresh || v.Aliased || v.Captured)
             return false;
 
         // A loop that holds the update but not the declaration runs the update again on the same
