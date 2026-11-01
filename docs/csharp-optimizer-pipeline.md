@@ -57,6 +57,21 @@ an optimization flag. Behavioral coverage lives in
 [FunctionFieldCallTests](../tests/Plato.Interpreter.Tests/FunctionFieldCallTests.cs) and
 [FunctionFieldCollisionControls](../tests/Plato.Interpreter.Tests/FunctionFieldCollisionControls.cs).
 
+**Writer switches are on by default for C# (decoder wave, 2026-11-01).** The twenty-one switches of the
+plato-brep regeneration (`--loops --fuse --fuse-consumers --exact-output --lean-inlining --share-calls
+--lower-scalars --concrete-arrays --presize --in-place --sink-bindings --bind-scrutinee --share-calls-wide
+--closure-free --in-params --switch-match --hoist-invariants --cache-constants --primitive-compare
+--lower-more --specialize-callbacks`) are rows of one table, `src/Plato.CLI/WriterSwitches.cs`, and are on
+by default for C# generation and for `plato run --backend=csharp|differential`. Each has a `--no-<name>`
+spelling; if both spellings appear the last wins, and a `--no-` option naming no switch is an error.
+`--no-writer-defaults` turns every default off, which gives the output the sentences above call "with no
+flag"; an explicit `--<name>` still turns that one switch on. For other targets (TypeScript, Rust, GLSL,
+C++, CUDA) and for the interpreter backend every switch starts off, so a default never raises an error;
+passing a C#-only switch explicitly there is still rejected. A defaulted switch whose dependency is off is
+off too, silently (`--no-loops` also drops `--fuse-consumers`, `--exact-output`, `--hoist-invariants` and
+`--lower-more`); an explicit dependent switch without its dependency is rejected as before. The statements
+below that call a switch "default off" describe the switch itself; the CLI now turns it on unless told not to.
+
 Each pass returns its input unchanged when its flag is off or nothing matched, so any subset of these
 baseline flags is valid and with no flag the output is the unoptimized C#. The new
 `--fuse-consumers` and `--exact-output` generation flags require C# output and `--loops`;
