@@ -141,3 +141,8 @@ strings. JSON storage and byte-based number parsing retain their byte representa
 Generated CPU JSON readers distinguish missing members from explicit JSON values.
 Missing members reset to their typed defaults; present members use their normal
 converters, including rejection of null or multi-code-unit Character values.
+
+CPU JSON definitions are emitted into bounded `plato_json*.cpp` translation units.
+Hosts must compile and link every matching unit; `plato_json.cpp` is always present.
+The writer preserves definition order and keeps each record converter pair intact.
+Generic converters remain in the type header so instantiation can see them.

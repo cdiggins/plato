@@ -559,7 +559,13 @@ namespace Ara3D.Geometry.CppWriter
             var n = 0;
             foreach (var text in BuildCpuFunctionFiles(live))
                 Files[$"plato_functions_{n++}.cpp"] = new StringBuilder(text);
-            Files["plato_json.cpp"] = new StringBuilder(BuildCpuJson());
+            n = 0;
+            foreach (var text in BuildCpuJsonFiles())
+            {
+                var name = n == 0 ? "plato_json.cpp" : $"plato_json_{n}.cpp";
+                Files[name] = new StringBuilder(text);
+                n++;
+            }
             Files["plato_skipped.txt"] = new StringBuilder(Skipped.Count == 0 ? "" : string.Join("\n", Skipped) + "\n");
             return this;
         }
@@ -723,19 +729,29 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
         }
 
         private const int MaxLinesPerFile = 20000;
+        private const int MaxJsonLinesPerFile = 2000;
 
         private IEnumerable<string> BuildCpuFunctionFiles(List<Emitted> live)
+            => BuildCpuDefinitionFiles(live.Where(e => !e.Provided && !e.IsTemplate)
+                    .Select(e => e.Definition),
+                "#include \"plato_types.hpp\"\n#include \"plato_functions.hpp\"\n",
+                MaxLinesPerFile);
+
+        // Keep definitions intact and preserve their deterministic dependency order.
+        // A single oversized definition occupies its own unit; an empty program still
+        // emits one unit so hosts need no special empty-program convention.
+        private static IEnumerable<string> BuildCpuDefinitionFiles(
+            IEnumerable<string> definitions, string includes, int maxLines)
         {
-            const string head = Banner + "#include \"plato_types.hpp\"\n#include \"plato_functions.hpp\"\n\nnamespace plato {\n\n";
+            var head = Banner + includes + "\nnamespace plato {\n\n";
             const string tail = "} // namespace plato\n";
             var sb = new StringBuilder(head);
             var lines = 0;
-            var any = false;
-            foreach (var e in live.Where(e => !e.Provided && !e.IsTemplate))
+            foreach (var definition in definitions)
             {
-                var def = e.Definition.TrimEnd('\r', '\n');
+                var def = definition.TrimEnd('\r', '\n');
                 var defLines = def.Count(c => c == '\n') + 2;
-                if (lines > 0 && lines + defLines > MaxLinesPerFile)
+                if (lines > 0 && lines + defLines > maxLines)
                 {
                     yield return sb.Append(tail).ToString();
                     sb = new StringBuilder(head);
@@ -743,20 +759,20 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 }
                 sb.Append(def).Append("\n\n");
                 lines += defLines;
-                any = true;
             }
-            if (any || lines == 0)
-                yield return sb.Append(tail).ToString();
+            yield return sb.Append(tail).ToString();
         }
 
-        private string BuildCpuJson()
+        private IEnumerable<string> BuildCpuJsonFiles()
+            => BuildCpuDefinitionFiles(BuildCpuJsonDefinitions(),
+                "// Each object writes every field, including inactive closed-sum fields.\n"
+                + "#include \"plato_types.hpp\"\n", MaxJsonLinesPerFile);
+
+        private IEnumerable<string> BuildCpuJsonDefinitions()
         {
-            var sb = new StringBuilder();
-            sb.Append(Banner).Append("// Same encoding as plato-brep generated/Ara3D.StepBrep/Intrinsics/PlatoJson.cs: one object per struct, field names as keys;\n");
-            sb.Append("// a closed sum writes its Kind and every flattened Case_Field.\n");
-            sb.Append("#include \"plato_types.hpp\"\n\nnamespace plato {\n\n");
             foreach (var s in CpuStructs().Where(s => GenericParamNames(s.Type).Count == 0))
             {
+                var sb = new StringBuilder();
                 sb.Append($"void from_json(const Json& j, {s.Name}& v)\n{{\n");
                 foreach (var f in s.Fields)
                     sb.Append($"    from_json_member(j, \"{f.Name}\", v.{EscapeName(f.Name)});\n");
@@ -764,10 +780,9 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 sb.Append($"Json to_json(const {s.Name}& v)\n{{\n    Json j = Json::Object();\n");
                 foreach (var f in s.Fields)
                     sb.Append($"    j.set(\"{f.Name}\", to_json(v.{EscapeName(f.Name)}));\n");
-                sb.Append("    return j;\n}\n\n");
+                sb.Append("    return j;\n}\n");
+                yield return sb.ToString();
             }
-            sb.Append("} // namespace plato\n");
-            return sb.ToString();
         }
 
         // ---- reflection helpers ----------------------------------------------------

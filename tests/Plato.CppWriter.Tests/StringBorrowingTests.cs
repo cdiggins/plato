@@ -34,11 +34,10 @@ public class StringBorrowingTests
             Does.Contain("String EchoText(const String& text)"));
         foreach (var file in writer.Files)
             File.WriteAllText(Path.Combine(output, file.Key), file.Value.ToString());
-        var includes = writer.Files.Keys.Where(f => f.StartsWith("plato_functions_") && f.EndsWith(".cpp"))
+        var includes = writer.Files.Keys.Where(f => f.EndsWith(".cpp"))
             .Select(f => $"#include \"{f}\"");
         File.WriteAllText(Path.Combine(output, "main.cpp"), string.Join("\n", includes) + """
 
-            #include "plato_json.cpp"
 
             int main()
             {

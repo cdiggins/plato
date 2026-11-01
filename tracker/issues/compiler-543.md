@@ -12,3 +12,10 @@ created: 2026-11-01
 closed:
 links: []
 ---
+
+## Done means
+
+- [x] Native JSON definitions split deterministically without splitting record converter pairs.
+- [x] Native regression compiles and links separate units and round-trips records across units.
+
+Verification: cpp-json-units recorded build has zero errors. JsonCompilationTests, StringBorrowingTests and PrimitiveSignatureTests pass (3/3); .temp-brep-json-units-tests.log. BREP integration and performance measurements are consumer follow-up gates, not implied by these focused tests.
