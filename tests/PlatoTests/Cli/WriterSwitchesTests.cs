@@ -16,10 +16,11 @@ public class WriterSwitchesTests
     private static string[] On(ResolvedWriterSwitches r) => Pinned.Where(n => r[n]).ToArray();
 
     [Test]
-    public void TableHoldsTheTwentyOneRegenerationSwitchesAllDefaultedOn()
+    public void TableHoldsTheTwentyOneRegenerationSwitchesDefaultedOnAndTheUnpinnedOff()
     {
-        Assert.That(WriterSwitches.Table.Select(s => s.Name), Is.EquivalentTo(Pinned));
-        Assert.That(WriterSwitches.Table.All(s => s.Default));
+        // TKT-1152's switches stay off by default until plato-brep measures and pins them.
+        Assert.That(WriterSwitches.Table.Where(s => s.Default).Select(s => s.Name), Is.EquivalentTo(Pinned));
+        Assert.That(WriterSwitches.Table.Where(s => !s.Default).Select(s => s.Name), Is.EquivalentTo(new[] { "scalar-arrays", "owned-arrays" }));
         var names = WriterSwitches.Table.Select(s => s.Name).ToList();
         foreach (var s in WriterSwitches.Table.Where(s => s.Requires != null))
             Assert.That(names.IndexOf(s.Requires!), Is.LessThan(names.IndexOf(s.Name)), s.Name + " must follow " + s.Requires);
