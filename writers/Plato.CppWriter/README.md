@@ -147,17 +147,19 @@ Hosts must compile and link every matching unit; `plato_json.cpp` is always pres
 The writer preserves definition order and keeps each record converter pair intact.
 Generic converters remain in the type header so instantiation can see them.
 
-CPU functions borrow closed record parameters whose actual native `sizeof` is at
+With `CppCpuOptions.BorrowLargeParameters`, CPU functions borrow closed record parameters whose actual native `sizeof` is at
 least 256 bytes. Smaller records remain values; generic parameter positions retain
 deduction-compatible signatures. Assignment targets remain owned parameters, and
-all returns remain owned values. `CppCpuOptions.BorrowLargeParameters` defaults to
-true and can be disabled through the writer API for comparison. This changes native
+return signatures stay by value; array views retain their region lifetime.
+Borrowing is opt-in through the writer API and defaults to false. This changes native
 function signatures; regenerate and rebuild callers together. C++ value captures
 copy the referred-to record, so they cannot retain a reference to a caller temporary.
 
-With large-parameter borrowing enabled, generated array reads use the internal
+With `CppCpuOptions.BorrowArrayReads`, generated array reads use the internal
 `array_at_readonly` helper. It returns a reference only for large values, valid
 within the array region's lifetime. Generated value locals and returns still
 copy; immediate borrowed arguments avoid the transient element copy. Public
 `At` retains its value-returning contract, including independent string payloads.
-Disabling `BorrowLargeParameters` also disables this array-read lowering.
+The array-read flag is independent of parameter passing and defaults to false.
+Both flags have native execution coverage in every combination; enabling them
+requires workload evidence before promotion into a consumer default.

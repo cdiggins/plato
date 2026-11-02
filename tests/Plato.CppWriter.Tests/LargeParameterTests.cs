@@ -8,9 +8,11 @@ namespace PlatoCppWriterTests;
 [TestFixture]
 public class LargeParameterTests
 {
-    [TestCase(true)]
-    [TestCase(false)]
-    public void Readonly_records_borrow_but_assignments_and_returns_own_values(bool borrow)
+    [TestCase(true, true)]
+    [TestCase(true, false)]
+    [TestCase(false, true)]
+    [TestCase(false, false)]
+    public void Readonly_records_borrow_but_assignments_and_returns_own_values(bool borrow, bool borrowReads)
     {
         var output = Path.Combine(Path.GetTempPath(), $"plato-cpu-borrow-{Guid.NewGuid():N}");
         Directory.CreateDirectory(output);
@@ -43,7 +45,7 @@ public class LargeParameterTests
         var compilation = new Compilation(Ara3D.Logging.Logger.Null, asts);
         Assert.That(compilation.CompletedCompilation, Is.True);
         var roots = new[] { "ReadWide", "CopyWide", "ReadNarrow", "ReplaceWide", "ReplaceText", "ReadWideArray", "CopyWideArray", "ReplaceWideArray" };
-        var options = new CppCpuOptions(false, false, false, false, roots) { BorrowLargeParameters = borrow };
+        var options = new CppCpuOptions(false, false, false, false, roots) { BorrowLargeParameters = borrow, BorrowArrayReads = borrowReads };
         var writer = compilation.ToCpp(new DirectoryPath(output), CppDialect.Cpu, true, options);
         var header = writer.Files["plato_functions.hpp"].ToString();
         var parameter = borrow ? "ReadOnlyParameter<Wide>" : "Wide";
@@ -51,7 +53,7 @@ public class LargeParameterTests
         Assert.That(header, Does.Contain($"ReplaceWide(Wide value, {parameter} other)"));
         var functions = string.Join("\n", writer.Files.Where(f => f.Key.StartsWith("plato_functions_"))
             .Select(f => f.Value.ToString()));
-        Assert.That(functions.Contains("plato::array_at_readonly("), Is.EqualTo(borrow));
+        Assert.That(functions.Contains("plato::array_at_readonly("), Is.EqualTo(borrowReads));
         Assert.That(header, Does.Contain("ReplaceText(String value, const String& other)"));
         var owned = compilation.ToCpp(new DirectoryPath(output), CppDialect.Cpu, true,
             options with { BorrowLargeParameters = false });

@@ -17,7 +17,8 @@ namespace Ara3D.Geometry.CppWriter
     public sealed record CppCpuOptions(bool Loops, bool Fuse, bool FuseConsumers, bool ExactOutput, IReadOnlyList<string> Roots)
     {
         public bool ShareCalls { get; init; }
-        public bool BorrowLargeParameters { get; init; } = true;
+        public bool BorrowLargeParameters { get; init; }
+        public bool BorrowArrayReads { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
     }
 

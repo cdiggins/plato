@@ -884,7 +884,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         // Generated locals, lambda returns and function returns are values. A
         // readonly array read therefore stays borrowed only through an immediate
         // borrowed call argument; value contexts still copy before the region ends.
-        if (UsesCpuLambdas && _w.CpuOptions.BorrowLargeParameters && name == "At"
+        if (UsesCpuLambdas && _w.CpuOptions.BorrowArrayReads && name == "At"
             && args.Count == 2 && _w.CppTypeNameOrNull(args[0].Type)?.StartsWith("Array<") == true)
         {
             RecordCall(name, args);
