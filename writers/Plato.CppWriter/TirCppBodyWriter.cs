@@ -881,6 +881,19 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             return;
         }
 
+        // Generated locals, lambda returns and function returns are values. A
+        // readonly array read therefore stays borrowed only through an immediate
+        // borrowed call argument; value contexts still copy before the region ends.
+        if (UsesCpuLambdas && _w.CpuOptions.BorrowLargeParameters && name == "At"
+            && args.Count == 2 && _w.CppTypeNameOrNull(args[0].Type)?.StartsWith("Array<") == true)
+        {
+            RecordCall(name, args);
+            Write("plato::array_at_readonly(");
+            WriteArgs(args);
+            Write(")");
+            return;
+        }
+
         // Everything else: a free-function call.
         RecordCall(name, args);
         Write($"{_w.FunctionName(name)}{ExplicitTemplateArguments(call)}(");

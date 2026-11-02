@@ -296,7 +296,12 @@ namespace plato
     }
 
     template <class T> inline int32_t ToCount(Array<T> xs) { return xs.count; }
-    template <class T> inline T At(Array<T> xs, int32_t i) { PLATO_ASSERT(i >= 0 && i < xs.count); return xs.data[i]; }
+    // Internal immutable read: large values may bind directly to borrowed call
+    // parameters. The reference is valid only while the array's region is alive.
+    template <class T> inline ReadOnlyParameter<T> array_at_readonly(Array<T> xs, int32_t i)
+    { PLATO_ASSERT(i >= 0 && i < xs.count); return xs.data[i]; }
+    // Preserve the public value-returning accessor contract for host callers.
+    template <class T> inline T At(Array<T> xs, int32_t i) { return array_at_readonly(xs, i); }
 
     // MapRange: f(0) to f(n - 1), each once, in index order; n <= 0 gives the empty array.
     template <class F>

@@ -7,6 +7,7 @@ public class ScratchArenaTests
 {
     [TestCase("check.cpp")]
     [TestCase("text.cpp")]
+    [TestCase("array-borrow.cpp")]
     [TestCase("scratch-lifetime.cpp")]
     public void Cpu_runtime_preserves_values_and_releases_scratch(string source)
     {

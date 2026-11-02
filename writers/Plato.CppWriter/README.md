@@ -154,3 +154,10 @@ all returns remain owned values. `CppCpuOptions.BorrowLargeParameters` defaults 
 true and can be disabled through the writer API for comparison. This changes native
 function signatures; regenerate and rebuild callers together. C++ value captures
 copy the referred-to record, so they cannot retain a reference to a caller temporary.
+
+With large-parameter borrowing enabled, generated array reads use the internal
+`array_at_readonly` helper. It returns a reference only for large values, valid
+within the array region's lifetime. Generated value locals and returns still
+copy; immediate borrowed arguments avoid the transient element copy. Public
+`At` retains its value-returning contract, including independent string payloads.
+Disabling `BorrowLargeParameters` also disables this array-read lowering.

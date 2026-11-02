@@ -8,8 +8,9 @@ namespace PlatoCppWriterTests;
 [TestFixture]
 public class LargeParameterTests
 {
-    [Test]
-    public void Readonly_records_borrow_but_assignments_and_returns_own_values()
+    [TestCase(true)]
+    [TestCase(false)]
+    public void Readonly_records_borrow_but_assignments_and_returns_own_values(bool borrow)
     {
         var output = Path.Combine(Path.GetTempPath(), $"plato-cpu-borrow-{Guid.NewGuid():N}");
         Directory.CreateDirectory(output);
@@ -21,6 +22,9 @@ public class LargeParameterTests
             {
                 ReadWide(value: Wide): Number => value.A0 + value.A39;
                 CopyWide(value: Wide): Wide => value;
+                ReadWideArray(values: Array<Wide>): Number => ReadWide(values[0]);
+                CopyWideArray(values: Array<Wide>): Wide => values[0];
+                ReplaceWideArray(values: Array<Wide>, other: Wide): Wide => ReplaceWide(values[0], other);
                 ReadNarrow(value: Narrow): Number => value.X + value.Y;
                 ReplaceWide(value: Wide, other: Wide): Wide
                 {
@@ -38,12 +42,16 @@ public class LargeParameterTests
         var asts = Directory.GetFiles(folder, "*.plato").Append(source).Select(PlatoSource.ParseFile).ToList();
         var compilation = new Compilation(Ara3D.Logging.Logger.Null, asts);
         Assert.That(compilation.CompletedCompilation, Is.True);
-        var roots = new[] { "ReadWide", "CopyWide", "ReadNarrow", "ReplaceWide", "ReplaceText" };
-        var options = new CppCpuOptions(false, false, false, false, roots);
+        var roots = new[] { "ReadWide", "CopyWide", "ReadNarrow", "ReplaceWide", "ReplaceText", "ReadWideArray", "CopyWideArray", "ReplaceWideArray" };
+        var options = new CppCpuOptions(false, false, false, false, roots) { BorrowLargeParameters = borrow };
         var writer = compilation.ToCpp(new DirectoryPath(output), CppDialect.Cpu, true, options);
         var header = writer.Files["plato_functions.hpp"].ToString();
-        Assert.That(header, Does.Contain("ReadWide(ReadOnlyParameter<Wide> value)"));
-        Assert.That(header, Does.Contain("ReplaceWide(Wide value, ReadOnlyParameter<Wide> other)"));
+        var parameter = borrow ? "ReadOnlyParameter<Wide>" : "Wide";
+        Assert.That(header, Does.Contain($"ReadWide({parameter} value)"));
+        Assert.That(header, Does.Contain($"ReplaceWide(Wide value, {parameter} other)"));
+        var functions = string.Join("\n", writer.Files.Where(f => f.Key.StartsWith("plato_functions_"))
+            .Select(f => f.Value.ToString()));
+        Assert.That(functions.Contains("plato::array_at_readonly("), Is.EqualTo(borrow));
         Assert.That(header, Does.Contain("ReplaceText(String value, const String& other)"));
         var owned = compilation.ToCpp(new DirectoryPath(output), CppDialect.Cpu, true,
             options with { BorrowLargeParameters = false });
@@ -52,14 +60,15 @@ public class LargeParameterTests
             File.WriteAllText(Path.Combine(output, file.Key), file.Value.ToString());
         var includes = writer.Files.Keys.Where(f => f.StartsWith("plato_functions_") && f.EndsWith(".cpp"))
             .Select(f => $"#include \"{f}\"");
-        File.WriteAllText(Path.Combine(output, "main.cpp"), string.Join("\n", includes) + """
+        File.WriteAllText(Path.Combine(output, "main.cpp"),  $"#define PLATO_TEST_BORROW {(borrow ? 1 : 0)}\n" + string.Join("\n", includes) + """
 
             int main()
             {
                 using namespace plato;
-                static_assert(std::is_same_v<decltype(&ReadWide), double(*)(const Wide&)>);
+                using WideArg = std::conditional_t<PLATO_TEST_BORROW != 0, const Wide&, Wide>;
+                static_assert(std::is_same_v<decltype(&ReadWide), double(*)(WideArg)>);
                 static_assert(std::is_same_v<decltype(&ReadNarrow), double(*)(Narrow)>);
-                static_assert(std::is_same_v<decltype(&CopyWide), Wide(*)(const Wide&)>);
+                static_assert(std::is_same_v<decltype(&CopyWide), Wide(*)(WideArg)>);
                 Wide a{}; a.A0 = 3; a.A39 = 4; a.Text = u"original";
                 if (ReadWide(a) != 7 || ReadWide(Wide{}) != 0) return 1;
                 auto copy = CopyWide(a); a.Text[0] = u'x';
@@ -68,6 +77,16 @@ public class LargeParameterTests
                 if (ReplaceWide(a, replacement).Text != u"replacement" || a.Text != u"xriginal") return 3;
                 if (ReplaceText(u"before", u"after") != u"after") return 4;
                 if (ReadNarrow(Narrow{2, 3}) != 5) return 5;
+                auto rows = arena_alloc<Wide>(1);
+                rows[0].A0 = 9; rows[0].A39 = 2;
+                rows[0].Text = u"a heap-backed string payload that must survive scratch reset";
+                Array<Wide> xs{rows, 1};
+                if (ReadWideArray(xs) != 11) return 6;
+                auto saved = CopyWideArray(xs);
+                if (ReplaceWideArray(xs, replacement).Text != u"replacement") return 7;
+                if (rows[0].Text != saved.Text) return 8;
+                arena_reset();
+                if (saved.Text != u"a heap-backed string payload that must survive scratch reset") return 9;
                 return 0;
             }
             """);
