@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-11-01 — [compiler-545](issues/compiler-545.md) — Avoid large array element copies at borrowed calls — done (1e1e41e8, 2361ccb9): parity verified; mixed timing keeps independent borrowing policies opt-in
 - 2026-11-01 — [compiler-544](issues/compiler-544.md) — Borrow large readonly native record parameters — done (1fbae01c; aligned gates and mixed two-model A/B recorded, no shipping pin promotion)
 - 2026-11-01 — [compiler-542](issues/compiler-542.md) — Align native text encoding and sum JSON defaults with C# — done (eb508247; frozen candidate1fbae01c aligned gates pass)
 - 2026-11-01 — [compiler-543](issues/compiler-543.md) — Split native JSON compilation into bounded units — done (bounded units; focused native compile/link and round-trip tests pass)
