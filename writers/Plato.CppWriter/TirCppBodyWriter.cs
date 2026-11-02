@@ -624,9 +624,9 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 Write("(");
                 WriteNode(cond.Condition);
                 Write(" ? ");
-                WriteNode(cond.IfTrue);
+                WriteConditionalBranch(cond, cond.IfTrue, cond.IfFalse);
                 Write(" : ");
-                WriteNode(cond.IfFalse);
+                WriteConditionalBranch(cond, cond.IfFalse, cond.IfTrue);
                 Write(")");
                 return;
 

@@ -88,6 +88,27 @@ public partial class TirCppBodyWriter
         return source ? $"const {type}&" : type;
     }
 
+    /// <summary>A conditional whose branches are a borrowed array read (an lvalue) and a value (a prvalue) has
+    /// prvalue type, and MSVC materializes the lvalue into a temporary and copies it again. Writing the borrowed
+    /// branch as <c>T(read)</c> makes both branches prvalues, so the result is built in place with one copy, as
+    /// before borrowing. When the other branch is also an lvalue (a borrowed read or a name) the result stays
+    /// an lvalue and nothing is copied until a value is needed.</summary>
+    private void WriteConditionalBranch(TirConditional cond, TirNode branch, TirNode other)
+    {
+        var type = BorrowReads ? _w.CppTypeNameOrNull(cond.Type) : null;
+        if (type != null && (type == "String" || _w.StructNames.Contains(type))
+            && branch is TirCall read && IsBorrowedArrayRead(read) && _w.CppTypeNameOrNull(read.Type) == type
+            && !(other is TirCall otherRead && IsBorrowedArrayRead(otherRead))
+            && other is not (TirParameter or TirVariable))
+        {
+            Write($"{type}(");
+            WriteNode(branch);
+            Write(")");
+            return;
+        }
+        WriteNode(branch);
+    }
+
     private bool IsBorrowedArrayRead(TirCall call)
         => call.Name == "At" && call.Args.Count == 2 && _w.CppTypeNameOrNull(call.Args[0].Type)?.StartsWith("Array<") == true;
 

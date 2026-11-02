@@ -20,6 +20,7 @@ public class BorrowReadsTests
             SumX(xs: Array<Tagged>): Number => xs.Map((t) => t.X).Reduce(0.0, (a, b) => a + b);
             Lengths(xs: Array<Tagged>): Array<Integer> => xs.Map((t) => NameLength(t));
             FirstName(xs: Array<Tagged>): String => xs[0].Name;
+            PickOr(xs: Array<Tagged>, i: Integer): Tagged => i < xs.Count ? xs[i] : KeepFirst(xs);
             KeepFirst(xs: Array<Tagged>): Tagged
             {
                 var first = xs[0];
@@ -53,7 +54,7 @@ public class BorrowReadsTests
         return (compilation, output);
     }
 
-    private static readonly string[] Roots = { "NameLength", "SumX", "Lengths", "FirstName", "KeepFirst", "Alias", "Rewritten", "PairSum" };
+    private static readonly string[] Roots = { "NameLength", "SumX", "Lengths", "FirstName", "KeepFirst", "Alias", "Rewritten", "PairSum", "PickOr" };
 
     private static string Functions(CppWriter w) => string.Join("\n", w.Files.Where(f => f.Key.StartsWith("plato_functions_"))
         .Select(f => f.Value.ToString()));
@@ -81,6 +82,8 @@ public class BorrowReadsTests
         Assert.That(functions.Contains("const auto& "), Is.EqualTo(borrow), functions);
         Assert.That(functions.Contains("const Tagged& first = "), Is.EqualTo(borrow), functions);
         Assert.That(functions.Contains("const Tagged& u = "), Is.EqualTo(borrow), functions);
+        // A conditional mixing a borrowed read with a value copies the read once, as a prvalue.
+        Assert.That(functions.Contains("? Tagged(plato::array_at_readonly("), Is.EqualTo(borrow), functions);
         // A local that is written again stays an owned copy.
         Assert.That(functions, Does.Contain("Tagged u = t;"));
         var header = writer.Files["plato_functions.hpp"].ToString();
@@ -112,6 +115,7 @@ public class BorrowReadsTests
                 if (Alias(rows[1]) != 2) return 4;
                 if (Rewritten(rows[1], rows[2]) != 6) return 5;
                 if (PairSum(Pair{ 2, 3 }) != 5) return 6;
+                if (PickOr(xs, 2).X != 4 || PickOr(xs, 7).X != 1) return 8;
                 arena_reset();
                 if (kept.Name.size() != 54 || name.size() != 54) return 7;
                 return 0;
