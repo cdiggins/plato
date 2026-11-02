@@ -1,102 +1,102 @@
 {
-  "updated_at": "2026-11-01T22:52:07-05:00",
-  "note": "Written by tools/record-gates.py at 2026-11-01T22:38:05-05:00.",
+  "updated_at": "2026-11-01T23:13:15-05:00",
+  "note": "Written by tools/record-gates.py at 2026-11-01T23:13:15-05:00.",
   "gates": [
     {
       "name": "Plato.CLI build (Release)",
       "result": "PASS",
-      "seconds": "32s",
+      "seconds": "21s",
       "detail": "0 errors"
     },
     {
       "name": "lint --strict (3 stdlib tiers, shipping only)",
       "result": "PASS",
-      "seconds": "20s",
+      "seconds": "30s",
       "detail": "0 error / 29 warning / 1514 info; ratchet 29"
     },
     {
       "name": "PlatoTests (incl. both ratchets)",
       "result": "PASS",
-      "seconds": "433s",
+      "seconds": "888s",
       "detail": "616 passed / 0 failed"
     },
     {
       "name": "forward-stdlib codegen (full recipe)",
       "result": "PASS",
       "seconds": "67s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 1042 .g.cs, 1 degraded bodies"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 1042 .g.cs, 1 degraded bodies"
     },
     {
       "name": "forward conformance (build + law runner)",
       "result": "FAIL",
       "seconds": "7s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) did not build"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) did not build"
     },
     {
       "name": "lint --strict (four stdlib tiers)",
       "result": "PASS",
       "seconds": "14s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 0 error / 44 warning / 2374 info; ratchet 44"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 0 error / 44 warning / 2374 info; ratchet 44"
     },
     {
       "name": "stdlib fast gate (lint + checker ratchet)",
       "result": "PASS",
       "seconds": "538s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 2026-07-29 17:54 ET"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 2026-07-29 17:54 ET"
     },
     {
       "name": "lint --strict forward stdlib",
       "result": "PASS",
       "seconds": "14s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 0 parse / 0 resolution errors; warning/info findings present"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 0 parse / 0 resolution errors; warning/info findings present"
     },
     {
       "name": "frozen-v1 tripwire",
       "result": "PASS",
       "seconds": "<1s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 210 files unchanged"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 210 files unchanged"
     },
     {
       "name": "Plato.CLI + Compiler build (Release)",
       "result": "PASS",
       "seconds": "~17s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) file-lock noise possible when Navigation MCP is live"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) file-lock noise possible when Navigation MCP is live"
     },
     {
       "name": "Plato.sln full build",
       "result": "BLOCKED",
       "seconds": "101s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) MSB3027 when Plato.Navigation.CLI holds DLL locks"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) MSB3027 when Plato.Navigation.CLI holds DLL locks"
     },
     {
       "name": "PlatoTests",
       "result": "PASS",
       "seconds": "77s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 161 passed / 0 failed"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 161 passed / 0 failed"
     },
     {
       "name": "Plato.Navigation.Tests",
       "result": "PASS",
       "seconds": "42s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 30 passed / 0 failed"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 30 passed / 0 failed"
     },
     {
       "name": "conformance suite",
       "result": "NOT RUN",
       "seconds": "\u2014",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) expected 0 fail when run; refresh snapshot after regen-conformance.ps1 -Test"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) expected 0 fail when run; refresh snapshot after regen-conformance.ps1 -Test"
     },
     {
       "name": "regen-generated diff gate",
       "result": "NOT RUN",
       "seconds": "\u2014",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) refresh after regen-generated.ps1"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) refresh after regen-generated.ps1"
     },
     {
       "name": "check-all.ps1 full battery",
       "result": "NOT RUN",
       "seconds": "\u2014",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) run before merge / mission end"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) run before merge / mission end"
     }
   ],
   "lint": {
