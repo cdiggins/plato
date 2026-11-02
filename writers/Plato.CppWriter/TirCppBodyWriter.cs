@@ -592,6 +592,8 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 var type = UsesCpuLambdas
                     ? (let.Value is TirLambda ? null : _w.CppTypeNameOrNull(let.Value?.Type ?? let.Type)) ?? "auto"
                     : _w.CppTypeName(let.Value?.Type ?? let.Type);
+                if (type != "auto")
+                    type = BorrowedLocalType(type, let.Def, let.Value);
                 Write($"{type} {CppWriter.EscapeName(let.Def?.Name ?? "?")} = ");
                 WriteNode(let.Value);
                 return;
@@ -884,7 +886,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         // Generated locals, lambda returns and function returns are values. A
         // readonly array read therefore stays borrowed only through an immediate
         // borrowed call argument; value contexts still copy before the region ends.
-        if (UsesCpuLambdas && _w.CpuOptions.BorrowLargeParameters && name == "At"
+        if (UsesCpuLambdas && (_w.CpuOptions.BorrowLargeParameters || _w.CpuOptions.BorrowReads) && name == "At"
             && args.Count == 2 && _w.CppTypeNameOrNull(args[0].Type)?.StartsWith("Array<") == true)
         {
             RecordCall(name, args);

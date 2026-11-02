@@ -4,6 +4,26 @@ namespace Ara3D.Geometry.CppWriter
 {
     public static class CppCpuPrelude
     {
+        private const string DefaultBorrow = "template <class T> using ReadOnlyParameter = std::conditional_t<(sizeof(T) >= 256), const T&, T>;";
+        private const string DefaultRead = "template <class T> inline ReadOnlyParameter<T> array_at_readonly(Array<T> xs, int32_t i)";
+
+        /// <summary>The prelude for these options: <see cref="Text"/> itself unless a borrowing option is set, so
+        /// default generation stays byte-identical.</summary>
+        public static string TextFor(CppCpuOptions o)
+        {
+            var text = Text;
+            if (o == null)
+                return text;
+            if (o.BorrowMinBytes != 256 || o.BorrowNonTrivial)
+            {
+                var condition = $"sizeof(T) >= {o.BorrowMinBytes}" + (o.BorrowNonTrivial ? " || !std::is_trivially_copyable<T>::value" : "");
+                text = text.Replace(DefaultBorrow, $"template <class T> using ReadOnlyParameter = std::conditional_t<({condition}), const T&, T>;");
+            }
+            if (o.BorrowReads)
+                text = text.Replace(DefaultRead, "template <class T> inline const T& array_at_readonly(Array<T> xs, int32_t i)");
+            return text;
+        }
+
         public static string Text => """
 // plato_cpu.hpp: the CPU prelude of the Plato C++ writer, dialect cpu64i32 (TKT-1097).
 // Mirrors the C# runtime (Intrinsics/*.cs of Ara3D.StepBrep) name for name: Number is double,

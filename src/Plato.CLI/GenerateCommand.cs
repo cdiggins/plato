@@ -95,6 +95,22 @@ internal static class GenerateCommand
             Console.Error.WriteLine("--cpp-roots requires --cpp --profile=cpu64i32.");
             return 1;
         }
+        // Native copy removal (all off by default; see CppCpuOptions): borrowed reads and the parameter borrow rule.
+        var borrowReads = args.Contains("--cpp-borrow-reads");
+        var borrowNonTrivial = args.Contains("--cpp-borrow-nontrivial");
+        var borrowMinBytesArg = args.Where(a => a.StartsWith("--cpp-borrow-min-bytes="))
+            .Select(a => a.Substring("--cpp-borrow-min-bytes=".Length)).LastOrDefault();
+        var borrowMinBytes = 256;
+        if (borrowMinBytesArg != null && (!int.TryParse(borrowMinBytesArg, out borrowMinBytes) || borrowMinBytes < 1))
+        {
+            Console.Error.WriteLine("--cpp-borrow-min-bytes requires a positive integer.");
+            return 1;
+        }
+        if ((borrowReads || borrowNonTrivial || borrowMinBytesArg != null) && !cpu)
+        {
+            Console.Error.WriteLine("--cpp-borrow-reads, --cpp-borrow-nontrivial and --cpp-borrow-min-bytes require --cpp --profile=cpu64i32.");
+            return 1;
+        }
         if (cpu)
             inline = true;
         if ((loopOptimizations.FuseConsumers || loopOptimizations.ExactOutputAllocation)
@@ -221,6 +237,11 @@ internal static class GenerateCommand
             var cpuOptions = cpu
                 ? new CppCpuOptions(loops, fuse, resolved["fuse-consumers"], resolved["exact-output"],
                     (cppRoots ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                {
+                    BorrowReads = borrowReads,
+                    BorrowNonTrivial = borrowNonTrivial,
+                    BorrowMinBytes = borrowMinBytes,
+                }
                 : null;
             var output = compilation.ToCpp(outputFolder, dialect, inline, cpuOptions);
             logger.Log($"{dialect.DisplayName()} functions emitted: {output.FunctionsEmitted}, skipped: {output.Skipped.Count}");

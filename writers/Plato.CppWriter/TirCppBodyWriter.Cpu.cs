@@ -19,6 +19,78 @@ public partial class TirCppBodyWriter
     // The return type of each enclosing C++ lambda; a null Cpp means it is deduced.
     private readonly Stack<(string Cpp, string Plato)> _lambdaReturns = new();
 
+    // --- borrowed reads (CppCpuOptions.BorrowReads) ------------------------------
+    //
+    // Arrays are immutable views into the arena, and generated code never rolls the arena back inside a body
+    // (only hosts do, between rows, after copying results out), so a reference to an element lives as long
+    // as the body. A const reference to a named value is sound only when neither name is written after the
+    // binding; Mutated collects every definition the body writes anywhere (assignments, inline-region results
+    // and exits, paired reductions), which is stronger than "after".
+
+    private bool BorrowReads => UsesCpuLambdas && _w.CpuOptions.BorrowReads;
+
+    private HashSet<object> _mutated;
+
+    private HashSet<object> Mutated => _mutated ??= CollectMutated(_tir?.Body);
+
+    private static HashSet<object> CollectMutated(TirNode body)
+    {
+        var written = new HashSet<object>();
+        if (body == null)
+            return written;
+        foreach (var n in body.Descendants())
+        {
+            switch (n)
+            {
+                case TirAssign a:
+                    foreach (var d in a.LValue.Descendants())
+                        if (d is TirVariable v) written.Add(v.Def);
+                        else if (d is TirParameter p) written.Add(p.Def);
+                    break;
+                case TirInlineExit exit:
+                    written.Add(exit.Result);
+                    break;
+                case TirInlineRegion region:
+                    written.Add(region.Result);
+                    break;
+                case TirMultiReduction pair:
+                    written.Add(pair.First.Def);
+                    written.Add(pair.Second.Def);
+                    break;
+            }
+        }
+        return written;
+    }
+
+    /// <summary>The declaration keyword for a lowered-loop parameter bound to <paramref name="element"/>:
+    /// <c>const auto&amp;</c> when it reads an array element and the parameter is never written.</summary>
+    private string ElementBinding(ParameterDef parameter, string element)
+        => BorrowReads && element.EndsWith("]") && element.Contains(".data[") && !Mutated.Contains(parameter)
+            ? "const auto&" : "auto";
+
+    /// <summary>The declared type of a local, made a const reference when the local copies a record or String
+    /// that stays put for the whole body: an array element, or a name that is never written.</summary>
+    private string BorrowedLocalType(string type, VariableDef def, TirNode value)
+    {
+        if (!BorrowReads || type == null || def == null || Mutated.Contains(def) || value == null)
+            return type;
+        if (type != "String" && !_w.StructNames.Contains(type))
+            return type;
+        if (_w.CppTypeNameOrNull(value.Type) != type)
+            return type;
+        var source = value switch
+        {
+            TirParameter p when !Mutated.Contains(p.Def) => true,
+            TirVariable v when !Mutated.Contains(v.Def) => true,
+            TirCall c when IsBorrowedArrayRead(c) => true,
+            _ => false,
+        };
+        return source ? $"const {type}&" : type;
+    }
+
+    private bool IsBorrowedArrayRead(TirCall call)
+        => call.Name == "At" && call.Args.Count == 2 && _w.CppTypeNameOrNull(call.Args[0].Type)?.StartsWith("Array<") == true;
+
     private void WriteLambdaReturnValue(TirNode value)
     {
         var (cpp, plato) = _lambdaReturns.Peek();
@@ -111,7 +183,7 @@ public partial class TirCppBodyWriter
                 WriteLine($"; goto {exit.Result.Name}_exit;");
                 return;
             case TirInlineBinding binding:
-                Write(binding.Value is TirLambda ? "auto" : _w.CppTypeNameOrNull(binding.Type) ?? "auto");
+                Write(binding.Value is TirLambda ? "auto" : BorrowedLocalType(_w.CppTypeNameOrNull(binding.Type), binding.Def, binding.Value) ?? "auto");
                 Write($" {CppWriter.EscapeName(binding.Def.Name)} = ");
                 WriteNode(binding.Value);
                 WriteLine(";");
@@ -166,7 +238,7 @@ public partial class TirCppBodyWriter
         }
         WriteLine($"for (int32_t {index} = 0; {index} < {source}.count; {index}++)");
         WriteStartBlock();
-        WriteLine($"auto {element} = {source}.data[{index}];");
+        WriteLine($"{(BorrowReads ? "const auto&" : "auto")} {element} = {source}.data[{index}];");
         WriteReductionStep(pair.First, element);
         WriteReductionStep(pair.Second, element);
         WriteEndBlock();
@@ -248,7 +320,7 @@ public partial class TirCppBodyWriter
             if (lam == null)
                 return;
             for (var p = 0; p < lam.Parameters.Count && p < elems.Length; p++)
-                WriteLine($"auto {_loopParamNames[lam.Parameters[p]]} = {elems[p]};");
+                WriteLine($"{ElementBinding(lam.Parameters[p], elems[p])} {_loopParamNames[lam.Parameters[p]]} = {elems[p]};");
             if (IsStatementNode(lam.Body))
                 WriteCallbackResult(lam, new VariableDef(null, $"_callback{k}", lam.Type.TypeArgs.Last(), null));
         }
@@ -286,7 +358,7 @@ public partial class TirCppBodyWriter
                 var e = $"_e{k}_{st}";
                 if (stages[st] is TirLambda sl)
                 {
-                    WriteLine($"auto {_loopParamNames[sl.Parameters[0]]} = {prev};");
+                    WriteLine($"{ElementBinding(sl.Parameters[0], prev)} {_loopParamNames[sl.Parameters[0]]} = {prev};");
                     WriteCallbackResult(sl, new VariableDef(null, e, sl.Type.TypeArgs.Last(), null));
                 }
                 else
@@ -438,7 +510,7 @@ public partial class TirCppBodyWriter
             WriteLine($"int32_t {off} = 0;");
             forLoop(n, () =>
             {
-                WriteLine($"auto {_loopParamNames[exact.Parameters[0]]} = {srcNames[0]}.data[{i}];");
+                WriteLine($"{ElementBinding(exact.Parameters[0], $"{srcNames[0]}.data[{i}]")} {_loopParamNames[exact.Parameters[0]]} = {srcNames[0]}.data[{i}];");
                 Write($"auto {part} = ");
                 WriteNode(exact.Body);
                 WriteLine(";");
