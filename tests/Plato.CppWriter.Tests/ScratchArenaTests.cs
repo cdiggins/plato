@@ -16,7 +16,7 @@ public class ScratchArenaTests
         var folder = PlatoSource.FindRepoFolder("writers/Plato.CppWriter/cpu-prelude-check");
         var output = Path.Combine(Path.GetTempPath(), $"plato-arena-{Guid.NewGuid():N}");
         Directory.CreateDirectory(output);
-        var command = $"\"\"{vcvars}\" >nul && cl /nologo /std:c++17 /O2 /EHsc /W4 /WX /I\"{folder}\" \"{Path.Combine(folder, source)}\" /Fe:arena.exe\"";
+        var command = $"\"\"{vcvars}\" >nul && cl /nologo /std:c++17 /O2 /EHsc /W4 /WX /I\"{folder}\" /I\"{PlatoSource.FindRepoFolder("writers/Plato.CppWriter/prelude")}\" \"{Path.Combine(folder, source)}\" /Fe:arena.exe\"";
         var compile = Toolchain.Run("cmd.exe", "/c " + command, output, nativeEnvironment: true);
         Assert.That(compile.ExitCode, Is.Zero, compile.Output);
         var exe = Path.Combine(output, "arena.exe");

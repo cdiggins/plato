@@ -21,7 +21,7 @@ public class PrimitiveSignatureTests
         var functions = string.Join("\n", writer.Files.Where(f => f.Key.StartsWith("plato_functions"))
             .Select(f => f.Value.ToString()));
         Assert.That(functions, Does.Not.Match(@"int32_t ToInteger\(int32_t "));
-        Assert.That(writer.Files["plato_cpu.hpp"].ToString(), Does.Contain("int32_t ToInteger(int32_t"));
+        Assert.That(writer.Files["plato_string.hpp"].ToString(), Does.Contain("int32_t ToInteger(int32_t"));
         var vcvars = Toolchain.FindVcVars();
         if (vcvars == null)
             Assert.Ignore("MSVC is required for the native compilation gate");

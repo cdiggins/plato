@@ -62,11 +62,9 @@ public class BorrowReadsTests
     [Test]
     public void Default_options_keep_the_default_prelude()
     {
-        Assert.That(CppCpuPrelude.TextFor(CppCpuOptions.Default), Is.EqualTo(CppCpuPrelude.Text));
-        Assert.That(CppCpuPrelude.TextFor(null), Is.EqualTo(CppCpuPrelude.Text));
-        var custom = CppCpuPrelude.TextFor(CppCpuOptions.Default with { BorrowMinBytes = 32, BorrowNonTrivial = true, BorrowReads = true });
-        Assert.That(custom, Does.Contain("std::conditional_t<(sizeof(T) >= 32 || !std::is_trivially_copyable<T>::value), const T&, T>"));
-        Assert.That(custom, Does.Contain("inline const T& array_at_readonly(Array<T> xs, int32_t i)"));
+        Assert.That(CppCpuPrelude.ConfigFor(CppCpuOptions.Default), Is.EqualTo(CppCpuPrelude.ConfigFor(null)));
+        var custom = CppCpuPrelude.ConfigFor(CppCpuOptions.Default with { BorrowMinBytes = 32, BorrowNonTrivial = true, BorrowReads = true });
+        Assert.That(custom, Does.Contain("#define PLATO_BORROW_MIN_BYTES 32").And.Contain("#define PLATO_BORROW_NON_TRIVIAL 1").And.Contain("#define PLATO_BORROW_READS 1"));
     }
 
     [TestCase(false)]
@@ -77,8 +75,8 @@ public class BorrowReadsTests
         var options = new CppCpuOptions(true, false, false, false, Roots) { BorrowLargeParameters = true, BorrowReads = borrow, BorrowNonTrivial = borrow };
         var writer = compilation.ToCpp(new DirectoryPath(output), CppDialect.Cpu, true, options);
         var functions = Functions(writer);
-        var prelude = writer.Files["plato_cpu.hpp"].ToString();
-        Assert.That(prelude.Contains("inline const T& array_at_readonly("), Is.EqualTo(borrow));
+        var prelude = writer.Files["plato_config.hpp"].ToString();
+        Assert.That(prelude.Contains("#define PLATO_BORROW_READS 1"), Is.EqualTo(borrow));
         Assert.That(functions.Contains("const auto& "), Is.EqualTo(borrow), functions);
         Assert.That(functions.Contains("const Tagged& first = "), Is.EqualTo(borrow), functions);
         Assert.That(functions.Contains("const Tagged& u = "), Is.EqualTo(borrow), functions);

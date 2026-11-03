@@ -582,7 +582,8 @@ namespace Ara3D.Geometry.CppWriter
             var live = _emitted.Where(e => !e.Pruned).ToList();
             FunctionsEmitted = live.Count(e => !e.Provided);
 
-            Files["plato_cpu.hpp"] = new StringBuilder(CppCpuPrelude.TextFor(CpuOptions));
+            foreach (var file in CppCpuPrelude.FilesFor(CpuOptions))
+                Files[file.Key] = new StringBuilder(file.Value);
             Files["plato_types.hpp"] = new StringBuilder(BuildCpuTypesHeader());
             Files["plato_functions.hpp"] = new StringBuilder(BuildCpuFunctionsHeader(live));
             var n = 0;
