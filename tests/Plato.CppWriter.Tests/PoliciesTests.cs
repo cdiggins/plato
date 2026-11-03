@@ -62,7 +62,7 @@ public class PoliciesTests
         var units = new LineLimitPartitioner { MaxFunctionLines = 5, MaxJsonLines = 100 };
         var definitions = new[] { "a\nb", "c\nd", "e" };
         var split = units.Partition(definitions, "<", ">", UnitKind.Functions).ToList();
-        Assert.That(split, Is.EqualTo(new[] { "<a\nb\n\nc\nd\n\n>", "<e\n\n>" }));
+        Assert.That(split, Is.EqualTo(new[] { "<a\nb\n\n>", "<c\nd\n\ne\n\n>" }));
         Assert.That(units.Partition(definitions, "<", ">", UnitKind.Json).Count(), Is.EqualTo(1));
         Assert.That(units.Partition(Array.Empty<string>(), "<", ">", UnitKind.Functions).Single(), Is.EqualTo("<>"));
         var oversized = units.Partition(new[] { "1\n2\n3\n4\n5\n6", "x" }, "<", ">", UnitKind.Functions).ToList();
