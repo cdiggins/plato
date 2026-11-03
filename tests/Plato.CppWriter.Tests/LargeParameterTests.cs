@@ -45,7 +45,7 @@ public class LargeParameterTests
         var compilation = new Compilation(Ara3D.Logging.Logger.Null, asts);
         Assert.That(compilation.CompletedCompilation, Is.True);
         var roots = new[] { "ReadWide", "CopyWide", "ReadNarrow", "ReplaceWide", "ReplaceText", "ReadWideArray", "CopyWideArray", "ReplaceWideArray" };
-        var options = new CppCpuOptions(false, false, false, false, roots) { BorrowLargeParameters = borrow, BorrowArrayReads = borrowReads };
+        var options = new CppCpuOptions(false, false, false, false, roots) { BorrowLargeParameters = borrow, BorrowReads = borrowReads };
         var writer = compilation.ToCpp(new DirectoryPath(output), CppDialect.Cpu, true, options);
         var header = writer.Files["plato_functions.hpp"].ToString();
         var parameter = borrow ? "ReadOnlyParameter<Wide>" : "Wide";

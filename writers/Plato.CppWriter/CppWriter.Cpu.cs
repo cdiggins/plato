@@ -17,8 +17,18 @@ namespace Ara3D.Geometry.CppWriter
     public sealed record CppCpuOptions(bool Loops, bool Fuse, bool FuseConsumers, bool ExactOutput, IReadOnlyList<string> Roots)
     {
         public bool ShareCalls { get; init; }
+        /// <summary>--cpp-borrow-params (off by default): <c>ReadOnlyParameter</c> spells unassigned record parameters at or
+        /// over the borrow threshold as <c>const T&amp;</c>.</summary>
         public bool BorrowLargeParameters { get; init; }
-        public bool BorrowArrayReads { get; init; }
+        /// <summary>--cpp-borrow-reads (off by default): array reads return <c>const T&amp;</c> (arrays are immutable
+        /// arena views), lowered-loop elements bind by <c>const auto&amp;</c>, and a record or String local that copies an
+        /// array read or a name neither side of which is written again in the body binds by <c>const T&amp;</c>.</summary>
+        public bool BorrowReads { get; init; }
+        /// <summary>--cpp-borrow-min-bytes=N: <c>ReadOnlyParameter</c> borrows records of at least N bytes (default 256).</summary>
+        public int BorrowMinBytes { get; init; } = 256;
+        /// <summary>--cpp-borrow-nontrivial (off by default): <c>ReadOnlyParameter</c> also borrows every record that is
+        /// not trivially copyable (records holding String), whatever its size.</summary>
+        public bool BorrowNonTrivial { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
     }
 
@@ -555,7 +565,7 @@ namespace Ara3D.Geometry.CppWriter
             var live = _emitted.Where(e => !e.Pruned).ToList();
             FunctionsEmitted = live.Count(e => !e.Provided);
 
-            Files["plato_cpu.hpp"] = new StringBuilder(CppCpuPrelude.Text);
+            Files["plato_cpu.hpp"] = new StringBuilder(CppCpuPrelude.TextFor(CpuOptions));
             Files["plato_types.hpp"] = new StringBuilder(BuildCpuTypesHeader());
             Files["plato_functions.hpp"] = new StringBuilder(BuildCpuFunctionsHeader(live));
             var n = 0;
