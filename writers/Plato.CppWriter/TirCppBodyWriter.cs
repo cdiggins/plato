@@ -5,6 +5,7 @@ using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.CppWriter.Policies;
 using Ara3D.Geometry.CSharpWriter;
 using Ara3D.Utils;
 
@@ -734,13 +735,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             case LiteralTypesEnum.String:
             {
                 var raw = lit.Value?.ToString() ?? "";
-                var esc = CppWriter.EscapeCppStringPublic(raw);
-                if (UsesCpuLambdas)
-                {
-                    Write($"make_string_n(\"{esc}\", {System.Text.Encoding.UTF8.GetByteCount(raw)})");
-                    return;
-                }
-                Write($"make_string_n(\"{esc}\", {raw.Length})");
+                Write(_w.Policies.Strings.Literal(raw, UsesCpuLambdas ? System.Text.Encoding.UTF8.GetByteCount(raw) : raw.Length));
                 return;
             }
             default:
@@ -785,7 +780,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             case "int": Write("0"); return;
             case "bool": Write("false"); return;
             case "char": Write("'\\0'"); return;
-            case "String": Write("make_string_n(\"\", 0)"); return;
+            case "String": Write(_w.Policies.Strings.Literal("", 0)); return;
             case "float2": Write("make_float2(0.0f, 0.0f)"); return;
             case "float3": Write("make_float3(0.0f, 0.0f, 0.0f)"); return;
             case "float4": Write("make_float4(0.0f, 0.0f, 0.0f, 0.0f)"); return;
@@ -886,7 +881,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         // Generated locals, lambda returns and function returns are values. A
         // readonly array read therefore stays borrowed only through an immediate
         // borrowed call argument; value contexts still copy before the region ends.
-        if (UsesCpuLambdas && _w.CpuOptions.BorrowReads && name == "At"
+        if (BorrowReads && name == "At"
             && args.Count == 2 && _w.CppTypeNameOrNull(args[0].Type)?.StartsWith("Array<") == true)
         {
             RecordCall(name, args);

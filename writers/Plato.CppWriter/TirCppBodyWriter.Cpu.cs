@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.CppWriter.Policies;
 using Ara3D.Geometry.CSharpWriter;
 using Ara3D.Utils;
 
@@ -27,7 +28,7 @@ public partial class TirCppBodyWriter
     // binding; Mutated collects every definition the body writes anywhere (assignments, inline-region results
     // and exits, paired reductions), which is stronger than "after".
 
-    private bool BorrowReads => UsesCpuLambdas && _w.CpuOptions.BorrowReads;
+    private bool BorrowReads => UsesCpuLambdas && _w.Policies.Reads.BorrowsReads;
 
     private HashSet<object> _mutated;
 
@@ -65,8 +66,9 @@ public partial class TirCppBodyWriter
     /// <summary>The declaration keyword for a lowered-loop parameter bound to <paramref name="element"/>:
     /// <c>const auto&amp;</c> when it reads an array element and the parameter is never written.</summary>
     private string ElementBinding(ParameterDef parameter, string element)
-        => BorrowReads && element.EndsWith("]") && element.Contains(".data[") && !Mutated.Contains(parameter)
-            ? "const auto&" : "auto";
+        => BorrowReads
+            ? _w.Policies.Reads.ElementBinding(element.EndsWith("]") && element.Contains(".data["), Mutated.Contains(parameter))
+            : "auto";
 
     /// <summary>The declared type of a local, made a const reference when the local copies a record or String
     /// that stays put for the whole body: an array element, or a name that is never written.</summary>
@@ -78,14 +80,14 @@ public partial class TirCppBodyWriter
             return type;
         if (_w.CppTypeNameOrNull(value.Type) != type)
             return type;
-        var source = value switch
+        var stable = value switch
         {
             TirParameter p when !Mutated.Contains(p.Def) => true,
             TirVariable v when !Mutated.Contains(v.Def) => true,
             TirCall c when IsBorrowedArrayRead(c) => true,
             _ => false,
         };
-        return source ? $"const {type}&" : type;
+        return _w.Policies.Reads.LocalType(type, stable);
     }
 
     /// <summary>A conditional whose branches are a borrowed array read (an lvalue) and a value (a prvalue) has
@@ -140,7 +142,7 @@ public partial class TirCppBodyWriter
         var ps = lam.Parameters.Select(p => $"{ResolveLambdaParamCpp(lam, p) ?? "auto"} {CppWriter.EscapeName(p.Name)}");
         var retType = LambdaReturnType(lam);
         var ret = _w.CppTypeNameOrNull(retType);
-        Write($"[=]({ps.JoinStringsWithComma()}) ");
+        Write($"{_w.Policies.Lambdas.Capture(LambdaSite.FunctionValue)}({ps.JoinStringsWithComma()}) ");
         if (ret != null)
             Write($"-> {ret} ");
         _lambdaReturns.Push((ret, ret == null ? null : CppWriter.PlatoTypeName(retType)));
@@ -176,7 +178,7 @@ public partial class TirCppBodyWriter
         }
         var p = $"_lit{_nextArrayId++}";
         var elemPlato = elemType != null ? CppWriter.PlatoTypeName(elemType) : null;
-        Write($"([&]() -> plato::Array<{elem}> {{ {elem}* {p} = plato::arena_alloc<{elem}>({arr.Elements.Count}); ");
+        Write($"({_w.Policies.Lambdas.Capture(LambdaSite.ArrayLiteral)}() -> plato::Array<{elem}> {{ {elem}* {p} = plato::arena_alloc<{elem}>({arr.Elements.Count}); ");
         for (var i = 0; i < arr.Elements.Count; i++)
         {
             Write($"{p}[{i}] = ");
@@ -259,7 +261,7 @@ public partial class TirCppBodyWriter
         }
         WriteLine($"for (int32_t {index} = 0; {index} < {source}.count; {index}++)");
         WriteStartBlock();
-        WriteLine($"{(BorrowReads ? "const auto&" : "auto")} {element} = {source}.data[{index}];");
+        WriteLine($"{(BorrowReads ? _w.Policies.Reads.ReductionElementBinding : "auto")} {element} = {source}.data[{index}];");
         WriteReductionStep(pair.First, element);
         WriteReductionStep(pair.Second, element);
         WriteEndBlock();
@@ -393,169 +395,42 @@ public partial class TirCppBodyWriter
             return prev;
         }
 
-        void FillArray(System.Func<string[]> elems)
+        if (!_w.Policies.Loops.TryGet(ll.Kind, out var emitter))
+            throw new CppUnsupportedException($"unknown lowered loop kind '{ll.Kind}'");
+        var emission = new LoopEmission
         {
-            WriteLine($"{Elem()}* {a} = plato::arena_alloc<{Elem()}>({arrayCount});");
-            For(arrayCount, () =>
-            {
-                var es = elems();
-                DeclareParams(es);
-                Write($"{a}[{i}] = ");
-                WriteFnValue(es);
-                WriteLine(";");
-            });
-        }
-
-        switch (ll.Kind)
-        {
-            case "Map" or "MapIdx":
-                WriteLine($"int32_t {n} = {count0};");
-                FillArray(() =>
-                {
-                    var e = BaseElem();
-                    return ll.Kind == "MapIdx" ? new[] { e, i } : new[] { e };
-                });
-                break;
-            case "MapRange":
-                WriteLine($"int32_t {n} = ({srcNames[0]} > 0 ? {srcNames[0]} : 0);");
-                FillArray(() => new[] { i });
-                break;
-            case "Zip2":
-            case "Zip3":
-                WriteLine($"int32_t {n} = {Count(0)} < {Count(1)} ? {Count(0)} : {Count(1)};");
-                if (ll.Kind == "Zip3")
-                    WriteLine($"{n} = {n} < {Count(2)} ? {n} : {Count(2)};");
-                FillArray(() => srcNames.Select(sn => $"{sn}.data[{i}]").ToArray());
-                break;
-            case "Reduce":
-            {
-                var acc = TirLoopLowerer.IsRenderableConcrete(ll.Type) ? _w.CppTypeNameOrNull(ll.Type) ?? "auto" : "auto";
-                Write($"{acc} {t} = ");
-                WriteNode(ll.Seed);
-                WriteLine(";");
-                WriteLine($"int32_t {n} = {count0};");
-                For(n, () =>
-                {
-                    var e = BaseElem();
-                    DeclareParams(t, e);
-                    Write($"{t} = ");
-                    WriteFnValue(t, e);
-                    WriteLine(";");
-                });
-                break;
-            }
-            case "All":
-            case "Any":
-            {
-                var isAll = ll.Kind == "All";
-                WriteLine($"bool {t} = {(isAll ? "true" : "false")};");
-                WriteLine($"int32_t {n} = {count0};");
-                For(n, () =>
-                {
-                    var e = BaseElem();
-                    DeclareParams(e);
-                    Write(isAll ? "if (!(" : "if ((");
-                    WriteFnValue(e);
-                    WriteLine("))");
-                    WriteStartBlock();
-                    WriteLine($"{t} = {(isAll ? "false" : "true")};");
-                    WriteLine("break;");
-                    WriteEndBlock();
-                });
-                break;
-            }
-            case "FlatMap":
-                WriteCpuFlatMap(ll, srcNames, Elem(), count0, BaseElem, DeclareParams, WriteFnValue, For);
-                arrayCount = $"_total{k}";
-                break;
-            case "Reverse":
-                WriteLine($"int32_t {n} = {Count(0)};");
-                WriteLine($"{Elem()}* {a} = plato::arena_alloc<{Elem()}>({n});");
-                For(n, () => WriteLine($"{a}[{i}] = {srcNames[0]}.data[{n} - 1 - {i}];"));
-                break;
-            case "WithNext":
-            {
-                WriteLine($"int32_t {n} = {Count(0)};");
-                arrayCount = $"_m{k}";
-                Write($"int32_t {arrayCount} = (");
-                WriteNode(ll.IncludeFirst);
-                WriteLine($") ? {n} : ({n} > 1 ? {n} - 1 : 0);");
-                FillArray(() => new[] { $"{srcNames[0]}.data[{i}]", $"{srcNames[0]}.data[({i} + 1) % {n}]" });
-                break;
-            }
-            case "MapPairs":
-            case "MapTriplets":
-            case "MapQuartets":
-            {
-                var stride = ll.Kind == "MapPairs" ? 2 : ll.Kind == "MapTriplets" ? 3 : 4;
-                WriteLine($"int32_t {n} = {Count(0)} / {stride};");
-                FillArray(() => Enumerable.Range(0, stride)
-                    .Select(o => o == 0 ? $"{srcNames[0]}.data[{i} * {stride}]" : $"{srcNames[0]}.data[{i} * {stride} + {o}]")
-                    .ToArray());
-                break;
-            }
-            default:
-                throw new CppUnsupportedException($"unknown lowered loop kind '{ll.Kind}'");
-        }
-        if (TirLoopLowerer.ProducesArray(ll.Kind) || ll.Kind == "FlatMap")
-            WriteLine($"auto {t} = plato::make_array({(ll.Kind == "FlatMap" ? $"_fa{k}" : a)}, {arrayCount});");
+            Loop = ll,
+            Writer = _w,
+            SourceNames = srcNames,
+            Count = n,
+            Index = i,
+            Buffer = a,
+            Temp = t,
+            SourceCount = count0,
+            ArrayCount = n,
+            ResultArray = a,
+            Write = text => Write(text),
+            WriteLine = text => WriteLine(text),
+            WriteNode = WriteNode,
+            StartBlock = () => WriteStartBlock(),
+            EndBlock = () => WriteEndBlock(),
+            ElementType = Elem,
+            BaseElement = BaseElem,
+            For = For,
+            DeclareParameters = DeclareParams,
+            WriteCallback = WriteFnValue,
+            ElementBinding = ElementBinding,
+            ParameterName = p => _loopParamNames[p],
+        };
+        emitter.Emit(emission);
+        if (TirLoopLowerer.ProducesArray(ll.Kind) || emission.ResultArray != a)
+            WriteLine($"auto {t} = plato::make_array({emission.ResultArray}, {emission.ArrayCount});");
         if (lam != null)
             foreach (var p in lam.Parameters)
                 _loopParamNames.Remove(p);
         foreach (var sl in stageLams)
             foreach (var p in sl.Parameters)
                 _loopParamNames.Remove(p);
-    }
-
-    // FlatMap needs the total length before it can allocate in a bump arena: with a proved fixed
-    // width (exact output) the total is count * width; otherwise each part is kept and copied.
-    private void WriteCpuFlatMap(TirLoweredLoop ll, List<string> srcNames, string elem, string count0,
-        System.Func<string> baseElem, System.Action<string[]> declareParams,
-        System.Action<string[]> writeFnValue, System.Action<string, System.Action> forLoop)
-    {
-        var k = ll.Id;
-        var n = $"_n{k}";
-        var i = $"_i{k}";
-        var j = $"_j{k}";
-        var part = $"_p{k}";
-        var total = $"_total{k}";
-        var fa = $"_fa{k}";
-        var off = $"_off{k}";
-        WriteLine($"int32_t {n} = {count0};");
-        if (_w.CpuOptions.ExactOutput
-            && ll.Fn is TirLambda exact && ll.SourceStages.Count == 0 && !ll.IndexSource
-            && TirExactOutput.TryGetWidth(ll, _w.Compilation, out var width))
-        {
-            WriteLine($"int32_t {total} = {n} * {width};");
-            WriteLine($"{elem}* {fa} = plato::arena_alloc<{elem}>({total});");
-            WriteLine($"int32_t {off} = 0;");
-            forLoop(n, () =>
-            {
-                WriteLine($"{ElementBinding(exact.Parameters[0], $"{srcNames[0]}.data[{i}]")} {_loopParamNames[exact.Parameters[0]]} = {srcNames[0]}.data[{i}];");
-                Write($"auto {part} = ");
-                WriteNode(exact.Body);
-                WriteLine(";");
-                WriteLine($"for (int32_t {j} = 0; {j} < {part}.count; {j}++) {fa}[{off}++] = {part}.data[{j}];");
-            });
-            return;
-        }
-        var parts = $"_parts{k}";
-        WriteLine($"plato::Array<{elem}>* {parts} = plato::arena_alloc<plato::Array<{elem}>>({n});");
-        WriteLine($"int32_t {total} = 0;");
-        forLoop(n, () =>
-        {
-            var e = baseElem();
-            declareParams(new[] { e });
-            Write($"auto {part} = ");
-            writeFnValue(new[] { e });
-            WriteLine(";");
-            WriteLine($"{parts}[{i}] = {part};");
-            WriteLine($"{total} += {part}.count;");
-        });
-        WriteLine($"{elem}* {fa} = plato::arena_alloc<{elem}>({total});");
-        WriteLine($"int32_t {off} = 0;");
-        forLoop(n, () =>
-            WriteLine($"for (int32_t {j} = 0; {j} < {parts}[{i}].count; {j}++) {fa}[{off}++] = {parts}[{i}].data[{j}];"));
     }
 }
 

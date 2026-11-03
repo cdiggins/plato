@@ -6,6 +6,7 @@ using System.Text;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;
+using Ara3D.Geometry.CppWriter.Policies;
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.CppWriter
@@ -29,6 +30,8 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>--cpp-borrow-nontrivial (off by default): <c>ReadOnlyParameter</c> also borrows every record that is
         /// not trivially copyable (records holding String), whatever its size.</summary>
         public bool BorrowNonTrivial { get; init; }
+        /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
+        public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
     }
 
@@ -49,6 +52,25 @@ namespace Ara3D.Geometry.CppWriter
     public partial class CppWriter
     {
         public CppCpuOptions CpuOptions { get; set; } = CppCpuOptions.Default;
+
+        private CppCpuOptions _policiesFor;
+        private CppPolicies _policies;
+
+        /// <summary>The code-shape decisions in force for <see cref="CpuOptions"/>.</summary>
+        public CppPolicies Policies
+        {
+            get
+            {
+                if (CpuOptions.Policies != null)
+                    return CpuOptions.Policies;
+                if (!ReferenceEquals(_policiesFor, CpuOptions))
+                {
+                    _policies = CppPolicies.For(CpuOptions);
+                    _policiesFor = CpuOptions;
+                }
+                return _policies;
+            }
+        }
         internal CppTirPipeline CpuPipeline { get; } = new CppTirPipeline();
 
         public bool IsCpu => Dialect == CppDialect.Cpu;
@@ -90,11 +112,7 @@ namespace Ara3D.Geometry.CppWriter
         private List<CppField> StructFieldsOf(ConcreteType c)
         {
             if (IsCpu && c.TypeDef.IsSum)
-            {
-                var list = new List<CppField> { new CppField("Kind", null, "int32_t") };
-                list.AddRange(c.TypeDef.Cases.SelectMany(cs => cs.Fields).Select(f => new CppField(f.FlatName, f.Type)));
-                return list;
-            }
+                return Policies.Sums.Fields(c.TypeDef.Cases).ToList();
             return c.TypeDef.Fields.Select(f => new CppField(f.Name, f.Type)).ToList();
         }
 
@@ -390,8 +408,7 @@ namespace Ara3D.Geometry.CppWriter
                 var cs = ct.TypeDef.Cases.FirstOrDefault(c => c.Name == fi.Name);
                 if (cs != null && cs.Fields.Count == paramNames.Count)
                 {
-                    var sets = cs.Fields.Select((f, i) => $" r.{EscapeName(f.FlatName)} = {paramNames[i]};").JoinStrings("");
-                    Add(label, sigKey, sig, $"{sig} {{ {owner} r{{}}; r.Kind = {owner}::{cs.TagConstName};{sets} return r; }}", null);
+                    Add(label, sigKey, sig, sig + Policies.Sums.Construct(owner, cs, paramNames), null);
                     return;
                 }
             }
@@ -604,8 +621,7 @@ namespace Ara3D.Geometry.CppWriter
             {
                 sb.Append($"{TemplatePrefix(s.Type)}struct {s.Name}\n{{\n");
                 if (s.Type != null && s.Type.TypeDef.IsSum)
-                    foreach (var cs in s.Type.TypeDef.Cases)
-                        sb.Append($"    static constexpr int32_t {cs.TagConstName} = {cs.Tag};\n");
+                    sb.Append(Policies.Sums.TagDeclarations(s.Type.TypeDef.Cases));
                 using (ParamScope(s.Type))
                     foreach (var f in s.Fields)
                         sb.Append($"    {CppTypeName(f)} {EscapeName(f.Name)};\n");
@@ -649,15 +665,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 var n = s.Name;
                 string cond;
                 if (s.Type != null && s.Type.TypeDef.IsSum)
-                {
-                    var terms = new List<string> { "a.Kind == b.Kind" };
-                    foreach (var cs in s.Type.TypeDef.Cases.Where(c => c.Fields.Count > 0))
-                    {
-                        var eq = cs.Fields.Select(f => $"eq_(a.{EscapeName(f.FlatName)}, b.{EscapeName(f.FlatName)})").JoinStrings(" && ");
-                        terms.Add($"(a.Kind != {n}::{cs.TagConstName} || ({eq}))");
-                    }
-                    cond = string.Join(" && ", terms);
-                }
+                    cond = Policies.Sums.EqualsCondition(n, s.Type.TypeDef.Cases);
                 else
                 {
                     cond = s.Fields.Count == 0 ? "true"
@@ -740,45 +748,21 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
             return sb.ToString();
         }
 
-        private const int MaxLinesPerFile = 20000;
-        private const int MaxJsonLinesPerFile = 2000;
-
         private IEnumerable<string> BuildCpuFunctionFiles(List<Emitted> live)
             => BuildCpuDefinitionFiles(live.Where(e => !e.Provided && !e.IsTemplate)
                     .Select(e => e.Definition),
                 "#include \"plato_types.hpp\"\n#include \"plato_functions.hpp\"\n",
-                MaxLinesPerFile);
+                UnitKind.Functions);
 
-        // Keep definitions intact and preserve their deterministic dependency order.
-        // A single oversized definition occupies its own unit; an empty program still
-        // emits one unit so hosts need no special empty-program convention.
-        private static IEnumerable<string> BuildCpuDefinitionFiles(
-            IEnumerable<string> definitions, string includes, int maxLines)
-        {
-            var head = Banner + includes + "\nnamespace plato {\n\n";
-            const string tail = "} // namespace plato\n";
-            var sb = new StringBuilder(head);
-            var lines = 0;
-            foreach (var definition in definitions)
-            {
-                var def = definition.TrimEnd('\r', '\n');
-                var defLines = def.Count(c => c == '\n') + 2;
-                if (lines > 0 && lines + defLines > maxLines)
-                {
-                    yield return sb.Append(tail).ToString();
-                    sb = new StringBuilder(head);
-                    lines = 0;
-                }
-                sb.Append(def).Append("\n\n");
-                lines += defLines;
-            }
-            yield return sb.Append(tail).ToString();
-        }
+        private IEnumerable<string> BuildCpuDefinitionFiles(
+            IEnumerable<string> definitions, string includes, UnitKind kind)
+            => Policies.Units.Partition(definitions, Banner + includes + "\nnamespace plato {\n\n",
+                "} // namespace plato\n", kind);
 
         private IEnumerable<string> BuildCpuJsonFiles()
             => BuildCpuDefinitionFiles(BuildCpuJsonDefinitions(),
                 "// Each object writes every field, including inactive closed-sum fields.\n"
-                + "#include \"plato_types.hpp\"\n", MaxJsonLinesPerFile);
+                + "#include \"plato_types.hpp\"\n", UnitKind.Json);
 
         private IEnumerable<string> BuildCpuJsonDefinitions()
         {
@@ -817,7 +801,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 var n = s.Name;
                 AddGenerated("Equals", new[] { n, n }, $"PLATO_FN bool Equals(const {n}& a, const {n}& b)", " { return a == b; }");
                 AddGenerated("NotEquals", new[] { n, n }, $"PLATO_FN bool NotEquals(const {n}& a, const {n}& b)", " { return a != b; }");
-                AddGenerated("TypeName", new[] { n }, $"PLATO_FN String TypeName(const {n}& _)", $" {{ return make_string_n(\"{EscapeCppString(n)}\", {System.Text.Encoding.UTF8.GetByteCount(n)}); }}");
+                AddGenerated("TypeName", new[] { n }, $"PLATO_FN String TypeName(const {n}& _)", $" {{ return {Policies.Strings.Literal(n, System.Text.Encoding.UTF8.GetByteCount(n))}; }}");
 
                 string HashOf(CppField f)
                 {
@@ -835,18 +819,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
 
                 string body;
                 if (s.Type != null && s.Type.TypeDef.IsSum)
-                {
-                    var sb = new StringBuilder(" { int32_t h = hash_(a.Kind);");
-                    foreach (var cs in s.Type.TypeDef.Cases.Where(c => c.Fields.Count > 0))
-                    {
-                        sb.Append($" if (a.Kind == {n}::{cs.TagConstName}) {{");
-                        foreach (var f in cs.Fields)
-                            sb.Append($" h = mix_(h, {HashOf(new CppField(f.FlatName, f.Type))});");
-                        sb.Append(" }");
-                    }
-                    sb.Append(" return h; }");
-                    body = sb.ToString();
-                }
+                    body = Policies.Sums.HashBody(n, s.Type.TypeDef.Cases, HashOf);
                 else
                 {
                     body = " { int32_t h = 17;" + s.Fields.Select(f => $" h = mix_(h, {HashOf(f)});").JoinStrings("") + " return h; }";
@@ -859,14 +832,13 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                     {
                         var fieldTypes = cs.Fields.Select(f => FieldCppOrNull(new CppField(f.FlatName, f.Type))).ToList();
                         var ps = fieldTypes.Select((t, i) => ParameterDeclaration(t, $"p{i}")).Prepend($"{n} _").JoinStringsWithComma();
-                        var sets = cs.Fields.Select((f, i) => $" r.{EscapeName(f.FlatName)} = p{i};").JoinStrings("");
                         AddGenerated(cs.Name, fieldTypes.Prepend(n).ToArray(), $"PLATO_FN {n} {FunctionName(cs.Name)}({ps})",
-                            $" {{ {n} r{{}}; r.Kind = {n}::{cs.TagConstName};{sets} return r; }}");
+                            Policies.Sums.Construct(n, cs, cs.Fields.Select((f, i) => $"p{i}").ToList()));
                     }
                 if (s.Type != null && s.Type.TypeDef.IsSum)
                     foreach (var cs in s.Type.TypeDef.Cases)
                         AddGenerated(cs.PredicateName, new[] { n }, $"PLATO_FN bool {cs.PredicateName}(const {n}& s)",
-                            $" {{ return s.Kind == {n}::{cs.TagConstName}; }}");
+                            Policies.Sums.PredicateBody(n, cs));
             }
         }
 

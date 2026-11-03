@@ -8,6 +8,7 @@ using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.Compiler.Types;
+using Ara3D.Geometry.CppWriter.Policies;
 using Ara3D.Geometry.CSharpWriter;
 using Ara3D.Utils;
 
@@ -436,7 +437,7 @@ namespace Ara3D.Geometry.CppWriter
                 case "int": return "0";
                 case "bool": return "false";
                 case "char": return "'\\0'";
-                case "String": return "make_string_n(\"\", 0)";
+                case "String": return Policies.Strings.Literal("", 0);
                 case "float2": return "make_float2(0.0f, 0.0f)";
                 case "float3": return "make_float3(0.0f, 0.0f, 0.0f)";
                 case "float4": return "make_float4(0.0f, 0.0f, 0.0f, 0.0f)";
@@ -1107,10 +1108,9 @@ namespace Ara3D.Geometry.CppWriter
 
             void EmitTypeName(string cppType, string platoName)
             {
-                var lit = EscapeCppString(platoName);
                 AddGenerated("TypeName", new[] { cppType },
                     $"PLATO_FN String TypeName({cppType} _)",
-                    $" {{ return make_string_n(\"{lit}\", {platoName.Length}); }}");
+                    $" {{ return {Policies.Strings.Literal(platoName, platoName.Length)}; }}");
             }
 
             string RichToStringBody(string cppType, Action<StringBuilder> writeBody)
@@ -1169,7 +1169,7 @@ namespace Ara3D.Geometry.CppWriter
 
             AddGenerated("TypeName", new[] { "String" },
                 "PLATO_FN String TypeName(String _)",
-                " { return make_string_n(\"String\", 6); }");
+                $" {{ return {Policies.Strings.Literal("String", 6)}; }}");
             AddGenerated("ToString", new[] { "String" },
                 "PLATO_FN String ToString(String s)", " { return s; }");
 
@@ -1179,7 +1179,7 @@ namespace Ara3D.Geometry.CppWriter
                 var lit = EscapeCppString(n);
                 AddGenerated("TypeName", new[] { n },
                     $"PLATO_FN String TypeName({n} _)",
-                    $" {{ return make_string_n(\"{lit}\", {n.Length}); }}");
+                    $" {{ return {Policies.Strings.Literal(n, n.Length)}; }}");
 
                 var fields = c.TypeDef.Fields.Select(f => EscapeName(f.Name)).ToList();
                 var fieldCpp = c.TypeDef.Fields.Select(f => CppTypeNameOrNull(f.Type)).ToList();
@@ -1628,15 +1628,16 @@ namespace Ara3D.Geometry.CppWriter
                     .Select(p => p.Def).ToHashSet() ?? new HashSet<ParameterDef>();
                 var parameters = paramTypes.Select((type, i) =>
                 {
-                    if (tir != null && assigned.Contains(tir.Parameters[i]))
-                        return $"{type} {paramNames[i]}";
-                    // Only closed, named records: alias templates in deduced parameter
-                    // positions would prevent generic argument deduction in C++.
-                    if (IsCpu && CpuOptions.BorrowLargeParameters && StructNames.Contains(type))
-                        return $"ReadOnlyParameter<{type}> {paramNames[i]}";
-                    return ParameterDeclaration(type, paramNames[i]);
+                    var isAssigned = tir != null && assigned.Contains(tir.Parameters[i]);
+                    switch (Policies.Parameters.Classify(type, isAssigned, IsCpu && StructNames.Contains(type)))
+                    {
+                        case ParameterPassing.Owned: return $"{type} {paramNames[i]}";
+                        case ParameterPassing.ReadOnly: return $"ReadOnlyParameter<{type}> {paramNames[i]}";
+                        default: return ParameterDeclaration(type, paramNames[i]);
+                    }
                 }).JoinStringsWithComma();
-                var sig = $"{TemplateHeader(templateNames)}PLATO_FN {ret} {FunctionName(fi.Name)}({parameters})";
+                var attributes = Policies.Attributes.For(fi.Name, paramTypes, ret);
+                var sig = $"{TemplateHeader(templateNames)}PLATO_FN {attributes}{ret} {FunctionName(fi.Name)}({parameters})";
 
                 string definition;
                 List<CallSite> callees = null;
@@ -1672,7 +1673,7 @@ namespace Ara3D.Geometry.CppWriter
                     // The body can name more type variables than the signature; the header lists them all.
                     typeVars = CpuTemplateVarsInUse();
                     if (typeVars.Count > 0)
-                        sig = $"{TemplateHeader(typeVars.Concat(templateNames).ToList())}PLATO_FN {ret} {FunctionName(fi.Name)}({parameters})";
+                        sig = $"{TemplateHeader(typeVars.Concat(templateNames).ToList())}PLATO_FN {attributes}{ret} {FunctionName(fi.Name)}({parameters})";
                     definition = sig + bodyText;
                 }
                 if (tir == null)
