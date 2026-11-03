@@ -659,7 +659,7 @@ inline int32_t hash_(const Bytes& b) { return Hash(b); }
 inline int32_t hash_(const String& s) { int32_t h = 17; for (char16_t c : s) h = mix_(h, (int32_t)c); return h; }
 template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
 
-");
+".Replace("\r\n", "\n"));  // the literal must not inherit the checkout's line endings
             foreach (var s in CpuStructs())
             {
                 var n = s.Name;
