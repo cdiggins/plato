@@ -41,6 +41,10 @@ public class PreludeFragmentsTests
         var (exit, output) = Toolchain.Run("cmd.exe", "/c " + command, folder, nativeEnvironment: true);
         Assert.That(exit, Is.Zero, output);
         // The standard headers expand too; they are the same on both sides. Whitespace and blank lines carry no meaning.
+        // The #line directives name the temporary folder, which differs between the two sides.
+        output = Regex.Replace(output, @"plato-prelude-[a-z0-9-]+-[0-9a-f]{32}", "DIR");
+        // assert expands __FILE__ and __LINE__, which name the fragment and its line.
+        output = Regex.Replace(output, @"DIR[^""]*\.hpp"", \(unsigned\)\(\d+\)", "SITE");
         return Regex.Replace(output, @"\s+", " ");
     }
 
