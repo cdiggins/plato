@@ -1,0 +1,38 @@
+// Fixture for GoldenEmissionTests: one small program per feature the C++ writer has a decision about.
+type Tagged { Name: String; X: Number; }
+type Pair { A: Number; B: Number; }
+type Wide { A0: Number; A1: Number; A2: Number; A3: Number; A4: Number; A5: Number; A6: Number; A7: Number; A8: Number; A9: Number; A10: Number; A11: Number; A12: Number; A13: Number; A14: Number; A15: Number; A16: Number; A17: Number; A18: Number; A19: Number; A20: Number; A21: Number; A22: Number; A23: Number; A24: Number; A25: Number; A26: Number; A27: Number; A28: Number; A29: Number; A30: Number; A31: Number; A32: Number; A33: Number; A34: Number; A35: Number; A36: Number; A37: Number; A38: Number; A39: Number; }
+type Huge { B0: Number; B1: Number; B2: Number; B3: Number; B4: Number; B5: Number; B6: Number; B7: Number; B8: Number; B9: Number; B10: Number; B11: Number; B12: Number; B13: Number; B14: Number; B15: Number; B16: Number; B17: Number; B18: Number; B19: Number; B20: Number; B21: Number; B22: Number; B23: Number; B24: Number; B25: Number; B26: Number; B27: Number; B28: Number; B29: Number; B30: Number; B31: Number; B32: Number; B33: Number; B34: Number; B35: Number; }
+type Shape = Circle(Radius: Number) | Rect(Width: Number, Height: Number) | Dot;
+library GoldenFixture
+{
+    Area(s: Shape): Number
+        => match (s) {
+            Circle(r) => 3.0 * r * r;
+            Rect(w, h) => w * h;
+            Dot => 0.0;
+        };
+    TotalArea(xs: Array<Shape>): Number => xs.Map((s) => Area(s)).Reduce(0.0, (a, b) => a + b);
+    WideSum(w: Wide): Number => w.A0 + w.A39;
+    HugeSum(h: Huge, i: Integer): Number => h.B0 + h.B35 + i;
+    CopyHuge(h: Huge): Huge => h;
+    NameLength(t: Tagged): Integer => t.Name.Count;
+    SumX(xs: Array<Tagged>): Number => xs.Map((t) => t.X).Reduce(0.0, (a, b) => a + b);
+    FirstName(xs: Array<Tagged>): String => xs[0].Name;
+    Greeting(t: Tagged): String => t.Name.Count > 0 ? "Hello, world" : "";
+    Lengths(xs: Array<Tagged>): Array<Integer> => xs.Map((t) => NameLength(t));
+    Scaled(xs: Array<Number>, k: Number): Array<Number> => xs.Map((x) => x * k + 1.0);
+    SumSquares(xs: Array<Number>): Number => xs.Map((x) => x * x).Reduce(0.0, (a, b) => a + b);
+    PairSum(p: Pair): Number => p.A + p.B;
+    Root(a: Number): Number
+    {
+        var x = a;
+        var i = 0;
+        while (i < 20)
+        {
+            x = x - (x * x - a) / (2.0 * x);
+            i = i + 1;
+        }
+        return x;
+    }
+}
