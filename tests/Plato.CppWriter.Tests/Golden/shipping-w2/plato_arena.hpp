@@ -59,19 +59,54 @@
         }
     };
 
+#if PLATO_ARENA_TLS_PTR
+    // The pointer has a constant initializer, so reading it needs no guard; the state itself is created once per
+    // thread by the slow path and destroyed at thread exit as before.
+    inline thread_local ArenaState* arena_tls_state = nullptr;
+
+#ifdef _MSC_VER
+    __declspec(noinline)
+#else
+    __attribute__((noinline))
+#endif
+    inline ArenaState& arena_state_create()
+    {
+        static thread_local ArenaState s;
+        arena_tls_state = &s;
+        return s;
+    }
+
+    inline ArenaState& arena_state()
+    {
+        ArenaState* s = arena_tls_state;
+        return s ? *s : arena_state_create();
+    }
+#else
     inline ArenaState& arena_state()
     {
         static thread_local ArenaState s;
         return s;
     }
+#endif
 
-    inline unsigned char* arena_alloc_bytes(size_t bytes)
+#if PLATO_ARENA_LAZY_PEAK
+    // The allocator does not touch peak: it is folded in before bytes can fall and on read.
+    inline void arena_note_peak(ArenaState& s)
     {
-        if (bytes > std::numeric_limits<size_t>::max() - 15) std::abort();
-        bytes = (bytes + 15) & ~size_t(15);
-        if (bytes == 0)
-            return nullptr;
-        ArenaState& s = arena_state();
+        if (s.bytes > s.peak)
+            s.peak = s.bytes;
+    }
+#endif
+
+    // Finds room in a later or new block; the bump path of arena_alloc_bytes failed.
+#if PLATO_ARENA_INLINE
+#ifdef _MSC_VER
+    __declspec(noinline)
+#else
+    __attribute__((noinline))
+#endif
+    inline unsigned char* arena_alloc_slow(ArenaState& s, size_t bytes)
+    {
         for (;;)
         {
             if (s.cur && s.cur->cap - s.cur->used >= bytes)
@@ -79,8 +114,10 @@
                 unsigned char* p = reinterpret_cast<unsigned char*>(s.cur) + sizeof(ArenaBlock) + s.cur->used;
                 s.cur->used += bytes;
                 s.bytes += bytes;
+#if !PLATO_ARENA_LAZY_PEAK
                 if (s.bytes > s.peak)
                     s.peak = s.bytes;
+#endif
                 return p;
             }
             if (s.cur && s.cur->next)
@@ -107,6 +144,78 @@
         }
     }
 
+#ifdef _MSC_VER
+    __forceinline
+#else
+    __attribute__((always_inline)) inline
+#endif
+    unsigned char* arena_alloc_bytes(size_t bytes)
+    {
+        if (bytes > std::numeric_limits<size_t>::max() - 15) std::abort();
+        bytes = (bytes + 15) & ~size_t(15);
+        if (bytes == 0)
+            return nullptr;
+        ArenaState& s = arena_state();
+        ArenaBlock* c = s.cur;
+        if (c && c->cap - c->used >= bytes)
+        {
+            unsigned char* p = reinterpret_cast<unsigned char*>(c) + sizeof(ArenaBlock) + c->used;
+            c->used += bytes;
+            s.bytes += bytes;
+#if !PLATO_ARENA_LAZY_PEAK
+            if (s.bytes > s.peak)
+                s.peak = s.bytes;
+#endif
+            return p;
+        }
+        return arena_alloc_slow(s, bytes);
+    }
+#else
+    inline unsigned char* arena_alloc_bytes(size_t bytes)
+    {
+        if (bytes > std::numeric_limits<size_t>::max() - 15) std::abort();
+        bytes = (bytes + 15) & ~size_t(15);
+        if (bytes == 0)
+            return nullptr;
+        ArenaState& s = arena_state();
+        for (;;)
+        {
+            if (s.cur && s.cur->cap - s.cur->used >= bytes)
+            {
+                unsigned char* p = reinterpret_cast<unsigned char*>(s.cur) + sizeof(ArenaBlock) + s.cur->used;
+                s.cur->used += bytes;
+                s.bytes += bytes;
+#if !PLATO_ARENA_LAZY_PEAK
+                if (s.bytes > s.peak)
+                    s.peak = s.bytes;
+#endif
+                return p;
+            }
+            if (s.cur && s.cur->next)
+            {
+                s.cur = s.cur->next;
+                continue;
+            }
+            size_t cap = s.next_block > bytes ? s.next_block : bytes;
+            if (cap > std::numeric_limits<size_t>::max() - sizeof(ArenaBlock)) std::abort();
+            ArenaBlock* b = static_cast<ArenaBlock*>(std::malloc(sizeof(ArenaBlock) + cap));
+            if (!b)
+                std::abort();
+            b->next = nullptr;
+            b->cap = cap;
+            b->used = 0;
+            if (s.tail)
+                s.tail->next = b;
+            else
+                s.head = b;
+            s.tail = b;
+            s.cur = b;
+            if (s.next_block < (size_t(256) << 20))
+                s.next_block *= 2;
+        }
+    }
+#endif
+
     template <class T>
     inline T* arena_alloc(int32_t n)
     {
@@ -115,7 +224,11 @@
             return nullptr;
         if (static_cast<size_t>(n) > std::numeric_limits<size_t>::max() / sizeof(T)) std::abort();
         T* p = reinterpret_cast<T*>(arena_alloc_bytes(sizeof(T) * static_cast<size_t>(n)));
+#if PLATO_ARENA_UNINIT
+        if constexpr (!std::is_trivially_default_constructible<T>::value && !std::is_trivially_copyable<T>::value)
+#else
         if constexpr (!std::is_trivially_default_constructible<T>::value)
+#endif
             for (int32_t i = 0; i < n; i++)
                 new (p + i) T();
         if constexpr (!std::is_trivially_destructible<T>::value)
@@ -145,6 +258,9 @@
         auto& s = arena_state();
         if (mark.owner != &s || mark.generation != s.generation || mark.bytes > s.bytes
             || mark.cleanups > s.cleanups.size()) std::abort();
+#if PLATO_ARENA_LAZY_PEAK
+        arena_note_peak(s);
+#endif
         s.destroy_from(mark.cleanups);
         for (auto* block = mark.block ? mark.block->next : s.head; block; block = block->next)
             block->used = 0;
@@ -156,6 +272,9 @@
     inline void arena_reset()
     {
         ArenaState& s = arena_state();
+#if PLATO_ARENA_LAZY_PEAK
+        arena_note_peak(s);
+#endif
         s.destroy_from(0);
         ++s.generation;
         for (ArenaBlock* b = s.head; b; b = b->next)
@@ -165,4 +284,13 @@
     }
 
     inline size_t arena_bytes() { return arena_state().bytes; }
+#if PLATO_ARENA_LAZY_PEAK
+    inline size_t arena_peak_bytes()
+    {
+        auto& s = arena_state();
+        arena_note_peak(s);
+        return s.peak;
+    }
+#else
     inline size_t arena_peak_bytes() { return arena_state().peak; }
+#endif
