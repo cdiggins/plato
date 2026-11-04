@@ -32,7 +32,10 @@ namespace Ara3D.Geometry.CppWriter
         public bool BorrowNonTrivial { get; init; }
         /// <summary>Sum dispatch (off by default; tests only until the CLI row exists): a chain of case predicates on one
         /// value in a returned expression is written as <c>switch (value.Kind)</c>.</summary>
-        public bool SwitchSumDispatch { get; init; }
+        public bool SwitchSumDispatch { get; init; } = SumLayoutFromEnvironment.Has("switch");
+        /// <summary>Compact sums (off by default; tests only until the CLI row exists): a sum is an <c>int32_t Kind</c> and one
+        /// union of per-case structs instead of every case's fields side by side.</summary>
+        public bool CompactSums { get; init; } = SumLayoutFromEnvironment.Has("compact");
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
@@ -41,13 +44,16 @@ namespace Ara3D.Geometry.CppWriter
     /// <summary>One data field of an emitted struct: a record field, or the Kind/flattened field of a closed sum.</summary>
     public sealed class CppField
     {
-        public CppField(string name, TypeExpression type, string cppOverride = null)
+        public CppField(string name, TypeExpression type, string cppOverride = null, string access = null)
         {
             Name = name;
             Type = type;
             CppOverride = cppOverride;
+            Access = access;
         }
         public string Name { get; }
+        /// <summary>The member path that reads the field from a value of its struct; null means the escaped <see cref="Name"/>.</summary>
+        public string Access { get; }
         public TypeExpression Type { get; }
         public string CppOverride { get; }
     }
@@ -76,7 +82,22 @@ namespace Ara3D.Geometry.CppWriter
         }
 
         /// <summary>The sum layout in force for <see cref="CpuOptions"/>.</summary>
-        public ISumLayout Sums => Policies.Sums;
+        public ISumLayout Sums
+        {
+            get
+            {
+                var policies = Policies;
+                if (!ReferenceEquals(_sumsFor, policies))
+                {
+                    _sums = policies.Sums.BindStorage(MayShareSumStorage);
+                    _sumsFor = policies;
+                }
+                return _sums;
+            }
+        }
+
+        private ISumLayout _sums;
+        private CppPolicies _sumsFor;
 
         private Dictionary<string, IReadOnlyList<SumCaseDef>> _sumCases;
 
@@ -643,8 +664,13 @@ namespace Ara3D.Geometry.CppWriter
                 if (s.Type != null && s.Type.TypeDef.IsSum)
                     sb.Append(Sums.TagDeclarations(s.Type.TypeDef.Cases));
                 using (ParamScope(s.Type))
-                    foreach (var f in s.Fields)
-                        sb.Append($"    {CppTypeName(f)} {EscapeName(f.Name)};\n");
+                {
+                    if (s.Type != null && s.Type.TypeDef.IsSum)
+                        sb.Append(Sums.MemberDeclarations(s.Name, s.Type.TypeDef.Cases, CppTypeName));
+                    else
+                        foreach (var f in s.Fields)
+                            sb.Append($"    {CppTypeName(f)} {EscapeName(f.Name)};\n");
+                }
                 // A one-field wrapper unwraps implicitly, as the C# struct's implicit operator does
                 // (a typed index passes where the intrinsic wants an int32_t).
                 if (s.Name.StartsWith("Tuple") && s.Name.Length > 5 && char.IsDigit(s.Name[s.Name.Length - 1]) && GenericParamNames(s.Type).Count == s.Fields.Count && s.Fields.Count >= 2)
@@ -710,12 +736,10 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 var tn = SelfTypeName(s.Name, s.Type);
                 var tp = TemplatePrefix(s.Type);
                 sb.Append($"{tp}inline void from_json(const Json& j, {tn}& v)\n{{\n");
-                foreach (var f in s.Fields)
-                    sb.Append($"    from_json_member(j, \"{f.Name}\", v.{EscapeName(f.Name)});\n");
+                sb.Append(JsonReadMembers(s));
                 sb.Append("}\n");
                 sb.Append($"{tp}inline Json to_json(const {tn}& v)\n{{\n    Json j = Json::Object();\n");
-                foreach (var f in s.Fields)
-                    sb.Append($"    j.set(\"{f.Name}\", to_json(v.{EscapeName(f.Name)}));\n");
+                sb.Append(JsonWriteMembers(s));
                 sb.Append("    return j;\n}\n");
             }
             sb.Append("\n} // namespace plato\n");
@@ -790,12 +814,10 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
             {
                 var sb = new StringBuilder();
                 sb.Append($"void from_json(const Json& j, {s.Name}& v)\n{{\n");
-                foreach (var f in s.Fields)
-                    sb.Append($"    from_json_member(j, \"{f.Name}\", v.{EscapeName(f.Name)});\n");
+                sb.Append(JsonReadMembers(s));
                 sb.Append("}\n\n");
                 sb.Append($"Json to_json(const {s.Name}& v)\n{{\n    Json j = Json::Object();\n");
-                foreach (var f in s.Fields)
-                    sb.Append($"    j.set(\"{f.Name}\", to_json(v.{EscapeName(f.Name)}));\n");
+                sb.Append(JsonWriteMembers(s));
                 sb.Append("    return j;\n}\n");
                 yield return sb.ToString();
             }
@@ -826,7 +848,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 string HashOf(CppField f)
                 {
                     var cpp = FieldCppOrNull(f);
-                    var member = "a." + EscapeName(f.Name);
+                    var member = "a." + (f.Access ?? EscapeName(f.Name));
                     return cpp != null && StructNames.Contains(cpp)
                         ? $"GetHashCode({member})"
                         : $"hash_({member})";

@@ -42,6 +42,8 @@ public class SumLayoutTests
     {
         yield return new TestCaseData(new CppCpuOptions(false, false, false, false, Roots)).SetName("Sum_flat");
         yield return new TestCaseData(new CppCpuOptions(false, false, false, false, Roots) { SwitchSumDispatch = true }).SetName("Sum_switch");
+        yield return new TestCaseData(new CppCpuOptions(false, false, false, false, Roots) { CompactSums = true }).SetName("Sum_compact");
+        yield return new TestCaseData(new CppCpuOptions(false, false, false, false, Roots) { CompactSums = true, SwitchSumDispatch = true }).SetName("Sum_compact_switch");
     }
 
     [TestCaseSource(nameof(Layouts))]
@@ -59,7 +61,7 @@ public class SumLayoutTests
         foreach (var file in writer.Files)
             File.WriteAllText(Path.Combine(output, file.Key), file.Value.ToString());
         var units = writer.Files.Keys.Where(f => f.EndsWith(".cpp")).Select(f => $"#include \"{f}\"");
-        File.WriteAllText(Path.Combine(output, "main.cpp"), string.Join("\n", units) + """
+        File.WriteAllText(Path.Combine(output, "main.cpp"), $"#define SUM_COMPACT {(options.CompactSums ? 1 : 0)}\n" + string.Join("\n", units) + """
 
             int main()
             {
@@ -83,6 +85,9 @@ public class SumLayoutTests
                 }
                 Shape zero{};
                 if (zero.Kind != 0) return 8;
+                // Label holds a String, so it keeps flat members; the other five cases share one union (largest: Seg, 32 bytes).
+                if (SUM_COMPACT ? sizeof(Shape) > 96 : sizeof(Shape) < 128) return 9;
+                if (SUM_COMPACT && !std::is_trivially_copyable_v<Pt>) return 10;
                 return 0;
             }
             """);

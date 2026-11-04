@@ -14,14 +14,14 @@ namespace Ara3D.Geometry.CppWriter.Policies
     /// </summary>
     public class FlattenedKindSumLayout : ISumLayout
     {
-        public IReadOnlyList<CppField> Fields(IReadOnlyList<SumCaseDef> cases)
+        public virtual IReadOnlyList<CppField> Fields(IReadOnlyList<SumCaseDef> cases)
         {
             var list = new List<CppField> { new CppField("Kind", null, "int32_t") };
             list.AddRange(cases.SelectMany(cs => cs.Fields).Select(f => new CppField(f.FlatName, f.Type)));
             return list;
         }
 
-        public string TagDeclarations(IReadOnlyList<SumCaseDef> cases)
+        public virtual string TagDeclarations(IReadOnlyList<SumCaseDef> cases)
         {
             var sb = new StringBuilder();
             foreach (var cs in cases)
@@ -29,13 +29,13 @@ namespace Ara3D.Geometry.CppWriter.Policies
             return sb.ToString();
         }
 
-        public string Construct(string typeName, SumCaseDef c, IReadOnlyList<string> values)
+        public virtual string Construct(string typeName, SumCaseDef c, IReadOnlyList<string> values)
         {
             var sets = c.Fields.Select((f, i) => $" r.{CppWriter.EscapeName(f.FlatName)} = {values[i]};").JoinStrings("");
             return $" {{ {typeName} r{{}}; r.Kind = {typeName}::{c.TagConstName};{sets} return r; }}";
         }
 
-        public string EqualsCondition(string typeName, IReadOnlyList<SumCaseDef> cases)
+        public virtual string EqualsCondition(string typeName, IReadOnlyList<SumCaseDef> cases)
         {
             var terms = new List<string> { "a.Kind == b.Kind" };
             foreach (var cs in cases.Where(c => c.Fields.Count > 0))
@@ -46,7 +46,7 @@ namespace Ara3D.Geometry.CppWriter.Policies
             return string.Join(" && ", terms);
         }
 
-        public string HashBody(string typeName, IReadOnlyList<SumCaseDef> cases, Func<CppField, string> hashOf)
+        public virtual string HashBody(string typeName, IReadOnlyList<SumCaseDef> cases, Func<CppField, string> hashOf)
         {
             var sb = new StringBuilder(" { int32_t h = hash_(a.Kind);");
             foreach (var cs in cases.Where(c => c.Fields.Count > 0))
@@ -60,7 +60,18 @@ namespace Ara3D.Geometry.CppWriter.Policies
             return sb.ToString();
         }
 
-        public string PredicateBody(string typeName, SumCaseDef c)
+        public virtual string MemberDeclarations(string typeName, IReadOnlyList<SumCaseDef> cases, Func<CppField, string> cppType)
+            => string.Concat(Fields(cases).Select(f => $"    {cppType(f)} {CppWriter.EscapeName(f.Name)};{'\n'}"));
+
+        public virtual string FieldAccess(SumCaseDef c, SumCaseField f) => CppWriter.EscapeName(f.FlatName);
+
+        public virtual string JsonRead(string typeName, IReadOnlyList<SumCaseDef> cases)
+            => string.Concat(Fields(cases).Select(f => $"    from_json_member(j, \"{f.Name}\", v.{CppWriter.EscapeName(f.Name)});{'\n'}"));
+
+        public virtual string JsonWrite(string typeName, IReadOnlyList<SumCaseDef> cases)
+            => string.Concat(Fields(cases).Select(f => $"    j.set(\"{f.Name}\", to_json(v.{CppWriter.EscapeName(f.Name)}));{'\n'}"));
+
+        public virtual string PredicateBody(string typeName, SumCaseDef c)
             => $" {{ return s.Kind == {typeName}::{c.TagConstName}; }}";
     }
 }

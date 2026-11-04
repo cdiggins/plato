@@ -336,7 +336,7 @@ namespace Ara3D.Geometry.CppWriter
                     case "W": return "w";
                 }
             }
-            return EscapeName(fieldName);
+            return IsCpu && TryGetSumFieldAccess(receiverPlatoType, fieldName, out var access) ? access : EscapeName(fieldName);
         }
 
         public static bool IsScalar(string cppType)

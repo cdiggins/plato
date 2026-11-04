@@ -27,6 +27,7 @@ public class GoldenEmissionTests
         yield return new TestCaseData("shipping", Shipping).SetName("Golden_shipping");
         yield return new TestCaseData("shipping-share-calls", Shipping with { ShareCalls = true }).SetName("Golden_shipping_share_calls");
         yield return new TestCaseData("shipping-sum-switch", Shipping with { SwitchSumDispatch = true }).SetName("Golden_shipping_sum_switch");
+        yield return new TestCaseData("shipping-compact-sums", Shipping with { CompactSums = true, SwitchSumDispatch = true }).SetName("Golden_shipping_compact_sums");
         yield return new TestCaseData("shipping-w2", Shipping with
         {
             BorrowLargeParameters = true, BorrowReads = true, BorrowNonTrivial = true, BorrowMinBytes = 32,

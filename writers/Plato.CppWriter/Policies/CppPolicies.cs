@@ -21,7 +21,8 @@ namespace Ara3D.Geometry.CppWriter.Policies
             Parameters = new BorrowRecordParameters(options.BorrowLargeParameters),
             Reads = options.BorrowReads ? new ConstReferenceReads() : new CopyingReads(),
             Lambdas = new CaptureByValueLambdas(),
-            Sums = options.SwitchSumDispatch ? new SwitchKindSumLayout() : new FlattenedKindSumLayout(),
+            Sums = options.CompactSums ? new CompactUnionSumLayout(options.SwitchSumDispatch)
+                : options.SwitchSumDispatch ? new SwitchKindSumLayout() : new FlattenedKindSumLayout(),
             Strings = new MakeStringLiterals(),
             Units = new LineLimitPartitioner(),
             Attributes = new NoFunctionAttributes(),

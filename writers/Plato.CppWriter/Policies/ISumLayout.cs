@@ -33,5 +33,22 @@ namespace Ara3D.Geometry.CppWriter.Policies
         /// <summary>The member read, appended to a sum value, that yields its tag when a chain of case predicates on one
         /// value is written as a <c>switch</c>; null (the default) leaves the chain as conditionals.</summary>
         string SwitchOn => null;
+
+        /// <summary>This layout, told which cases may share storage (a case whose fields are all trivially copyable and
+        /// destructible); a layout that never shares returns itself. The writer binds once its types are known.</summary>
+        ISumLayout BindStorage(Func<SumCaseDef, bool> mayShareStorage) => this;
+
+        /// <summary>The member declarations of the struct (the tag constants are <see cref="TagDeclarations"/>), each line
+        /// ending in a newline. <paramref name="cppType"/> spells a field's C++ type.</summary>
+        string MemberDeclarations(string typeName, IReadOnlyList<SumCaseDef> cases, Func<CppField, string> cppType);
+
+        /// <summary>The member path, relative to a value of the sum, that reads field <paramref name="f"/> of case <paramref name="c"/>.</summary>
+        string FieldAccess(SumCaseDef c, SumCaseField f);
+
+        /// <summary>The statements, each ending in a newline, that fill <c>v</c> from the object <c>j</c>.</summary>
+        string JsonRead(string typeName, IReadOnlyList<SumCaseDef> cases);
+
+        /// <summary>The statements, each ending in a newline, that set every field of <c>v</c> on the object <c>j</c>.</summary>
+        string JsonWrite(string typeName, IReadOnlyList<SumCaseDef> cases);
     }
 }
