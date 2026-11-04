@@ -73,7 +73,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// the unwrap, so wrapping is a constructor call
         /// (<c>tracker/decisions/2026-08-02-single-field-mirror-unwraps-only.md</c>, TKT-445).
         /// </summary>
-        private bool TryCoerce(TypeExpression from, TypeExpression to, Dictionary<string, TypeExpression> sub, int depth = 0)
+        private bool TryCoerce(TypeExpression from, TypeExpression to, TypeBindings sub, int depth = 0)
         {
             if (from == null || to == null || depth > MaxDepth)
                 return true;
@@ -91,14 +91,14 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <summary>A <c>Tuple{N}</c> converts to a concrete struct with N fields, each element
         /// COERCING (not merely unifying) to its field type — the generated tuple-constructor
         /// implicit operator applies an implicit conversion per constructor argument.</summary>
-        private bool TupleConvertsToStruct(TypeExpression from, TypeExpression to, Dictionary<string, TypeExpression> sub, int depth)
+        private bool TupleConvertsToStruct(TypeExpression from, TypeExpression to, TypeBindings sub, int depth)
         {
             if (from?.Def?.Name == null || !from.Def.Name.StartsWith("Tuple"))
                 return false;
             if (to?.Def == null || !to.Def.IsConcrete() || to.Def.Fields.Count != from.TypeArgs.Count)
                 return false;
             var map = BuildParamSubstitution(to);
-            var scratch = new Dictionary<string, TypeExpression>(sub);
+            var scratch = new TypeBindings(sub);
             for (var i = 0; i < from.TypeArgs.Count; i++)
             {
                 var fieldType = Substitute(to.Def.Fields[i].Type, map);
@@ -129,9 +129,9 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         /// <summary>Unify on a scratch copy and adopt the bindings only if it fully succeeds, so a
         /// partial/failed match never leaves spurious bindings or rejects the candidate.</summary>
-        private void BindBestEffort(TypeExpression a, TypeExpression b, Dictionary<string, TypeExpression> sub)
+        private void BindBestEffort(TypeExpression a, TypeExpression b, TypeBindings sub)
         {
-            var scratch = new Dictionary<string, TypeExpression>(sub);
+            var scratch = new TypeBindings(sub);
             if (Unify(a, b, scratch, null, record: false))
                 foreach (var kv in scratch)
                     sub[kv.Key] = kv.Value;
