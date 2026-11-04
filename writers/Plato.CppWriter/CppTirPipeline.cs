@@ -39,8 +39,6 @@ namespace Ara3D.Geometry.CppWriter
             s.Set("exact-output", options.ExactOutput);
             s.Set("share-calls", options.ShareCalls);
             s.Set("scalar-arrays", options.ScalarArrays);
-            s.Set("lower-more", options.LowerMore);
-            s.Set("filter-lowering", options.FilterLowering);
             return s;
         }
 

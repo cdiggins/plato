@@ -1,4 +1,5 @@
-// Pins the lane C1-c rows (TKT-1186): scalar-arrays and lower-more reach the Cpu target, filter-lowering is Cpu only; scalar-arrays on for Cpu since timing window 2, the other two off.
+// Pins the lane C1-c row (TKT-1186): scalar-arrays reaches the Cpu target and is on there since timing window 2.
+// lower-more is C# only again and filter-lowering is gone (both rejected for Cpu in timing window 2, 0.996).
 using Ara3D.Geometry.CLI;
 
 namespace PlatoTests.Cli;
@@ -6,21 +7,20 @@ namespace PlatoTests.Cli;
 public class C1cSwitchesTests
 {
     [Test]
-    public void TheThreeSwitchesApplyToCpp()
+    public void ScalarArraysIsOnForCpu()
     {
-        var off = WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu);
-        Assert.That(off["lower-more"] || off["filter-lowering"], Is.False);
-        Assert.That(off["scalar-arrays"], "on for Cpu since timing window 2");
-        var on = WriterSwitches.Resolve(new[] { "--loops", "--scalar-arrays", "--lower-more", "--filter-lowering" }, WriterTarget.Cpu);
-        Assert.That(on["scalar-arrays"] && on["lower-more"] && on["filter-lowering"]);
-        Assert.That(WriterSwitches.Check(on, WriterTarget.Cpu), Is.Null);
+        var cpu = WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu);
+        Assert.That(cpu["scalar-arrays"], "on for Cpu since timing window 2");
+        Assert.That(cpu["lower-more"], Is.False);
+        Assert.That(WriterSwitches.Check(cpu, WriterTarget.Cpu), Is.Null);
     }
 
     [Test]
-    public void FilterLoweringNeedsLowerMore()
+    public void LowerMoreIsCSharpOnlyAndFilterLoweringIsGone()
     {
-        var args = WriterSwitches.Resolve(new[] { "--filter-lowering" }, WriterTarget.Cpu);
-        Assert.That(WriterSwitches.Check(args, WriterTarget.Cpu), Is.EqualTo("--filter-lowering requires --lower-more."));
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--loops", "--lower-more" }, WriterTarget.Cpu), WriterTarget.Cpu),
+            Does.StartWith("--lower-more applies to C#"));
+        Assert.That(WriterSwitches.IsSwitch("filter-lowering"), Is.False);
     }
 
     [Test]

@@ -102,11 +102,11 @@ public class PoliciesTests
     {
         var loops = CppPolicies.For(CppCpuOptions.Default).Loops;
         foreach (var kind in new[] { "Map", "MapIdx", "MapRange", "Zip2", "Zip3", "Reduce", "All", "Any", "FlatMap",
-                     "Reverse", "WithNext", "MapPairs", "MapTriplets", "MapQuartets",
-                     "Filter", "Make2D", "Make3D", "Cartesian" })
+                     "Reverse", "WithNext", "MapPairs", "MapTriplets", "MapQuartets" })
             Assert.That(loops.TryGet(kind, out _), Is.True, kind);
-        // Sort and SortIdx (--closure-free) still have no emitter.
-        Assert.That(loops.TryGet("Sort", out _), Is.False);
+        // The --lower-more kinds (C# only since timing window 2) and Sort (--closure-free) have no emitter.
+        foreach (var kind in new[] { "Filter", "Make2D", "Make3D", "Cartesian", "Sort" })
+            Assert.That(loops.TryGet(kind, out _), Is.False, kind);
     }
 
     [Test]

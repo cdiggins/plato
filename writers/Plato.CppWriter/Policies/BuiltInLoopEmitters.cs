@@ -8,7 +8,7 @@ namespace Ara3D.Geometry.CppWriter.Policies
 {
     public static class BuiltInLoopEmitters
     {
-        public static LoweredLoopEmitters Create() => LowerMoreLoopEmitters.AddTo(new LoweredLoopEmitters()
+        public static LoweredLoopEmitters Create() => new LoweredLoopEmitters()
             .Add(new MapLoop())
             .Add(new MapRangeLoop())
             .Add(new ZipLoop())
@@ -17,7 +17,7 @@ namespace Ara3D.Geometry.CppWriter.Policies
             .Add(new FlatMapLoop())
             .Add(new ReverseLoop())
             .Add(new WithNextLoop())
-            .Add(new StrideLoop()));
+            .Add(new StrideLoop());
 
         private sealed class MapLoop : ILoweredLoopEmitter
         {

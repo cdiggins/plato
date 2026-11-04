@@ -1,5 +1,5 @@
 // Fixture for the lane C1-c golden sets (TKT-1186): component arrays over a fixed-arity vector (scalar-arrays), the
-// filter idiom and Filter (filter-lowering, lower-more), and the grid builders (lower-more).
+// filter idiom and Filter, and the grid builders (once for lower-more and filter-lowering, deleted for Cpu after timing window 2).
 // It is compiled with the foundation slice plus numeric-structures, without GoldenFixture.plato, so the existing snapshots do not move.
 library GoldenFixtureC1c
 {

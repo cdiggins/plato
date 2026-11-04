@@ -43,10 +43,6 @@ namespace Ara3D.Geometry.CppWriter
         public bool StaticStringLiterals { get; init; }
         /// <summary>--scalar-arrays (TKT-1186; on for Cpu since timing window 2, 2026-11-04): a fixed-arity struct's Count is folded and its component arrays unrolled.</summary>
         public bool ScalarArrays { get; init; }
-        /// <summary>--lower-more (TKT-1186, off by default): the grid builders and Filter are lowered to loops.</summary>
-        public bool LowerMore { get; init; }
-        /// <summary>--filter-lowering (TKT-1186, off by default, needs LowerMore): a FlatMap of the filter idiom fills one buffer.</summary>
-        public bool FilterLowering { get; init; }
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
@@ -69,8 +65,6 @@ namespace Ara3D.Geometry.CppWriter
                 CompactSums = s.On("cpp-sum-compact"),
                 StaticStringLiterals = s.On("cpp-static-strings"),
                 ScalarArrays = s.On("scalar-arrays"),
-                LowerMore = s.On("lower-more"),
-                FilterLowering = s.On("filter-lowering"),
                 UnitLines = s.Int("cpp-unit-lines", DefaultUnitLines),
                 Switches = s,
             };

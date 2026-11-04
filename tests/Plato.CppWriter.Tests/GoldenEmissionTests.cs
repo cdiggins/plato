@@ -121,7 +121,7 @@ public class GoldenEmissionTests
                     $"Actual output is in {actualFolder}; set PLATO_GOLDEN_UPDATE=1 to accept.");
     }
 
-    // Lane C1-c (TKT-1186): scalar-arrays, lower-more and filter-lowering, on their own fixture.
+    // Lane C1-c (TKT-1186): scalar-arrays on its own fixture (lower-more and filter-lowering were deleted for Cpu after timing window 2).
     private static readonly Lazy<Compilation> SharedC1c = new(() => Compile("GoldenFixtureC1c.plato", "*"));
 
     private static readonly string[] C1cRoots =
@@ -135,8 +135,6 @@ public class GoldenEmissionTests
     {
         yield return new TestCaseData("shipping-c1c-base", ShippingC1c).SetName("Golden_shipping_c1c_base");
         yield return new TestCaseData("shipping-scalar-arrays", ShippingC1c with { ScalarArrays = true }).SetName("Golden_shipping_scalar_arrays");
-        yield return new TestCaseData("shipping-lower-more", ShippingC1c with { LowerMore = true }).SetName("Golden_shipping_lower_more");
-        yield return new TestCaseData("shipping-filter-lowering", ShippingC1c with { LowerMore = true, FilterLowering = true }).SetName("Golden_shipping_filter_lowering");
     }
 
     [TestCaseSource(nameof(C1cOptionSets))]
