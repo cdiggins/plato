@@ -829,6 +829,31 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         }
     }
 
+    /// <summary>The elaborator's case test (no callee, as C#'s TagTest reads it) is a tag comparison, never a call: a user
+    /// function may have the case predicate's name and signature and answer differently (TKT-1204).</summary>
+    private bool TryWriteCaseTest(TirCall call, TirNode receiver)
+    {
+        if (!UsesCpuLambdas || call.Callee != null || call.EmissionKind != EmissionKind.Property || call.Args.Count != 1)
+            return false;
+        var sum = receiver.Type?.Def;
+        var tested = sum != null && sum.IsSum ? sum.Cases.FirstOrDefault(c => c.PredicateName == call.Name) : null;
+        var typeName = tested != null ? _w.CppTypeNameOrNull(receiver.Type) : null;
+        if (typeName == null)
+            return false;
+        Write("(");
+        if (receiver is TirLiteral || receiver is TirConditional || receiver is TirAssign)
+        {
+            Write("(");
+            WriteNode(call.Args[0]);
+            Write(")");
+        }
+        else
+            WriteNode(call.Args[0]);
+        Write(_w.Sums.CaseTest(typeName, tested));
+        Write(")");
+        return true;
+    }
+
     private void WriteCall(TirCall call)
     {
         var name = call.Name;
@@ -845,6 +870,9 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         }
 
         var receiver = StripCoerce(args[0]);
+
+        if (TryWriteCaseTest(call, receiver))
+            return;
 
         // Field access stays a field read; X/Y/Z/W map to .x/.y/.z/.w on native vectors.
         if (args.Count == 1

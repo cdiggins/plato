@@ -646,6 +646,7 @@ namespace Ara3D.Geometry.CppWriter
             WriteCpuReflection();
             CollectConstants();
             CollectMemberFunctions();
+            WriteCpuCasePredicates();
             PruneCpu();
 
             var live = _emitted.Where(e => !e.Pruned).ToList();
@@ -906,11 +907,17 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                         AddGenerated(cs.Name, fieldTypes.Prepend(n).ToArray(), $"PLATO_FN {n} {FunctionName(cs.Name)}({ps})",
                             Sums.Construct(n, cs, cs.Fields.Select((f, i) => $"p{i}").ToList()));
                     }
-                if (s.Type != null && s.Type.TypeDef.IsSum)
-                    foreach (var cs in s.Type.TypeDef.Cases)
-                        AddGenerated(cs.PredicateName, new[] { n }, $"PLATO_FN bool {cs.PredicateName}(const {n}& s)",
-                            Sums.PredicateBody(n, cs));
             }
+        }
+
+        /// <summary>The case predicates, after the library functions: a user function with a predicate's name and signature
+        /// claims it first and keeps its own body (TKT-1204).</summary>
+        private void WriteCpuCasePredicates()
+        {
+            foreach (var s in CpuStructs().Where(s => GenericParamNames(s.Type).Count == 0 && s.Type != null && s.Type.TypeDef.IsSum))
+                foreach (var cs in s.Type.TypeDef.Cases)
+                    AddGenerated(cs.PredicateName, new[] { s.Name }, $"PLATO_FN bool {cs.PredicateName}(const {s.Name}& s)",
+                        Sums.PredicateBody(s.Name, cs));
         }
 
         // ---- pruning and reachability ------------------------------------------------

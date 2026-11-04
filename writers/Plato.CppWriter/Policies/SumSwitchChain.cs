@@ -38,7 +38,8 @@ namespace Ara3D.Geometry.CppWriter.Policies
             string typeName = null;
             IReadOnlyList<SumCaseDef> cases = null;
             var current = value;
-            while (current is TirConditional c && c.Condition is TirCall call && call.Args.Count == 1)
+            // A null callee marks the elaborator's case test; a call with a callee is a function that may disagree with the tag (TKT-1204).
+            while (current is TirConditional c && c.Condition is TirCall { Callee: null, EmissionKind: EmissionKind.Property } call && call.Args.Count == 1)
             {
                 var receiver = strip(call.Args[0]);
                 var def = receiver is TirParameter p ? (object)p.Def : receiver is TirVariable v ? v.Def : null;

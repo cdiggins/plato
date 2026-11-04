@@ -87,6 +87,7 @@ public class PoliciesTests
         Assert.That(layout.Construct("Shape", cases[1], new[] { "p0" }), Is.EqualTo(
             " { Shape r{}; r.Kind = Shape::Kind_Circle; r.Circle_Radius = p0; return r; }"));
         Assert.That(layout.PredicateBody("Shape", cases[1]), Is.EqualTo(" { return s.Kind == Shape::Kind_Circle; }"));
+        Assert.That(layout.CaseTest("Shape", cases[1]), Is.EqualTo(".Kind == Shape::Kind_Circle"));
         Assert.That(layout.EqualsCondition("Shape", cases), Is.EqualTo(
             "a.Kind == b.Kind && (a.Kind != Shape::Kind_Circle || (eq_(a.Circle_Radius, b.Circle_Radius)))"
             + " && (a.Kind != Shape::Kind_Box || (eq_(a.Box_W, b.Box_W) && eq_(a.Box_H, b.Box_H)))"));

@@ -30,6 +30,9 @@ namespace Ara3D.Geometry.CppWriter.Policies
         /// <summary>A function body, starting with a space, for the predicate <c>Is&lt;Case&gt;(const T&amp; s)</c>.</summary>
         string PredicateBody(string typeName, SumCaseDef c);
 
+        /// <summary>The test, appended to a sum value, that it holds case <paramref name="c"/>.</summary>
+        string CaseTest(string typeName, SumCaseDef c);
+
         /// <summary>The member read, appended to a sum value, that yields its tag when a chain of case predicates on one
         /// value is written as a <c>switch</c>; null (the default) leaves the chain as conditionals.</summary>
         string SwitchOn => null;

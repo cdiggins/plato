@@ -71,7 +71,8 @@ namespace Ara3D.Geometry.CppWriter.Policies
         public virtual string JsonWrite(string typeName, IReadOnlyList<SumCaseDef> cases)
             => string.Concat(Fields(cases).Select(f => $"    j.set(\"{f.Name}\", to_json(v.{CppWriter.EscapeName(f.Name)}));{'\n'}"));
 
-        public virtual string PredicateBody(string typeName, SumCaseDef c)
-            => $" {{ return s.Kind == {typeName}::{c.TagConstName}; }}";
+        public virtual string CaseTest(string typeName, SumCaseDef c) => $".Kind == {typeName}::{c.TagConstName}";
+
+        public virtual string PredicateBody(string typeName, SumCaseDef c) => $" {{ return s{CaseTest(typeName, c)}; }}";
     }
 }
