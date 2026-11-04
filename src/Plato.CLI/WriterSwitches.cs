@@ -63,7 +63,7 @@ public static class WriterSwitches
     // Order matters: a switch comes after the one it requires.
     public static readonly IReadOnlyList<WriterSwitch> Table = new WriterSwitch[]
     {
-        new("loops", CsCpu, CS),
+        new("loops", CsCpu, CsCpu), // a Cpu default too: hoist-invariants, on for Cpu, needs it and a defaulted switch whose dependency is off is silently off
         new("fuse", CsCpu, CS),
         new("fuse-consumers", CsCpu, CS, "loops"),
         new("exact-output", CsCpu, CS, "loops"),
