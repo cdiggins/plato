@@ -1,0 +1,15 @@
+// Fixture for the lane C1-c golden sets (TKT-1186): component arrays over a fixed-arity vector (scalar-arrays), the
+// filter idiom and Filter (filter-lowering, lower-more), and the grid builders (lower-more).
+// It is compiled with the foundation slice plus numeric-structures, without GoldenFixture.plato, so the existing snapshots do not move.
+library GoldenFixtureC1c
+{
+    SumSquares3(v: Vector3D): Number => v.ReduceComponents(0.0, (a, x) => a + x * x);
+    AnyBig(v: Vector3D): Boolean => v.AnyComponent(x => x > 1.0);
+    ComponentCount(v: Vector3D): Integer => v.Count;
+    KeepEven(xs: Array<Integer>): Array<Integer> => xs.FlatMap(x => x % 2 == 0 ? [x] : [x].Take(0));
+    KeepSmall(xs: Array<Integer>, limit: Integer): Array<Integer> => xs.Map(x => x * 3).FlatMap(y => y < limit ? [y] : []);
+    Positives(xs: Array<Number>): Array<Number> => xs.Filter(x => x > 0.0);
+    Grid(columns: Integer, rows: Integer): Array2D<Integer> => columns.MakeArray2D(rows, (c, r) => c * 10 + r);
+    Cube(n: Integer): Array3D<Integer> => n.MakeArray3D(n, n, (c, r, l) => c + r * 10 + l * 100);
+    Products(a: Array<Integer>, b: Array<Integer>): Array2D<Integer> => a.CartesianProduct(b, (x, y) => x * y);
+}
