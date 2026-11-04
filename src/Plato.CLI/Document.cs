@@ -11,7 +11,6 @@ namespace Ara3D.Geometry.CLI
     {
         public string Text { get; }
         public ParserInput Input { get; }
-        public Parser Tokenizer { get; }
         public Parser Parser { get; }
         public AstNode Ast { get; }
 
@@ -22,9 +21,6 @@ namespace Ara3D.Geometry.CLI
                 Logger.Log($"Reading {filePath.GetFileName()}");
                 Text = File.ReadAllText(filePath);
                 Input = new ParserInput(Text, filePath);
-
-                Logger.Log($"Tokenization");
-                Tokenizer = CommonParsers.PlatoTokenizer(Input, Logger);
 
                 Logger.Log($"Parsing");
                 Parser = CommonParsers.PlatoParser(Input, Logger);
