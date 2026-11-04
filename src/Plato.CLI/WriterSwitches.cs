@@ -95,6 +95,8 @@ public static class WriterSwitches
         new("cpp-borrow-nontrivial", Cpu),
         // The record size at or over which a read-only parameter borrows; CppCpuOptions.BorrowMinBytes (256) when absent.
         new("cpp-borrow-min-bytes", Cpu) { Parameter = SwitchParameter.PositiveInt },
+        // The most lines of definitions in one emitted function unit; CppCpuOptions.DefaultUnitLines when absent.
+        new("cpp-unit-lines", Cpu) { Parameter = SwitchParameter.PositiveInt },
     };
 
     private static WriterSwitch? Find(string name) => Table.FirstOrDefault(s => s.Name == name);

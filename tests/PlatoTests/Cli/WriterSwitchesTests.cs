@@ -131,6 +131,16 @@ public class WriterSwitchesTests
     }
 
     [Test]
+    public void UnitLinesIsACppParameterWithTheWritersDefault()
+    {
+        var r = WriterSwitches.Resolve(new[] { "--cpp-unit-lines=1234" }, WriterTarget.Cpu);
+        Assert.That(r.Switches.Int("cpp-unit-lines", 20000), Is.EqualTo(1234));
+        Assert.That(WriterSwitches.Check(r, WriterTarget.Cpu), Is.Null);
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--cpp-unit-lines=0" }, WriterTarget.Cpu), WriterTarget.Cpu), Is.EqualTo("--cpp-unit-lines requires a positive integer."));
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--cpp-unit-lines=9" }, WriterTarget.CSharp), WriterTarget.CSharp), Does.StartWith("--cpp-unit-lines applies to C++"));
+    }
+
+    [Test]
     public void EveryRowDefaultsOnlyWhereItApplies()
     {
         foreach (var s in WriterSwitches.Table)

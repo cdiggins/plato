@@ -36,6 +36,9 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>Compact sums (off by default; tests only until the CLI row exists): a sum is an <c>int32_t Kind</c> and one
         /// union of per-case structs instead of every case's fields side by side.</summary>
         public bool CompactSums { get; init; } = SumLayoutFromEnvironment.Has("compact");
+        /// <summary>--cpp-unit-lines=N: the most lines of definitions in one function unit (<see cref="DefaultUnitLines"/> when absent).</summary>
+        public int UnitLines { get; init; } = DefaultUnitLines;
+        public const int DefaultUnitLines = 20000;
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
@@ -54,6 +57,7 @@ namespace Ara3D.Geometry.CppWriter
                 BorrowReads = s.On("cpp-borrow-reads"),
                 BorrowNonTrivial = s.On("cpp-borrow-nontrivial"),
                 BorrowMinBytes = s.Int("cpp-borrow-min-bytes", 256),
+                UnitLines = s.Int("cpp-unit-lines", DefaultUnitLines),
                 Switches = s,
             };
     }

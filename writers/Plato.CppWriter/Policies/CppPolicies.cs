@@ -24,7 +24,7 @@ namespace Ara3D.Geometry.CppWriter.Policies
             Sums = options.CompactSums ? new CompactUnionSumLayout(options.SwitchSumDispatch)
                 : options.SwitchSumDispatch ? new SwitchKindSumLayout() : new FlattenedKindSumLayout(),
             Strings = new MakeStringLiterals(),
-            Units = new LineLimitPartitioner(),
+            Units = new LineLimitPartitioner { MaxFunctionLines = options.UnitLines },
             Attributes = new NoFunctionAttributes(),
             Loops = BuiltInLoopEmitters.Create(),
         };
