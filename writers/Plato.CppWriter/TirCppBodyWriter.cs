@@ -99,7 +99,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             WriteLine(";");
             WriteEndBlock();
         }
-        else if (!TryWriteCachedConstantBody(body))
+        else
         {
             Write(" { return ");
             WriteReturnValue(body);
@@ -650,8 +650,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 return;
 
             case TirCall call:
-                if (!TryWriteCachedClosedCall(call))
-                    WriteCall(call);
+                WriteCall(call);
                 return;
 
             case TirCoerce c:
@@ -666,10 +665,6 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 Write(" : ");
                 WriteConditionalBranch(cond, cond.IfFalse, cond.IfTrue);
                 Write(")");
-                return;
-
-            case TirNew nw when nw.NewType?.Name == "List" && UsesCpuLambdas && nw.Args.Count <= 1:
-                WriteListCreation(_w.CppTypeName(nw.NewType), nw.Args);
                 return;
 
             case TirNew nw:

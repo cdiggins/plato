@@ -109,23 +109,6 @@ public class GoldenEmissionTests
                     $"Actual output is in {actualFolder}; set PLATO_GOLDEN_UPDATE=1 to accept.");
     }
 
-    // Lane C1-b (TKT-1183): presize and cache-constants, on their own fixture so the sets above stay as they are.
-    private static readonly Lazy<Compilation> SharedC1b = new(() => Compile("GoldenFixtureC1b.plato"));
-
-    private static readonly string[] C1bRoots = { "Squares", "Counted", "Grown", "Newton", "RootOfTwo", "ScaledRoot", "TwoRoots" };
-
-    private static CppCpuOptions ShippingC1b => new(true, true, true, true, C1bRoots);
-
-    public static IEnumerable<TestCaseData> C1bOptionSets()
-    {
-        yield return new TestCaseData("shipping-c1b-base", ShippingC1b).SetName("Golden_shipping_c1b_base");
-        yield return new TestCaseData("shipping-presize", ShippingC1b with { Presize = true }).SetName("Golden_shipping_presize");
-        yield return new TestCaseData("shipping-cache-constants", ShippingC1b with { CacheConstants = true }).SetName("Golden_shipping_cache_constants");
-    }
-
-    [TestCaseSource(nameof(C1bOptionSets))]
-    public void C1b_emission_matches_snapshot(string set, CppCpuOptions options) => CheckSnapshot(set, options, SharedC1b.Value);
-
     // Lane C1-c (TKT-1186): scalar-arrays, lower-more and filter-lowering, on their own fixture.
     private static readonly Lazy<Compilation> SharedC1c = new(() => Compile("GoldenFixtureC1c.plato", "*"));
 

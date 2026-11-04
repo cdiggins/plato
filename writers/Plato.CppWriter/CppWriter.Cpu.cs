@@ -41,10 +41,6 @@ namespace Ara3D.Geometry.CppWriter
         public const int DefaultUnitLines = 5000;
         /// <summary>--cpp-static-strings (TKT-1159, off by default): static string literals: each constant is built once per use site.</summary>
         public bool StaticStringLiterals { get; init; }
-        /// <summary>--presize (TKT-1183, off by default): the shared presize pass runs and a counted List fill is created with its capacity.</summary>
-        public bool Presize { get; init; }
-        /// <summary>--cache-constants (TKT-1183, off by default): a closed expression with an arena-free result is evaluated once, in a function-local static.</summary>
-        public bool CacheConstants { get; init; }
         /// <summary>--scalar-arrays (TKT-1186, off by default): a fixed-arity struct's Count is folded and its component arrays unrolled.</summary>
         public bool ScalarArrays { get; init; }
         /// <summary>--lower-more (TKT-1186, off by default): the grid builders and Filter are lowered to loops.</summary>
@@ -72,8 +68,6 @@ namespace Ara3D.Geometry.CppWriter
                 SwitchSumDispatch = s.On("cpp-sum-switch"),
                 CompactSums = s.On("cpp-sum-compact"),
                 StaticStringLiterals = s.On("cpp-static-strings"),
-                Presize = s.On("presize"),
-                CacheConstants = s.On("cache-constants"),
                 ScalarArrays = s.On("scalar-arrays"),
                 LowerMore = s.On("lower-more"),
                 FilterLowering = s.On("filter-lowering"),
