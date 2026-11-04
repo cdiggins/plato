@@ -41,7 +41,7 @@ namespace Ara3D.Geometry.CppWriter
         public const int DefaultUnitLines = 5000;
         /// <summary>--cpp-static-strings (TKT-1159, on by default for Cpu since 2026-11-04): static string literals: each constant is built once per use site.</summary>
         public bool StaticStringLiterals { get; init; }
-        /// <summary>--scalar-arrays (TKT-1186, off by default): a fixed-arity struct's Count is folded and its component arrays unrolled.</summary>
+        /// <summary>--scalar-arrays (TKT-1186; on for Cpu since timing window 2, 2026-11-04): a fixed-arity struct's Count is folded and its component arrays unrolled.</summary>
         public bool ScalarArrays { get; init; }
         /// <summary>--lower-more (TKT-1186, off by default): the grid builders and Filter are lowered to loops.</summary>
         public bool LowerMore { get; init; }

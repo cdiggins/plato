@@ -86,7 +86,8 @@ public static class WriterSwitches
         new("specialize-callbacks", CS, CS),
         new("specialize-callbacks-lean", CS, Requires: "specialize-callbacks"),
         // TKT-1152: off by default until each is measured and pinned in plato-brep.
-        new("scalar-arrays", CsCpu),
+        // On for Cpu since timing window 2 (2026-11-04, geomean 0.951 with bind-component-receivers); C# keeps it off.
+        new("scalar-arrays", CsCpu, Cpu),
         new("owned-arrays", CS),
         new("stack-arrays", CS, Requires: "owned-arrays"),
         new("span-params", CS, Requires: "owned-arrays"),

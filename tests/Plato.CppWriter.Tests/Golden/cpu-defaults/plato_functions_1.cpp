@@ -3462,21 +3462,21 @@ Vector2D Pow4(ReadOnlyParameter<Vector2D> x) { return Square(Square(x)); }
 
 Vector2D Pow5(ReadOnlyParameter<Vector2D> x) { return Multiply(Square(Square(x)), x); }
 
-int32_t LastIndex(ReadOnlyParameter<Vector2D> self) { return (ToCount(self) - 1); }
+int32_t LastIndex(ReadOnlyParameter<Vector2D> self) { return (2 - 1); }
 
-bool IsValidIndex(ReadOnlyParameter<Vector2D> self, int32_t index) { return ((0 <= index) ? (index < ToCount(self)) : false); }
+bool IsValidIndex(ReadOnlyParameter<Vector2D> self, int32_t index) { return ((0 <= index) ? (index < 2) : false); }
 
 double First(ReadOnlyParameter<Vector2D> self) { return At(self, 0); }
 
-double Last(ReadOnlyParameter<Vector2D> self) { return At(self, (ToCount(self) - 1)); }
+double Last(ReadOnlyParameter<Vector2D> self) { return At(self, (2 - 1)); }
 
-double Middle(ReadOnlyParameter<Vector2D> self) { return At(self, (ToCount(self) / 2)); }
+double Middle(ReadOnlyParameter<Vector2D> self) { return At(self, (2 / 2)); }
 
-bool IsEmpty(ReadOnlyParameter<Vector2D> self) { return (ToCount(self) == 0); }
+bool IsEmpty(ReadOnlyParameter<Vector2D> self) { return (2 == 0); }
 
-bool IsNotEmpty(ReadOnlyParameter<Vector2D> self) { return (0 < ToCount(self)); }
+bool IsNotEmpty(ReadOnlyParameter<Vector2D> self) { return (0 < 2); }
 
-bool IsSingleton(ReadOnlyParameter<Vector2D> self) { return (ToCount(self) == 1); }
+bool IsSingleton(ReadOnlyParameter<Vector2D> self) { return (2 == 1); }
 
 bool IsUnit(ReadOnlyParameter<Vector2D> x, double tolerance) { return (Abs((MagnitudeSquared(x) - 1.0)) <= tolerance); }
 
@@ -3602,21 +3602,21 @@ Vector3D Pow4(ReadOnlyParameter<Vector3D> x) { return Square(Square(x)); }
 
 Vector3D Pow5(ReadOnlyParameter<Vector3D> x) { return Multiply(Square(Square(x)), x); }
 
-int32_t LastIndex(ReadOnlyParameter<Vector3D> self) { return (ToCount(self) - 1); }
+int32_t LastIndex(ReadOnlyParameter<Vector3D> self) { return (3 - 1); }
 
-bool IsValidIndex(ReadOnlyParameter<Vector3D> self, int32_t index) { return ((0 <= index) ? (index < ToCount(self)) : false); }
+bool IsValidIndex(ReadOnlyParameter<Vector3D> self, int32_t index) { return ((0 <= index) ? (index < 3) : false); }
 
 double First(ReadOnlyParameter<Vector3D> self) { return At(self, 0); }
 
-double Last(ReadOnlyParameter<Vector3D> self) { return At(self, (ToCount(self) - 1)); }
+double Last(ReadOnlyParameter<Vector3D> self) { return At(self, (3 - 1)); }
 
-double Middle(ReadOnlyParameter<Vector3D> self) { return At(self, (ToCount(self) / 2)); }
+double Middle(ReadOnlyParameter<Vector3D> self) { return At(self, (3 / 2)); }
 
-bool IsEmpty(ReadOnlyParameter<Vector3D> self) { return (ToCount(self) == 0); }
+bool IsEmpty(ReadOnlyParameter<Vector3D> self) { return (3 == 0); }
 
-bool IsNotEmpty(ReadOnlyParameter<Vector3D> self) { return (0 < ToCount(self)); }
+bool IsNotEmpty(ReadOnlyParameter<Vector3D> self) { return (0 < 3); }
 
-bool IsSingleton(ReadOnlyParameter<Vector3D> self) { return (ToCount(self) == 1); }
+bool IsSingleton(ReadOnlyParameter<Vector3D> self) { return (3 == 1); }
 
 bool IsUnit(ReadOnlyParameter<Vector3D> x, double tolerance) { return (Abs((MagnitudeSquared(x) - 1.0)) <= tolerance); }
 
@@ -3872,21 +3872,21 @@ Number2 Pow4(ReadOnlyParameter<Number2> x) { return Square(Square(x)); }
 
 Number2 Pow5(ReadOnlyParameter<Number2> x) { return Multiply(Square(Square(x)), x); }
 
-int32_t LastIndex(ReadOnlyParameter<Number2> self) { return (ToCount(self) - 1); }
+int32_t LastIndex(ReadOnlyParameter<Number2> self) { return (2 - 1); }
 
-bool IsValidIndex(ReadOnlyParameter<Number2> self, int32_t index) { return ((0 <= index) ? (index < ToCount(self)) : false); }
+bool IsValidIndex(ReadOnlyParameter<Number2> self, int32_t index) { return ((0 <= index) ? (index < 2) : false); }
 
 double First(ReadOnlyParameter<Number2> self) { return At(self, 0); }
 
-double Last(ReadOnlyParameter<Number2> self) { return At(self, (ToCount(self) - 1)); }
+double Last(ReadOnlyParameter<Number2> self) { return At(self, (2 - 1)); }
 
-double Middle(ReadOnlyParameter<Number2> self) { return At(self, (ToCount(self) / 2)); }
+double Middle(ReadOnlyParameter<Number2> self) { return At(self, (2 / 2)); }
 
-bool IsEmpty(ReadOnlyParameter<Number2> self) { return (ToCount(self) == 0); }
+bool IsEmpty(ReadOnlyParameter<Number2> self) { return (2 == 0); }
 
-bool IsNotEmpty(ReadOnlyParameter<Number2> self) { return (0 < ToCount(self)); }
+bool IsNotEmpty(ReadOnlyParameter<Number2> self) { return (0 < 2); }
 
-bool IsSingleton(ReadOnlyParameter<Number2> self) { return (ToCount(self) == 1); }
+bool IsSingleton(ReadOnlyParameter<Number2> self) { return (2 == 1); }
 
 bool IsUnit(ReadOnlyParameter<Number2> x, double tolerance) { return (Abs((MagnitudeSquared(x) - 1.0)) <= tolerance); }
 
@@ -4006,21 +4006,21 @@ Number3 Pow4(ReadOnlyParameter<Number3> x) { return Square(Square(x)); }
 
 Number3 Pow5(ReadOnlyParameter<Number3> x) { return Multiply(Square(Square(x)), x); }
 
-int32_t LastIndex(ReadOnlyParameter<Number3> self) { return (ToCount(self) - 1); }
+int32_t LastIndex(ReadOnlyParameter<Number3> self) { return (3 - 1); }
 
-bool IsValidIndex(ReadOnlyParameter<Number3> self, int32_t index) { return ((0 <= index) ? (index < ToCount(self)) : false); }
+bool IsValidIndex(ReadOnlyParameter<Number3> self, int32_t index) { return ((0 <= index) ? (index < 3) : false); }
 
 double First(ReadOnlyParameter<Number3> self) { return At(self, 0); }
 
-double Last(ReadOnlyParameter<Number3> self) { return At(self, (ToCount(self) - 1)); }
+double Last(ReadOnlyParameter<Number3> self) { return At(self, (3 - 1)); }
 
-double Middle(ReadOnlyParameter<Number3> self) { return At(self, (ToCount(self) / 2)); }
+double Middle(ReadOnlyParameter<Number3> self) { return At(self, (3 / 2)); }
 
-bool IsEmpty(ReadOnlyParameter<Number3> self) { return (ToCount(self) == 0); }
+bool IsEmpty(ReadOnlyParameter<Number3> self) { return (3 == 0); }
 
-bool IsNotEmpty(ReadOnlyParameter<Number3> self) { return (0 < ToCount(self)); }
+bool IsNotEmpty(ReadOnlyParameter<Number3> self) { return (0 < 3); }
 
-bool IsSingleton(ReadOnlyParameter<Number3> self) { return (ToCount(self) == 1); }
+bool IsSingleton(ReadOnlyParameter<Number3> self) { return (3 == 1); }
 
 bool IsUnit(ReadOnlyParameter<Number3> x, double tolerance) { return (Abs((MagnitudeSquared(x) - 1.0)) <= tolerance); }
 
@@ -4140,21 +4140,21 @@ Number4 Pow4(ReadOnlyParameter<Number4> x) { return Square(Square(x)); }
 
 Number4 Pow5(ReadOnlyParameter<Number4> x) { return Multiply(Square(Square(x)), x); }
 
-int32_t LastIndex(ReadOnlyParameter<Number4> self) { return (ToCount(self) - 1); }
+int32_t LastIndex(ReadOnlyParameter<Number4> self) { return (4 - 1); }
 
-bool IsValidIndex(ReadOnlyParameter<Number4> self, int32_t index) { return ((0 <= index) ? (index < ToCount(self)) : false); }
+bool IsValidIndex(ReadOnlyParameter<Number4> self, int32_t index) { return ((0 <= index) ? (index < 4) : false); }
 
 double First(ReadOnlyParameter<Number4> self) { return At(self, 0); }
 
-double Last(ReadOnlyParameter<Number4> self) { return At(self, (ToCount(self) - 1)); }
+double Last(ReadOnlyParameter<Number4> self) { return At(self, (4 - 1)); }
 
-double Middle(ReadOnlyParameter<Number4> self) { return At(self, (ToCount(self) / 2)); }
+double Middle(ReadOnlyParameter<Number4> self) { return At(self, (4 / 2)); }
 
-bool IsEmpty(ReadOnlyParameter<Number4> self) { return (ToCount(self) == 0); }
+bool IsEmpty(ReadOnlyParameter<Number4> self) { return (4 == 0); }
 
-bool IsNotEmpty(ReadOnlyParameter<Number4> self) { return (0 < ToCount(self)); }
+bool IsNotEmpty(ReadOnlyParameter<Number4> self) { return (0 < 4); }
 
-bool IsSingleton(ReadOnlyParameter<Number4> self) { return (ToCount(self) == 1); }
+bool IsSingleton(ReadOnlyParameter<Number4> self) { return (4 == 1); }
 
 bool IsUnit(ReadOnlyParameter<Number4> x, double tolerance) { return (Abs((MagnitudeSquared(x) - 1.0)) <= tolerance); }
 
@@ -4274,21 +4274,21 @@ Number8 Pow4(ReadOnlyParameter<Number8> x) { return Square(Square(x)); }
 
 Number8 Pow5(ReadOnlyParameter<Number8> x) { return Multiply(Square(Square(x)), x); }
 
-int32_t LastIndex(ReadOnlyParameter<Number8> self) { return (ToCount(self) - 1); }
+int32_t LastIndex(ReadOnlyParameter<Number8> self) { return (8 - 1); }
 
-bool IsValidIndex(ReadOnlyParameter<Number8> self, int32_t index) { return ((0 <= index) ? (index < ToCount(self)) : false); }
+bool IsValidIndex(ReadOnlyParameter<Number8> self, int32_t index) { return ((0 <= index) ? (index < 8) : false); }
 
 double First(ReadOnlyParameter<Number8> self) { return At(self, 0); }
 
-double Last(ReadOnlyParameter<Number8> self) { return At(self, (ToCount(self) - 1)); }
+double Last(ReadOnlyParameter<Number8> self) { return At(self, (8 - 1)); }
 
-double Middle(ReadOnlyParameter<Number8> self) { return At(self, (ToCount(self) / 2)); }
+double Middle(ReadOnlyParameter<Number8> self) { return At(self, (8 / 2)); }
 
-bool IsEmpty(ReadOnlyParameter<Number8> self) { return (ToCount(self) == 0); }
+bool IsEmpty(ReadOnlyParameter<Number8> self) { return (8 == 0); }
 
-bool IsNotEmpty(ReadOnlyParameter<Number8> self) { return (0 < ToCount(self)); }
+bool IsNotEmpty(ReadOnlyParameter<Number8> self) { return (0 < 8); }
 
-bool IsSingleton(ReadOnlyParameter<Number8> self) { return (ToCount(self) == 1); }
+bool IsSingleton(ReadOnlyParameter<Number8> self) { return (8 == 1); }
 
 bool IsUnit(ReadOnlyParameter<Number8> x, double tolerance) { return (Abs((MagnitudeSquared(x) - 1.0)) <= tolerance); }
 

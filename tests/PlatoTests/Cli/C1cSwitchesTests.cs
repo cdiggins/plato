@@ -1,4 +1,4 @@
-// Pins the lane C1-c rows (TKT-1186): scalar-arrays and lower-more reach the Cpu target, filter-lowering is Cpu only; all off for Cpu.
+// Pins the lane C1-c rows (TKT-1186): scalar-arrays and lower-more reach the Cpu target, filter-lowering is Cpu only; scalar-arrays on for Cpu since timing window 2, the other two off.
 using Ara3D.Geometry.CLI;
 
 namespace PlatoTests.Cli;
@@ -6,10 +6,11 @@ namespace PlatoTests.Cli;
 public class C1cSwitchesTests
 {
     [Test]
-    public void TheThreeSwitchesApplyToCppAndAreOffThereByDefault()
+    public void TheThreeSwitchesApplyToCpp()
     {
         var off = WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu);
-        Assert.That(off["scalar-arrays"] || off["lower-more"] || off["filter-lowering"], Is.False);
+        Assert.That(off["lower-more"] || off["filter-lowering"], Is.False);
+        Assert.That(off["scalar-arrays"], "on for Cpu since timing window 2");
         var on = WriterSwitches.Resolve(new[] { "--loops", "--scalar-arrays", "--lower-more", "--filter-lowering" }, WriterTarget.Cpu);
         Assert.That(on["scalar-arrays"] && on["lower-more"] && on["filter-lowering"]);
         Assert.That(WriterSwitches.Check(on, WriterTarget.Cpu), Is.Null);

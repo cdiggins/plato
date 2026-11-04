@@ -5057,15 +5057,15 @@ template <typename F> bool AllComponents(Vector2D x, F f) { return f(x.X) && f(x
 
 template <typename F> bool AnyComponent(Vector2D x, F f) { return f(x.X) || f(x.Y); }
 
-template<class TV0> bool IsValidIndex(ReadOnlyParameter<Vector2D> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < ToCount(self)) : false); }
+template<class TV0> bool IsValidIndex(ReadOnlyParameter<Vector2D> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 2) : false); }
 
 template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Vector2D> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Vector2D> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Vector2D> xs, F0 predicate) { return All(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Vector2D> xs, F0 predicate) { return All(MapRange(2, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
-template<class F0> bool Any(ReadOnlyParameter<Vector2D> xs, F0 predicate) { return Any(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Vector2D> xs, F0 predicate) { return Any(MapRange(2, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
 template <typename F> Vector3D MapComponents(Vector3D x, F f) { return Vector3D{ f(x.X), f(x.Y), f(x.Z) }; }
 
@@ -5085,15 +5085,15 @@ template <typename F> bool AllComponents(Vector3D x, F f) { return f(x.X) && f(x
 
 template <typename F> bool AnyComponent(Vector3D x, F f) { return f(x.X) || f(x.Y) || f(x.Z); }
 
-template<class TV0> bool IsValidIndex(ReadOnlyParameter<Vector3D> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < ToCount(self)) : false); }
+template<class TV0> bool IsValidIndex(ReadOnlyParameter<Vector3D> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 3) : false); }
 
 template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Vector3D> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Vector3D> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Vector3D> xs, F0 predicate) { return All(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Vector3D> xs, F0 predicate) { return All(MapRange(3, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
-template<class F0> bool Any(ReadOnlyParameter<Vector3D> xs, F0 predicate) { return Any(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Vector3D> xs, F0 predicate) { return Any(MapRange(3, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
 template <typename F> VectorN MapComponents(VectorN x, F f) { int32_t n = x.Components.count; double* p = arena_alloc<double>(n); for (int32_t i = 0; i < n; i++) p[i] = f(x.Components.data[i]); return VectorN{ make_array(p, n) }; }
 
@@ -5139,15 +5139,15 @@ template <typename F> bool AllComponents(Number2 x, F f) { return f(x.X) && f(x.
 
 template <typename F> bool AnyComponent(Number2 x, F f) { return f(x.X) || f(x.Y); }
 
-template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number2> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < ToCount(self)) : false); }
+template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number2> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 2) : false); }
 
 template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number2> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Number2> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Number2> xs, F0 predicate) { return All(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Number2> xs, F0 predicate) { return All(MapRange(2, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
-template<class F0> bool Any(ReadOnlyParameter<Number2> xs, F0 predicate) { return Any(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Number2> xs, F0 predicate) { return Any(MapRange(2, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
 template <typename F> Number3 MapComponents(Number3 x, F f) { return Number3{ f(x.X), f(x.Y), f(x.Z) }; }
 
@@ -5167,15 +5167,15 @@ template <typename F> bool AllComponents(Number3 x, F f) { return f(x.X) && f(x.
 
 template <typename F> bool AnyComponent(Number3 x, F f) { return f(x.X) || f(x.Y) || f(x.Z); }
 
-template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number3> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < ToCount(self)) : false); }
+template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number3> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 3) : false); }
 
 template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number3> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Number3> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Number3> xs, F0 predicate) { return All(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Number3> xs, F0 predicate) { return All(MapRange(3, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
-template<class F0> bool Any(ReadOnlyParameter<Number3> xs, F0 predicate) { return Any(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Number3> xs, F0 predicate) { return Any(MapRange(3, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
 template <typename F> Number4 MapComponents(Number4 x, F f) { return Number4{ f(x.X), f(x.Y), f(x.Z), f(x.W) }; }
 
@@ -5195,15 +5195,15 @@ template <typename F> bool AllComponents(Number4 x, F f) { return f(x.X) && f(x.
 
 template <typename F> bool AnyComponent(Number4 x, F f) { return f(x.X) || f(x.Y) || f(x.Z) || f(x.W); }
 
-template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number4> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < ToCount(self)) : false); }
+template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number4> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 4) : false); }
 
 template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number4> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Number4> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Number4> xs, F0 predicate) { return All(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Number4> xs, F0 predicate) { return All(MapRange(4, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
-template<class F0> bool Any(ReadOnlyParameter<Number4> xs, F0 predicate) { return Any(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Number4> xs, F0 predicate) { return Any(MapRange(4, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
 template <typename F> Number8 MapComponents(Number8 x, F f) { return Number8{ f(x.X0), f(x.X1), f(x.X2), f(x.X3), f(x.X4), f(x.X5), f(x.X6), f(x.X7) }; }
 
@@ -5223,15 +5223,15 @@ template <typename F> bool AllComponents(Number8 x, F f) { return f(x.X0) && f(x
 
 template <typename F> bool AnyComponent(Number8 x, F f) { return f(x.X0) || f(x.X1) || f(x.X2) || f(x.X3) || f(x.X4) || f(x.X5) || f(x.X6) || f(x.X7); }
 
-template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number8> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < ToCount(self)) : false); }
+template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number8> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 8) : false); }
 
 template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number8> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Number8> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Number8> xs, F0 predicate) { return All(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Number8> xs, F0 predicate) { return All(MapRange(8, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
-template<class F0> bool Any(ReadOnlyParameter<Number8> xs, F0 predicate) { return Any(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Number8> xs, F0 predicate) { return Any(MapRange(8, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
 
 template <class T> Array<int32_t> Offsets(JaggedArray<T> self) { return self.Offsets; }
 

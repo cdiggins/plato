@@ -99,11 +99,11 @@ public class WriterSwitchesTests
     public void CppTargetDefaultsTheTimingWindowSetAndAcceptsItsRows()
     {
         var w2 = new[] { "--cpp", "--loops", "--fuse", "--fuse-consumers", "--exact-output", "--cpp-borrow-params", "--cpp-borrow-reads", "--cpp-borrow-nontrivial", "--cpp-borrow-min-bytes=32", "--cpp-roots=A,B" };
-        // Timing window 1 (2026-11-04): W2, both sum flags, static strings and the C1-a passes are on for Cpu; the C1-a
+        // Timing windows 1 and 2 (2026-11-04): W2, both sum flags, static strings, the C1-a passes and scalar-arrays are on for Cpu; the C1-a
         // passes that need --loops stay off without it, and --no-writer-defaults still gives the empty set.
         var cpu = WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu);
         Assert.That(cpu.Switches.Names, Is.EquivalentTo(new[] { "share-calls", "sink-bindings", "bind-scrutinee", "share-calls-wide",
-            "cpp-borrow-params", "cpp-borrow-reads", "cpp-borrow-nontrivial", "cpp-sum-switch", "cpp-sum-compact", "cpp-static-strings", "cpp-borrow-min-bytes=32" }));
+            "cpp-borrow-params", "cpp-borrow-reads", "cpp-borrow-nontrivial", "cpp-sum-switch", "cpp-sum-compact", "cpp-static-strings", "cpp-borrow-min-bytes=32", "scalar-arrays" }));
         Assert.That(cpu.Switches.Int("cpp-borrow-min-bytes", 256), Is.EqualTo(32));
         Assert.That(WriterSwitches.Resolve(new[] { "--cpp", "--loops" }, WriterTarget.Cpu)["hoist-invariants"]);
         var none = WriterSwitches.Resolve(new[] { "--cpp", WriterSwitches.Umbrella }, WriterTarget.Cpu);
