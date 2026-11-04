@@ -268,6 +268,13 @@ internal static class GenerateCommand
                 var s = output.Specializations;
                 logger.Log($"Callbacks specialized: {s.SitesSpecialized} sites into {s.Clones.Count} clones; refused: {string.Join(", ", s.Refusals.Select(r => $"{r.Key} {r.Value}"))}");
             }
+            if (loopOptimizations.OwnedArrays)
+            {
+                // TKT-1152: the storage layer's counts; a checker violation prints that body with List storage.
+                logger.Log($"Storage: {output.StorageBodiesChecked} bodies checked, checker refusals {output.StorageRefusals}, stack slots {output.StackSlotsPlaced}, twin calls routed {output.TwinCallsRouted}; stack refused: {string.Join(", ", output.StackRefusals.Select(r => $"{r.Key} {r.Value}"))}");
+                foreach (var refusal in output.StorageRefusalLog)
+                    logger.Log($"  storage refused: {refusal}");
+            }
             if (output.DegradedBodies.Count > 0)
             {
                 logger.Log($"DEGRADED bodies (no ground TIR, emitted as throwing stubs): {output.DegradedBodies.Count}");
