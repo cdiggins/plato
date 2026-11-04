@@ -30,12 +30,12 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>--cpp-borrow-nontrivial (off by default): <c>ReadOnlyParameter</c> also borrows every record that is
         /// not trivially copyable (records holding String), whatever its size.</summary>
         public bool BorrowNonTrivial { get; init; }
-        /// <summary>Sum dispatch (off by default; tests only until the CLI row exists): a chain of case predicates on one
+        /// <summary>--cpp-sum-switch (off by default): sum dispatch;: a chain of case predicates on one
         /// value in a returned expression is written as <c>switch (value.Kind)</c>.</summary>
-        public bool SwitchSumDispatch { get; init; } = SumLayoutFromEnvironment.Has("switch");
-        /// <summary>Compact sums (off by default; tests only until the CLI row exists): a sum is an <c>int32_t Kind</c> and one
+        public bool SwitchSumDispatch { get; init; }
+        /// <summary>--cpp-sum-compact (off by default): compact sums;: a sum is an <c>int32_t Kind</c> and one
         /// union of per-case structs instead of every case's fields side by side.</summary>
-        public bool CompactSums { get; init; } = SumLayoutFromEnvironment.Has("compact");
+        public bool CompactSums { get; init; }
         /// <summary>--cpp-unit-lines=N: the most lines of definitions in one function unit (<see cref="DefaultUnitLines"/> when absent).</summary>
         public int UnitLines { get; init; } = DefaultUnitLines;
         public const int DefaultUnitLines = 20000;
@@ -57,6 +57,8 @@ namespace Ara3D.Geometry.CppWriter
                 BorrowReads = s.On("cpp-borrow-reads"),
                 BorrowNonTrivial = s.On("cpp-borrow-nontrivial"),
                 BorrowMinBytes = s.Int("cpp-borrow-min-bytes", 256),
+                SwitchSumDispatch = s.On("cpp-sum-switch"),
+                CompactSums = s.On("cpp-sum-compact"),
                 UnitLines = s.Int("cpp-unit-lines", DefaultUnitLines),
                 Switches = s,
             };

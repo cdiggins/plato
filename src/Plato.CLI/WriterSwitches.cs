@@ -95,6 +95,9 @@ public static class WriterSwitches
         new("cpp-borrow-nontrivial", Cpu),
         // The record size at or over which a read-only parameter borrows; CppCpuOptions.BorrowMinBytes (256) when absent.
         new("cpp-borrow-min-bytes", Cpu) { Parameter = SwitchParameter.PositiveInt },
+        // Sum layout (off by default): a chain of case predicates on one sum becomes switch (Kind); a sum is Kind plus one union of per-case structs.
+        new("cpp-sum-switch", Cpu),
+        new("cpp-sum-compact", Cpu),
         // The most lines of definitions in one emitted function unit; CppCpuOptions.DefaultUnitLines when absent.
         new("cpp-unit-lines", Cpu) { Parameter = SwitchParameter.PositiveInt },
     };

@@ -141,6 +141,17 @@ public class WriterSwitchesTests
     }
 
     [Test]
+    public void SumLayoutRowsAreCppOnlyAndOffByDefault()
+    {
+        var off = WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu);
+        Assert.That(off["cpp-sum-switch"] || off["cpp-sum-compact"], Is.False);
+        var on = WriterSwitches.Resolve(new[] { "--cpp-sum-switch", "--cpp-sum-compact" }, WriterTarget.Cpu);
+        Assert.That(on["cpp-sum-switch"] && on["cpp-sum-compact"]);
+        Assert.That(WriterSwitches.Check(on, WriterTarget.Cpu), Is.Null);
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--cpp-sum-compact" }, WriterTarget.CSharp), WriterTarget.CSharp), Does.StartWith("--cpp-sum-compact applies to C++"));
+    }
+
+    [Test]
     public void EveryRowDefaultsOnlyWhereItApplies()
     {
         foreach (var s in WriterSwitches.Table)
