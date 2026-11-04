@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Optimizer;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -22,14 +23,14 @@ public static partial class TirLoopLowerer
     // (--lower-more, lambda removal L3). Set for the duration of one Rewrite, per thread.
     [System.ThreadStatic] private static bool _lowerMore;
 
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
+    public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
-        if (!writer.LowerLoops || tir?.Body == null)
+        if (!pass.On("loops") || tir?.Body == null)
             return tir;
         var previousSort = _sortLoops;
         var previousMore = _lowerMore;
-        _sortLoops = writer.ClosureFree;
-        _lowerMore = writer.LowerMore;
+        _sortLoops = pass.On("closure-free");
+        _lowerMore = pass.On("lower-more");
         try { return RewriteScoped(tir); }
         finally { _sortLoops = previousSort; _lowerMore = previousMore; }
     }

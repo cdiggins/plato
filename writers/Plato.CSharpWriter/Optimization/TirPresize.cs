@@ -4,6 +4,7 @@ using System.Linq;
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Optimizer;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -34,9 +35,9 @@ namespace Ara3D.Geometry.CSharpWriter;
 /// </summary>
 public static class TirPresize
 {
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
+    public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
-        if (!writer.Presize || tir?.Body == null)
+        if (!pass.On("presize") || tir?.Body == null)
             return tir;
         var body = Visit(tir.Body);
         return ReferenceEquals(body, tir.Body)

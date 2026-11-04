@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Optimizer;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -27,9 +28,9 @@ public static class TirArrayMaterializer
 {
     /// <summary>The function with materialization-position Map/MapRange calls made eager, or the
     /// function unchanged (also when the flag is off).</summary>
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
+    public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
-        if (!writer.OptimizeArrays || tir?.Body == null)
+        if (!pass.On("optimize-arrays") || tir?.Body == null)
             return tir;
         var body = RewriteBody(tir.Body);
         return ReferenceEquals(body, tir.Body)

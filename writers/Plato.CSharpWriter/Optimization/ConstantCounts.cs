@@ -93,7 +93,7 @@ public static class ConstantCounts
         public Rewriter(CSharpWriter writer)
         {
             _writer = writer;
-            _ctx = new FusionContext(writer);
+            _ctx = new FusionContext(writer.Compilation);
             _policy = new UnrollPolicy(IsRepeatable, AccumulatorBudget);
         }
 

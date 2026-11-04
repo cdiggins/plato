@@ -10,16 +10,16 @@ public static partial class TirInliner
     {
         private readonly TirFunction _input;
         private readonly ITirInlineHost _host;
-        private readonly CSharpFunctionInfo _info;
+        private readonly object _info;
         private readonly bool _simplify;
         private readonly InlineExpansionBudget _budget;
         private readonly StatementExpansion _expansion;
 
         public StatementPipeline(TirFunction input, ITirInlineHost host, string owner,
-            bool eliminateLambdas, bool simplify, CSharpFunctionInfo info)
+            bool eliminateLambdas, bool simplify, object info)
         {
             (_input, _host, _info, _simplify) = (input, host, info, simplify);
-            var limit = host is CSharpWriter w ? Math.Min(w.StatementNodeBudget, w.RemainingStatementGrowth)
+            var limit = host is IStatementInlineHost w ? Math.Min(w.StatementNodeBudget, w.RemainingStatementGrowth)
                 : InlineExpansionBudget.DefaultGrowth;
             _budget = new InlineExpansionBudget(limit);
             _expansion = new StatementExpansion(input, host, owner, eliminateLambdas, simplify, _budget);
@@ -31,10 +31,9 @@ public static partial class TirInliner
 
         private TirNode Expose(TirNode body)
         {
-            if (!_simplify || _host is not CSharpWriter writer)
+            if (!_simplify || _host is not IStatementInlineHost writer)
                 return body;
-            var current = TirFusion.Rewrite(WithBody(body), writer);
-            return TirComponentUnroller.UnrollFunction(current, _info, writer).Body;
+            return writer.ExposeForStatementInlining(WithBody(body), _info).Body;
         }
 
         public TirFunction Run()
@@ -56,7 +55,7 @@ public static partial class TirInliner
                 if (!changed && version == _expansion.Version)
                     break;
             }
-            if (_host is CSharpWriter writer)
+            if (_host is IStatementInlineHost writer)
                 writer.RemainingStatementGrowth -= growth;
             return ReferenceEquals(body, _input.Body) ? _input : WithBody(body);
         }

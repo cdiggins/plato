@@ -40,30 +40,9 @@ namespace Ara3D.Geometry.CSharpWriter
         public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool optimizeArrays = false, bool inlineCalls = false, bool lowerLoops = false, string tirDumpDir = null, bool inlineReport = false, bool staticAbstract = false, Compiler.Types.NumberProfile profile = null, bool fuseCombinators = false, StatementInliningOptions statementInlining = null, LoopOptimizationOptions loopOptimizations = null)
         {
             var writer = new CSharpWriter(compilation, outputFolder) { Profile = profile ?? Compiler.Types.NumberProfile.Default, ExtensionStyle = extensionStyle, Optimize = optimize, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, LowerLoops = lowerLoops, FuseCombinators = fuseCombinators, StaticAbstract = staticAbstract, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
-            writer.FuseConsumers = loopOptimizations?.FuseConsumers ?? false;
-            writer.ExactOutputAllocation = loopOptimizations?.ExactOutputAllocation ?? false;
-            writer.LeanInlining = loopOptimizations?.LeanInlining ?? false;
-            writer.ConcreteArrays = loopOptimizations?.ConcreteArrays ?? false;
-            writer.Presize = loopOptimizations?.Presize ?? false;
-            writer.InPlaceUpdates = loopOptimizations?.InPlace ?? false;
-            writer.ShareCalls = loopOptimizations?.ShareCalls ?? false;
-            writer.SinkBindings = loopOptimizations?.SinkBindings ?? false;
-            writer.BindScrutinees = loopOptimizations?.BindScrutinees ?? false;
-            writer.ShareCallsWide = loopOptimizations?.ShareCallsWide ?? false;
-            writer.LowerScalars = loopOptimizations?.LowerScalars ?? false;
-            writer.ClosureFree = loopOptimizations?.ClosureFree ?? false;
-            writer.LowerMore = loopOptimizations?.LowerMore ?? false;
-            writer.InParameters = loopOptimizations?.InParameters ?? false;
-            writer.SwitchMatch = loopOptimizations?.SwitchMatch ?? false;
-            writer.HoistInvariants = loopOptimizations?.HoistInvariants ?? false;
-            writer.CacheConstants = loopOptimizations?.CacheConstants ?? false;
-            writer.PrimitiveCompare = loopOptimizations?.PrimitiveCompare ?? false;
-            writer.SpecializeCallbacks = loopOptimizations?.SpecializeCallbacks ?? false;
-            writer.OwnedArrays = loopOptimizations?.OwnedArrays ?? false;
-            writer.StackArrays = loopOptimizations?.StackArrays ?? false;
-            writer.SpanParams = loopOptimizations?.SpanParams ?? false;
-            writer.ScalarArrays = loopOptimizations?.ScalarArrays ?? false;
-            writer.SpecializeCallbacksLean = loopOptimizations?.SpecializeCallbacksLean ?? false;
+            // Every switch of the resolved table (or of a hand-built record) turns on in the writer's set; its boolean
+            // properties are views on that set, and the passes read it through the writer's PassContext.
+            writer.Switches.UnionWith(loopOptimizations?.ToSwitches());
             if (statementInlining != null)
             {
                 writer.InlineStatements = true;

@@ -9,7 +9,7 @@ public static partial class TirInliner
 {
     /// <summary>Experimental call expansion with ordered evaluation and lexical result regions.</summary>
     public static TirFunction InlineStatements(TirFunction tir, ITirInlineHost host, string owner,
-        bool eliminateLambdas = false, bool simplify = false, CSharpFunctionInfo functionInfo = null)
+        bool eliminateLambdas = false, bool simplify = false, object functionInfo = null)
         => tir?.Body == null ? tir : new StatementPipeline(tir, host, owner,
             eliminateLambdas, simplify, functionInfo).Run();
 

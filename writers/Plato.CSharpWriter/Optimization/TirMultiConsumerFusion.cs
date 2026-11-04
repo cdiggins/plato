@@ -2,15 +2,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Optimizer;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
 /// <summary>Combines adjacent total Number folds without changing either fold's arithmetic order.</summary>
 public static class TirMultiConsumerFusion
 {
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
+    public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
-        if (!writer.FuseConsumers || !writer.LowerLoops || tir?.Body is not TirBlock block)
+        var writer = pass.Compilation;
+        if (!pass.On("fuse-consumers") || !pass.On("loops") || tir?.Body is not TirBlock block)
             return tir;
         var nodes = tir.AllNodes.ToList();
         var assigned = nodes.OfType<TirAssign>().Select(a => a.LValue).Select(n => n switch
@@ -47,21 +49,21 @@ public static class TirMultiConsumerFusion
             new TirBlock(statements, block.Origin), tir.ZonkedParameterTypes, tir.ZonkedReturnType);
     }
 
-    private static bool TypeIs(TypeExpression type, CSharpWriter writer, string name, int arity = 0)
+    private static bool TypeIs(TypeExpression type, Compiler.Compilation writer, string name, int arity = 0)
         => type != null && type.TypeArgs.Count == arity
-           && writer.Compilation.TypeDefinitionsByName.TryGetValue(name, out var definition)
+           && writer.TypeDefinitionsByName.TryGetValue(name, out var definition)
            && definition.IsPrimitiveDeclaration && ReferenceEquals(type.Def, definition);
 
-    private static bool Number(TypeExpression type, CSharpWriter writer)
+    private static bool Number(TypeExpression type, Compiler.Compilation writer)
         => TypeIs(type, writer, "Number");
 
-    private static bool Numbers(TypeExpression type, CSharpWriter writer)
+    private static bool Numbers(TypeExpression type, Compiler.Compilation writer)
         => TypeIs(type, writer, "Array", 1) && Number(type.TypeArgs[0], writer);
 
-    private static bool Intrinsic(TirCall call, CSharpWriter writer, string name)
-        => call.Name == name && TirIntrinsicIdentity.IsIntrinsic(call.Callee, writer.Compilation, name);
+    private static bool Intrinsic(TirCall call, Compiler.Compilation writer, string name)
+        => call.Name == name && TirIntrinsicIdentity.IsIntrinsic(call.Callee, writer, name);
 
-    private static bool OwnedArray(TirNode node, CSharpWriter writer)
+    private static bool OwnedArray(TirNode node, Compiler.Compilation writer)
         => Numbers(node.Type, writer) && (node is TirArray
            || node is TirCall call && Intrinsic(call, writer, "MapRange") && call.Args.Count == 2
            && TypeIs(call.Args[0].Type, writer, "Integer")
@@ -69,7 +71,7 @@ public static class TirMultiConsumerFusion
            && Equals(call.ReturnType, call.Type));
 
     private static bool Reduction(TirLet binding, VariableDef source, TirFunction function,
-        HashSet<DefSymbol> assigned, CSharpWriter writer)
+        HashSet<DefSymbol> assigned, Compiler.Compilation writer)
         => binding.Value is TirCall call && Intrinsic(call, writer, "Reduce")
            && Number(call.Type, writer) && Equals(call.ReturnType, call.Type)
            && call.Args.Count == 3 && call.ParameterTypes.Count == 3
@@ -82,7 +84,7 @@ public static class TirMultiConsumerFusion
            && Total(lambda.Body, function.Parameters.Concat(lambda.Parameters).ToHashSet(), assigned, writer);
 
     private static bool Total(TirNode node, HashSet<ParameterDef> parameters,
-        HashSet<DefSymbol> assigned, CSharpWriter writer)
+        HashSet<DefSymbol> assigned, Compiler.Compilation writer)
         => Number(node.Type, writer) && (node switch
         {
             TirLiteral => true,

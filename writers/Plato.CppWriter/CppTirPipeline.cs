@@ -4,6 +4,7 @@
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Geometry.CSharpWriter;
+using Ara3D.Geometry.Optimizer;
 using CSharpHost = Ara3D.Geometry.CSharpWriter.CSharpWriter;
 
 namespace Ara3D.Geometry.CppWriter
@@ -55,11 +56,12 @@ namespace Ara3D.Geometry.CppWriter
             TirInliner.NextRenameId = TirFusion.NextId = TirLoopLowerer.NextId = 0;
             try
             {
+                var ctx = host.Passes.ForBody(ownerTypeName);
                 tir = TirInliner.Inline(tir, host, ownerTypeName, out _);
-                tir = TirFusion.Rewrite(tir, host);
-                tir = TirMultiConsumerFusion.Rewrite(tir, host);
-                tir = TirSharedCalls.Rewrite(tir, host);
-                return TirLoopLowerer.Rewrite(tir, host);
+                tir = TirFusion.Rewrite(tir, ctx);
+                tir = TirMultiConsumerFusion.Rewrite(tir, ctx);
+                tir = TirSharedCalls.Rewrite(tir, ctx);
+                return TirLoopLowerer.Rewrite(tir, ctx);
             }
             finally
             {

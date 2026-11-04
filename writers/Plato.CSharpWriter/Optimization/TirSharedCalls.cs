@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Optimizer;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -33,13 +34,13 @@ namespace Ara3D.Geometry.CSharpWriter;
 /// </summary>
 public static class TirSharedCalls
 {
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
+    public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
-        if (!writer.ShareCalls || tir?.Body == null)
+        if (!pass.On("share-calls") || tir?.Body == null)
             return tir;
-        var sharing = new Sharing(tir, writer.ShareCallsWide, writer.RewriteStats);
+        var sharing = new Sharing(tir, pass.On("share-calls-wide"), pass.Stats.Rewrites);
         var body = tir.Body;
-        if (writer.ShareCallsWide)
+        if (pass.On("share-calls-wide"))
             body = sharing.Lambdas(sharing.Statements(body));
         body = sharing.Body(body);
         return ReferenceEquals(body, tir.Body)

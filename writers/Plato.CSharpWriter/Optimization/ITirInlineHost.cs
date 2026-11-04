@@ -46,3 +46,20 @@ public interface ITirInlineHost
     /// </summary>
     ISet<string> TryGetKnownMemberNames(string typeName);
 }
+
+/// <summary>
+/// What the experimental statement inliner (<c>--inline-policy</c>) needs beyond <see cref="ITirInlineHost"/>:
+/// the expansion budgets, and the backend's rewrites that expose more calls between expansion rounds
+/// (C#: combinator fusion and component unrolling).
+/// </summary>
+public interface IStatementInlineHost
+{
+    int StatementNodeBudget { get; }
+
+    /// <summary>The module-wide growth still allowed; each body's expansion spends from it.</summary>
+    int RemainingStatementGrowth { get; set; }
+
+    /// <summary>The body after the backend's exposing rewrites; <paramref name="functionInfo"/> is the backend's record
+    /// of the function (C#: its CSharpFunctionInfo) or null.</summary>
+    TirFunction ExposeForStatementInlining(TirFunction tir, object functionInfo);
+}

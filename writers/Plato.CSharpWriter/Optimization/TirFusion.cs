@@ -4,6 +4,7 @@ using System.Linq;
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Optimizer;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -44,11 +45,11 @@ public static class TirFusion
     /// <summary>The literal count at or below which a MapRange, Range, All or Any is unrolled.</summary>
     public const int UnrollLimit = 8;
 
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
+    public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
-        if (!writer.FuseCombinators || tir?.Body == null)
+        if (!pass.On("fuse") || tir?.Body == null)
             return tir;
-        var ctx = new FusionContext(writer);
+        var ctx = new FusionContext(pass.Compilation);
         var body = TirRewrite.Rewrite(tir.Body, n => n is TirCall c ? FuseCall(c, ctx) : n);
         return new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,
             tir.ZonkedParameterTypes, tir.ZonkedReturnType);
@@ -274,15 +275,15 @@ public static class TirFusion
 /// no callee, which the body writer prints by name like every intrinsic.</summary>
 public sealed class FusionContext
 {
-    private readonly CSharpWriter _writer;
+    private readonly Compiler.Compilation _compilation;
     public TypeExpression IntegerType { get; }
     public TypeExpression BooleanType { get; }
 
-    public FusionContext(CSharpWriter writer)
+    public FusionContext(Compiler.Compilation compilation)
     {
-        _writer = writer;
-        IntegerType = writer.Compilation.GetTypeDef("Integer")?.ToTypeExpression();
-        BooleanType = writer.Compilation.GetTypeDef("Boolean")?.ToTypeExpression();
+        _compilation = compilation;
+        IntegerType = compilation.GetTypeDef("Integer")?.ToTypeExpression();
+        BooleanType = compilation.GetTypeDef("Boolean")?.ToTypeExpression();
     }
 
     public ParameterDef FreshIndexParam()
@@ -292,7 +293,7 @@ public sealed class FusionContext
     /// (null type when the program declares no such Function type).</summary>
     public TirLambda Lambda(IReadOnlyList<ParameterDef> parameters, TirNode body, TypeExpression result)
     {
-        var def = _writer.Compilation.GetTypeDef($"Function{parameters.Count}");
+        var def = _compilation.GetTypeDef($"Function{parameters.Count}");
         var argTypes = parameters.Select(p => p.Type).Append(result).ToArray();
         var type = def != null && argTypes.All(t => t != null) ? new TypeExpression(def, argTypes) : null;
         return new TirLambda(parameters, body, type, body?.Origin);
@@ -314,7 +315,7 @@ public sealed class FusionContext
         => new TirLiteral(value, LiteralTypesEnum.Integer, IntegerType, origin);
 
     public FunctionDef Standard(string name)
-        => _writer.Compilation.LibraryDefinitionsByName.TryGetValue("Primitives", out var library)
+        => _compilation.LibraryDefinitionsByName.TryGetValue("Primitives", out var library)
             ? library.Functions.FirstOrDefault(f => f.Name == name && f.Body != null) : null;
 
     public bool IsStandard(FunctionDef function, string name)

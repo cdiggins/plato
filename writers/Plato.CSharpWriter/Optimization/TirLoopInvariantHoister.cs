@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Optimizer;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -50,9 +51,10 @@ public static class TirLoopInvariantHoister
     // Size of one expanded forwarding body; a larger body is the callee's real work, not a wrapper.
     private const int MaxExposedNodes = 48;
 
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer, string ownerTypeName)
+    public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
-        if (!writer.HoistInvariants || !writer.LowerLoops || tir?.Body == null)
+        var ownerTypeName = pass.OwnerTypeName;
+        if (!pass.On("hoist-invariants") || !pass.On("loops") || tir?.Body == null)
             return tir;
         var changed = false;
         HashSet<string> callerNames = null;
@@ -60,15 +62,15 @@ public static class TirLoopInvariantHoister
         {
             if (n is not TirLoweredLoop loop)
                 return n;
-            var context = new Context(tir, writer, ownerTypeName,
+            var context = new Context(tir, pass.InlineHost, ownerTypeName,
                 () => callerNames ??= TirInliner.BoundNamesForHoisting(tir));
             var hoisted = HoistLoop(loop, context);
             if (ReferenceEquals(hoisted, loop))
                 return n;
             changed = true;
-            writer.HoistedInvariants += context.Hoisted;
-            writer.HoistExposingInlines += context.Inlined;
-            writer.HoistedLoops++;
+            pass.Stats.HoistedInvariants += context.Hoisted;
+            pass.Stats.HoistExposingInlines += context.Inlined;
+            pass.Stats.HoistedLoops++;
             return hoisted;
         });
         return changed
@@ -79,14 +81,14 @@ public static class TirLoopInvariantHoister
     private sealed class Context
     {
         public readonly TirFunction Tir;
-        public readonly CSharpWriter Writer;
+        public readonly ITirInlineHost Writer;
         public readonly string OwnerTypeName;
         public readonly System.Func<HashSet<string>> CallerNames;
         public readonly HashSet<object> Bound = new();
         public int Hoisted;
         public int Inlined;
 
-        public Context(TirFunction tir, CSharpWriter writer, string ownerTypeName, System.Func<HashSet<string>> callerNames)
+        public Context(TirFunction tir, ITirInlineHost writer, string ownerTypeName, System.Func<HashSet<string>> callerNames)
             => (Tir, Writer, OwnerTypeName, CallerNames) = (tir, writer, ownerTypeName, callerNames);
     }
 

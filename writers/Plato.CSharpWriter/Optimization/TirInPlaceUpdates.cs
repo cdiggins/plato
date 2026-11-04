@@ -1,6 +1,7 @@
 // Rewrites array updates whose old value is provably unused afterwards into in-place writes (--in-place).
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
+using Ara3D.Geometry.Optimizer;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -16,11 +17,11 @@ namespace Ara3D.Geometry.CSharpWriter;
 /// </summary>
 public static class TirInPlaceUpdates
 {
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
+    public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
-        if (!writer.InPlaceUpdates || tir?.Body == null)
+        if (!pass.On("in-place") || tir?.Body == null)
             return tir;
-        var body = Apply(tir.Body, new TirArrayIdentity(writer.Compilation), out _);
+        var body = Apply(tir.Body, new TirArrayIdentity(pass.Compilation), out _);
         return ReferenceEquals(body, tir.Body)
             ? tir
             : new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,

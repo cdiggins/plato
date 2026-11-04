@@ -1,5 +1,6 @@
 // Runs the shared sinking rewrite on a function after inlining (--sink-bindings, TKT-1142).
 using Ara3D.Geometry.Compiler.Checking;
+using Ara3D.Geometry.Optimizer;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -19,12 +20,12 @@ public sealed class WriterRewriteStats
 /// </summary>
 public static class TirSinkBindingsPass
 {
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
+    public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
-        if (!writer.SinkBindings || tir?.Body == null)
+        if (!pass.On("sink-bindings") || tir?.Body == null)
             return tir;
         var body = TirSinkBindings.Rewrite(tir.Body, out var sunk);
-        writer.RewriteStats.SunkAfterInlining += sunk;
+        pass.Stats.Rewrites.SunkAfterInlining += sunk;
         return ReferenceEquals(body, tir.Body)
             ? tir
             : new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,
