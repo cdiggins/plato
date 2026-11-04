@@ -6,6 +6,7 @@ library GoldenFixtureC1c
     SumSquares3(v: Vector3D): Number => v.ReduceComponents(0.0, (a, x) => a + x * x);
     AnyBig(v: Vector3D): Boolean => v.AnyComponent(x => x > 1.0);
     ComponentCount(v: Vector3D): Integer => v.Count;
+    Spread(a: Vector3D, b: Vector3D): Number => (a - b).ReduceComponents(0.0, (s, x) => s + x * x);
     KeepEven(xs: Array<Integer>): Array<Integer> => xs.FlatMap(x => x % 2 == 0 ? [x] : [x].Take(0));
     KeepSmall(xs: Array<Integer>, limit: Integer): Array<Integer> => xs.Map(x => x * 3).FlatMap(y => y < limit ? [y] : []);
     Positives(xs: Array<Number>): Array<Number> => xs.Filter(x => x > 0.0);

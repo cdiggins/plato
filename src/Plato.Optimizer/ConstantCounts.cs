@@ -85,6 +85,29 @@ public static class ConstantCounts
         return table;
     }
 
+    // The stdlib function (identity, not name): a user's own FromComponents or ComponentArray keeps its calls.
+    internal static bool IsLibrary(Ara3D.Geometry.Compiler.Compilation compilation, FunctionDef callee, string name)
+        => callee != null && callee.Name == name
+           && compilation.LibraryDefinitionsByName.TryGetValue("NumericStructures", out var library)
+           && library.Functions.Any(f => ReferenceEquals(f, callee));
+
+    /// <summary>The receiver of a library <c>ComponentArray(v)</c> call that <see cref="Rewriter"/> would expose as
+    /// component reads if <c>v</c> were a leaf, when <c>v</c> is not one (TKT-1187: the receiver is then bound to a
+    /// local first, <see cref="ComponentReceiverBinding"/>); null otherwise.</summary>
+    internal static TirNode ComputedReceiver(Ara3D.Geometry.Compiler.Compilation compilation, TirNode arg)
+    {
+        if (TirRewrite.StripCoerce(arg) is not TirCall { Name: "ComponentArray", Args.Count: 1 } call
+            || !IsLibrary(compilation, call.Callee, "ComponentArray"))
+            return null;
+        var receiver = TirRewrite.StripCoerce(call.Args[0]);
+        var fields = FixedFields(compilation, receiver?.Type?.Name);
+        var element = TirRewrite.ListElementType(call.Type);
+        if (fields == null || fields.Count > TirFusion.UnrollLimit || TirRewrite.IsCheap(receiver)
+            || element?.Name == null || fields.Any(f => f.TypeName != element.Name))
+            return null;
+        return receiver;
+    }
+
     private sealed class Rewriter
     {
         private readonly Ara3D.Geometry.Compiler.Compilation _compilation;
@@ -204,11 +227,7 @@ public static class ConstantCounts
             return new TirArray(fields.Select(f => (TirNode)new TirComponentAccess(receiver, f.Name, null, null, element)).ToList(), map.Type, map.Origin);
         }
 
-        // The stdlib function (identity, not name): a user's own FromComponents or ComponentArray keeps its calls.
-        private bool IsLibrary(FunctionDef callee, string name)
-            => callee != null && callee.Name == name
-               && _compilation.LibraryDefinitionsByName.TryGetValue("NumericStructures", out var library)
-               && library.Functions.Any(f => ReferenceEquals(f, callee));
+        private bool IsLibrary(FunctionDef callee, string name) => ConstantCounts.IsLibrary(_compilation, callee, name);
 
         // A leaf, or a component read of one: repeating it re-reads a field.
         private static bool IsRepeatable(TirNode n)

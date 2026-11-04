@@ -4,6 +4,26 @@
 
 namespace plato {
 
+Vector3D Clamp(Vector3D self, Vector3D lo, Vector3D hi)
+{
+    Vector3D _eval2 = Max(self, lo);
+    auto _s2a = ComponentArray(Max(self, lo));
+    auto _s2b = ComponentArray(hi);
+    int32_t _n2 = _s2a.count < _s2b.count ? _s2a.count : _s2b.count;
+    double* _a2 = plato::arena_alloc<double>(_n2);
+    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
+    {
+        auto _eval0_2 = _s2a.data[_i2];
+        auto _eval1_2 = _s2b.data[_i2];
+        _a2[_i2] = ((_eval0_2 <= _eval1_2) ? _eval0_2 : _eval1_2);
+    }
+    auto _lp2 = plato::make_array(_a2, _n2);
+    Array<double> _eval3 = _lp2;
+    return FromComponents(_eval2, _eval3);
+}
+
+Vector3D Saturate(Vector3D self) { return ZipComponents(Max(self, Zero(self)), One(self), [=](double x, double y) -> double { return ((x <= y) ? x : y); }); }
+
 Vector3D NormalizeOr(Vector3D self, Vector3D fallback) { return ((0.0 < MagnitudeSquared(self)) ? Normalize(self) : fallback); }
 
 bool IsZero(Vector3D x) { return (x == Zero(x)); }

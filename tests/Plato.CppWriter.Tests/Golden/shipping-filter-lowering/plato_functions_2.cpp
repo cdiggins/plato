@@ -4828,6 +4828,20 @@ bool AnyBig(Vector3D v)
 
 int32_t ComponentCount(Vector3D v) { return ToCount(v); }
 
+double Spread(Vector3D a, Vector3D b)
+{
+    auto _s2 = ComponentArray(Vector3D{ (a.X - b.X), (a.Y - b.Y), (a.Z - b.Z) });
+    double _lp2 = 0.0;
+    int32_t _n2 = _s2.count;
+    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
+    {
+        auto _eval0_2 = _lp2;
+        auto _eval1_2 = _s2.data[_i2];
+        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
+    }
+    return _lp2;
+}
+
 Vector3D Multiply(Vector3D a, Vector3D b) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x * y); }); }
 
 Vector3D Divide(Vector3D a, Vector3D b) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x / y); }); }
@@ -4988,19 +5002,5 @@ Vector3D Clamp(Vector3D self, Vector3D lo, Vector3D hi)
 }
 
 Vector3D Saturate(Vector3D self) { return ZipComponents(Max(self, Zero(self)), One(self), [=](double x, double y) -> double { return ((x <= y) ? x : y); }); }
-
-Vector3D NormalizeOr(Vector3D self, Vector3D fallback) { return ((0.0 < MagnitudeSquared(self)) ? Normalize(self) : fallback); }
-
-bool IsZero(Vector3D x) { return (x == Zero(x)); }
-
-bool IsOne(Vector3D x) { return (x == One(x)); }
-
-Vector3D LinearCombination(Vector3D a, Vector3D b, double s, double t) { return Add(Multiply(a, s), Multiply(b, t)); }
-
-Vector3D Barycentric(Vector3D a, Vector3D b, Vector3D c, double u, double v) { return Add(Add(a, Multiply(Subtract(b, a), u)), Multiply(Subtract(c, a), v)); }
-
-Vector3D Linear(Vector3D m, Vector3D b, double x) { return Add(Multiply(m, x), b); }
-
-Vector3D LinearDerivative(Vector3D m, Vector3D b, double x) { return m; }
 
 } // namespace plato

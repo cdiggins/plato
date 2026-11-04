@@ -15,6 +15,8 @@ public static class SharedPasses
     public const string Inline = "inline";
     /// <summary>--scalar-arrays: the constant Count of a fixed-arity struct folded and its component arrays unrolled.</summary>
     public const string ConstantCounts = "constant-counts";
+    /// <summary>--scalar-arrays (Cpu list only): a computed ComponentArray receiver bound to a local so constant-counts folds it (TKT-1187).</summary>
+    public const string BindComponentReceivers = "bind-component-receivers";
     /// <summary>--fuse: combinator chains fused, literal ranges unrolled.</summary>
     public const string Fuse = "fuse";
     /// <summary>--fuse-consumers (with --loops): independent reductions of one array in one loop.</summary>
@@ -37,6 +39,7 @@ public static class SharedPasses
     public static IReadOnlyList<ITirPass> All { get; } = new ITirPass[]
     {
         new TirPass(Inline, "inline (layer 7)", (tir, ctx) => TirInliner.Inline(tir, ctx.InlineHost, ctx.OwnerTypeName, out _)),
+        new TirPass(BindComponentReceivers, "scalar-arrays / computed component-array receivers bound (TKT-1187)", ComponentReceiverBinding.Rewrite),
         new TirPass(ConstantCounts, "scalar-arrays / constant counts and component arrays", Ara3D.Geometry.Optimizer.ConstantCounts.Rewrite),
         new TirPass(Fuse, "fuse / combinator fusion (layer 7b)", TirFusion.Rewrite),
         new TirPass(FuseConsumers, "fuse-consumers / independent reductions", TirMultiConsumerFusion.Rewrite),

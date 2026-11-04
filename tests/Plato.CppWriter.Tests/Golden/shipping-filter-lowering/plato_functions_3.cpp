@@ -4,6 +4,20 @@
 
 namespace plato {
 
+Vector3D NormalizeOr(Vector3D self, Vector3D fallback) { return ((0.0 < MagnitudeSquared(self)) ? Normalize(self) : fallback); }
+
+bool IsZero(Vector3D x) { return (x == Zero(x)); }
+
+bool IsOne(Vector3D x) { return (x == One(x)); }
+
+Vector3D LinearCombination(Vector3D a, Vector3D b, double s, double t) { return Add(Multiply(a, s), Multiply(b, t)); }
+
+Vector3D Barycentric(Vector3D a, Vector3D b, Vector3D c, double u, double v) { return Add(Add(a, Multiply(Subtract(b, a), u)), Multiply(Subtract(c, a), v)); }
+
+Vector3D Linear(Vector3D m, Vector3D b, double x) { return Add(Multiply(m, x), b); }
+
+Vector3D LinearDerivative(Vector3D m, Vector3D b, double x) { return m; }
+
 Vector3D LinearSecondDerivative(Vector3D m, Vector3D b, double x) { return Zero(m); }
 
 Vector3D Quadratic(Vector3D a, Vector3D b, Vector3D c, double x) { return Add(Add(Multiply(a, (x * x)), Multiply(b, x)), c); }
