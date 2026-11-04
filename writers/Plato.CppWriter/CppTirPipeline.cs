@@ -1,22 +1,23 @@
 // Runs the shared optimizer passes (inline, fuse, loops, exact output) on one function's TIR for the Cpu dialect.
-// The passes take a CSharpWriter host, so this class owns one private CSharpWriter over the same compilation,
+// The passes take a CSharpWriter host, so each CppWriter owns one private CSharpWriter over the same compilation,
 // configured the way GenerateCommand configures it for C#. It is never asked to write a file.
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Types;
+using Ara3D.Geometry.CSharpWriter;
 using CSharpHost = Ara3D.Geometry.CSharpWriter.CSharpWriter;
 
 namespace Ara3D.Geometry.CppWriter
 {
-    public static class CppTirPipeline
+    public sealed class CppTirPipeline
     {
         public static bool IsCpu(CppWriter w) => w.Dialect == CppDialect.Cpu;
 
-        private static CSharpHost _host;
-        private static Compiler.Compilation _hostCompilation;
-        private static CppCpuOptions _hostOptions;
+        private CSharpHost _host;
+        private Compiler.Compilation _hostCompilation;
+        private CppCpuOptions _hostOptions;
 
         /// <summary>The private C# writer the shared passes run against; built on first use, rebuilt when the compilation or options change.</summary>
-        private static CSharpHost Host(CppWriter w)
+        private CSharpHost Host(CppWriter w)
         {
             var options = w.CpuOptions;
             if (_host != null && ReferenceEquals(_hostCompilation, w.Compilation) && _hostOptions == options)
@@ -29,6 +30,7 @@ namespace Ara3D.Geometry.CppWriter
                 FuseCombinators = options.Fuse,
                 FuseConsumers = options.FuseConsumers,
                 ExactOutputAllocation = options.ExactOutput,
+                ShareCalls = options.ShareCalls,
             };
             _hostCompilation = w.Compilation;
             _hostOptions = options;
@@ -44,12 +46,27 @@ namespace Ara3D.Geometry.CppWriter
         {
             if (tir == null || !IsCpu(w))
                 return tir;
-            var host = Host(w);
-            tir = Ara3D.Geometry.CSharpWriter.TirInliner.Inline(tir, host, ownerTypeName, out _);
-            tir = Ara3D.Geometry.CSharpWriter.TirFusion.Rewrite(tir, host);
-            tir = Ara3D.Geometry.CSharpWriter.TirMultiConsumerFusion.Rewrite(tir, host);
-            tir = Ara3D.Geometry.CSharpWriter.TirLoopLowerer.Rewrite(tir, host);
-            return tir;
+            var host = w.CpuPipeline.Host(w);
+            // Shared passes expose thread-local counters. Scope them to this body and restore
+            // the caller's state so another writer on this thread cannot affect emitted names.
+            var renameId = TirInliner.NextRenameId;
+            var fusionId = TirFusion.NextId;
+            var loopId = TirLoopLowerer.NextId;
+            TirInliner.NextRenameId = TirFusion.NextId = TirLoopLowerer.NextId = 0;
+            try
+            {
+                tir = TirInliner.Inline(tir, host, ownerTypeName, out _);
+                tir = TirFusion.Rewrite(tir, host);
+                tir = TirMultiConsumerFusion.Rewrite(tir, host);
+                tir = TirSharedCalls.Rewrite(tir, host);
+                return TirLoopLowerer.Rewrite(tir, host);
+            }
+            finally
+            {
+                TirInliner.NextRenameId = renameId;
+                TirFusion.NextId = fusionId;
+                TirLoopLowerer.NextId = loopId;
+            }
         }
     }
 }

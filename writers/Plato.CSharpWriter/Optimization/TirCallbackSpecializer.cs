@@ -89,6 +89,14 @@ public sealed class CallbackSpecializations
         _clones.Add(clone);
     }
 
+    /// <summary>Takes back a clone registered while a build that then failed.</summary>
+    public void Remove(CallbackClone clone)
+    {
+        _byKey.Remove(clone.Key);
+        _clones.Remove(clone);
+        _names.Remove(clone.Name);
+    }
+
     public void Refuse(string reason)
     {
         Refusals.TryGetValue(reason, out var n);
@@ -179,6 +187,11 @@ public static class TirCallbackSpecializer
             // A law or a witness runs once per trial; cloning its callees would only grow the output.
             if (_caller.Original?.Name != null && (_caller.Original.Name.StartsWith("Law_") || _caller.Original.Name.StartsWith("Witness_")))
                 return Refuse("law body", call);
+            // --specialize-callbacks-lean: a Check_ body is validation code the mesher never runs, and the
+            // library's Check combinators it calls (CheckAll, CheckGrid, ...) re-wrap their callbacks into
+            // recursive folds; clones of them were half of the clone file.
+            if (_writer.SpecializeCallbacksLean && _caller.Original?.Name != null && _caller.Original.Name.StartsWith("Check_"))
+                return Refuse("validation body", call);
             // A combinator the loop lowerer or the component unroller consumes with its lambda in place
             // (a loop, a fan-out) does better than a clone of the stdlib body.
             if (LoweredCombinators.Contains(callee.Name))
@@ -280,6 +293,8 @@ public static class TirCallbackSpecializer
             foreach (var c in captures)
                 args.Add(c.Node);
             _registry.SitesSpecialized++;
+            if (Trace)
+                System.Console.Error.WriteLine($"specialize accepted: {callee.OwnerType?.Name}.{callee.Name} in {_owner}.{_caller.Original?.Name}");
             return new TirSpecializedCall(clone.Name, args, call.Type, call.Origin);
         }
 
@@ -544,6 +559,13 @@ public static class TirCallbackSpecializer
             }
 
             string failure = null;
+            // --specialize-callbacks-lean: a lambda that cannot be beta-reduced at an invocation (its parameter
+            // is used twice and the argument is not cheap to repeat) becomes a helper method of the same
+            // file, called with the argument: C# evaluates the argument once, in the original order.
+            var helperOf = new Dictionary<TirNode, int>(ReferenceEqualityComparer.Instance);
+            foreach (var i in lambdaAt)
+                helperOf[TirRewrite.StripCoerce(byDef[paramDefs[i]])] = i;
+            var helpers = new Dictionary<int, CallbackClone>();
             var body = TirRewrite.Rewrite(calleeTir.Body, n =>
             {
                 if (n is TirInvoke invoke && TirRewrite.StripCoerce(invoke.Target) is TirLambda target)
@@ -556,6 +578,26 @@ public static class TirCallbackSpecializer
                         return n;
                     if (TirRewrite.TryBetaReduce(invoke, out var reduced, CheapToRepeat))
                         return reduced;
+                    if (_writer.SpecializeCallbacksLean && helperOf.TryGetValue(target, out var position))
+                    {
+                        if (!helpers.TryGetValue(position, out var helper))
+                        {
+                            helper = LambdaHelper(callee, receiverTypeName, receiverType, plan, fi,
+                                (TirLambda)target, position, captures, key, stable, ref failure);
+                            if (helper != null)
+                                helpers[position] = helper;
+                        }
+                        if (helper != null)
+                        {
+                            var helperArgs = invoke.Args.ToList();
+                            foreach (var c in captures)
+                                if (helper.Tir.Parameters.Contains(c.Parameter))
+                                    helperArgs.Add(new TirParameter(c.Parameter, c.Type, invoke.Origin));
+                            return new TirSpecializedCall(helper.Name, helperArgs, invoke.Type, invoke.Origin);
+                        }
+                        if (failure != null)
+                            return n;
+                    }
                     failure = "invocation argument used more than once";
                     if (Trace)
                         System.Console.Error.WriteLine($"specialize detail: {failure} | {callee.OwnerType?.Name}.{callee.Name}: {invoke}");
@@ -566,7 +608,11 @@ public static class TirCallbackSpecializer
                 return n;
             });
             if (failure != null)
+            {
+                foreach (var helper in helpers.Values)
+                    _registry.Remove(helper);
                 return failure;
+            }
 
             var parameters = new List<ParameterDef>();
             var zonked = calleeTir.ZonkedParameterTypes == null ? null : new List<TypeExpression>();
@@ -583,7 +629,11 @@ public static class TirCallbackSpecializer
             {
                 var csharp = ((ITypeToCSharp)new CSharpTypeWriter(_writer, receiverType)).ToCSharpType(c.Type);
                 if (string.IsNullOrEmpty(csharp) || csharp.Contains('$'))
+                {
+                    foreach (var helper in helpers.Values)
+                        _registry.Remove(helper);
                     return "capture type unknown";
+                }
                 parameters.Add(c.Parameter);
                 zonked?.Add(c.Type);
                 types.Add(csharp);
@@ -603,6 +653,54 @@ public static class TirCallbackSpecializer
                 Depth = _writer.SpecializationDepth + 1,
             };
             return null;
+        }
+
+        /// <summary>The helper method for one lambda of a clone: the lambda's parameters then the captures it
+        /// names, its body unchanged, in the callee's extension context. Registered at once (the clone body
+        /// calls it by name); <see cref="Build"/> takes it back when the clone then fails. Null with
+        /// <paramref name="failure"/> set when a type cannot be spelled.</summary>
+        private CallbackClone LambdaHelper(FunctionDef callee, string receiverTypeName, TypeDef receiverType,
+            ExtensionStylePlan plan, CSharpFunctionInfo fi, TirLambda lambda, int position,
+            List<Capture> captures, string key, string stable, ref string failure)
+        {
+            var typeWriter = (ITypeToCSharp)new CSharpTypeWriter(_writer, receiverType);
+            var signature = lambda.Type.TypeArgs;
+            var used = new HashSet<ParameterDef>();
+            foreach (var n in lambda.Body.Descendants())
+                if (n is TirParameter p && p.Def != null)
+                    used.Add(p.Def);
+            var parameters = new List<ParameterDef>(lambda.Parameters);
+            var types = new List<string>();
+            for (var k = 0; k < lambda.Parameters.Count; k++)
+                types.Add(typeWriter.ToCSharpType(signature[k]));
+            foreach (var c in captures)
+                if (used.Contains(c.Parameter))
+                {
+                    parameters.Add(c.Parameter);
+                    types.Add(typeWriter.ToCSharpType(c.Type));
+                }
+            var returnType = typeWriter.ToCSharpType(signature[signature.Count - 1]);
+            if (returnType == null || returnType.Contains('$') || types.Any(t => string.IsNullOrEmpty(t) || t.Contains('$')))
+            {
+                failure = "open-typed invocation argument";
+                return null;
+            }
+            var helper = new CallbackClone
+            {
+                Key = $"{key}#L{position}",
+                Name = $"{callee.Name}_{Hash($"{stable}#L{position}")}_L{position}",
+                Callee = callee,
+                ReceiverTypeName = receiverTypeName,
+                ReceiverType = receiverType,
+                Plan = plan,
+                Function = fi,
+                Tir = new TirFunction(callee, parameters, signature[signature.Count - 1], lambda.Body),
+                ParameterTypes = types,
+                ReturnType = returnType,
+                Depth = _writer.SpecializationDepth + 1,
+            };
+            _registry.Add(helper);
+            return helper;
         }
 
         /// <summary>The invocation with each argument whose type still holds a type variable retyped to

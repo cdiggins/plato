@@ -735,7 +735,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 var esc = CppWriter.EscapeCppStringPublic(raw);
                 if (UsesCpuLambdas)
                 {
-                    Write($"String(\"{esc}\")");
+                    Write($"make_string_n(\"{esc}\", {System.Text.Encoding.UTF8.GetByteCount(raw)})");
                     return;
                 }
                 Write($"make_string_n(\"{esc}\", {raw.Length})");
@@ -878,6 +878,19 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         if (_w.StructNames.Contains(name) && call.EmissionKind == EmissionKind.Constructor)
         {
             WriteConstruction(name, args);
+            return;
+        }
+
+        // Generated locals, lambda returns and function returns are values. A
+        // readonly array read therefore stays borrowed only through an immediate
+        // borrowed call argument; value contexts still copy before the region ends.
+        if (UsesCpuLambdas && _w.CpuOptions.BorrowArrayReads && name == "At"
+            && args.Count == 2 && _w.CppTypeNameOrNull(args[0].Type)?.StartsWith("Array<") == true)
+        {
+            RecordCall(name, args);
+            Write("plato::array_at_readonly(");
+            WriteArgs(args);
+            Write(")");
             return;
         }
 

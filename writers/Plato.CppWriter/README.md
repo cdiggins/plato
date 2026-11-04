@@ -112,3 +112,54 @@ Verification lives in `../Plato.CppWriter.Tests` (gates run with `inlineCalls: t
 
 `CppWriter.cs` coordinates declarations and output. `TirCppBodyWriter.cs` renders typed intermediate representation (typed IR) function bodies, and `PlatoAnalyzer.cs` selects function implementations. `CppWriterExtensions.cs` provides the compilation entry point.
 `CppPrelude.cs` supplies target math and vector helpers; `CppDialect.cs` selects portable C++ or CUDA.
+
+CPU optimization context is owned by each CppWriter. Separate compilations may generate concurrently without sharing the cached optimization host or options. A single writer remains a mutable, single-operation emitter. The shared passes and their order are unchanged.
+
+The CPU runtime defines PLATO_ARENA_LIFETIMES and owns nontrivial array element destruction. Hosts must use plato::arena_mark()/arena_rollback() rather than changing ArenaBlock.used directly: rollback destroys temporary elements in reverse order before storage reuse. Reset also destroys elements; thread exit releases elements and blocks. Marks cannot cross threads or reset. Array views must not outlive their region. Allocation-size overflow aborts. Constructors and destructors used in the no-exception runtime must not throw.
+
+CppCpuOptions.ShareCalls enables the same conservative TirSharedCalls pass as C#, after consumer fusion and before loops. It is opt-in through the writer API; the CLI and shipping defaults do not enable it yet. Branch-only calls, differing arguments and affine/array operations retain the shared pass's refusal rules. Wider sharing and BREP performance promotion require separate evidence.
+
+CPU array wire contract: `Array<T>{}` is the CLR-compatible null default;
+`Array<T>{data, count}` and array-producing operations construct present arrays,
+including `[]` when count is zero. JSON preserves this distinction recursively.
+The presence bit does not change element counts or array indexing. Hosts must use
+constructors rather than fill a default view's pointer/count fields directly.
+
+CPU text contract: `Character` is an unsigned UTF-16 code unit (`char16_t`) and
+`String` owns UTF-16 code units (`std::u16string`). Count, indexing, substring,
+comparison and integer conversion use code units, matching C#. Supplementary
+characters occupy surrogate pairs. JSON and host byte streams use UTF-8;
+`StringFromUtf8` rejects malformed UTF-8, and `StringToUtf8` replaces unpaired
+surrogates with U+FFFD when serializing, as the managed JSON boundary does.
+`make_string_n` accepts an explicit UTF-8 byte length, preserving embedded NULs.
+`Bytes.ToText` maps bytes to Latin-1 code units; it does not decode UTF-8.
+
+This changes the native text ABI. Hosts must use `make_string_n` or explicit
+UTF-8 conversion at byte boundaries, and use UTF-16 literals for native language
+strings. JSON storage and byte-based number parsing retain their byte representation.
+
+Generated CPU JSON readers distinguish missing members from explicit JSON values.
+Missing members reset to their typed defaults; present members use their normal
+converters, including rejection of null or multi-code-unit Character values.
+
+CPU JSON definitions are emitted into bounded `plato_json*.cpp` translation units.
+Hosts must compile and link every matching unit; `plato_json.cpp` is always present.
+The writer preserves definition order and keeps each record converter pair intact.
+Generic converters remain in the type header so instantiation can see them.
+
+With `CppCpuOptions.BorrowLargeParameters`, CPU functions borrow closed record parameters whose actual native `sizeof` is at
+least 256 bytes. Smaller records remain values; generic parameter positions retain
+deduction-compatible signatures. Assignment targets remain owned parameters, and
+return signatures stay by value; array views retain their region lifetime.
+Borrowing is opt-in through the writer API and defaults to false. This changes native
+function signatures; regenerate and rebuild callers together. C++ value captures
+copy the referred-to record, so they cannot retain a reference to a caller temporary.
+
+With `CppCpuOptions.BorrowArrayReads`, generated array reads use the internal
+`array_at_readonly` helper. It returns a reference only for large values, valid
+within the array region's lifetime. Generated value locals and returns still
+copy; immediate borrowed arguments avoid the transient element copy. Public
+`At` retains its value-returning contract, including independent string payloads.
+The array-read flag is independent of parameter passing and defaults to false.
+Both flags have native execution coverage in every combination; enabling them
+requires workload evidence before promotion into a consumer default.

@@ -1,7 +1,8 @@
 # Plato.CppWriter.Tests
 
 The V1 gate for the C++ / CUDA backend: generate from real Plato source, then prove the generated
-code **compiles**. No runtime values are checked yet.
+code **compiles**. The CPU string borrowing regression also executes generated code
+to check temporary inputs and independently owned returned strings.
 
 ```
 dotnet test submodules\Plato\Plato.CppWriter.Tests -c Release
@@ -28,10 +29,28 @@ the tests follow the repo rather than a configured path. Generated output goes t
   `PATH`): the real compiler.
 - **MSVC + shim**, otherwise: the `.cu` is compiled as host C++ against a test-only stand-in
   `cuda_runtime.h` that defines the `__host__` / `__device__` qualifiers away and supplies
-  `float2/3/4` + `make_floatN`. This still gates everything the writer decides — types, overload
-  resolution, name collisions, unresolved calls — but not CUDA-specific semantics.
+  `float2/3/4` + `make_floatN`. This still gates everything the writer decides â€” types, overload
+  resolution, name collisions, unresolved calls â€” but not CUDA-specific semantics.
 
 No toolkit is installed on the current development machine, so the CUDA tests run in shim mode.
 They upgrade themselves the day one is installed; nothing needs changing here.
 
 Both tests `Assert.Ignore` rather than fail when no compiler at all can be found.
+
+## Selecting the native toolchain
+
+Set `PLATO_VCVARS` to the full path of the intended `vcvars64.bat` when several
+Visual Studio installations exist. An invalid override fails explicitly. Without
+an override, the tests discover Visual Studio as before. Use the same installation
+as the downstream native mesher gate when comparing results. MSVC runs with a
+short child-process PATH so vcvars can discover the Windows SDK even when the
+parent PATH exceeds cmd's line limit; the parent environment is unchanged.
+
+`PrimitiveSignatureTests` generates the forward foundation's integer conversions
+and compiles the resulting translation units. This catches collisions between
+runtime-provided conversions and emitted Plato bodies; it does not certify runtime
+values or the full BREP corpus.
+
+`StringBorrowingTests` checks the const-reference function signature and runs calls
+with stored and temporary strings. Returned strings remain values, so later input
+changes cannot alter a saved result. This does not validate the full BREP corpus.

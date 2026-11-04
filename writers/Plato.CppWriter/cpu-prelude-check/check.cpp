@@ -29,6 +29,34 @@ int main()
     CHECK(big != nullptr);
     arena_reset();
 
+    // Bytes JSON must preserve Latin-1 values, including control bytes and UTF-8 encodings above 127.
+    uint8_t everyByte[256];
+    for (int i = 0; i < 256; ++i) everyByte[i] = static_cast<uint8_t>(i);
+    const auto byteValues = make_array(make_bytes(everyByte, 256), Bytes{});
+    const auto byteJson = json_dump(to_json(byteValues));
+    Json byteParsed;
+    CHECK(json_parse(byteJson, byteParsed));
+    Array<Bytes> byteRestored;
+    from_json(byteParsed, byteRestored);
+    CHECK(byteRestored.count == 2 && byteRestored.data[0] == byteValues.data[0] && byteRestored.data[1].count == 0);
+    CHECK(to_json(make_bytes(everyByte + 128, 1)).s == std::string("\xc2\x80"));
+
+    // Match CLR defaults without conflating null and constructed empty arrays.
+    Array<int32_t> absent;
+    const auto empty = make_array_empty<int32_t>();
+    CHECK(json_dump(to_json(absent)) == "null");
+    CHECK(json_dump(to_json(empty)) == "[]");
+    CHECK(json_dump(to_json(Range(0))) == "[]");
+    const auto nested = make_array(absent, empty, Range(2));
+    CHECK(json_dump(to_json(nested)) == "[null,[],[0,1]]");
+    Json nestedJson;
+    CHECK(json_parse("[null,[],[0,1]]", nestedJson));
+    Array<Array<int32_t>> restored;
+    from_json(nestedJson, restored);
+    CHECK(json_dump(to_json(restored)) == "[null,[],[0,1]]");
+    from_json(Json{}, restored);
+    CHECK(json_dump(to_json(restored)) == "null");
+
     // Range, Map, Reduce, FlatMap, Zip
     Array<int32_t> r = Range(5);
     CHECK(ToCount(r) == 5 && At(r, 4) == 4);
@@ -48,6 +76,15 @@ int main()
     CHECK(lit == make_array(1.0, 2.0, 3.0));
     const double raw[] = { 7.0, 8.0 };
     CHECK(At(make_array(raw, 2), 1) == 8.0);
+    List<int32_t> capacityHint{ 2 };
+    CHECK(capacityHint.count == 0 && capacityHint.cap == 2);
+    auto* reserved = capacityHint.items;
+    capacityHint = Add(capacityHint, 7);
+    capacityHint = Add(capacityHint, 8);
+    CHECK(capacityHint.items == reserved);
+    capacityHint = Add(capacityHint, 9);
+    CHECK(ToCount(capacityHint) == 3 && At(Freeze(capacityHint), 2) == 9);
+    CHECK(List<int32_t>{ -1 }.cap == 0 && List<int32_t>{ 0 }.items == nullptr);
     PlatoList<int32_t> l = EmptyList(r);
     for (int i = 0; i < 20; i++) l = Add(l, i);
     CHECK(ToCount(l) == 20 && At(Freeze(l), 19) == 19);
@@ -67,37 +104,37 @@ int main()
     CHECK(Hash(0.0) == Hash(-0.0) && Hash(1.0) == 1072693248);   // 0x3FF0000000000000 -> 0x3FF00000 ^ 0
     CHECK(Atan2Radians(1.0, 1.0) > 0.785398 && Atan2Radians(1.0, 1.0) < 0.785399);
     CHECK(Cbrt(8.0) == 2.0 && Cbrt(-27.0) == -3.0 && std::signbit(Cbrt(-0.0)) && !std::signbit(Cbrt(0.0)) && Cbrt(0.125) == 0.5);
-    CHECK(LessThanOrEquals(std::string("B"), std::string("a")) && !LessThanOrEquals(std::string("a"), std::string("B")) && LessThanOrEquals(std::string("ab"), std::string("abc")) && !LessThanOrEquals(std::string("abc"), std::string("ab")) && LessThanOrEquals(std::string(), std::string("a")) && !LessThanOrEquals(std::string("é"), std::string("z")));
+    CHECK(LessThanOrEquals(String(u"B"), String(u"a")) && !LessThanOrEquals(String(u"a"), String(u"B")) && LessThanOrEquals(String(u"ab"), String(u"abc")) && !LessThanOrEquals(String(u"abc"), String(u"ab")) && LessThanOrEquals(String(), String(u"a")) && !LessThanOrEquals(String(u"Ã©"), String(u"z")));
 
     // ToString
-    CHECK(ToString(1.5) == "1.5" && ToString(100.0) == "100" && ToString(0.1) == "0.1");
-    CHECK(ToString(1e15) == "1000000000000000" && ToString(1e16) == "10000000000000000" && ToString(1e17) == "1E+17" && ToString(123456789012345.0) == "123456789012345");
-    CHECK(ToString(0.0001) == "0.0001" && ToString(0.00001) == "1E-05");
-    CHECK(ToString(-1.2345e-7) == "-1.2345E-07" && ToString(1.2345678901234568e17) == "1.2345678901234568E+17");
-    CHECK(ToString(1.0 / 3.0) == "0.3333333333333333");
-    CHECK(ToString(std::nan("")) == "NaN" && ToString(-HUGE_VAL) == "-Infinity" && ToString(-42) == "-42");
+    CHECK(ToString(1.5) == u"1.5" && ToString(100.0) == u"100" && ToString(0.1) == u"0.1");
+    CHECK(ToString(1e15) == u"1000000000000000" && ToString(1e16) == u"10000000000000000" && ToString(1e17) == u"1E+17" && ToString(123456789012345.0) == u"123456789012345");
+    CHECK(ToString(0.0001) == u"0.0001" && ToString(0.00001) == u"1E-05");
+    CHECK(ToString(-1.2345e-7) == u"-1.2345E-07" && ToString(1.2345678901234568e17) == u"1.2345678901234568E+17");
+    CHECK(ToString(1.0 / 3.0) == u"0.3333333333333333");
+    CHECK(ToString(std::nan("")) == u"NaN" && ToString(-HUGE_VAL) == u"-Infinity" && ToString(-42) == u"-42");
 
     // Text intrinsics
-    CHECK(FromCharacters(make_array('a', 'b')) == "ab" && FromCharacters(make_array_empty<char>()) == "");
+    CHECK(FromCharacters(make_array(u'a', u'b')) == u"ab" && FromCharacters(make_array_empty<char16_t>()) == u"");
 
-    CHECK(Substring("abcd", 1, 2) == "bc" && Substring("abcd", -1, 3) == "ab" && Substring("abcd", 3, 9) == "d");
-    CHECK(Substring("abcd", 0, 0) == "" && Substring("abcd", 0, -5) == "" && Substring("abcd", 4, 1) == "" && Substring("abcd", 9, 1) == "");
-    CHECK(Substring("abcd", INT32_MIN, INT32_MAX) == "" && Substring("abcd", -1, INT32_MAX) == "abcd" && Substring("abcd", 2, INT32_MAX) == "cd" && Substring("", 0, 1) == "");
+    CHECK(Substring(u"abcd", 1, 2) == u"bc" && Substring(u"abcd", -1, 3) == u"ab" && Substring(u"abcd", 3, 9) == u"d");
+    CHECK(Substring(u"abcd", 0, 0) == u"" && Substring(u"abcd", 0, -5) == u"" && Substring(u"abcd", 4, 1) == u"" && Substring(u"abcd", 9, 1) == u"");
+    CHECK(Substring(u"abcd", INT32_MIN, INT32_MAX) == u"" && Substring(u"abcd", -1, INT32_MAX) == u"abcd" && Substring(u"abcd", 2, INT32_MAX) == u"cd" && Substring(u"", 0, 1) == u"");
 
-    CHECK(IsNumberText("1.") && IsNumberText(".5") && IsNumberText("1.E-06") && IsNumberText("-0") && IsNumberText("+7") && IsNumberText("12e3") && IsNumberText("0.1E+2"));
-    CHECK(!IsNumberText("") && !IsNumberText(".") && !IsNumberText("-") && !IsNumberText("1e") && !IsNumberText("1e+") && !IsNumberText(".e1") && !IsNumberText("NaN")
-        && !IsNumberText("Infinity") && !IsNumberText("0x10") && !IsNumberText(" 1") && !IsNumberText("1 ") && !IsNumberText("1,5") && !IsNumberText("1.5.2") && !IsNumberText("1e999") && !IsNumberText("--1"));
-    CHECK(NumberFromText("1.5E1") == 15.0 && NumberFromText("abc") == 0.0 && NumberFromText(".5") == 0.5 && NumberFromText("1.") == 1.0 && NumberFromText("1.E-06") == 1e-6 && NumberFromText("+2.5") == 2.5);
-    CHECK(std::signbit(NumberFromText("-0")) && std::signbit(NumberFromText("-0.0E5")) && !std::signbit(NumberFromText("0")));
-    CHECK(NumberFromText("0.1") == 0.1 && NumberFromText("123456789012345678901234567890") == 1.2345678901234568e29 && NumberFromText("4.9e-324") == 4.9406564584124654e-324);
-    CHECK(NumberFromText("1e-400") == 0.0 && NumberFromText("2.2250738585072011e-308") == 2.2250738585072009e-308 && NumberFromText("1.7976931348623157e308") == 1.7976931348623157e308);
+    CHECK(IsNumberText(u"1.") && IsNumberText(u".5") && IsNumberText(u"1.E-06") && IsNumberText(u"-0") && IsNumberText(u"+7") && IsNumberText(u"12e3") && IsNumberText(u"0.1E+2"));
+    CHECK(!IsNumberText(u"") && !IsNumberText(u".") && !IsNumberText(u"-") && !IsNumberText(u"1e") && !IsNumberText(u"1e+") && !IsNumberText(u".e1") && !IsNumberText(u"NaN")
+        && !IsNumberText(u"Infinity") && !IsNumberText(u"0x10") && !IsNumberText(u" 1") && !IsNumberText(u"1 ") && !IsNumberText(u"1,5") && !IsNumberText(u"1.5.2") && !IsNumberText(u"1e999") && !IsNumberText(u"--1"));
+    CHECK(NumberFromText(u"1.5E1") == 15.0 && NumberFromText(u"abc") == 0.0 && NumberFromText(u".5") == 0.5 && NumberFromText(u"1.") == 1.0 && NumberFromText(u"1.E-06") == 1e-6 && NumberFromText(u"+2.5") == 2.5);
+    CHECK(std::signbit(NumberFromText(u"-0")) && std::signbit(NumberFromText(u"-0.0E5")) && !std::signbit(NumberFromText(u"0")));
+    CHECK(NumberFromText(u"0.1") == 0.1 && NumberFromText(u"123456789012345678901234567890") == 1.2345678901234568e29 && NumberFromText(u"4.9e-324") == 4.9406564584124654e-324);
+    CHECK(NumberFromText(u"1e-400") == 0.0 && NumberFromText(u"2.2250738585072011e-308") == 2.2250738585072009e-308 && NumberFromText(u"1.7976931348623157e308") == 1.7976931348623157e308);
 
-    CHECK(IsIntegerText("-12") && IsIntegerText("+7") && IsIntegerText("007") && IsIntegerText("-0") && IsIntegerText("2147483647") && IsIntegerText("-2147483648") && IsIntegerText("000000000000000000000000000001"));
-    CHECK(!IsIntegerText("") && !IsIntegerText("+") && !IsIntegerText("-") && !IsIntegerText("1.0") && !IsIntegerText("1e3") && !IsIntegerText(" 1") && !IsIntegerText("1 ")
-        && !IsIntegerText("2147483648") && !IsIntegerText("-2147483649") && !IsIntegerText("99999999999999999999") && !IsIntegerText("--1") && !IsIntegerText("0x10"));
-    CHECK(IntegerFromText("-12") == -12 && IntegerFromText("1.0") == 0 && IntegerFromText("2147483647") == INT32_MAX && IntegerFromText("-2147483648") == INT32_MIN && IntegerFromText("2147483648") == 0 && IntegerFromText("+7") == 7);
+    CHECK(IsIntegerText(u"-12") && IsIntegerText(u"+7") && IsIntegerText(u"007") && IsIntegerText(u"-0") && IsIntegerText(u"2147483647") && IsIntegerText(u"-2147483648") && IsIntegerText(u"000000000000000000000000000001"));
+    CHECK(!IsIntegerText(u"") && !IsIntegerText(u"+") && !IsIntegerText(u"-") && !IsIntegerText(u"1.0") && !IsIntegerText(u"1e3") && !IsIntegerText(u" 1") && !IsIntegerText(u"1 ")
+        && !IsIntegerText(u"2147483648") && !IsIntegerText(u"-2147483649") && !IsIntegerText(u"99999999999999999999") && !IsIntegerText(u"--1") && !IsIntegerText(u"0x10"));
+    CHECK(IntegerFromText(u"-12") == -12 && IntegerFromText(u"1.0") == 0 && IntegerFromText(u"2147483647") == INT32_MAX && IntegerFromText(u"-2147483648") == INT32_MIN && IntegerFromText(u"2147483648") == 0 && IntegerFromText(u"+7") == 7);
 
-    CHECK(NumberToShortestString(0.5) == "0.5" && NumberToShortestString(1e-5) == "1E-05" && NumberToShortestString(-0.0) == "-0" && NumberToShortestString(1e300) == "1E+300" && NumberToShortestString(1e15) == "1000000000000000");
+    CHECK(NumberToShortestString(0.5) == u"0.5" && NumberToShortestString(1e-5) == u"1E-05" && NumberToShortestString(-0.0) == u"-0" && NumberToShortestString(1e300) == u"1E+300" && NumberToShortestString(1e15) == u"1000000000000000");
     for (double x : { 0.1, 0.1 + 0.2, 1.0 / 3.0, -2.5e-300, 5e-324, 1.7976931348623157e308, 123456789.123456789, 9007199254740993.0, -0.0, 1e15, 1e-5, 4.35, 100.0 })
     {
         double back = NumberFromText(NumberToShortestString(x));
@@ -105,8 +142,8 @@ int main()
     }
     CHECK(!IsNumberText(NumberToShortestString(std::nan(""))) && !IsNumberText(NumberToShortestString(HUGE_VAL)) && !IsNumberText(NumberToShortestString(-HUGE_VAL)));
 
-    CHECK(ToInteger('a') == 97 && ToInteger(static_cast<char>(200)) == 200 && ToCharacter(97) == 'a' && ToInteger(ToCharacter(255)) == 255 && At(std::string("abc"), 1) == 'b');
-    CHECK(FromCharacters(make_array(ToCharacter(10), ToCharacter(13))) == std::string("\x0a\x0d"));
+    CHECK(ToInteger('a') == 97 && ToInteger(static_cast<char16_t>(200)) == 200 && ToCharacter(97) == 'a' && ToInteger(ToCharacter(255)) == 255 && At(String(u"abc"), 1) == 'b');
+    CHECK(FromCharacters(make_array(ToCharacter(10), ToCharacter(13))) == String(u"\x0a\x0d"));
 
     // Json: Array<double> and a nested object
     arena_reset();
@@ -156,10 +193,10 @@ int main()
         CHECK(Hash(SubBytes(bytes_of("zzfoobarzz"), 2, 6)) == Hash(bytes_of("foobar")));
         {   // ToText: every byte value, 0 to 255, is one character of that code, and a view gives the text of its range
             uint8_t all256[256]; for (int i = 0; i < 256; i++) all256[i] = static_cast<uint8_t>(i);
-            std::string t = ToText(make_bytes(all256, 256));
+            String t = ToText(make_bytes(all256, 256));
             bool ok = t.size() == 256;
             for (int i = 0; ok && i < 256; i++) ok = static_cast<uint8_t>(t[static_cast<size_t>(i)]) == i;
-            CHECK(ok && ToText(Bytes{}) == "" && ToText(SubBytes(bytes_of("zzfoobarzz"), 2, 6)) == "foobar");
+            CHECK(ok && ToText(Bytes{}) == u"" && ToText(SubBytes(bytes_of("zzfoobarzz"), 2, 6)) == u"foobar");
         }
         CHECK(bytes_of("abc") == bytes_of("abc") && !(bytes_of("abc") == bytes_of("abd")) && bytes_of("") == Bytes{});
         CHECK(LessThanOrEquals(bytes_of("ab"), bytes_of("abc")) && !LessThanOrEquals(bytes_of("abc"), bytes_of("ab")) && LessThanOrEquals(bytes_of("B"), bytes_of("a")));

@@ -7,9 +7,10 @@ namespace Ara3D.Geometry.CppWriter
         public static string Text => """
 // plato_cpu.hpp: the CPU prelude of the Plato C++ writer, dialect cpu64i32 (TKT-1097).
 // Mirrors the C# runtime (Intrinsics/*.cs of Ara3D.StepBrep) name for name: Number is double,
-// Integer is int32_t, Boolean is bool, Character is char, String is std::string, and an
+// Integer is int32_t, Boolean is bool, Character is char16_t, String is std::u16string, and an
 // Array<T> is an immutable view into a thread-local bump arena. No exceptions, no RTTI, no iostream.
 #pragma once
+#define PLATO_ARENA_LIFETIMES 1
 
 #include <cassert>
 #include <charconv>
@@ -30,16 +31,75 @@ namespace Ara3D.Geometry.CppWriter
 
 namespace plato
 {
-    using String = std::string;
+    using String = std::u16string;
+
+    // Use the target compiler's real layout instead of duplicating its ABI rules.
+    // Return values remain owned; callers may bind temporaries for the call duration.
+    template <class T> using ReadOnlyParameter = std::conditional_t<(sizeof(T) >= 256), const T&, T>;
+
+    // Plato text uses UTF-16 code units, like C#. JSON and host byte streams use UTF-8.
+    inline void append_utf8(std::string& out, uint32_t cp)
+    {
+        if (cp < 0x80) out.push_back(static_cast<char>(cp));
+        else if (cp < 0x800) { out.push_back(static_cast<char>(0xc0 | (cp >> 6))); out.push_back(static_cast<char>(0x80 | (cp & 63))); }
+        else if (cp < 0x10000) { out.push_back(static_cast<char>(0xe0 | (cp >> 12))); out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 63))); out.push_back(static_cast<char>(0x80 | (cp & 63))); }
+        else { out.push_back(static_cast<char>(0xf0 | (cp >> 18))); out.push_back(static_cast<char>(0x80 | ((cp >> 12) & 63))); out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 63))); out.push_back(static_cast<char>(0x80 | (cp & 63))); }
+    }
+
+    inline std::string StringToUtf8(const String& text)
+    {
+        std::string out;
+        out.reserve(text.size());
+        for (size_t i = 0; i < text.size(); ++i)
+        {
+            uint32_t cp = text[i];
+            if (cp >= 0xd800 && cp <= 0xdbff && i + 1 < text.size() && text[i + 1] >= 0xdc00 && text[i + 1] <= 0xdfff)
+                cp = 0x10000 + ((cp - 0xd800) << 10) + (text[++i] - 0xdc00);
+            else if (cp >= 0xd800 && cp <= 0xdfff) cp = 0xfffd;
+            append_utf8(out, cp);
+        }
+        return out;
+    }
+
+    inline String StringFromUtf8(const std::string& bytes)
+    {
+        String out;
+        out.reserve(bytes.size());
+        for (size_t i = 0; i < bytes.size();)
+        {
+            const auto first = static_cast<uint8_t>(bytes[i++]);
+            uint32_t cp = first;
+            int extra = 0;
+            if (first >= 0xc2 && first <= 0xdf) { cp &= 31; extra = 1; }
+            else if (first >= 0xe0 && first <= 0xef) { cp &= 15; extra = 2; }
+            else if (first >= 0xf0 && first <= 0xf4) { cp &= 7; extra = 3; }
+            else if (first >= 0x80) std::abort();
+            if (bytes.size() - i < static_cast<size_t>(extra)) std::abort();
+            for (int n = 0; n < extra; ++n)
+            {
+                const auto next = static_cast<uint8_t>(bytes[i++]);
+                if ((next & 0xc0) != 0x80) std::abort();
+                cp = (cp << 6) | (next & 63);
+            }
+            if ((extra == 1 && cp < 0x80) || (extra == 2 && cp < 0x800) || (extra == 3 && cp < 0x10000)
+                || cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff)) std::abort();
+            if (cp >= 0x10000)
+            {
+                cp -= 0x10000;
+                out.push_back(static_cast<char16_t>(0xd800 + (cp >> 10)));
+                out.push_back(static_cast<char16_t>(0xdc00 + (cp & 1023)));
+            }
+            else out.push_back(static_cast<char16_t>(cp));
+        }
+        return out;
+    }
 
     // A function value: a lambda or functor with one operator(). A record is not one. It tells apart the
     // function-typed and the interface-typed overload of one name (Deform(self, mapping), Deform(self, deformation)).
     template <class T, class = void> struct is_function_value : std::false_type {};
     template <class T> struct is_function_value<T, std::void_t<decltype(&T::operator())>> : std::true_type {};
 
-    // ---- Arena: thread-local bump allocator, 16-byte aligned, freed only by arena_reset ----
-    // Destructors never run: a non-trivial element type (a record holding a std::string) is
-    // default-constructed on allocation and its heap memory, if any, is not returned on reset.
+    // ---- Arena: thread-local storage with reverse-order destruction on rollback/reset ----
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -55,6 +115,13 @@ namespace plato
 #pragma warning(pop)
 #endif
 
+    struct ArenaCleanup
+    {
+        void* data;
+        int32_t count;
+        void (*destroy)(void*, int32_t);
+    };
+
     struct ArenaState
     {
         ArenaBlock* head = nullptr;
@@ -63,6 +130,31 @@ namespace plato
         size_t bytes = 0;
         size_t peak = 0;
         size_t next_block = size_t(1) << 20;
+        size_t generation = 0;
+        std::vector<ArenaCleanup> cleanups;
+
+        ArenaState() = default;
+        ArenaState(const ArenaState&) = delete;
+        ArenaState& operator=(const ArenaState&) = delete;
+        void destroy_from(size_t count)
+        {
+            while (cleanups.size() > count)
+            {
+                const auto cleanup = cleanups.back();
+                cleanups.pop_back();
+                cleanup.destroy(cleanup.data, cleanup.count);
+            }
+        }
+        ~ArenaState()
+        {
+            destroy_from(0);
+            while (head)
+            {
+                auto* next = head->next;
+                std::free(head);
+                head = next;
+            }
+        }
     };
 
     inline ArenaState& arena_state()
@@ -73,6 +165,7 @@ namespace plato
 
     inline unsigned char* arena_alloc_bytes(size_t bytes)
     {
+        if (bytes > std::numeric_limits<size_t>::max() - 15) std::abort();
         bytes = (bytes + 15) & ~size_t(15);
         if (bytes == 0)
             return nullptr;
@@ -94,6 +187,7 @@ namespace plato
                 continue;
             }
             size_t cap = s.next_block > bytes ? s.next_block : bytes;
+            if (cap > std::numeric_limits<size_t>::max() - sizeof(ArenaBlock)) std::abort();
             ArenaBlock* b = static_cast<ArenaBlock*>(std::malloc(sizeof(ArenaBlock) + cap));
             if (!b)
                 std::abort();
@@ -117,16 +211,51 @@ namespace plato
         static_assert(alignof(T) <= 16, "arena_alloc: over-aligned type");
         if (n <= 0)
             return nullptr;
+        if (static_cast<size_t>(n) > std::numeric_limits<size_t>::max() / sizeof(T)) std::abort();
         T* p = reinterpret_cast<T*>(arena_alloc_bytes(sizeof(T) * static_cast<size_t>(n)));
         if constexpr (!std::is_trivially_default_constructible<T>::value)
             for (int32_t i = 0; i < n; i++)
                 new (p + i) T();
+        if constexpr (!std::is_trivially_destructible<T>::value)
+            arena_state().cleanups.push_back({ p, n, [](void* data, int32_t count) {
+                auto* values = static_cast<T*>(data);
+                while (count > 0) values[--count].~T();
+            } });
         return p;
+    }
+
+    // Marks belong to this thread and remain valid only until reset or rollback past them.
+    struct ArenaMark
+    {
+        ArenaState* owner;
+        ArenaBlock* block;
+        size_t used, bytes, cleanups, generation;
+    };
+
+    inline ArenaMark arena_mark()
+    {
+        auto& s = arena_state();
+        return { &s, s.cur, s.cur ? s.cur->used : 0, s.bytes, s.cleanups.size(), s.generation };
+    }
+
+    inline void arena_rollback(const ArenaMark& mark)
+    {
+        auto& s = arena_state();
+        if (mark.owner != &s || mark.generation != s.generation || mark.bytes > s.bytes
+            || mark.cleanups > s.cleanups.size()) std::abort();
+        s.destroy_from(mark.cleanups);
+        for (auto* block = mark.block ? mark.block->next : s.head; block; block = block->next)
+            block->used = 0;
+        if (mark.block) mark.block->used = mark.used;
+        s.cur = mark.block ? mark.block : s.head;
+        s.bytes = mark.bytes;
     }
 
     inline void arena_reset()
     {
         ArenaState& s = arena_state();
+        s.destroy_from(0);
+        ++s.generation;
         for (ArenaBlock* b = s.head; b; b = b->next)
             b->used = 0;
         s.cur = s.head;
@@ -141,8 +270,12 @@ namespace plato
     template <class T>
     struct Array
     {
-        const T* data;
-        int32_t count;
+        const T* data = nullptr;
+        int32_t count = 0;
+        // CLR array defaults are null; an explicitly constructed empty view is [].
+        bool has_value = false;
+        Array() = default;
+        Array(const T* values, int32_t size) : data(values), count(size), has_value(true) {}
         const T& operator[](int32_t i) const
         {
             PLATO_ASSERT(i >= 0 && i < count);
@@ -170,7 +303,12 @@ namespace plato
     }
 
     template <class T> inline int32_t ToCount(Array<T> xs) { return xs.count; }
-    template <class T> inline T At(Array<T> xs, int32_t i) { PLATO_ASSERT(i >= 0 && i < xs.count); return xs.data[i]; }
+    // Internal immutable read: large values may bind directly to borrowed call
+    // parameters. The reference is valid only while the array's region is alive.
+    template <class T> inline ReadOnlyParameter<T> array_at_readonly(Array<T> xs, int32_t i)
+    { PLATO_ASSERT(i >= 0 && i < xs.count); return xs.data[i]; }
+    // Preserve the public value-returning accessor contract for host callers.
+    template <class T> inline T At(Array<T> xs, int32_t i) { return array_at_readonly(xs, i); }
 
     // MapRange: f(0) to f(n - 1), each once, in index order; n <= 0 gives the empty array.
     template <class F>
@@ -356,6 +494,10 @@ namespace plato
         T* items;
         int32_t count;
         int32_t cap;
+        PlatoList() : items(nullptr), count(0), cap(0) {}
+        explicit PlatoList(int32_t capacity)
+            : items(arena_alloc<T>(capacity)), count(0), cap(capacity > 0 ? capacity : 0) {}
+        PlatoList(T* data, int32_t size, int32_t capacity) : items(data), count(size), cap(capacity) {}
     };
     template <class T> using List = PlatoList<T>;
 
@@ -467,8 +609,8 @@ namespace plato
     inline bool And(bool a, bool b) { return a && b; }
     inline bool Or(bool a, bool b) { return a || b; }
     inline bool Not(bool a) { return !a; }
-    inline bool LessThanOrEquals(char a, char b) { return a <= b; }   // C# compares UTF-16 code units; ordinal here
-    inline bool LessThanOrEquals(const std::string& a, const std::string& b) { return a.compare(b) <= 0; }   // byte-wise (char_traits<char>::compare orders as unsigned char); C# CompareOrdinal orders UTF-16 code units, the same for ASCII
+    inline bool LessThanOrEquals(char16_t a, char16_t b) { return a <= b; }   // C# compares UTF-16 code units; ordinal here
+    inline bool LessThanOrEquals(const String& a, const String& b) { return a.compare(b) <= 0; }   // ordinal UTF-16 code units
 
     inline double Floor(double x) { return std::floor(x); }
     inline double Sqrt(double x) { return std::sqrt(x); }
@@ -528,26 +670,26 @@ namespace plato
         return static_cast<int32_t>(bits) ^ static_cast<int32_t>(bits >> 32);
     }
 
-    // String.Count / At (Character is char; a String is UTF-8 here, UTF-16 in C#, identical for ASCII).
-    inline int32_t ToCount(const std::string& s) { return static_cast<int32_t>(s.size()); }
-    inline char At(const std::string& s, int32_t i) { PLATO_ASSERT(i >= 0 && static_cast<size_t>(i) < s.size()); return s[static_cast<size_t>(i)]; }
+    // String.Count / At index UTF-16 code units, including surrogate halves.
+    inline int32_t ToCount(const String& s) { return static_cast<int32_t>(s.size()); }
+    inline char16_t At(const String& s, int32_t i) { PLATO_ASSERT(i >= 0 && static_cast<size_t>(i) < s.size()); return s[static_cast<size_t>(i)]; }
 
-    // Character <-> Integer: the code unit (a Character is one byte here, so 0 to 255 agree with C#).
-    inline int32_t ToInteger(char c) { return static_cast<int32_t>(static_cast<unsigned char>(c)); }
+    // Character <-> Integer: the unsigned UTF-16 code unit.
+    inline int32_t ToInteger(char16_t c) { return static_cast<int32_t>(c); }
     inline int32_t ToInteger(int32_t x) { return x; }
-    inline char ToCharacter(int32_t n) { return static_cast<char>(n); }
+    inline char16_t ToCharacter(int32_t n) { return static_cast<char16_t>(n); }
 
     // FromCharacters: the String of the array's characters, in order.
-    inline std::string FromCharacters(Array<char> cs) { return cs.count > 0 ? std::string(cs.data, static_cast<size_t>(cs.count)) : std::string(); }
+    inline String FromCharacters(Array<char16_t> cs) { return cs.count > 0 ? String(cs.data, static_cast<size_t>(cs.count)) : String(); }
 
     // Substring: the characters at start .. start + count - 1 that exist; clamped at both ends, never fails.
-    inline std::string Substring(const std::string& s, int32_t start, int32_t count)
+    inline String Substring(const String& s, int32_t start, int32_t count)
     {
         int64_t first = start;
         int64_t n = count;
         const int64_t length = static_cast<int64_t>(s.size());
         if (first < 0) { n += first; first = 0; }
-        if (n <= 0 || first >= length) return std::string();
+        if (n <= 0 || first >= length) return String();
         if (n > length - first) n = length - first;
         return s.substr(static_cast<size_t>(first), static_cast<size_t>(n));
     }
@@ -603,23 +745,25 @@ namespace plato
     }
     inline bool TryParseNumber(const std::string& t, double& value) { return TryParseNumber(t.data(), t.size(), value); }
 
-    inline bool IsNumberText(const std::string& t) { double v; return TryParseNumber(t, v); }
-    inline double NumberFromText(const std::string& t) { double v; return TryParseNumber(t, v) ? v : 0.0; }
+    inline bool TryParseNumber(const String& t, double& value) { return TryParseNumber(StringToUtf8(t), value); }
+
+    inline bool IsNumberText(const String& t) { double v; return TryParseNumber(t, v); }
+    inline double NumberFromText(const String& t) { double v; return TryParseNumber(t, v) ? v : 0.0; }
 
     // IsIntegerText / IntegerFromText: an optional sign and one or more digits, within int32_t (this dialect's
     // Integer); overflow is reported, never wrapped. The same results as the C# runtime's TextForms under cpu64i32.
-    inline bool TryParseInteger(const std::string& t, int32_t& value)
+    inline bool TryParseInteger(const String& t, int32_t& value)
     {
         value = 0;
-        const char* first = t.data();
-        const char* last = first + t.size();
+        const char16_t* first = t.data();
+        const char16_t* last = first + t.size();
         const bool negative = first != last && *first == '-';
         if (first != last && (*first == '+' || *first == '-')) ++first;
         if (first == last) return false;
-        for (const char* p = first; p != last; ++p)
+        for (const char16_t* p = first; p != last; ++p)
             if (*p < '0' || *p > '9') return false;
         int64_t v = 0;
-        for (const char* p = first; p != last; ++p)
+        for (const char16_t* p = first; p != last; ++p)
         {
             v = v * 10 + (*p - '0');
             if (v > INT64_C(2147483648)) return false;
@@ -630,8 +774,8 @@ namespace plato
         return true;
     }
 
-    inline bool IsIntegerText(const std::string& t) { int32_t v; return TryParseInteger(t, v); }
-    inline int32_t IntegerFromText(const std::string& t) { int32_t v; return TryParseInteger(t, v) ? v : 0; }
+    inline bool IsIntegerText(const String& t) { int32_t v; return TryParseInteger(t, v); }
+    inline int32_t IntegerFromText(const String& t) { int32_t v; return TryParseInteger(t, v) ? v : 0; }
 
     // ---- Bytes: a view of bytes, the span of the Bytes primitive (TKT-1143) ----
     // A pointer and a count. The host owns the bytes a Bytes views and must keep them alive while it does (a file
@@ -690,9 +834,14 @@ namespace plato
     inline bool TryParseNumberBytes(Bytes t, double& value) { return TryParseNumber(reinterpret_cast<const char*>(t.data), static_cast<size_t>(t.count), value); }
     inline double NumberFromBytes(Bytes b) { double v; return TryParseNumberBytes(b, v) ? v : std::numeric_limits<double>::quiet_NaN(); }
 
-    // ToText: the String of the bytes. A String here is a byte string (FromCharacters copies the characters as bytes),
-    // so a direct copy is the Latin-1 text of the bytes and ToBytes inverts it.
-    inline std::string ToText(Bytes b) { return b.count > 0 ? std::string(reinterpret_cast<const char*>(b.data), static_cast<size_t>(b.count)) : std::string(); }
+    // Each byte maps to the same-valued Latin-1 UTF-16 code unit (never UTF-8 decoding).
+    inline String ToText(Bytes b)
+    {
+        String text;
+        text.reserve(static_cast<size_t>(b.count));
+        for (int32_t i = 0; i < b.count; ++i) text.push_back(static_cast<char16_t>(b.data[i]));
+        return text;
+    }
 
     // ---- Helpers the body writer emits (names as in the GPU prelude, on double) ----
 
@@ -723,16 +872,16 @@ namespace plato
     inline int32_t hash_float(double x) { return Hash(x); }
     inline int32_t GetHashCode(int32_t x) { return x; }
     inline int32_t GetHashCode(bool x) { return x ? 1 : 0; }
-    inline int32_t GetHashCode(char x) { return static_cast<int32_t>(static_cast<unsigned char>(x)); }
+    inline int32_t GetHashCode(char16_t x) { return static_cast<int32_t>(x); }
     inline int32_t GetHashCode(double x) { return Hash(x); }
-    inline int32_t HashString(const std::string& s)
+    inline int32_t HashString(const String& s)
     {
         int32_t h = static_cast<int32_t>(s.size());
-        for (char c : s)
-            h = mix_hash(h, static_cast<int32_t>(static_cast<unsigned char>(c)));
+        for (char16_t c : s)
+            h = mix_hash(h, static_cast<int32_t>(c));
         return h;
     }
-    inline int32_t GetHashCode(const std::string& s) { return HashString(s); }
+    inline int32_t GetHashCode(const String& s) { return HashString(s); }
     template <class T>
     inline int32_t GetHashCode(Array<T> xs)
     {
@@ -750,7 +899,7 @@ namespace plato
 
     // ---- ToString: the invariant-culture text C# writes (round-trip "R" for numbers) ----
 
-    inline std::string ToString(int32_t v)
+    inline std::string NumberTextUtf8(int32_t v)
     {
         char buf[16];
         auto r = std::to_chars(buf, buf + sizeof buf, v);
@@ -758,7 +907,7 @@ namespace plato
     }
 
     // Shortest round-trip digits, laid out as .NET writes "R" (checked on .NET 8, 9 and 10): plain from 1e-4 up to below 1e17, otherwise d.dddE+XX.
-    inline std::string ToString(double v)
+    inline std::string NumberTextUtf8(double v)
     {
         if (std::isnan(v)) return "NaN";
         if (std::isinf(v)) return v > 0 ? "Infinity" : "-Infinity";
@@ -794,7 +943,7 @@ namespace plato
             out.push_back(e < 0 ? '-' : '+');
             const int a = e < 0 ? -e : e;
             if (a < 10) out.push_back('0');
-            out += ToString(static_cast<int32_t>(a));
+            out += NumberTextUtf8(static_cast<int32_t>(a));
         }
         else if (e >= 0)
         {
@@ -820,22 +969,20 @@ namespace plato
         return out;
     }
 
-    inline std::string ToString(bool v) { return v ? "True" : "False"; }   // C# bool.ToString
-    inline std::string ToString(char v) { return std::string(1, v); }
-    inline std::string ToString(const std::string& v) { return v; }
+    inline String ToString(int32_t v) { return StringFromUtf8(NumberTextUtf8(v)); }
+    inline String ToString(double v) { return StringFromUtf8(NumberTextUtf8(v)); }
+    inline String ToString(bool v) { return v ? u"True" : u"False"; }
+    inline String ToString(char16_t v) { return String(1, v); }
+    inline String ToString(const String& v) { return v; }
+    inline String NumberToShortestString(double v) { return ToString(v); }
 
-    // NumberToShortestString: the shortest text that reads back to the same double through NumberFromText, the
-    // layout .NET writes ("0.1", "1E+15", "1E-05", "-0"); NaN, Infinity and -Infinity are not numbers to IsNumberText.
-    inline std::string NumberToShortestString(double x) { return ToString(x); }
-
-    // ---- String helpers (std::string replaces the fixed-capacity GPU String) ----
-
-    inline std::string make_string_n(const char* s, int32_t n) { return std::string(s, static_cast<size_t>(n < 0 ? 0 : n)); }
-    inline void string_clear(std::string* s) { s->clear(); }
-    inline void string_append_char(std::string* s, char c) { s->push_back(c); }
-    inline void string_append_cstr(std::string* s, const char* p) { if (p) s->append(p); }
-    inline void string_append_int(std::string* s, int32_t v) { s->append(ToString(v)); }
-    inline void string_append_float(std::string* s, double v) { s->append(ToString(v)); }
+    // Generated UTF-8 literals carry their byte length, including embedded NULs.
+    inline String make_string_n(const char* s, int32_t n) { return StringFromUtf8(std::string(s, static_cast<size_t>(n < 0 ? 0 : n))); }
+    inline void string_clear(String* s) { s->clear(); }
+    inline void string_append_char(String* s, char16_t c) { s->push_back(c); }
+    inline void string_append_cstr(String* s, const char* p) { if (p) s->append(StringFromUtf8(p)); }
+    inline void string_append_int(String* s, int32_t v) { s->append(ToString(v)); }
+    inline void string_append_float(String* s, double v) { s->append(ToString(v)); }
 
     // ---- Json: the DOM and the text PlatoJson.cs writes (invariant "R" numbers; non-finite as the
     // quoted names "NaN", "Infinity", "-Infinity"; a Character as a one-character string) ----
@@ -949,8 +1096,8 @@ namespace plato
         case Json::Kind::Null: out += "null"; break;
         case Json::Kind::Bool: out += j.b ? "true" : "false"; break;
         case Json::Kind::Number:
-            if (std::isfinite(j.n)) out += ToString(j.n);
-            else json_write_string(out, ToString(j.n));
+            if (std::isfinite(j.n)) out += NumberTextUtf8(j.n);
+            else json_write_string(out, NumberTextUtf8(j.n));
             break;
         case Json::Kind::String: json_write_string(out, j.s); break;
         case Json::Kind::Array:
@@ -1129,7 +1276,7 @@ namespace plato
         }
         if (!good)
         {
-            if (error) *error = "invalid JSON at offset " + ToString(static_cast<int32_t>(ps.p - text.data()));
+            if (error) *error = "invalid JSON at offset " + NumberTextUtf8(static_cast<int32_t>(ps.p - text.data()));
             return false;
         }
         out = std::move(j);
@@ -1140,12 +1287,41 @@ namespace plato
     inline void from_json(const Json& j, double& v) { v = j.as_number(); }
     inline void from_json(const Json& j, int32_t& v) { v = ToInteger(j.as_number()); }
     inline void from_json(const Json& j, bool& v) { v = j.as_bool(); }
-    inline void from_json(const Json& j, char& v) { v = j.is_string() && !j.s.empty() ? j.s[0] : '\0'; }
-    inline void from_json(const Json& j, std::string& v) { v = j.is_string() ? j.s : std::string(); }
+    inline void from_json(const Json& j, char16_t& v)
+    {
+        if (!j.is_string()) std::abort();
+        const auto text = StringFromUtf8(j.s);
+        if (text.size() != 1) std::abort();
+        v = text[0];
+    }
+    inline void from_json(const Json& j, String& v) { v = j.is_string() ? StringFromUtf8(j.s) : String(); }
+    // Bytes use the managed Latin-1 JSON string representation; Json strings store UTF-8.
+    inline void from_json(const Json& j, Bytes& value)
+    {
+        if (!j.is_string() || j.s.size() > static_cast<size_t>(INT32_MAX)) std::abort();
+        auto* bytes = arena_alloc<uint8_t>(static_cast<int32_t>(j.s.size()));
+        int32_t count = 0;
+        for (size_t i = 0; i < j.s.size(); ++i)
+        {
+            const auto c = static_cast<uint8_t>(j.s[i]);
+            if (c < 128) bytes[count++] = c;
+            else
+            {
+                if ((c != 0xc2 && c != 0xc3) || ++i >= j.s.size()) std::abort();
+                const auto next = static_cast<uint8_t>(j.s[i]);
+                if (next < 0x80 || next > 0xbf) std::abort();
+                bytes[count++] = static_cast<uint8_t>(((c & 3) << 6) | (next & 0x3f));
+            }
+        }
+        value = { bytes, count };
+    }
+
     template <class T>
     inline void from_json(const Json& j, Array<T>& a)
     {
-        const int32_t n = j.is_array() ? j.size() : 0;
+        if (j.kind == Json::Kind::Null) { a = Array<T>{}; return; }
+        if (!j.is_array()) std::abort();
+        const int32_t n = j.size();
         T* p = arena_alloc<T>(n);
         for (int32_t i = 0; i < n; i++)
             from_json(j[i], p[i]);
@@ -1155,16 +1331,37 @@ namespace plato
     inline Json to_json(double v) { return Json::Number(v); }
     inline Json to_json(int32_t v) { return Json::Number(static_cast<double>(v)); }
     inline Json to_json(bool v) { return Json::Bool(v); }
-    inline Json to_json(char v) { return Json::String(std::string(1, v)); }
-    inline Json to_json(const std::string& v) { return Json::String(v); }
+    inline Json to_json(char16_t v) { return Json::String(StringToUtf8(String(1, v))); }
+    inline Json to_json(const String& v) { return Json::String(StringToUtf8(v)); }
+    inline Json to_json(const Bytes& value)
+    {
+        std::string utf8;
+        for (int32_t i = 0; i < value.count; ++i)
+        {
+            const auto c = value.data[i];
+            if (c >= 128) utf8.push_back(static_cast<char>(0xc0 | (c >> 6)));
+            utf8.push_back(static_cast<char>(c < 128 ? c : 0x80 | (c & 0x3f)));
+        }
+        return Json::String(std::move(utf8));
+    }
     template <class T>
     inline Json to_json(const Array<T>& a)
     {
+        if (!a.has_value) return Json{};
         Json j = Json::Array();
         for (int32_t i = 0; i < a.count; i++)
             j.push(to_json(a.data[i]));
         return j;
     }
+    // Missing record fields receive CLR-style typed defaults; explicit null still
+    // goes through the scalar/array converter and its normal validation.
+    template <class T>
+    inline void from_json_member(const Json& object, const char* name, T& value)
+    {
+        if (const auto* field = object.find(name)) from_json(*field, value);
+        else value = T{};
+    }
+
 }
 """;
     }

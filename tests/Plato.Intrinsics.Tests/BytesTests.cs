@@ -15,6 +15,28 @@ namespace Plato.IntrinsicsTests;
 [TestFixture]
 public static class BytesTests
 {
+    [Test]
+    public static void JsonPreservesEveryByteAndNestedArrays()
+    {
+        var all = Enumerable.Range(0, 256).Select(i => (byte)i).ToArray();
+        var value = Bytes.Wrap(all);
+        var json = System.Text.Json.JsonSerializer.Serialize(value);
+        Assert.That(System.Text.Json.JsonSerializer.Deserialize<string>(json), Is.EqualTo(value.ToString()));
+        Assert.That(System.Text.Json.JsonSerializer.Deserialize<Bytes>(json).AsSpan().ToArray(), Is.EqualTo(all));
+        var platoJson = PlatoJson.WriteValue(new StringBuilder(), value, null, null).ToString();
+        Assert.That(System.Text.Json.JsonSerializer.Deserialize<Bytes>(platoJson).AsSpan().ToArray(), Is.EqualTo(all));
+        var array = new[] { value.SubBytes(127, 3), default(Bytes) };
+        var restored = System.Text.Json.JsonSerializer.Deserialize<Bytes[]>(System.Text.Json.JsonSerializer.Serialize(array));
+        Assert.That(restored![0].AsSpan().ToArray(), Is.EqualTo(new byte[] { 127, 128, 129 }));
+        Assert.That(restored[1].Count.Value, Is.Zero);
+    }
+
+    [TestCase("null")]
+    [TestCase("[1,2]")]
+    [TestCase("\"\\u0100\"")]
+    public static void JsonRejectsNonByteValues(string json)
+        => Assert.Throws<System.Text.Json.JsonException>(() => System.Text.Json.JsonSerializer.Deserialize<Bytes>(json));
+
     private static Bytes B(string s) => Bytes.Wrap(Encoding.Latin1.GetBytes(s));
 
     [Test]

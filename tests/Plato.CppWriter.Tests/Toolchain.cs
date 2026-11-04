@@ -20,6 +20,10 @@ public static class Toolchain
 {
     public static string? FindVcVars()
     {
+        var configured = Environment.GetEnvironmentVariable("PLATO_VCVARS");
+        if (!string.IsNullOrWhiteSpace(configured))
+            return File.Exists(configured) ? configured
+                : throw new FileNotFoundException("PLATO_VCVARS must name a vcvars64.bat file", configured);
         var programFilesX86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)")
                               ?? @"C:\Program Files (x86)";
         var vswhere = Path.Combine(programFilesX86, "Microsoft Visual Studio", "Installer", "vswhere.exe");
@@ -84,7 +88,7 @@ public static class Toolchain
         return onPath;
     }
 
-    public static (int ExitCode, string Output) Run(string exe, string args, string workingDir)
+    public static (int ExitCode, string Output) Run(string exe, string args, string workingDir, bool nativeEnvironment = false)
     {
         var psi = new ProcessStartInfo(exe, args)
         {
@@ -94,6 +98,12 @@ public static class Toolchain
             UseShellExecute = false,
             CreateNoWindow = true,
         };
+        if (nativeEnvironment)
+        {
+            // vcvars extends PATH through cmd, whose line limit can truncate SDK discovery.
+            var windows = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+            psi.Environment["PATH"] = Path.Combine(windows, "System32") + ";" + windows;
+        }
         using var p = Process.Start(psi)!;
         var stdout = p.StandardOutput.ReadToEnd();
         var stderr = p.StandardError.ReadToEnd();
@@ -108,7 +118,7 @@ public static class Toolchain
         // The compiler only exists inside the environment vcvars64.bat sets up, so both run
         // in one cmd invocation. The outer quotes are cmd's own /c "..." wrapper.
         var command = $"\"\"{vcvars}\" >nul && cl /nologo /std:c++17 /W3 /EHsc /c {extraArgs} \"{sourceFile}\"\"";
-        return Run("cmd.exe", "/c " + command, workingDir);
+        return Run("cmd.exe", "/c " + command, workingDir, nativeEnvironment: true);
     }
 
     public static (int ExitCode, string Output) CompileWithNvcc(string nvcc, string workingDir, string sourceFile,

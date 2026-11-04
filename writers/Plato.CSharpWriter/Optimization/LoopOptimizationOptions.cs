@@ -53,4 +53,7 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     // (ConstantCounts). Independent of the other switches; it unrolls through the literal rules, so it is
     // useful with --fuse.
     public bool ScalarArrays { get; init; }
+    // --specialize-callbacks-lean (requires --specialize-callbacks): no clones for validation bodies (`Check_`),
+    // and a lambda that uses its parameter twice gets a helper method instead of a refusal.
+    public bool SpecializeCallbacksLean { get; init; }
 }

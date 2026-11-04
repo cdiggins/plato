@@ -746,6 +746,8 @@ namespace Ara3D.Geometry.CSharpWriter
         internal readonly List<TwinSite> TwinSites = new List<TwinSite>();
         // --scalar-arrays (TKT-1152 chunk C0): see ConstantCounts. Default (false) output is unchanged.
         public bool ScalarArrays { get; set; }
+        // --specialize-callbacks-lean: see LoopOptimizationOptions.SpecializeCallbacksLean. Meaningless without SpecializeCallbacks.
+        public bool SpecializeCallbacksLean { get; set; }
         public CallbackSpecializations Specializations { get; } = new CallbackSpecializations();
         // The nesting depth of the clone whose body is being optimized (0 for an ordinary body).
         public int SpecializationDepth;

@@ -1550,6 +1550,9 @@ namespace Ara3D.Geometry.CppWriter
             });
         }
 
+        private string ParameterDeclaration(string type, string name)
+            => $"{(IsCpu && type == "String" ? "const String&" : type)} {name}";
+
         private void TryEmitFunction(FunctionInstance fi, ConcreteType ct)
         {
             var owner = ct.TypeDef.Name;
@@ -1607,7 +1610,9 @@ namespace Ara3D.Geometry.CppWriter
                     : fi.ReturnType?.Name;
 
                 var sigKey = $"{fi.Name}({paramTypes.JoinStringsWithComma()})";
-                if (IsCpu && IsPreludeArrayTemplate(fi.Name, paramTypes))
+                if (IsCpu && (IsPreludeArrayTemplate(fi.Name, paramTypes)
+                    || (fi.Name == "ToInteger" && ret == "int32_t"
+                        && paramTypes.SequenceEqual(new[] { "int32_t" }))))
                 {
                     if (_claimedSignatures.Add(sigKey))
                         _emitted.Add(new Emitted { Label = label, Key = sigKey, Prototype = "", Definition = "", Provided = true });
@@ -1616,7 +1621,21 @@ namespace Ara3D.Geometry.CppWriter
                 if (!_claimedSignatures.Add(sigKey))
                     return; // identical overload already emitted (first wins)
 
-                var parameters = paramTypes.Zip(paramNames, (t, n) => $"{t} {n}").JoinStringsWithComma();
+                // Assignment targets must remain owned values. Walk the entire target so
+                // member/index assignment cannot accidentally borrow its root parameter.
+                var assigned = tir?.Body?.Descendants().OfType<TirAssign>()
+                    .SelectMany(a => a.LValue.Descendants().OfType<TirParameter>())
+                    .Select(p => p.Def).ToHashSet() ?? new HashSet<ParameterDef>();
+                var parameters = paramTypes.Select((type, i) =>
+                {
+                    if (tir != null && assigned.Contains(tir.Parameters[i]))
+                        return $"{type} {paramNames[i]}";
+                    // Only closed, named records: alias templates in deduced parameter
+                    // positions would prevent generic argument deduction in C++.
+                    if (IsCpu && CpuOptions.BorrowLargeParameters && StructNames.Contains(type))
+                        return $"ReadOnlyParameter<{type}> {paramNames[i]}";
+                    return ParameterDeclaration(type, paramNames[i]);
+                }).JoinStringsWithComma();
                 var sig = $"{TemplateHeader(templateNames)}PLATO_FN {ret} {FunctionName(fi.Name)}({parameters})";
 
                 string definition;

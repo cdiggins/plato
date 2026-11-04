@@ -46,6 +46,7 @@ public static class WriterSwitches
         new("primitive-compare", true),
         new("lower-more", true, "loops"),
         new("specialize-callbacks", true),
+        new("specialize-callbacks-lean", false, "specialize-callbacks"),
         // TKT-1152: off by default until each is measured and pinned in plato-brep.
         new("scalar-arrays", false),
         new("owned-arrays", false),
@@ -102,6 +103,7 @@ public static class WriterSwitches
             SwitchMatch = s["switch-match"],
             LowerMore = s["lower-more"],
             SpecializeCallbacks = s["specialize-callbacks"],
+            SpecializeCallbacksLean = s["specialize-callbacks-lean"],
             ScalarArrays = s["scalar-arrays"],
             OwnedArrays = s["owned-arrays"],
             StackArrays = s["stack-arrays"],

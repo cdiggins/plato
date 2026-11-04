@@ -15,6 +15,7 @@ namespace Ara3D.Geometry
     /// <c>Count</c>, <c>At</c>, <c>SubBytes</c>, <c>FromIntegers</c> (<see cref="BytesIntrinsics"/>), the
     /// comparison operators, <c>Hash</c>, <c>NumberFromBytes</c> and <c>ToText</c>.
     /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(BytesJsonConverter))]
     public readonly partial struct Bytes
     {
         // -------------------------------------------------------------------------------
@@ -152,7 +153,26 @@ namespace Ara3D.Geometry
             => System.Text.Encoding.Latin1.GetString(AsSpan());
     }
 
-    /// <summary>The text forms the byte parse accepts: the grammar of <c>TextForms</c> over bytes.</summary>
+    /// <summary>Round-trips bytes as a Latin-1 JSON string, matching PlatoJson.WriteValue.</summary>
+    public sealed class BytesJsonConverter : System.Text.Json.Serialization.JsonConverter<Bytes>
+    {
+        public override Bytes Read(ref System.Text.Json.Utf8JsonReader reader, System.Type type,
+            System.Text.Json.JsonSerializerOptions options)
+        {
+            var text = reader.GetString();
+            if (text == null)
+                throw new System.Text.Json.JsonException("Bytes requires a Latin-1 JSON string");
+            foreach (var c in text)
+                if (c > 255)
+                    throw new System.Text.Json.JsonException("Bytes cannot contain a character above 255");
+            return Bytes.Wrap(System.Text.Encoding.Latin1.GetBytes(text));
+        }
+
+        public override void Write(System.Text.Json.Utf8JsonWriter writer, Bytes value,
+            System.Text.Json.JsonSerializerOptions options)
+            => writer.WriteStringValue(value.ToString());
+    }
+
     internal static class ByteForms
     {
         private static bool IsDigit(byte c) => c >= (byte)'0' && c <= (byte)'9';

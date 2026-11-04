@@ -63,6 +63,7 @@ namespace Ara3D.Geometry.CSharpWriter
             writer.StackArrays = loopOptimizations?.StackArrays ?? false;
             writer.SpanParams = loopOptimizations?.SpanParams ?? false;
             writer.ScalarArrays = loopOptimizations?.ScalarArrays ?? false;
+            writer.SpecializeCallbacksLean = loopOptimizations?.SpecializeCallbacksLean ?? false;
             if (statementInlining != null)
             {
                 writer.InlineStatements = true;

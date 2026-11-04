@@ -16,6 +16,9 @@ namespace Ara3D.Geometry.CppWriter
     /// </summary>
     public sealed record CppCpuOptions(bool Loops, bool Fuse, bool FuseConsumers, bool ExactOutput, IReadOnlyList<string> Roots)
     {
+        public bool ShareCalls { get; init; }
+        public bool BorrowLargeParameters { get; init; }
+        public bool BorrowArrayReads { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
     }
 
@@ -36,6 +39,7 @@ namespace Ara3D.Geometry.CppWriter
     public partial class CppWriter
     {
         public CppCpuOptions CpuOptions { get; set; } = CppCpuOptions.Default;
+        internal CppTirPipeline CpuPipeline { get; } = new CppTirPipeline();
 
         public bool IsCpu => Dialect == CppDialect.Cpu;
 
@@ -44,7 +48,7 @@ namespace Ara3D.Geometry.CppWriter
             { "Number", "double" },
             { "Integer", "int32_t" },
             { "Boolean", "bool" },
-            { "Character", "char" },
+            { "Character", "char16_t" },
         };
 
         /// <summary>C++ spelling of Number / Integer in this dialect ("float"/"int" in Cpp and Cuda).</summary>
@@ -54,7 +58,7 @@ namespace Ara3D.Geometry.CppWriter
         public bool IsNumberCpp(string cpp) => cpp == NumberCpp;
         public bool IsIntegerCpp(string cpp) => cpp == IntegerCpp;
         public bool IsScalarCpp(string cpp)
-            => cpp == NumberCpp || cpp == IntegerCpp || cpp == "bool" || cpp == "char";
+            => cpp == NumberCpp || cpp == IntegerCpp || cpp == "bool" || cpp == "char" || cpp == "char16_t";
 
         /// <summary>Vector2D/3D/4D are native float2/3/4 in Cpp and Cuda, ordinary structs in Cpu.</summary>
         public bool IsNativeVectorName(string name) => !IsCpu && NativeVectors.ContainsKey(name);
@@ -235,7 +239,7 @@ namespace Ara3D.Geometry.CppWriter
                 case "double": return "0.0";
                 case "int32_t": return "0";
                 case "bool": return "false";
-                case "char": return "'\\0'";
+                case "char16_t": return "'\\0'";
                 case "String": return "String()";
                 default: return $"{cppType}{{}}";
             }
@@ -365,7 +369,7 @@ namespace Ara3D.Geometry.CppWriter
             if (!_claimedSignatures.Add(sigKey))
                 return;
 
-            var parameters = paramTypes.Zip(paramNames, (t, n) => $"{t} {n}").JoinStringsWithComma();
+            var parameters = paramTypes.Zip(paramNames, ParameterDeclaration).JoinStringsWithComma();
             var sig = $"PLATO_FN {ret} {FunctionName(fi.Name)}({parameters})";
             var a = paramNames.Count > 0 ? paramNames[0] : null;
             var b = paramNames.Count > 1 ? paramNames[1] : null;
@@ -557,7 +561,13 @@ namespace Ara3D.Geometry.CppWriter
             var n = 0;
             foreach (var text in BuildCpuFunctionFiles(live))
                 Files[$"plato_functions_{n++}.cpp"] = new StringBuilder(text);
-            Files["plato_json.cpp"] = new StringBuilder(BuildCpuJson());
+            n = 0;
+            foreach (var text in BuildCpuJsonFiles())
+            {
+                var name = n == 0 ? "plato_json.cpp" : $"plato_json_{n}.cpp";
+                Files[name] = new StringBuilder(text);
+                n++;
+            }
             Files["plato_skipped.txt"] = new StringBuilder(Skipped.Count == 0 ? "" : string.Join("\n", Skipped) + "\n");
             return this;
         }
@@ -618,9 +628,9 @@ inline int32_t mix_(int32_t h, int32_t v) { return (int32_t)(((uint32_t)h * 1677
 inline int32_t hash_(double x) { uint64_t u; std::memcpy(&u, &x, sizeof u); return (int32_t)(u ^ (u >> 32)); }
 inline int32_t hash_(int32_t x) { return x; }
 inline int32_t hash_(bool x) { return x ? 1 : 0; }
-inline int32_t hash_(char x) { return (int32_t)(unsigned char)x; }
+inline int32_t hash_(char16_t x) { return (int32_t)x; }
 inline int32_t hash_(const Bytes& b) { return Hash(b); }
-inline int32_t hash_(const String& s) { int32_t h = 17; for (char c : s) h = mix_(h, (int32_t)(unsigned char)c); return h; }
+inline int32_t hash_(const String& s) { int32_t h = 17; for (char16_t c : s) h = mix_(h, (int32_t)c); return h; }
 template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
 
 ");
@@ -663,7 +673,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 var tp = TemplatePrefix(s.Type);
                 sb.Append($"{tp}inline void from_json(const Json& j, {tn}& v)\n{{\n");
                 foreach (var f in s.Fields)
-                    sb.Append($"    from_json(j[\"{f.Name}\"], v.{EscapeName(f.Name)});\n");
+                    sb.Append($"    from_json_member(j, \"{f.Name}\", v.{EscapeName(f.Name)});\n");
                 sb.Append("}\n");
                 sb.Append($"{tp}inline Json to_json(const {tn}& v)\n{{\n    Json j = Json::Object();\n");
                 foreach (var f in s.Fields)
@@ -721,19 +731,29 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
         }
 
         private const int MaxLinesPerFile = 20000;
+        private const int MaxJsonLinesPerFile = 2000;
 
         private IEnumerable<string> BuildCpuFunctionFiles(List<Emitted> live)
+            => BuildCpuDefinitionFiles(live.Where(e => !e.Provided && !e.IsTemplate)
+                    .Select(e => e.Definition),
+                "#include \"plato_types.hpp\"\n#include \"plato_functions.hpp\"\n",
+                MaxLinesPerFile);
+
+        // Keep definitions intact and preserve their deterministic dependency order.
+        // A single oversized definition occupies its own unit; an empty program still
+        // emits one unit so hosts need no special empty-program convention.
+        private static IEnumerable<string> BuildCpuDefinitionFiles(
+            IEnumerable<string> definitions, string includes, int maxLines)
         {
-            const string head = Banner + "#include \"plato_types.hpp\"\n#include \"plato_functions.hpp\"\n\nnamespace plato {\n\n";
+            var head = Banner + includes + "\nnamespace plato {\n\n";
             const string tail = "} // namespace plato\n";
             var sb = new StringBuilder(head);
             var lines = 0;
-            var any = false;
-            foreach (var e in live.Where(e => !e.Provided && !e.IsTemplate))
+            foreach (var definition in definitions)
             {
-                var def = e.Definition.TrimEnd('\r', '\n');
+                var def = definition.TrimEnd('\r', '\n');
                 var defLines = def.Count(c => c == '\n') + 2;
-                if (lines > 0 && lines + defLines > MaxLinesPerFile)
+                if (lines > 0 && lines + defLines > maxLines)
                 {
                     yield return sb.Append(tail).ToString();
                     sb = new StringBuilder(head);
@@ -741,31 +761,30 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 }
                 sb.Append(def).Append("\n\n");
                 lines += defLines;
-                any = true;
             }
-            if (any || lines == 0)
-                yield return sb.Append(tail).ToString();
+            yield return sb.Append(tail).ToString();
         }
 
-        private string BuildCpuJson()
+        private IEnumerable<string> BuildCpuJsonFiles()
+            => BuildCpuDefinitionFiles(BuildCpuJsonDefinitions(),
+                "// Each object writes every field, including inactive closed-sum fields.\n"
+                + "#include \"plato_types.hpp\"\n", MaxJsonLinesPerFile);
+
+        private IEnumerable<string> BuildCpuJsonDefinitions()
         {
-            var sb = new StringBuilder();
-            sb.Append(Banner).Append("// Same encoding as plato-brep generated/Ara3D.StepBrep/Intrinsics/PlatoJson.cs: one object per struct, field names as keys;\n");
-            sb.Append("// a closed sum writes its Kind and every flattened Case_Field.\n");
-            sb.Append("#include \"plato_types.hpp\"\n\nnamespace plato {\n\n");
             foreach (var s in CpuStructs().Where(s => GenericParamNames(s.Type).Count == 0))
             {
+                var sb = new StringBuilder();
                 sb.Append($"void from_json(const Json& j, {s.Name}& v)\n{{\n");
                 foreach (var f in s.Fields)
-                    sb.Append($"    from_json(j[\"{f.Name}\"], v.{EscapeName(f.Name)});\n");
+                    sb.Append($"    from_json_member(j, \"{f.Name}\", v.{EscapeName(f.Name)});\n");
                 sb.Append("}\n\n");
                 sb.Append($"Json to_json(const {s.Name}& v)\n{{\n    Json j = Json::Object();\n");
                 foreach (var f in s.Fields)
                     sb.Append($"    j.set(\"{f.Name}\", to_json(v.{EscapeName(f.Name)}));\n");
-                sb.Append("    return j;\n}\n\n");
+                sb.Append("    return j;\n}\n");
+                yield return sb.ToString();
             }
-            sb.Append("} // namespace plato\n");
-            return sb.ToString();
         }
 
         // ---- reflection helpers ----------------------------------------------------
@@ -788,7 +807,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 var n = s.Name;
                 AddGenerated("Equals", new[] { n, n }, $"PLATO_FN bool Equals(const {n}& a, const {n}& b)", " { return a == b; }");
                 AddGenerated("NotEquals", new[] { n, n }, $"PLATO_FN bool NotEquals(const {n}& a, const {n}& b)", " { return a != b; }");
-                AddGenerated("TypeName", new[] { n }, $"PLATO_FN String TypeName(const {n}& _)", $" {{ return String(\"{EscapeCppString(n)}\"); }}");
+                AddGenerated("TypeName", new[] { n }, $"PLATO_FN String TypeName(const {n}& _)", $" {{ return make_string_n(\"{EscapeCppString(n)}\", {System.Text.Encoding.UTF8.GetByteCount(n)}); }}");
 
                 string HashOf(CppField f)
                 {
@@ -829,7 +848,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                     foreach (var cs in s.Type.TypeDef.Cases)
                     {
                         var fieldTypes = cs.Fields.Select(f => FieldCppOrNull(new CppField(f.FlatName, f.Type))).ToList();
-                        var ps = fieldTypes.Select((t, i) => $"{t} p{i}").Prepend($"{n} _").JoinStringsWithComma();
+                        var ps = fieldTypes.Select((t, i) => ParameterDeclaration(t, $"p{i}")).Prepend($"{n} _").JoinStringsWithComma();
                         var sets = cs.Fields.Select((f, i) => $" r.{EscapeName(f.FlatName)} = p{i};").JoinStrings("");
                         AddGenerated(cs.Name, fieldTypes.Prepend(n).ToArray(), $"PLATO_FN {n} {FunctionName(cs.Name)}({ps})",
                             $" {{ {n} r{{}}; r.Kind = {n}::{cs.TagConstName};{sets} return r; }}");
