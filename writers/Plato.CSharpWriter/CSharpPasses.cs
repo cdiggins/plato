@@ -17,8 +17,6 @@ public static class CSharpPasses
     public const string InlineStatements = "inline-statements";
     /// <summary>--specialize-callbacks: a lambda passed to a function-typed parameter calls a clone of the callee.</summary>
     public const string SpecializeCallbacks = "specialize-callbacks";
-    /// <summary>--scalar-arrays: constant counts folded and component arrays unrolled.</summary>
-    public const string ConstantCounts = "constant-counts";
     /// <summary>--optimize: component-op unrolling on known IArrayLike types.</summary>
     public const string ComponentUnroll = "component-unroll";
 
@@ -37,8 +35,6 @@ public static class CSharpPasses
         new TirPass(InlineStatements, "experimental statement / callable expansion", RunInlineStatements),
         new TirPass(SpecializeCallbacks, "specialize-callbacks / clone the callee per lambda shape",
             (tir, ctx) => TirCallbackSpecializer.Rewrite(tir, Writer(ctx), ctx.OwnerTypeName)),
-        new TirPass(ConstantCounts, "scalar-arrays / constant counts and component arrays",
-            (tir, ctx) => Ara3D.Geometry.CSharpWriter.ConstantCounts.Rewrite(tir, Writer(ctx))),
         new TirPass(ComponentUnroll, "optimize / component-unroll (layer 8)",
             (tir, ctx) => TirComponentUnroller.UnrollFunction(tir, (CSharpFunctionInfo)ctx.FunctionInfo, Writer(ctx))),
     };
