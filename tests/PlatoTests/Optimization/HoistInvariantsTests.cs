@@ -25,6 +25,8 @@ public static class HoistInvariantsTests
         ["Dependent"] = $"IReadOnlyList<Number> Dependent(IReadOnlyList<Number> xs, Number a, {Delegates})",
         ["Scaled"] = $"Number Scaled(this Number x, Number a, {Delegates})",
         ["Exposed"] = $"IReadOnlyList<Number> Exposed(IReadOnlyList<Number> xs, Number a, {Delegates})",
+        ["FreshList"] = "IReadOnlyList<IReadOnlyList<Number>> FreshList(IReadOnlyList<Number> xs)",
+        ["FreshBuffer"] = "IReadOnlyList<IReadOnlyList<Number>> FreshBuffer(IReadOnlyList<Number> xs)",
     };
 
     private sealed record Program(Assembly Assembly, string Source, CSharpWriter Writer);
@@ -111,6 +113,16 @@ public static class HoistInvariantsTests
             Assert.That(counts[0], Is.EqualTo(input.Length));
             Assert.That(counts[1], Is.EqualTo(input.Length == 0 ? 0 : 1));
         }
+    }
+
+    [TestCase("FreshList", 2)]
+    [TestCase("FreshBuffer", 1)]
+    public static void AnAffineBuilderStaysInTheLoop(string name, int width)
+    {
+        Assert.That(Method(true, name), Does.Not.Contain("_inv"));
+        var rows = (IReadOnlyList<IReadOnlyList<Number>>)Run(true, name, Numbers(1, 2, 3));
+        Assert.That(rows.Select(r => r.Count), Is.EqualTo(new[] { width, width, width }));
+        Assert.That(rows.Select(r => (double)r[width - 1]), Is.EqualTo(new[] { 1.0, 2.0, 3.0 }));
     }
 
     [Test]

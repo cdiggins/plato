@@ -18,4 +18,11 @@ library HoistProbe
 
     Exposed(xs: Array<Number>, a: Number, value: Function1<Number, Number>, f: Function2<Number, Number, Number>): Array<Number>
         => xs.Map(x => x.Scaled(a, value, f));
+
+    // A builder is affine: every iteration owns a new one, so neither constructor call leaves the loop (TKT-1202).
+    FreshList(xs: Array<Number>): Array<Array<Number>>
+        => xs.Map(x => new List<Number>().Add(0.0).Add(x).Freeze());
+
+    FreshBuffer(xs: Array<Number>): Array<Array<Number>>
+        => xs.Map(x => new Buffer<Number>(1).Set(0, x).Freeze());
 }

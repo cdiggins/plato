@@ -122,6 +122,10 @@ public static class TirRewrite
     public static bool IsListType(TypeExpression t)
         => t != null && (t.Name == "Array" || t.Name == "IArray") && t.TypeArgs.Count == 1;
 
+    /// <summary>Whether a type is affine or holds one: a value of it is owned by one use, so it must not be shared.</summary>
+    public static bool IsUniqueType(TypeExpression t)
+        => t != null && ((t.Def?.IsUnique ?? false) || t.TypeArgs.Any(IsUniqueType));
+
     /// <summary>The element type of a list type (see <see cref="IsListType"/>), or null.</summary>
     public static TypeExpression ListElementType(TypeExpression t)
         => IsListType(t) ? t.TypeArgs[0] : null;

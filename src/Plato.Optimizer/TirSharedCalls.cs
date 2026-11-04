@@ -205,8 +205,7 @@ public static class TirSharedCalls
                && c.EmissionKind is EmissionKind.InstanceMethod or EmissionKind.StaticMethod
                && c.Type != null && !TirRewrite.IsListType(c.Type) && !IsUnique(c.Type);
 
-        private static bool IsUnique(TypeExpression t)
-            => t != null && ((t.Def?.IsUnique ?? false) || t.TypeArgs.Any(IsUnique));
+        private static bool IsUnique(TypeExpression t) => TirRewrite.IsUniqueType(t);
 
         /// <summary>Structural identity of a candidate, or null when something below it is not known to be pure
         /// and repeatable.</summary>
