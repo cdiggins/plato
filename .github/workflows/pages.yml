@@ -1,13 +1,14 @@
-# Builds and deploys the demo site to GitHub Pages:
+# Builds and deploys the site to GitHub Pages:
 #
 #   /            demos/site/index.html         (landing page)
+#   /reference/  tools/reference-reader            (Vite build of the reference, data from tools/reference/build.py)
 #   /typescript/ demos/typescript/geometry-samples  (Vite build)
 #   /sdf/        demos/typescript/sdf               (Vite build)
 #   /rust/       demos/rust/geometry-samples/web + src  (static; wasm is checked in)
 #
 # Enable in repo settings: Settings -> Pages -> Source: "GitHub Actions".
 
-name: Deploy demos to GitHub Pages
+name: Deploy the site to GitHub Pages
 
 on:
   push:
@@ -28,6 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The reference's grammar evidence reads the Parakeet sources.
+          submodules: true
 
       - uses: actions/setup-node@v4
         with:
@@ -36,6 +40,18 @@ jobs:
           cache-dependency-path: |
             demos/typescript/geometry-samples/package-lock.json
             demos/typescript/sdf/package-lock.json
+            tools/reference-reader/package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build the reference reader
+        working-directory: tools/reference-reader
+        run: |
+          npm ci
+          npm test
+          npm run build -- --base=/${{ github.event.repository.name }}/reference/
 
       - name: Build TypeScript geometry samples
         working-directory: demos/typescript/geometry-samples
@@ -55,6 +71,7 @@ jobs:
         run: |
           mkdir -p _site/rust/src
           cp demos/site/index.html _site/
+          cp -r tools/reference-reader/dist/. _site/reference/
           cp -r demos/typescript/geometry-samples/dist/. _site/typescript/
           cp -r demos/typescript/sdf/dist/. _site/sdf/
           cp demos/rust/geometry-samples/web/index.html \

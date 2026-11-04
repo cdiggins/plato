@@ -1,18 +1,18 @@
 # Polygons, holes and triangulation
 
-Read [polygon records](../../api/geometry/polygons.types.md), [polygon operations](../../api/geometry/polygons.library.md), [planar shapes](../../api/geometry/planar.types.md), [triangulation bodies](../../api/geometry/triangulation.library.md), and [ear-clip nodes](../../api/geometry/triangulation.types.md).
+A polygon ring is a boundary, usually with an implied edge from the last vertex back to the first. A polyline is a path and does not have to close. `ConvexPolygon2D` asserts convexity. An array of points does not.
 
-## A polygon is more than an array
+Self-intersections, repeated edges, a hole outside the outer ring, and holes that cross each other need an explicit check, or they sit outside an algorithm's preconditions.
 
-A polygon ring describes a boundary, usually with an implied closing edge from the last vertex to the first. A polyline describes a path and need not close. A `ConvexPolygon2D` asserts convexity; arbitrary points in an array do not prove it. Self-intersections, repeated edges, holes outside the outer ring and intersecting holes require explicit validation or are outside an algorithm's preconditions.
+## Rings and signed area
 
-Signed planar area uses the shoelace sum. For vertices `(xi,yi)` and cyclic next index `j`, twice the signed area is `sum(xi*yj-xj*yi)`. CCW order gives positive area. Absolute area discards orientation and cannot replace a winding check.
+Signed planar area is the shoelace sum. For vertices `(xi, yi)` and the cyclic next index `j`, twice the signed area is `sum(xi*yj - xj*yi)`. Counterclockwise order gives a positive area. Absolute area drops the orientation, so it cannot stand in for a winding check.
 
-## Preserve the point pool
+## The triangulator keeps the point pool
 
-The triangulator works with a shared point pool and ring boundaries. Ring zero is the outer boundary; hole-start offsets divide the remaining rings. Output `TriangleFace` references index that original pool, so source vertex identity survives the decomposition.
+The triangulator uses one shared point pool and ring boundaries. Ring zero is the outer boundary. Hole-start offsets divide the remaining rings. Each output `TriangleFace` indexes that original pool, so a source vertex keeps its identity through the decomposition.
 
-Before ear clipping, it makes the outer ring CCW and holes clockwise. Hole bridging builds a walk suitable for clipping. Its coincidence checks are exact; deliberately duplicated bridge vertices must not accidentally merge with nearby distinct points under a global epsilon. Rings reduced below three vertices after cleanup enclose nothing and are dropped.
+Before ear clipping, the outer ring is made counterclockwise and the holes clockwise. Hole bridging builds a walk the clipper can use. Its coincidence checks are exact. A bridge vertex you duplicated on purpose must not merge with a nearby distinct point under a global epsilon. A ring that cleanup reduces below three vertices encloses nothing, and it is dropped.
 
 ```mermaid
 flowchart LR
@@ -22,12 +22,17 @@ flowchart LR
   D --> E[Triangle faces referencing original pool]
 ```
 
-## Preconditions remain a separate problem
+## The laws do not accept every point array
 
-A random point array is often self-intersecting, so randomized laws over all arrays cannot assume a valid polygon. Read [triangulation laws](../../../../stdlib/tests/triangulation.laws.plato) and the [dedicated harness](../../../../tests/Plato.Triangulation.Tests) for the distinction between unrestricted algebraic laws and well-formed input fixtures. This guide does not claim those tests were run during documentation authoring.
+A random point array is often self-intersecting, so a randomized law over all arrays cannot assume a valid polygon. The triangulation laws and the dedicated harness separate unrestricted algebraic laws from fixtures with well-formed input. This guide does not claim those tests were run while the page was written.
 
-The polygon library's convex support-query TODO concerns a faster search over the ring. Algorithmic cost, numerical robustness and output winding are separate properties; a triangulation can satisfy one while failing another.
+The polygon library's convex support-query TODO is about a faster search over the ring. Cost, numerical robustness, and output winding are separate properties. A triangulation can satisfy one of them and fail another.
 
-## Related work
+## Where to look
 
-[CGAL's triangulation packages](https://doc.cgal.org/latest/Manual/packages.html) include multiple triangulation models. Plato's ear clipping with hole bridging is not automatically constrained Delaunay triangulation and does not promise its angle-quality or robust-predicate properties. Choose the algorithm by required output properties, not the generic word “triangulate.”
+- [Polygon records](../../api/geometry/polygons.types.md) and [polygon operations](../../api/geometry/polygons.library.md)
+- [Planar shapes](../../api/geometry/planar.types.md)
+- [Triangulation bodies](../../api/geometry/triangulation.library.md) and [ear-clip nodes](../../api/geometry/triangulation.types.md)
+- [Triangulation laws](../../../../stdlib/tests/triangulation.laws.plato) and the [dedicated harness](../../../../tests/Plato.Triangulation.Tests)
+
+[CGAL's triangulation packages](https://doc.cgal.org/latest/Manual/packages.html) include more than one triangulation model. Ear clipping with hole bridging is not constrained Delaunay triangulation, and it does not promise that model's angle quality or robust predicates. Pick the algorithm by the output property you need, not by the word "triangulate."

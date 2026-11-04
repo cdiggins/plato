@@ -1,6 +1,6 @@
 # Bridging the proofs to Plato
 
-The checked [core model](core-language.md) provides useful examples of what a theorem can state. It is not a formal specification of the full language. The essential missing artifact is a **refinement proof**: a precise mapping from a source construct and its implementation to a modeled term, together with a proof that the mapping preserves the intended observations.
+The checked [core model](core-language.md) proves properties of a small language. It is not a formal specification of the full language. The missing artifact is a refinement proof: a precise mapping from a source construct and its implementation to a modeled term, together with a proof that the mapping preserves the intended observations.
 
 ## Correspondence and deliberate differences
 
@@ -30,9 +30,11 @@ These are possible extensions to the formal development, not claims that the lan
 
 A proof of the bounded core is a foundation for this work; it cannot replace it. Likewise, unit tests and differential interpreter/C# tests can expose disagreement, but agreement on tested inputs is not a universal semantic theorem.
 
-## Specification improvements worth considering
+[CompCert's semantic preservation account](https://compcert.org/motivations.html) connects compiler transformations to observable source and target behavior, and that obligation is substantially larger than proofs about this teaching calculus. [Software Foundations' small-step presentation](https://softwarefoundations.cis.upenn.edu/plf-current/Smallstep.html) is the next step for adding divergence and intermediate execution states.
 
-The following are proposed improvements to the specification and verification process, not proposed changes to accepted programs:
+## Specification improvements
+
+The items below are proposals for the specification and the verification process. They are not proposed changes to accepted programs.
 
 - Publish a precise observable-outcome contract: which fault distinctions, evaluation counts, evaluation order, divergence, and host obligations must transformations preserve?
 - Give each compiler pass a local input invariant and output relation, so proofs and tests can target a documented boundary.
@@ -41,7 +43,3 @@ The following are proposed improvements to the specification and verification pr
 - Add a reproducible Lean check to reference validation if maintaining the formal track becomes an ongoing commitment.
 
 The supervisor records actionable issues and proposals in the repository tracker. This page explains the proof gaps; it does not establish that every gap is a compiler defect.
-
-## Related work
-
-[CompCert's semantic preservation account](https://compcert.org/motivations.html) describes connecting compiler transformations to observable source and target behavior. The scale and obligations of that connection are substantially larger than proving properties of a teaching calculus. [Software Foundations' small-step presentation](https://softwarefoundations.cis.upenn.edu/plf-current/Smallstep.html) provides a natural next step for adding divergence and intermediate execution states.

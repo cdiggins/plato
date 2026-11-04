@@ -1,0 +1,4 @@
+library TourInterfacesAnswer {
+    TourHalved(a: TourScalable): TourScalable => a.TourScale(0.5);
+    Law_ReferenceTourExerciseHalved(): Boolean => TourVec(1.5, 4.0).TourHalved.Y == 2.0;
+}

@@ -1,0 +1,12 @@
+library TourImmutabilityAnswer {
+    TourProductTo(n: Integer): Integer {
+        var product = 1;
+        var i = 1;
+        while (i <= n) {
+            product = product * i;
+            i = i + 1;
+        }
+        return product;
+    }
+    Law_ReferenceTourExerciseProduct(): Boolean => TourProductTo(4) == 24;
+}

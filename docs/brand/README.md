@@ -6,7 +6,7 @@ Plato is a small, pure, statically-typed language for writing geometric and nume
 
 The files that carry the brand:
 
-- [`tokens.json`](tokens.json) holds every colour, type style, spacing step and radius, each with a usage note. It is the only place a value lives; this document names tokens and never restates their values.
+- [`tokens.json`](tokens.json) holds every colour, type style, spacing step and radius, each with a usage note. It is the only place a value lives; this document names tokens and never restates their values. The [reference reader](../../tools/reference-reader/README.md) consumes it the same way: its builder turns the tokens into a stylesheet, and the reader's own stylesheet names tokens only.
 - [`../assets/icon/`](../assets/icon/README.md) holds the mark in every format, generated from one geometry script.
 - The same guidelines, with live previews of the wordmark and a cover, are published as a shareable [design-system page](https://claude.ai/artifact/4TtKnKzegCVbm24quQXbjK). This folder is the authority; the page is a mirror.
 

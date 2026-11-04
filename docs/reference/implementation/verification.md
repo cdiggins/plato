@@ -1,6 +1,8 @@
 # Verification evidence and reproducible examples
 
-A reference claim should be supported by the stage that can actually test it. A parser fixture establishes accepted syntax, not correct arithmetic. A generated program that compiles establishes host type compatibility, not equivalence to the interpreter. A passing finite law run supplies counterexample-search evidence, not a universal mathematical theorem.
+A reference claim should be supported by the stage that can actually test it. A parser fixture establishes accepted syntax. It does not establish correct arithmetic. A generated program that compiles establishes host type compatibility. It does not establish equivalence to the interpreter. A passing finite law run supplies counterexample-search evidence. It is not a universal mathematical theorem.
+
+The [Rust reference](https://doc.rust-lang.org/reference/) and the [C# specification](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/expressions) separate a language's specified semantics from what one compiler accepts. This repository uses executable fixtures and implementation evidence. The [formal track](../formal/README.md) adds narrower machine-checkable arguments where they exist.
 
 ## Stage-specific evidence
 
@@ -20,7 +22,7 @@ The normative library verification ladder lives in [VERIFICATION](../../../stdli
 
 ## Reproducible source examples
 
-[Example sources](examples/README.md) accompany the reference. The small core fixtures use a shared explicit primitive prelude; examples requiring the standard library say so. No example becomes “verified” merely because it is shown in a code fence. The supervisor's integrated run records actual checks.
+[Example sources](examples/README.md) accompany the reference. The small core fixtures use a shared explicit primitive prelude. Examples that require the standard library say so. An example is not verified because it appears in a code fence. The [2026-10-25 integration record](verification-2026-10-25.md) lists the checks that were actually run.
 
 Useful commands from the repository root:
 
@@ -35,29 +37,16 @@ dotnet src/Plato.CLI/bin/Release/net8.0/Plato.CLI.dll run docs/reference/impleme
 .\tools\regen-foundation.ps1 -WhatIf
 ```
 
-The first two require a built CLI. The last command uses the repository's recorded-build workflow; a nonzero code-diff report is informational when compilation succeeds. Repository-wide gate scheduling belongs to the integration supervisor, not each documentation author.
+The first two require a built CLI. The last command uses the repository's recorded-build workflow. A nonzero code-diff report is informational when compilation succeeds. Repository-wide gate scheduling belongs to the integration supervisor, not to each documentation author.
 
 ## Build-output layout and fixture discovery
 
-The reference examples take explicit source roots, so the helper script can use an isolated CLI
-assembly through `--cli`. Some repository tests instead locate fixtures with
-[CheckerTestSupport.FindFolder](../../../tests/PlatoTests/CheckerTestSupport.cs). Its output-first
-search can mistake an isolated `bin/PlatoTests` directory for the source test folder, before
-trying the source-file fallback. Missing fixtures in that layout are not failed numerical laws.
-Use the normal layout for those gates until [repo-531](../../../tracker/issues/repo-531.md) fixes
-the lookup, and preserve the failing report if experimenting with output locations.
+The reference examples take explicit source roots, so the helper script can use an isolated CLI assembly through `--cli`. Some repository tests instead locate fixtures with [CheckerTestSupport.FindFolder](../../../tests/PlatoTests/CheckerTestSupport.cs). Its output-first search can mistake an isolated `bin/PlatoTests` directory for the source test folder, before trying the source-file fallback. Missing fixtures in that layout are not failed numerical laws. Use the normal layout for those gates until [repo-531](../../../tracker/issues/repo-531.md) fixes the lookup, and preserve the failing report if experimenting with output locations.
 
-The studio battery also checks frozen copies of the older runtime in the SDK checkout. That
-checksum contract is separate from Plato's writable forward sources and generated caches.
-A failure there requires reviewing the named SDK artifacts; it does not authorize a silent
-checksum rebaseline or editing an unrelated checkout to make this reference's gates green.
+The studio battery also checks frozen copies of the older runtime in the SDK checkout. That checksum contract is separate from Plato's writable forward sources and generated caches. A failure there requires reviewing the named SDK artifacts. It does not authorize a silent checksum rebaseline, or an edit to an unrelated checkout to make this reference's gates green.
 
 ## Regression coverage
 
 Keep positive and negative cases for nominal mismatch, tuple construction by field order, generic case freshness, match exhaustiveness, conversion ranking, generic rigidity, bound satisfaction through inherited interfaces, sealed construction bypass paths, lazy Boolean RHS behavior, and loop local identity. Include tests where C# would accept a program through a different implicit conversion than the solver selected.
 
-For numbers, test both profiles and include values near rounding/overflow/index boundaries. For builders, test use after Freeze and unsafe storage/capture attempts. For an optimizer, compare faults and evaluation behavior as well as successful result values. Report unresolved or degraded bodies explicitly.
-
-## Related work
-
-The [Rust reference](https://doc.rust-lang.org/reference/) and [C# specification](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/expressions) illustrate the distinction between a language's specified semantics and a particular compiler's acceptance. This repository uses executable fixtures plus implementation evidence; the [formal track](../formal/README.md) adds narrower machine-checkable arguments where available.
+For numbers, test both profiles and include values near rounding, overflow, and index boundaries. For builders, test use after Freeze and unsafe storage or capture attempts. For an optimizer, compare faults and evaluation behavior as well as successful result values. Report unresolved or degraded bodies explicitly.

@@ -1,0 +1,9 @@
+type TourPair<T> { Left: T; Right: T; }
+
+library TourGenerics {
+    TourSwapPair(p: TourPair<$T>): TourPair<$T> => (p.Right, p.Left);
+    TourLeftOf(p: TourPair<$T>): $T => p.Left;
+
+    Law_ReferenceTourSwapInteger(): Boolean => TourSwapPair(TourPair(1, 2)).Left == 2;
+    Law_ReferenceTourSwapNumber(): Boolean => TourSwapPair(TourPair(1.5, 2.5)).Left == 2.5;
+}

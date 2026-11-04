@@ -1,27 +1,32 @@
 # Curves, arcs and splines
 
-Read [curve interfaces](../../api/geometry/curves.concepts.md), [curve helpers](../../api/geometry/curves.library.md), [analytic curve types](../../api/geometry/curves-shapes.types.md) and [bodies](../../api/geometry/curves-shapes.library.md), [spline types](../../api/geometry/splines.types.md) and [spline bodies](../../api/geometry/splines.library.md).
+A curve maps a scalar parameter to a point. Unless a concrete type says otherwise, the preferred domain is [0, 1], and a closed curve meets itself at the endpoints. Equal steps in that parameter are not equal distances along the curve. Arc-length parameterization is a separate capability.
 
-## Parameter is not distance
+## A parameter is not a distance
 
-A curve maps a scalar parameter to a point. Unless a concrete type says otherwise, its preferred parameter domain is `[0,1]`; a closed curve agrees at the endpoints. Equal increments in the parameter need not produce equal world-space distances. Arc-length parameterization is an extra capability.
+An angular curve takes an `Angle`. A bridge maps the numeric unit parameter onto that angle. A circular or elliptical arc stores a sweep, so a full circle, a short arc, and a reversed sweep can share one analytic circle. A curve with no placement fields sits where its declaration puts it. A transform places it.
 
-An angular curve's natural input is `Angle`; a bridge maps its numeric unit parameter to that angle. Circular or elliptical arc records carry a sweep; a full circle, a short arc and a reversed sweep can share the same underlying analytic circle. A curve without placement fields is in the canonical position described by its declaration; use a transform to place it.
-
-`Eval`, a secant, a finite-difference tangent and an analytic derivative are distinct contracts. The general helpers can estimate from evaluations; only a differentiable capability supplies derivative evidence. A finite-difference step is in parameter units and can cross a seam or an invalid domain endpoint.
+`Eval`, a secant, a finite-difference tangent, and an analytic derivative are different contracts. The general helpers can estimate a tangent from samples. Only a differentiable capability returns derivative evidence. A finite-difference step is in parameter units, and it can cross a seam or leave the valid domain.
 
 ## Control points and basis choices
 
-Bézier control points determine a polynomial curve; they are generally not interpolation points except for endpoints. Rational Bézier and NURBS additionally use weights and a denominator that must remain meaningful. B-spline knot vectors must satisfy their declared order and multiplicity conditions. Hermite curves carry endpoint tangents; changing a parameter scale changes the meaning of those tangents.
+Interior Bézier control points are not points on the curve. The endpoints are. A rational Bézier or a NURBS also has weights, and the denominator has to stay meaningful. A B-spline knot vector has to match the declared order and multiplicity. A Hermite curve stores endpoint tangents. Changing the parameter scale changes what those tangents mean.
 
-The [polynomial guide](../foundation/polynomials.md) explains the basis arithmetic. Converting a continuous curve to a polyline chooses a sample count or tolerance and is explicit approximation, even if the sampled points lie exactly on the original curve.
+The [polynomial guide](../foundation/polynomials.md) explains the basis arithmetic. Turning a continuous curve into a polyline chooses a sample count or a tolerance. The polyline is an approximation, even when every sample lies on the original curve.
 
-## Explicit implementation gaps
+## What the bodies actually evaluate
 
-The Catmull-Rom evaluator uses the uniform basis and **ignores the declared `Alpha` parameter**. Setting centripetal or chordal alpha does not currently select those algorithms. The source records this as a cross-package TODO.
+The Catmull-Rom evaluator uses the uniform basis and ignores `Alpha`. A centripetal or chordal alpha does not select those algorithms. The source marks this as a cross-package TODO.
 
-`NaturalCubicSpline1D` has knot accessors but no evaluator in the spline body file; the documented missing step is the tridiagonal solve for second derivatives. Neither a declaration nor accessors make it usable as an evaluated natural spline. Other comments describing missing angular interfaces must be checked against the actual curve interface file, which now contains angular capabilities.
+The comment above the knot accessors still says `NaturalCubicSpline1D` keeps no `Eval`, and it describes the tridiagonal solve as unfinished. The section under that comment does evaluate. `Eval` takes a unit parameter, maps it onto the knot domain, and clamps outside [0, 1]. Fewer than two knots returns the first knot value. The sweep recomputes earlier rows, and the source describes that evaluation as correct and not fast. The earlier comment is not the contract.
 
-## Related work
+Comments in the analytic-curve bodies still say an angular curve interface is missing. The curve interface file now has those capabilities, and the curve helpers bridge a numeric parameter to an angle of `t` turns. Read the interface file before treating those comments as open gaps.
 
-[DLMF's approximation and polynomial chapters](https://dlmf.nist.gov/) supply basis mathematics. [CGAL's package overview](https://doc.cgal.org/latest/Manual/packages.html) separates representations from interpolation algorithms. Plato's shared evaluation interface does not make parameterization, smoothness, or approximation accuracy interchangeable across spline families.
+## Where to look
+
+- [Curve interfaces](../../api/geometry/curves.concepts.md) and [curve helpers](../../api/geometry/curves.library.md)
+- [Analytic curve types](../../api/geometry/curves-shapes.types.md) and [bodies](../../api/geometry/curves-shapes.library.md)
+- [Spline types](../../api/geometry/splines.types.md) and [spline bodies](../../api/geometry/splines.library.md)
+- [Polynomials, series and basis functions](../foundation/polynomials.md)
+
+[DLMF's approximation and polynomial chapters](https://dlmf.nist.gov/) cover the basis mathematics, and [CGAL's package overview](https://doc.cgal.org/latest/Manual/packages.html) separates representations from interpolation algorithms. A shared `Eval` does not make parameterization, smoothness, or approximation accuracy the same from one spline family to another.

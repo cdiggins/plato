@@ -1,0 +1,8 @@
+library TourNumbers {
+    TourHalf(x: Number): Number => x / 2.0;
+    TourWhole(n: Integer): Number => n.ToNumber;
+
+    Law_ReferenceTourLiteralKinds(): Boolean => 7.TourWhole == 7.0;
+    Law_ReferenceTourHalf(): Boolean => TourHalf(5.0) == 2.5;
+    Law_ReferenceTourAbs(): Boolean => (0.0 - 3.5).Abs == 3.5;
+}

@@ -1,0 +1,18 @@
+library CookbookNewtonRoot {
+    // Newton's method for a cubic: repeat x <- x - p(x) / p'(x), a fixed number
+    // of times. Precondition: p'(x) is non-zero along the way.
+    NewtonCubic(p: CubicPolynomial, start: Number, steps: Integer): Number
+        => steps.MapRange(i => i).Reduce(start, (x, i) => x - p.Eval(x) / p.Derivative(x));
+
+    // x^3 - 2x - 5, the cubic Newton used as his own example.
+    Example(): CubicPolynomial => new CubicPolynomial(1.0, 0.0, -2.0, -5.0);
+
+    Law_ReferenceNewtonValue(): Boolean
+        => Example().Eval(2.0).AlmostEqual(-1.0, 1e-12);
+    Law_ReferenceNewtonDerivative(): Boolean
+        => Example().Derivative(2.0).AlmostEqual(10.0, 1e-12);
+    Law_ReferenceNewtonRoot(): Boolean
+        => NewtonCubic(Example(), 2.0, 6).AlmostEqual(2.0945514815423265, 1e-9);
+    Law_ReferenceNewtonResidual(): Boolean
+        => Example().Eval(NewtonCubic(Example(), 2.0, 6)).Abs < 1e-9;
+}

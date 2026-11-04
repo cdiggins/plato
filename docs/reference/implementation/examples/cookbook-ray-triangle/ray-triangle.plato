@@ -1,0 +1,16 @@
+library CookbookRayTriangle {
+    Triangle(): Triangle3D
+        => new Triangle3D(new Point3D(0.0, 0.0, 0.0), new Point3D(4.0, 0.0, 0.0), new Point3D(0.0, 4.0, 0.0));
+
+    // A ray fired straight down from (1, 1, 3).
+    Down(x: Number, y: Number): Ray3D
+        => new Ray3D(new Point3D(x, y, 3.0), new Direction3D(new Vector3D(0.0, 0.0, -1.0)));
+
+    Law_ReferenceRayHits(): Boolean => Triangle().Raycast(Down(1.0, 1.0)).Hit;
+    Law_ReferenceRayDistance(): Boolean => Triangle().Raycast(Down(1.0, 1.0)).Distance.AlmostEqual(3.0, 1e-9);
+    Law_ReferenceRayPosition(): Boolean
+        => Triangle().Raycast(Down(1.0, 1.0)).Position.Z.AlmostEqual(0.0, 1e-9);
+    Law_ReferenceRayNormalOpposesRay(): Boolean
+        => Triangle().Raycast(Down(1.0, 1.0)).Normal.Vector.Z.AlmostEqual(1.0, 1e-9);
+    Law_ReferenceRayMissesOutside(): Boolean => Triangle().Raycast(Down(3.0, 3.0)).Hit.Not;
+}

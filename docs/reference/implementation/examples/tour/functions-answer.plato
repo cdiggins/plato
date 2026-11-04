@@ -1,0 +1,4 @@
+library TourFunctionsAnswer {
+    TourTriple(x: Integer): Integer => x * 3;
+    Law_ReferenceTourExerciseTriple(): Boolean => 5.TourTriple == 15;
+}

@@ -4,7 +4,7 @@ The proofs in [Core.lean](Core.lean) connect an independent rule-based type syst
 
 ## Reading typing rules
 
-`⊢ e : T` means “expression `e` has type `T`.” The empty space before `⊢` means there is no variable environment: all expressions are closed. A horizontal line separates premises above from a conclusion below. A rule with no premises is immediately available.
+`⊢ e : T` means "expression `e` has type `T`." The empty space before `⊢` means there is no variable environment: all expressions are closed. A horizontal line separates premises above from a conclusion below. A rule with no premises is immediately available.
 
 ```text
                          ⊢ a : Integer     ⊢ b : Integer
@@ -49,7 +49,7 @@ The last expression evaluates successfully to `3`; the faulting branch is not se
 
 Completeness here means completeness for these syntax-directed rules. It is **not** a result about Plato's generic inference, nominal conversions, or overload search.
 
-The soundness proof proceeds by induction on expression structure: assume the result for immediate subexpressions, inspect the inference branch, and assemble the corresponding typing constructor. Completeness instead proceeds by induction on a typing derivation.
+The soundness proof proceeds by induction on expression structure: assume the result for immediate subexpressions, inspect the inference branch, and assemble the corresponding typing constructor. [Lean's induction chapter](https://lean-lang.org/theorem_proving_in_lean4/induction_and_recursion.html) explains this kind of structural induction. Completeness instead proceeds by induction on a typing derivation.
 
 ## Evaluating safely
 
@@ -69,10 +69,6 @@ The theorem `typed_result` makes this concrete: a typed expression either return
 
 The theorem `deterministic` states that if `e ⇓ a` and `e ⇓ b`, then `a = b`. Because evaluation is defined as a total function, this is a direct consequence of equality. Its significance is the declared deterministic semantics, not evidence about an independently specified interpreter.
 
-## What “type safety” does not prove here
+## What "type safety" does not prove here
 
-There is no small-step relation in this model, so it does not claim separately checked one-step preservation or progress lemmas. `typed_result` is a terminal-result safety theorem for a total finite expression calculus. For loops and recursion, an eventual-result theorem is insufficient: the development needs a small-step relation or a suitable partial/coinductive evaluation semantics.
-
-## Related work
-
-[Software Foundations: Types](https://softwarefoundations.cis.upenn.edu/plf-current/Types.html) proves progress and preservation separately for a small-step typed arithmetic language. The resulting safety idea is related, but its theorem statements and proof structure differ from the direct result theorem here. [Lean's induction chapter](https://lean-lang.org/theorem_proving_in_lean4/induction_and_recursion.html) explains the structural induction used in the proof source.
+There is no small-step relation in this model, so it does not claim separately checked one-step preservation or progress lemmas. `typed_result` is a terminal-result safety theorem for a total finite expression calculus. For loops and recursion, an eventual-result theorem is insufficient: the development needs a small-step relation or a suitable partial/coinductive evaluation semantics. [Software Foundations](https://softwarefoundations.cis.upenn.edu/plf-current/Types.html) proves progress and preservation separately for a small-step language, and both the statements and the proof structure differ from `typed_result`.

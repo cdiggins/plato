@@ -1,10 +1,17 @@
 # Possible language improvements
 
-This is a running design register requested during the reference audit. An entry is a candidate,
+This register lists design candidates from the reference audit. An entry is a candidate,
 not part of Plato's accepted semantics and not authorization to change the compiler.
 [plato-524](../../../tracker/issues/plato-524.md) tracks triage. The
 [discrepancy register](../implementation/discrepancies.md) separately records conflicting claims
 and implementation defects; correcting a stale document does not require redesigning the language.
+
+The [Rust ownership chapter](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html)
+is useful when comparing static guarantees with Plato's runtime-checked affine builders.
+[Software Foundations](https://softwarefoundations.cis.upenn.edu/)
+shows how preservation and progress obligations can be stated for a small calculus.
+Neither comparison establishes a theorem about the full Plato compiler. The candidates below
+must be tested against Plato's own scientific-library needs and existing decisions.
 
 ## Validate invariant-bearing values at construction
 
@@ -60,6 +67,31 @@ scripts; it does not itself repair incomplete lowering.
 [type checker](../../../src/Plato.Compiler/Checking/TypeChecker.cs), and
 [verification policy](../../../stdlib/verification.json).
 **State:** captured for triage; compare existing commands before designing a new report.
+
+## Report checker diagnostics from the command line
+
+**Problem.** The command-line `lint` and `run` commands do not print the checker's `CHK`
+diagnostics, so a beginner's mistake is often accepted. Observed while writing the language
+chapters' "Common mistake" sections: a `match` missing a case is accepted, and a law reaching the
+missing case can pass; a `_` arm fails only at run time; `+=` and `++` drop the function, and the
+command can still exit successfully; a non-Boolean condition, a mismatched equality, a wrong
+return type and a violated type-argument bound are not reported. Several resolution messages
+repeat for one mistake, name an internal variable such as `$Ret0`, or point at an enclosing rule
+with no position.
+
+**Possible improvement.** Run the checker on the command-line path and print its findings with
+source spans, and reject compound assignment and increment in the parser or the AST step with a
+located message. Inferred from source: the sum, bound and existential checkers have no caller on
+that path.
+
+**Benefit.** The first program a beginner gets wrong is reported where it is wrong, and the
+[diagnostics chapter](../language/diagnostics.md) can describe what users actually see.
+**Trade-off.** Surfacing the checker can make currently accepted programs and stdlib files fail,
+so it may need a staged rollout; it overlaps the support-stage contract above.
+
+**Evidence.** The "Common mistake" sections of the [language chapters](../language/README.md),
+and [what the command line shows](../language/diagnostics.md#what-the-command-line-shows).
+**State:** captured for triage; confirm the missing callers before designing the change.
 
 ## Require observable-behavior conditions on rewrites
 
@@ -118,12 +150,3 @@ or bind the subject once during lowering if single evaluation is intended.
 change or fresh local, and compatibility tests. The audit observation is not itself a new rule.
 **Evidence.** `ElaborateMatch` in the [elaborator](../../../src/Plato.Compiler/Checking/Elaborator.cs).
 **State:** captured for triage; settle and reproduce observable behavior before changing lowering.
-
-## Related work
-
-The [Rust ownership chapter](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html)
-is useful when comparing static guarantees with Plato's runtime-checked affine builders.
-[Software Foundations](https://softwarefoundations.cis.upenn.edu/)
-shows how preservation and progress obligations can be stated for a small calculus.
-Neither comparison establishes a theorem about the full Plato compiler. Design candidates above
-must be tested against Plato's own scientific-library needs and existing decisions.

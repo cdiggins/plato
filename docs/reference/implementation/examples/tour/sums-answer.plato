@@ -1,0 +1,6 @@
+library TourSumsAnswer {
+    TourIsSome(c: TourChoice<$T>): Boolean
+        => match (c) { TourSome(_) => true; TourNone => false; };
+    Law_ReferenceTourExerciseIsSome(): Boolean
+        => TourFound(1).TourIsSome && !Integer.TourMissing.TourIsSome;
+}

@@ -1,0 +1,26 @@
+library CookbookFitLine {
+    // Ordinary least squares for y = Slope * x + Intercept.
+    // Precondition: at least two points and not all x equal.
+    FitLine(xs: Array<Number>, ys: Array<Number>): LinearFit {
+        var n = xs.Count.ToNumber;
+        var meanX = xs.SumOf / n;
+        var meanY = ys.SumOf / n;
+        var sxx = xs.Map(x => (x - meanX).Square).SumOf;
+        var syy = ys.Map(y => (y - meanY).Square).SumOf;
+        var sxy = xs.Count.MapRange(i => (xs[i] - meanX) * (ys[i] - meanY)).SumOf;
+        var slope = sxy / sxx;
+        return new LinearFit(slope, meanY - slope * meanX, sxy * sxy / (sxx * syy));
+    }
+
+    Measurements(): Array<Number> => [1.1, 2.9, 5.2, 6.8, 9.0];
+    Times(): Array<Number> => [0.0, 1.0, 2.0, 3.0, 4.0];
+
+    Law_ReferenceFitLineSlope(): Boolean
+        => FitLine(Times(), Measurements()).Slope.AlmostEqual(1.97, 1e-9);
+    Law_ReferenceFitLineIntercept(): Boolean
+        => FitLine(Times(), Measurements()).Intercept.AlmostEqual(1.06, 1e-9);
+    Law_ReferenceFitLineRSquared(): Boolean
+        => FitLine(Times(), Measurements()).RSquared.AlmostEqual(0.99766, 1e-5);
+    Law_ReferenceFitLinePredict(): Boolean
+        => FitLine(Times(), Measurements()).Predict(5.0).AlmostEqual(10.91, 1e-9);
+}

@@ -1,10 +1,6 @@
-# Reference verification — 2026-10-25
+# Reference verification, 2026-10-25
 
-This dated snapshot records checks actually run for
-[docs-523](../../../tracker/issues/docs-523.md), the hierarchical reference and React reader.
-It is evidence from this integration session, not a promise that every later checkout passes.
-The mission changes documentation, examples and reference tooling; it does not repair the
-compiler or scientific algorithms identified by the audit.
+This dated snapshot records checks actually run for [docs-523](../../../tracker/issues/docs-523.md), the hierarchical reference and React reader. It is evidence from this integration session. It is not a promise that every later checkout passes. The mission changes documentation, examples, and reference tooling. It does not repair the compiler, or the scientific algorithms the audit identified.
 
 | Check | Result | Evidence and scope |
 | --- | --- | --- |
@@ -24,30 +20,15 @@ compiler or scientific algorithms identified by the audit.
 
 ## Verification environment and failures investigated
 
-The shared default CLI build initially encountered CS2012: the compiler output DLL was in use
-by another process. An isolated artifacts build passed. Running the entire test suite in an
-isolated layout then exposed [repo-531](../../../tracker/issues/repo-531.md): fixture lookup
-mistook `bin/PlatoTests` for the source test folder. Every failure in that run was a missing
-fixture; the normal-layout recorded rerun passes. Both runs remain in the gate log.
+The shared default CLI build initially encountered CS2012: the compiler output DLL was in use by another process. An isolated artifacts build passed. Running the entire test suite in an isolated layout then exposed [repo-531](../../../tracker/issues/repo-531.md): fixture lookup mistook `bin/PlatoTests` for the source test folder. Every failure in that run was a missing fixture. The normal-layout recorded rerun passes. Both runs remain in the gate log.
 
-[repo-532](../../../tracker/issues/repo-532.md) captures the studio checksum failure: its SDK
-copies of PlatoList.cs, PlatoBuffer.cs and Number.cs differ from the recorded frozen baseline.
-The reference mission did not modify them or rebaseline the checksum. This is separate from
-Plato's writable forward sources and generated caches.
+[repo-532](../../../tracker/issues/repo-532.md) captures the studio checksum failure. Its SDK copies of PlatoList.cs, PlatoBuffer.cs, and Number.cs differ from the recorded frozen baseline. The reference mission did not modify them and did not rebaseline the checksum. This is separate from Plato's writable forward sources and generated caches.
 
-Port 5178 initially answered with another application's HTML, Platonic Agora. The reader now
-uses `http://127.0.0.1:5391/`, binds that loopback address explicitly, and was restarted with
-local-network access for the external browser. Its title and dataset identity were checked
-before reopening it. A successful HTTP status alone is insufficient preview verification.
+Port 5178 initially answered with another application's HTML, Platonic Agora. The reader now uses `http://127.0.0.1:5391/`, binds that loopback address explicitly, and was restarted with local-network access for the external browser. Its title and dataset identity were checked before reopening it. A successful HTTP status is not enough to verify the preview.
 
 ## Retained logs and rerun commands
 
-Working logs are under `.temp/reference-example-logs/`, `.temp/reference-proof-logs/`,
-`.temp/csharp-build-logs/reference-cli-isolated.log`, `.temp/reference-reader-build.log`,
-and `.temp/reference-check-all.log`. The isolated gate run is under
-`.temp/gate-logs/20261025-114436-991105/`; the normal-layout run is under
-`.temp/gate-logs/20261025-115700-369340/`. These temporary files may be overwritten; the
-[gate history](../../gate-log.md) and tracker issues are the durable records.
+Working logs are under `.temp/reference-example-logs/`, `.temp/reference-proof-logs/`, `.temp/csharp-build-logs/reference-cli-isolated.log`, `.temp/reference-reader-build.log`, and `.temp/reference-check-all.log`. The isolated gate run is under `.temp/gate-logs/20261025-114436-991105/`. The normal-layout run is under `.temp/gate-logs/20261025-115700-369340/`. These temporary files may be overwritten. The [gate history](../../gate-log.md) and the tracker issues are the durable records.
 
 ```powershell
 python tools/reference/build.py --check
@@ -60,5 +41,4 @@ npm --prefix tools/reference-reader run build
 python tools/record-gates.py
 ```
 
-The proof checker requires its pinned toolchain; the example checker requires a built CLI.
-See the [tool guide](../../../tools/reference/README.md) for explicit executable overrides.
+The proof checker requires its pinned toolchain. The example checker requires a built CLI. See the [tool guide](../../../tools/reference/README.md) for explicit executable overrides.

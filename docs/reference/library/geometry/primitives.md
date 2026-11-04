@@ -1,23 +1,28 @@
 # Geometric capabilities, primitives and bounds
 
-Begin with [geometry interfaces](../../api/geometry/geometry.concepts.md), [geometry bodies](../../api/geometry/geometry.library.md), [fit records](../../api/geometry/geometry.types.md), [planar shapes](../../api/geometry/planar.types.md) and [operations](../../api/geometry/planar.library.md), [spatial shapes](../../api/geometry/spatial-primitives.types.md) and [operations](../../api/geometry/spatial-primitives.library.md), and [lines and planes](../../api/geometry/lines.types.md) with [line operations](../../api/geometry/lines.library.md).
+`IGeometry2D` or `IGeometry3D` says which space the object lives in. A curve in 3D still has one intrinsic parameter. `IBounded3D` returns bounds. `IContainsPoint3D` returns membership. `INearestPoint3D` returns a nearest point. `ISupport3D` returns a farthest point in a direction. None of those interfaces supplies the others.
 
-## Ask for the capability you need
+## One interface is one query
 
-`IGeometry2D` or `IGeometry3D` identifies an embedding space. A curve in 3D still has one intrinsic parameter. `IBounded3D` supplies bounds; `IContainsPoint3D` supplies membership; `INearestPoint3D` supplies a nearest-point query; `ISupport3D` supplies a farthest point in a direction. None implies all the others.
+Convexity, connectedness, manifoldness, and closure are promises about how a type or a value is meant to be read. They are not checks the library runs on every value. `IFitted` and the fit-result records describe a fitted shape and a residual. They do not mean every estimator exists, or that a fit was the global optimum.
 
-Convexity, connectedness, manifoldness and closure are promises of a type or value's interpretation. They are not universally checked refinements. `IFitted` and fit-result records describe a fitted shape and residual quality, rather than proving that every estimator exists or that a fit was globally optimal.
+A line segment, a ray, and an infinite line have different parameter domains. An infinite-line hit stays unclamped unless that operation's contract clamps it. A plane-hit record has a validity flag. Read it before using the point or the parameter. Parallel, coincident, and zero-direction inputs follow the contract of the operation you called.
 
-A line segment, ray and infinite line have different parameter domains. Do not clamp an infinite-line query into a segment silently. A plane-hit record has a validity flag: check it before using the point or parameter. Parallel, coincident and zero-direction inputs need the operation's exact contract.
+## Bounds enclose
 
-## Bounds are enclosures
+Intervals and bounds are inclusive. An axis-aligned box is the enclosure those intervals describe. An inverted interval is empty: it contains nothing, and it is the identity for union. Empty and zero-size are different. An inclusive `[a, a]` contains one coordinate.
 
-[Interval and bounds declarations](../../api/foundation/intervals.types.md), [interfaces](../../api/foundation/intervals-bounds.concepts.md), and [bodies](../../api/foundation/intervals.library.md) define inclusive geometric intervals and axis-aligned boxes. An inverted interval encodes empty space; it contains nothing and is the union identity. Empty and zero-size are different: an inclusive `[a,a]` contains one coordinate.
+A bounds query may be conservative rather than tight. The source leaves tighter bounds and support queries for circular sectors and segments, superellipses, spherical caps, and bilinear patches. An overestimate can reject objects in a broad phase and still be the wrong input for exact area, support, or closest point. Read the concrete body and its TODO.
 
-A bounds query may be conservative rather than tight. The source explicitly leaves tighter bounds/support work for circular sectors and segments, superellipses, spherical caps and bilinear patches. An overestimate can be valid for broad-phase rejection while unsuitable for exact area, support or closest-point claims. Read each concrete body and its TODO.
+In the world frame, the triangle `(0,0,0), (1,0,0), (0,1,0)` has a right-hand normal along +Z. Reversing the last two vertices reverses that normal. The frame and winding conventions settle orientation for the shape families.
 
-Example: in the world frame, the triangle `(0,0,0),(1,0,0),(0,1,0)` has a right-hand normal along +Z. Reversing the last two vertices reverses that normal. The [frame and winding conventions](../../../../stdlib/CONVENTIONS.md) settle orientation across all shape families.
+## Where to look
 
-## Related work
+- [Geometry interfaces](../../api/geometry/geometry.concepts.md), [geometry bodies](../../api/geometry/geometry.library.md), and [fit records](../../api/geometry/geometry.types.md)
+- [Planar shapes](../../api/geometry/planar.types.md) and [operations](../../api/geometry/planar.library.md)
+- [Spatial shapes](../../api/geometry/spatial-primitives.types.md) and [operations](../../api/geometry/spatial-primitives.library.md)
+- [Lines and planes](../../api/geometry/lines.types.md) and [line operations](../../api/geometry/lines.library.md)
+- [Interval and bounds declarations](../../api/foundation/intervals.types.md), [interfaces](../../api/foundation/intervals-bounds.concepts.md), and [bodies](../../api/foundation/intervals.library.md)
+- [Frame and winding conventions](../../../../stdlib/CONVENTIONS.md)
 
-[CGAL's geometry packages](https://doc.cgal.org/latest/Manual/packages.html) distinguish primitives, kernels and geometric algorithms. Plato's analogous vocabulary does not imply CGAL's exact predicates or robustness guarantees. [PBRT's bounding-box chapter](https://pbr-book.org/4ed/contents) explains the broad-phase role of conservative enclosures; exact geometry still requires a separate query.
+[CGAL's geometry packages](https://doc.cgal.org/latest/Manual/packages.html) separate primitives, kernels, and geometric algorithms. The same words here do not include CGAL's exact predicates. [PBRT's bounding-box chapter](https://pbr-book.org/4ed/contents) is the broad-phase role of a conservative enclosure. Exact geometry still needs its own query.

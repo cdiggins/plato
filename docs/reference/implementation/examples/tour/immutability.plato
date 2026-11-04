@@ -1,0 +1,19 @@
+type TourRange { Low: Integer; High: Integer; }
+
+library TourImmutability {
+    TourWithHigh(r: TourRange, high: Integer): TourRange => (r.Low, high);
+    TourSpan(r: TourRange): Integer => r.High - r.Low;
+    TourSumTo(n: Integer): Integer {
+        var total = 0;
+        var i = 1;
+        while (i <= n) {
+            total = total + i;
+            i = i + 1;
+        }
+        return total;
+    }
+
+    Law_ReferenceTourNewValue(): Boolean => TourRange(1, 5).TourWithHigh(9).High == 9;
+    Law_ReferenceTourOriginalKept(): Boolean => TourRange(1, 5).High == 5;
+    Law_ReferenceTourSumTo(): Boolean => TourSumTo(4) == 10;
+}

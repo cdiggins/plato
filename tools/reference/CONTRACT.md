@@ -1,4 +1,4 @@
-# Reference integration contract — revision 2
+# Reference integration contract — revision 4
 
 The supervisor owns `tools/reference/`, tracker, shared indexes and all generated Markdown.
 Language author owns `docs/reference/language/` and `docs/reference/implementation/` only.
@@ -22,8 +22,15 @@ Do not use non-C# writers as semantic evidence. Do not claim a clean-room spec i
 
 ## Reader data
 
-`tools/reference/build.py` writes `tools/reference-reader/public/reference.json` before reader build.
-Top-level object: `{schemaVersion: 1, sourceRevision: string, pages: Page[]}`.
+This section describes reader data v1, `reference.json`, which is retired: the builder no longer
+writes it and the reader reads "Reader data v2" below. The page record and link rules here still
+apply to v2's page files. Its top-level object was `{schemaVersion: 1, sourceRevision: string, pages: Page[], symbols, aliases}`.
+`symbols` maps a declared name to `[{id, title}]`, one entry per name page.
+`aliases` maps a retired page id to its replacement page id, copied from
+`docs/reference/api/aliases.json`; the reader resolves an unknown route through it before
+reporting a missing page.
+Beside the bundle the builder writes `plato-reference.txt` (every page, in reader order, under
+`=== PAGE <id> ===`) and `llms.txt`. All three are ignored by git.
 Page: `{id: string, path: string, title: string, group: string[], markdown: string}`.
 `rawMarkdown` is an optional string preserving original relative links for downloads.
 `id` is the repo-relative Markdown path without `.md`, e.g. `docs/reference/language/model`.
@@ -43,3 +50,96 @@ Reader agent owns dependency installation, production build and preview server o
 Supervisor owns the browser QA session and all repo-wide gates and generator outputs.
 Agents save their checkpoints inside their assigned subtree. States: working, implemented,
 verified, integrated. Report real checks and blockers; do not invent passing evidence.
+
+## Reference site decisions
+
+These settle Wave 0 of [`plans/reference-site-plan.md`](../../plans/reference-site-plan.md), toward
+the [site guidance](../../docs/design/reference-site-guidance.md). Every later chunk reads them.
+
+### Symbol URLs
+
+- One page per declared name per source file: `docs/reference/api/<tier>/<stem>/<name>.md`,
+  where `<stem>` is the source file stem and `<name>` is the declared name in lower case. The
+  page id, and so the reader route, follows from that path.
+- Every overload of a name in one file is listed on that name's one page. The same name in a
+  different file is a different page; the symbol index lists both.
+- The file page stays at `docs/reference/api/<tier>/<stem>.md` and links each name page.
+- Nothing in the path depends on declaration order, so adding or reordering declarations never
+  moves a page.
+- The builder fails, rather than inventing a suffix, when two names in one file differ only by
+  case, or when a lower-cased name is `readme`, `index`, or a Windows reserved device name.
+- The numbered slice pages are retired. A frozen alias table,
+  `docs/reference/api/aliases.json`, maps each retired page id to the name page of the first
+  name in its slice. It is written once from the last numbered `catalog.json` and never
+  regenerated. The reader resolves an unknown route through it before reporting a missing page.
+
+### Status
+
+Each API page and each library guide carries one status, set by its tier:
+
+| Status | Tiers | Meaning |
+| --- | --- | --- |
+| Supported | `foundation`, `geometry`, `graphics` | In a shipping tier. The lint, type-check, and code-generation gates cover it. No release promises its signature yet. |
+| Experimental | `future` | Aspirational vocabulary. It must parse and type-check; it is not linted or converted to C#. |
+| Legacy | `legacy` | The older library, compiled separately. It is writable, but new vocabulary does not go there. |
+
+The guidance's "stable" and "frozen" are not used: no language release exists to make a
+signature stable, and the legacy library is not frozen. Status is separate from the evidence
+labels in the reference README, which qualify individual claims, not pages.
+
+### Example fixtures
+
+- A fixture group is a folder under `docs/reference/implementation/examples/`. Groups are
+  isolated: each compiles alone with its inputs.
+- A group compiles with the `prelude` folder unless it holds an `inputs.txt`, which lists its
+  compilation inputs, one repo-relative folder per line, such as `stdlib/foundation`. The
+  `builders` group moves to that file.
+- Every group declares at least one `Law_Reference*` function. A law states an example's
+  expected result, so the result a page shows is the one the law runner checks.
+- The tour is one group, `tour`. Each cookbook recipe is its own group, `cookbook-<recipe>`,
+  so recipes cannot change each other's name resolution.
+- Every `plato` fence on a tour or cookbook page is copied verbatim from a file in its group,
+  and the page links that file. The builder rejects a fence it cannot find in the group.
+- A runnable example that no group holds is tagged `plato unchecked` and says so in its prose.
+  The fence check exempts that tag.
+
+## Reader data v2
+
+The reader loads its data in pieces. The builder writes these in
+`tools/reference-reader/public/`, all ignored by git.
+
+- `reference-index.json`: `{schemaVersion: 2, sourceRevision, pages, symbols, aliases}`.
+  `pages` is `[{id, path, title, group, door, status}]` in reader order, without Markdown.
+  `door` is one of `home`, `tour`, `reference`, `cookbook`, `design`, from the first folder below
+  `docs/reference`: `start` and `compare` are the tour; `language`, `library` and `api` the
+  reference; `cookbook` the cookbook; everything else the design door. `status` is the tier
+  status for API pages and tier library guides, otherwise null. `symbols` maps a name to
+  `[{id, title, declarations}]`, where `declarations` lists each overload's first line.
+  `aliases` is as in v1. `order` is the page's position among the links of its folder's index
+page (`x.md` beside folder `x/`, or `x/README.md`), or null when that page does not link it; the
+reader orders sibling pages by it before its own rules.
+- `pages/<page id>.json`: `{id, markdown, rawMarkdown}` for one page, fetched when it opens.
+- `search.json`: `{schemaVersion: 2, pages: [{id, text}]}`, the raw Markdown of every page,
+  fetched on the first body search.
+- `examples.json`: `{schemaVersion: 2, groups}`, where each fixture group is
+  `{inputs, files: [{path, source}], laws}`.
+
+## Playground
+
+- Routes: `#/playground` lists the example groups, `#/playground/<group>` opens one, and
+  `#/playground/<group>~<payload>` opens it with a shared edit. The payload is opaque to the
+  reader shell; the playground module encodes and decodes it.
+- Payload: one version character, then base64url without padding. `z` is deflate-raw, `p` is
+  uncompressed. The bytes are UTF-8 JSON mapping each edited file's path to its full edited
+  source; unedited files are left out. A payload that is malformed, too large, or names a file
+  the group lacks is rejected with a message. `src/playground/share.js` holds the limits.
+- The `navigate` prop takes a full hash route beginning `#/`.
+- The reader shell parses these routes, loads `examples.json` on first entry, and renders the
+  default export of `tools/reference-reader/src/playground/Playground.jsx` with the props its
+  header comment lists. The playground module owns everything inside that component.
+- A `plato` fence on a tour page links to `#/playground/tour`, and on a cookbook page
+  `cookbook/<recipe>.md` to `#/playground/cookbook-<recipe>`.
+- Nothing runs in the browser yet. The playground shows each group's files and the laws that
+  state its results, says those were checked when the site was built, and labels an edited
+  program as not re-run. The [playground feasibility report](../../docs/reports/playground-feasibility-2026-10-31.md)
+  records why.

@@ -1,6 +1,6 @@
 # Rewriting while preserving behavior
 
-A rewrite replaces an expression by another expression. For [this core](core-language.md), the relevant observable behavior is its evaluation outcome: an integer value, a Boolean value, a fault, or a type error. Write `a ≈ b` to mean `eval(a) = eval(b)`. This is whole-expression outcome equality; it does not claim equality of execution cost or traces.
+A rewrite replaces an expression by another expression. For [this core](core-language.md), the relevant observable behavior is its evaluation outcome: an integer value, a Boolean value, a fault, or a type error. Write `a ≈ b` to mean `eval(a) = eval(b)`. This is whole-expression outcome equality for a finite expression language. It does not claim equality of execution cost or traces, and it is a different claim from equivalence of state-transforming commands in [Software Foundations](https://softwarefoundations.cis.upenn.edu/plf-current/Equiv.html).
 
 ## Constant conditionals
 
@@ -49,7 +49,7 @@ strictAnd(false, fault(Boolean)) = fault
 andThen(false, fault(Boolean))   ⇓ value(false)
 ```
 
-Therefore eager replacement changes observable behavior. No mutable state is involved. Purity by itself is insufficient to justify evaluating an expression that short-circuit semantics would skip.
+Therefore eager replacement changes observable behavior. No mutable state is involved. Purity by itself is insufficient to justify evaluating an expression that short-circuit semantics would skip. The [C# expression specification](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/expressions) states conditional evaluation and conditional logical operators separately; preserving source behavior during emission requires matching those rules, not merely matching Boolean truth tables.
 
 The counterexample's Lean proof is executable and short:
 
@@ -60,7 +60,3 @@ theorem eager_and_counterexample :
 ```
 
 `by decide` computes the decidable equality question and constructs a proof that the outcomes differ. It does not assume the inequality.
-
-## Related work
-
-[Software Foundations: Equivalence](https://softwarefoundations.cis.upenn.edu/plf-current/Equiv.html) develops program equivalence and verified transformations. Our theorem uses equality of outcomes for a finite expression language, rather than equivalence of state-transforming commands. The [C# expression specification](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/expressions) separately specifies conditional evaluation and conditional logical operators; preserving source behavior requires matching those rules during emission, not merely matching Boolean truth tables.
