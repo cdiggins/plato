@@ -16,6 +16,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\writers\Plato.CppWriter\Plato.CppWriter.csproj" />
     <ProjectReference Include="..\..\src\Plato.Compiler\Plato.Compiler.csproj" />
+    <!-- The CLI's writer switch table, so one golden set takes the Cpu defaults the shipped tree uses (TKT-1193). -->
+    <ProjectReference Include="..\..\src\Plato.CLI\Plato.CLI.csproj" />
     <!-- Parser + utils, so the tests can build a Compilation from real .plato source. -->
     <ProjectReference Include="..\..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />

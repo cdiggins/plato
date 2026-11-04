@@ -1,4 +1,5 @@
 using System.Text;
+using Ara3D.Geometry.CLI;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.CppWriter;
 using Ara3D.Utils;
@@ -6,7 +7,8 @@ using NUnit.Framework;
 
 namespace PlatoCppWriterTests;
 
-/// <summary>Golden snapshots of the Cpu dialect's emitted C++ (every file, prelude included) for four option sets.
+/// <summary>Golden snapshots of the Cpu dialect's emitted C++ (every file, prelude included) for several option sets, one of them
+/// the switch table's Cpu defaults (cpu-defaults).
 /// A writer refactor that must change no output passes without a full-library generation; a switch shows its
 /// effect as a diff of the Golden/ folders. A mismatch writes the actual text to Golden/_actual/&lt;set&gt;/ and fails;
 /// PLATO_GOLDEN_UPDATE=1 rewrites the snapshots.</summary>
@@ -21,10 +23,20 @@ public class GoldenEmissionTests
 
     private static CppCpuOptions Shipping => new(true, true, true, true, Roots);
 
+    /// <summary>The options the CLI selects for <c>--cpp --profile=cpu64i32</c> with no switch spelled: the switch table's
+    /// Cpu defaults, resolved by the table itself, so flipping a default changes the cpu-defaults snapshot (TKT-1193).</summary>
+    internal static CppCpuOptions CpuDefaults(IEnumerable<string> roots)
+    {
+        var resolved = WriterSwitches.Resolve(new[] { "--cpp-roots=" + string.Join(",", roots) }, WriterTarget.Cpu);
+        Assert.That(WriterSwitches.Check(resolved, WriterTarget.Cpu), Is.Null);
+        return CppCpuOptions.From(resolved.Switches);
+    }
+
     public static IEnumerable<TestCaseData> OptionSets()
     {
         yield return new TestCaseData("default", new CppCpuOptions(false, false, false, false, Roots)).SetName("Golden_default");
         yield return new TestCaseData("shipping", Shipping).SetName("Golden_shipping");
+        yield return new TestCaseData("cpu-defaults", CpuDefaults(Roots)).SetName("Golden_cpu_defaults");
         yield return new TestCaseData("shipping-share-calls", Shipping with { ShareCalls = true }).SetName("Golden_shipping_share_calls");
         yield return new TestCaseData("shipping-sum-switch", Shipping with { SwitchSumDispatch = true }).SetName("Golden_shipping_sum_switch");
         yield return new TestCaseData("shipping-compact-sums", Shipping with { CompactSums = true, SwitchSumDispatch = true }).SetName("Golden_shipping_compact_sums");
