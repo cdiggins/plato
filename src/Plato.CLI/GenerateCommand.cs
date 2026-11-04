@@ -48,93 +48,28 @@ internal static class GenerateCommand
             Console.Error.WriteLine($"Unrecognized generation option '{unknownNegation}'.");
             return 1;
         }
-        var resolved = WriterSwitches.Resolve(args, !(typeScript || rust || glsl || cpp || cuda));
-        var loops = resolved["loops"];
-        var lowerScalars = resolved["lower-scalars"];
-
-        var loopOptimizations = WriterSwitches.ToLoopOptions(resolved);
-        if (loopOptimizations.LowerMore && (!loops || typeScript || rust || glsl || cpp || cuda))
-        {
-            Console.Error.WriteLine("--lower-more requires C# generation with --loops.");
-            return 1;
-        }
-        if (loopOptimizations.SpecializeCallbacksLean && !loopOptimizations.SpecializeCallbacks)
-        {
-            Console.Error.WriteLine("--specialize-callbacks-lean requires --specialize-callbacks.");
-            return 1;
-        }
-        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks || loopOptimizations.ScalarArrays || loopOptimizations.OwnedArrays)
-            && (typeScript || rust || glsl || cpp || cuda))
-        {
-            Console.Error.WriteLine("--cache-constants, --primitive-compare, --specialize-callbacks, --scalar-arrays and --owned-arrays apply to C# generation only.");
-            return 1;
-        }
-        if (loopOptimizations.SpanParams && (!loopOptimizations.OwnedArrays || statementInlining != null || typeScript || rust || glsl || cpp || cuda))
-        {
-            Console.Error.WriteLine("--span-params requires C# generation with --owned-arrays and cannot be combined with --inline-policy.");
-            return 1;
-        }
-        if (loopOptimizations.HoistInvariants && (!loops || typeScript || rust || glsl || cpp || cuda))
-        {
-            Console.Error.WriteLine("--hoist-invariants requires C# generation with --loops.");
-            return 1;
-        }
-        if (loopOptimizations.ConcreteArrays && (typeScript || rust || glsl || cpp || cuda))
-        {
-            Console.Error.WriteLine("--concrete-arrays applies to C# generation only.");
-            return 1;
-        }
-        if (loopOptimizations.Presize && (typeScript || rust || glsl || cpp || cuda))
-        {
-            Console.Error.WriteLine("--presize applies to C# generation only.");
-            return 1;
-        }
         var profileArg = args.Where(a => a.StartsWith("--profile="))
             .Select(a => a.Substring("--profile=".Length)).LastOrDefault();
         // --cpp --profile=cpu64i32 selects the Cpu dialect (TKT-1097); it implies --inline.
         var cpu = cpp && !cuda && profileArg == "cpu64i32";
-        var cppRoots = args.Where(a => a.StartsWith("--cpp-roots="))
-            .Select(a => a.Substring("--cpp-roots=".Length)).LastOrDefault();
-        if (cppRoots != null && !cpu)
+        var target = cpu ? WriterTarget.Cpu : typeScript || rust || glsl || cpp || cuda ? WriterTarget.Other : WriterTarget.CSharp;
+        // The switch table (WriterSwitches) decides defaults, the targets each switch applies to and its dependency.
+        var resolved = WriterSwitches.Resolve(args, target);
+        var switchError = WriterSwitches.Check(resolved, target);
+        if (switchError != null)
         {
-            Console.Error.WriteLine("--cpp-roots requires --cpp --profile=cpu64i32.");
+            Console.Error.WriteLine(switchError);
             return 1;
         }
-        // Native copy removal (all off by default; see CppCpuOptions): borrowed reads and the parameter borrow rule.
-        var borrowParams = args.Contains("--cpp-borrow-params");
-        var borrowReads = args.Contains("--cpp-borrow-reads");
-        var borrowNonTrivial = args.Contains("--cpp-borrow-nontrivial");
-        var borrowMinBytesArg = args.Where(a => a.StartsWith("--cpp-borrow-min-bytes="))
-            .Select(a => a.Substring("--cpp-borrow-min-bytes=".Length)).LastOrDefault();
-        var borrowMinBytes = 256;
-        if (borrowMinBytesArg != null && (!int.TryParse(borrowMinBytesArg, out borrowMinBytes) || borrowMinBytes < 1))
+        var loops = resolved["loops"];
+        var loopOptimizations = WriterSwitches.ToLoopOptions(resolved);
+        if (loopOptimizations.SpanParams && statementInlining != null)
         {
-            Console.Error.WriteLine("--cpp-borrow-min-bytes requires a positive integer.");
-            return 1;
-        }
-        if ((borrowParams || borrowReads || borrowNonTrivial || borrowMinBytesArg != null) && !cpu)
-        {
-            Console.Error.WriteLine("--cpp-borrow-params, --cpp-borrow-reads, --cpp-borrow-nontrivial and --cpp-borrow-min-bytes require --cpp --profile=cpu64i32.");
+            Console.Error.WriteLine("--span-params cannot be combined with --inline-policy.");
             return 1;
         }
         if (cpu)
             inline = true;
-        if ((loopOptimizations.FuseConsumers || loopOptimizations.ExactOutputAllocation)
-            && (!loops || typeScript || rust || glsl || (cpp && !cpu) || cuda))
-        {
-            Console.Error.WriteLine("--fuse-consumers and --exact-output require C# generation with --loops.");
-            return 1;
-        }
-        if (loopOptimizations.ClosureFree && (typeScript || rust || glsl || cpp || cuda))
-        {
-            Console.Error.WriteLine("--closure-free applies to C# generation only.");
-            return 1;
-        }
-        if (lowerScalars && (typeScript || rust || glsl || cpp || cuda))
-        {
-            Console.Error.WriteLine("--lower-scalars requires C# generation.");
-            return 1;
-        }
 
         var fuse = resolved["fuse"];
 
@@ -240,16 +175,7 @@ internal static class GenerateCommand
         {
             var dialect = cuda ? CppDialect.Cuda : cpu ? CppDialect.Cpu : CppDialect.Cpp;
             logger.Log($"Writing {dialect.DisplayName()} Files");
-            var cpuOptions = cpu
-                ? new CppCpuOptions(loops, fuse, resolved["fuse-consumers"], resolved["exact-output"],
-                    (cppRoots ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-                {
-                    BorrowLargeParameters = borrowParams,
-                    BorrowReads = borrowReads,
-                    BorrowNonTrivial = borrowNonTrivial,
-                    BorrowMinBytes = borrowMinBytes,
-                }
-                : null;
+            var cpuOptions = cpu ? CppCpuOptions.From(resolved.Switches) : null;
             var output = compilation.ToCpp(outputFolder, dialect, inline, cpuOptions);
             logger.Log($"{dialect.DisplayName()} functions emitted: {output.FunctionsEmitted}, skipped: {output.Skipped.Count}");
             GeneratedFiles.Write(output.Files, outputFolder, logger);

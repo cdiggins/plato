@@ -20,7 +20,7 @@ public class WriterSwitchesTests
     {
         // --specialize-callbacks-lean (not yet measured as a set) and TKT-1152's switches stay off by default until plato-brep measures and pins them.
         Assert.That(WriterSwitches.Table.Where(s => s.Default).Select(s => s.Name), Is.EquivalentTo(Pinned));
-        Assert.That(WriterSwitches.Table.Where(s => !s.Default).Select(s => s.Name), Is.EquivalentTo(new[] { "specialize-callbacks-lean", "scalar-arrays", "owned-arrays", "stack-arrays", "span-params" }));
+        Assert.That(WriterSwitches.Table.Where(s => !s.Default && s.Targets.HasFlag(WriterTarget.CSharp)).Select(s => s.Name), Is.EquivalentTo(new[] { "specialize-callbacks-lean", "scalar-arrays", "owned-arrays", "stack-arrays", "span-params" }));
         var names = WriterSwitches.Table.Select(s => s.Name).ToList();
         foreach (var s in WriterSwitches.Table.Where(s => s.Requires != null))
             Assert.That(names.IndexOf(s.Requires!), Is.LessThan(names.IndexOf(s.Name)), s.Name + " must follow " + s.Requires);
@@ -93,6 +93,51 @@ public class WriterSwitchesTests
         Assert.That(all.LowerMore && all.SpecializeCallbacks && all.CacheConstants && all.Presize && all.FuseConsumers);
         var none = WriterSwitches.ToLoopOptions(WriterSwitches.Resolve(new[] { WriterSwitches.Umbrella }, true));
         Assert.That(none.LowerMore || none.SpecializeCallbacks || none.CacheConstants || none.Presize || none.FuseConsumers, Is.False);
+    }
+
+    [Test]
+    public void CppTargetDefaultsNothingAndAcceptsItsRows()
+    {
+        var w2 = new[] { "--cpp", "--loops", "--fuse", "--fuse-consumers", "--exact-output", "--cpp-borrow-params", "--cpp-borrow-reads", "--cpp-borrow-nontrivial", "--cpp-borrow-min-bytes=32", "--cpp-roots=A,B" };
+        Assert.That(WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu).Switches.Names, Is.Empty);
+        var r = WriterSwitches.Resolve(w2, WriterTarget.Cpu);
+        Assert.That(WriterSwitches.Check(r, WriterTarget.Cpu), Is.Null);
+        Assert.That(r.Switches.Int("cpp-borrow-min-bytes", 256), Is.EqualTo(32));
+        Assert.That(r.Value("cpp-roots"), Is.EqualTo("A,B"));
+        Assert.That(r["cpp-borrow-reads"] && r["loops"] && !r["presize"]);
+        Assert.That(w2.All(a => a == "--cpp" || WriterSwitches.IsSpelling(a)));
+    }
+
+    [Test]
+    public void CheckRejectsASwitchOutsideItsTargetsAMissingDependencyAndABadValue()
+    {
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--presize" }, WriterTarget.Cpu), WriterTarget.Cpu), Does.StartWith("--presize applies to C#"));
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--cpp-borrow-reads" }, WriterTarget.CSharp), WriterTarget.CSharp), Does.StartWith("--cpp-borrow-reads applies to C++"));
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--no-loops", "--lower-more" }, WriterTarget.CSharp), WriterTarget.CSharp), Is.EqualTo("--lower-more requires --loops."));
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--cpp-borrow-min-bytes=0" }, WriterTarget.Cpu), WriterTarget.Cpu), Is.EqualTo("--cpp-borrow-min-bytes requires a positive integer."));
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(Array.Empty<string>(), WriterTarget.CSharp), WriterTarget.CSharp), Is.Null);
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--loops" }, WriterTarget.Other), WriterTarget.Other), Does.StartWith("--loops applies to"));
+    }
+
+    [Test]
+    public void ParameterisedSwitchesNeedAValueAndTheLastSpellingWins()
+    {
+        Assert.That(WriterSwitches.IsSpelling("--cpp-borrow-min-bytes=8") && !WriterSwitches.IsSpelling("--cpp-borrow-min-bytes") && !WriterSwitches.IsSpelling("--presize=1"));
+        var r = WriterSwitches.Resolve(new[] { "--cpp-borrow-min-bytes=8", "--cpp-borrow-min-bytes=64" }, WriterTarget.Cpu);
+        Assert.That(r.Switches.Int("cpp-borrow-min-bytes", 256), Is.EqualTo(64));
+        var dropped = WriterSwitches.Resolve(new[] { "--cpp-borrow-min-bytes=8", "--no-cpp-borrow-min-bytes" }, WriterTarget.Cpu);
+        Assert.That(dropped["cpp-borrow-min-bytes"], Is.False);
+        Assert.That(dropped.Switches.Int("cpp-borrow-min-bytes", 256), Is.EqualTo(256));
+    }
+
+    [Test]
+    public void EveryRowDefaultsOnlyWhereItApplies()
+    {
+        foreach (var s in WriterSwitches.Table)
+        {
+            Assert.That(s.Targets.HasFlag(s.Defaults), s.Name);
+            Assert.That(s.Parameter == null || s.Defaults == WriterTarget.None, s.Name);
+        }
     }
 
     [Test]

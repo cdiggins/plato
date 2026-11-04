@@ -17,6 +17,48 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     bool HoistInvariants = false,
     bool CacheConstants = false, bool PrimitiveCompare = false)
 {
+    /// <summary>The whole resolved switch set when the options come from the CLI table (<see cref="From"/>); null when a
+    /// caller built the record from its booleans. <see cref="ToSwitches"/> gives a set either way.</summary>
+    public Ara3D.Geometry.Optimizer.SwitchSet Switches { get; init; }
+
+    /// <summary>The options a resolved switch set selects, carrying the set itself.</summary>
+    public static LoopOptimizationOptions From(Ara3D.Geometry.Optimizer.SwitchSet s)
+        => new(s.On("fuse-consumers"), s.On("exact-output"), s.On("concrete-arrays"), s.On("lean-inlining"), s.On("presize"), s.On("in-place"), s.On("share-calls"),
+            LowerScalars: s.On("lower-scalars"),
+            SinkBindings: s.On("sink-bindings"), BindScrutinees: s.On("bind-scrutinee"), ShareCallsWide: s.On("share-calls-wide"),
+            ClosureFree: s.On("closure-free"),
+            HoistInvariants: s.On("hoist-invariants"), CacheConstants: s.On("cache-constants"),
+            PrimitiveCompare: s.On("primitive-compare"))
+        {
+            InParameters = s.On("in-params"),
+            SwitchMatch = s.On("switch-match"),
+            LowerMore = s.On("lower-more"),
+            SpecializeCallbacks = s.On("specialize-callbacks"),
+            SpecializeCallbacksLean = s.On("specialize-callbacks-lean"),
+            ScalarArrays = s.On("scalar-arrays"),
+            OwnedArrays = s.On("owned-arrays"),
+            StackArrays = s.On("stack-arrays"),
+            SpanParams = s.On("span-params"),
+            Switches = s,
+        };
+
+    /// <summary>The switch set: <see cref="Switches"/> when the record came from one, else the set its booleans spell
+    /// (for callers that build the record by hand, such as tests).</summary>
+    public Ara3D.Geometry.Optimizer.SwitchSet ToSwitches()
+    {
+        if (Switches != null) return Switches.Copy();
+        var s = new Ara3D.Geometry.Optimizer.SwitchSet();
+        s.Set("fuse-consumers", FuseConsumers); s.Set("exact-output", ExactOutputAllocation); s.Set("concrete-arrays", ConcreteArrays);
+        s.Set("lean-inlining", LeanInlining); s.Set("presize", Presize); s.Set("in-place", InPlace); s.Set("share-calls", ShareCalls);
+        s.Set("lower-scalars", LowerScalars); s.Set("sink-bindings", SinkBindings); s.Set("bind-scrutinee", BindScrutinees);
+        s.Set("share-calls-wide", ShareCallsWide); s.Set("closure-free", ClosureFree); s.Set("hoist-invariants", HoistInvariants);
+        s.Set("cache-constants", CacheConstants); s.Set("primitive-compare", PrimitiveCompare); s.Set("in-params", InParameters);
+        s.Set("switch-match", SwitchMatch); s.Set("lower-more", LowerMore); s.Set("specialize-callbacks", SpecializeCallbacks);
+        s.Set("specialize-callbacks-lean", SpecializeCallbacksLean); s.Set("scalar-arrays", ScalarArrays); s.Set("owned-arrays", OwnedArrays);
+        s.Set("stack-arrays", StackArrays); s.Set("span-params", SpanParams);
+        return s;
+    }
+
     /// <summary>The elaboration rewrites these switches ask for (the interpreter and the writer elaborate alike).</summary>
     public Ara3D.Geometry.Compiler.Checking.ElaborationOptions Elaboration
         => new(BindScrutinees, SinkBindings);

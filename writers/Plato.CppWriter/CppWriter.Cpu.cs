@@ -33,6 +33,23 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
+
+        /// <summary>The resolved switch set these options came from (<see cref="From"/>), or null for options built by hand;
+        /// the C++ pass list reads it (see <see cref="CppTirPipeline"/>).</summary>
+        public Ara3D.Geometry.Optimizer.SwitchSet Switches { get; init; }
+
+        /// <summary>The options a resolved switch set selects (the CLI's table; C++ rows name the Cpu target).</summary>
+        public static CppCpuOptions From(Ara3D.Geometry.Optimizer.SwitchSet s)
+            => new CppCpuOptions(s.On("loops"), s.On("fuse"), s.On("fuse-consumers"), s.On("exact-output"),
+                (s.Value("cpp-roots") ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                ShareCalls = s.On("share-calls"),
+                BorrowLargeParameters = s.On("cpp-borrow-params"),
+                BorrowReads = s.On("cpp-borrow-reads"),
+                BorrowNonTrivial = s.On("cpp-borrow-nontrivial"),
+                BorrowMinBytes = s.Int("cpp-borrow-min-bytes", 256),
+                Switches = s,
+            };
     }
 
     /// <summary>One data field of an emitted struct: a record field, or the Kind/flattened field of a closed sum.</summary>

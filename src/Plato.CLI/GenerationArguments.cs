@@ -6,13 +6,12 @@ internal static class GenerationArguments
     private static readonly HashSet<string> Switches = new(StringComparer.Ordinal)
     {
         "--typescript", "--rust", "--glsl", "--cpp", "--cuda",
-        "--optimize", "--optimize-arrays", "--inline", "--static-abstract", "--inline-report",
-        "--cpp-borrow-params", "--cpp-borrow-reads", "--cpp-borrow-nontrivial"
+        "--optimize", "--optimize-arrays", "--inline", "--static-abstract", "--inline-report"
     };
 
     private static readonly HashSet<string> ValueOptions = new(StringComparer.Ordinal)
     {
-        "--dump-tir", "--csharp-style", "--profile", "--out", "--inline-policy", "--inline-growth", "--cpp-roots", "--cpp-borrow-min-bytes"
+        "--dump-tir", "--csharp-style", "--profile", "--out", "--inline-policy", "--inline-growth"
     };
 
     public static string? UnknownOption(IReadOnlyList<string> args)

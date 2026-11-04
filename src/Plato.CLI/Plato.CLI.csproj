@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\writers\Plato.RustWriter\Plato.RustWriter.csproj" />
     <ProjectReference Include="..\..\writers\Plato.GlslWriter\Plato.GlslWriter.csproj" />
     <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
+    <ProjectReference Include="..\Plato.Optimizer\Plato.Optimizer.csproj" />
     <ProjectReference Include="..\Plato.Interpreter\Plato.Interpreter.csproj" />
     <ProjectReference Include="..\Plato.Navigation\Plato.Navigation.csproj" />
     <ProjectReference Include="..\Plato.Laws\Plato.Laws.csproj" />
