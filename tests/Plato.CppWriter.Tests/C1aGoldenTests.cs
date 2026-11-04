@@ -16,8 +16,14 @@ public class C1aGoldenTests
 {
     private static readonly string[] Roots = { "ShapeArea", "Same", "AreaAt", "Pick", "Twice", "Wide", "Scaled" };
 
+    private static readonly string[] HoistRoots = { "HArea", "Hoisty", "HoistySum" };
+    private const string HoistFixture = "C1aHoistFixture.plato";
+
     private static CppCpuOptions Shipping(params string[] switches)
         => new(true, true, true, true, Roots) { Switches = new SwitchSet(switches) };
+
+    private static CppCpuOptions HoistShipping(params string[] switches)
+        => new(true, true, true, true, HoistRoots) { Switches = new SwitchSet(switches) };
 
     private static readonly string[] SliceLibraries =
     {
@@ -27,12 +33,17 @@ public class C1aGoldenTests
 
     public static IEnumerable<TestCaseData> OptionSets()
     {
-        yield return new TestCaseData("shipping-c1a-base", Shipping()).SetName("C1aGolden_base");
-        yield return new TestCaseData("shipping-share-calls-wide", Shipping("share-calls", "share-calls-wide") with { ShareCalls = true }).SetName("C1aGolden_share_calls_wide");
-        yield return new TestCaseData("shipping-sink-bindings", Shipping("sink-bindings")).SetName("C1aGolden_sink_bindings");
-        yield return new TestCaseData("shipping-bind-scrutinee", Shipping("bind-scrutinee")).SetName("C1aGolden_bind_scrutinee");
+        yield return new TestCaseData("shipping-c1a-base", Shipping(), "C1aFixture.plato").SetName("C1aGolden_base");
+        yield return new TestCaseData("shipping-share-calls-wide", Shipping("share-calls", "share-calls-wide") with { ShareCalls = true }, "C1aFixture.plato").SetName("C1aGolden_share_calls_wide");
+        yield return new TestCaseData("shipping-sink-bindings", Shipping("sink-bindings"), "C1aFixture.plato").SetName("C1aGolden_sink_bindings");
+        yield return new TestCaseData("shipping-bind-scrutinee", Shipping("bind-scrutinee"), "C1aFixture.plato").SetName("C1aGolden_bind_scrutinee");
         yield return new TestCaseData("shipping-c1a-bundle",
-            Shipping("share-calls", "share-calls-wide", "sink-bindings", "bind-scrutinee") with { ShareCalls = true }).SetName("C1aGolden_bundle");
+            Shipping("share-calls", "share-calls-wide", "sink-bindings", "bind-scrutinee", "hoist-invariants") with { ShareCalls = true }, "C1aFixture.plato").SetName("C1aGolden_bundle");
+        // TKT-1185: the pass's locals are printed under `if (count > 0)` around the loop; diff against the base.
+        yield return new TestCaseData("shipping-hoist-base", HoistShipping(), HoistFixture).SetName("C1aGolden_hoist_base");
+        yield return new TestCaseData("shipping-hoist-invariants", HoistShipping("hoist-invariants"), HoistFixture).SetName("C1aGolden_hoist_invariants");
+        // Borrowed reads on: the scrutinee binding of an unwritten parameter is a const reference, not a copy.
+        yield return new TestCaseData("shipping-borrow-scrutinee", Shipping("bind-scrutinee") with { BorrowReads = true }, "C1aFixture.plato").SetName("C1aGolden_borrow_scrutinee");
     }
 
     private static string SourceFolder([System.Runtime.CompilerServices.CallerFilePath] string path = "")
@@ -47,10 +58,10 @@ public class C1aGoldenTests
 
     // Each case elaborates its own copy: bind-scrutinee and sink-bindings change the TIR source, which a shared
     // Compilation would cache.
-    private static Compilation Compile()
+    private static Compilation Compile(string fixtureName)
     {
         var folder = PlatoSource.FindRepoFolder("stdlib/foundation");
-        var fixture = Path.Combine(SourceFolder(), "C1aFixture.plato");
+        var fixture = Path.Combine(SourceFolder(), fixtureName);
         var asts = Directory.GetFiles(folder, "*.plato").Where(IsInSlice).Append(fixture).Select(PlatoSource.ParseFile).ToList();
         var compilation = new Compilation(Ara3D.Logging.Logger.Null, asts);
         Assert.That(compilation.CompletedCompilation, Is.True);
@@ -60,11 +71,11 @@ public class C1aGoldenTests
     private static string Normalize(string text) => text.Replace("\r\n", "\n");
 
     [TestCaseSource(nameof(OptionSets))]
-    public void Emission_matches_snapshot(string set, CppCpuOptions options)
+    public void Emission_matches_snapshot(string set, CppCpuOptions options, string fixtureName)
     {
         var scratch = Path.Combine(Path.GetTempPath(), $"plato-golden-c1a-{Guid.NewGuid():N}");
         Directory.CreateDirectory(scratch);
-        var writer = Compile().ToCpp(new DirectoryPath(scratch), CppDialect.Cpu, true, options);
+        var writer = Compile(fixtureName).ToCpp(new DirectoryPath(scratch), CppDialect.Cpu, true, options);
         var actual = writer.Files.ToDictionary(f => f.Key, f => Normalize(f.Value.ToString()));
         var golden = Path.Combine(SourceFolder(), "Golden", set);
         if (Environment.GetEnvironmentVariable("PLATO_GOLDEN_UPDATE") == "1")

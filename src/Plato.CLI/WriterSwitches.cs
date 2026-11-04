@@ -76,7 +76,7 @@ public static class WriterSwitches
         new("closure-free", CS, CS),
         new("in-params", CS, CS),
         new("switch-match", CS, CS),
-        new("hoist-invariants", CS, CS, "loops"),
+        new("hoist-invariants", CsCpu, CS, "loops"),
         new("cache-constants", CS, CS),
         new("primitive-compare", CS, CS),
         new("lower-more", CS, CS, "loops"),

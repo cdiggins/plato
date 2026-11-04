@@ -4,15 +4,200 @@
 
 namespace plato {
 
+Array<Inductance> LinearSpaceExclusive(Inductance a, Inductance b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Inductance* _a1 = plato::arena_alloc<Inductance>(_n1);
+    if (_n1 > 0)
+    {
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Inductance Add(Inductance a, Inductance b) { std::abort(); }
+
+Inductance Subtract(Inductance a, Inductance b) { std::abort(); }
+
+Inductance Negative(Inductance x) { std::abort(); }
+
+Inductance Zero(Inductance x) { std::abort(); }
+
+int32_t Hash(Inductance x) { std::abort(); }
+
+Inductance Lerp(Inductance a, Inductance b, double t) { std::abort(); }
+
+bool LessThanOrEquals(Inductance a, Inductance b) { std::abort(); }
+
+double Amount(Inductance x) { std::abort(); }
+
+Inductance FromAmount(Inductance _, double x) { std::abort(); }
+
+Inductance Multiply(Inductance x, double scalar) { std::abort(); }
+
+Inductance Divide(Inductance x, double scalar) { std::abort(); }
+
+Inductance Modulo(Inductance x, double scalar) { std::abort(); }
+
+double Turns(Angle x) { return (x.Radians / (2.0 * Pi(0.0))); }
+
+double Degrees(Angle x) { return ((x.Radians / (2.0 * Pi(0.0))) * 360.0); }
+
+double Gradians(Angle x) { return ((x.Radians / (2.0 * Pi(0.0))) * 400.0); }
+
+double ArcMinutes(Angle x) { return (((x.Radians / (2.0 * Pi(0.0))) * 360.0) * 60.0); }
+
+double ArcSeconds(Angle x) { return ((((x.Radians / (2.0 * Pi(0.0))) * 360.0) * 60.0) * 60.0); }
+
+double Sec(Angle x) { return (1.0 / Cos(x.Radians)); }
+
+double Csc(Angle x) { return (1.0 / Sin(x.Radians)); }
+
+double Cot(Angle x) { return (1.0 / (Sin(x.Radians) / Cos(x.Radians))); }
+
+Angle Normalize(Angle self)
+{
+    double tau = (2.0 * Pi(0.0));
+    double m = (self.Radians - (tau * Floor((self.Radians / tau))));
+    return Angle{ ((Pi(0.0) < m) ? (m - tau) : m) };
+}
+
+Angle Wrap(Angle self, Angle period) { return Angle{ (self.Radians - (period.Radians * Floor((self.Radians / period.Radians)))) }; }
+
+Angle LerpShortest(Angle a, Angle b, double t) { return Angle{ (a.Radians + (Normalize(Angle{ (b.Radians - a.Radians) }).Radians * t)) }; }
+
+bool EquivalentAngle(Angle a, Angle b) { return (Normalize(a).Radians == Normalize(b).Radians); }
+
+double Cos(Angle self) { return Cos(self.Radians); }
+
+double Sin(Angle self) { return Sin(self.Radians); }
+
+double Tan(Angle self) { return (Sin(self.Radians) / Cos(self.Radians)); }
+
+Tuple2<double, double> SinCos(Angle self) { return Tuple2<double, double>{ Sin(self.Radians), Cos(self.Radians) }; }
+
+double Cosh(Angle self) { return ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0); }
+
+double Sinh(Angle self) { return ((Exp(self.Radians) - Exp((-self.Radians))) / 2.0); }
+
+double Tanh(Angle self) { return (((Exp(self.Radians) - Exp((-self.Radians))) / 2.0) / ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0)); }
+
+Angle Add(Angle a, Angle b) { return Angle{ (a.Radians + b.Radians) }; }
+
+Angle Subtract(Angle a, Angle b) { return Angle{ (a.Radians - b.Radians) }; }
+
+Angle Multiply(Angle a, double x) { return Angle{ (a.Radians * x) }; }
+
+Angle Divide(Angle a, double x) { return Angle{ (a.Radians / x) }; }
+
+Angle Negative(Angle n) { return Angle{ (-n.Radians) }; }
+
+int32_t Compare(Angle a, Angle b) { return ((a.Radians == b.Radians) ? 0 : ((a.Radians <= b.Radians) ? (-1) : 1)); }
+
+int32_t Hash(Angle self) { return Hash(self.Radians); }
+
+Angle Double(Angle x) { return Add(x, x); }
+
+Angle Half(Angle x) { return Divide(x, 2.0); }
+
+Angle Third(Angle x) { return Divide(x, 3.0); }
+
+Angle Quarter(Angle x) { return Divide(x, 4.0); }
+
+Angle Eighth(Angle x) { return Divide(x, 8.0); }
+
+Angle Sixteenth(Angle x) { return Divide(x, 16.0); }
+
+Angle Tenth(Angle x) { return Divide(x, 10.0); }
+
+Angle Hundredth(Angle x) { return Divide(x, 100.0); }
+
+Angle Thousandth(Angle x) { return Divide(x, 1000.0); }
+
+Angle Millionth(Angle x) { return Divide(x, 1000000.0); }
+
+Angle Billionth(Angle x) { return Divide(x, 1000000000.0); }
+
+Angle Million(Angle x) { return Multiply(x, 1000000.0); }
+
+Angle Billion(Angle x) { return Multiply(x, 1000000000.0); }
+
+Angle ToPercent(Angle x, double percent) { return Multiply(x, (percent / 100.0)); }
+
+bool LessThan(SolidAngle a, SolidAngle b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
+
+bool GreaterThan(SolidAngle a, SolidAngle b) { return LessThan(b, a); }
+
+bool GreaterThanOrEquals(SolidAngle a, SolidAngle b) { return LessThanOrEquals(b, a); }
+
+SolidAngle Lesser(SolidAngle a, SolidAngle b) { return (LessThanOrEquals(a, b) ? a : b); }
+
+SolidAngle Greater(SolidAngle a, SolidAngle b) { return (LessThanOrEquals(a, b) ? b : a); }
+
+bool Between(SolidAngle x, SolidAngle lower, SolidAngle upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
+
+SolidAngle Clamp(SolidAngle x, SolidAngle lower, SolidAngle upper) { return Lesser(Greater(x, lower), upper); }
+
+SolidAngle Min3(SolidAngle a, SolidAngle b, SolidAngle c) { return Lesser(Lesser(a, b), c); }
+
+SolidAngle Max3(SolidAngle a, SolidAngle b, SolidAngle c) { return Greater(Greater(a, b), c); }
+
+int32_t Compare(SolidAngle a, SolidAngle b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
+
+SolidAngle Double(SolidAngle x) { return Add(x, x); }
+
+SolidAngle Half(SolidAngle x) { return Divide(x, 2.0); }
+
+SolidAngle Third(SolidAngle x) { return Divide(x, 3.0); }
+
+SolidAngle Quarter(SolidAngle x) { return Divide(x, 4.0); }
+
+SolidAngle Eighth(SolidAngle x) { return Divide(x, 8.0); }
+
+SolidAngle Sixteenth(SolidAngle x) { return Divide(x, 16.0); }
+
+SolidAngle Tenth(SolidAngle x) { return Divide(x, 10.0); }
+
+SolidAngle Hundredth(SolidAngle x) { return Divide(x, 100.0); }
+
+SolidAngle Thousandth(SolidAngle x) { return Divide(x, 1000.0); }
+
+SolidAngle Millionth(SolidAngle x) { return Divide(x, 1000000.0); }
+
+SolidAngle Billionth(SolidAngle x) { return Divide(x, 1000000000.0); }
+
+SolidAngle Million(SolidAngle x) { return Multiply(x, 1000000.0); }
+
+SolidAngle Billion(SolidAngle x) { return Multiply(x, 1000000000.0); }
+
+SolidAngle ToPercent(SolidAngle x, double percent) { return Multiply(x, (percent / 100.0)); }
+
+SolidAngle MidPoint(SolidAngle a, SolidAngle b) { return Lerp(a, b, 0.5); }
+
+SolidAngle LerpClamped(SolidAngle a, SolidAngle b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+SolidAngle SmoothLerp(SolidAngle a, SolidAngle b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
 Array<SolidAngle> LinearSpace(SolidAngle a, SolidAngle b, int32_t count)
 {
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     SolidAngle* _a1 = plato::arena_alloc<SolidAngle>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -23,10 +208,14 @@ Array<SolidAngle> LinearSpaceExclusive(SolidAngle a, SolidAngle b, int32_t count
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     SolidAngle* _a1 = plato::arena_alloc<SolidAngle>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -115,10 +304,14 @@ Array<Length> LinearSpace(Length a, Length b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Length* _a1 = plato::arena_alloc<Length>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -129,10 +322,14 @@ Array<Length> LinearSpaceExclusive(Length a, Length b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Length* _a1 = plato::arena_alloc<Length>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -221,10 +418,14 @@ Array<Area> LinearSpace(Area a, Area b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Area* _a1 = plato::arena_alloc<Area>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -235,10 +436,14 @@ Array<Area> LinearSpaceExclusive(Area a, Area b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Area* _a1 = plato::arena_alloc<Area>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -327,10 +532,14 @@ Array<Volume> LinearSpace(Volume a, Volume b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Volume* _a1 = plato::arena_alloc<Volume>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -341,10 +550,14 @@ Array<Volume> LinearSpaceExclusive(Volume a, Volume b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Volume* _a1 = plato::arena_alloc<Volume>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -433,10 +646,14 @@ Array<WaveNumber> LinearSpace(WaveNumber a, WaveNumber b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     WaveNumber* _a1 = plato::arena_alloc<WaveNumber>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -447,10 +664,14 @@ Array<WaveNumber> LinearSpaceExclusive(WaveNumber a, WaveNumber b, int32_t count
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     WaveNumber* _a1 = plato::arena_alloc<WaveNumber>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -539,10 +760,14 @@ Array<Curvature> LinearSpace(Curvature a, Curvature b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Curvature* _a1 = plato::arena_alloc<Curvature>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -553,10 +778,14 @@ Array<Curvature> LinearSpaceExclusive(Curvature a, Curvature b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Curvature* _a1 = plato::arena_alloc<Curvature>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -645,10 +874,14 @@ Array<Speed> LinearSpace(Speed a, Speed b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Speed* _a1 = plato::arena_alloc<Speed>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -659,10 +892,14 @@ Array<Speed> LinearSpaceExclusive(Speed a, Speed b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Speed* _a1 = plato::arena_alloc<Speed>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -753,10 +990,14 @@ Array<Acceleration> LinearSpace(Acceleration a, Acceleration b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Acceleration* _a1 = plato::arena_alloc<Acceleration>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -767,10 +1008,14 @@ Array<Acceleration> LinearSpaceExclusive(Acceleration a, Acceleration b, int32_t
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Acceleration* _a1 = plato::arena_alloc<Acceleration>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -859,10 +1104,14 @@ Array<Jerk> LinearSpace(Jerk a, Jerk b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Jerk* _a1 = plato::arena_alloc<Jerk>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -873,10 +1122,14 @@ Array<Jerk> LinearSpaceExclusive(Jerk a, Jerk b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Jerk* _a1 = plato::arena_alloc<Jerk>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -965,10 +1218,14 @@ Array<AngularVelocity> LinearSpace(AngularVelocity a, AngularVelocity b, int32_t
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     AngularVelocity* _a1 = plato::arena_alloc<AngularVelocity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -979,10 +1236,14 @@ Array<AngularVelocity> LinearSpaceExclusive(AngularVelocity a, AngularVelocity b
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     AngularVelocity* _a1 = plato::arena_alloc<AngularVelocity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1071,10 +1332,14 @@ Array<AngularAcceleration> LinearSpace(AngularAcceleration a, AngularAcceleratio
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     AngularAcceleration* _a1 = plato::arena_alloc<AngularAcceleration>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1085,10 +1350,14 @@ Array<AngularAcceleration> LinearSpaceExclusive(AngularAcceleration a, AngularAc
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     AngularAcceleration* _a1 = plato::arena_alloc<AngularAcceleration>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1177,10 +1446,14 @@ Array<Frequency> LinearSpace(Frequency a, Frequency b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Frequency* _a1 = plato::arena_alloc<Frequency>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1191,10 +1464,14 @@ Array<Frequency> LinearSpaceExclusive(Frequency a, Frequency b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Frequency* _a1 = plato::arena_alloc<Frequency>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1283,10 +1560,14 @@ Array<Pressure> LinearSpace(Pressure a, Pressure b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Pressure* _a1 = plato::arena_alloc<Pressure>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1297,10 +1578,14 @@ Array<Pressure> LinearSpaceExclusive(Pressure a, Pressure b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Pressure* _a1 = plato::arena_alloc<Pressure>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1389,10 +1674,14 @@ Array<Stiffness> LinearSpace(Stiffness a, Stiffness b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Stiffness* _a1 = plato::arena_alloc<Stiffness>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1403,10 +1692,14 @@ Array<Stiffness> LinearSpaceExclusive(Stiffness a, Stiffness b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Stiffness* _a1 = plato::arena_alloc<Stiffness>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1495,10 +1788,14 @@ Array<DampingCoefficient> LinearSpace(DampingCoefficient a, DampingCoefficient b
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     DampingCoefficient* _a1 = plato::arena_alloc<DampingCoefficient>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1509,10 +1806,14 @@ Array<DampingCoefficient> LinearSpaceExclusive(DampingCoefficient a, DampingCoef
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     DampingCoefficient* _a1 = plato::arena_alloc<DampingCoefficient>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1601,10 +1902,14 @@ Array<DynamicViscosity> LinearSpace(DynamicViscosity a, DynamicViscosity b, int3
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     DynamicViscosity* _a1 = plato::arena_alloc<DynamicViscosity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1615,10 +1920,14 @@ Array<DynamicViscosity> LinearSpaceExclusive(DynamicViscosity a, DynamicViscosit
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     DynamicViscosity* _a1 = plato::arena_alloc<DynamicViscosity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1707,10 +2016,14 @@ Array<KinematicViscosity> LinearSpace(KinematicViscosity a, KinematicViscosity b
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     KinematicViscosity* _a1 = plato::arena_alloc<KinematicViscosity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1721,10 +2034,14 @@ Array<KinematicViscosity> LinearSpaceExclusive(KinematicViscosity a, KinematicVi
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     KinematicViscosity* _a1 = plato::arena_alloc<KinematicViscosity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1813,10 +2130,14 @@ Array<MassFlowRate> LinearSpace(MassFlowRate a, MassFlowRate b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     MassFlowRate* _a1 = plato::arena_alloc<MassFlowRate>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1827,10 +2148,14 @@ Array<MassFlowRate> LinearSpaceExclusive(MassFlowRate a, MassFlowRate b, int32_t
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     MassFlowRate* _a1 = plato::arena_alloc<MassFlowRate>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1919,10 +2244,14 @@ Array<VolumetricFlowRate> LinearSpace(VolumetricFlowRate a, VolumetricFlowRate b
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     VolumetricFlowRate* _a1 = plato::arena_alloc<VolumetricFlowRate>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -1933,10 +2262,14 @@ Array<VolumetricFlowRate> LinearSpaceExclusive(VolumetricFlowRate a, VolumetricF
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     VolumetricFlowRate* _a1 = plato::arena_alloc<VolumetricFlowRate>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2025,10 +2358,14 @@ Array<Strain> LinearSpace(Strain a, Strain b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Strain* _a1 = plato::arena_alloc<Strain>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2039,10 +2376,14 @@ Array<Strain> LinearSpaceExclusive(Strain a, Strain b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Strain* _a1 = plato::arena_alloc<Strain>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2131,10 +2472,14 @@ Array<Mass> LinearSpace(Mass a, Mass b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Mass* _a1 = plato::arena_alloc<Mass>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2145,10 +2490,14 @@ Array<Mass> LinearSpaceExclusive(Mass a, Mass b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Mass* _a1 = plato::arena_alloc<Mass>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2237,10 +2586,14 @@ Array<Density> LinearSpace(Density a, Density b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Density* _a1 = plato::arena_alloc<Density>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2251,10 +2604,14 @@ Array<Density> LinearSpaceExclusive(Density a, Density b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Density* _a1 = plato::arena_alloc<Density>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2343,10 +2700,14 @@ Array<ArealDensity> LinearSpace(ArealDensity a, ArealDensity b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     ArealDensity* _a1 = plato::arena_alloc<ArealDensity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2357,10 +2718,14 @@ Array<ArealDensity> LinearSpaceExclusive(ArealDensity a, ArealDensity b, int32_t
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     ArealDensity* _a1 = plato::arena_alloc<ArealDensity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2449,10 +2814,14 @@ Array<LinearDensity> LinearSpace(LinearDensity a, LinearDensity b, int32_t count
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     LinearDensity* _a1 = plato::arena_alloc<LinearDensity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2463,10 +2832,14 @@ Array<LinearDensity> LinearSpaceExclusive(LinearDensity a, LinearDensity b, int3
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     LinearDensity* _a1 = plato::arena_alloc<LinearDensity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2555,10 +2928,14 @@ Array<Force> LinearSpace(Force a, Force b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Force* _a1 = plato::arena_alloc<Force>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2569,10 +2946,14 @@ Array<Force> LinearSpaceExclusive(Force a, Force b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Force* _a1 = plato::arena_alloc<Force>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2661,10 +3042,14 @@ Array<Torque> LinearSpace(Torque a, Torque b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Torque* _a1 = plato::arena_alloc<Torque>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2675,10 +3060,14 @@ Array<Torque> LinearSpaceExclusive(Torque a, Torque b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Torque* _a1 = plato::arena_alloc<Torque>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2767,10 +3156,14 @@ Array<Impulse> LinearSpace(Impulse a, Impulse b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Impulse* _a1 = plato::arena_alloc<Impulse>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2781,10 +3174,14 @@ Array<Impulse> LinearSpaceExclusive(Impulse a, Impulse b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Impulse* _a1 = plato::arena_alloc<Impulse>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2873,10 +3270,14 @@ Array<Momentum> LinearSpace(Momentum a, Momentum b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Momentum* _a1 = plato::arena_alloc<Momentum>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2887,10 +3288,14 @@ Array<Momentum> LinearSpaceExclusive(Momentum a, Momentum b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Momentum* _a1 = plato::arena_alloc<Momentum>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2979,10 +3384,14 @@ Array<AngularMomentum> LinearSpace(AngularMomentum a, AngularMomentum b, int32_t
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     AngularMomentum* _a1 = plato::arena_alloc<AngularMomentum>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -2993,10 +3402,14 @@ Array<AngularMomentum> LinearSpaceExclusive(AngularMomentum a, AngularMomentum b
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     AngularMomentum* _a1 = plato::arena_alloc<AngularMomentum>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3085,10 +3498,14 @@ Array<MomentOfInertia> LinearSpace(MomentOfInertia a, MomentOfInertia b, int32_t
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     MomentOfInertia* _a1 = plato::arena_alloc<MomentOfInertia>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3099,10 +3516,14 @@ Array<MomentOfInertia> LinearSpaceExclusive(MomentOfInertia a, MomentOfInertia b
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     MomentOfInertia* _a1 = plato::arena_alloc<MomentOfInertia>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3191,10 +3612,14 @@ Array<Energy> LinearSpace(Energy a, Energy b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Energy* _a1 = plato::arena_alloc<Energy>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3205,10 +3630,14 @@ Array<Energy> LinearSpaceExclusive(Energy a, Energy b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Energy* _a1 = plato::arena_alloc<Energy>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3297,10 +3726,14 @@ Array<Power> LinearSpace(Power a, Power b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Power* _a1 = plato::arena_alloc<Power>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3311,10 +3744,14 @@ Array<Power> LinearSpaceExclusive(Power a, Power b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Power* _a1 = plato::arena_alloc<Power>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3403,10 +3840,14 @@ Array<LuminousIntensity> LinearSpace(LuminousIntensity a, LuminousIntensity b, i
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     LuminousIntensity* _a1 = plato::arena_alloc<LuminousIntensity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3417,10 +3858,14 @@ Array<LuminousIntensity> LinearSpaceExclusive(LuminousIntensity a, LuminousInten
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     LuminousIntensity* _a1 = plato::arena_alloc<LuminousIntensity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3509,10 +3954,14 @@ Array<LuminousFlux> LinearSpace(LuminousFlux a, LuminousFlux b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     LuminousFlux* _a1 = plato::arena_alloc<LuminousFlux>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3523,10 +3972,14 @@ Array<LuminousFlux> LinearSpaceExclusive(LuminousFlux a, LuminousFlux b, int32_t
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     LuminousFlux* _a1 = plato::arena_alloc<LuminousFlux>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3615,10 +4068,14 @@ Array<Illuminance> LinearSpace(Illuminance a, Illuminance b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Illuminance* _a1 = plato::arena_alloc<Illuminance>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3629,10 +4086,14 @@ Array<Illuminance> LinearSpaceExclusive(Illuminance a, Illuminance b, int32_t co
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Illuminance* _a1 = plato::arena_alloc<Illuminance>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3721,10 +4182,14 @@ Array<Luminance> LinearSpace(Luminance a, Luminance b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Luminance* _a1 = plato::arena_alloc<Luminance>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3735,10 +4200,14 @@ Array<Luminance> LinearSpaceExclusive(Luminance a, Luminance b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Luminance* _a1 = plato::arena_alloc<Luminance>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3827,10 +4296,14 @@ Array<Irradiance> LinearSpace(Irradiance a, Irradiance b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Irradiance* _a1 = plato::arena_alloc<Irradiance>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3841,10 +4314,14 @@ Array<Irradiance> LinearSpaceExclusive(Irradiance a, Irradiance b, int32_t count
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Irradiance* _a1 = plato::arena_alloc<Irradiance>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3933,10 +4410,14 @@ Array<Temperature> LinearSpace(Temperature a, Temperature b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Temperature* _a1 = plato::arena_alloc<Temperature>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -3947,10 +4428,14 @@ Array<Temperature> LinearSpaceExclusive(Temperature a, Temperature b, int32_t co
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     Temperature* _a1 = plato::arena_alloc<Temperature>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -4039,10 +4524,14 @@ Array<TemperatureDelta> LinearSpace(TemperatureDelta a, TemperatureDelta b, int3
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     TemperatureDelta* _a1 = plato::arena_alloc<TemperatureDelta>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -4053,10 +4542,14 @@ Array<TemperatureDelta> LinearSpaceExclusive(TemperatureDelta a, TemperatureDelt
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     TemperatureDelta* _a1 = plato::arena_alloc<TemperatureDelta>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -4145,10 +4638,14 @@ Array<HeatCapacity> LinearSpace(HeatCapacity a, HeatCapacity b, int32_t count)
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     HeatCapacity* _a1 = plato::arena_alloc<HeatCapacity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -4159,10 +4656,14 @@ Array<HeatCapacity> LinearSpaceExclusive(HeatCapacity a, HeatCapacity b, int32_t
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     HeatCapacity* _a1 = plato::arena_alloc<HeatCapacity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -4251,10 +4752,14 @@ Array<ThermalConductivity> LinearSpace(ThermalConductivity a, ThermalConductivit
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     ThermalConductivity* _a1 = plato::arena_alloc<ThermalConductivity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -4265,10 +4770,14 @@ Array<ThermalConductivity> LinearSpaceExclusive(ThermalConductivity a, ThermalCo
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     ThermalConductivity* _a1 = plato::arena_alloc<ThermalConductivity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -4357,10 +4866,14 @@ Array<AmountOfSubstance> LinearSpace(AmountOfSubstance a, AmountOfSubstance b, i
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     AmountOfSubstance* _a1 = plato::arena_alloc<AmountOfSubstance>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -4371,10 +4884,14 @@ Array<AmountOfSubstance> LinearSpaceExclusive(AmountOfSubstance a, AmountOfSubst
     auto _s1 = count;
     int32_t _n1 = (_s1 > 0 ? _s1 : 0);
     AmountOfSubstance* _a1 = plato::arena_alloc<AmountOfSubstance>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    if (_n1 > 0)
     {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
     }
     auto _lp1 = plato::make_array(_a1, _n1);
     return _lp1;
@@ -4485,523 +5002,5 @@ double Pdf(VonMisesDistribution x, double value) { std::abort(); }
 double Cdf(VonMisesDistribution x, double value) { std::abort(); }
 
 double Mean(GammaDistribution x) { std::abort(); }
-
-double Variance(GammaDistribution x) { std::abort(); }
-
-double Pdf(GammaDistribution x, double value) { std::abort(); }
-
-double Cdf(GammaDistribution x, double value) { std::abort(); }
-
-double Mean(BetaDistribution x) { std::abort(); }
-
-double Variance(BetaDistribution x) { std::abort(); }
-
-double Pdf(BetaDistribution x, double value) { std::abort(); }
-
-double Cdf(BetaDistribution x, double value) { std::abort(); }
-
-double Mean(ChiSquaredDistribution x) { std::abort(); }
-
-double Variance(ChiSquaredDistribution x) { std::abort(); }
-
-double Pdf(ChiSquaredDistribution x, double value) { std::abort(); }
-
-double Cdf(ChiSquaredDistribution x, double value) { std::abort(); }
-
-double Mean(StudentTDistribution x) { std::abort(); }
-
-double Variance(StudentTDistribution x) { std::abort(); }
-
-double Pdf(StudentTDistribution x, double value) { std::abort(); }
-
-double Cdf(StudentTDistribution x, double value) { std::abort(); }
-
-double Mean(BernoulliDistribution x) { std::abort(); }
-
-double Variance(BernoulliDistribution x) { std::abort(); }
-
-double Pdf(BernoulliDistribution x, double value) { std::abort(); }
-
-double Cdf(BernoulliDistribution x, double value) { std::abort(); }
-
-double Mean(BinomialDistribution x) { std::abort(); }
-
-double Variance(BinomialDistribution x) { std::abort(); }
-
-double Pdf(BinomialDistribution x, double value) { std::abort(); }
-
-double Cdf(BinomialDistribution x, double value) { std::abort(); }
-
-double Mean(GeometricDistribution x) { std::abort(); }
-
-double Variance(GeometricDistribution x) { std::abort(); }
-
-double Pdf(GeometricDistribution x, double value) { std::abort(); }
-
-double Cdf(GeometricDistribution x, double value) { std::abort(); }
-
-double Mean(PoissonDistribution x) { std::abort(); }
-
-double Variance(PoissonDistribution x) { std::abort(); }
-
-double Pdf(PoissonDistribution x, double value) { std::abort(); }
-
-double Cdf(PoissonDistribution x, double value) { std::abort(); }
-
-double Mean(DiscreteDistribution x) { std::abort(); }
-
-double Variance(DiscreteDistribution x) { std::abort(); }
-
-double Pdf(DiscreteDistribution x, double value) { std::abort(); }
-
-double Cdf(DiscreteDistribution x, double value) { std::abort(); }
-
-Quaternion Square(Quaternion x) { return Multiply(x, x); }
-
-Quaternion Cube(Quaternion x) { return Multiply(Multiply(x, x), x); }
-
-Quaternion Pow4(Quaternion x) { return Square(Square(x)); }
-
-Quaternion Pow5(Quaternion x) { return Multiply(Square(Square(x)), x); }
-
-Quaternion MidPoint(Quaternion a, Quaternion b) { return Lerp(a, b, 0.5); }
-
-Quaternion LerpClamped(Quaternion a, Quaternion b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Quaternion SmoothLerp(Quaternion a, Quaternion b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Quaternion> LinearSpace(Quaternion a, Quaternion b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Quaternion* _a1 = plato::arena_alloc<Quaternion>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<Quaternion> LinearSpaceExclusive(Quaternion a, Quaternion b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Quaternion* _a1 = plato::arena_alloc<Quaternion>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-AffineTransform3D ToAffineTransform3D(Quaternion x) { std::abort(); }
-
-Quaternion Lerp(Quaternion a, Quaternion b, double t) { std::abort(); }
-
-Quaternion Multiply(Quaternion a, Quaternion b) { std::abort(); }
-
-Pose3D ToPose3D(Quaternion x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(AxisAngle x) { std::abort(); }
-
-Pose3D ToPose3D(AxisAngle x) { std::abort(); }
-
-Quaternion ToQuaternion(AxisAngle x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(EulerAngles x) { std::abort(); }
-
-Pose3D ToPose3D(EulerAngles x) { std::abort(); }
-
-Quaternion ToQuaternion(EulerAngles x) { std::abort(); }
-
-Rotation2D Square(Rotation2D x) { return Multiply(x, x); }
-
-Rotation2D Cube(Rotation2D x) { return Multiply(Multiply(x, x), x); }
-
-Rotation2D Pow4(Rotation2D x) { return Square(Square(x)); }
-
-Rotation2D Pow5(Rotation2D x) { return Multiply(Square(Square(x)), x); }
-
-Rotation2D MidPoint(Rotation2D a, Rotation2D b) { return Lerp(a, b, 0.5); }
-
-Rotation2D LerpClamped(Rotation2D a, Rotation2D b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Rotation2D SmoothLerp(Rotation2D a, Rotation2D b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Rotation2D> LinearSpace(Rotation2D a, Rotation2D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Rotation2D* _a1 = plato::arena_alloc<Rotation2D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<Rotation2D> LinearSpaceExclusive(Rotation2D a, Rotation2D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Rotation2D* _a1 = plato::arena_alloc<Rotation2D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-AffineTransform2D ToAffineTransform2D(Rotation2D x) { std::abort(); }
-
-Rotation2D Lerp(Rotation2D a, Rotation2D b, double t) { std::abort(); }
-
-Rotation2D Multiply(Rotation2D a, Rotation2D b) { std::abort(); }
-
-Pose2D ToPose2D(Rotation2D x) { std::abort(); }
-
-Rotor2D Square(Rotor2D x) { return Multiply(x, x); }
-
-Rotor2D Cube(Rotor2D x) { return Multiply(Multiply(x, x), x); }
-
-Rotor2D Pow4(Rotor2D x) { return Square(Square(x)); }
-
-Rotor2D Pow5(Rotor2D x) { return Multiply(Square(Square(x)), x); }
-
-Rotor2D Multiply(Rotor2D a, Rotor2D b) { std::abort(); }
-
-Rotor3D Square(Rotor3D x) { return Multiply(x, x); }
-
-Rotor3D Cube(Rotor3D x) { return Multiply(Multiply(x, x), x); }
-
-Rotor3D Pow4(Rotor3D x) { return Square(Square(x)); }
-
-Rotor3D Pow5(Rotor3D x) { return Multiply(Square(Square(x)), x); }
-
-AffineTransform3D ToAffineTransform3D(Rotor3D x) { std::abort(); }
-
-Rotor3D Multiply(Rotor3D a, Rotor3D b) { std::abort(); }
-
-Pose3D ToPose3D(Rotor3D x) { std::abort(); }
-
-Quaternion ToQuaternion(Rotor3D x) { std::abort(); }
-
-bool LessThan(Duration a, Duration b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(Duration a, Duration b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(Duration a, Duration b) { return LessThanOrEquals(b, a); }
-
-Duration Lesser(Duration a, Duration b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Duration Greater(Duration a, Duration b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(Duration x, Duration lower, Duration upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-Duration Clamp(Duration x, Duration lower, Duration upper) { return Lesser(Greater(x, lower), upper); }
-
-Duration Min3(Duration a, Duration b, Duration c) { return Lesser(Lesser(a, b), c); }
-
-Duration Max3(Duration a, Duration b, Duration c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(Duration a, Duration b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-Duration Double(Duration x) { return Add(x, x); }
-
-Duration Half(Duration x) { return Divide(x, 2.0); }
-
-Duration Third(Duration x) { return Divide(x, 3.0); }
-
-Duration Quarter(Duration x) { return Divide(x, 4.0); }
-
-Duration Eighth(Duration x) { return Divide(x, 8.0); }
-
-Duration Sixteenth(Duration x) { return Divide(x, 16.0); }
-
-Duration Tenth(Duration x) { return Divide(x, 10.0); }
-
-Duration Hundredth(Duration x) { return Divide(x, 100.0); }
-
-Duration Thousandth(Duration x) { return Divide(x, 1000.0); }
-
-Duration Millionth(Duration x) { return Divide(x, 1000000.0); }
-
-Duration Billionth(Duration x) { return Divide(x, 1000000000.0); }
-
-Duration Million(Duration x) { return Multiply(x, 1000000.0); }
-
-Duration Billion(Duration x) { return Multiply(x, 1000000000.0); }
-
-Duration ToPercent(Duration x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Duration MidPoint(Duration a, Duration b) { return Lerp(a, b, 0.5); }
-
-Duration LerpClamped(Duration a, Duration b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Duration SmoothLerp(Duration a, Duration b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Duration> LinearSpace(Duration a, Duration b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Duration* _a1 = plato::arena_alloc<Duration>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<Duration> LinearSpaceExclusive(Duration a, Duration b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Duration* _a1 = plato::arena_alloc<Duration>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Duration Add(Duration a, Duration b) { std::abort(); }
-
-Duration Subtract(Duration a, Duration b) { std::abort(); }
-
-Duration Negative(Duration x) { std::abort(); }
-
-Duration Zero(Duration x) { std::abort(); }
-
-int32_t Hash(Duration x) { std::abort(); }
-
-Duration Lerp(Duration a, Duration b, double t) { std::abort(); }
-
-bool LessThanOrEquals(Duration a, Duration b) { std::abort(); }
-
-double Amount(Duration x) { std::abort(); }
-
-Duration FromAmount(Duration _, double x) { std::abort(); }
-
-Duration Multiply(Duration x, double scalar) { std::abort(); }
-
-Duration Divide(Duration x, double scalar) { std::abort(); }
-
-Duration Modulo(Duration x, double scalar) { std::abort(); }
-
-bool LessThan(Instant a, Instant b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(Instant a, Instant b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(Instant a, Instant b) { return LessThanOrEquals(b, a); }
-
-Instant Lesser(Instant a, Instant b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Instant Greater(Instant a, Instant b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(Instant x, Instant lower, Instant upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-Instant Clamp(Instant x, Instant lower, Instant upper) { return Lesser(Greater(x, lower), upper); }
-
-Instant Min3(Instant a, Instant b, Instant c) { return Lesser(Lesser(a, b), c); }
-
-Instant Max3(Instant a, Instant b, Instant c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(Instant a, Instant b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-Instant Add(Instant x, Duration delta) { return FromOffset(x, Add(Offset(x), delta)); }
-
-Duration Between(Instant a, Instant b) { return Subtract(Offset(b), Offset(a)); }
-
-Instant Origin(Instant x) { return FromOffset(x, Zero(Offset(x))); }
-
-Instant Subtract(Instant x, Duration delta) { return Add(x, Negative(delta)); }
-
-Duration Subtract(Instant a, Instant b) { return Between(b, a); }
-
-Instant Lerp(Instant a, Instant b, double t) { return Add(a, Multiply(Between(a, b), t)); }
-
-bool LessThanOrEquals(Instant a, Instant b) { std::abort(); }
-
-Duration Offset(Instant x) { std::abort(); }
-
-Instant FromOffset(Instant _, Duration d) { std::abort(); }
-
-bool LessThan(FrameTime a, FrameTime b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(FrameTime a, FrameTime b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(FrameTime a, FrameTime b) { return LessThanOrEquals(b, a); }
-
-FrameTime Lesser(FrameTime a, FrameTime b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-FrameTime Greater(FrameTime a, FrameTime b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(FrameTime x, FrameTime lower, FrameTime upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-FrameTime Clamp(FrameTime x, FrameTime lower, FrameTime upper) { return Lesser(Greater(x, lower), upper); }
-
-FrameTime Min3(FrameTime a, FrameTime b, FrameTime c) { return Lesser(Lesser(a, b), c); }
-
-FrameTime Max3(FrameTime a, FrameTime b, FrameTime c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(FrameTime a, FrameTime b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-bool LessThanOrEquals(FrameTime a, FrameTime b) { std::abort(); }
-
-bool LessThan(BeatTime a, BeatTime b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(BeatTime a, BeatTime b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(BeatTime a, BeatTime b) { return LessThanOrEquals(b, a); }
-
-BeatTime Lesser(BeatTime a, BeatTime b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-BeatTime Greater(BeatTime a, BeatTime b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(BeatTime x, BeatTime lower, BeatTime upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-BeatTime Clamp(BeatTime x, BeatTime lower, BeatTime upper) { return Lesser(Greater(x, lower), upper); }
-
-BeatTime Min3(BeatTime a, BeatTime b, BeatTime c) { return Lesser(Lesser(a, b), c); }
-
-BeatTime Max3(BeatTime a, BeatTime b, BeatTime c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(BeatTime a, BeatTime b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-bool LessThanOrEquals(BeatTime a, BeatTime b) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(Frame2D x) { std::abort(); }
-
-Pose2D ToPose2D(Frame2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(Frame3D x) { std::abort(); }
-
-Pose3D ToPose3D(Frame3D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(Basis3D x) { std::abort(); }
-
-Motor3D Square(Motor3D x) { return Multiply(x, x); }
-
-Motor3D Cube(Motor3D x) { return Multiply(Multiply(x, x), x); }
-
-Motor3D Pow4(Motor3D x) { return Square(Square(x)); }
-
-Motor3D Pow5(Motor3D x) { return Multiply(Square(Square(x)), x); }
-
-AffineTransform3D ToAffineTransform3D(Motor3D x) { std::abort(); }
-
-Motor3D Multiply(Motor3D a, Motor3D b) { std::abort(); }
-
-Pose3D ToPose3D(Motor3D x) { std::abort(); }
-
-Pose2D MidPoint(Pose2D a, Pose2D b) { return Lerp(a, b, 0.5); }
-
-Pose2D LerpClamped(Pose2D a, Pose2D b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Pose2D SmoothLerp(Pose2D a, Pose2D b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Pose2D> LinearSpace(Pose2D a, Pose2D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Pose2D* _a1 = plato::arena_alloc<Pose2D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<Pose2D> LinearSpaceExclusive(Pose2D a, Pose2D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Pose2D* _a1 = plato::arena_alloc<Pose2D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-AffineTransform2D ToAffineTransform2D(Pose2D x) { std::abort(); }
-
-Pose2D Lerp(Pose2D a, Pose2D b, double t) { std::abort(); }
-
-Pose3D MidPoint(Pose3D a, Pose3D b) { return Lerp(a, b, 0.5); }
-
-Pose3D LerpClamped(Pose3D a, Pose3D b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Pose3D SmoothLerp(Pose3D a, Pose3D b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Pose3D> LinearSpace(Pose3D a, Pose3D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Pose3D* _a1 = plato::arena_alloc<Pose3D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<Pose3D> LinearSpaceExclusive(Pose3D a, Pose3D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Pose3D* _a1 = plato::arena_alloc<Pose3D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-AffineTransform3D ToAffineTransform3D(Pose3D x) { std::abort(); }
-
-Pose3D Lerp(Pose3D a, Pose3D b, double t) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(TrsTransform2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(TrsTransform3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(Translation2D x) { std::abort(); }
-
-Pose2D ToPose2D(Translation2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(Translation3D x) { std::abort(); }
-
-Pose3D ToPose3D(Translation3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(Scaling2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(Scaling3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(UniformScaling2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(UniformScaling3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(Reflection2D x) { std::abort(); }
 
 } // namespace plato

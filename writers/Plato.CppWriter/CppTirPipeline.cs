@@ -20,7 +20,7 @@ namespace Ara3D.Geometry.CppWriter
         public static readonly IReadOnlyList<string> PassOrder = new[]
         {
             SharedPasses.Inline, SharedPasses.Fuse, SharedPasses.FuseConsumers, SharedPasses.SinkBindings, SharedPasses.ShareCalls,
-            SharedPasses.LowerLoops,
+            SharedPasses.LowerLoops, SharedPasses.HoistInvariants,
         };
 
         private static readonly IReadOnlyList<ITirPass> Passes = PassRegistry.Shared.Resolve(PassOrder);

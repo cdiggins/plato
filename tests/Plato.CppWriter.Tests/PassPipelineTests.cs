@@ -15,7 +15,7 @@ public class PassPipelineTests
     [Test]
     public void Cpp_pass_order_names_registered_shared_passes()
     {
-        Assert.That(CppTirPipeline.PassOrder, Is.EqualTo(new[] { "inline", "fuse", "fuse-consumers", "sink-bindings", "share-calls", "lower-loops" }));
+        Assert.That(CppTirPipeline.PassOrder, Is.EqualTo(new[] { "inline", "fuse", "fuse-consumers", "sink-bindings", "share-calls", "lower-loops", "hoist-invariants" }));
         Assert.That(PassRegistry.Shared.Resolve(CppTirPipeline.PassOrder).Count, Is.EqualTo(CppTirPipeline.PassOrder.Count));
     }
 
