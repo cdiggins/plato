@@ -98,7 +98,7 @@ public static class WriterSwitches
         // Sum layout (off by default): a chain of case predicates on one sum becomes switch (Kind); a sum is Kind plus one union of per-case structs.
         new("cpp-sum-switch", Cpu),
         new("cpp-sum-compact", Cpu),
-        // The most lines of definitions in one emitted function unit; CppCpuOptions.DefaultUnitLines when absent.
+        // The most lines of definitions in one emitted function unit; CppCpuOptions.DefaultUnitLines (5000) when absent.
         new("cpp-unit-lines", Cpu) { Parameter = SwitchParameter.PositiveInt },
     };
 

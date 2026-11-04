@@ -36,9 +36,9 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>--cpp-sum-compact (off by default): compact sums;: a sum is an <c>int32_t Kind</c> and one
         /// union of per-case structs instead of every case's fields side by side.</summary>
         public bool CompactSums { get; init; }
-        /// <summary>--cpp-unit-lines=N: the most lines of definitions in one function unit (<see cref="DefaultUnitLines"/> when absent).</summary>
+        /// <summary>--cpp-unit-lines=N: the most lines of definitions in one function unit (<see cref="DefaultUnitLines"/> when absent; 5000 since 2026-11-04: runtime unchanged with LTCG, one-unit rebuild 62 to 32 s).</summary>
         public int UnitLines { get; init; } = DefaultUnitLines;
-        public const int DefaultUnitLines = 20000;
+        public const int DefaultUnitLines = 5000;
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
