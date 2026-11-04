@@ -1,6 +1,6 @@
 // Native check of PLATO_STR (TKT-1159). Built by StringLiteralTests; must exit 0.
-#include "plato_cpu.hpp"
 #include <cstdio>
+#include "plato_cpu.hpp"
 #include <thread>
 #include <vector>
 

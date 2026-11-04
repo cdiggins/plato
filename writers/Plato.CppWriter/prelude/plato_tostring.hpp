@@ -82,8 +82,11 @@
 
     // Generated UTF-8 literals carry their byte length, including embedded NULs.
 #ifdef PLATO_STRING_PROBE
-    // Probe build (-DPLATO_STRING_PROBE): make_string_n evaluations, read by a single-threaded host (TKT-1159).
+    // Probe build (-DPLATO_STRING_PROBE): make_string_n evaluations, read by a single-threaded host (TKT-1159); build with /FIcstdio so fprintf is declared.
     inline long long plato_make_string_count = 0;
+    struct PlatoMakeStringReport { ~PlatoMakeStringReport() { std::fprintf(stderr, "PLATO_STRING_PROBE make_string_n=%lld
+", plato_make_string_count); } };
+    inline PlatoMakeStringReport plato_make_string_report;
 #define PLATO_STRING_PROBE_COUNT() (++::plato::plato_make_string_count)
 #else
 #define PLATO_STRING_PROBE_COUNT() ((void)0)
