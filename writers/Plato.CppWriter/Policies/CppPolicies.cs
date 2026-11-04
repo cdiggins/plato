@@ -22,7 +22,7 @@ namespace Ara3D.Geometry.CppWriter.Policies
             Reads = options.BorrowReads ? new ConstReferenceReads() : new CopyingReads(),
             Lambdas = new CaptureByValueLambdas(),
             Sums = new FlattenedKindSumLayout(),
-            Strings = new MakeStringLiterals(),
+            Strings = options.StaticStringLiterals ? new StaticStringLiterals() : new MakeStringLiterals(),
             Units = new LineLimitPartitioner(),
             Attributes = new NoFunctionAttributes(),
             Loops = BuiltInLoopEmitters.Create(),

@@ -30,6 +30,8 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>--cpp-borrow-nontrivial (off by default): <c>ReadOnlyParameter</c> also borrows every record that is
         /// not trivially copyable (records holding String), whatever its size.</summary>
         public bool BorrowNonTrivial { get; init; }
+        /// <summary>Static string literals (TKT-1159, off by default): each constant is built once per use site.</summary>
+        public bool StaticStringLiterals { get; init; }
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
