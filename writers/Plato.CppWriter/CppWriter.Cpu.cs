@@ -18,28 +18,28 @@ namespace Ara3D.Geometry.CppWriter
     public sealed record CppCpuOptions(bool Loops, bool Fuse, bool FuseConsumers, bool ExactOutput, IReadOnlyList<string> Roots)
     {
         public bool ShareCalls { get; init; }
-        /// <summary>--cpp-borrow-params (off by default): <c>ReadOnlyParameter</c> spells unassigned record parameters at or
+        /// <summary>--cpp-borrow-params (on by default for Cpu since 2026-11-04): <c>ReadOnlyParameter</c> spells unassigned record parameters at or
         /// over the borrow threshold as <c>const T&amp;</c>.</summary>
         public bool BorrowLargeParameters { get; init; }
-        /// <summary>--cpp-borrow-reads (off by default): array reads return <c>const T&amp;</c> (arrays are immutable
+        /// <summary>--cpp-borrow-reads (on by default for Cpu since 2026-11-04): array reads return <c>const T&amp;</c> (arrays are immutable
         /// arena views), lowered-loop elements bind by <c>const auto&amp;</c>, and a record or String local that copies an
         /// array read or a name neither side of which is written again in the body binds by <c>const T&amp;</c>.</summary>
         public bool BorrowReads { get; init; }
-        /// <summary>--cpp-borrow-min-bytes=N: <c>ReadOnlyParameter</c> borrows records of at least N bytes (default 256).</summary>
+        /// <summary>--cpp-borrow-min-bytes=N: <c>ReadOnlyParameter</c> borrows records of at least N bytes (256 here; the CLI defaults Cpu to 32).</summary>
         public int BorrowMinBytes { get; init; } = 256;
-        /// <summary>--cpp-borrow-nontrivial (off by default): <c>ReadOnlyParameter</c> also borrows every record that is
+        /// <summary>--cpp-borrow-nontrivial (on by default for Cpu since 2026-11-04): <c>ReadOnlyParameter</c> also borrows every record that is
         /// not trivially copyable (records holding String), whatever its size.</summary>
         public bool BorrowNonTrivial { get; init; }
-        /// <summary>--cpp-sum-switch (off by default): sum dispatch: a chain of case predicates on one
+        /// <summary>--cpp-sum-switch (on by default for Cpu since 2026-11-04): sum dispatch: a chain of case predicates on one
         /// value in a returned expression is written as <c>switch (value.Kind)</c>.</summary>
         public bool SwitchSumDispatch { get; init; }
-        /// <summary>--cpp-sum-compact (off by default): compact sums: a sum is an <c>int32_t Kind</c> and one
+        /// <summary>--cpp-sum-compact (on by default for Cpu since 2026-11-04): compact sums: a sum is an <c>int32_t Kind</c> and one
         /// union of per-case structs instead of every case's fields side by side.</summary>
         public bool CompactSums { get; init; }
         /// <summary>--cpp-unit-lines=N: the most lines of definitions in one function unit (<see cref="DefaultUnitLines"/> when absent; 5000 since 2026-11-04: runtime unchanged with LTCG, one-unit rebuild 62 to 32 s).</summary>
         public int UnitLines { get; init; } = DefaultUnitLines;
         public const int DefaultUnitLines = 5000;
-        /// <summary>--cpp-static-strings (TKT-1159, off by default): static string literals: each constant is built once per use site.</summary>
+        /// <summary>--cpp-static-strings (TKT-1159, on by default for Cpu since 2026-11-04): static string literals: each constant is built once per use site.</summary>
         public bool StaticStringLiterals { get; init; }
         /// <summary>--scalar-arrays (TKT-1186, off by default): a fixed-arity struct's Count is folded and its component arrays unrolled.</summary>
         public bool ScalarArrays { get; init; }

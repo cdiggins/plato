@@ -32,6 +32,9 @@ public sealed record WriterSwitch(string Name, WriterTarget Targets, WriterTarge
     /// <summary>Non-null for a switch spelled <c>--name=value</c>; it is on when a value is given.</summary>
     public SwitchParameter? Parameter { get; init; }
 
+    /// <summary>For a parameterised switch, the value it takes for the targets in <see cref="Defaults"/> when it is not spelled.</summary>
+    public string? DefaultValue { get; init; }
+
     /// <summary>On by default for C# output.</summary>
     public bool Default => Defaults.HasFlag(WriterTarget.CSharp);
 }
@@ -65,18 +68,18 @@ public static class WriterSwitches
         new("fuse-consumers", CsCpu, CS, "loops"),
         new("exact-output", CsCpu, CS, "loops"),
         new("lean-inlining", CS, CS),
-        new("share-calls", CsCpu, CS),
+        new("share-calls", CsCpu, CsCpu),
         new("lower-scalars", CS, CS),
         new("concrete-arrays", CS, CS),
         new("presize", CS, CS),
         new("in-place", CS, CS),
-        new("sink-bindings", CsCpu, CS),
-        new("bind-scrutinee", CsCpu, CS),
-        new("share-calls-wide", CsCpu, CS),
+        new("sink-bindings", CsCpu, CsCpu),
+        new("bind-scrutinee", CsCpu, CsCpu),
+        new("share-calls-wide", CsCpu, CsCpu),
         new("closure-free", CS, CS),
         new("in-params", CS, CS),
         new("switch-match", CS, CS),
-        new("hoist-invariants", CsCpu, CS, "loops"),
+        new("hoist-invariants", CsCpu, CsCpu, "loops"),
         new("cache-constants", CS, CS),
         new("primitive-compare", CS, CS),
         new("lower-more", CsCpu, CS, "loops"),
@@ -91,17 +94,17 @@ public static class WriterSwitches
         new("filter-lowering", Cpu, Requires: "lower-more"),
         // C++ (Cpu dialect) only. --cpp-roots names the functions whose reachable set must all be emitted.
         new("cpp-roots", Cpu) { Parameter = SwitchParameter.AnyText },
-        // Native copy removal (off by default; see CppCpuOptions): the parameter borrow rule and borrowed reads.
-        new("cpp-borrow-params", Cpu),
-        new("cpp-borrow-reads", Cpu),
-        new("cpp-borrow-nontrivial", Cpu),
-        // The record size at or over which a read-only parameter borrows; CppCpuOptions.BorrowMinBytes (256) when absent.
-        new("cpp-borrow-min-bytes", Cpu) { Parameter = SwitchParameter.PositiveInt },
-        // Sum layout (off by default): a chain of case predicates on one sum becomes switch (Kind); a sum is Kind plus one union of per-case structs.
-        new("cpp-sum-switch", Cpu),
-        new("cpp-sum-compact", Cpu),
-        // String literals (off by default): each constant is built once per use site.
-        new("cpp-static-strings", Cpu),
+        // Native copy removal (on for Cpu since timing window 1, 2026-11-04; see CppCpuOptions): the parameter borrow rule and borrowed reads.
+        new("cpp-borrow-params", Cpu, Cpu),
+        new("cpp-borrow-reads", Cpu, Cpu),
+        new("cpp-borrow-nontrivial", Cpu, Cpu),
+        // The record size at or over which a read-only parameter borrows: 32 by default for Cpu (W2); CppCpuOptions.BorrowMinBytes (256) when absent.
+        new("cpp-borrow-min-bytes", Cpu, Cpu) { Parameter = SwitchParameter.PositiveInt, DefaultValue = "32" },
+        // Sum layout (on for Cpu since timing window 1): a chain of case predicates on one sum becomes switch (Kind); a sum is Kind plus one union of per-case structs.
+        new("cpp-sum-switch", Cpu, Cpu),
+        new("cpp-sum-compact", Cpu, Cpu),
+        // String literals (on for Cpu since timing window 1): each constant is built once per use site.
+        new("cpp-static-strings", Cpu, Cpu),
         // The most lines of definitions in one emitted function unit; CppCpuOptions.DefaultUnitLines (5000) when absent.
         new("cpp-unit-lines", Cpu) { Parameter = SwitchParameter.PositiveInt },
     };
@@ -161,6 +164,9 @@ public static class WriterSwitches
                 : defaults && s.Defaults.HasFlag(target) && (s.Requires == null || on.Contains(s.Requires));
             if (value) on.Add(s.Name);
         }
+        foreach (var s in Table.Where(s => s.Parameter != null && s.DefaultValue != null && !explicitState.ContainsKey(s.Name)))
+            if (defaults && s.Defaults.HasFlag(target) && (s.Requires == null || on.Contains(s.Requires)))
+                values[s.Name] = s.DefaultValue!;
         return new ResolvedWriterSwitches(new SwitchSet(on, values));
     }
 

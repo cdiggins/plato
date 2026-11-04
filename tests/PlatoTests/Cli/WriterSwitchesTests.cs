@@ -96,10 +96,21 @@ public class WriterSwitchesTests
     }
 
     [Test]
-    public void CppTargetDefaultsNothingAndAcceptsItsRows()
+    public void CppTargetDefaultsTheTimingWindowSetAndAcceptsItsRows()
     {
         var w2 = new[] { "--cpp", "--loops", "--fuse", "--fuse-consumers", "--exact-output", "--cpp-borrow-params", "--cpp-borrow-reads", "--cpp-borrow-nontrivial", "--cpp-borrow-min-bytes=32", "--cpp-roots=A,B" };
-        Assert.That(WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu).Switches.Names, Is.Empty);
+        // Timing window 1 (2026-11-04): W2, both sum flags, static strings and the C1-a passes are on for Cpu; the C1-a
+        // passes that need --loops stay off without it, and --no-writer-defaults still gives the empty set.
+        var cpu = WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu);
+        Assert.That(cpu.Switches.Names, Is.EquivalentTo(new[] { "share-calls", "sink-bindings", "bind-scrutinee", "share-calls-wide",
+            "cpp-borrow-params", "cpp-borrow-reads", "cpp-borrow-nontrivial", "cpp-sum-switch", "cpp-sum-compact", "cpp-static-strings", "cpp-borrow-min-bytes=32" }));
+        Assert.That(cpu.Switches.Int("cpp-borrow-min-bytes", 256), Is.EqualTo(32));
+        Assert.That(WriterSwitches.Resolve(new[] { "--cpp", "--loops" }, WriterTarget.Cpu)["hoist-invariants"]);
+        var none = WriterSwitches.Resolve(new[] { "--cpp", WriterSwitches.Umbrella }, WriterTarget.Cpu);
+        Assert.That(none.Switches.Names, Is.Empty);
+        Assert.That(none.Switches.Int("cpp-borrow-min-bytes", 256), Is.EqualTo(256));
+        Assert.That(WriterSwitches.Resolve(new[] { "--cpp", "--no-cpp-borrow-min-bytes" }, WriterTarget.Cpu).Switches.Int("cpp-borrow-min-bytes", 256), Is.EqualTo(256));
+        Assert.That(WriterSwitches.Check(cpu, WriterTarget.Cpu), Is.Null);
         var r = WriterSwitches.Resolve(w2, WriterTarget.Cpu);
         Assert.That(WriterSwitches.Check(r, WriterTarget.Cpu), Is.Null);
         Assert.That(r.Switches.Int("cpp-borrow-min-bytes", 256), Is.EqualTo(32));
@@ -141,9 +152,10 @@ public class WriterSwitchesTests
     }
 
     [Test]
-    public void SumLayoutRowsAreCppOnlyAndOffByDefault()
+    public void SumLayoutRowsAreCppOnlyAndOnByDefaultForCpu()
     {
-        var off = WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu);
+        var off = WriterSwitches.Resolve(new[] { "--cpp", "--no-cpp-sum-switch", "--no-cpp-sum-compact", "--no-cpp-static-strings" }, WriterTarget.Cpu);
+        Assert.That(WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu) is var d && d["cpp-sum-switch"] && d["cpp-sum-compact"] && d["cpp-static-strings"]);
         Assert.That(off["cpp-sum-switch"] || off["cpp-sum-compact"], Is.False);
         var on = WriterSwitches.Resolve(new[] { "--cpp-sum-switch", "--cpp-sum-compact", "--cpp-static-strings" }, WriterTarget.Cpu);
         Assert.That(on["cpp-sum-switch"] && on["cpp-sum-compact"] && on["cpp-static-strings"] && !off["cpp-static-strings"]);
@@ -157,7 +169,7 @@ public class WriterSwitchesTests
         foreach (var s in WriterSwitches.Table)
         {
             Assert.That(s.Targets.HasFlag(s.Defaults), s.Name);
-            Assert.That(s.Parameter == null || s.Defaults == WriterTarget.None, s.Name);
+            Assert.That(s.Parameter == null || (s.Defaults == WriterTarget.None) == (s.DefaultValue == null), s.Name);
         }
     }
 
