@@ -111,7 +111,7 @@ public class WriterSwitchesTests
     [Test]
     public void CheckRejectsASwitchOutsideItsTargetsAMissingDependencyAndABadValue()
     {
-        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--presize" }, WriterTarget.Cpu), WriterTarget.Cpu), Does.StartWith("--presize applies to C#"));
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--lower-scalars" }, WriterTarget.Cpu), WriterTarget.Cpu), Does.StartWith("--lower-scalars applies to C#"));
         Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--cpp-borrow-reads" }, WriterTarget.CSharp), WriterTarget.CSharp), Does.StartWith("--cpp-borrow-reads applies to C++"));
         Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--no-loops", "--lower-more" }, WriterTarget.CSharp), WriterTarget.CSharp), Is.EqualTo("--lower-more requires --loops."));
         Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--cpp-borrow-min-bytes=0" }, WriterTarget.Cpu), WriterTarget.Cpu), Is.EqualTo("--cpp-borrow-min-bytes requires a positive integer."));

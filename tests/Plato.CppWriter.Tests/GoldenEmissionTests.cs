@@ -40,7 +40,7 @@ public class GoldenEmissionTests
 
     // Compiling the library dominates the run, so the cases share one Compilation (emission leaves it unchanged;
     // the snapshots would differ between cases otherwise).
-    private static readonly Lazy<Compilation> Shared = new(Compile);
+    private static readonly Lazy<Compilation> Shared = new(() => Compile("GoldenFixture.plato"));
 
     // The types and concepts of foundation (every library names them) plus the libraries the fixture reaches; the rest
     // of the standard library adds emitted text, not writer decisions.
@@ -57,10 +57,10 @@ public class GoldenEmissionTests
             || SliceLibraries.Any(l => name == l + ".library.plato");
     }
 
-    private static Compilation Compile()
+    private static Compilation Compile(string fixtureFile)
     {
         var folder = PlatoSource.FindRepoFolder("stdlib/foundation");
-        var fixture = Path.Combine(SourceFolder(), "GoldenFixture.plato");
+        var fixture = Path.Combine(SourceFolder(), fixtureFile);
         var asts = Directory.GetFiles(folder, "*.plato").Where(IsInSlice).Append(fixture).Select(PlatoSource.ParseFile).ToList();
         var compilation = new Compilation(Ara3D.Logging.Logger.Null, asts);
         Assert.That(compilation.CompletedCompilation, Is.True);
@@ -70,11 +70,13 @@ public class GoldenEmissionTests
     private static string Normalize(string text) => text.Replace("\r\n", "\n");
 
     [TestCaseSource(nameof(OptionSets))]
-    public void Emission_matches_snapshot(string set, CppCpuOptions options)
+    public void Emission_matches_snapshot(string set, CppCpuOptions options) => CheckSnapshot(set, options, Shared.Value);
+
+    private static void CheckSnapshot(string set, CppCpuOptions options, Compilation compilation)
     {
         var scratch = Path.Combine(Path.GetTempPath(), $"plato-golden-{Guid.NewGuid():N}");
         Directory.CreateDirectory(scratch);
-        var writer = Shared.Value.ToCpp(new DirectoryPath(scratch), CppDialect.Cpu, true, options);
+        var writer = compilation.ToCpp(new DirectoryPath(scratch), CppDialect.Cpu, true, options);
         var actual = writer.Files.ToDictionary(f => f.Key, f => Normalize(f.Value.ToString()));
         var golden = Path.Combine(SourceFolder(), "Golden", set);
         var update = Environment.GetEnvironmentVariable("PLATO_GOLDEN_UPDATE") == "1";
@@ -106,4 +108,21 @@ public class GoldenEmissionTests
         Assert.Fail($"Emission for '{set}' differs from {golden} in {differing.Count} file(s): {string.Join(", ", differing)}. " +
                     $"Actual output is in {actualFolder}; set PLATO_GOLDEN_UPDATE=1 to accept.");
     }
+
+    // Lane C1-b (TKT-1183): presize and cache-constants, on their own fixture so the sets above stay as they are.
+    private static readonly Lazy<Compilation> SharedC1b = new(() => Compile("GoldenFixtureC1b.plato"));
+
+    private static readonly string[] C1bRoots = { "Squares", "Counted", "Grown", "Newton", "RootOfTwo", "ScaledRoot", "TwoRoots" };
+
+    private static CppCpuOptions ShippingC1b => new(true, true, true, true, C1bRoots);
+
+    public static IEnumerable<TestCaseData> C1bOptionSets()
+    {
+        yield return new TestCaseData("shipping-c1b-base", ShippingC1b).SetName("Golden_shipping_c1b_base");
+        yield return new TestCaseData("shipping-presize", ShippingC1b with { Presize = true }).SetName("Golden_shipping_presize");
+        yield return new TestCaseData("shipping-cache-constants", ShippingC1b with { CacheConstants = true }).SetName("Golden_shipping_cache_constants");
+    }
+
+    [TestCaseSource(nameof(C1bOptionSets))]
+    public void C1b_emission_matches_snapshot(string set, CppCpuOptions options) => CheckSnapshot(set, options, SharedC1b.Value);
 }

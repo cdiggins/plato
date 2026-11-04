@@ -13,6 +13,8 @@ namespace Ara3D.Geometry.CppWriter.Policies
         public ISumLayout Sums { get; init; }
         public IStringLiteralPolicy Strings { get; init; }
         public IUnitPartitioner Units { get; init; }
+        public IListBuilderPolicy Lists { get; init; }
+        public IConstantCachePolicy Constants { get; init; }
         public IFunctionAttributes Attributes { get; init; }
         public LoweredLoopEmitters Loops { get; init; }
 
@@ -24,6 +26,8 @@ namespace Ara3D.Geometry.CppWriter.Policies
             Sums = options.CompactSums ? new CompactUnionSumLayout(options.SwitchSumDispatch)
                 : options.SwitchSumDispatch ? new SwitchKindSumLayout() : new FlattenedKindSumLayout(),
             Strings = options.StaticStringLiterals ? new StaticStringLiterals() : new MakeStringLiterals(),
+            Lists = options.Presize ? new PresizedListBuilders() : new GrowingListBuilders(),
+            Constants = options.CacheConstants ? new FunctionLocalStaticConstants() : new NoConstantCaching(),
             Units = new LineLimitPartitioner { MaxFunctionLines = options.UnitLines },
             Attributes = new NoFunctionAttributes(),
             Loops = BuiltInLoopEmitters.Create(),

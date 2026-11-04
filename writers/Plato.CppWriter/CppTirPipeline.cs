@@ -19,6 +19,9 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>The passes the Cpu dialect runs, in order.</summary>
         public static readonly IReadOnlyList<string> PassOrder = new[]
         {
+            // Presize matches the source loop `while (i < bound)`; once inlined, an Integer LessThan on plain names is
+            // `(i <= bound) ? !(i == bound) : false` and no longer matches, so it runs first (TKT-1183).
+            SharedPasses.Presize,
             SharedPasses.Inline, SharedPasses.Fuse, SharedPasses.FuseConsumers, SharedPasses.ShareCalls, SharedPasses.LowerLoops,
         };
 
@@ -37,6 +40,7 @@ namespace Ara3D.Geometry.CppWriter
             s.Set("fuse-consumers", options.FuseConsumers);
             s.Set("exact-output", options.ExactOutput);
             s.Set("share-calls", options.ShareCalls);
+            s.Set("presize", options.Presize);
             return s;
         }
 
