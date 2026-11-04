@@ -40,6 +40,8 @@ namespace Ara3D.Geometry.CppWriter
 
         private bool IsUnionSafe(TypeInstance ti, HashSet<string> visiting)
         {
+            if (ti.Name == "Array" || ti.Name == "IArray")
+                return true; // a view whatever its element
             var cpp = CppTypeNameOrNull(ti);
             if (cpp == null)
                 return false;
