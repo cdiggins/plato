@@ -4776,6 +4776,20 @@ bool AnyBig(Vector3D v)
 
 int32_t ComponentCount(Vector3D v) { return ToCount(v); }
 
+double Spread(Vector3D a, Vector3D b)
+{
+    auto _s2 = ComponentArray(Vector3D{ (a.X - b.X), (a.Y - b.Y), (a.Z - b.Z) });
+    double _lp2 = 0.0;
+    int32_t _n2 = _s2.count;
+    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
+    {
+        auto _eval0_2 = _lp2;
+        auto _eval1_2 = _s2.data[_i2];
+        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
+    }
+    return _lp2;
+}
+
 Vector3D Multiply(Vector3D a, Vector3D b) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x * y); }); }
 
 Vector3D Divide(Vector3D a, Vector3D b) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x / y); }); }
@@ -4988,19 +5002,5 @@ Vector3D Hermite(Vector3D p0, Vector3D p1, Vector3D m0, Vector3D m1, double t) {
 Vector3D HermiteDerivative(Vector3D p0, Vector3D p1, Vector3D m0, Vector3D m1, double t) { return Add(Add(Add(Multiply(p0, ((6.0 * (t * t)) - (6.0 * t))), Multiply(m0, (((3.0 * (t * t)) - (4.0 * t)) + 1.0))), Multiply(p1, ((6.0 * t) - (6.0 * (t * t))))), Multiply(m1, ((3.0 * (t * t)) - (2.0 * t)))); }
 
 Vector3D CatmullRom(Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3, double t) { return Multiply(Add(Add(Add(Multiply(p1, 2.0), Multiply(Subtract(p2, p0), t)), Multiply(Subtract(Subtract(Add(Multiply(p0, 2.0), Multiply(p2, 4.0)), Multiply(p1, 5.0)), p3), (t * t))), Multiply(Subtract(Subtract(Add(Multiply(p1, 3.0), p3), p0), Multiply(p2, 3.0)), ((t * t) * t))), 0.5); }
-
-Vector3D CatmullRomDerivative(Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3, double t) { return Multiply(Add(Add(Subtract(p2, p0), Multiply(Subtract(Subtract(Add(Multiply(p0, 2.0), Multiply(p2, 4.0)), Multiply(p1, 5.0)), p3), (2.0 * t))), Multiply(Subtract(Subtract(Add(Multiply(p1, 3.0), p3), p0), Multiply(p2, 3.0)), (3.0 * (t * t)))), 0.5); }
-
-Vector3D Double(Vector3D x) { return Add(x, x); }
-
-Vector3D Half(Vector3D x) { return Divide(x, 2.0); }
-
-Vector3D Third(Vector3D x) { return Divide(x, 3.0); }
-
-Vector3D Quarter(Vector3D x) { return Divide(x, 4.0); }
-
-Vector3D Eighth(Vector3D x) { return Divide(x, 8.0); }
-
-Vector3D Sixteenth(Vector3D x) { return Divide(x, 16.0); }
 
 } // namespace plato

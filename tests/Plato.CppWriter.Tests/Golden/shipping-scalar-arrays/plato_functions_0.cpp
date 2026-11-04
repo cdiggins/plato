@@ -2863,31 +2863,9 @@ Matrix2x2 Divide(Matrix2x2 self, double scalar) { return Matrix2x2{ Number2{ (se
 
 Matrix2x2 Modulo(Matrix2x2 self, double scalar)
 {
-    Number2 _eval1 = self.Row1;
-    auto _s2 = ComponentArray(self.Row1);
-    int32_t _n2 = _s2.count;
-    double* _a2 = plato::arena_alloc<double>(_n2);
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _s2.data[_i2];
-        _a2[_i2] = fmodf(_eval0_2, scalar);
-    }
-    auto _lp2 = plato::make_array(_a2, _n2);
-    Array<double> _eval2 = _lp2;
-    Number2 _eval6 = FromComponents(_eval1, _eval2);
-    Number2 _eval4 = self.Row2;
-    auto _s3 = ComponentArray(self.Row2);
-    int32_t _n3 = _s3.count;
-    double* _a3 = plato::arena_alloc<double>(_n3);
-    for (int32_t _i3 = 0; _i3 < _n3; _i3++)
-    {
-        auto _eval3_3 = _s3.data[_i3];
-        _a3[_i3] = fmodf(_eval3_3, scalar);
-    }
-    auto _lp3 = plato::make_array(_a3, _n3);
-    Array<double> _eval5 = _lp3;
-    Number2 _eval7 = FromComponents(_eval4, _eval5);
-    return Matrix2x2{ _eval6, _eval7 };
+    Number2 _cr0 = self.Row1;
+    Number2 _cr1 = self.Row2;
+    return Matrix2x2{ FromComponents(self.Row1, ([&]() -> plato::Array<double> { double* _lit0 = plato::arena_alloc<double>(2); _lit0[0] = fmodf(_cr0.X, scalar); _lit0[1] = fmodf(_cr0.Y, scalar); return plato::make_array(_lit0, 2); }())), FromComponents(self.Row2, ([&]() -> plato::Array<double> { double* _lit1 = plato::arena_alloc<double>(2); _lit1[0] = fmodf(_cr1.X, scalar); _lit1[1] = fmodf(_cr1.Y, scalar); return plato::make_array(_lit1, 2); }())) };
 }
 
 Matrix2x2 Zero(Matrix2x2 _) { return Matrix2x2{ Tuple2{ 0.0, 0.0 }, Tuple2{ 0.0, 0.0 } }; }
@@ -2999,43 +2977,10 @@ Matrix3x3 Divide(Matrix3x3 self, double scalar) { return Matrix3x3{ Number3{ (se
 
 Matrix3x3 Modulo(Matrix3x3 self, double scalar)
 {
-    Number3 _eval1 = self.Row1;
-    auto _s3 = ComponentArray(self.Row1);
-    int32_t _n3 = _s3.count;
-    double* _a3 = plato::arena_alloc<double>(_n3);
-    for (int32_t _i3 = 0; _i3 < _n3; _i3++)
-    {
-        auto _eval0_3 = _s3.data[_i3];
-        _a3[_i3] = fmodf(_eval0_3, scalar);
-    }
-    auto _lp3 = plato::make_array(_a3, _n3);
-    Array<double> _eval2 = _lp3;
-    Number3 _eval9 = FromComponents(_eval1, _eval2);
-    Number3 _eval4 = self.Row2;
-    auto _s4 = ComponentArray(self.Row2);
-    int32_t _n4 = _s4.count;
-    double* _a4 = plato::arena_alloc<double>(_n4);
-    for (int32_t _i4 = 0; _i4 < _n4; _i4++)
-    {
-        auto _eval3_4 = _s4.data[_i4];
-        _a4[_i4] = fmodf(_eval3_4, scalar);
-    }
-    auto _lp4 = plato::make_array(_a4, _n4);
-    Array<double> _eval5 = _lp4;
-    Number3 _eval10 = FromComponents(_eval4, _eval5);
-    Number3 _eval7 = self.Row3;
-    auto _s5 = ComponentArray(self.Row3);
-    int32_t _n5 = _s5.count;
-    double* _a5 = plato::arena_alloc<double>(_n5);
-    for (int32_t _i5 = 0; _i5 < _n5; _i5++)
-    {
-        auto _eval6_5 = _s5.data[_i5];
-        _a5[_i5] = fmodf(_eval6_5, scalar);
-    }
-    auto _lp5 = plato::make_array(_a5, _n5);
-    Array<double> _eval8 = _lp5;
-    Number3 _eval11 = FromComponents(_eval7, _eval8);
-    return Matrix3x3{ _eval9, _eval10, _eval11 };
+    Number3 _cr0 = self.Row1;
+    Number3 _cr1 = self.Row2;
+    Number3 _cr2 = self.Row3;
+    return Matrix3x3{ FromComponents(self.Row1, ([&]() -> plato::Array<double> { double* _lit0 = plato::arena_alloc<double>(3); _lit0[0] = fmodf(_cr0.X, scalar); _lit0[1] = fmodf(_cr0.Y, scalar); _lit0[2] = fmodf(_cr0.Z, scalar); return plato::make_array(_lit0, 3); }())), FromComponents(self.Row2, ([&]() -> plato::Array<double> { double* _lit1 = plato::arena_alloc<double>(3); _lit1[0] = fmodf(_cr1.X, scalar); _lit1[1] = fmodf(_cr1.Y, scalar); _lit1[2] = fmodf(_cr1.Z, scalar); return plato::make_array(_lit1, 3); }())), FromComponents(self.Row3, ([&]() -> plato::Array<double> { double* _lit2 = plato::arena_alloc<double>(3); _lit2[0] = fmodf(_cr2.X, scalar); _lit2[1] = fmodf(_cr2.Y, scalar); _lit2[2] = fmodf(_cr2.Z, scalar); return plato::make_array(_lit2, 3); }())) };
 }
 
 Matrix3x3 Zero(Matrix3x3 _) { return Matrix3x3{ Tuple3{ 0.0, 0.0, 0.0 }, Tuple3{ 0.0, 0.0, 0.0 }, Tuple3{ 0.0, 0.0, 0.0 } }; }
@@ -3411,55 +3356,11 @@ Matrix4x4 Negative(Matrix4x4 self) { return Matrix4x4{ Number4{ (-self.Row1.X), 
 
 Matrix4x4 Modulo(Matrix4x4 self, double scalar)
 {
-    Number4 _eval1 = self.Row1;
-    auto _s4 = ComponentArray(self.Row1);
-    int32_t _n4 = _s4.count;
-    double* _a4 = plato::arena_alloc<double>(_n4);
-    for (int32_t _i4 = 0; _i4 < _n4; _i4++)
-    {
-        auto _eval0_4 = _s4.data[_i4];
-        _a4[_i4] = fmodf(_eval0_4, scalar);
-    }
-    auto _lp4 = plato::make_array(_a4, _n4);
-    Array<double> _eval2 = _lp4;
-    Number4 _eval12 = FromComponents(_eval1, _eval2);
-    Number4 _eval4 = self.Row2;
-    auto _s5 = ComponentArray(self.Row2);
-    int32_t _n5 = _s5.count;
-    double* _a5 = plato::arena_alloc<double>(_n5);
-    for (int32_t _i5 = 0; _i5 < _n5; _i5++)
-    {
-        auto _eval3_5 = _s5.data[_i5];
-        _a5[_i5] = fmodf(_eval3_5, scalar);
-    }
-    auto _lp5 = plato::make_array(_a5, _n5);
-    Array<double> _eval5 = _lp5;
-    Number4 _eval13 = FromComponents(_eval4, _eval5);
-    Number4 _eval7 = self.Row3;
-    auto _s6 = ComponentArray(self.Row3);
-    int32_t _n6 = _s6.count;
-    double* _a6 = plato::arena_alloc<double>(_n6);
-    for (int32_t _i6 = 0; _i6 < _n6; _i6++)
-    {
-        auto _eval6_6 = _s6.data[_i6];
-        _a6[_i6] = fmodf(_eval6_6, scalar);
-    }
-    auto _lp6 = plato::make_array(_a6, _n6);
-    Array<double> _eval8 = _lp6;
-    Number4 _eval14 = FromComponents(_eval7, _eval8);
-    Number4 _eval10 = self.Row4;
-    auto _s7 = ComponentArray(self.Row4);
-    int32_t _n7 = _s7.count;
-    double* _a7 = plato::arena_alloc<double>(_n7);
-    for (int32_t _i7 = 0; _i7 < _n7; _i7++)
-    {
-        auto _eval9_7 = _s7.data[_i7];
-        _a7[_i7] = fmodf(_eval9_7, scalar);
-    }
-    auto _lp7 = plato::make_array(_a7, _n7);
-    Array<double> _eval11 = _lp7;
-    Number4 _eval15 = FromComponents(_eval10, _eval11);
-    return Matrix4x4{ _eval12, _eval13, _eval14, _eval15 };
+    Number4 _cr0 = self.Row1;
+    Number4 _cr1 = self.Row2;
+    Number4 _cr2 = self.Row3;
+    Number4 _cr3 = self.Row4;
+    return Matrix4x4{ FromComponents(self.Row1, ([&]() -> plato::Array<double> { double* _lit0 = plato::arena_alloc<double>(4); _lit0[0] = fmodf(_cr0.X, scalar); _lit0[1] = fmodf(_cr0.Y, scalar); _lit0[2] = fmodf(_cr0.Z, scalar); _lit0[3] = fmodf(_cr0.W, scalar); return plato::make_array(_lit0, 4); }())), FromComponents(self.Row2, ([&]() -> plato::Array<double> { double* _lit1 = plato::arena_alloc<double>(4); _lit1[0] = fmodf(_cr1.X, scalar); _lit1[1] = fmodf(_cr1.Y, scalar); _lit1[2] = fmodf(_cr1.Z, scalar); _lit1[3] = fmodf(_cr1.W, scalar); return plato::make_array(_lit1, 4); }())), FromComponents(self.Row3, ([&]() -> plato::Array<double> { double* _lit2 = plato::arena_alloc<double>(4); _lit2[0] = fmodf(_cr2.X, scalar); _lit2[1] = fmodf(_cr2.Y, scalar); _lit2[2] = fmodf(_cr2.Z, scalar); _lit2[3] = fmodf(_cr2.W, scalar); return plato::make_array(_lit2, 4); }())), FromComponents(self.Row4, ([&]() -> plato::Array<double> { double* _lit3 = plato::arena_alloc<double>(4); _lit3[0] = fmodf(_cr3.X, scalar); _lit3[1] = fmodf(_cr3.Y, scalar); _lit3[2] = fmodf(_cr3.Z, scalar); _lit3[3] = fmodf(_cr3.W, scalar); return plato::make_array(_lit3, 4); }())) };
 }
 
 Matrix4x4 Zero(Matrix4x4 _) { return Matrix4x4{ Tuple4{ 0.0, 0.0, 0.0, 0.0 }, Tuple4{ 0.0, 0.0, 0.0, 0.0 }, Tuple4{ 0.0, 0.0, 0.0, 0.0 }, Tuple4{ 0.0, 0.0, 0.0, 0.0 } }; }
@@ -3666,43 +3567,10 @@ Matrix3x2 Negative(Matrix3x2 self) { return Matrix3x2{ Number2{ (-self.Row1.X), 
 
 Matrix3x2 Modulo(Matrix3x2 self, double scalar)
 {
-    Number2 _eval1 = self.Row1;
-    auto _s3 = ComponentArray(self.Row1);
-    int32_t _n3 = _s3.count;
-    double* _a3 = plato::arena_alloc<double>(_n3);
-    for (int32_t _i3 = 0; _i3 < _n3; _i3++)
-    {
-        auto _eval0_3 = _s3.data[_i3];
-        _a3[_i3] = fmodf(_eval0_3, scalar);
-    }
-    auto _lp3 = plato::make_array(_a3, _n3);
-    Array<double> _eval2 = _lp3;
-    Number2 _eval9 = FromComponents(_eval1, _eval2);
-    Number2 _eval4 = self.Row2;
-    auto _s4 = ComponentArray(self.Row2);
-    int32_t _n4 = _s4.count;
-    double* _a4 = plato::arena_alloc<double>(_n4);
-    for (int32_t _i4 = 0; _i4 < _n4; _i4++)
-    {
-        auto _eval3_4 = _s4.data[_i4];
-        _a4[_i4] = fmodf(_eval3_4, scalar);
-    }
-    auto _lp4 = plato::make_array(_a4, _n4);
-    Array<double> _eval5 = _lp4;
-    Number2 _eval10 = FromComponents(_eval4, _eval5);
-    Number2 _eval7 = self.Row3;
-    auto _s5 = ComponentArray(self.Row3);
-    int32_t _n5 = _s5.count;
-    double* _a5 = plato::arena_alloc<double>(_n5);
-    for (int32_t _i5 = 0; _i5 < _n5; _i5++)
-    {
-        auto _eval6_5 = _s5.data[_i5];
-        _a5[_i5] = fmodf(_eval6_5, scalar);
-    }
-    auto _lp5 = plato::make_array(_a5, _n5);
-    Array<double> _eval8 = _lp5;
-    Number2 _eval11 = FromComponents(_eval7, _eval8);
-    return Matrix3x2{ _eval9, _eval10, _eval11 };
+    Number2 _cr0 = self.Row1;
+    Number2 _cr1 = self.Row2;
+    Number2 _cr2 = self.Row3;
+    return Matrix3x2{ FromComponents(self.Row1, ([&]() -> plato::Array<double> { double* _lit0 = plato::arena_alloc<double>(2); _lit0[0] = fmodf(_cr0.X, scalar); _lit0[1] = fmodf(_cr0.Y, scalar); return plato::make_array(_lit0, 2); }())), FromComponents(self.Row2, ([&]() -> plato::Array<double> { double* _lit1 = plato::arena_alloc<double>(2); _lit1[0] = fmodf(_cr1.X, scalar); _lit1[1] = fmodf(_cr1.Y, scalar); return plato::make_array(_lit1, 2); }())), FromComponents(self.Row3, ([&]() -> plato::Array<double> { double* _lit2 = plato::arena_alloc<double>(2); _lit2[0] = fmodf(_cr2.X, scalar); _lit2[1] = fmodf(_cr2.Y, scalar); return plato::make_array(_lit2, 2); }())) };
 }
 
 Matrix3x2 Zero(Matrix3x2 _) { return Matrix3x2{ Tuple2{ 0.0, 0.0 }, Tuple2{ 0.0, 0.0 }, Tuple2{ 0.0, 0.0 } }; }
@@ -3810,55 +3678,11 @@ Matrix4x3 Divide(Matrix4x3 self, double scalar) { return Matrix4x3{ Number3{ (se
 
 Matrix4x3 Modulo(Matrix4x3 self, double scalar)
 {
-    Number3 _eval1 = self.Row1;
-    auto _s4 = ComponentArray(self.Row1);
-    int32_t _n4 = _s4.count;
-    double* _a4 = plato::arena_alloc<double>(_n4);
-    for (int32_t _i4 = 0; _i4 < _n4; _i4++)
-    {
-        auto _eval0_4 = _s4.data[_i4];
-        _a4[_i4] = fmodf(_eval0_4, scalar);
-    }
-    auto _lp4 = plato::make_array(_a4, _n4);
-    Array<double> _eval2 = _lp4;
-    Number3 _eval12 = FromComponents(_eval1, _eval2);
-    Number3 _eval4 = self.Row2;
-    auto _s5 = ComponentArray(self.Row2);
-    int32_t _n5 = _s5.count;
-    double* _a5 = plato::arena_alloc<double>(_n5);
-    for (int32_t _i5 = 0; _i5 < _n5; _i5++)
-    {
-        auto _eval3_5 = _s5.data[_i5];
-        _a5[_i5] = fmodf(_eval3_5, scalar);
-    }
-    auto _lp5 = plato::make_array(_a5, _n5);
-    Array<double> _eval5 = _lp5;
-    Number3 _eval13 = FromComponents(_eval4, _eval5);
-    Number3 _eval7 = self.Row3;
-    auto _s6 = ComponentArray(self.Row3);
-    int32_t _n6 = _s6.count;
-    double* _a6 = plato::arena_alloc<double>(_n6);
-    for (int32_t _i6 = 0; _i6 < _n6; _i6++)
-    {
-        auto _eval6_6 = _s6.data[_i6];
-        _a6[_i6] = fmodf(_eval6_6, scalar);
-    }
-    auto _lp6 = plato::make_array(_a6, _n6);
-    Array<double> _eval8 = _lp6;
-    Number3 _eval14 = FromComponents(_eval7, _eval8);
-    Number3 _eval10 = self.Row4;
-    auto _s7 = ComponentArray(self.Row4);
-    int32_t _n7 = _s7.count;
-    double* _a7 = plato::arena_alloc<double>(_n7);
-    for (int32_t _i7 = 0; _i7 < _n7; _i7++)
-    {
-        auto _eval9_7 = _s7.data[_i7];
-        _a7[_i7] = fmodf(_eval9_7, scalar);
-    }
-    auto _lp7 = plato::make_array(_a7, _n7);
-    Array<double> _eval11 = _lp7;
-    Number3 _eval15 = FromComponents(_eval10, _eval11);
-    return Matrix4x3{ _eval12, _eval13, _eval14, _eval15 };
+    Number3 _cr0 = self.Row1;
+    Number3 _cr1 = self.Row2;
+    Number3 _cr2 = self.Row3;
+    Number3 _cr3 = self.Row4;
+    return Matrix4x3{ FromComponents(self.Row1, ([&]() -> plato::Array<double> { double* _lit0 = plato::arena_alloc<double>(3); _lit0[0] = fmodf(_cr0.X, scalar); _lit0[1] = fmodf(_cr0.Y, scalar); _lit0[2] = fmodf(_cr0.Z, scalar); return plato::make_array(_lit0, 3); }())), FromComponents(self.Row2, ([&]() -> plato::Array<double> { double* _lit1 = plato::arena_alloc<double>(3); _lit1[0] = fmodf(_cr1.X, scalar); _lit1[1] = fmodf(_cr1.Y, scalar); _lit1[2] = fmodf(_cr1.Z, scalar); return plato::make_array(_lit1, 3); }())), FromComponents(self.Row3, ([&]() -> plato::Array<double> { double* _lit2 = plato::arena_alloc<double>(3); _lit2[0] = fmodf(_cr2.X, scalar); _lit2[1] = fmodf(_cr2.Y, scalar); _lit2[2] = fmodf(_cr2.Z, scalar); return plato::make_array(_lit2, 3); }())), FromComponents(self.Row4, ([&]() -> plato::Array<double> { double* _lit3 = plato::arena_alloc<double>(3); _lit3[0] = fmodf(_cr3.X, scalar); _lit3[1] = fmodf(_cr3.Y, scalar); _lit3[2] = fmodf(_cr3.Z, scalar); return plato::make_array(_lit3, 3); }())) };
 }
 
 Matrix4x3 Zero(Matrix4x3 _) { return Matrix4x3{ Tuple3{ 0.0, 0.0, 0.0 }, Tuple3{ 0.0, 0.0, 0.0 }, Tuple3{ 0.0, 0.0, 0.0 }, Tuple3{ 0.0, 0.0, 0.0 } }; }
@@ -5002,5 +4826,182 @@ DualNumber Divide(DualNumber a, DualNumber b) { return DualNumber{ (a.Value / b.
 DualNumber Divide(DualNumber x, double scalar) { return DualNumber{ (x.Value / scalar), (x.Derivative / scalar) }; }
 
 DualNumber Modulo(DualNumber x, double scalar) { return DualNumber{ fmodf(x.Value, scalar), x.Derivative }; }
+
+DualNumber One(DualNumber _) { return DualNumber{ 1.0, 0.0 }; }
+
+DualNumber Lerp(DualNumber a, DualNumber b, double t) { return DualNumber{ (a.Value + ((b.Value - a.Value) * t)), (a.Derivative + ((b.Derivative - a.Derivative) * t)) }; }
+
+DualNumber MinValue(DualNumber _) { return DualNumber{ MinValue(0.0), 0.0 }; }
+
+DualNumber MaxValue(DualNumber _) { return DualNumber{ MaxValue(0.0), 0.0 }; }
+
+DualNumber Square(DualNumber x) { return DualNumber{ (x.Value * x.Value), ((2.0 * x.Value) * x.Derivative) }; }
+
+DualNumber Reciprocal(DualNumber x) { return DualNumber{ (1.0 / x.Value), ((-x.Derivative) / (x.Value * x.Value)) }; }
+
+DualNumber Sqrt(DualNumber x) { return DualNumber{ Sqrt(x.Value), (x.Derivative / (2.0 * Sqrt(x.Value))) }; }
+
+DualNumber Pow(DualNumber x, double power) { return DualNumber{ Pow(x.Value, power), ((power * Pow(x.Value, (power - 1.0))) * x.Derivative) }; }
+
+DualNumber Exp(DualNumber x) { return DualNumber{ Exp(x.Value), (Exp(x.Value) * x.Derivative) }; }
+
+DualNumber NaturalLog(DualNumber x) { return DualNumber{ NaturalLog(x.Value), (x.Derivative / x.Value) }; }
+
+DualNumber Sin(DualNumber x) { return DualNumber{ Sin(x.Value), (Cos(x.Value) * x.Derivative) }; }
+
+DualNumber Cos(DualNumber x) { return DualNumber{ Cos(x.Value), ((-Sin(x.Value)) * x.Derivative) }; }
+
+DualNumber Tan(DualNumber x) { return DualNumber{ (Sin(x.Value) / Cos(x.Value)), (x.Derivative / Square(Cos(x.Value))) }; }
+
+DualNumber Abs(DualNumber x) { return DualNumber{ ((0.0 <= x.Value) ? x.Value : (-x.Value)), (ToNumber(((0.0 <= x.Value) ? ((x.Value <= 0.0) ? 0 : 1) : (-1))) * x.Derivative) }; }
+
+bool IsZero(DualNumber x) { return (x == Zero(x)); }
+
+bool IsOne(DualNumber x) { return (x == One(x)); }
+
+DualNumber LinearCombination(DualNumber a, DualNumber b, double s, double t) { return DualNumber{ (Multiply(a, s).Value + Multiply(b, t).Value), (Multiply(a, s).Derivative + Multiply(b, t).Derivative) }; }
+
+DualNumber Barycentric(DualNumber a, DualNumber b, DualNumber c, double u, double v) { return Add(Add(a, DualNumber{ (Subtract(b, a).Value * u), (Subtract(b, a).Derivative * u) }), DualNumber{ (Subtract(c, a).Value * v), (Subtract(c, a).Derivative * v) }); }
+
+DualNumber Linear(DualNumber m, DualNumber b, double x) { return DualNumber{ (Multiply(m, x).Value + b.Value), (Multiply(m, x).Derivative + b.Derivative) }; }
+
+DualNumber LinearDerivative(DualNumber m, DualNumber b, double x) { return m; }
+
+DualNumber LinearSecondDerivative(DualNumber m, DualNumber b, double x) { return Zero(m); }
+
+DualNumber Quadratic(DualNumber a, DualNumber b, DualNumber c, double x) { return Add(DualNumber{ (Multiply(a, (x * x)).Value + Multiply(b, x).Value), (Multiply(a, (x * x)).Derivative + Multiply(b, x).Derivative) }, c); }
+
+DualNumber QuadraticDerivative(DualNumber a, DualNumber b, DualNumber c, double x) { return DualNumber{ (Multiply(a, (2.0 * x)).Value + b.Value), (Multiply(a, (2.0 * x)).Derivative + b.Derivative) }; }
+
+DualNumber QuadraticSecondDerivative(DualNumber a, DualNumber b, DualNumber c, double x) { return Multiply(a, 2.0); }
+
+DualNumber Cubic(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double x) { return Add(Add(DualNumber{ (Multiply(a, ((x * x) * x)).Value + Multiply(b, (x * x)).Value), (Multiply(a, ((x * x) * x)).Derivative + Multiply(b, (x * x)).Derivative) }, Multiply(c, x)), d); }
+
+DualNumber CubicDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double x) { return Add(DualNumber{ (Multiply(a, (3.0 * (x * x))).Value + Multiply(b, (2.0 * x)).Value), (Multiply(a, (3.0 * (x * x))).Derivative + Multiply(b, (2.0 * x)).Derivative) }, c); }
+
+DualNumber CubicSecondDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double x) { return DualNumber{ (Multiply(a, (6.0 * x)).Value + Multiply(b, 2.0).Value), (Multiply(a, (6.0 * x)).Derivative + Multiply(b, 2.0).Derivative) }; }
+
+DualNumber Quartic(DualNumber a, DualNumber b, DualNumber c, DualNumber d, DualNumber e, double x) { return Add(Add(Add(Add(Multiply(a, ((x * x) * (x * x))), Multiply(b, ((x * x) * x))), Multiply(c, (x * x))), Multiply(d, x)), e); }
+
+DualNumber QuarticDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, DualNumber e, double x) { return Add(Add(Add(Multiply(a, ((4.0 * (x * x)) * x)), Multiply(b, (3.0 * (x * x)))), Multiply(c, (2.0 * x))), d); }
+
+DualNumber QuarticSecondDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, DualNumber e, double x) { return Add(DualNumber{ (Multiply(a, (12.0 * (x * x))).Value + Multiply(b, (6.0 * x)).Value), (Multiply(a, (12.0 * (x * x))).Derivative + Multiply(b, (6.0 * x)).Derivative) }, Multiply(c, 2.0)); }
+
+DualNumber QuadraticBezier(DualNumber a, DualNumber b, DualNumber c, double t) { return Add(Add(Multiply(a, ((1.0 - t) * (1.0 - t))), Multiply(b, ((2.0 * (1.0 - t)) * t))), Multiply(c, (t * t))); }
+
+DualNumber QuadraticBezierDerivative(DualNumber a, DualNumber b, DualNumber c, double t) { return Add(DualNumber{ (Subtract(b, a).Value * (2.0 * (1.0 - t))), (Subtract(b, a).Derivative * (2.0 * (1.0 - t))) }, DualNumber{ (Subtract(c, b).Value * (2.0 * t)), (Subtract(c, b).Derivative * (2.0 * t)) }); }
+
+DualNumber QuadraticBezierSecondDerivative(DualNumber a, DualNumber b, DualNumber c, double t) { return Multiply(DualNumber{ (Add(a, c).Value - Multiply(b, 2.0).Value), (Add(a, c).Derivative - Multiply(b, 2.0).Derivative) }, 2.0); }
+
+DualNumber CubicBezier(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double t) { return Add(Add(Add(Multiply(a, (((1.0 - t) * (1.0 - t)) * (1.0 - t))), Multiply(b, ((3.0 * ((1.0 - t) * (1.0 - t))) * t))), Multiply(c, ((3.0 * (1.0 - t)) * (t * t)))), Multiply(d, ((t * t) * t))); }
+
+DualNumber CubicBezierDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double t) { return Add(Add(Multiply(Subtract(b, a), (3.0 * ((1.0 - t) * (1.0 - t)))), DualNumber{ (Subtract(c, b).Value * ((6.0 * (1.0 - t)) * t)), (Subtract(c, b).Derivative * ((6.0 * (1.0 - t)) * t)) }), DualNumber{ (Subtract(d, c).Value * (3.0 * (t * t))), (Subtract(d, c).Derivative * (3.0 * (t * t))) }); }
+
+DualNumber CubicBezierSecondDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double t) { return Add(Multiply(DualNumber{ (Add(a, c).Value - Multiply(b, 2.0).Value), (Add(a, c).Derivative - Multiply(b, 2.0).Derivative) }, (6.0 * (1.0 - t))), Multiply(DualNumber{ (Add(b, d).Value - Multiply(c, 2.0).Value), (Add(b, d).Derivative - Multiply(c, 2.0).Derivative) }, (6.0 * t))); }
+
+DualNumber Hermite(DualNumber p0, DualNumber p1, DualNumber m0, DualNumber m1, double t) { return Add(Add(Add(Multiply(p0, ((((2.0 * (t * t)) * t) - (3.0 * (t * t))) + 1.0)), Multiply(m0, ((((t * t) * t) - (2.0 * (t * t))) + t))), Multiply(p1, ((3.0 * (t * t)) - ((2.0 * (t * t)) * t)))), Multiply(m1, (((t * t) * t) - (t * t)))); }
+
+DualNumber HermiteDerivative(DualNumber p0, DualNumber p1, DualNumber m0, DualNumber m1, double t) { return Add(Add(Add(Multiply(p0, ((6.0 * (t * t)) - (6.0 * t))), Multiply(m0, (((3.0 * (t * t)) - (4.0 * t)) + 1.0))), Multiply(p1, ((6.0 * t) - (6.0 * (t * t))))), Multiply(m1, ((3.0 * (t * t)) - (2.0 * t)))); }
+
+DualNumber CatmullRom(DualNumber p0, DualNumber p1, DualNumber p2, DualNumber p3, double t) { return Multiply(Add(Add(Add(Multiply(p1, 2.0), DualNumber{ (Subtract(p2, p0).Value * t), (Subtract(p2, p0).Derivative * t) }), Multiply(Subtract(Subtract(DualNumber{ (Multiply(p0, 2.0).Value + Multiply(p2, 4.0).Value), (Multiply(p0, 2.0).Derivative + Multiply(p2, 4.0).Derivative) }, Multiply(p1, 5.0)), p3), (t * t))), Multiply(Subtract(Subtract(DualNumber{ (Multiply(p1, 3.0).Value + p3.Value), (Multiply(p1, 3.0).Derivative + p3.Derivative) }, p0), Multiply(p2, 3.0)), ((t * t) * t))), 0.5); }
+
+DualNumber CatmullRomDerivative(DualNumber p0, DualNumber p1, DualNumber p2, DualNumber p3, double t) { return Multiply(Add(Add(Subtract(p2, p0), Multiply(Subtract(Subtract(DualNumber{ (Multiply(p0, 2.0).Value + Multiply(p2, 4.0).Value), (Multiply(p0, 2.0).Derivative + Multiply(p2, 4.0).Derivative) }, Multiply(p1, 5.0)), p3), (2.0 * t))), Multiply(Subtract(Subtract(DualNumber{ (Multiply(p1, 3.0).Value + p3.Value), (Multiply(p1, 3.0).Derivative + p3.Derivative) }, p0), Multiply(p2, 3.0)), (3.0 * (t * t)))), 0.5); }
+
+DualNumber Double(DualNumber x) { return Add(x, x); }
+
+DualNumber Half(DualNumber x) { return Divide(x, 2.0); }
+
+DualNumber Third(DualNumber x) { return Divide(x, 3.0); }
+
+DualNumber Quarter(DualNumber x) { return Divide(x, 4.0); }
+
+DualNumber Eighth(DualNumber x) { return Divide(x, 8.0); }
+
+DualNumber Sixteenth(DualNumber x) { return Divide(x, 16.0); }
+
+DualNumber Tenth(DualNumber x) { return Divide(x, 10.0); }
+
+DualNumber Hundredth(DualNumber x) { return Divide(x, 100.0); }
+
+DualNumber Thousandth(DualNumber x) { return Divide(x, 1000.0); }
+
+DualNumber Millionth(DualNumber x) { return Divide(x, 1000000.0); }
+
+DualNumber Billionth(DualNumber x) { return Divide(x, 1000000000.0); }
+
+DualNumber Million(DualNumber x) { return Multiply(x, 1000000.0); }
+
+DualNumber Billion(DualNumber x) { return Multiply(x, 1000000000.0); }
+
+DualNumber ToPercent(DualNumber x, double percent) { return Multiply(x, (percent / 100.0)); }
+
+DualNumber MidPoint(DualNumber a, DualNumber b) { return Lerp(a, b, 0.5); }
+
+DualNumber LerpClamped(DualNumber a, DualNumber b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+DualNumber SmoothLerp(DualNumber a, DualNumber b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
+Array<DualNumber> LinearSpace(DualNumber a, DualNumber b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    DualNumber* _a1 = plato::arena_alloc<DualNumber>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Array<DualNumber> LinearSpaceExclusive(DualNumber a, DualNumber b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    DualNumber* _a1 = plato::arena_alloc<DualNumber>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+double Distance(Point2D a, Point2D b)
+{
+    Vector2D _cr0 = Subtract(Vector2D{ b.X, b.Y }, Vector2D{ a.X, a.Y });
+    return Sqrt(((0.0 + (_cr0.X * _cr0.X)) + (_cr0.Y * _cr0.Y)));
+}
+
+double DistanceSquared(Point2D a, Point2D b)
+{
+    Vector2D _cr0 = Subtract(Vector2D{ b.X, b.Y }, Vector2D{ a.X, a.Y });
+    return ((0.0 + (_cr0.X * _cr0.X)) + (_cr0.Y * _cr0.Y));
+}
+
+int32_t Hash(Point2D self) { return BitwiseXor((Hash(self.X) * 31), Hash(self.Y)); }
+
+Point2D Transform(Point2D p, AffineTransform2D a) { return ToPoint(Transform(Vector2D{ p.X, p.Y }, a.Matrix)); }
+
+Point2D Transform(Point2D p, Transform2D t)
+{
+    Matrix3x3 m = t.Matrix;
+    Number3 v = Add(Add(Number3{ (m.Row1.X * p.X), (m.Row1.Y * p.X), (m.Row1.Z * p.X) }, Number3{ (m.Row2.X * p.Y), (m.Row2.Y * p.Y), (m.Row2.Z * p.Y) }), m.Row3);
+    return Point2D{ (v.X / v.Z), (v.Y / v.Z) };
+}
+
+Point2D Transform(Point2D p, Translation2D t) { return FromOffset(p, Add(Vector2D{ p.X, p.Y }, t.Vector)); }
+
+Point2D Transform(Point2D p, Scaling2D s) { return ToPoint(Multiply(Vector2D{ p.X, p.Y }, s.Amount)); }
+
+Point2D Transform(Point2D p, UniformScaling2D s) { return ToPoint(Multiply(Vector2D{ p.X, p.Y }, s.Amount)); }
+
+Point2D Transform(Point2D p, Reflection2D r) { return FromOffset(r.Origin, Add(Vector2D{ r.Origin.X, r.Origin.Y }, Reflect(Subtract(Vector2D{ p.X, p.Y }, Vector2D{ r.Origin.X, r.Origin.Y }), Vector2D{ (-r.Direction.Vector.Y), r.Direction.Vector.X }))); }
+
+Point2D Transform(Point2D p, RotationAbout2D r) { return FromOffset(r.Center, Add(Vector2D{ r.Center.X, r.Center.Y }, Transform(Subtract(Vector2D{ p.X, p.Y }, Vector2D{ r.Center.X, r.Center.Y }), r.Rotation))); }
+
+Point2D Transform(Point2D p, ScalingAbout2D s) { return FromOffset(s.Center, Add(Vector2D{ s.Center.X, s.Center.Y }, Multiply(Subtract(Vector2D{ p.X, p.Y }, Vector2D{ s.Center.X, s.Center.Y }), s.Amount))); }
 
 } // namespace plato

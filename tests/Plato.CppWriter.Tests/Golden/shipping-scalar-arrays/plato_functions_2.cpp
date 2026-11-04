@@ -4,204 +4,6 @@
 
 namespace plato {
 
-int32_t Sign(ArealDensity self) { return Sign(Amount(self)); }
-
-ArealDensity Abs(ArealDensity self) { return (IsNegative(self) ? Negative(self) : self); }
-
-ArealDensity AbsoluteDifference(ArealDensity a, ArealDensity b) { return (((Subtract(a, b).KilogramsPerSquareMeter <= 0.0) ? (!(Subtract(a, b).KilogramsPerSquareMeter == 0.0)) : false) ? ArealDensity{ (-Subtract(a, b).KilogramsPerSquareMeter) } : Subtract(a, b)); }
-
-ArealDensity Add(ArealDensity a, ArealDensity b) { return FromAmount(a, (Amount(a) + Amount(b))); }
-
-ArealDensity Subtract(ArealDensity a, ArealDensity b) { return FromAmount(a, (Amount(a) - Amount(b))); }
-
-ArealDensity Negative(ArealDensity x) { return FromAmount(x, (-Amount(x))); }
-
-ArealDensity Zero(ArealDensity x) { return FromAmount(x, 0.0); }
-
-int32_t Hash(ArealDensity x) { return Hash(Amount(x)); }
-
-bool LessThanOrEquals(ArealDensity a, ArealDensity b) { return (Amount(a) <= Amount(b)); }
-
-ArealDensity Lerp(ArealDensity a, ArealDensity b, double t) { return FromAmount(a, Lerp(Amount(a), Amount(b), t)); }
-
-ArealDensity Multiply(ArealDensity x, double scalar) { return FromAmount(x, (Amount(x) * scalar)); }
-
-ArealDensity Divide(ArealDensity x, double scalar) { return FromAmount(x, (Amount(x) / scalar)); }
-
-ArealDensity Modulo(ArealDensity x, double scalar) { return FromAmount(x, fmodf(Amount(x), scalar)); }
-
-bool LessThan(ArealDensity a, ArealDensity b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(ArealDensity a, ArealDensity b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(ArealDensity a, ArealDensity b) { return LessThanOrEquals(b, a); }
-
-ArealDensity Lesser(ArealDensity a, ArealDensity b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-ArealDensity Greater(ArealDensity a, ArealDensity b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(ArealDensity x, ArealDensity lower, ArealDensity upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-ArealDensity Clamp(ArealDensity x, ArealDensity lower, ArealDensity upper) { return Lesser(Greater(x, lower), upper); }
-
-ArealDensity Min3(ArealDensity a, ArealDensity b, ArealDensity c) { return Lesser(Lesser(a, b), c); }
-
-ArealDensity Max3(ArealDensity a, ArealDensity b, ArealDensity c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ArealDensity a, ArealDensity b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-ArealDensity Double(ArealDensity x) { return Add(x, x); }
-
-ArealDensity Half(ArealDensity x) { return Divide(x, 2.0); }
-
-ArealDensity Third(ArealDensity x) { return Divide(x, 3.0); }
-
-ArealDensity Quarter(ArealDensity x) { return Divide(x, 4.0); }
-
-ArealDensity Eighth(ArealDensity x) { return Divide(x, 8.0); }
-
-ArealDensity Sixteenth(ArealDensity x) { return Divide(x, 16.0); }
-
-ArealDensity Tenth(ArealDensity x) { return Divide(x, 10.0); }
-
-ArealDensity Hundredth(ArealDensity x) { return Divide(x, 100.0); }
-
-ArealDensity Thousandth(ArealDensity x) { return Divide(x, 1000.0); }
-
-ArealDensity Millionth(ArealDensity x) { return Divide(x, 1000000.0); }
-
-ArealDensity Billionth(ArealDensity x) { return Divide(x, 1000000000.0); }
-
-ArealDensity Million(ArealDensity x) { return Multiply(x, 1000000.0); }
-
-ArealDensity Billion(ArealDensity x) { return Multiply(x, 1000000000.0); }
-
-ArealDensity ToPercent(ArealDensity x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-ArealDensity MidPoint(ArealDensity a, ArealDensity b) { return Lerp(a, b, 0.5); }
-
-ArealDensity LerpClamped(ArealDensity a, ArealDensity b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-ArealDensity SmoothLerp(ArealDensity a, ArealDensity b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<ArealDensity> LinearSpace(ArealDensity a, ArealDensity b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    ArealDensity* _a1 = plato::arena_alloc<ArealDensity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<ArealDensity> LinearSpaceExclusive(ArealDensity a, ArealDensity b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    ArealDensity* _a1 = plato::arena_alloc<ArealDensity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-double Amount(LinearDensity x) { return x.KilogramsPerMeter; }
-
-LinearDensity FromAmount(LinearDensity _, double x) { return LinearDensity{ x }; }
-
-bool IsZero(LinearDensity self) { return (Amount(self) == 0.0); }
-
-bool IsPositive(LinearDensity self) { return (0.0 < Amount(self)); }
-
-bool IsNegative(LinearDensity self) { return (Amount(self) < 0.0); }
-
-int32_t Sign(LinearDensity self) { return Sign(Amount(self)); }
-
-LinearDensity Abs(LinearDensity self) { return (IsNegative(self) ? Negative(self) : self); }
-
-LinearDensity AbsoluteDifference(LinearDensity a, LinearDensity b) { return (((Subtract(a, b).KilogramsPerMeter <= 0.0) ? (!(Subtract(a, b).KilogramsPerMeter == 0.0)) : false) ? LinearDensity{ (-Subtract(a, b).KilogramsPerMeter) } : Subtract(a, b)); }
-
-LinearDensity Add(LinearDensity a, LinearDensity b) { return FromAmount(a, (Amount(a) + Amount(b))); }
-
-LinearDensity Subtract(LinearDensity a, LinearDensity b) { return FromAmount(a, (Amount(a) - Amount(b))); }
-
-LinearDensity Negative(LinearDensity x) { return FromAmount(x, (-Amount(x))); }
-
-LinearDensity Zero(LinearDensity x) { return FromAmount(x, 0.0); }
-
-int32_t Hash(LinearDensity x) { return Hash(Amount(x)); }
-
-bool LessThanOrEquals(LinearDensity a, LinearDensity b) { return (Amount(a) <= Amount(b)); }
-
-LinearDensity Lerp(LinearDensity a, LinearDensity b, double t) { return FromAmount(a, Lerp(Amount(a), Amount(b), t)); }
-
-LinearDensity Multiply(LinearDensity x, double scalar) { return FromAmount(x, (Amount(x) * scalar)); }
-
-LinearDensity Divide(LinearDensity x, double scalar) { return FromAmount(x, (Amount(x) / scalar)); }
-
-LinearDensity Modulo(LinearDensity x, double scalar) { return FromAmount(x, fmodf(Amount(x), scalar)); }
-
-bool LessThan(LinearDensity a, LinearDensity b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(LinearDensity a, LinearDensity b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(LinearDensity a, LinearDensity b) { return LessThanOrEquals(b, a); }
-
-LinearDensity Lesser(LinearDensity a, LinearDensity b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-LinearDensity Greater(LinearDensity a, LinearDensity b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(LinearDensity x, LinearDensity lower, LinearDensity upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-LinearDensity Clamp(LinearDensity x, LinearDensity lower, LinearDensity upper) { return Lesser(Greater(x, lower), upper); }
-
-LinearDensity Min3(LinearDensity a, LinearDensity b, LinearDensity c) { return Lesser(Lesser(a, b), c); }
-
-LinearDensity Max3(LinearDensity a, LinearDensity b, LinearDensity c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(LinearDensity a, LinearDensity b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-LinearDensity Double(LinearDensity x) { return Add(x, x); }
-
-LinearDensity Half(LinearDensity x) { return Divide(x, 2.0); }
-
-LinearDensity Third(LinearDensity x) { return Divide(x, 3.0); }
-
-LinearDensity Quarter(LinearDensity x) { return Divide(x, 4.0); }
-
-LinearDensity Eighth(LinearDensity x) { return Divide(x, 8.0); }
-
-LinearDensity Sixteenth(LinearDensity x) { return Divide(x, 16.0); }
-
-LinearDensity Tenth(LinearDensity x) { return Divide(x, 10.0); }
-
-LinearDensity Hundredth(LinearDensity x) { return Divide(x, 100.0); }
-
-LinearDensity Thousandth(LinearDensity x) { return Divide(x, 1000.0); }
-
-LinearDensity Millionth(LinearDensity x) { return Divide(x, 1000000.0); }
-
-LinearDensity Billionth(LinearDensity x) { return Divide(x, 1000000000.0); }
-
-LinearDensity Million(LinearDensity x) { return Multiply(x, 1000000.0); }
-
-LinearDensity Billion(LinearDensity x) { return Multiply(x, 1000000000.0); }
-
-LinearDensity ToPercent(LinearDensity x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-LinearDensity MidPoint(LinearDensity a, LinearDensity b) { return Lerp(a, b, 0.5); }
-
-LinearDensity LerpClamped(LinearDensity a, LinearDensity b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-LinearDensity SmoothLerp(LinearDensity a, LinearDensity b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
 Array<LinearDensity> LinearSpace(LinearDensity a, LinearDensity b, int32_t count)
 {
     auto _s1 = count;
@@ -4342,31 +4144,14 @@ Vector2D MaxValue(Vector2D self) { return Broadcast(self, MaxValue(0.0)); }
 
 double Distance(Vector2D a, Vector2D b)
 {
-    auto _s2 = ComponentArray(Subtract(a, b));
-    double _lp2 = 0.0;
-    int32_t _n2 = _s2.count;
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _lp2;
-        auto _eval1_2 = _s2.data[_i2];
-        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
-    }
-    double _eval2 = _lp2;
-    return Sqrt(_eval2);
+    Vector2D _cr0 = Subtract(a, b);
+    return Sqrt(((0.0 + (_cr0.X * _cr0.X)) + (_cr0.Y * _cr0.Y)));
 }
 
 double DistanceSquared(Vector2D a, Vector2D b)
 {
-    auto _s2 = ComponentArray(Subtract(a, b));
-    double _lp2 = 0.0;
-    int32_t _n2 = _s2.count;
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _lp2;
-        auto _eval1_2 = _s2.data[_i2];
-        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
-    }
-    return _lp2;
+    Vector2D _cr0 = Subtract(a, b);
+    return ((0.0 + (_cr0.X * _cr0.X)) + (_cr0.Y * _cr0.Y));
 }
 
 bool WithinDistance(Vector2D a, Vector2D b, double radius) { return (DistanceSquared(a, b) <= (radius * radius)); }
@@ -4385,20 +4170,8 @@ Vector2D ScaledToLength(Vector2D self, double length) { return MapComponents(Nor
 
 Vector2D Clamp(Vector2D self, Vector2D lo, Vector2D hi)
 {
-    Vector2D _eval2 = Max(self, lo);
-    auto _s2a = ComponentArray(Max(self, lo));
-    auto _s2b = ComponentArray(hi);
-    int32_t _n2 = _s2a.count < _s2b.count ? _s2a.count : _s2b.count;
-    double* _a2 = plato::arena_alloc<double>(_n2);
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _s2a.data[_i2];
-        auto _eval1_2 = _s2b.data[_i2];
-        _a2[_i2] = ((_eval0_2 <= _eval1_2) ? _eval0_2 : _eval1_2);
-    }
-    auto _lp2 = plato::make_array(_a2, _n2);
-    Array<double> _eval3 = _lp2;
-    return FromComponents(_eval2, _eval3);
+    Vector2D _cr0 = Max(self, lo);
+    return FromComponents(Max(self, lo), ([&]() -> plato::Array<double> { double* _lit0 = plato::arena_alloc<double>(2); _lit0[0] = ((_cr0.X <= hi.X) ? _cr0.X : hi.X); _lit0[1] = ((_cr0.Y <= hi.Y) ? _cr0.Y : hi.Y); return plato::make_array(_lit0, 2); }()));
 }
 
 Vector2D Saturate(Vector2D self) { return ZipComponents(Max(self, Zero(self)), One(self), [=](double x, double y) -> double { return ((x <= y) ? x : y); }); }
@@ -4523,20 +4296,8 @@ Vector2D Square(Vector2D x) { return Multiply(x, x); }
 
 Vector2D Cube(Vector2D x)
 {
-    Vector2D _eval2 = Multiply(x, x);
-    auto _s3a = ComponentArray(Multiply(x, x));
-    auto _s3b = ComponentArray(x);
-    int32_t _n3 = _s3a.count < _s3b.count ? _s3a.count : _s3b.count;
-    double* _a3 = plato::arena_alloc<double>(_n3);
-    for (int32_t _i3 = 0; _i3 < _n3; _i3++)
-    {
-        auto _eval0_3 = _s3a.data[_i3];
-        auto _eval1_3 = _s3b.data[_i3];
-        _a3[_i3] = (_eval0_3 * _eval1_3);
-    }
-    auto _lp3 = plato::make_array(_a3, _n3);
-    Array<double> _eval3 = _lp3;
-    return FromComponents(_eval2, _eval3);
+    Vector2D _cr0 = Multiply(x, x);
+    return FromComponents(Multiply(x, x), ([&]() -> plato::Array<double> { double* _lit0 = plato::arena_alloc<double>(2); _lit0[0] = (_cr0.X * x.X); _lit0[1] = (_cr0.Y * x.Y); return plato::make_array(_lit0, 2); }()));
 }
 
 Vector2D Pow4(Vector2D x) { return Square(Square(x)); }
@@ -4595,18 +4356,8 @@ double ScalarTriple(Vector3D a, Vector3D b, Vector3D c) { return Dot(a, Vector3D
 
 bool AreParallel(Vector3D a, Vector3D b, double tolerance)
 {
-    auto _s2 = ComponentArray(Vector3D{ ((a.Y * b.Z) - (a.Z * b.Y)), ((a.Z * b.X) - (a.X * b.Z)), ((a.X * b.Y) - (a.Y * b.X)) });
-    double _lp2 = 0.0;
-    int32_t _n2 = _s2.count;
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _lp2;
-        auto _eval1_2 = _s2.data[_i2];
-        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
-    }
-    double _eval2 = _lp2;
-    double _eval3 = (tolerance * tolerance);
-    return (_eval2 <= _eval3);
+    Vector3D _cr0 = Vector3D{ ((a.Y * b.Z) - (a.Z * b.Y)), ((a.Z * b.X) - (a.X * b.Z)), ((a.X * b.Y) - (a.Y * b.X)) };
+    return ((((0.0 + (_cr0.X * _cr0.X)) + (_cr0.Y * _cr0.Y)) + (_cr0.Z * _cr0.Z)) <= (tolerance * tolerance));
 }
 
 Bivector3D Wedge(Vector3D a, Vector3D b) { return Bivector3D{ ((a.Y * b.Z) - (a.Z * b.Y)), ((a.Z * b.X) - (a.X * b.Z)), ((a.X * b.Y) - (a.Y * b.X)) }; }
@@ -4699,6 +4450,12 @@ bool AnyBig(Vector3D v) { return (((1.0 <= v.X) ? (!(1.0 == v.X)) : false)) || (
 
 int32_t ComponentCount(Vector3D v) { return 3; }
 
+double Spread(Vector3D a, Vector3D b)
+{
+    Vector3D _cr0 = Vector3D{ (a.X - b.X), (a.Y - b.Y), (a.Z - b.Z) };
+    return (((0.0 + (_cr0.X * _cr0.X)) + (_cr0.Y * _cr0.Y)) + (_cr0.Z * _cr0.Z));
+}
+
 Vector3D Multiply(Vector3D a, Vector3D b) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x * y); }); }
 
 Vector3D Divide(Vector3D a, Vector3D b) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x / y); }); }
@@ -4787,31 +4544,14 @@ Vector3D MaxValue(Vector3D self) { return Broadcast(self, MaxValue(0.0)); }
 
 double Distance(Vector3D a, Vector3D b)
 {
-    auto _s2 = ComponentArray(Subtract(a, b));
-    double _lp2 = 0.0;
-    int32_t _n2 = _s2.count;
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _lp2;
-        auto _eval1_2 = _s2.data[_i2];
-        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
-    }
-    double _eval2 = _lp2;
-    return Sqrt(_eval2);
+    Vector3D _cr0 = Subtract(a, b);
+    return Sqrt((((0.0 + (_cr0.X * _cr0.X)) + (_cr0.Y * _cr0.Y)) + (_cr0.Z * _cr0.Z)));
 }
 
 double DistanceSquared(Vector3D a, Vector3D b)
 {
-    auto _s2 = ComponentArray(Subtract(a, b));
-    double _lp2 = 0.0;
-    int32_t _n2 = _s2.count;
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _lp2;
-        auto _eval1_2 = _s2.data[_i2];
-        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
-    }
-    return _lp2;
+    Vector3D _cr0 = Subtract(a, b);
+    return (((0.0 + (_cr0.X * _cr0.X)) + (_cr0.Y * _cr0.Y)) + (_cr0.Z * _cr0.Z));
 }
 
 bool WithinDistance(Vector3D a, Vector3D b, double radius) { return (DistanceSquared(a, b) <= (radius * radius)); }
@@ -4830,20 +4570,8 @@ Vector3D ScaledToLength(Vector3D self, double length) { return MapComponents(Nor
 
 Vector3D Clamp(Vector3D self, Vector3D lo, Vector3D hi)
 {
-    Vector3D _eval2 = Max(self, lo);
-    auto _s2a = ComponentArray(Max(self, lo));
-    auto _s2b = ComponentArray(hi);
-    int32_t _n2 = _s2a.count < _s2b.count ? _s2a.count : _s2b.count;
-    double* _a2 = plato::arena_alloc<double>(_n2);
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _s2a.data[_i2];
-        auto _eval1_2 = _s2b.data[_i2];
-        _a2[_i2] = ((_eval0_2 <= _eval1_2) ? _eval0_2 : _eval1_2);
-    }
-    auto _lp2 = plato::make_array(_a2, _n2);
-    Array<double> _eval3 = _lp2;
-    return FromComponents(_eval2, _eval3);
+    Vector3D _cr0 = Max(self, lo);
+    return FromComponents(Max(self, lo), ([&]() -> plato::Array<double> { double* _lit0 = plato::arena_alloc<double>(3); _lit0[0] = ((_cr0.X <= hi.X) ? _cr0.X : hi.X); _lit0[1] = ((_cr0.Y <= hi.Y) ? _cr0.Y : hi.Y); _lit0[2] = ((_cr0.Z <= hi.Z) ? _cr0.Z : hi.Z); return plato::make_array(_lit0, 3); }()));
 }
 
 Vector3D Saturate(Vector3D self) { return ZipComponents(Max(self, Zero(self)), One(self), [=](double x, double y) -> double { return ((x <= y) ? x : y); }); }
@@ -4968,20 +4696,8 @@ Vector3D Square(Vector3D x) { return Multiply(x, x); }
 
 Vector3D Cube(Vector3D x)
 {
-    Vector3D _eval2 = Multiply(x, x);
-    auto _s3a = ComponentArray(Multiply(x, x));
-    auto _s3b = ComponentArray(x);
-    int32_t _n3 = _s3a.count < _s3b.count ? _s3a.count : _s3b.count;
-    double* _a3 = plato::arena_alloc<double>(_n3);
-    for (int32_t _i3 = 0; _i3 < _n3; _i3++)
-    {
-        auto _eval0_3 = _s3a.data[_i3];
-        auto _eval1_3 = _s3b.data[_i3];
-        _a3[_i3] = (_eval0_3 * _eval1_3);
-    }
-    auto _lp3 = plato::make_array(_a3, _n3);
-    Array<double> _eval3 = _lp3;
-    return FromComponents(_eval2, _eval3);
+    Vector3D _cr0 = Multiply(x, x);
+    return FromComponents(Multiply(x, x), ([&]() -> plato::Array<double> { double* _lit0 = plato::arena_alloc<double>(3); _lit0[0] = (_cr0.X * x.X); _lit0[1] = (_cr0.Y * x.Y); _lit0[2] = (_cr0.Z * x.Z); return plato::make_array(_lit0, 3); }()));
 }
 
 Vector3D Pow4(Vector3D x) { return Square(Square(x)); }
@@ -5003,5 +4719,277 @@ bool IsEmpty(Vector3D self) { return (3 == 0); }
 bool IsNotEmpty(Vector3D self) { return (0 < 3); }
 
 bool IsSingleton(Vector3D self) { return (3 == 1); }
+
+bool IsUnit(Vector3D x, double tolerance) { return (Abs((MagnitudeSquared(x) - 1.0)) <= tolerance); }
+
+bool IsZeroLength(Vector3D x, double tolerance) { return (MagnitudeSquared(x) <= tolerance); }
+
+double At(VectorN self, int32_t i) { return At(self.Components, i); }
+
+int32_t ToCount(VectorN self) { return self.Components.count; }
+
+int32_t NumComponents(VectorN self) { return self.Components.count; }
+
+Array<double> Components(VectorN self) { return self.Components; }
+
+VectorN CreateFromComponents(VectorN _, Array<double> c) { return VectorN{ c }; }
+
+VectorN FromComponents(VectorN _, Array<double> xs) { return VectorN{ xs }; }
+
+VectorN Broadcast(VectorN self, double x) { return VectorN{ Repeat(ToCount(self.Components), x) }; }
+
+int32_t Hash(VectorN self)
+{
+    auto _s0 = self.Components;
+    int32_t _lp0 = 0;
+    int32_t _n0 = _s0.count;
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0 = _lp0;
+        auto _eval1_0 = _s0.data[_i0];
+        _lp0 = ((_eval0_0 * 31) + Hash(_eval1_0));
+    }
+    return _lp0;
+}
+
+VectorN Add(VectorN a, VectorN b) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x + y); }); }
+
+VectorN Subtract(VectorN a, VectorN b) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x - y); }); }
+
+VectorN Multiply(VectorN a, VectorN b) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x * y); }); }
+
+VectorN Divide(VectorN a, VectorN b) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x / y); }); }
+
+VectorN Modulo(VectorN a, VectorN b) { return ZipComponents(a, b, [=](double x, double y) -> double { return fmodf(x, y); }); }
+
+VectorN Negative(VectorN self) { return MapComponents(self, [=](double x) -> double { return (-x); }); }
+
+VectorN Multiply(VectorN self, double scalar) { return MapComponents(self, [=](double x) -> double { return (x * scalar); }); }
+
+VectorN Divide(VectorN self, double scalar) { return MapComponents(self, [=](double x) -> double { return (x / scalar); }); }
+
+VectorN Modulo(VectorN self, double scalar) { return MapComponents(self, [=](double x) -> double { return fmodf(x, scalar); }); }
+
+VectorN Min(VectorN a, VectorN b) { return ZipComponents(a, b, [=](double x, double y) -> double { return ((x <= y) ? x : y); }); }
+
+VectorN Max(VectorN a, VectorN b) { return ZipComponents(a, b, [=](double x, double y) -> double { return ((x <= y) ? y : x); }); }
+
+VectorN Lerp(VectorN a, VectorN b, double t) { return ZipComponents(a, b, [=](double x, double y) -> double { return (x + ((y - x) * t)); }); }
+
+VectorN Abs(VectorN self) { return MapComponents(self, [=](double x) -> double { return ((0.0 <= x) ? x : (-x)); }); }
+
+VectorN Floor(VectorN self) { return MapComponents(self, [=](double x) -> double { return Floor(x); }); }
+
+VectorN Ceiling(VectorN self) { return MapComponents(self, [=](double x) -> double { return (-Floor((-x))); }); }
+
+VectorN Truncate(VectorN self) { return MapComponents(self, [=](double x) -> double { return ((0.0 <= x) ? Floor(x) : (-Floor((-x)))); }); }
+
+VectorN Sqrt(VectorN self) { return MapComponents(self, [=](double x) -> double { return Sqrt(x); }); }
+
+VectorN Cbrt(VectorN self) { return MapComponents(self, [=](double x) -> double { return Cbrt(x); }); }
+
+VectorN Exp(VectorN self) { return MapComponents(self, [=](double x) -> double { return Exp(x); }); }
+
+VectorN NaturalLog(VectorN self) { return MapComponents(self, [=](double x) -> double { return NaturalLog(x); }); }
+
+VectorN Log2(VectorN self) { return MapComponents(self, [=](double x) -> double { return (NaturalLog(x) / 0.6931471805599453); }); }
+
+VectorN Log10(VectorN self) { return MapComponents(self, [=](double x) -> double { return (NaturalLog(x) / 2.302585092994046); }); }
+
+VectorN Reciprocal(VectorN self) { return MapComponents(self, [=](double x) -> double { return (1.0 / x); }); }
+
+VectorN Pow(VectorN self, VectorN power) { return ZipComponents(self, power, [=](double x, double y) -> double { return Pow(x, y); }); }
+
+VectorN Pow(VectorN self, double power) { return MapComponents(self, [=](double x) -> double { return Pow(x, power); }); }
+
+VectorN CopySign(VectorN self, VectorN sign) { return ZipComponents(self, sign, [=](double x, double y) -> double { return ((0.0 <= y) ? ((0.0 <= x) ? x : (-x)) : (-((0.0 <= x) ? x : (-x)))); }); }
+
+VectorN FusedMultiplyAdd(VectorN self, VectorN y, VectorN z) { return ZipComponents(self, y, z, [=](double a, double b, double c) -> double { return FusedMultiplyAdd(a, b, c); }); }
+
+VectorN Clamp(VectorN self, double lo, double hi) { return MapComponents(self, [=](double x) -> double { return Lesser(((x <= lo) ? lo : x), hi); }); }
+
+VectorN FractionalPart(VectorN self) { return MapComponents(self, [=](double x) -> double { return (x - Floor(x)); }); }
+
+VectorN OneMinus(VectorN self) { return MapComponents(self, [=](double x) -> double { return (1.0 - x); }); }
+
+VectorN RoundedToNearest(VectorN self) { return MapComponents(self, [=](double x) -> double { return Floor((x + (1.0 / 2.0))); }); }
+
+bool AlmostEqual(VectorN a, VectorN b, double tolerance) { return AllZipComponents(a, b, [=](double x, double y) -> bool { return (((((x - y) <= 0.0) ? (!((x - y) == 0.0)) : false) ? (-(x - y)) : (x - y)) <= tolerance); }); }
+
+bool AlmostZero(VectorN self, double tolerance) { return AllComponents(self, [=](double x) -> bool { return ((((x <= 0.0) ? (!(x == 0.0)) : false) ? (-x) : x) <= tolerance); }); }
+
+bool Between(VectorN self, VectorN lower, VectorN upper) { return AllZipComponents(self, lower, upper, [=](double x, double a, double b) -> bool { return ((a <= x) ? (x <= b) : false); }); }
+
+bool IsFinite(VectorN self) { return AllComponents(self, [=](double x) -> bool { return ((!IsNaN(x)) ? (!IsInfinite(x)) : false); }); }
+
+bool HasNaN(VectorN self) { return AnyComponent(self, [=](double x) -> bool { return IsNaN(x); }); }
+
+Array<double> ComponentArray(VectorN self)
+{
+    auto _s1 = ToCount(self);
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    double* _a1 = plato::arena_alloc<double>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = At(self, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+double SumComponents(VectorN self) { return ReduceComponents(self, 0.0, [=](double acc, double x) -> double { return (acc + x); }); }
+
+double SumSqrComponents(VectorN self) { return ReduceComponents(self, 0.0, [=](double acc, double x) -> double { return (acc + (x * x)); }); }
+
+double MinComponent(VectorN self) { return ReduceComponents(self, At(self, 0), [=](double acc, double x) -> double { return ((acc <= x) ? acc : x); }); }
+
+double MaxComponent(VectorN self) { return ReduceComponents(self, At(self, 0), [=](double acc, double x) -> double { return ((acc <= x) ? x : acc); }); }
+
+double AvgComponent(VectorN self) { return (SumComponents(self) / ToNumber(ToCount(self))); }
+
+double Magnitude(VectorN self) { return Sqrt(MagnitudeSquared(self)); }
+
+double MagnitudeSquared(VectorN self) { return SumSqrComponents(self); }
+
+double Dot(VectorN a, VectorN b)
+{
+    auto _s7 = ComponentArray(ZipComponents(a, b, [=](double x_0_3, double y_1_4) -> double { return (x_0_3 * y_1_4); }));
+    double _lp7 = 0.0;
+    int32_t _n7 = _s7.count;
+    for (int32_t _i7 = 0; _i7 < _n7; _i7++)
+    {
+        auto _eval0_7 = _lp7;
+        auto _eval1_7 = _s7.data[_i7];
+        _lp7 = (_eval0_7 + _eval1_7);
+    }
+    return _lp7;
+}
+
+VectorN Zero(VectorN self) { return Broadcast(self, 0.0); }
+
+VectorN One(VectorN self) { return Broadcast(self, 1.0); }
+
+VectorN MinValue(VectorN self) { return Broadcast(self, MinValue(0.0)); }
+
+VectorN MaxValue(VectorN self) { return Broadcast(self, MaxValue(0.0)); }
+
+VectorN Normalize(VectorN self) { return Divide(self, Magnitude(self)); }
+
+double Distance(VectorN a, VectorN b)
+{
+    auto _s2 = ComponentArray(Subtract(a, b));
+    double _lp2 = 0.0;
+    int32_t _n2 = _s2.count;
+    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
+    {
+        auto _eval0_2 = _lp2;
+        auto _eval1_2 = _s2.data[_i2];
+        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
+    }
+    double _eval2 = _lp2;
+    return Sqrt(_eval2);
+}
+
+double DistanceSquared(VectorN a, VectorN b)
+{
+    auto _s2 = ComponentArray(Subtract(a, b));
+    double _lp2 = 0.0;
+    int32_t _n2 = _s2.count;
+    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
+    {
+        auto _eval0_2 = _lp2;
+        auto _eval1_2 = _s2.data[_i2];
+        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
+    }
+    return _lp2;
+}
+
+bool WithinDistance(VectorN a, VectorN b, double radius) { return (DistanceSquared(a, b) <= (radius * radius)); }
+
+double ScalarProjection(VectorN self, VectorN onto) { return (Dot(self, onto) / Magnitude(onto)); }
+
+VectorN ProjectOnto(VectorN self, VectorN onto) { return Multiply(onto, (Dot(self, onto) / Dot(onto, onto))); }
+
+VectorN RejectFrom(VectorN self, VectorN onto) { return Subtract(self, ProjectOnto(self, onto)); }
+
+VectorN Reflect(VectorN self, VectorN normal) { return Subtract(self, Multiply(normal, (2.0 * Dot(self, normal)))); }
+
+double CosineSimilarity(VectorN a, VectorN b) { return (Dot(a, b) / (Magnitude(a) * Magnitude(b))); }
+
+Angle AngleBetween(VectorN a, VectorN b) { return Angle{ AcosRadians(Lesser(Greater(CosineSimilarity(a, b), (-1.0)), 1.0)) }; }
+
+VectorN ScaledToLength(VectorN self, double length) { return MapComponents(Normalize(self), [=](double x) -> double { return (x * length); }); }
+
+VectorN Clamp(VectorN self, VectorN lo, VectorN hi)
+{
+    auto _s4a = ComponentArray(Max(self, lo));
+    auto _s4b = ComponentArray(hi);
+    int32_t _n4 = _s4a.count < _s4b.count ? _s4a.count : _s4b.count;
+    double* _a4 = plato::arena_alloc<double>(_n4);
+    for (int32_t _i4 = 0; _i4 < _n4; _i4++)
+    {
+        auto _eval0_4 = _s4a.data[_i4];
+        auto _eval1_4 = _s4b.data[_i4];
+        _a4[_i4] = ((_eval0_4 <= _eval1_4) ? _eval0_4 : _eval1_4);
+    }
+    auto _lp4 = plato::make_array(_a4, _n4);
+    Array<double> _eval2 = _lp4;
+    return VectorN{ _eval2 };
+}
+
+VectorN Saturate(VectorN self) { return ZipComponents(Max(self, Zero(self)), One(self), [=](double x, double y) -> double { return ((x <= y) ? x : y); }); }
+
+VectorN NormalizeOr(VectorN self, VectorN fallback) { return ((0.0 < MagnitudeSquared(self)) ? Normalize(self) : fallback); }
+
+bool IsZero(VectorN x) { return (x == Zero(x)); }
+
+bool IsOne(VectorN x) { return (x == One(x)); }
+
+VectorN LinearCombination(VectorN a, VectorN b, double s, double t)
+{
+    auto _s4a = ComponentArray(Multiply(a, s));
+    auto _s4b = ComponentArray(Multiply(b, t));
+    int32_t _n4 = _s4a.count < _s4b.count ? _s4a.count : _s4b.count;
+    double* _a4 = plato::arena_alloc<double>(_n4);
+    for (int32_t _i4 = 0; _i4 < _n4; _i4++)
+    {
+        auto _eval0_4 = _s4a.data[_i4];
+        auto _eval1_4 = _s4b.data[_i4];
+        _a4[_i4] = (_eval0_4 + _eval1_4);
+    }
+    auto _lp4 = plato::make_array(_a4, _n4);
+    Array<double> _eval2 = _lp4;
+    return VectorN{ _eval2 };
+}
+
+VectorN Barycentric(VectorN a, VectorN b, VectorN c, double u, double v)
+{
+    VectorN _eval2 = a;
+    auto _s4 = ComponentArray(Subtract(b, a));
+    int32_t _n4 = _s4.count;
+    double* _a4 = plato::arena_alloc<double>(_n4);
+    for (int32_t _i4 = 0; _i4 < _n4; _i4++)
+    {
+        auto _eval0_4 = _s4.data[_i4];
+        _a4[_i4] = (_eval0_4 * u);
+    }
+    auto _lp4 = plato::make_array(_a4, _n4);
+    Array<double> _eval1 = _lp4;
+    VectorN _eval3 = VectorN{ _eval1 };
+    VectorN _eval6 = Add(_eval2, _eval3);
+    auto _s5 = ComponentArray(Subtract(c, a));
+    int32_t _n5 = _s5.count;
+    double* _a5 = plato::arena_alloc<double>(_n5);
+    for (int32_t _i5 = 0; _i5 < _n5; _i5++)
+    {
+        auto _eval4_5 = _s5.data[_i5];
+        _a5[_i5] = (_eval4_5 * v);
+    }
+    auto _lp5 = plato::make_array(_a5, _n5);
+    Array<double> _eval5 = _lp5;
+    VectorN _eval7 = VectorN{ _eval5 };
+    return ZipComponents(_eval6, _eval7, [=](double x, double y) -> double { return (x + y); });
+}
 
 } // namespace plato

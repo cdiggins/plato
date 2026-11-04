@@ -5724,6 +5724,7 @@ int32_t Hash(Vector3D self);
 double SumSquares3(Vector3D v);
 bool AnyBig(Vector3D v);
 int32_t ComponentCount(Vector3D v);
+double Spread(Vector3D a, Vector3D b);
 Vector3D Multiply(Vector3D a, Vector3D b);
 Vector3D Divide(Vector3D a, Vector3D b);
 Vector3D Modulo(Vector3D a, Vector3D b);

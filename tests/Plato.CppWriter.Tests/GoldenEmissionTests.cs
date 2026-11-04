@@ -114,7 +114,7 @@ public class GoldenEmissionTests
 
     private static readonly string[] C1cRoots =
     {
-        "SumSquares3", "AnyBig", "ComponentCount", "KeepEven", "KeepSmall", "Positives", "Grid", "Cube", "Products",
+        "SumSquares3", "AnyBig", "ComponentCount", "Spread", "KeepEven", "KeepSmall", "Positives", "Grid", "Cube", "Products",
     };
 
     private static CppCpuOptions ShippingC1c => new(true, true, true, true, C1cRoots);

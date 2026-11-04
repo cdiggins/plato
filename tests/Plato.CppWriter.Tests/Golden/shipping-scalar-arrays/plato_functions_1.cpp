@@ -4,200 +4,6 @@
 
 namespace plato {
 
-DualNumber One(DualNumber _) { return DualNumber{ 1.0, 0.0 }; }
-
-DualNumber Lerp(DualNumber a, DualNumber b, double t) { return DualNumber{ (a.Value + ((b.Value - a.Value) * t)), (a.Derivative + ((b.Derivative - a.Derivative) * t)) }; }
-
-DualNumber MinValue(DualNumber _) { return DualNumber{ MinValue(0.0), 0.0 }; }
-
-DualNumber MaxValue(DualNumber _) { return DualNumber{ MaxValue(0.0), 0.0 }; }
-
-DualNumber Square(DualNumber x) { return DualNumber{ (x.Value * x.Value), ((2.0 * x.Value) * x.Derivative) }; }
-
-DualNumber Reciprocal(DualNumber x) { return DualNumber{ (1.0 / x.Value), ((-x.Derivative) / (x.Value * x.Value)) }; }
-
-DualNumber Sqrt(DualNumber x) { return DualNumber{ Sqrt(x.Value), (x.Derivative / (2.0 * Sqrt(x.Value))) }; }
-
-DualNumber Pow(DualNumber x, double power) { return DualNumber{ Pow(x.Value, power), ((power * Pow(x.Value, (power - 1.0))) * x.Derivative) }; }
-
-DualNumber Exp(DualNumber x) { return DualNumber{ Exp(x.Value), (Exp(x.Value) * x.Derivative) }; }
-
-DualNumber NaturalLog(DualNumber x) { return DualNumber{ NaturalLog(x.Value), (x.Derivative / x.Value) }; }
-
-DualNumber Sin(DualNumber x) { return DualNumber{ Sin(x.Value), (Cos(x.Value) * x.Derivative) }; }
-
-DualNumber Cos(DualNumber x) { return DualNumber{ Cos(x.Value), ((-Sin(x.Value)) * x.Derivative) }; }
-
-DualNumber Tan(DualNumber x) { return DualNumber{ (Sin(x.Value) / Cos(x.Value)), (x.Derivative / Square(Cos(x.Value))) }; }
-
-DualNumber Abs(DualNumber x) { return DualNumber{ ((0.0 <= x.Value) ? x.Value : (-x.Value)), (ToNumber(((0.0 <= x.Value) ? ((x.Value <= 0.0) ? 0 : 1) : (-1))) * x.Derivative) }; }
-
-bool IsZero(DualNumber x) { return (x == Zero(x)); }
-
-bool IsOne(DualNumber x) { return (x == One(x)); }
-
-DualNumber LinearCombination(DualNumber a, DualNumber b, double s, double t) { return DualNumber{ (Multiply(a, s).Value + Multiply(b, t).Value), (Multiply(a, s).Derivative + Multiply(b, t).Derivative) }; }
-
-DualNumber Barycentric(DualNumber a, DualNumber b, DualNumber c, double u, double v) { return Add(Add(a, DualNumber{ (Subtract(b, a).Value * u), (Subtract(b, a).Derivative * u) }), DualNumber{ (Subtract(c, a).Value * v), (Subtract(c, a).Derivative * v) }); }
-
-DualNumber Linear(DualNumber m, DualNumber b, double x) { return DualNumber{ (Multiply(m, x).Value + b.Value), (Multiply(m, x).Derivative + b.Derivative) }; }
-
-DualNumber LinearDerivative(DualNumber m, DualNumber b, double x) { return m; }
-
-DualNumber LinearSecondDerivative(DualNumber m, DualNumber b, double x) { return Zero(m); }
-
-DualNumber Quadratic(DualNumber a, DualNumber b, DualNumber c, double x) { return Add(DualNumber{ (Multiply(a, (x * x)).Value + Multiply(b, x).Value), (Multiply(a, (x * x)).Derivative + Multiply(b, x).Derivative) }, c); }
-
-DualNumber QuadraticDerivative(DualNumber a, DualNumber b, DualNumber c, double x) { return DualNumber{ (Multiply(a, (2.0 * x)).Value + b.Value), (Multiply(a, (2.0 * x)).Derivative + b.Derivative) }; }
-
-DualNumber QuadraticSecondDerivative(DualNumber a, DualNumber b, DualNumber c, double x) { return Multiply(a, 2.0); }
-
-DualNumber Cubic(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double x) { return Add(Add(DualNumber{ (Multiply(a, ((x * x) * x)).Value + Multiply(b, (x * x)).Value), (Multiply(a, ((x * x) * x)).Derivative + Multiply(b, (x * x)).Derivative) }, Multiply(c, x)), d); }
-
-DualNumber CubicDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double x) { return Add(DualNumber{ (Multiply(a, (3.0 * (x * x))).Value + Multiply(b, (2.0 * x)).Value), (Multiply(a, (3.0 * (x * x))).Derivative + Multiply(b, (2.0 * x)).Derivative) }, c); }
-
-DualNumber CubicSecondDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double x) { return DualNumber{ (Multiply(a, (6.0 * x)).Value + Multiply(b, 2.0).Value), (Multiply(a, (6.0 * x)).Derivative + Multiply(b, 2.0).Derivative) }; }
-
-DualNumber Quartic(DualNumber a, DualNumber b, DualNumber c, DualNumber d, DualNumber e, double x) { return Add(Add(Add(Add(Multiply(a, ((x * x) * (x * x))), Multiply(b, ((x * x) * x))), Multiply(c, (x * x))), Multiply(d, x)), e); }
-
-DualNumber QuarticDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, DualNumber e, double x) { return Add(Add(Add(Multiply(a, ((4.0 * (x * x)) * x)), Multiply(b, (3.0 * (x * x)))), Multiply(c, (2.0 * x))), d); }
-
-DualNumber QuarticSecondDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, DualNumber e, double x) { return Add(DualNumber{ (Multiply(a, (12.0 * (x * x))).Value + Multiply(b, (6.0 * x)).Value), (Multiply(a, (12.0 * (x * x))).Derivative + Multiply(b, (6.0 * x)).Derivative) }, Multiply(c, 2.0)); }
-
-DualNumber QuadraticBezier(DualNumber a, DualNumber b, DualNumber c, double t) { return Add(Add(Multiply(a, ((1.0 - t) * (1.0 - t))), Multiply(b, ((2.0 * (1.0 - t)) * t))), Multiply(c, (t * t))); }
-
-DualNumber QuadraticBezierDerivative(DualNumber a, DualNumber b, DualNumber c, double t) { return Add(DualNumber{ (Subtract(b, a).Value * (2.0 * (1.0 - t))), (Subtract(b, a).Derivative * (2.0 * (1.0 - t))) }, DualNumber{ (Subtract(c, b).Value * (2.0 * t)), (Subtract(c, b).Derivative * (2.0 * t)) }); }
-
-DualNumber QuadraticBezierSecondDerivative(DualNumber a, DualNumber b, DualNumber c, double t) { return Multiply(DualNumber{ (Add(a, c).Value - Multiply(b, 2.0).Value), (Add(a, c).Derivative - Multiply(b, 2.0).Derivative) }, 2.0); }
-
-DualNumber CubicBezier(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double t) { return Add(Add(Add(Multiply(a, (((1.0 - t) * (1.0 - t)) * (1.0 - t))), Multiply(b, ((3.0 * ((1.0 - t) * (1.0 - t))) * t))), Multiply(c, ((3.0 * (1.0 - t)) * (t * t)))), Multiply(d, ((t * t) * t))); }
-
-DualNumber CubicBezierDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double t) { return Add(Add(Multiply(Subtract(b, a), (3.0 * ((1.0 - t) * (1.0 - t)))), DualNumber{ (Subtract(c, b).Value * ((6.0 * (1.0 - t)) * t)), (Subtract(c, b).Derivative * ((6.0 * (1.0 - t)) * t)) }), DualNumber{ (Subtract(d, c).Value * (3.0 * (t * t))), (Subtract(d, c).Derivative * (3.0 * (t * t))) }); }
-
-DualNumber CubicBezierSecondDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double t) { return Add(Multiply(DualNumber{ (Add(a, c).Value - Multiply(b, 2.0).Value), (Add(a, c).Derivative - Multiply(b, 2.0).Derivative) }, (6.0 * (1.0 - t))), Multiply(DualNumber{ (Add(b, d).Value - Multiply(c, 2.0).Value), (Add(b, d).Derivative - Multiply(c, 2.0).Derivative) }, (6.0 * t))); }
-
-DualNumber Hermite(DualNumber p0, DualNumber p1, DualNumber m0, DualNumber m1, double t) { return Add(Add(Add(Multiply(p0, ((((2.0 * (t * t)) * t) - (3.0 * (t * t))) + 1.0)), Multiply(m0, ((((t * t) * t) - (2.0 * (t * t))) + t))), Multiply(p1, ((3.0 * (t * t)) - ((2.0 * (t * t)) * t)))), Multiply(m1, (((t * t) * t) - (t * t)))); }
-
-DualNumber HermiteDerivative(DualNumber p0, DualNumber p1, DualNumber m0, DualNumber m1, double t) { return Add(Add(Add(Multiply(p0, ((6.0 * (t * t)) - (6.0 * t))), Multiply(m0, (((3.0 * (t * t)) - (4.0 * t)) + 1.0))), Multiply(p1, ((6.0 * t) - (6.0 * (t * t))))), Multiply(m1, ((3.0 * (t * t)) - (2.0 * t)))); }
-
-DualNumber CatmullRom(DualNumber p0, DualNumber p1, DualNumber p2, DualNumber p3, double t) { return Multiply(Add(Add(Add(Multiply(p1, 2.0), DualNumber{ (Subtract(p2, p0).Value * t), (Subtract(p2, p0).Derivative * t) }), Multiply(Subtract(Subtract(DualNumber{ (Multiply(p0, 2.0).Value + Multiply(p2, 4.0).Value), (Multiply(p0, 2.0).Derivative + Multiply(p2, 4.0).Derivative) }, Multiply(p1, 5.0)), p3), (t * t))), Multiply(Subtract(Subtract(DualNumber{ (Multiply(p1, 3.0).Value + p3.Value), (Multiply(p1, 3.0).Derivative + p3.Derivative) }, p0), Multiply(p2, 3.0)), ((t * t) * t))), 0.5); }
-
-DualNumber CatmullRomDerivative(DualNumber p0, DualNumber p1, DualNumber p2, DualNumber p3, double t) { return Multiply(Add(Add(Subtract(p2, p0), Multiply(Subtract(Subtract(DualNumber{ (Multiply(p0, 2.0).Value + Multiply(p2, 4.0).Value), (Multiply(p0, 2.0).Derivative + Multiply(p2, 4.0).Derivative) }, Multiply(p1, 5.0)), p3), (2.0 * t))), Multiply(Subtract(Subtract(DualNumber{ (Multiply(p1, 3.0).Value + p3.Value), (Multiply(p1, 3.0).Derivative + p3.Derivative) }, p0), Multiply(p2, 3.0)), (3.0 * (t * t)))), 0.5); }
-
-DualNumber Double(DualNumber x) { return Add(x, x); }
-
-DualNumber Half(DualNumber x) { return Divide(x, 2.0); }
-
-DualNumber Third(DualNumber x) { return Divide(x, 3.0); }
-
-DualNumber Quarter(DualNumber x) { return Divide(x, 4.0); }
-
-DualNumber Eighth(DualNumber x) { return Divide(x, 8.0); }
-
-DualNumber Sixteenth(DualNumber x) { return Divide(x, 16.0); }
-
-DualNumber Tenth(DualNumber x) { return Divide(x, 10.0); }
-
-DualNumber Hundredth(DualNumber x) { return Divide(x, 100.0); }
-
-DualNumber Thousandth(DualNumber x) { return Divide(x, 1000.0); }
-
-DualNumber Millionth(DualNumber x) { return Divide(x, 1000000.0); }
-
-DualNumber Billionth(DualNumber x) { return Divide(x, 1000000000.0); }
-
-DualNumber Million(DualNumber x) { return Multiply(x, 1000000.0); }
-
-DualNumber Billion(DualNumber x) { return Multiply(x, 1000000000.0); }
-
-DualNumber ToPercent(DualNumber x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-DualNumber MidPoint(DualNumber a, DualNumber b) { return Lerp(a, b, 0.5); }
-
-DualNumber LerpClamped(DualNumber a, DualNumber b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-DualNumber SmoothLerp(DualNumber a, DualNumber b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<DualNumber> LinearSpace(DualNumber a, DualNumber b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    DualNumber* _a1 = plato::arena_alloc<DualNumber>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<DualNumber> LinearSpaceExclusive(DualNumber a, DualNumber b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    DualNumber* _a1 = plato::arena_alloc<DualNumber>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-double Distance(Point2D a, Point2D b)
-{
-    auto _s2 = ComponentArray(Subtract(Vector2D{ b.X, b.Y }, Vector2D{ a.X, a.Y }));
-    double _lp2 = 0.0;
-    int32_t _n2 = _s2.count;
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _lp2;
-        auto _eval1_2 = _s2.data[_i2];
-        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
-    }
-    double _eval2 = _lp2;
-    return Sqrt(_eval2);
-}
-
-double DistanceSquared(Point2D a, Point2D b)
-{
-    auto _s2 = ComponentArray(Subtract(Vector2D{ b.X, b.Y }, Vector2D{ a.X, a.Y }));
-    double _lp2 = 0.0;
-    int32_t _n2 = _s2.count;
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _lp2;
-        auto _eval1_2 = _s2.data[_i2];
-        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
-    }
-    return _lp2;
-}
-
-int32_t Hash(Point2D self) { return BitwiseXor((Hash(self.X) * 31), Hash(self.Y)); }
-
-Point2D Transform(Point2D p, AffineTransform2D a) { return ToPoint(Transform(Vector2D{ p.X, p.Y }, a.Matrix)); }
-
-Point2D Transform(Point2D p, Transform2D t)
-{
-    Matrix3x3 m = t.Matrix;
-    Number3 v = Add(Add(Number3{ (m.Row1.X * p.X), (m.Row1.Y * p.X), (m.Row1.Z * p.X) }, Number3{ (m.Row2.X * p.Y), (m.Row2.Y * p.Y), (m.Row2.Z * p.Y) }), m.Row3);
-    return Point2D{ (v.X / v.Z), (v.Y / v.Z) };
-}
-
-Point2D Transform(Point2D p, Translation2D t) { return FromOffset(p, Add(Vector2D{ p.X, p.Y }, t.Vector)); }
-
-Point2D Transform(Point2D p, Scaling2D s) { return ToPoint(Multiply(Vector2D{ p.X, p.Y }, s.Amount)); }
-
-Point2D Transform(Point2D p, UniformScaling2D s) { return ToPoint(Multiply(Vector2D{ p.X, p.Y }, s.Amount)); }
-
-Point2D Transform(Point2D p, Reflection2D r) { return FromOffset(r.Origin, Add(Vector2D{ r.Origin.X, r.Origin.Y }, Reflect(Subtract(Vector2D{ p.X, p.Y }, Vector2D{ r.Origin.X, r.Origin.Y }), Vector2D{ (-r.Direction.Vector.Y), r.Direction.Vector.X }))); }
-
-Point2D Transform(Point2D p, RotationAbout2D r) { return FromOffset(r.Center, Add(Vector2D{ r.Center.X, r.Center.Y }, Transform(Subtract(Vector2D{ p.X, p.Y }, Vector2D{ r.Center.X, r.Center.Y }), r.Rotation))); }
-
-Point2D Transform(Point2D p, ScalingAbout2D s) { return FromOffset(s.Center, Add(Vector2D{ s.Center.X, s.Center.Y }, Multiply(Subtract(Vector2D{ p.X, p.Y }, Vector2D{ s.Center.X, s.Center.Y }), s.Amount))); }
-
 Vector2D Offset(Point2D p) { return Vector2D{ p.X, p.Y }; }
 
 Point2D FromOffset(Point2D _, Vector2D v) { return Point2D{ v.X, v.Y }; }
@@ -270,31 +76,14 @@ Point2D ThenTransform(Point2D self, Transform2D first, Transform2D second, Trans
 
 double Distance(Point3D a, Point3D b)
 {
-    auto _s2 = ComponentArray(Subtract(Vector3D{ b.X, b.Y, b.Z }, Vector3D{ a.X, a.Y, a.Z }));
-    double _lp2 = 0.0;
-    int32_t _n2 = _s2.count;
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _lp2;
-        auto _eval1_2 = _s2.data[_i2];
-        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
-    }
-    double _eval2 = _lp2;
-    return Sqrt(_eval2);
+    Vector3D _cr0 = Subtract(Vector3D{ b.X, b.Y, b.Z }, Vector3D{ a.X, a.Y, a.Z });
+    return Sqrt((((0.0 + (_cr0.X * _cr0.X)) + (_cr0.Y * _cr0.Y)) + (_cr0.Z * _cr0.Z)));
 }
 
 double DistanceSquared(Point3D a, Point3D b)
 {
-    auto _s2 = ComponentArray(Subtract(Vector3D{ b.X, b.Y, b.Z }, Vector3D{ a.X, a.Y, a.Z }));
-    double _lp2 = 0.0;
-    int32_t _n2 = _s2.count;
-    for (int32_t _i2 = 0; _i2 < _n2; _i2++)
-    {
-        auto _eval0_2 = _lp2;
-        auto _eval1_2 = _s2.data[_i2];
-        _lp2 = (_eval0_2 + (_eval1_2 * _eval1_2));
-    }
-    return _lp2;
+    Vector3D _cr0 = Subtract(Vector3D{ b.X, b.Y, b.Z }, Vector3D{ a.X, a.Y, a.Z });
+    return (((0.0 + (_cr0.X * _cr0.X)) + (_cr0.Y * _cr0.Y)) + (_cr0.Z * _cr0.Z));
 }
 
 int32_t Hash(Point3D self) { return BitwiseXor((BitwiseXor((Hash(self.X) * 31), Hash(self.Y)) * 31), Hash(self.Z)); }
@@ -5003,5 +4792,203 @@ bool IsZero(ArealDensity self) { return (Amount(self) == 0.0); }
 bool IsPositive(ArealDensity self) { return (0.0 < Amount(self)); }
 
 bool IsNegative(ArealDensity self) { return (Amount(self) < 0.0); }
+
+int32_t Sign(ArealDensity self) { return Sign(Amount(self)); }
+
+ArealDensity Abs(ArealDensity self) { return (IsNegative(self) ? Negative(self) : self); }
+
+ArealDensity AbsoluteDifference(ArealDensity a, ArealDensity b) { return (((Subtract(a, b).KilogramsPerSquareMeter <= 0.0) ? (!(Subtract(a, b).KilogramsPerSquareMeter == 0.0)) : false) ? ArealDensity{ (-Subtract(a, b).KilogramsPerSquareMeter) } : Subtract(a, b)); }
+
+ArealDensity Add(ArealDensity a, ArealDensity b) { return FromAmount(a, (Amount(a) + Amount(b))); }
+
+ArealDensity Subtract(ArealDensity a, ArealDensity b) { return FromAmount(a, (Amount(a) - Amount(b))); }
+
+ArealDensity Negative(ArealDensity x) { return FromAmount(x, (-Amount(x))); }
+
+ArealDensity Zero(ArealDensity x) { return FromAmount(x, 0.0); }
+
+int32_t Hash(ArealDensity x) { return Hash(Amount(x)); }
+
+bool LessThanOrEquals(ArealDensity a, ArealDensity b) { return (Amount(a) <= Amount(b)); }
+
+ArealDensity Lerp(ArealDensity a, ArealDensity b, double t) { return FromAmount(a, Lerp(Amount(a), Amount(b), t)); }
+
+ArealDensity Multiply(ArealDensity x, double scalar) { return FromAmount(x, (Amount(x) * scalar)); }
+
+ArealDensity Divide(ArealDensity x, double scalar) { return FromAmount(x, (Amount(x) / scalar)); }
+
+ArealDensity Modulo(ArealDensity x, double scalar) { return FromAmount(x, fmodf(Amount(x), scalar)); }
+
+bool LessThan(ArealDensity a, ArealDensity b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
+
+bool GreaterThan(ArealDensity a, ArealDensity b) { return LessThan(b, a); }
+
+bool GreaterThanOrEquals(ArealDensity a, ArealDensity b) { return LessThanOrEquals(b, a); }
+
+ArealDensity Lesser(ArealDensity a, ArealDensity b) { return (LessThanOrEquals(a, b) ? a : b); }
+
+ArealDensity Greater(ArealDensity a, ArealDensity b) { return (LessThanOrEquals(a, b) ? b : a); }
+
+bool Between(ArealDensity x, ArealDensity lower, ArealDensity upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
+
+ArealDensity Clamp(ArealDensity x, ArealDensity lower, ArealDensity upper) { return Lesser(Greater(x, lower), upper); }
+
+ArealDensity Min3(ArealDensity a, ArealDensity b, ArealDensity c) { return Lesser(Lesser(a, b), c); }
+
+ArealDensity Max3(ArealDensity a, ArealDensity b, ArealDensity c) { return Greater(Greater(a, b), c); }
+
+int32_t Compare(ArealDensity a, ArealDensity b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
+
+ArealDensity Double(ArealDensity x) { return Add(x, x); }
+
+ArealDensity Half(ArealDensity x) { return Divide(x, 2.0); }
+
+ArealDensity Third(ArealDensity x) { return Divide(x, 3.0); }
+
+ArealDensity Quarter(ArealDensity x) { return Divide(x, 4.0); }
+
+ArealDensity Eighth(ArealDensity x) { return Divide(x, 8.0); }
+
+ArealDensity Sixteenth(ArealDensity x) { return Divide(x, 16.0); }
+
+ArealDensity Tenth(ArealDensity x) { return Divide(x, 10.0); }
+
+ArealDensity Hundredth(ArealDensity x) { return Divide(x, 100.0); }
+
+ArealDensity Thousandth(ArealDensity x) { return Divide(x, 1000.0); }
+
+ArealDensity Millionth(ArealDensity x) { return Divide(x, 1000000.0); }
+
+ArealDensity Billionth(ArealDensity x) { return Divide(x, 1000000000.0); }
+
+ArealDensity Million(ArealDensity x) { return Multiply(x, 1000000.0); }
+
+ArealDensity Billion(ArealDensity x) { return Multiply(x, 1000000000.0); }
+
+ArealDensity ToPercent(ArealDensity x, double percent) { return Multiply(x, (percent / 100.0)); }
+
+ArealDensity MidPoint(ArealDensity a, ArealDensity b) { return Lerp(a, b, 0.5); }
+
+ArealDensity LerpClamped(ArealDensity a, ArealDensity b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+ArealDensity SmoothLerp(ArealDensity a, ArealDensity b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
+Array<ArealDensity> LinearSpace(ArealDensity a, ArealDensity b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    ArealDensity* _a1 = plato::arena_alloc<ArealDensity>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Array<ArealDensity> LinearSpaceExclusive(ArealDensity a, ArealDensity b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    ArealDensity* _a1 = plato::arena_alloc<ArealDensity>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+double Amount(LinearDensity x) { return x.KilogramsPerMeter; }
+
+LinearDensity FromAmount(LinearDensity _, double x) { return LinearDensity{ x }; }
+
+bool IsZero(LinearDensity self) { return (Amount(self) == 0.0); }
+
+bool IsPositive(LinearDensity self) { return (0.0 < Amount(self)); }
+
+bool IsNegative(LinearDensity self) { return (Amount(self) < 0.0); }
+
+int32_t Sign(LinearDensity self) { return Sign(Amount(self)); }
+
+LinearDensity Abs(LinearDensity self) { return (IsNegative(self) ? Negative(self) : self); }
+
+LinearDensity AbsoluteDifference(LinearDensity a, LinearDensity b) { return (((Subtract(a, b).KilogramsPerMeter <= 0.0) ? (!(Subtract(a, b).KilogramsPerMeter == 0.0)) : false) ? LinearDensity{ (-Subtract(a, b).KilogramsPerMeter) } : Subtract(a, b)); }
+
+LinearDensity Add(LinearDensity a, LinearDensity b) { return FromAmount(a, (Amount(a) + Amount(b))); }
+
+LinearDensity Subtract(LinearDensity a, LinearDensity b) { return FromAmount(a, (Amount(a) - Amount(b))); }
+
+LinearDensity Negative(LinearDensity x) { return FromAmount(x, (-Amount(x))); }
+
+LinearDensity Zero(LinearDensity x) { return FromAmount(x, 0.0); }
+
+int32_t Hash(LinearDensity x) { return Hash(Amount(x)); }
+
+bool LessThanOrEquals(LinearDensity a, LinearDensity b) { return (Amount(a) <= Amount(b)); }
+
+LinearDensity Lerp(LinearDensity a, LinearDensity b, double t) { return FromAmount(a, Lerp(Amount(a), Amount(b), t)); }
+
+LinearDensity Multiply(LinearDensity x, double scalar) { return FromAmount(x, (Amount(x) * scalar)); }
+
+LinearDensity Divide(LinearDensity x, double scalar) { return FromAmount(x, (Amount(x) / scalar)); }
+
+LinearDensity Modulo(LinearDensity x, double scalar) { return FromAmount(x, fmodf(Amount(x), scalar)); }
+
+bool LessThan(LinearDensity a, LinearDensity b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
+
+bool GreaterThan(LinearDensity a, LinearDensity b) { return LessThan(b, a); }
+
+bool GreaterThanOrEquals(LinearDensity a, LinearDensity b) { return LessThanOrEquals(b, a); }
+
+LinearDensity Lesser(LinearDensity a, LinearDensity b) { return (LessThanOrEquals(a, b) ? a : b); }
+
+LinearDensity Greater(LinearDensity a, LinearDensity b) { return (LessThanOrEquals(a, b) ? b : a); }
+
+bool Between(LinearDensity x, LinearDensity lower, LinearDensity upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
+
+LinearDensity Clamp(LinearDensity x, LinearDensity lower, LinearDensity upper) { return Lesser(Greater(x, lower), upper); }
+
+LinearDensity Min3(LinearDensity a, LinearDensity b, LinearDensity c) { return Lesser(Lesser(a, b), c); }
+
+LinearDensity Max3(LinearDensity a, LinearDensity b, LinearDensity c) { return Greater(Greater(a, b), c); }
+
+int32_t Compare(LinearDensity a, LinearDensity b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
+
+LinearDensity Double(LinearDensity x) { return Add(x, x); }
+
+LinearDensity Half(LinearDensity x) { return Divide(x, 2.0); }
+
+LinearDensity Third(LinearDensity x) { return Divide(x, 3.0); }
+
+LinearDensity Quarter(LinearDensity x) { return Divide(x, 4.0); }
+
+LinearDensity Eighth(LinearDensity x) { return Divide(x, 8.0); }
+
+LinearDensity Sixteenth(LinearDensity x) { return Divide(x, 16.0); }
+
+LinearDensity Tenth(LinearDensity x) { return Divide(x, 10.0); }
+
+LinearDensity Hundredth(LinearDensity x) { return Divide(x, 100.0); }
+
+LinearDensity Thousandth(LinearDensity x) { return Divide(x, 1000.0); }
+
+LinearDensity Millionth(LinearDensity x) { return Divide(x, 1000000.0); }
+
+LinearDensity Billionth(LinearDensity x) { return Divide(x, 1000000000.0); }
+
+LinearDensity Million(LinearDensity x) { return Multiply(x, 1000000.0); }
+
+LinearDensity Billion(LinearDensity x) { return Multiply(x, 1000000000.0); }
+
+LinearDensity ToPercent(LinearDensity x, double percent) { return Multiply(x, (percent / 100.0)); }
+
+LinearDensity MidPoint(LinearDensity a, LinearDensity b) { return Lerp(a, b, 0.5); }
+
+LinearDensity LerpClamped(LinearDensity a, LinearDensity b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+LinearDensity SmoothLerp(LinearDensity a, LinearDensity b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
 } // namespace plato

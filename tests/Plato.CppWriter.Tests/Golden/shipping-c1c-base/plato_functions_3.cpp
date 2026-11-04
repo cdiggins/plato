@@ -4,6 +4,20 @@
 
 namespace plato {
 
+Vector3D CatmullRomDerivative(Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3, double t) { return Multiply(Add(Add(Subtract(p2, p0), Multiply(Subtract(Subtract(Add(Multiply(p0, 2.0), Multiply(p2, 4.0)), Multiply(p1, 5.0)), p3), (2.0 * t))), Multiply(Subtract(Subtract(Add(Multiply(p1, 3.0), p3), p0), Multiply(p2, 3.0)), (3.0 * (t * t)))), 0.5); }
+
+Vector3D Double(Vector3D x) { return Add(x, x); }
+
+Vector3D Half(Vector3D x) { return Divide(x, 2.0); }
+
+Vector3D Third(Vector3D x) { return Divide(x, 3.0); }
+
+Vector3D Quarter(Vector3D x) { return Divide(x, 4.0); }
+
+Vector3D Eighth(Vector3D x) { return Divide(x, 8.0); }
+
+Vector3D Sixteenth(Vector3D x) { return Divide(x, 16.0); }
+
 Vector3D Tenth(Vector3D x) { return Divide(x, 10.0); }
 
 Vector3D Hundredth(Vector3D x) { return Divide(x, 100.0); }

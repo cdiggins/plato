@@ -19,7 +19,7 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>The passes the Cpu dialect runs, in order.</summary>
         public static readonly IReadOnlyList<string> PassOrder = new[]
         {
-            SharedPasses.Inline, SharedPasses.ConstantCounts, SharedPasses.Fuse, SharedPasses.FuseConsumers, SharedPasses.SinkBindings, SharedPasses.ShareCalls,
+            SharedPasses.Inline, SharedPasses.BindComponentReceivers, SharedPasses.ConstantCounts, SharedPasses.Fuse, SharedPasses.FuseConsumers, SharedPasses.SinkBindings, SharedPasses.ShareCalls,
             SharedPasses.LowerLoops, SharedPasses.HoistInvariants,
         };
 
