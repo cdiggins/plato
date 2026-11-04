@@ -1,6 +1,10 @@
 // string: String indexing, text forms, number and integer parsing.
 // A fragment of plato_cpu.hpp: included by it, in order, inside namespace plato. Not self-contained.
 
+    // PLATO_STR("utf-8 text", byte length): a String constant built once per use site (the writer's StaticStringLiterals policy).
+    // The function-local static is initialised thread-safely on first use; the expression is a const String&.
+#define PLATO_STR(text, n) ([]() -> const ::plato::String& { static const ::plato::String s = ::plato::make_string_n(text, n); return s; }())
+
     // String.Count / At index UTF-16 code units, including surrogate halves.
     inline int32_t ToCount(const String& s) { return static_cast<int32_t>(s.size()); }
     inline char16_t At(const String& s, int32_t i) { PLATO_ASSERT(i >= 0 && static_cast<size_t>(i) < s.size()); return s[static_cast<size_t>(i)]; }

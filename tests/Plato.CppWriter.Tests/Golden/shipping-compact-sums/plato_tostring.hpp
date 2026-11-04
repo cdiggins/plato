@@ -82,6 +82,14 @@
 
     // Generated UTF-8 literals carry their byte length, including embedded NULs.
     inline String make_string_n(const char* s, int32_t n) { return StringFromUtf8(std::string(s, static_cast<size_t>(n < 0 ? 0 : n))); }
+#ifdef PLATO_STRING_PROBE
+    // Probe build (-DPLATO_STRING_PROBE, with /FIcstdio): every later make_string_n call is counted; the count is printed at exit (TKT-1159).
+    // Single-threaded hosts only. The report is a function-local static of the wrapper, so it exists once the first call has happened. The define comes after the definition, so the default prelude is unchanged.
+    inline long long plato_make_string_count = 0;
+    struct PlatoMakeStringReport { ~PlatoMakeStringReport() { std::fprintf(stderr, "PLATO_STRING_PROBE make_string_n=%lld\n", plato_make_string_count); } };
+    inline String plato_make_string_n_counted(const char* s, int32_t n) { static PlatoMakeStringReport report; ++plato_make_string_count; return make_string_n(s, n); }
+#define make_string_n plato_make_string_n_counted
+#endif
     inline void string_clear(String* s) { s->clear(); }
     inline void string_append_char(String* s, char16_t c) { s->push_back(c); }
     inline void string_append_cstr(String* s, const char* p) { if (p) s->append(StringFromUtf8(p)); }
