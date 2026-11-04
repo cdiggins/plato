@@ -4,77 +4,6 @@
 
 namespace plato {
 
-double ArcSeconds(Angle x) { return ((((x.Radians / (2.0 * Pi(0.0))) * 360.0) * 60.0) * 60.0); }
-
-double Sec(Angle x) { return (1.0 / Cos(x.Radians)); }
-
-double Csc(Angle x) { return (1.0 / Sin(x.Radians)); }
-
-double Cot(Angle x) { return (1.0 / (Sin(x.Radians) / Cos(x.Radians))); }
-
-Angle Normalize(Angle self)
-{
-    double tau = (2.0 * Pi(0.0));
-    double m = (self.Radians - (tau * Floor((self.Radians / tau))));
-    return Angle{ ((Pi(0.0) < m) ? (m - tau) : m) };
-}
-
-Angle Wrap(Angle self, Angle period) { return Angle{ (self.Radians - (period.Radians * Floor((self.Radians / period.Radians)))) }; }
-
-Angle LerpShortest(Angle a, Angle b, double t) { return Angle{ (a.Radians + (Normalize(Angle{ (b.Radians - a.Radians) }).Radians * t)) }; }
-
-bool EquivalentAngle(Angle a, Angle b) { return (Normalize(a).Radians == Normalize(b).Radians); }
-
-double Cos(Angle self) { return Cos(self.Radians); }
-
-double Sin(Angle self) { return Sin(self.Radians); }
-
-double Tan(Angle self) { return (Sin(self.Radians) / Cos(self.Radians)); }
-
-Tuple2<double, double> SinCos(Angle self) { return Tuple2<double, double>{ Sin(self.Radians), Cos(self.Radians) }; }
-
-double Cosh(Angle self) { return ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0); }
-
-double Sinh(Angle self) { return ((Exp(self.Radians) - Exp((-self.Radians))) / 2.0); }
-
-double Tanh(Angle self) { return (((Exp(self.Radians) - Exp((-self.Radians))) / 2.0) / ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0)); }
-
-Angle Add(Angle a, Angle b) { return Angle{ (a.Radians + b.Radians) }; }
-
-Angle Subtract(Angle a, Angle b) { return Angle{ (a.Radians - b.Radians) }; }
-
-Angle Multiply(Angle a, double x) { return Angle{ (a.Radians * x) }; }
-
-Angle Divide(Angle a, double x) { return Angle{ (a.Radians / x) }; }
-
-Angle Negative(Angle n) { return Angle{ (-n.Radians) }; }
-
-int32_t Compare(Angle a, Angle b) { return ((a.Radians == b.Radians) ? 0 : ((a.Radians <= b.Radians) ? (-1) : 1)); }
-
-int32_t Hash(Angle self) { return Hash(self.Radians); }
-
-Angle Double(Angle x) { return Add(x, x); }
-
-Angle Half(Angle x) { return Divide(x, 2.0); }
-
-Angle Third(Angle x) { return Divide(x, 3.0); }
-
-Angle Quarter(Angle x) { return Divide(x, 4.0); }
-
-Angle Eighth(Angle x) { return Divide(x, 8.0); }
-
-Angle Sixteenth(Angle x) { return Divide(x, 16.0); }
-
-Angle Tenth(Angle x) { return Divide(x, 10.0); }
-
-Angle Hundredth(Angle x) { return Divide(x, 100.0); }
-
-Angle Thousandth(Angle x) { return Divide(x, 1000.0); }
-
-Angle Millionth(Angle x) { return Divide(x, 1000000.0); }
-
-Angle Billionth(Angle x) { return Divide(x, 1000000000.0); }
-
 Angle Million(Angle x) { return Multiply(x, 1000000.0); }
 
 Angle Billion(Angle x) { return Multiply(x, 1000000000.0); }
@@ -5002,5 +4931,77 @@ double Cdf(BinomialDistribution x, double value) { std::abort(); }
 double Mean(GeometricDistribution x) { std::abort(); }
 
 double Variance(GeometricDistribution x) { std::abort(); }
+
+double Pdf(GeometricDistribution x, double value) { std::abort(); }
+
+double Cdf(GeometricDistribution x, double value) { std::abort(); }
+
+double Mean(PoissonDistribution x) { std::abort(); }
+
+double Variance(PoissonDistribution x) { std::abort(); }
+
+double Pdf(PoissonDistribution x, double value) { std::abort(); }
+
+double Cdf(PoissonDistribution x, double value) { std::abort(); }
+
+double Mean(DiscreteDistribution x) { std::abort(); }
+
+double Variance(DiscreteDistribution x) { std::abort(); }
+
+double Pdf(DiscreteDistribution x, double value) { std::abort(); }
+
+double Cdf(DiscreteDistribution x, double value) { std::abort(); }
+
+Quaternion Square(Quaternion x) { return Multiply(x, x); }
+
+Quaternion Cube(Quaternion x) { return Multiply(Multiply(x, x), x); }
+
+Quaternion Pow4(Quaternion x) { return Square(Square(x)); }
+
+Quaternion Pow5(Quaternion x) { return Multiply(Square(Square(x)), x); }
+
+Quaternion MidPoint(Quaternion a, Quaternion b) { return Lerp(a, b, 0.5); }
+
+Quaternion LerpClamped(Quaternion a, Quaternion b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+Quaternion SmoothLerp(Quaternion a, Quaternion b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
+Array<Quaternion> LinearSpace(Quaternion a, Quaternion b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Quaternion* _a1 = plato::arena_alloc<Quaternion>(_n1);
+    if (_n1 > 0)
+    {
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Array<Quaternion> LinearSpaceExclusive(Quaternion a, Quaternion b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Quaternion* _a1 = plato::arena_alloc<Quaternion>(_n1);
+    if (_n1 > 0)
+    {
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval0_1 = _i1;
+            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
+        }
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+AffineTransform3D ToAffineTransform3D(Quaternion x) { std::abort(); }
 
 } // namespace plato

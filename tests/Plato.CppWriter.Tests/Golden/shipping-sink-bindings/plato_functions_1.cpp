@@ -4,84 +4,6 @@
 
 namespace plato {
 
-Array<SolidAngle> LinearSpace(SolidAngle a, SolidAngle b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    SolidAngle* _a1 = plato::arena_alloc<SolidAngle>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<SolidAngle> LinearSpaceExclusive(SolidAngle a, SolidAngle b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    SolidAngle* _a1 = plato::arena_alloc<SolidAngle>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-SolidAngle Add(SolidAngle a, SolidAngle b) { std::abort(); }
-
-SolidAngle Subtract(SolidAngle a, SolidAngle b) { std::abort(); }
-
-SolidAngle Negative(SolidAngle x) { std::abort(); }
-
-SolidAngle Zero(SolidAngle x) { std::abort(); }
-
-int32_t Hash(SolidAngle x) { std::abort(); }
-
-SolidAngle Lerp(SolidAngle a, SolidAngle b, double t) { std::abort(); }
-
-bool LessThanOrEquals(SolidAngle a, SolidAngle b) { std::abort(); }
-
-double Amount(SolidAngle x) { std::abort(); }
-
-SolidAngle FromAmount(SolidAngle _, double x) { std::abort(); }
-
-SolidAngle Multiply(SolidAngle x, double scalar) { std::abort(); }
-
-SolidAngle Divide(SolidAngle x, double scalar) { std::abort(); }
-
-SolidAngle Modulo(SolidAngle x, double scalar) { std::abort(); }
-
-bool LessThan(Length a, Length b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(Length a, Length b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(Length a, Length b) { return LessThanOrEquals(b, a); }
-
-Length Lesser(Length a, Length b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Length Greater(Length a, Length b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(Length x, Length lower, Length upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-Length Clamp(Length x, Length lower, Length upper) { return Lesser(Greater(x, lower), upper); }
-
-Length Min3(Length a, Length b, Length c) { return Lesser(Lesser(a, b), c); }
-
-Length Max3(Length a, Length b, Length c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(Length a, Length b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-Length Double(Length x) { return Add(x, x); }
-
-Length Half(Length x) { return Divide(x, 2.0); }
-
-Length Third(Length x) { return Divide(x, 3.0); }
-
 Length Quarter(Length x) { return Divide(x, 4.0); }
 
 Length Eighth(Length x) { return Divide(x, 8.0); }
@@ -5003,5 +4925,79 @@ AffineTransform2D ToAffineTransform2D(UniformScaling2D x) { std::abort(); }
 AffineTransform3D ToAffineTransform3D(UniformScaling3D x) { std::abort(); }
 
 AffineTransform2D ToAffineTransform2D(Reflection2D x) { std::abort(); }
+
+AffineTransform3D ToAffineTransform3D(Reflection3D x) { std::abort(); }
+
+AffineTransform2D ToAffineTransform2D(RotationAbout2D x) { std::abort(); }
+
+Pose2D ToPose2D(RotationAbout2D x) { std::abort(); }
+
+AffineTransform3D ToAffineTransform3D(RotationAbout3D x) { std::abort(); }
+
+Pose3D ToPose3D(RotationAbout3D x) { std::abort(); }
+
+AffineTransform2D ToAffineTransform2D(ScalingAbout2D x) { std::abort(); }
+
+AffineTransform3D ToAffineTransform3D(ScalingAbout3D x) { std::abort(); }
+
+double At(Vector2D self, int32_t i) { return (i <= 0 ? self.X : self.Y); }
+
+int32_t ToCount(Vector2D self) { return 2; }
+
+int32_t NumComponents(Vector2D self) { return 2; }
+
+Array<double> Components(Vector2D self) { double* p = arena_alloc<double>(2); p[0] = self.X; p[1] = self.Y; return make_array(p, 2); }
+
+Vector2D CreateFromComponents(Vector2D _, Array<double> c) { return Vector2D{ c.data[0], c.data[1] }; }
+
+Vector2D CreateFromComponent(Vector2D _, double x) { return Vector2D{ x, x }; }
+
+Vector2D Reverse(Vector2D self) { return Vector2D{ self.Y, self.X }; }
+
+Vector2D UnitX(Vector2D _) { return Vector2D{ 1.0, 0.0 }; }
+
+Vector2D UnitY(Vector2D _) { return Vector2D{ 0.0, 1.0 }; }
+
+bool IsZero(Vector2D x) { return (x == Zero(x)); }
+
+bool IsOne(Vector2D x) { return (x == One(x)); }
+
+Vector2D LinearCombination(Vector2D a, Vector2D b, double s, double t) { return Add(Multiply(a, s), Multiply(b, t)); }
+
+Vector2D Barycentric(Vector2D a, Vector2D b, Vector2D c, double u, double v) { return Add(Add(a, Multiply(Subtract(b, a), u)), Multiply(Subtract(c, a), v)); }
+
+Vector2D Double(Vector2D x) { return Add(x, x); }
+
+Vector2D Half(Vector2D x) { return Divide(x, 2.0); }
+
+Vector2D Third(Vector2D x) { return Divide(x, 3.0); }
+
+Vector2D Quarter(Vector2D x) { return Divide(x, 4.0); }
+
+Vector2D Eighth(Vector2D x) { return Divide(x, 8.0); }
+
+Vector2D Sixteenth(Vector2D x) { return Divide(x, 16.0); }
+
+Vector2D Tenth(Vector2D x) { return Divide(x, 10.0); }
+
+Vector2D Hundredth(Vector2D x) { return Divide(x, 100.0); }
+
+Vector2D Thousandth(Vector2D x) { return Divide(x, 1000.0); }
+
+Vector2D Millionth(Vector2D x) { return Divide(x, 1000000.0); }
+
+Vector2D Billionth(Vector2D x) { return Divide(x, 1000000000.0); }
+
+Vector2D Million(Vector2D x) { return Multiply(x, 1000000.0); }
+
+Vector2D Billion(Vector2D x) { return Multiply(x, 1000000000.0); }
+
+Vector2D ToPercent(Vector2D x, double percent) { return Multiply(x, (percent / 100.0)); }
+
+Vector2D MidPoint(Vector2D a, Vector2D b) { return Lerp(a, b, 0.5); }
+
+Vector2D LerpClamped(Vector2D a, Vector2D b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+Vector2D SmoothLerp(Vector2D a, Vector2D b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
 } // namespace plato

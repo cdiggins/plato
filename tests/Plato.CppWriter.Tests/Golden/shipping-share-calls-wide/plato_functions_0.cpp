@@ -38,12 +38,6 @@ Axis3D Y(Axis3D _) { Axis3D r{}; r.Kind = Axis3D::Kind_Y; return r; }
 
 Axis3D Z(Axis3D _) { Axis3D r{}; r.Kind = Axis3D::Kind_Z; return r; }
 
-bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
-
-bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
-
-bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
-
 bool Equals(const Axis2D& a, const Axis2D& b) { return a == b; }
 
 bool NotEquals(const Axis2D& a, const Axis2D& b) { return a != b; }
@@ -55,10 +49,6 @@ int32_t GetHashCode(const Axis2D& a) { int32_t h = hash_(a.Kind); return h; }
 Axis2D X(Axis2D _) { Axis2D r{}; r.Kind = Axis2D::Kind_X; return r; }
 
 Axis2D Y(Axis2D _) { Axis2D r{}; r.Kind = Axis2D::Kind_Y; return r; }
-
-bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
-
-bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
 
 bool Equals(const SignedAxis3D& a, const SignedAxis3D& b) { return a == b; }
 
@@ -79,18 +69,6 @@ SignedAxis3D NegY(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kin
 SignedAxis3D PosZ(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kind_PosZ; return r; }
 
 SignedAxis3D NegZ(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kind_NegZ; return r; }
-
-bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
-
-bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
-
-bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
-
-bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
-
-bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
-
-bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
 
 bool Equals(const Color& a, const Color& b) { return a == b; }
 
@@ -305,18 +283,6 @@ GraphLayout Grid(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Gr
 GraphLayout Radial(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Radial; return r; }
 
 GraphLayout Spectral(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Spectral; return r; }
-
-bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
-
-bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
-
-bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
-
-bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
-
-bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
-
-bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
 
 bool Equals(const NumberInterval& a, const NumberInterval& b) { return a == b; }
 
@@ -1308,18 +1274,6 @@ RotationOrder ZXY(RotationOrder _) { RotationOrder r{}; r.Kind = RotationOrder::
 
 RotationOrder ZYX(RotationOrder _) { RotationOrder r{}; r.Kind = RotationOrder::Kind_ZYX; return r; }
 
-bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
-
-bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
-
-bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
-
-bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
-
-bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
-
-bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
-
 bool Equals(const EulerAngles& a, const EulerAngles& b) { return a == b; }
 
 bool NotEquals(const EulerAngles& a, const EulerAngles& b) { return a != b; }
@@ -1438,12 +1392,6 @@ MovingAverage Exponential(MovingAverage _, Proportion p0) { MovingAverage r{}; r
 
 MovingAverage Gaussian(MovingAverage _, int32_t p0, double p1) { MovingAverage r{}; r.Kind = MovingAverage::Kind_Gaussian; r.Gaussian_WindowSize = p0; r.Gaussian_StandardDeviation = p1; return r; }
 
-bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
-
-bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
-
-bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
-
 bool Equals(const OutlierDetection& a, const OutlierDetection& b) { return a == b; }
 
 bool NotEquals(const OutlierDetection& a, const OutlierDetection& b) { return a != b; }
@@ -1457,12 +1405,6 @@ OutlierDetection ZScore(OutlierDetection _, double p0) { OutlierDetection r{}; r
 OutlierDetection Iqr(OutlierDetection _, double p0) { OutlierDetection r{}; r.Kind = OutlierDetection::Kind_Iqr; r.Iqr_Threshold = p0; return r; }
 
 OutlierDetection Mad(OutlierDetection _, double p0) { OutlierDetection r{}; r.Kind = OutlierDetection::Kind_Mad; r.Mad_Threshold = p0; return r; }
-
-bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
-
-bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
-
-bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
 
 bool Equals(const Covariance2D& a, const Covariance2D& b) { return a == b; }
 
@@ -1493,12 +1435,6 @@ CorrelationStatistic Pearson(CorrelationStatistic _) { CorrelationStatistic r{};
 CorrelationStatistic Spearman(CorrelationStatistic _) { CorrelationStatistic r{}; r.Kind = CorrelationStatistic::Kind_Spearman; return r; }
 
 CorrelationStatistic Kendall(CorrelationStatistic _) { CorrelationStatistic r{}; r.Kind = CorrelationStatistic::Kind_Kendall; return r; }
-
-bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
-
-bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
-
-bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
 
 bool Equals(const CorrelationCoefficient& a, const CorrelationCoefficient& b) { return a == b; }
 
@@ -1769,12 +1705,6 @@ Shape Circle(Shape _, double p0) { Shape r{}; r.Kind = Shape::Kind_Circle; r.Cir
 Shape Rect(Shape _, double p0, double p1) { Shape r{}; r.Kind = Shape::Kind_Rect; r.Rect_Width = p0; r.Rect_Height = p1; return r; }
 
 Shape Dot(Shape _) { Shape r{}; r.Kind = Shape::Kind_Dot; return r; }
-
-bool IsCircle(const Shape& s) { return s.Kind == Shape::Kind_Circle; }
-
-bool IsRect(const Shape& s) { return s.Kind == Shape::Kind_Rect; }
-
-bool IsDot(const Shape& s) { return s.Kind == Shape::Kind_Dot; }
 
 bool Equals(const LayoutedGraph& a, const LayoutedGraph& b) { return a == b; }
 
@@ -5003,5 +4933,63 @@ double Amount(SolidAngle x) { std::abort(); }
 SolidAngle FromAmount(SolidAngle _, double x) { std::abort(); }
 
 SolidAngle Multiply(SolidAngle x, double scalar) { std::abort(); }
+
+SolidAngle Divide(SolidAngle x, double scalar) { std::abort(); }
+
+SolidAngle Modulo(SolidAngle x, double scalar) { std::abort(); }
+
+bool LessThan(Length a, Length b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
+
+bool GreaterThan(Length a, Length b) { return LessThan(b, a); }
+
+bool GreaterThanOrEquals(Length a, Length b) { return LessThanOrEquals(b, a); }
+
+Length Lesser(Length a, Length b) { return (LessThanOrEquals(a, b) ? a : b); }
+
+Length Greater(Length a, Length b) { return (LessThanOrEquals(a, b) ? b : a); }
+
+bool Between(Length x, Length lower, Length upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
+
+Length Clamp(Length x, Length lower, Length upper) { return Lesser(Greater(x, lower), upper); }
+
+Length Min3(Length a, Length b, Length c) { return Lesser(Lesser(a, b), c); }
+
+Length Max3(Length a, Length b, Length c) { return Greater(Greater(a, b), c); }
+
+int32_t Compare(Length a, Length b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
+
+Length Double(Length x) { return Add(x, x); }
+
+Length Half(Length x) { return Divide(x, 2.0); }
+
+Length Third(Length x) { return Divide(x, 3.0); }
+
+Length Quarter(Length x) { return Divide(x, 4.0); }
+
+Length Eighth(Length x) { return Divide(x, 8.0); }
+
+Length Sixteenth(Length x) { return Divide(x, 16.0); }
+
+Length Tenth(Length x) { return Divide(x, 10.0); }
+
+Length Hundredth(Length x) { return Divide(x, 100.0); }
+
+Length Thousandth(Length x) { return Divide(x, 1000.0); }
+
+Length Millionth(Length x) { return Divide(x, 1000000.0); }
+
+Length Billionth(Length x) { return Divide(x, 1000000000.0); }
+
+Length Million(Length x) { return Multiply(x, 1000000.0); }
+
+Length Billion(Length x) { return Multiply(x, 1000000000.0); }
+
+Length ToPercent(Length x, double percent) { return Multiply(x, (percent / 100.0)); }
+
+Length MidPoint(Length a, Length b) { return Lerp(a, b, 0.5); }
+
+Length LerpClamped(Length a, Length b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+Length SmoothLerp(Length a, Length b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
 } // namespace plato

@@ -22,17 +22,12 @@ int32_t GetHashCode(const Axis3D& a);
 Axis3D X(Axis3D _);
 Axis3D Y(Axis3D _);
 Axis3D Z(Axis3D _);
-bool IsX(const Axis3D& s);
-bool IsY(const Axis3D& s);
-bool IsZ(const Axis3D& s);
 bool Equals(const Axis2D& a, const Axis2D& b);
 bool NotEquals(const Axis2D& a, const Axis2D& b);
 String TypeName(const Axis2D& _);
 int32_t GetHashCode(const Axis2D& a);
 Axis2D X(Axis2D _);
 Axis2D Y(Axis2D _);
-bool IsX(const Axis2D& s);
-bool IsY(const Axis2D& s);
 bool Equals(const SignedAxis3D& a, const SignedAxis3D& b);
 bool NotEquals(const SignedAxis3D& a, const SignedAxis3D& b);
 String TypeName(const SignedAxis3D& _);
@@ -43,12 +38,6 @@ SignedAxis3D PosY(SignedAxis3D _);
 SignedAxis3D NegY(SignedAxis3D _);
 SignedAxis3D PosZ(SignedAxis3D _);
 SignedAxis3D NegZ(SignedAxis3D _);
-bool IsPosX(const SignedAxis3D& s);
-bool IsNegX(const SignedAxis3D& s);
-bool IsPosY(const SignedAxis3D& s);
-bool IsNegY(const SignedAxis3D& s);
-bool IsPosZ(const SignedAxis3D& s);
-bool IsNegZ(const SignedAxis3D& s);
 bool Equals(const Color& a, const Color& b);
 bool NotEquals(const Color& a, const Color& b);
 String TypeName(const Color& _);
@@ -156,12 +145,6 @@ GraphLayout Layered(GraphLayout _);
 GraphLayout Grid(GraphLayout _);
 GraphLayout Radial(GraphLayout _);
 GraphLayout Spectral(GraphLayout _);
-bool IsForceDirected(const GraphLayout& s);
-bool IsCircular(const GraphLayout& s);
-bool IsLayered(const GraphLayout& s);
-bool IsGrid(const GraphLayout& s);
-bool IsRadial(const GraphLayout& s);
-bool IsSpectral(const GraphLayout& s);
 bool Equals(const NumberInterval& a, const NumberInterval& b);
 bool NotEquals(const NumberInterval& a, const NumberInterval& b);
 String TypeName(const NumberInterval& _);
@@ -657,12 +640,6 @@ RotationOrder YXZ(RotationOrder _);
 RotationOrder YZX(RotationOrder _);
 RotationOrder ZXY(RotationOrder _);
 RotationOrder ZYX(RotationOrder _);
-bool IsXYZ(const RotationOrder& s);
-bool IsXZY(const RotationOrder& s);
-bool IsYXZ(const RotationOrder& s);
-bool IsYZX(const RotationOrder& s);
-bool IsZXY(const RotationOrder& s);
-bool IsZYX(const RotationOrder& s);
 bool Equals(const EulerAngles& a, const EulerAngles& b);
 bool NotEquals(const EulerAngles& a, const EulerAngles& b);
 String TypeName(const EulerAngles& _);
@@ -722,9 +699,6 @@ int32_t GetHashCode(const MovingAverage& a);
 MovingAverage Simple(MovingAverage _, int32_t p0);
 MovingAverage Exponential(MovingAverage _, Proportion p0);
 MovingAverage Gaussian(MovingAverage _, int32_t p0, double p1);
-bool IsSimple(const MovingAverage& s);
-bool IsExponential(const MovingAverage& s);
-bool IsGaussian(const MovingAverage& s);
 bool Equals(const OutlierDetection& a, const OutlierDetection& b);
 bool NotEquals(const OutlierDetection& a, const OutlierDetection& b);
 String TypeName(const OutlierDetection& _);
@@ -732,9 +706,6 @@ int32_t GetHashCode(const OutlierDetection& a);
 OutlierDetection ZScore(OutlierDetection _, double p0);
 OutlierDetection Iqr(OutlierDetection _, double p0);
 OutlierDetection Mad(OutlierDetection _, double p0);
-bool IsZScore(const OutlierDetection& s);
-bool IsIqr(const OutlierDetection& s);
-bool IsMad(const OutlierDetection& s);
 bool Equals(const Covariance2D& a, const Covariance2D& b);
 bool NotEquals(const Covariance2D& a, const Covariance2D& b);
 String TypeName(const Covariance2D& _);
@@ -750,9 +721,6 @@ int32_t GetHashCode(const CorrelationStatistic& a);
 CorrelationStatistic Pearson(CorrelationStatistic _);
 CorrelationStatistic Spearman(CorrelationStatistic _);
 CorrelationStatistic Kendall(CorrelationStatistic _);
-bool IsPearson(const CorrelationStatistic& s);
-bool IsSpearman(const CorrelationStatistic& s);
-bool IsKendall(const CorrelationStatistic& s);
 bool Equals(const CorrelationCoefficient& a, const CorrelationCoefficient& b);
 bool NotEquals(const CorrelationCoefficient& a, const CorrelationCoefficient& b);
 String TypeName(const CorrelationCoefficient& _);
@@ -904,9 +872,6 @@ int32_t GetHashCode(const Shape& a);
 Shape Circle(Shape _, double p0);
 Shape Rect(Shape _, double p0, double p1);
 Shape Dot(Shape _);
-bool IsCircle(const Shape& s);
-bool IsRect(const Shape& s);
-bool IsDot(const Shape& s);
 bool Equals(const LayoutedGraph& a, const LayoutedGraph& b);
 bool NotEquals(const LayoutedGraph& a, const LayoutedGraph& b);
 String TypeName(const LayoutedGraph& _);
@@ -4772,6 +4737,41 @@ double WideSum(ReadOnlyParameter<Wide> w);
 double HugeSum(ReadOnlyParameter<Huge> h, int32_t i);
 Huge CopyHuge(ReadOnlyParameter<Huge> h);
 double ToArea(ReadOnlyParameter<Shape> s);
+bool IsX(const Axis3D& s);
+bool IsY(const Axis3D& s);
+bool IsZ(const Axis3D& s);
+bool IsX(const Axis2D& s);
+bool IsY(const Axis2D& s);
+bool IsPosX(const SignedAxis3D& s);
+bool IsNegX(const SignedAxis3D& s);
+bool IsPosY(const SignedAxis3D& s);
+bool IsNegY(const SignedAxis3D& s);
+bool IsPosZ(const SignedAxis3D& s);
+bool IsNegZ(const SignedAxis3D& s);
+bool IsForceDirected(const GraphLayout& s);
+bool IsCircular(const GraphLayout& s);
+bool IsLayered(const GraphLayout& s);
+bool IsGrid(const GraphLayout& s);
+bool IsRadial(const GraphLayout& s);
+bool IsSpectral(const GraphLayout& s);
+bool IsXYZ(const RotationOrder& s);
+bool IsXZY(const RotationOrder& s);
+bool IsYXZ(const RotationOrder& s);
+bool IsYZX(const RotationOrder& s);
+bool IsZXY(const RotationOrder& s);
+bool IsZYX(const RotationOrder& s);
+bool IsSimple(const MovingAverage& s);
+bool IsExponential(const MovingAverage& s);
+bool IsGaussian(const MovingAverage& s);
+bool IsZScore(const OutlierDetection& s);
+bool IsIqr(const OutlierDetection& s);
+bool IsMad(const OutlierDetection& s);
+bool IsPearson(const CorrelationStatistic& s);
+bool IsSpearman(const CorrelationStatistic& s);
+bool IsKendall(const CorrelationStatistic& s);
+bool IsCircle(const Shape& s);
+bool IsRect(const Shape& s);
+bool IsDot(const Shape& s);
 template <class T> Array<int32_t> Offsets(JaggedArray<T> self);
 template <class T> Array<T> Values(JaggedArray<T> self);
 int32_t VertexCount(Graph self);
@@ -4921,7 +4921,32 @@ template<class TV0, class F0> Array<TV0> Sort(Array<TV0> xs, F0 lessOrEqual) { r
 
 template<class TV0> JaggedArray<TV0> FromRows(Array<Array<TV0>> rows)
 {
-    Array<int32_t> offsets = MapRange((ToCount(rows) + 1), [=](int32_t i) -> int32_t { return Reduce(MapRange(i, [=](int32_t j) -> int32_t { return ToCount(plato::array_at_readonly(rows, j)); }), 0, [=](int32_t acc, int32_t n) -> int32_t { return (acc + n); }); });
+    auto _s0 = (ToCount(rows) + 1);
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    int32_t* _a0 = plato::arena_alloc<int32_t>(_n0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0 = _i0;
+        int32_t _callback0{};
+        {
+            auto _s1 = _eval0_0;
+            int32_t _lp1 = 0;
+            int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+            for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+            {
+                auto _eval6_1s0 = _i1;
+                int32_t _e1_0 = ToCount(plato::array_at_readonly(rows, _eval6_1s0));
+                auto _eval4_1 = _lp1;
+                auto _eval5_1 = _e1_0;
+                _lp1 = (_eval4_1 + _eval5_1);
+            }
+            _callback0 = _lp1; goto _callback0_exit;
+        }
+        _callback0_exit: ;
+        _a0[_i0] = _callback0;
+    }
+    auto _lp0 = plato::make_array(_a0, _n0);
+    Array<int32_t> offsets = _lp0;
     return JaggedArray<TV0>{ offsets, FlatMap(rows, [=](Array<TV0> r) -> Array<TV0> { return r; }) };
 }
 
@@ -4983,11 +5008,55 @@ template<class T> T Last(Array2D<T> self) { return At(self, (ToCount(self) - 1))
 
 template<class T> T Middle(Array2D<T> self) { return At(self, (ToCount(self) / 2)); }
 
-template<class T, class TV2, class F0> TV2 Reduce(Array2D<T> xs, TV2 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> T { return At(xs, i); }), acc, f); }
+template<class T, class TV2, class F0> TV2 Reduce(Array2D<T> xs, TV2 acc, F0 f)
+{
+    auto _s0 = ToCount(xs);
+    auto _lp0 = acc;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        T _e0_0 = At(xs, _eval0_0s0);
+        _lp0 = (f)(_lp0, _e0_0);
+    }
+    return _lp0;
+}
 
-template<class T, class F0> bool All(Array2D<T> xs, F0 predicate) { return All(MapRange(ToCount(xs), [=](int32_t i) -> T { return At(xs, i); }), predicate); }
+template<class T, class F0> bool All(Array2D<T> xs, F0 predicate)
+{
+    auto _s0 = ToCount(xs);
+    bool _lp0 = true;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        T _e0_0 = At(xs, _eval0_0s0);
+        if (!((predicate)(_e0_0)))
+        {
+            _lp0 = false;
+            break;
+        }
+    }
+    return _lp0;
+}
 
-template<class T, class F0> bool Any(Array2D<T> xs, F0 predicate) { return Any(MapRange(ToCount(xs), [=](int32_t i) -> T { return At(xs, i); }), predicate); }
+template<class T, class F0> bool Any(Array2D<T> xs, F0 predicate)
+{
+    auto _s0 = ToCount(xs);
+    bool _lp0 = false;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        T _e0_0 = At(xs, _eval0_0s0);
+        if (((predicate)(_e0_0)))
+        {
+            _lp0 = true;
+            break;
+        }
+    }
+    return _lp0;
+}
 
 template<class T> bool IsEmpty(Array2D<T> self) { return (ToCount(self) == 0); }
 
@@ -5025,13 +5094,57 @@ template<class T> T Last(Array3D<T> self) { return At(self, (ToCount(self) - 1))
 
 template<class T> T Middle(Array3D<T> self) { return At(self, (ToCount(self) / 2)); }
 
-template<class T, class TV2, class F0> TV2 Reduce(Array3D<T> xs, TV2 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> T { return At(xs, i); }), acc, f); }
+template<class T, class TV2, class F0> TV2 Reduce(Array3D<T> xs, TV2 acc, F0 f)
+{
+    auto _s0 = ToCount(xs);
+    auto _lp0 = acc;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        T _e0_0 = At(xs, _eval0_0s0);
+        _lp0 = (f)(_lp0, _e0_0);
+    }
+    return _lp0;
+}
 
 template<class T, class TV2, class F0> Array<TV2> Map(Array3D<T> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> T { return At(xs, i); }), f); }
 
-template<class T, class F0> bool All(Array3D<T> xs, F0 predicate) { return All(MapRange(ToCount(xs), [=](int32_t i) -> T { return At(xs, i); }), predicate); }
+template<class T, class F0> bool All(Array3D<T> xs, F0 predicate)
+{
+    auto _s0 = ToCount(xs);
+    bool _lp0 = true;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        T _e0_0 = At(xs, _eval0_0s0);
+        if (!((predicate)(_e0_0)))
+        {
+            _lp0 = false;
+            break;
+        }
+    }
+    return _lp0;
+}
 
-template<class T, class F0> bool Any(Array3D<T> xs, F0 predicate) { return Any(MapRange(ToCount(xs), [=](int32_t i) -> T { return At(xs, i); }), predicate); }
+template<class T, class F0> bool Any(Array3D<T> xs, F0 predicate)
+{
+    auto _s0 = ToCount(xs);
+    bool _lp0 = false;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        T _e0_0 = At(xs, _eval0_0s0);
+        if (((predicate)(_e0_0)))
+        {
+            _lp0 = true;
+            break;
+        }
+    }
+    return _lp0;
+}
 
 template<class T> bool IsEmpty(Array3D<T> self) { return (ToCount(self) == 0); }
 
@@ -5059,13 +5172,57 @@ template <typename F> bool AnyComponent(Vector2D x, F f) { return f(x.X) || f(x.
 
 template<class TV0> bool IsValidIndex(ReadOnlyParameter<Vector2D> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 2) : false); }
 
-template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Vector2D> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
+template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Vector2D> xs, TV1 acc, F0 f)
+{
+    auto _s0 = ToCount(xs);
+    auto _lp0 = acc;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        _lp0 = (f)(_lp0, _e0_0);
+    }
+    return _lp0;
+}
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Vector2D> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Vector2D> xs, F0 predicate) { return All(MapRange(2, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Vector2D> xs, F0 predicate)
+{
+    auto _s0 = 2;
+    bool _lp0 = true;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (!((predicate)(_e0_0)))
+        {
+            _lp0 = false;
+            break;
+        }
+    }
+    return _lp0;
+}
 
-template<class F0> bool Any(ReadOnlyParameter<Vector2D> xs, F0 predicate) { return Any(MapRange(2, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Vector2D> xs, F0 predicate)
+{
+    auto _s0 = 2;
+    bool _lp0 = false;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (((predicate)(_e0_0)))
+        {
+            _lp0 = true;
+            break;
+        }
+    }
+    return _lp0;
+}
 
 template <typename F> Vector3D MapComponents(Vector3D x, F f) { return Vector3D{ f(x.X), f(x.Y), f(x.Z) }; }
 
@@ -5087,13 +5244,57 @@ template <typename F> bool AnyComponent(Vector3D x, F f) { return f(x.X) || f(x.
 
 template<class TV0> bool IsValidIndex(ReadOnlyParameter<Vector3D> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 3) : false); }
 
-template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Vector3D> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
+template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Vector3D> xs, TV1 acc, F0 f)
+{
+    auto _s0 = ToCount(xs);
+    auto _lp0 = acc;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        _lp0 = (f)(_lp0, _e0_0);
+    }
+    return _lp0;
+}
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Vector3D> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Vector3D> xs, F0 predicate) { return All(MapRange(3, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Vector3D> xs, F0 predicate)
+{
+    auto _s0 = 3;
+    bool _lp0 = true;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (!((predicate)(_e0_0)))
+        {
+            _lp0 = false;
+            break;
+        }
+    }
+    return _lp0;
+}
 
-template<class F0> bool Any(ReadOnlyParameter<Vector3D> xs, F0 predicate) { return Any(MapRange(3, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Vector3D> xs, F0 predicate)
+{
+    auto _s0 = 3;
+    bool _lp0 = false;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (((predicate)(_e0_0)))
+        {
+            _lp0 = true;
+            break;
+        }
+    }
+    return _lp0;
+}
 
 template <typename F> VectorN MapComponents(VectorN x, F f) { int32_t n = x.Components.count; double* p = arena_alloc<double>(n); for (int32_t i = 0; i < n; i++) p[i] = f(x.Components.data[i]); return VectorN{ make_array(p, n) }; }
 
@@ -5113,13 +5314,57 @@ template <typename F> bool AnyComponent(VectorN x, F f) { for (int32_t i = 0; i 
 
 template<class TV0> bool IsValidIndex(ReadOnlyParameter<VectorN> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < ToCount(self)) : false); }
 
-template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<VectorN> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
+template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<VectorN> xs, TV1 acc, F0 f)
+{
+    auto _s0 = ToCount(xs);
+    auto _lp0 = acc;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        _lp0 = (f)(_lp0, _e0_0);
+    }
+    return _lp0;
+}
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<VectorN> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<VectorN> xs, F0 predicate) { return All(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<VectorN> xs, F0 predicate)
+{
+    auto _s0 = ToCount(xs);
+    bool _lp0 = true;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (!((predicate)(_e0_0)))
+        {
+            _lp0 = false;
+            break;
+        }
+    }
+    return _lp0;
+}
 
-template<class F0> bool Any(ReadOnlyParameter<VectorN> xs, F0 predicate) { return Any(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<VectorN> xs, F0 predicate)
+{
+    auto _s0 = ToCount(xs);
+    bool _lp0 = false;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (((predicate)(_e0_0)))
+        {
+            _lp0 = true;
+            break;
+        }
+    }
+    return _lp0;
+}
 
 template <typename F> Number2 MapComponents(Number2 x, F f) { return Number2{ f(x.X), f(x.Y) }; }
 
@@ -5141,13 +5386,57 @@ template <typename F> bool AnyComponent(Number2 x, F f) { return f(x.X) || f(x.Y
 
 template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number2> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 2) : false); }
 
-template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number2> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
+template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number2> xs, TV1 acc, F0 f)
+{
+    auto _s0 = ToCount(xs);
+    auto _lp0 = acc;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        _lp0 = (f)(_lp0, _e0_0);
+    }
+    return _lp0;
+}
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Number2> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Number2> xs, F0 predicate) { return All(MapRange(2, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Number2> xs, F0 predicate)
+{
+    auto _s0 = 2;
+    bool _lp0 = true;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (!((predicate)(_e0_0)))
+        {
+            _lp0 = false;
+            break;
+        }
+    }
+    return _lp0;
+}
 
-template<class F0> bool Any(ReadOnlyParameter<Number2> xs, F0 predicate) { return Any(MapRange(2, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Number2> xs, F0 predicate)
+{
+    auto _s0 = 2;
+    bool _lp0 = false;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (((predicate)(_e0_0)))
+        {
+            _lp0 = true;
+            break;
+        }
+    }
+    return _lp0;
+}
 
 template <typename F> Number3 MapComponents(Number3 x, F f) { return Number3{ f(x.X), f(x.Y), f(x.Z) }; }
 
@@ -5169,13 +5458,57 @@ template <typename F> bool AnyComponent(Number3 x, F f) { return f(x.X) || f(x.Y
 
 template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number3> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 3) : false); }
 
-template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number3> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
+template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number3> xs, TV1 acc, F0 f)
+{
+    auto _s0 = ToCount(xs);
+    auto _lp0 = acc;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        _lp0 = (f)(_lp0, _e0_0);
+    }
+    return _lp0;
+}
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Number3> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Number3> xs, F0 predicate) { return All(MapRange(3, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Number3> xs, F0 predicate)
+{
+    auto _s0 = 3;
+    bool _lp0 = true;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (!((predicate)(_e0_0)))
+        {
+            _lp0 = false;
+            break;
+        }
+    }
+    return _lp0;
+}
 
-template<class F0> bool Any(ReadOnlyParameter<Number3> xs, F0 predicate) { return Any(MapRange(3, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Number3> xs, F0 predicate)
+{
+    auto _s0 = 3;
+    bool _lp0 = false;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (((predicate)(_e0_0)))
+        {
+            _lp0 = true;
+            break;
+        }
+    }
+    return _lp0;
+}
 
 template <typename F> Number4 MapComponents(Number4 x, F f) { return Number4{ f(x.X), f(x.Y), f(x.Z), f(x.W) }; }
 
@@ -5197,13 +5530,57 @@ template <typename F> bool AnyComponent(Number4 x, F f) { return f(x.X) || f(x.Y
 
 template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number4> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 4) : false); }
 
-template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number4> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
+template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number4> xs, TV1 acc, F0 f)
+{
+    auto _s0 = ToCount(xs);
+    auto _lp0 = acc;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        _lp0 = (f)(_lp0, _e0_0);
+    }
+    return _lp0;
+}
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Number4> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Number4> xs, F0 predicate) { return All(MapRange(4, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Number4> xs, F0 predicate)
+{
+    auto _s0 = 4;
+    bool _lp0 = true;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (!((predicate)(_e0_0)))
+        {
+            _lp0 = false;
+            break;
+        }
+    }
+    return _lp0;
+}
 
-template<class F0> bool Any(ReadOnlyParameter<Number4> xs, F0 predicate) { return Any(MapRange(4, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Number4> xs, F0 predicate)
+{
+    auto _s0 = 4;
+    bool _lp0 = false;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (((predicate)(_e0_0)))
+        {
+            _lp0 = true;
+            break;
+        }
+    }
+    return _lp0;
+}
 
 template <typename F> Number8 MapComponents(Number8 x, F f) { return Number8{ f(x.X0), f(x.X1), f(x.X2), f(x.X3), f(x.X4), f(x.X5), f(x.X6), f(x.X7) }; }
 
@@ -5225,13 +5602,57 @@ template <typename F> bool AnyComponent(Number8 x, F f) { return f(x.X0) || f(x.
 
 template<class TV0> bool IsValidIndex(ReadOnlyParameter<Number8> self, TV0 index) { return ((0 <= Value(index)) ? (Value(index) < 8) : false); }
 
-template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number8> xs, TV1 acc, F0 f) { return Reduce(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), acc, f); }
+template<class TV1, class F0> TV1 Reduce(ReadOnlyParameter<Number8> xs, TV1 acc, F0 f)
+{
+    auto _s0 = ToCount(xs);
+    auto _lp0 = acc;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        _lp0 = (f)(_lp0, _e0_0);
+    }
+    return _lp0;
+}
 
 template<class TV1, class F0> Array<TV1> Map(ReadOnlyParameter<Number8> xs, F0 f) { return Map(MapRange(ToCount(xs), [=](int32_t i) -> double { return At(xs, i); }), f); }
 
-template<class F0> bool All(ReadOnlyParameter<Number8> xs, F0 predicate) { return All(MapRange(8, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool All(ReadOnlyParameter<Number8> xs, F0 predicate)
+{
+    auto _s0 = 8;
+    bool _lp0 = true;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (!((predicate)(_e0_0)))
+        {
+            _lp0 = false;
+            break;
+        }
+    }
+    return _lp0;
+}
 
-template<class F0> bool Any(ReadOnlyParameter<Number8> xs, F0 predicate) { return Any(MapRange(8, [=](int32_t i) -> double { return At(xs, i); }), predicate); }
+template<class F0> bool Any(ReadOnlyParameter<Number8> xs, F0 predicate)
+{
+    auto _s0 = 8;
+    bool _lp0 = false;
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0s0 = _i0;
+        double _e0_0 = At(xs, _eval0_0s0);
+        if (((predicate)(_e0_0)))
+        {
+            _lp0 = true;
+            break;
+        }
+    }
+    return _lp0;
+}
 
 template <class T> Array<int32_t> Offsets(JaggedArray<T> self) { return self.Offsets; }
 

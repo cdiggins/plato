@@ -4,66 +4,6 @@
 
 namespace plato {
 
-SolidAngle Multiply(SolidAngle x, double scalar) { std::abort(); }
-
-SolidAngle Divide(SolidAngle x, double scalar) { std::abort(); }
-
-SolidAngle Modulo(SolidAngle x, double scalar) { std::abort(); }
-
-bool LessThan(Length a, Length b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(Length a, Length b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(Length a, Length b) { return LessThanOrEquals(b, a); }
-
-Length Lesser(Length a, Length b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Length Greater(Length a, Length b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(Length x, Length lower, Length upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-Length Clamp(Length x, Length lower, Length upper) { return Lesser(Greater(x, lower), upper); }
-
-Length Min3(Length a, Length b, Length c) { return Lesser(Lesser(a, b), c); }
-
-Length Max3(Length a, Length b, Length c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(Length a, Length b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-Length Double(Length x) { return Add(x, x); }
-
-Length Half(Length x) { return Divide(x, 2.0); }
-
-Length Third(Length x) { return Divide(x, 3.0); }
-
-Length Quarter(Length x) { return Divide(x, 4.0); }
-
-Length Eighth(Length x) { return Divide(x, 8.0); }
-
-Length Sixteenth(Length x) { return Divide(x, 16.0); }
-
-Length Tenth(Length x) { return Divide(x, 10.0); }
-
-Length Hundredth(Length x) { return Divide(x, 100.0); }
-
-Length Thousandth(Length x) { return Divide(x, 1000.0); }
-
-Length Millionth(Length x) { return Divide(x, 1000000.0); }
-
-Length Billionth(Length x) { return Divide(x, 1000000000.0); }
-
-Length Million(Length x) { return Multiply(x, 1000000.0); }
-
-Length Billion(Length x) { return Multiply(x, 1000000000.0); }
-
-Length ToPercent(Length x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Length MidPoint(Length a, Length b) { return Lerp(a, b, 0.5); }
-
-Length LerpClamped(Length a, Length b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Length SmoothLerp(Length a, Length b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
 Array<Length> LinearSpace(Length a, Length b, int32_t count)
 {
     auto _s1 = count;
@@ -5003,5 +4943,65 @@ Vector2D Double(Vector2D x) { return Add(x, x); }
 Vector2D Half(Vector2D x) { return Divide(x, 2.0); }
 
 Vector2D Third(Vector2D x) { return Divide(x, 3.0); }
+
+Vector2D Quarter(Vector2D x) { return Divide(x, 4.0); }
+
+Vector2D Eighth(Vector2D x) { return Divide(x, 8.0); }
+
+Vector2D Sixteenth(Vector2D x) { return Divide(x, 16.0); }
+
+Vector2D Tenth(Vector2D x) { return Divide(x, 10.0); }
+
+Vector2D Hundredth(Vector2D x) { return Divide(x, 100.0); }
+
+Vector2D Thousandth(Vector2D x) { return Divide(x, 1000.0); }
+
+Vector2D Millionth(Vector2D x) { return Divide(x, 1000000.0); }
+
+Vector2D Billionth(Vector2D x) { return Divide(x, 1000000000.0); }
+
+Vector2D Million(Vector2D x) { return Multiply(x, 1000000.0); }
+
+Vector2D Billion(Vector2D x) { return Multiply(x, 1000000000.0); }
+
+Vector2D ToPercent(Vector2D x, double percent) { return Multiply(x, (percent / 100.0)); }
+
+Vector2D MidPoint(Vector2D a, Vector2D b) { return Lerp(a, b, 0.5); }
+
+Vector2D LerpClamped(Vector2D a, Vector2D b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+Vector2D SmoothLerp(Vector2D a, Vector2D b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
+Array<Vector2D> LinearSpace(Vector2D a, Vector2D b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Vector2D* _a1 = plato::arena_alloc<Vector2D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Array<Vector2D> LinearSpaceExclusive(Vector2D a, Vector2D b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Vector2D* _a1 = plato::arena_alloc<Vector2D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Vector2D Square(Vector2D x) { return Multiply(x, x); }
+
+Vector2D Cube(Vector2D x) { return Multiply(Multiply(x, x), x); }
 
 } // namespace plato

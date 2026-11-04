@@ -4,70 +4,6 @@
 
 namespace plato {
 
-Vector2D Offset(Point2D p) { return Vector2D{ p.X, p.Y }; }
-
-Point2D FromOffset(Point2D _, Vector2D v) { return Point2D{ v.X, v.Y }; }
-
-Vector2D PositionVector(Point2D p) { return Vector2D{ p.X, p.Y }; }
-
-Point2D Transform(Point2D p, Pose2D pose) { return FromOffset(pose.Position, Add(Vector2D{ pose.Position.X, pose.Position.Y }, Transform(Vector2D{ p.X, p.Y }, pose.Rotation))); }
-
-Point2D Transform(Point2D p, Rotation2D r) { return ToPoint(Transform(Vector2D{ p.X, p.Y }, r)); }
-
-Point2D Transform(Point2D p, Rotor2D r) { return ToPoint(Transform(Vector2D{ p.X, p.Y }, r)); }
-
-Point2D Transform(Point2D p, TrsTransform2D t) { return ToPoint(Add(Transform(Multiply(Vector2D{ p.X, p.Y }, t.Scale), t.Rotation), t.Translation)); }
-
-Point2D MidPoint(Point2D a, Point2D b) { return Lerp(a, b, 0.5); }
-
-Point2D LerpClamped(Point2D a, Point2D b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Point2D SmoothLerp(Point2D a, Point2D b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Point2D> LinearSpace(Point2D a, Point2D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Point2D* _a1 = plato::arena_alloc<Point2D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<Point2D> LinearSpaceExclusive(Point2D a, Point2D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Point2D* _a1 = plato::arena_alloc<Point2D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Point2D Add(Point2D x, Vector2D delta) { return FromOffset(x, Add(Offset(x), delta)); }
-
-Vector2D Between(Point2D a, Point2D b) { return Subtract(Offset(b), Offset(a)); }
-
-Point2D Origin(Point2D x) { return FromOffset(x, Vector2D{ 0.0, 0.0 }); }
-
-Point2D Subtract(Point2D x, Vector2D delta) { return Add(x, Negative(delta)); }
-
-Vector2D Subtract(Point2D a, Point2D b) { return Between(b, a); }
-
-Point2D Lerp(Point2D a, Point2D b, double t) { return Add(a, Multiply(Between(a, b), t)); }
-
-bool IsNear(Point2D a, Point2D b, double tolerance) { return (Distance(a, b) <= tolerance); }
-
-bool IsNearerThan(Point2D reference, Point2D candidate, Point2D other) { return (Distance(reference, candidate) < Distance(reference, other)); }
-
 Point2D Nearest(Point2D reference, Point2D a, Point2D b) { return ((Distance(reference, a) <= Distance(reference, b)) ? a : b); }
 
 Point2D ThenTransform(Point2D self, Transform2D first, Transform2D second) { return Transform(Transform(self, first), second); }
@@ -4990,5 +4926,81 @@ LinearDensity MidPoint(LinearDensity a, LinearDensity b) { return Lerp(a, b, 0.5
 LinearDensity LerpClamped(LinearDensity a, LinearDensity b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
 
 LinearDensity SmoothLerp(LinearDensity a, LinearDensity b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
+Array<LinearDensity> LinearSpace(LinearDensity a, LinearDensity b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    LinearDensity* _a1 = plato::arena_alloc<LinearDensity>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Array<LinearDensity> LinearSpaceExclusive(LinearDensity a, LinearDensity b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    LinearDensity* _a1 = plato::arena_alloc<LinearDensity>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+double Amount(Force x) { return x.Newtons; }
+
+Force FromAmount(Force _, double x) { return Force{ x }; }
+
+bool IsZero(Force self) { return (Amount(self) == 0.0); }
+
+bool IsPositive(Force self) { return (0.0 < Amount(self)); }
+
+bool IsNegative(Force self) { return (Amount(self) < 0.0); }
+
+int32_t Sign(Force self) { return Sign(Amount(self)); }
+
+Force Abs(Force self) { return (IsNegative(self) ? Negative(self) : self); }
+
+Force AbsoluteDifference(Force a, Force b) { return (((Subtract(a, b).Newtons <= 0.0) ? (!(Subtract(a, b).Newtons == 0.0)) : false) ? Force{ (-Subtract(a, b).Newtons) } : Subtract(a, b)); }
+
+Force Add(Force a, Force b) { return FromAmount(a, (Amount(a) + Amount(b))); }
+
+Force Subtract(Force a, Force b) { return FromAmount(a, (Amount(a) - Amount(b))); }
+
+Force Negative(Force x) { return FromAmount(x, (-Amount(x))); }
+
+Force Zero(Force x) { return FromAmount(x, 0.0); }
+
+int32_t Hash(Force x) { return Hash(Amount(x)); }
+
+bool LessThanOrEquals(Force a, Force b) { return (Amount(a) <= Amount(b)); }
+
+Force Lerp(Force a, Force b, double t) { return FromAmount(a, Lerp(Amount(a), Amount(b), t)); }
+
+Force Multiply(Force x, double scalar) { return FromAmount(x, (Amount(x) * scalar)); }
+
+Force Divide(Force x, double scalar) { return FromAmount(x, (Amount(x) / scalar)); }
+
+Force Modulo(Force x, double scalar) { return FromAmount(x, fmodf(Amount(x), scalar)); }
+
+bool LessThan(Force a, Force b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
+
+bool GreaterThan(Force a, Force b) { return LessThan(b, a); }
+
+bool GreaterThanOrEquals(Force a, Force b) { return LessThanOrEquals(b, a); }
+
+Force Lesser(Force a, Force b) { return (LessThanOrEquals(a, b) ? a : b); }
+
+Force Greater(Force a, Force b) { return (LessThanOrEquals(a, b) ? b : a); }
+
+bool Between(Force x, Force lower, Force upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
 
 } // namespace plato

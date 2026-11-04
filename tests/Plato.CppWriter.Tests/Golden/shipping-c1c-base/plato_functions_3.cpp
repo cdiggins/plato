@@ -4,70 +4,6 @@
 
 namespace plato {
 
-Vector3D CatmullRomDerivative(Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3, double t) { return Multiply(Add(Add(Subtract(p2, p0), Multiply(Subtract(Subtract(Add(Multiply(p0, 2.0), Multiply(p2, 4.0)), Multiply(p1, 5.0)), p3), (2.0 * t))), Multiply(Subtract(Subtract(Add(Multiply(p1, 3.0), p3), p0), Multiply(p2, 3.0)), (3.0 * (t * t)))), 0.5); }
-
-Vector3D Double(Vector3D x) { return Add(x, x); }
-
-Vector3D Half(Vector3D x) { return Divide(x, 2.0); }
-
-Vector3D Third(Vector3D x) { return Divide(x, 3.0); }
-
-Vector3D Quarter(Vector3D x) { return Divide(x, 4.0); }
-
-Vector3D Eighth(Vector3D x) { return Divide(x, 8.0); }
-
-Vector3D Sixteenth(Vector3D x) { return Divide(x, 16.0); }
-
-Vector3D Tenth(Vector3D x) { return Divide(x, 10.0); }
-
-Vector3D Hundredth(Vector3D x) { return Divide(x, 100.0); }
-
-Vector3D Thousandth(Vector3D x) { return Divide(x, 1000.0); }
-
-Vector3D Millionth(Vector3D x) { return Divide(x, 1000000.0); }
-
-Vector3D Billionth(Vector3D x) { return Divide(x, 1000000000.0); }
-
-Vector3D Million(Vector3D x) { return Multiply(x, 1000000.0); }
-
-Vector3D Billion(Vector3D x) { return Multiply(x, 1000000000.0); }
-
-Vector3D ToPercent(Vector3D x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Vector3D MidPoint(Vector3D a, Vector3D b) { return Lerp(a, b, 0.5); }
-
-Vector3D LerpClamped(Vector3D a, Vector3D b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Vector3D SmoothLerp(Vector3D a, Vector3D b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Vector3D> LinearSpace(Vector3D a, Vector3D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Vector3D* _a1 = plato::arena_alloc<Vector3D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<Vector3D> LinearSpaceExclusive(Vector3D a, Vector3D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Vector3D* _a1 = plato::arena_alloc<Vector3D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
 Vector3D Square(Vector3D x) { return Multiply(x, x); }
 
 Vector3D Cube(Vector3D x)
@@ -2177,6 +2113,70 @@ bool IsSingleton(Number8 self) { return (ToCount(self) == 1); }
 bool IsUnit(Number8 x, double tolerance) { return (Abs((MagnitudeSquared(x) - 1.0)) <= tolerance); }
 
 bool IsZeroLength(Number8 x, double tolerance) { return (MagnitudeSquared(x) <= tolerance); }
+
+bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
+
+bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
+
+bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
+
+bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
+
+bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
+
+bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
+
+bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
+
+bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
+
+bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
+
+bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
+
+bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
+
+bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
+
+bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
+
+bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
+
+bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
+
+bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
+
+bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
+
+bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
+
+bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
+
+bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
+
+bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
+
+bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
+
+bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
+
+bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
+
+bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
+
+bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
+
+bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
+
+bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
+
+bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
+
+bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
+
+bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
+
+bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
 
 int32_t VertexCount(Graph self) { return self.VertexCount; }
 

@@ -38,12 +38,6 @@ Axis3D Y(Axis3D _) { Axis3D r{}; r.Kind = Axis3D::Kind_Y; return r; }
 
 Axis3D Z(Axis3D _) { Axis3D r{}; r.Kind = Axis3D::Kind_Z; return r; }
 
-bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
-
-bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
-
-bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
-
 bool Equals(const Axis2D& a, const Axis2D& b) { return a == b; }
 
 bool NotEquals(const Axis2D& a, const Axis2D& b) { return a != b; }
@@ -55,10 +49,6 @@ int32_t GetHashCode(const Axis2D& a) { int32_t h = hash_(a.Kind); return h; }
 Axis2D X(Axis2D _) { Axis2D r{}; r.Kind = Axis2D::Kind_X; return r; }
 
 Axis2D Y(Axis2D _) { Axis2D r{}; r.Kind = Axis2D::Kind_Y; return r; }
-
-bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
-
-bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
 
 bool Equals(const SignedAxis3D& a, const SignedAxis3D& b) { return a == b; }
 
@@ -79,18 +69,6 @@ SignedAxis3D NegY(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kin
 SignedAxis3D PosZ(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kind_PosZ; return r; }
 
 SignedAxis3D NegZ(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kind_NegZ; return r; }
-
-bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
-
-bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
-
-bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
-
-bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
-
-bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
-
-bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
 
 bool Equals(const Color& a, const Color& b) { return a == b; }
 
@@ -305,18 +283,6 @@ GraphLayout Grid(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Gr
 GraphLayout Radial(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Radial; return r; }
 
 GraphLayout Spectral(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Spectral; return r; }
-
-bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
-
-bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
-
-bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
-
-bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
-
-bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
-
-bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
 
 bool Equals(const NumberInterval& a, const NumberInterval& b) { return a == b; }
 
@@ -1308,18 +1274,6 @@ RotationOrder ZXY(RotationOrder _) { RotationOrder r{}; r.Kind = RotationOrder::
 
 RotationOrder ZYX(RotationOrder _) { RotationOrder r{}; r.Kind = RotationOrder::Kind_ZYX; return r; }
 
-bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
-
-bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
-
-bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
-
-bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
-
-bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
-
-bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
-
 bool Equals(const EulerAngles& a, const EulerAngles& b) { return a == b; }
 
 bool NotEquals(const EulerAngles& a, const EulerAngles& b) { return a != b; }
@@ -1438,12 +1392,6 @@ MovingAverage Exponential(MovingAverage _, Proportion p0) { MovingAverage r{}; r
 
 MovingAverage Gaussian(MovingAverage _, int32_t p0, double p1) { MovingAverage r{}; r.Kind = MovingAverage::Kind_Gaussian; r.As_Gaussian.WindowSize = p0; r.As_Gaussian.StandardDeviation = p1; return r; }
 
-bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
-
-bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
-
-bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
-
 bool Equals(const OutlierDetection& a, const OutlierDetection& b) { return a == b; }
 
 bool NotEquals(const OutlierDetection& a, const OutlierDetection& b) { return a != b; }
@@ -1457,12 +1405,6 @@ OutlierDetection ZScore(OutlierDetection _, double p0) { OutlierDetection r{}; r
 OutlierDetection Iqr(OutlierDetection _, double p0) { OutlierDetection r{}; r.Kind = OutlierDetection::Kind_Iqr; r.As_Iqr.Threshold = p0; return r; }
 
 OutlierDetection Mad(OutlierDetection _, double p0) { OutlierDetection r{}; r.Kind = OutlierDetection::Kind_Mad; r.As_Mad.Threshold = p0; return r; }
-
-bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
-
-bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
-
-bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
 
 bool Equals(const Covariance2D& a, const Covariance2D& b) { return a == b; }
 
@@ -1493,12 +1435,6 @@ CorrelationStatistic Pearson(CorrelationStatistic _) { CorrelationStatistic r{};
 CorrelationStatistic Spearman(CorrelationStatistic _) { CorrelationStatistic r{}; r.Kind = CorrelationStatistic::Kind_Spearman; return r; }
 
 CorrelationStatistic Kendall(CorrelationStatistic _) { CorrelationStatistic r{}; r.Kind = CorrelationStatistic::Kind_Kendall; return r; }
-
-bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
-
-bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
-
-bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
 
 bool Equals(const CorrelationCoefficient& a, const CorrelationCoefficient& b) { return a == b; }
 
@@ -1801,12 +1737,6 @@ Shape Circle(Shape _, double p0) { Shape r{}; r.Kind = Shape::Kind_Circle; r.As_
 Shape Rect(Shape _, double p0, double p1) { Shape r{}; r.Kind = Shape::Kind_Rect; r.As_Rect.Width = p0; r.As_Rect.Height = p1; return r; }
 
 Shape Dot(Shape _) { Shape r{}; r.Kind = Shape::Kind_Dot; return r; }
-
-bool IsCircle(const Shape& s) { return s.Kind == Shape::Kind_Circle; }
-
-bool IsRect(const Shape& s) { return s.Kind == Shape::Kind_Rect; }
-
-bool IsDot(const Shape& s) { return s.Kind == Shape::Kind_Dot; }
 
 bool Equals(const LayoutedGraph& a, const LayoutedGraph& b) { return a == b; }
 
@@ -2130,9 +2060,41 @@ Color LerpClamped(ReadOnlyParameter<Color> a, ReadOnlyParameter<Color> b, double
 
 Color SmoothLerp(ReadOnlyParameter<Color> a, ReadOnlyParameter<Color> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<Color> LinearSpace(ReadOnlyParameter<Color> a, ReadOnlyParameter<Color> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Color { return Lerp(a, b, t); }); }
+Array<Color> LinearSpace(ReadOnlyParameter<Color> a, ReadOnlyParameter<Color> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Color* _a1 = plato::arena_alloc<Color>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<Color> LinearSpaceExclusive(ReadOnlyParameter<Color> a, ReadOnlyParameter<Color> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Color { return Lerp(a, b, t); }); }
+Array<Color> LinearSpaceExclusive(ReadOnlyParameter<Color> a, ReadOnlyParameter<Color> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Color* _a1 = plato::arena_alloc<Color>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 Color Add(Color a, Color b) { std::abort(); }
 
@@ -2592,9 +2554,41 @@ Complex LerpClamped(ReadOnlyParameter<Complex> a, ReadOnlyParameter<Complex> b, 
 
 Complex SmoothLerp(ReadOnlyParameter<Complex> a, ReadOnlyParameter<Complex> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<Complex> LinearSpace(ReadOnlyParameter<Complex> a, ReadOnlyParameter<Complex> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Complex { return Lerp(a, b, t); }); }
+Array<Complex> LinearSpace(ReadOnlyParameter<Complex> a, ReadOnlyParameter<Complex> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Complex* _a1 = plato::arena_alloc<Complex>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<Complex> LinearSpaceExclusive(ReadOnlyParameter<Complex> a, ReadOnlyParameter<Complex> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Complex { return Lerp(a, b, t); }); }
+Array<Complex> LinearSpaceExclusive(ReadOnlyParameter<Complex> a, ReadOnlyParameter<Complex> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Complex* _a1 = plato::arena_alloc<Complex>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 Rational Add(ReadOnlyParameter<Rational> a, ReadOnlyParameter<Rational> b) { return Rational{ ((a.Numerator * b.Denominator) + (b.Numerator * a.Denominator)), (a.Denominator * b.Denominator) }; }
 
@@ -2699,9 +2693,41 @@ Proportion LerpClamped(ReadOnlyParameter<Proportion> a, ReadOnlyParameter<Propor
 
 Proportion SmoothLerp(ReadOnlyParameter<Proportion> a, ReadOnlyParameter<Proportion> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<Proportion> LinearSpace(ReadOnlyParameter<Proportion> a, ReadOnlyParameter<Proportion> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Proportion { return Lerp(a, b, t); }); }
+Array<Proportion> LinearSpace(ReadOnlyParameter<Proportion> a, ReadOnlyParameter<Proportion> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Proportion* _a1 = plato::arena_alloc<Proportion>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<Proportion> LinearSpaceExclusive(ReadOnlyParameter<Proportion> a, ReadOnlyParameter<Proportion> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Proportion { return Lerp(a, b, t); }); }
+Array<Proportion> LinearSpaceExclusive(ReadOnlyParameter<Proportion> a, ReadOnlyParameter<Proportion> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Proportion* _a1 = plato::arena_alloc<Proportion>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 bool LessThan(ReadOnlyParameter<Proportion> a, ReadOnlyParameter<Proportion> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
 
@@ -2787,9 +2813,41 @@ Percent LerpClamped(ReadOnlyParameter<Percent> a, ReadOnlyParameter<Percent> b, 
 
 Percent SmoothLerp(ReadOnlyParameter<Percent> a, ReadOnlyParameter<Percent> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<Percent> LinearSpace(ReadOnlyParameter<Percent> a, ReadOnlyParameter<Percent> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Percent { return Lerp(a, b, t); }); }
+Array<Percent> LinearSpace(ReadOnlyParameter<Percent> a, ReadOnlyParameter<Percent> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Percent* _a1 = plato::arena_alloc<Percent>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<Percent> LinearSpaceExclusive(ReadOnlyParameter<Percent> a, ReadOnlyParameter<Percent> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Percent { return Lerp(a, b, t); }); }
+Array<Percent> LinearSpaceExclusive(ReadOnlyParameter<Percent> a, ReadOnlyParameter<Percent> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Percent* _a1 = plato::arena_alloc<Percent>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 bool LessThan(ReadOnlyParameter<Percent> a, ReadOnlyParameter<Percent> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
 
@@ -2877,9 +2935,41 @@ Probability LerpClamped(ReadOnlyParameter<Probability> a, ReadOnlyParameter<Prob
 
 Probability SmoothLerp(ReadOnlyParameter<Probability> a, ReadOnlyParameter<Probability> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<Probability> LinearSpace(ReadOnlyParameter<Probability> a, ReadOnlyParameter<Probability> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Probability { return Lerp(a, b, t); }); }
+Array<Probability> LinearSpace(ReadOnlyParameter<Probability> a, ReadOnlyParameter<Probability> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Probability* _a1 = plato::arena_alloc<Probability>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<Probability> LinearSpaceExclusive(ReadOnlyParameter<Probability> a, ReadOnlyParameter<Probability> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Probability { return Lerp(a, b, t); }); }
+Array<Probability> LinearSpaceExclusive(ReadOnlyParameter<Probability> a, ReadOnlyParameter<Probability> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Probability* _a1 = plato::arena_alloc<Probability>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 bool LessThan(ReadOnlyParameter<Probability> a, ReadOnlyParameter<Probability> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
 
@@ -3039,9 +3129,41 @@ DualNumber LerpClamped(ReadOnlyParameter<DualNumber> a, ReadOnlyParameter<DualNu
 
 DualNumber SmoothLerp(ReadOnlyParameter<DualNumber> a, ReadOnlyParameter<DualNumber> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<DualNumber> LinearSpace(ReadOnlyParameter<DualNumber> a, ReadOnlyParameter<DualNumber> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> DualNumber { return Lerp(a, b, t); }); }
+Array<DualNumber> LinearSpace(ReadOnlyParameter<DualNumber> a, ReadOnlyParameter<DualNumber> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    DualNumber* _a1 = plato::arena_alloc<DualNumber>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<DualNumber> LinearSpaceExclusive(ReadOnlyParameter<DualNumber> a, ReadOnlyParameter<DualNumber> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> DualNumber { return Lerp(a, b, t); }); }
+Array<DualNumber> LinearSpaceExclusive(ReadOnlyParameter<DualNumber> a, ReadOnlyParameter<DualNumber> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    DualNumber* _a1 = plato::arena_alloc<DualNumber>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 Point2D MidPoint(ReadOnlyParameter<Point2D> a, ReadOnlyParameter<Point2D> b) { return Lerp(a, b, 0.5); }
 
@@ -3049,9 +3171,41 @@ Point2D LerpClamped(ReadOnlyParameter<Point2D> a, ReadOnlyParameter<Point2D> b, 
 
 Point2D SmoothLerp(ReadOnlyParameter<Point2D> a, ReadOnlyParameter<Point2D> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<Point2D> LinearSpace(ReadOnlyParameter<Point2D> a, ReadOnlyParameter<Point2D> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Point2D { return Lerp(a, b, t); }); }
+Array<Point2D> LinearSpace(ReadOnlyParameter<Point2D> a, ReadOnlyParameter<Point2D> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Point2D* _a1 = plato::arena_alloc<Point2D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<Point2D> LinearSpaceExclusive(ReadOnlyParameter<Point2D> a, ReadOnlyParameter<Point2D> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Point2D { return Lerp(a, b, t); }); }
+Array<Point2D> LinearSpaceExclusive(ReadOnlyParameter<Point2D> a, ReadOnlyParameter<Point2D> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Point2D* _a1 = plato::arena_alloc<Point2D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 Point2D Add(ReadOnlyParameter<Point2D> x, ReadOnlyParameter<Vector2D> delta) { return FromOffset(x, Add(Offset(x), delta)); }
 
@@ -3087,9 +3241,41 @@ Point3D LerpClamped(ReadOnlyParameter<Point3D> a, ReadOnlyParameter<Point3D> b, 
 
 Point3D SmoothLerp(ReadOnlyParameter<Point3D> a, ReadOnlyParameter<Point3D> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<Point3D> LinearSpace(ReadOnlyParameter<Point3D> a, ReadOnlyParameter<Point3D> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Point3D { return Lerp(a, b, t); }); }
+Array<Point3D> LinearSpace(ReadOnlyParameter<Point3D> a, ReadOnlyParameter<Point3D> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Point3D* _a1 = plato::arena_alloc<Point3D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<Point3D> LinearSpaceExclusive(ReadOnlyParameter<Point3D> a, ReadOnlyParameter<Point3D> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Point3D { return Lerp(a, b, t); }); }
+Array<Point3D> LinearSpaceExclusive(ReadOnlyParameter<Point3D> a, ReadOnlyParameter<Point3D> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Point3D* _a1 = plato::arena_alloc<Point3D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 Point3D Add(ReadOnlyParameter<Point3D> x, ReadOnlyParameter<Vector3D> delta) { return FromOffset(x, Add(Offset(x), delta)); }
 
@@ -3125,9 +3311,41 @@ PointN LerpClamped(ReadOnlyParameter<PointN> a, ReadOnlyParameter<PointN> b, dou
 
 PointN SmoothLerp(ReadOnlyParameter<PointN> a, ReadOnlyParameter<PointN> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<PointN> LinearSpace(ReadOnlyParameter<PointN> a, ReadOnlyParameter<PointN> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> PointN { return Lerp(a, b, t); }); }
+Array<PointN> LinearSpace(ReadOnlyParameter<PointN> a, ReadOnlyParameter<PointN> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    PointN* _a1 = plato::arena_alloc<PointN>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<PointN> LinearSpaceExclusive(ReadOnlyParameter<PointN> a, ReadOnlyParameter<PointN> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> PointN { return Lerp(a, b, t); }); }
+Array<PointN> LinearSpaceExclusive(ReadOnlyParameter<PointN> a, ReadOnlyParameter<PointN> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    PointN* _a1 = plato::arena_alloc<PointN>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 PointN Add(ReadOnlyParameter<PointN> x, ReadOnlyParameter<VectorN> delta) { return FromOffset(x, Add(Offset(x), delta)); }
 
@@ -3159,9 +3377,41 @@ UvCoordinate LerpClamped(ReadOnlyParameter<UvCoordinate> a, ReadOnlyParameter<Uv
 
 UvCoordinate SmoothLerp(ReadOnlyParameter<UvCoordinate> a, ReadOnlyParameter<UvCoordinate> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<UvCoordinate> LinearSpace(ReadOnlyParameter<UvCoordinate> a, ReadOnlyParameter<UvCoordinate> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> UvCoordinate { return Lerp(a, b, t); }); }
+Array<UvCoordinate> LinearSpace(ReadOnlyParameter<UvCoordinate> a, ReadOnlyParameter<UvCoordinate> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    UvCoordinate* _a1 = plato::arena_alloc<UvCoordinate>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<UvCoordinate> LinearSpaceExclusive(ReadOnlyParameter<UvCoordinate> a, ReadOnlyParameter<UvCoordinate> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> UvCoordinate { return Lerp(a, b, t); }); }
+Array<UvCoordinate> LinearSpaceExclusive(ReadOnlyParameter<UvCoordinate> a, ReadOnlyParameter<UvCoordinate> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    UvCoordinate* _a1 = plato::arena_alloc<UvCoordinate>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 UvCoordinate Add(ReadOnlyParameter<UvCoordinate> x, ReadOnlyParameter<Vector2D> delta) { return FromOffset(x, Add(Offset(x), delta)); }
 
@@ -3185,9 +3435,41 @@ UvwCoordinate LerpClamped(ReadOnlyParameter<UvwCoordinate> a, ReadOnlyParameter<
 
 UvwCoordinate SmoothLerp(ReadOnlyParameter<UvwCoordinate> a, ReadOnlyParameter<UvwCoordinate> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<UvwCoordinate> LinearSpace(ReadOnlyParameter<UvwCoordinate> a, ReadOnlyParameter<UvwCoordinate> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> UvwCoordinate { return Lerp(a, b, t); }); }
+Array<UvwCoordinate> LinearSpace(ReadOnlyParameter<UvwCoordinate> a, ReadOnlyParameter<UvwCoordinate> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    UvwCoordinate* _a1 = plato::arena_alloc<UvwCoordinate>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<UvwCoordinate> LinearSpaceExclusive(ReadOnlyParameter<UvwCoordinate> a, ReadOnlyParameter<UvwCoordinate> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> UvwCoordinate { return Lerp(a, b, t); }); }
+Array<UvwCoordinate> LinearSpaceExclusive(ReadOnlyParameter<UvwCoordinate> a, ReadOnlyParameter<UvwCoordinate> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    UvwCoordinate* _a1 = plato::arena_alloc<UvwCoordinate>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 UvwCoordinate Add(ReadOnlyParameter<UvwCoordinate> x, ReadOnlyParameter<Vector3D> delta) { return FromOffset(x, Add(Offset(x), delta)); }
 
@@ -3549,9 +3831,41 @@ double LerpClamped(double a, double b, double t) { return Lerp(a, b, Lesser(((t 
 
 double SmoothLerp(double a, double b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<double> LinearSpace(double a, double b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> double { return Lerp(a, b, t); }); }
+Array<double> LinearSpace(double a, double b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    double* _a1 = plato::arena_alloc<double>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<double> LinearSpaceExclusive(double a, double b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> double { return Lerp(a, b, t); }); }
+Array<double> LinearSpaceExclusive(double a, double b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    double* _a1 = plato::arena_alloc<double>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 bool LessThan(double a, double b) { return ((a <= b) ? (!(a == b)) : false); }
 
@@ -3589,13 +3903,85 @@ Angle ArcMinutes(int32_t x) { return Angle{ (((ToNumber(x) / 60.0) / 360.0) * (2
 
 Angle ArcSeconds(int32_t x) { return Angle{ ((((ToNumber(x) / 60.0) / 60.0) / 360.0) * (2.0 * Pi(0.0))) }; }
 
-Array<double> Fractions(int32_t count) { return Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }); }
+Array<double> Fractions(int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    double* _a1 = plato::arena_alloc<double>(_n1);
+    if (_n1 > 0)
+    {
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval1_1s0 = _i1;
+            int32_t _e1_0 = _eval1_1s0;
+            auto _eval0_1 = _e1_0;
+            _a1[_i1] = (ToNumber(_eval0_1) / _inv1_0);
+        }
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<double> FractionsExclusive(int32_t count) { return Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }); }
+Array<double> FractionsExclusive(int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    double* _a1 = plato::arena_alloc<double>(_n1);
+    if (_n1 > 0)
+    {
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval1_1s0 = _i1;
+            int32_t _e1_0 = _eval1_1s0;
+            auto _eval0_1 = _e1_0;
+            _a1[_i1] = (ToNumber(_eval0_1) / _inv1_0);
+        }
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<double> LinearSpace(int32_t count) { return Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }); }
+Array<double> LinearSpace(int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    double* _a1 = plato::arena_alloc<double>(_n1);
+    if (_n1 > 0)
+    {
+        double _inv1_0 = ToNumber((count - 1));
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval1_1s0 = _i1;
+            int32_t _e1_0 = _eval1_1s0;
+            auto _eval0_1 = _e1_0;
+            _a1[_i1] = (ToNumber(_eval0_1) / _inv1_0);
+        }
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<double> LinearSpaceExclusive(int32_t count) { return Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }); }
+Array<double> LinearSpaceExclusive(int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    double* _a1 = plato::arena_alloc<double>(_n1);
+    if (_n1 > 0)
+    {
+        double _inv1_0 = ToNumber(count);
+        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+        {
+            auto _eval1_1s0 = _i1;
+            int32_t _e1_0 = _eval1_1s0;
+            auto _eval0_1 = _e1_0;
+            _a1[_i1] = (ToNumber(_eval0_1) / _inv1_0);
+        }
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 int32_t Lerp(int32_t a, int32_t b, double t) { return ToInteger((ToNumber(a) + ((ToNumber(b) - ToNumber(a)) * t))); }
 
@@ -3661,9 +4047,41 @@ int32_t LerpClamped(int32_t a, int32_t b, double t) { return Lerp(a, b, Lesser((
 
 int32_t SmoothLerp(int32_t a, int32_t b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<int32_t> LinearSpace(int32_t a, int32_t b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> int32_t { return Lerp(a, b, t); }); }
+Array<int32_t> LinearSpace(int32_t a, int32_t b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    int32_t* _a1 = plato::arena_alloc<int32_t>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<int32_t> LinearSpaceExclusive(int32_t a, int32_t b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> int32_t { return Lerp(a, b, t); }); }
+Array<int32_t> LinearSpaceExclusive(int32_t a, int32_t b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    int32_t* _a1 = plato::arena_alloc<int32_t>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 int32_t BitwiseNand(int32_t a, int32_t b) { return BitwiseNot(BitwiseAnd(a, b)); }
 
@@ -3727,7 +4145,20 @@ char16_t Max3(char16_t a, char16_t b, char16_t c) { return Greater((LessThanOrEq
 
 int32_t Compare(char16_t a, char16_t b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
 
-Bytes ToBytes(const String& s) { return FromIntegers(MapRange(ToCount(s), [=](int32_t i) -> int32_t { return ToInteger(At(s, i)); })); }
+Bytes ToBytes(const String& s)
+{
+    auto _s0 = ToCount(s);
+    int32_t _n0 = (_s0 > 0 ? _s0 : 0);
+    int32_t* _a0 = plato::arena_alloc<int32_t>(_n0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0 = _i0;
+        _a0[_i0] = ToInteger(At(s, _eval0_0));
+    }
+    auto _lp0 = plato::make_array(_a0, _n0);
+    Array<int32_t> _eval1 = _lp0;
+    return FromIntegers(_eval1);
+}
 
 NumberParse ParseNumber(const String& s) { return NumberParse{ NumberFromText(s), IsNumberText(s) }; }
 
@@ -3859,19 +4290,97 @@ bool IsNotEmpty(Bytes self) { return (0 < ToCount(self)); }
 
 bool IsSingleton(Bytes self) { return (ToCount(self) == 1); }
 
-double SumOf(Array<double> values) { return Reduce(values, 0.0, [=](double acc, double x) -> double { return (acc + x); }); }
+double SumOf(Array<double> values)
+{
+    auto _s0 = values;
+    double _lp0 = 0.0;
+    int32_t _n0 = _s0.count;
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        auto _eval0_0 = _lp0;
+        const auto& _eval1_0 = _s0.data[_i0];
+        _lp0 = (_eval0_0 + _eval1_0);
+    }
+    return _lp0;
+}
 
-double TotalArea(Array<Shape> xs) { return Reduce(Map(xs, [=](Shape s) -> double { return ToArea(s); }), 0.0, [=](double a, double b) -> double { return (a + b); }); }
+double TotalArea(Array<Shape> xs)
+{
+    auto _s0 = xs;
+    double _lp0 = 0.0;
+    int32_t _n0 = _s0.count;
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        const auto& _eval2_0s0 = _s0.data[_i0];
+        double _e0_0 = ToArea(_eval2_0s0);
+        auto _eval0_0 = _lp0;
+        auto _eval1_0 = _e0_0;
+        _lp0 = (_eval0_0 + _eval1_0);
+    }
+    return _lp0;
+}
 
-double SumX(Array<Tagged> xs) { return Reduce(Map(xs, [=](Tagged t) -> double { return t.X; }), 0.0, [=](double a, double b) -> double { return (a + b); }); }
+double SumX(Array<Tagged> xs)
+{
+    auto _s0 = xs;
+    double _lp0 = 0.0;
+    int32_t _n0 = _s0.count;
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        const auto& _eval2_0s0 = _s0.data[_i0];
+        double _e0_0 = _eval2_0s0.X;
+        auto _eval0_0 = _lp0;
+        auto _eval1_0 = _e0_0;
+        _lp0 = (_eval0_0 + _eval1_0);
+    }
+    return _lp0;
+}
 
 String FirstName(Array<Tagged> xs) { return plato::array_at_readonly(xs, 0).Name; }
 
-Array<int32_t> Lengths(Array<Tagged> xs) { return Map(xs, [=](Tagged t) -> int32_t { return ToCount(t.Name); }); }
+Array<int32_t> Lengths(Array<Tagged> xs)
+{
+    auto _s0 = xs;
+    int32_t _n0 = _s0.count;
+    int32_t* _a0 = plato::arena_alloc<int32_t>(_n0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        const auto& _eval0_0 = _s0.data[_i0];
+        _a0[_i0] = ToCount(_eval0_0.Name);
+    }
+    auto _lp0 = plato::make_array(_a0, _n0);
+    return _lp0;
+}
 
-Array<double> Scaled(Array<double> xs, double k) { return Map(xs, [=](double x) -> double { return ((x * k) + 1.0); }); }
+Array<double> Scaled(Array<double> xs, double k)
+{
+    auto _s0 = xs;
+    int32_t _n0 = _s0.count;
+    double* _a0 = plato::arena_alloc<double>(_n0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        const auto& _eval0_0 = _s0.data[_i0];
+        _a0[_i0] = ((_eval0_0 * k) + 1.0);
+    }
+    auto _lp0 = plato::make_array(_a0, _n0);
+    return _lp0;
+}
 
-double SumSquares(Array<double> xs) { return Reduce(Map(xs, [=](double x) -> double { return (x * x); }), 0.0, [=](double a, double b) -> double { return (a + b); }); }
+double SumSquares(Array<double> xs)
+{
+    auto _s0 = xs;
+    double _lp0 = 0.0;
+    int32_t _n0 = _s0.count;
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        const auto& _eval2_0s0 = _s0.data[_i0];
+        double _e0_0 = (_eval2_0s0 * _eval2_0s0);
+        auto _eval0_0 = _lp0;
+        auto _eval1_0 = _e0_0;
+        _lp0 = (_eval0_0 + _eval1_0);
+    }
+    return _lp0;
+}
 
 bool LessThan(ReadOnlyParameter<ElectricCurrent> a, ReadOnlyParameter<ElectricCurrent> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
 
@@ -3927,9 +4436,41 @@ ElectricCurrent LerpClamped(ReadOnlyParameter<ElectricCurrent> a, ReadOnlyParame
 
 ElectricCurrent SmoothLerp(ReadOnlyParameter<ElectricCurrent> a, ReadOnlyParameter<ElectricCurrent> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<ElectricCurrent> LinearSpace(ReadOnlyParameter<ElectricCurrent> a, ReadOnlyParameter<ElectricCurrent> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> ElectricCurrent { return Lerp(a, b, t); }); }
+Array<ElectricCurrent> LinearSpace(ReadOnlyParameter<ElectricCurrent> a, ReadOnlyParameter<ElectricCurrent> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    ElectricCurrent* _a1 = plato::arena_alloc<ElectricCurrent>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<ElectricCurrent> LinearSpaceExclusive(ReadOnlyParameter<ElectricCurrent> a, ReadOnlyParameter<ElectricCurrent> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> ElectricCurrent { return Lerp(a, b, t); }); }
+Array<ElectricCurrent> LinearSpaceExclusive(ReadOnlyParameter<ElectricCurrent> a, ReadOnlyParameter<ElectricCurrent> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    ElectricCurrent* _a1 = plato::arena_alloc<ElectricCurrent>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 ElectricCurrent Add(ElectricCurrent a, ElectricCurrent b) { std::abort(); }
 
@@ -4009,9 +4550,41 @@ ElectricCharge LerpClamped(ReadOnlyParameter<ElectricCharge> a, ReadOnlyParamete
 
 ElectricCharge SmoothLerp(ReadOnlyParameter<ElectricCharge> a, ReadOnlyParameter<ElectricCharge> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<ElectricCharge> LinearSpace(ReadOnlyParameter<ElectricCharge> a, ReadOnlyParameter<ElectricCharge> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> ElectricCharge { return Lerp(a, b, t); }); }
+Array<ElectricCharge> LinearSpace(ReadOnlyParameter<ElectricCharge> a, ReadOnlyParameter<ElectricCharge> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    ElectricCharge* _a1 = plato::arena_alloc<ElectricCharge>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<ElectricCharge> LinearSpaceExclusive(ReadOnlyParameter<ElectricCharge> a, ReadOnlyParameter<ElectricCharge> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> ElectricCharge { return Lerp(a, b, t); }); }
+Array<ElectricCharge> LinearSpaceExclusive(ReadOnlyParameter<ElectricCharge> a, ReadOnlyParameter<ElectricCharge> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    ElectricCharge* _a1 = plato::arena_alloc<ElectricCharge>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 ElectricCharge Add(ElectricCharge a, ElectricCharge b) { std::abort(); }
 
@@ -4091,9 +4664,41 @@ Voltage LerpClamped(ReadOnlyParameter<Voltage> a, ReadOnlyParameter<Voltage> b, 
 
 Voltage SmoothLerp(ReadOnlyParameter<Voltage> a, ReadOnlyParameter<Voltage> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<Voltage> LinearSpace(ReadOnlyParameter<Voltage> a, ReadOnlyParameter<Voltage> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Voltage { return Lerp(a, b, t); }); }
+Array<Voltage> LinearSpace(ReadOnlyParameter<Voltage> a, ReadOnlyParameter<Voltage> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Voltage* _a1 = plato::arena_alloc<Voltage>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<Voltage> LinearSpaceExclusive(ReadOnlyParameter<Voltage> a, ReadOnlyParameter<Voltage> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Voltage { return Lerp(a, b, t); }); }
+Array<Voltage> LinearSpaceExclusive(ReadOnlyParameter<Voltage> a, ReadOnlyParameter<Voltage> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Voltage* _a1 = plato::arena_alloc<Voltage>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 Voltage Add(Voltage a, Voltage b) { std::abort(); }
 
@@ -4173,9 +4778,41 @@ Resistance LerpClamped(ReadOnlyParameter<Resistance> a, ReadOnlyParameter<Resist
 
 Resistance SmoothLerp(ReadOnlyParameter<Resistance> a, ReadOnlyParameter<Resistance> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<Resistance> LinearSpace(ReadOnlyParameter<Resistance> a, ReadOnlyParameter<Resistance> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Resistance { return Lerp(a, b, t); }); }
+Array<Resistance> LinearSpace(ReadOnlyParameter<Resistance> a, ReadOnlyParameter<Resistance> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Resistance* _a1 = plato::arena_alloc<Resistance>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<Resistance> LinearSpaceExclusive(ReadOnlyParameter<Resistance> a, ReadOnlyParameter<Resistance> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Resistance { return Lerp(a, b, t); }); }
+Array<Resistance> LinearSpaceExclusive(ReadOnlyParameter<Resistance> a, ReadOnlyParameter<Resistance> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Resistance* _a1 = plato::arena_alloc<Resistance>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 Resistance Add(Resistance a, Resistance b) { std::abort(); }
 
@@ -4255,9 +4892,41 @@ Capacitance LerpClamped(ReadOnlyParameter<Capacitance> a, ReadOnlyParameter<Capa
 
 Capacitance SmoothLerp(ReadOnlyParameter<Capacitance> a, ReadOnlyParameter<Capacitance> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
-Array<Capacitance> LinearSpace(ReadOnlyParameter<Capacitance> a, ReadOnlyParameter<Capacitance> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Capacitance { return Lerp(a, b, t); }); }
+Array<Capacitance> LinearSpace(ReadOnlyParameter<Capacitance> a, ReadOnlyParameter<Capacitance> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Capacitance* _a1 = plato::arena_alloc<Capacitance>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber((count - 1)));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
-Array<Capacitance> LinearSpaceExclusive(ReadOnlyParameter<Capacitance> a, ReadOnlyParameter<Capacitance> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Capacitance { return Lerp(a, b, t); }); }
+Array<Capacitance> LinearSpaceExclusive(ReadOnlyParameter<Capacitance> a, ReadOnlyParameter<Capacitance> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Capacitance* _a1 = plato::arena_alloc<Capacitance>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval1_1s0 = _i1;
+        int32_t _e1_0 = _eval1_1s0;
+        auto _eval2_1s1 = _e1_0;
+        double _e1_1 = (ToNumber(_eval2_1s1) / ToNumber(count));
+        auto _eval0_1 = _e1_1;
+        _a1[_i1] = Lerp(a, b, _eval0_1);
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 Capacitance Add(Capacitance a, Capacitance b) { std::abort(); }
 
@@ -4334,674 +5003,5 @@ Inductance ToPercent(ReadOnlyParameter<Inductance> x, double percent) { return M
 Inductance MidPoint(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b) { return Lerp(a, b, 0.5); }
 
 Inductance LerpClamped(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Inductance SmoothLerp(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Inductance> LinearSpace(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Inductance { return Lerp(a, b, t); }); }
-
-Array<Inductance> LinearSpaceExclusive(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Inductance { return Lerp(a, b, t); }); }
-
-Inductance Add(Inductance a, Inductance b) { std::abort(); }
-
-Inductance Subtract(Inductance a, Inductance b) { std::abort(); }
-
-Inductance Negative(Inductance x) { std::abort(); }
-
-Inductance Zero(Inductance x) { std::abort(); }
-
-int32_t Hash(Inductance x) { std::abort(); }
-
-Inductance Lerp(Inductance a, Inductance b, double t) { std::abort(); }
-
-bool LessThanOrEquals(Inductance a, Inductance b) { std::abort(); }
-
-double Amount(Inductance x) { std::abort(); }
-
-Inductance FromAmount(Inductance _, double x) { std::abort(); }
-
-Inductance Multiply(Inductance x, double scalar) { std::abort(); }
-
-Inductance Divide(Inductance x, double scalar) { std::abort(); }
-
-Inductance Modulo(Inductance x, double scalar) { std::abort(); }
-
-double Turns(ReadOnlyParameter<Angle> x) { return (x.Radians / (2.0 * Pi(0.0))); }
-
-double Degrees(ReadOnlyParameter<Angle> x) { return ((x.Radians / (2.0 * Pi(0.0))) * 360.0); }
-
-double Gradians(ReadOnlyParameter<Angle> x) { return ((x.Radians / (2.0 * Pi(0.0))) * 400.0); }
-
-double ArcMinutes(ReadOnlyParameter<Angle> x) { return (((x.Radians / (2.0 * Pi(0.0))) * 360.0) * 60.0); }
-
-double ArcSeconds(ReadOnlyParameter<Angle> x) { return ((((x.Radians / (2.0 * Pi(0.0))) * 360.0) * 60.0) * 60.0); }
-
-double Sec(ReadOnlyParameter<Angle> x) { return (1.0 / Cos(x.Radians)); }
-
-double Csc(ReadOnlyParameter<Angle> x) { return (1.0 / Sin(x.Radians)); }
-
-double Cot(ReadOnlyParameter<Angle> x) { return (1.0 / (Sin(x.Radians) / Cos(x.Radians))); }
-
-Angle Normalize(ReadOnlyParameter<Angle> self)
-{
-    double tau = (2.0 * Pi(0.0));
-    double m = (self.Radians - (tau * Floor((self.Radians / tau))));
-    return Angle{ ((Pi(0.0) < m) ? (m - tau) : m) };
-}
-
-Angle Wrap(ReadOnlyParameter<Angle> self, ReadOnlyParameter<Angle> period) { return Angle{ (self.Radians - (period.Radians * Floor((self.Radians / period.Radians)))) }; }
-
-Angle LerpShortest(ReadOnlyParameter<Angle> a, ReadOnlyParameter<Angle> b, double t) { return Angle{ (a.Radians + (Normalize(Angle{ (b.Radians - a.Radians) }).Radians * t)) }; }
-
-bool EquivalentAngle(ReadOnlyParameter<Angle> a, ReadOnlyParameter<Angle> b) { return (Normalize(a).Radians == Normalize(b).Radians); }
-
-double Cos(ReadOnlyParameter<Angle> self) { return Cos(self.Radians); }
-
-double Sin(ReadOnlyParameter<Angle> self) { return Sin(self.Radians); }
-
-double Tan(ReadOnlyParameter<Angle> self) { return (Sin(self.Radians) / Cos(self.Radians)); }
-
-Tuple2<double, double> SinCos(ReadOnlyParameter<Angle> self) { return Tuple2<double, double>{ Sin(self.Radians), Cos(self.Radians) }; }
-
-double Cosh(ReadOnlyParameter<Angle> self) { return ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0); }
-
-double Sinh(ReadOnlyParameter<Angle> self) { return ((Exp(self.Radians) - Exp((-self.Radians))) / 2.0); }
-
-double Tanh(ReadOnlyParameter<Angle> self) { return (((Exp(self.Radians) - Exp((-self.Radians))) / 2.0) / ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0)); }
-
-Angle Add(ReadOnlyParameter<Angle> a, ReadOnlyParameter<Angle> b) { return Angle{ (a.Radians + b.Radians) }; }
-
-Angle Subtract(ReadOnlyParameter<Angle> a, ReadOnlyParameter<Angle> b) { return Angle{ (a.Radians - b.Radians) }; }
-
-Angle Multiply(ReadOnlyParameter<Angle> a, double x) { return Angle{ (a.Radians * x) }; }
-
-Angle Divide(ReadOnlyParameter<Angle> a, double x) { return Angle{ (a.Radians / x) }; }
-
-Angle Negative(ReadOnlyParameter<Angle> n) { return Angle{ (-n.Radians) }; }
-
-int32_t Compare(ReadOnlyParameter<Angle> a, ReadOnlyParameter<Angle> b) { return ((a.Radians == b.Radians) ? 0 : ((a.Radians <= b.Radians) ? (-1) : 1)); }
-
-int32_t Hash(ReadOnlyParameter<Angle> self) { return Hash(self.Radians); }
-
-Angle Double(ReadOnlyParameter<Angle> x) { return Add(x, x); }
-
-Angle Half(ReadOnlyParameter<Angle> x) { return Divide(x, 2.0); }
-
-Angle Third(ReadOnlyParameter<Angle> x) { return Divide(x, 3.0); }
-
-Angle Quarter(ReadOnlyParameter<Angle> x) { return Divide(x, 4.0); }
-
-Angle Eighth(ReadOnlyParameter<Angle> x) { return Divide(x, 8.0); }
-
-Angle Sixteenth(ReadOnlyParameter<Angle> x) { return Divide(x, 16.0); }
-
-Angle Tenth(ReadOnlyParameter<Angle> x) { return Divide(x, 10.0); }
-
-Angle Hundredth(ReadOnlyParameter<Angle> x) { return Divide(x, 100.0); }
-
-Angle Thousandth(ReadOnlyParameter<Angle> x) { return Divide(x, 1000.0); }
-
-Angle Millionth(ReadOnlyParameter<Angle> x) { return Divide(x, 1000000.0); }
-
-Angle Billionth(ReadOnlyParameter<Angle> x) { return Divide(x, 1000000000.0); }
-
-Angle Million(ReadOnlyParameter<Angle> x) { return Multiply(x, 1000000.0); }
-
-Angle Billion(ReadOnlyParameter<Angle> x) { return Multiply(x, 1000000000.0); }
-
-Angle ToPercent(ReadOnlyParameter<Angle> x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-bool LessThan(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b) { return LessThanOrEquals(b, a); }
-
-SolidAngle Lesser(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-SolidAngle Greater(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(ReadOnlyParameter<SolidAngle> x, ReadOnlyParameter<SolidAngle> lower, ReadOnlyParameter<SolidAngle> upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-SolidAngle Clamp(ReadOnlyParameter<SolidAngle> x, ReadOnlyParameter<SolidAngle> lower, ReadOnlyParameter<SolidAngle> upper) { return Lesser(Greater(x, lower), upper); }
-
-SolidAngle Min3(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, ReadOnlyParameter<SolidAngle> c) { return Lesser(Lesser(a, b), c); }
-
-SolidAngle Max3(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, ReadOnlyParameter<SolidAngle> c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-SolidAngle Double(ReadOnlyParameter<SolidAngle> x) { return Add(x, x); }
-
-SolidAngle Half(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 2.0); }
-
-SolidAngle Third(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 3.0); }
-
-SolidAngle Quarter(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 4.0); }
-
-SolidAngle Eighth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 8.0); }
-
-SolidAngle Sixteenth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 16.0); }
-
-SolidAngle Tenth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 10.0); }
-
-SolidAngle Hundredth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 100.0); }
-
-SolidAngle Thousandth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 1000.0); }
-
-SolidAngle Millionth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 1000000.0); }
-
-SolidAngle Billionth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 1000000000.0); }
-
-SolidAngle Million(ReadOnlyParameter<SolidAngle> x) { return Multiply(x, 1000000.0); }
-
-SolidAngle Billion(ReadOnlyParameter<SolidAngle> x) { return Multiply(x, 1000000000.0); }
-
-SolidAngle ToPercent(ReadOnlyParameter<SolidAngle> x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-SolidAngle MidPoint(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b) { return Lerp(a, b, 0.5); }
-
-SolidAngle LerpClamped(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-SolidAngle SmoothLerp(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<SolidAngle> LinearSpace(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> SolidAngle { return Lerp(a, b, t); }); }
-
-Array<SolidAngle> LinearSpaceExclusive(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> SolidAngle { return Lerp(a, b, t); }); }
-
-SolidAngle Add(SolidAngle a, SolidAngle b) { std::abort(); }
-
-SolidAngle Subtract(SolidAngle a, SolidAngle b) { std::abort(); }
-
-SolidAngle Negative(SolidAngle x) { std::abort(); }
-
-SolidAngle Zero(SolidAngle x) { std::abort(); }
-
-int32_t Hash(SolidAngle x) { std::abort(); }
-
-SolidAngle Lerp(SolidAngle a, SolidAngle b, double t) { std::abort(); }
-
-bool LessThanOrEquals(SolidAngle a, SolidAngle b) { std::abort(); }
-
-double Amount(SolidAngle x) { std::abort(); }
-
-SolidAngle FromAmount(SolidAngle _, double x) { std::abort(); }
-
-SolidAngle Multiply(SolidAngle x, double scalar) { std::abort(); }
-
-SolidAngle Divide(SolidAngle x, double scalar) { std::abort(); }
-
-SolidAngle Modulo(SolidAngle x, double scalar) { std::abort(); }
-
-bool LessThan(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b) { return LessThanOrEquals(b, a); }
-
-Length Lesser(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Length Greater(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(ReadOnlyParameter<Length> x, ReadOnlyParameter<Length> lower, ReadOnlyParameter<Length> upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-Length Clamp(ReadOnlyParameter<Length> x, ReadOnlyParameter<Length> lower, ReadOnlyParameter<Length> upper) { return Lesser(Greater(x, lower), upper); }
-
-Length Min3(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b, ReadOnlyParameter<Length> c) { return Lesser(Lesser(a, b), c); }
-
-Length Max3(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b, ReadOnlyParameter<Length> c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-Length Double(ReadOnlyParameter<Length> x) { return Add(x, x); }
-
-Length Half(ReadOnlyParameter<Length> x) { return Divide(x, 2.0); }
-
-Length Third(ReadOnlyParameter<Length> x) { return Divide(x, 3.0); }
-
-Length Quarter(ReadOnlyParameter<Length> x) { return Divide(x, 4.0); }
-
-Length Eighth(ReadOnlyParameter<Length> x) { return Divide(x, 8.0); }
-
-Length Sixteenth(ReadOnlyParameter<Length> x) { return Divide(x, 16.0); }
-
-Length Tenth(ReadOnlyParameter<Length> x) { return Divide(x, 10.0); }
-
-Length Hundredth(ReadOnlyParameter<Length> x) { return Divide(x, 100.0); }
-
-Length Thousandth(ReadOnlyParameter<Length> x) { return Divide(x, 1000.0); }
-
-Length Millionth(ReadOnlyParameter<Length> x) { return Divide(x, 1000000.0); }
-
-Length Billionth(ReadOnlyParameter<Length> x) { return Divide(x, 1000000000.0); }
-
-Length Million(ReadOnlyParameter<Length> x) { return Multiply(x, 1000000.0); }
-
-Length Billion(ReadOnlyParameter<Length> x) { return Multiply(x, 1000000000.0); }
-
-Length ToPercent(ReadOnlyParameter<Length> x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Length MidPoint(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b) { return Lerp(a, b, 0.5); }
-
-Length LerpClamped(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Length SmoothLerp(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Length> LinearSpace(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Length { return Lerp(a, b, t); }); }
-
-Array<Length> LinearSpaceExclusive(ReadOnlyParameter<Length> a, ReadOnlyParameter<Length> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Length { return Lerp(a, b, t); }); }
-
-Length Add(Length a, Length b) { std::abort(); }
-
-Length Subtract(Length a, Length b) { std::abort(); }
-
-Length Negative(Length x) { std::abort(); }
-
-Length Zero(Length x) { std::abort(); }
-
-int32_t Hash(Length x) { std::abort(); }
-
-Length Lerp(Length a, Length b, double t) { std::abort(); }
-
-bool LessThanOrEquals(Length a, Length b) { std::abort(); }
-
-double Amount(Length x) { std::abort(); }
-
-Length FromAmount(Length _, double x) { std::abort(); }
-
-Length Multiply(Length x, double scalar) { std::abort(); }
-
-Length Divide(Length x, double scalar) { std::abort(); }
-
-Length Modulo(Length x, double scalar) { std::abort(); }
-
-bool LessThan(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b) { return LessThanOrEquals(b, a); }
-
-Area Lesser(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Area Greater(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(ReadOnlyParameter<Area> x, ReadOnlyParameter<Area> lower, ReadOnlyParameter<Area> upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-Area Clamp(ReadOnlyParameter<Area> x, ReadOnlyParameter<Area> lower, ReadOnlyParameter<Area> upper) { return Lesser(Greater(x, lower), upper); }
-
-Area Min3(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b, ReadOnlyParameter<Area> c) { return Lesser(Lesser(a, b), c); }
-
-Area Max3(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b, ReadOnlyParameter<Area> c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-Area Double(ReadOnlyParameter<Area> x) { return Add(x, x); }
-
-Area Half(ReadOnlyParameter<Area> x) { return Divide(x, 2.0); }
-
-Area Third(ReadOnlyParameter<Area> x) { return Divide(x, 3.0); }
-
-Area Quarter(ReadOnlyParameter<Area> x) { return Divide(x, 4.0); }
-
-Area Eighth(ReadOnlyParameter<Area> x) { return Divide(x, 8.0); }
-
-Area Sixteenth(ReadOnlyParameter<Area> x) { return Divide(x, 16.0); }
-
-Area Tenth(ReadOnlyParameter<Area> x) { return Divide(x, 10.0); }
-
-Area Hundredth(ReadOnlyParameter<Area> x) { return Divide(x, 100.0); }
-
-Area Thousandth(ReadOnlyParameter<Area> x) { return Divide(x, 1000.0); }
-
-Area Millionth(ReadOnlyParameter<Area> x) { return Divide(x, 1000000.0); }
-
-Area Billionth(ReadOnlyParameter<Area> x) { return Divide(x, 1000000000.0); }
-
-Area Million(ReadOnlyParameter<Area> x) { return Multiply(x, 1000000.0); }
-
-Area Billion(ReadOnlyParameter<Area> x) { return Multiply(x, 1000000000.0); }
-
-Area ToPercent(ReadOnlyParameter<Area> x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Area MidPoint(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b) { return Lerp(a, b, 0.5); }
-
-Area LerpClamped(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Area SmoothLerp(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Area> LinearSpace(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Area { return Lerp(a, b, t); }); }
-
-Array<Area> LinearSpaceExclusive(ReadOnlyParameter<Area> a, ReadOnlyParameter<Area> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Area { return Lerp(a, b, t); }); }
-
-Area Add(Area a, Area b) { std::abort(); }
-
-Area Subtract(Area a, Area b) { std::abort(); }
-
-Area Negative(Area x) { std::abort(); }
-
-Area Zero(Area x) { std::abort(); }
-
-int32_t Hash(Area x) { std::abort(); }
-
-Area Lerp(Area a, Area b, double t) { std::abort(); }
-
-bool LessThanOrEquals(Area a, Area b) { std::abort(); }
-
-double Amount(Area x) { std::abort(); }
-
-Area FromAmount(Area _, double x) { std::abort(); }
-
-Area Multiply(Area x, double scalar) { std::abort(); }
-
-Area Divide(Area x, double scalar) { std::abort(); }
-
-Area Modulo(Area x, double scalar) { std::abort(); }
-
-bool LessThan(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b) { return LessThanOrEquals(b, a); }
-
-Volume Lesser(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Volume Greater(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(ReadOnlyParameter<Volume> x, ReadOnlyParameter<Volume> lower, ReadOnlyParameter<Volume> upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-Volume Clamp(ReadOnlyParameter<Volume> x, ReadOnlyParameter<Volume> lower, ReadOnlyParameter<Volume> upper) { return Lesser(Greater(x, lower), upper); }
-
-Volume Min3(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b, ReadOnlyParameter<Volume> c) { return Lesser(Lesser(a, b), c); }
-
-Volume Max3(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b, ReadOnlyParameter<Volume> c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-Volume Double(ReadOnlyParameter<Volume> x) { return Add(x, x); }
-
-Volume Half(ReadOnlyParameter<Volume> x) { return Divide(x, 2.0); }
-
-Volume Third(ReadOnlyParameter<Volume> x) { return Divide(x, 3.0); }
-
-Volume Quarter(ReadOnlyParameter<Volume> x) { return Divide(x, 4.0); }
-
-Volume Eighth(ReadOnlyParameter<Volume> x) { return Divide(x, 8.0); }
-
-Volume Sixteenth(ReadOnlyParameter<Volume> x) { return Divide(x, 16.0); }
-
-Volume Tenth(ReadOnlyParameter<Volume> x) { return Divide(x, 10.0); }
-
-Volume Hundredth(ReadOnlyParameter<Volume> x) { return Divide(x, 100.0); }
-
-Volume Thousandth(ReadOnlyParameter<Volume> x) { return Divide(x, 1000.0); }
-
-Volume Millionth(ReadOnlyParameter<Volume> x) { return Divide(x, 1000000.0); }
-
-Volume Billionth(ReadOnlyParameter<Volume> x) { return Divide(x, 1000000000.0); }
-
-Volume Million(ReadOnlyParameter<Volume> x) { return Multiply(x, 1000000.0); }
-
-Volume Billion(ReadOnlyParameter<Volume> x) { return Multiply(x, 1000000000.0); }
-
-Volume ToPercent(ReadOnlyParameter<Volume> x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Volume MidPoint(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b) { return Lerp(a, b, 0.5); }
-
-Volume LerpClamped(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Volume SmoothLerp(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Volume> LinearSpace(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Volume { return Lerp(a, b, t); }); }
-
-Array<Volume> LinearSpaceExclusive(ReadOnlyParameter<Volume> a, ReadOnlyParameter<Volume> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Volume { return Lerp(a, b, t); }); }
-
-Volume Add(Volume a, Volume b) { std::abort(); }
-
-Volume Subtract(Volume a, Volume b) { std::abort(); }
-
-Volume Negative(Volume x) { std::abort(); }
-
-Volume Zero(Volume x) { std::abort(); }
-
-int32_t Hash(Volume x) { std::abort(); }
-
-Volume Lerp(Volume a, Volume b, double t) { std::abort(); }
-
-bool LessThanOrEquals(Volume a, Volume b) { std::abort(); }
-
-double Amount(Volume x) { std::abort(); }
-
-Volume FromAmount(Volume _, double x) { std::abort(); }
-
-Volume Multiply(Volume x, double scalar) { std::abort(); }
-
-Volume Divide(Volume x, double scalar) { std::abort(); }
-
-Volume Modulo(Volume x, double scalar) { std::abort(); }
-
-bool LessThan(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b) { return LessThanOrEquals(b, a); }
-
-WaveNumber Lesser(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-WaveNumber Greater(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(ReadOnlyParameter<WaveNumber> x, ReadOnlyParameter<WaveNumber> lower, ReadOnlyParameter<WaveNumber> upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-WaveNumber Clamp(ReadOnlyParameter<WaveNumber> x, ReadOnlyParameter<WaveNumber> lower, ReadOnlyParameter<WaveNumber> upper) { return Lesser(Greater(x, lower), upper); }
-
-WaveNumber Min3(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b, ReadOnlyParameter<WaveNumber> c) { return Lesser(Lesser(a, b), c); }
-
-WaveNumber Max3(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b, ReadOnlyParameter<WaveNumber> c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-WaveNumber Double(ReadOnlyParameter<WaveNumber> x) { return Add(x, x); }
-
-WaveNumber Half(ReadOnlyParameter<WaveNumber> x) { return Divide(x, 2.0); }
-
-WaveNumber Third(ReadOnlyParameter<WaveNumber> x) { return Divide(x, 3.0); }
-
-WaveNumber Quarter(ReadOnlyParameter<WaveNumber> x) { return Divide(x, 4.0); }
-
-WaveNumber Eighth(ReadOnlyParameter<WaveNumber> x) { return Divide(x, 8.0); }
-
-WaveNumber Sixteenth(ReadOnlyParameter<WaveNumber> x) { return Divide(x, 16.0); }
-
-WaveNumber Tenth(ReadOnlyParameter<WaveNumber> x) { return Divide(x, 10.0); }
-
-WaveNumber Hundredth(ReadOnlyParameter<WaveNumber> x) { return Divide(x, 100.0); }
-
-WaveNumber Thousandth(ReadOnlyParameter<WaveNumber> x) { return Divide(x, 1000.0); }
-
-WaveNumber Millionth(ReadOnlyParameter<WaveNumber> x) { return Divide(x, 1000000.0); }
-
-WaveNumber Billionth(ReadOnlyParameter<WaveNumber> x) { return Divide(x, 1000000000.0); }
-
-WaveNumber Million(ReadOnlyParameter<WaveNumber> x) { return Multiply(x, 1000000.0); }
-
-WaveNumber Billion(ReadOnlyParameter<WaveNumber> x) { return Multiply(x, 1000000000.0); }
-
-WaveNumber ToPercent(ReadOnlyParameter<WaveNumber> x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-WaveNumber MidPoint(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b) { return Lerp(a, b, 0.5); }
-
-WaveNumber LerpClamped(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-WaveNumber SmoothLerp(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<WaveNumber> LinearSpace(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> WaveNumber { return Lerp(a, b, t); }); }
-
-Array<WaveNumber> LinearSpaceExclusive(ReadOnlyParameter<WaveNumber> a, ReadOnlyParameter<WaveNumber> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> WaveNumber { return Lerp(a, b, t); }); }
-
-WaveNumber Add(WaveNumber a, WaveNumber b) { std::abort(); }
-
-WaveNumber Subtract(WaveNumber a, WaveNumber b) { std::abort(); }
-
-WaveNumber Negative(WaveNumber x) { std::abort(); }
-
-WaveNumber Zero(WaveNumber x) { std::abort(); }
-
-int32_t Hash(WaveNumber x) { std::abort(); }
-
-WaveNumber Lerp(WaveNumber a, WaveNumber b, double t) { std::abort(); }
-
-bool LessThanOrEquals(WaveNumber a, WaveNumber b) { std::abort(); }
-
-double Amount(WaveNumber x) { std::abort(); }
-
-WaveNumber FromAmount(WaveNumber _, double x) { std::abort(); }
-
-WaveNumber Multiply(WaveNumber x, double scalar) { std::abort(); }
-
-WaveNumber Divide(WaveNumber x, double scalar) { std::abort(); }
-
-WaveNumber Modulo(WaveNumber x, double scalar) { std::abort(); }
-
-bool LessThan(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b) { return LessThanOrEquals(b, a); }
-
-Curvature Lesser(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Curvature Greater(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(ReadOnlyParameter<Curvature> x, ReadOnlyParameter<Curvature> lower, ReadOnlyParameter<Curvature> upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-Curvature Clamp(ReadOnlyParameter<Curvature> x, ReadOnlyParameter<Curvature> lower, ReadOnlyParameter<Curvature> upper) { return Lesser(Greater(x, lower), upper); }
-
-Curvature Min3(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b, ReadOnlyParameter<Curvature> c) { return Lesser(Lesser(a, b), c); }
-
-Curvature Max3(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b, ReadOnlyParameter<Curvature> c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-Curvature Double(ReadOnlyParameter<Curvature> x) { return Add(x, x); }
-
-Curvature Half(ReadOnlyParameter<Curvature> x) { return Divide(x, 2.0); }
-
-Curvature Third(ReadOnlyParameter<Curvature> x) { return Divide(x, 3.0); }
-
-Curvature Quarter(ReadOnlyParameter<Curvature> x) { return Divide(x, 4.0); }
-
-Curvature Eighth(ReadOnlyParameter<Curvature> x) { return Divide(x, 8.0); }
-
-Curvature Sixteenth(ReadOnlyParameter<Curvature> x) { return Divide(x, 16.0); }
-
-Curvature Tenth(ReadOnlyParameter<Curvature> x) { return Divide(x, 10.0); }
-
-Curvature Hundredth(ReadOnlyParameter<Curvature> x) { return Divide(x, 100.0); }
-
-Curvature Thousandth(ReadOnlyParameter<Curvature> x) { return Divide(x, 1000.0); }
-
-Curvature Millionth(ReadOnlyParameter<Curvature> x) { return Divide(x, 1000000.0); }
-
-Curvature Billionth(ReadOnlyParameter<Curvature> x) { return Divide(x, 1000000000.0); }
-
-Curvature Million(ReadOnlyParameter<Curvature> x) { return Multiply(x, 1000000.0); }
-
-Curvature Billion(ReadOnlyParameter<Curvature> x) { return Multiply(x, 1000000000.0); }
-
-Curvature ToPercent(ReadOnlyParameter<Curvature> x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Curvature MidPoint(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b) { return Lerp(a, b, 0.5); }
-
-Curvature LerpClamped(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Curvature SmoothLerp(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Curvature> LinearSpace(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Curvature { return Lerp(a, b, t); }); }
-
-Array<Curvature> LinearSpaceExclusive(ReadOnlyParameter<Curvature> a, ReadOnlyParameter<Curvature> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Curvature { return Lerp(a, b, t); }); }
-
-Curvature Add(Curvature a, Curvature b) { std::abort(); }
-
-Curvature Subtract(Curvature a, Curvature b) { std::abort(); }
-
-Curvature Negative(Curvature x) { std::abort(); }
-
-Curvature Zero(Curvature x) { std::abort(); }
-
-int32_t Hash(Curvature x) { std::abort(); }
-
-Curvature Lerp(Curvature a, Curvature b, double t) { std::abort(); }
-
-bool LessThanOrEquals(Curvature a, Curvature b) { std::abort(); }
-
-double Amount(Curvature x) { std::abort(); }
-
-Curvature FromAmount(Curvature _, double x) { std::abort(); }
-
-Curvature Multiply(Curvature x, double scalar) { std::abort(); }
-
-Curvature Divide(Curvature x, double scalar) { std::abort(); }
-
-Curvature Modulo(Curvature x, double scalar) { std::abort(); }
-
-bool LessThan(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b) { return LessThanOrEquals(b, a); }
-
-Speed Lesser(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Speed Greater(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(ReadOnlyParameter<Speed> x, ReadOnlyParameter<Speed> lower, ReadOnlyParameter<Speed> upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-Speed Clamp(ReadOnlyParameter<Speed> x, ReadOnlyParameter<Speed> lower, ReadOnlyParameter<Speed> upper) { return Lesser(Greater(x, lower), upper); }
-
-Speed Min3(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b, ReadOnlyParameter<Speed> c) { return Lesser(Lesser(a, b), c); }
-
-Speed Max3(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b, ReadOnlyParameter<Speed> c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-Speed Double(ReadOnlyParameter<Speed> x) { return Add(x, x); }
-
-Speed Half(ReadOnlyParameter<Speed> x) { return Divide(x, 2.0); }
-
-Speed Third(ReadOnlyParameter<Speed> x) { return Divide(x, 3.0); }
-
-Speed Quarter(ReadOnlyParameter<Speed> x) { return Divide(x, 4.0); }
-
-Speed Eighth(ReadOnlyParameter<Speed> x) { return Divide(x, 8.0); }
-
-Speed Sixteenth(ReadOnlyParameter<Speed> x) { return Divide(x, 16.0); }
-
-Speed Tenth(ReadOnlyParameter<Speed> x) { return Divide(x, 10.0); }
-
-Speed Hundredth(ReadOnlyParameter<Speed> x) { return Divide(x, 100.0); }
-
-Speed Thousandth(ReadOnlyParameter<Speed> x) { return Divide(x, 1000.0); }
-
-Speed Millionth(ReadOnlyParameter<Speed> x) { return Divide(x, 1000000.0); }
-
-Speed Billionth(ReadOnlyParameter<Speed> x) { return Divide(x, 1000000000.0); }
-
-Speed Million(ReadOnlyParameter<Speed> x) { return Multiply(x, 1000000.0); }
-
-Speed Billion(ReadOnlyParameter<Speed> x) { return Multiply(x, 1000000000.0); }
-
-Speed ToPercent(ReadOnlyParameter<Speed> x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Speed MidPoint(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b) { return Lerp(a, b, 0.5); }
-
-Speed LerpClamped(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Speed SmoothLerp(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Speed> LinearSpace(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Speed { return Lerp(a, b, t); }); }
-
-Array<Speed> LinearSpaceExclusive(ReadOnlyParameter<Speed> a, ReadOnlyParameter<Speed> b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Speed { return Lerp(a, b, t); }); }
-
-Speed Add(Speed a, Speed b) { std::abort(); }
-
-Speed Subtract(Speed a, Speed b) { std::abort(); }
 
 } // namespace plato

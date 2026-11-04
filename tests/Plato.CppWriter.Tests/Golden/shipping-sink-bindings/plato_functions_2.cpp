@@ -4,80 +4,6 @@
 
 namespace plato {
 
-AffineTransform3D ToAffineTransform3D(Reflection3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(RotationAbout2D x) { std::abort(); }
-
-Pose2D ToPose2D(RotationAbout2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(RotationAbout3D x) { std::abort(); }
-
-Pose3D ToPose3D(RotationAbout3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(ScalingAbout2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(ScalingAbout3D x) { std::abort(); }
-
-double At(Vector2D self, int32_t i) { return (i <= 0 ? self.X : self.Y); }
-
-int32_t ToCount(Vector2D self) { return 2; }
-
-int32_t NumComponents(Vector2D self) { return 2; }
-
-Array<double> Components(Vector2D self) { double* p = arena_alloc<double>(2); p[0] = self.X; p[1] = self.Y; return make_array(p, 2); }
-
-Vector2D CreateFromComponents(Vector2D _, Array<double> c) { return Vector2D{ c.data[0], c.data[1] }; }
-
-Vector2D CreateFromComponent(Vector2D _, double x) { return Vector2D{ x, x }; }
-
-Vector2D Reverse(Vector2D self) { return Vector2D{ self.Y, self.X }; }
-
-Vector2D UnitX(Vector2D _) { return Vector2D{ 1.0, 0.0 }; }
-
-Vector2D UnitY(Vector2D _) { return Vector2D{ 0.0, 1.0 }; }
-
-bool IsZero(Vector2D x) { return (x == Zero(x)); }
-
-bool IsOne(Vector2D x) { return (x == One(x)); }
-
-Vector2D LinearCombination(Vector2D a, Vector2D b, double s, double t) { return Add(Multiply(a, s), Multiply(b, t)); }
-
-Vector2D Barycentric(Vector2D a, Vector2D b, Vector2D c, double u, double v) { return Add(Add(a, Multiply(Subtract(b, a), u)), Multiply(Subtract(c, a), v)); }
-
-Vector2D Double(Vector2D x) { return Add(x, x); }
-
-Vector2D Half(Vector2D x) { return Divide(x, 2.0); }
-
-Vector2D Third(Vector2D x) { return Divide(x, 3.0); }
-
-Vector2D Quarter(Vector2D x) { return Divide(x, 4.0); }
-
-Vector2D Eighth(Vector2D x) { return Divide(x, 8.0); }
-
-Vector2D Sixteenth(Vector2D x) { return Divide(x, 16.0); }
-
-Vector2D Tenth(Vector2D x) { return Divide(x, 10.0); }
-
-Vector2D Hundredth(Vector2D x) { return Divide(x, 100.0); }
-
-Vector2D Thousandth(Vector2D x) { return Divide(x, 1000.0); }
-
-Vector2D Millionth(Vector2D x) { return Divide(x, 1000000.0); }
-
-Vector2D Billionth(Vector2D x) { return Divide(x, 1000000000.0); }
-
-Vector2D Million(Vector2D x) { return Multiply(x, 1000000.0); }
-
-Vector2D Billion(Vector2D x) { return Multiply(x, 1000000000.0); }
-
-Vector2D ToPercent(Vector2D x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Vector2D MidPoint(Vector2D a, Vector2D b) { return Lerp(a, b, 0.5); }
-
-Vector2D LerpClamped(Vector2D a, Vector2D b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Vector2D SmoothLerp(Vector2D a, Vector2D b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
 Array<Vector2D> LinearSpace(Vector2D a, Vector2D b, int32_t count)
 {
     auto _s1 = count;
@@ -1136,11 +1062,11 @@ Number8 FromComponents(Number8 _, Array<double> xs) { std::abort(); }
 
 Number8 Broadcast(Number8 self, double x) { std::abort(); }
 
-double ShapeArea(Shape s) { return (IsCircle(s) ? ((3.0 * s.Circle_Radius) * s.Circle_Radius) : (IsRect(s) ? (s.Rect_Width * s.Rect_Height) : 0.0)); }
+double ShapeArea(Shape s) { return ((s.Kind == Shape::Kind_Circle) ? ((3.0 * s.Circle_Radius) * s.Circle_Radius) : ((s.Kind == Shape::Kind_Rect) ? (s.Rect_Width * s.Rect_Height) : 0.0)); }
 
 Shape Same(Shape s) { return s; }
 
-double AreaAt(Shape s) { return (IsCircle(s) ? ((3.0 * s.Circle_Radius) * s.Circle_Radius) : (IsRect(s) ? (s.Rect_Width * s.Rect_Height) : 0.0)); }
+double AreaAt(Shape s) { return ((s.Kind == Shape::Kind_Circle) ? ((3.0 * s.Circle_Radius) * s.Circle_Radius) : ((s.Kind == Shape::Kind_Rect) ? (s.Rect_Width * s.Rect_Height) : 0.0)); }
 
 double Twice(Shape s) { return (ShapeArea(s) + (ShapeArea(s) * 2.0)); }
 
@@ -1150,6 +1076,76 @@ double Wide(Shape s)
     double b = (ShapeArea(s) * 2.0);
     return (a + b);
 }
+
+bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
+
+bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
+
+bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
+
+bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
+
+bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
+
+bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
+
+bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
+
+bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
+
+bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
+
+bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
+
+bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
+
+bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
+
+bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
+
+bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
+
+bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
+
+bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
+
+bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
+
+bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
+
+bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
+
+bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
+
+bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
+
+bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
+
+bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
+
+bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
+
+bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
+
+bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
+
+bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
+
+bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
+
+bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
+
+bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
+
+bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
+
+bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
+
+bool IsCircle(const Shape& s) { return s.Kind == Shape::Kind_Circle; }
+
+bool IsRect(const Shape& s) { return s.Kind == Shape::Kind_Rect; }
+
+bool IsDot(const Shape& s) { return s.Kind == Shape::Kind_Dot; }
 
 int32_t VertexCount(Graph self) { return self.VertexCount; }
 

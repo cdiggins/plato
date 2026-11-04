@@ -38,12 +38,6 @@ Axis3D Y(Axis3D _) { Axis3D r{}; r.Kind = Axis3D::Kind_Y; return r; }
 
 Axis3D Z(Axis3D _) { Axis3D r{}; r.Kind = Axis3D::Kind_Z; return r; }
 
-bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
-
-bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
-
-bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
-
 bool Equals(const Axis2D& a, const Axis2D& b) { return a == b; }
 
 bool NotEquals(const Axis2D& a, const Axis2D& b) { return a != b; }
@@ -55,10 +49,6 @@ int32_t GetHashCode(const Axis2D& a) { int32_t h = hash_(a.Kind); return h; }
 Axis2D X(Axis2D _) { Axis2D r{}; r.Kind = Axis2D::Kind_X; return r; }
 
 Axis2D Y(Axis2D _) { Axis2D r{}; r.Kind = Axis2D::Kind_Y; return r; }
-
-bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
-
-bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
 
 bool Equals(const SignedAxis3D& a, const SignedAxis3D& b) { return a == b; }
 
@@ -79,18 +69,6 @@ SignedAxis3D NegY(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kin
 SignedAxis3D PosZ(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kind_PosZ; return r; }
 
 SignedAxis3D NegZ(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kind_NegZ; return r; }
-
-bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
-
-bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
-
-bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
-
-bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
-
-bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
-
-bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
 
 bool Equals(const Color& a, const Color& b) { return a == b; }
 
@@ -305,18 +283,6 @@ GraphLayout Grid(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Gr
 GraphLayout Radial(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Radial; return r; }
 
 GraphLayout Spectral(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Spectral; return r; }
-
-bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
-
-bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
-
-bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
-
-bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
-
-bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
-
-bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
 
 bool Equals(const NumberInterval& a, const NumberInterval& b) { return a == b; }
 
@@ -1308,18 +1274,6 @@ RotationOrder ZXY(RotationOrder _) { RotationOrder r{}; r.Kind = RotationOrder::
 
 RotationOrder ZYX(RotationOrder _) { RotationOrder r{}; r.Kind = RotationOrder::Kind_ZYX; return r; }
 
-bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
-
-bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
-
-bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
-
-bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
-
-bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
-
-bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
-
 bool Equals(const EulerAngles& a, const EulerAngles& b) { return a == b; }
 
 bool NotEquals(const EulerAngles& a, const EulerAngles& b) { return a != b; }
@@ -1438,12 +1392,6 @@ MovingAverage Exponential(MovingAverage _, Proportion p0) { MovingAverage r{}; r
 
 MovingAverage Gaussian(MovingAverage _, int32_t p0, double p1) { MovingAverage r{}; r.Kind = MovingAverage::Kind_Gaussian; r.Gaussian_WindowSize = p0; r.Gaussian_StandardDeviation = p1; return r; }
 
-bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
-
-bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
-
-bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
-
 bool Equals(const OutlierDetection& a, const OutlierDetection& b) { return a == b; }
 
 bool NotEquals(const OutlierDetection& a, const OutlierDetection& b) { return a != b; }
@@ -1457,12 +1405,6 @@ OutlierDetection ZScore(OutlierDetection _, double p0) { OutlierDetection r{}; r
 OutlierDetection Iqr(OutlierDetection _, double p0) { OutlierDetection r{}; r.Kind = OutlierDetection::Kind_Iqr; r.Iqr_Threshold = p0; return r; }
 
 OutlierDetection Mad(OutlierDetection _, double p0) { OutlierDetection r{}; r.Kind = OutlierDetection::Kind_Mad; r.Mad_Threshold = p0; return r; }
-
-bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
-
-bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
-
-bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
 
 bool Equals(const Covariance2D& a, const Covariance2D& b) { return a == b; }
 
@@ -1493,12 +1435,6 @@ CorrelationStatistic Pearson(CorrelationStatistic _) { CorrelationStatistic r{};
 CorrelationStatistic Spearman(CorrelationStatistic _) { CorrelationStatistic r{}; r.Kind = CorrelationStatistic::Kind_Spearman; return r; }
 
 CorrelationStatistic Kendall(CorrelationStatistic _) { CorrelationStatistic r{}; r.Kind = CorrelationStatistic::Kind_Kendall; return r; }
-
-bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
-
-bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
-
-bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
 
 bool Equals(const CorrelationCoefficient& a, const CorrelationCoefficient& b) { return a == b; }
 
@@ -2036,41 +1972,41 @@ String TypeName(const ScalingAbout3D& _) { return make_string_n("ScalingAbout3D"
 
 int32_t GetHashCode(const ScalingAbout3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Amount)); h = mix_(h, GetHashCode(a.Center)); return h; }
 
-Vector3D ToVector3D(Axis3D self) { return (IsX(self) ? Vector3D{ 1.0, 0.0, 0.0 } : (IsY(self) ? Vector3D{ 0.0, 1.0, 0.0 } : Vector3D{ 0.0, 0.0, 1.0 })); }
+Vector3D ToVector3D(Axis3D self) { return ((self.Kind == Axis3D::Kind_X) ? Vector3D{ 1.0, 0.0, 0.0 } : ((self.Kind == Axis3D::Kind_Y) ? Vector3D{ 0.0, 1.0, 0.0 } : Vector3D{ 0.0, 0.0, 1.0 })); }
 
 Direction3D ToDirection3D(Axis3D self) { return Direction3D{ ToVector3D(self) }; }
 
-Number3 ToNumber3(Axis3D self) { return ToNumber3((IsX(self) ? Tuple3{ 1.0, 0.0, 0.0 } : (IsY(self) ? Tuple3{ 0.0, 1.0, 0.0 } : Tuple3{ 0.0, 0.0, 1.0 }))); }
+Number3 ToNumber3(Axis3D self) { return ToNumber3(((self.Kind == Axis3D::Kind_X) ? Tuple3{ 1.0, 0.0, 0.0 } : ((self.Kind == Axis3D::Kind_Y) ? Tuple3{ 0.0, 1.0, 0.0 } : Tuple3{ 0.0, 0.0, 1.0 }))); }
 
-Point3D ToPoint3D(Axis3D self) { return ToPoint3D((IsX(self) ? Tuple3{ 1.0, 0.0, 0.0 } : (IsY(self) ? Tuple3{ 0.0, 1.0, 0.0 } : Tuple3{ 0.0, 0.0, 1.0 }))); }
+Point3D ToPoint3D(Axis3D self) { return ToPoint3D(((self.Kind == Axis3D::Kind_X) ? Tuple3{ 1.0, 0.0, 0.0 } : ((self.Kind == Axis3D::Kind_Y) ? Tuple3{ 0.0, 1.0, 0.0 } : Tuple3{ 0.0, 0.0, 1.0 }))); }
 
-int32_t Ordinal(Axis3D self) { return (IsX(self) ? 0 : (IsY(self) ? 1 : 2)); }
+int32_t Ordinal(Axis3D self) { return ((self.Kind == Axis3D::Kind_X) ? 0 : ((self.Kind == Axis3D::Kind_Y) ? 1 : 2)); }
 
-Axis3D Tangent(Axis3D self) { return (IsX(self) ? Y(Axis3D{}) : (IsY(self) ? Z(Axis3D{}) : X(Axis3D{}))); }
+Axis3D Tangent(Axis3D self) { return ((self.Kind == Axis3D::Kind_X) ? Y(Axis3D{}) : ((self.Kind == Axis3D::Kind_Y) ? Z(Axis3D{}) : X(Axis3D{}))); }
 
-Axis3D Bitangent(Axis3D self) { return (IsX(self) ? Z(Axis3D{}) : (IsY(self) ? X(Axis3D{}) : Y(Axis3D{}))); }
+Axis3D Bitangent(Axis3D self) { return ((self.Kind == Axis3D::Kind_X) ? Z(Axis3D{}) : ((self.Kind == Axis3D::Kind_Y) ? X(Axis3D{}) : Y(Axis3D{}))); }
 
-Vector2D ToVector2D(Axis2D self) { return (IsX(self) ? Vector2D{ 1.0, 0.0 } : Vector2D{ 0.0, 1.0 }); }
+Vector2D ToVector2D(Axis2D self) { return ((self.Kind == Axis2D::Kind_X) ? Vector2D{ 1.0, 0.0 } : Vector2D{ 0.0, 1.0 }); }
 
 Direction2D ToDirection2D(Axis2D self) { return Direction2D{ ToVector2D(self) }; }
 
-Number2 ToNumber2(Axis2D self) { return ToNumber2((IsX(self) ? Tuple2{ 1.0, 0.0 } : Tuple2{ 0.0, 1.0 })); }
+Number2 ToNumber2(Axis2D self) { return ToNumber2(((self.Kind == Axis2D::Kind_X) ? Tuple2{ 1.0, 0.0 } : Tuple2{ 0.0, 1.0 })); }
 
-Point2D ToPoint2D(Axis2D self) { return ToPoint2D((IsX(self) ? Tuple2{ 1.0, 0.0 } : Tuple2{ 0.0, 1.0 })); }
+Point2D ToPoint2D(Axis2D self) { return ToPoint2D(((self.Kind == Axis2D::Kind_X) ? Tuple2{ 1.0, 0.0 } : Tuple2{ 0.0, 1.0 })); }
 
-int32_t Ordinal(Axis2D self) { return (IsX(self) ? 0 : 1); }
+int32_t Ordinal(Axis2D self) { return ((self.Kind == Axis2D::Kind_X) ? 0 : 1); }
 
-Axis2D Perpendicular(Axis2D self) { return (IsX(self) ? Y(Axis2D{}) : X(Axis2D{})); }
+Axis2D Perpendicular(Axis2D self) { return ((self.Kind == Axis2D::Kind_X) ? Y(Axis2D{}) : X(Axis2D{})); }
 
-Axis3D ToAxis3D(SignedAxis3D self) { return (IsPosX(self) ? X(Axis3D{}) : (IsNegX(self) ? X(Axis3D{}) : (IsPosY(self) ? Y(Axis3D{}) : (IsNegY(self) ? Y(Axis3D{}) : (IsPosZ(self) ? Z(Axis3D{}) : Z(Axis3D{})))))); }
+Axis3D ToAxis3D(SignedAxis3D self) { return ((self.Kind == SignedAxis3D::Kind_PosX) ? X(Axis3D{}) : ((self.Kind == SignedAxis3D::Kind_NegX) ? X(Axis3D{}) : ((self.Kind == SignedAxis3D::Kind_PosY) ? Y(Axis3D{}) : ((self.Kind == SignedAxis3D::Kind_NegY) ? Y(Axis3D{}) : ((self.Kind == SignedAxis3D::Kind_PosZ) ? Z(Axis3D{}) : Z(Axis3D{})))))); }
 
-int32_t Sign(SignedAxis3D self) { return (IsPosX(self) ? 1 : (IsNegX(self) ? (-1) : (IsPosY(self) ? 1 : (IsNegY(self) ? (-1) : (IsPosZ(self) ? 1 : (-1)))))); }
+int32_t Sign(SignedAxis3D self) { return ((self.Kind == SignedAxis3D::Kind_PosX) ? 1 : ((self.Kind == SignedAxis3D::Kind_NegX) ? (-1) : ((self.Kind == SignedAxis3D::Kind_PosY) ? 1 : ((self.Kind == SignedAxis3D::Kind_NegY) ? (-1) : ((self.Kind == SignedAxis3D::Kind_PosZ) ? 1 : (-1)))))); }
 
-Vector3D ToVector3D(SignedAxis3D self) { return (IsPosX(self) ? Vector3D{ 1.0, 0.0, 0.0 } : (IsNegX(self) ? Vector3D{ (-1.0), 0.0, 0.0 } : (IsPosY(self) ? Vector3D{ 0.0, 1.0, 0.0 } : (IsNegY(self) ? Vector3D{ 0.0, (-1.0), 0.0 } : (IsPosZ(self) ? Vector3D{ 0.0, 0.0, 1.0 } : Vector3D{ 0.0, 0.0, (-1.0) }))))); }
+Vector3D ToVector3D(SignedAxis3D self) { return ((self.Kind == SignedAxis3D::Kind_PosX) ? Vector3D{ 1.0, 0.0, 0.0 } : ((self.Kind == SignedAxis3D::Kind_NegX) ? Vector3D{ (-1.0), 0.0, 0.0 } : ((self.Kind == SignedAxis3D::Kind_PosY) ? Vector3D{ 0.0, 1.0, 0.0 } : ((self.Kind == SignedAxis3D::Kind_NegY) ? Vector3D{ 0.0, (-1.0), 0.0 } : ((self.Kind == SignedAxis3D::Kind_PosZ) ? Vector3D{ 0.0, 0.0, 1.0 } : Vector3D{ 0.0, 0.0, (-1.0) }))))); }
 
 Direction3D ToDirection3D(SignedAxis3D self) { return Direction3D{ ToVector3D(self) }; }
 
-SignedAxis3D Opposite(SignedAxis3D self) { return (IsPosX(self) ? NegX(SignedAxis3D{}) : (IsNegX(self) ? PosX(SignedAxis3D{}) : (IsPosY(self) ? NegY(SignedAxis3D{}) : (IsNegY(self) ? PosY(SignedAxis3D{}) : (IsPosZ(self) ? NegZ(SignedAxis3D{}) : PosZ(SignedAxis3D{})))))); }
+SignedAxis3D Opposite(SignedAxis3D self) { return ((self.Kind == SignedAxis3D::Kind_PosX) ? NegX(SignedAxis3D{}) : ((self.Kind == SignedAxis3D::Kind_NegX) ? PosX(SignedAxis3D{}) : ((self.Kind == SignedAxis3D::Kind_PosY) ? NegY(SignedAxis3D{}) : ((self.Kind == SignedAxis3D::Kind_NegY) ? PosY(SignedAxis3D{}) : ((self.Kind == SignedAxis3D::Kind_PosZ) ? NegZ(SignedAxis3D{}) : PosZ(SignedAxis3D{})))))); }
 
 Color Add(Color a, Color b) { return Color{ (a.R + b.R), (a.G + b.G), (a.B + b.B), (a.A + b.A) }; }
 
@@ -5002,5 +4938,69 @@ DualNumber Divide(DualNumber a, DualNumber b) { return DualNumber{ (a.Value / b.
 DualNumber Divide(DualNumber x, double scalar) { return DualNumber{ (x.Value / scalar), (x.Derivative / scalar) }; }
 
 DualNumber Modulo(DualNumber x, double scalar) { return DualNumber{ fmodf(x.Value, scalar), x.Derivative }; }
+
+DualNumber One(DualNumber _) { return DualNumber{ 1.0, 0.0 }; }
+
+DualNumber Lerp(DualNumber a, DualNumber b, double t) { return DualNumber{ (a.Value + ((b.Value - a.Value) * t)), (a.Derivative + ((b.Derivative - a.Derivative) * t)) }; }
+
+DualNumber MinValue(DualNumber _) { return DualNumber{ MinValue(0.0), 0.0 }; }
+
+DualNumber MaxValue(DualNumber _) { return DualNumber{ MaxValue(0.0), 0.0 }; }
+
+DualNumber Square(DualNumber x) { return DualNumber{ (x.Value * x.Value), ((2.0 * x.Value) * x.Derivative) }; }
+
+DualNumber Reciprocal(DualNumber x) { return DualNumber{ (1.0 / x.Value), ((-x.Derivative) / (x.Value * x.Value)) }; }
+
+DualNumber Sqrt(DualNumber x) { return DualNumber{ Sqrt(x.Value), (x.Derivative / (2.0 * Sqrt(x.Value))) }; }
+
+DualNumber Pow(DualNumber x, double power) { return DualNumber{ Pow(x.Value, power), ((power * Pow(x.Value, (power - 1.0))) * x.Derivative) }; }
+
+DualNumber Exp(DualNumber x) { return DualNumber{ Exp(x.Value), (Exp(x.Value) * x.Derivative) }; }
+
+DualNumber NaturalLog(DualNumber x) { return DualNumber{ NaturalLog(x.Value), (x.Derivative / x.Value) }; }
+
+DualNumber Sin(DualNumber x) { return DualNumber{ Sin(x.Value), (Cos(x.Value) * x.Derivative) }; }
+
+DualNumber Cos(DualNumber x) { return DualNumber{ Cos(x.Value), ((-Sin(x.Value)) * x.Derivative) }; }
+
+DualNumber Tan(DualNumber x) { return DualNumber{ (Sin(x.Value) / Cos(x.Value)), (x.Derivative / Square(Cos(x.Value))) }; }
+
+DualNumber Abs(DualNumber x) { return DualNumber{ ((0.0 <= x.Value) ? x.Value : (-x.Value)), (ToNumber(((0.0 <= x.Value) ? ((x.Value <= 0.0) ? 0 : 1) : (-1))) * x.Derivative) }; }
+
+bool IsZero(DualNumber x) { return (x == Zero(x)); }
+
+bool IsOne(DualNumber x) { return (x == One(x)); }
+
+DualNumber LinearCombination(DualNumber a, DualNumber b, double s, double t) { return DualNumber{ (Multiply(a, s).Value + Multiply(b, t).Value), (Multiply(a, s).Derivative + Multiply(b, t).Derivative) }; }
+
+DualNumber Barycentric(DualNumber a, DualNumber b, DualNumber c, double u, double v) { return Add(Add(a, DualNumber{ (Subtract(b, a).Value * u), (Subtract(b, a).Derivative * u) }), DualNumber{ (Subtract(c, a).Value * v), (Subtract(c, a).Derivative * v) }); }
+
+DualNumber Linear(DualNumber m, DualNumber b, double x) { return DualNumber{ (Multiply(m, x).Value + b.Value), (Multiply(m, x).Derivative + b.Derivative) }; }
+
+DualNumber LinearDerivative(DualNumber m, DualNumber b, double x) { return m; }
+
+DualNumber LinearSecondDerivative(DualNumber m, DualNumber b, double x) { return Zero(m); }
+
+DualNumber Quadratic(DualNumber a, DualNumber b, DualNumber c, double x) { return Add(DualNumber{ (Multiply(a, (x * x)).Value + Multiply(b, x).Value), (Multiply(a, (x * x)).Derivative + Multiply(b, x).Derivative) }, c); }
+
+DualNumber QuadraticDerivative(DualNumber a, DualNumber b, DualNumber c, double x) { return DualNumber{ (Multiply(a, (2.0 * x)).Value + b.Value), (Multiply(a, (2.0 * x)).Derivative + b.Derivative) }; }
+
+DualNumber QuadraticSecondDerivative(DualNumber a, DualNumber b, DualNumber c, double x) { return Multiply(a, 2.0); }
+
+DualNumber Cubic(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double x) { return Add(Add(DualNumber{ (Multiply(a, ((x * x) * x)).Value + Multiply(b, (x * x)).Value), (Multiply(a, ((x * x) * x)).Derivative + Multiply(b, (x * x)).Derivative) }, Multiply(c, x)), d); }
+
+DualNumber CubicDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double x) { return Add(DualNumber{ (Multiply(a, (3.0 * (x * x))).Value + Multiply(b, (2.0 * x)).Value), (Multiply(a, (3.0 * (x * x))).Derivative + Multiply(b, (2.0 * x)).Derivative) }, c); }
+
+DualNumber CubicSecondDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, double x) { return DualNumber{ (Multiply(a, (6.0 * x)).Value + Multiply(b, 2.0).Value), (Multiply(a, (6.0 * x)).Derivative + Multiply(b, 2.0).Derivative) }; }
+
+DualNumber Quartic(DualNumber a, DualNumber b, DualNumber c, DualNumber d, DualNumber e, double x) { return Add(Add(Add(Add(Multiply(a, ((x * x) * (x * x))), Multiply(b, ((x * x) * x))), Multiply(c, (x * x))), Multiply(d, x)), e); }
+
+DualNumber QuarticDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, DualNumber e, double x) { return Add(Add(Add(Multiply(a, ((4.0 * (x * x)) * x)), Multiply(b, (3.0 * (x * x)))), Multiply(c, (2.0 * x))), d); }
+
+DualNumber QuarticSecondDerivative(DualNumber a, DualNumber b, DualNumber c, DualNumber d, DualNumber e, double x) { return Add(DualNumber{ (Multiply(a, (12.0 * (x * x))).Value + Multiply(b, (6.0 * x)).Value), (Multiply(a, (12.0 * (x * x))).Derivative + Multiply(b, (6.0 * x)).Derivative) }, Multiply(c, 2.0)); }
+
+DualNumber QuadraticBezier(DualNumber a, DualNumber b, DualNumber c, double t) { return Add(Add(Multiply(a, ((1.0 - t) * (1.0 - t))), Multiply(b, ((2.0 * (1.0 - t)) * t))), Multiply(c, (t * t))); }
+
+DualNumber QuadraticBezierDerivative(DualNumber a, DualNumber b, DualNumber c, double t) { return Add(DualNumber{ (Subtract(b, a).Value * (2.0 * (1.0 - t))), (Subtract(b, a).Derivative * (2.0 * (1.0 - t))) }, DualNumber{ (Subtract(c, b).Value * (2.0 * t)), (Subtract(c, b).Derivative * (2.0 * t)) }); }
 
 } // namespace plato

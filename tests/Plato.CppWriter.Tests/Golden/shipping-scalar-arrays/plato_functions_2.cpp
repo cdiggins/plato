@@ -4,82 +4,6 @@
 
 namespace plato {
 
-Array<LinearDensity> LinearSpace(LinearDensity a, LinearDensity b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    LinearDensity* _a1 = plato::arena_alloc<LinearDensity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<LinearDensity> LinearSpaceExclusive(LinearDensity a, LinearDensity b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    LinearDensity* _a1 = plato::arena_alloc<LinearDensity>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-double Amount(Force x) { return x.Newtons; }
-
-Force FromAmount(Force _, double x) { return Force{ x }; }
-
-bool IsZero(Force self) { return (Amount(self) == 0.0); }
-
-bool IsPositive(Force self) { return (0.0 < Amount(self)); }
-
-bool IsNegative(Force self) { return (Amount(self) < 0.0); }
-
-int32_t Sign(Force self) { return Sign(Amount(self)); }
-
-Force Abs(Force self) { return (IsNegative(self) ? Negative(self) : self); }
-
-Force AbsoluteDifference(Force a, Force b) { return (((Subtract(a, b).Newtons <= 0.0) ? (!(Subtract(a, b).Newtons == 0.0)) : false) ? Force{ (-Subtract(a, b).Newtons) } : Subtract(a, b)); }
-
-Force Add(Force a, Force b) { return FromAmount(a, (Amount(a) + Amount(b))); }
-
-Force Subtract(Force a, Force b) { return FromAmount(a, (Amount(a) - Amount(b))); }
-
-Force Negative(Force x) { return FromAmount(x, (-Amount(x))); }
-
-Force Zero(Force x) { return FromAmount(x, 0.0); }
-
-int32_t Hash(Force x) { return Hash(Amount(x)); }
-
-bool LessThanOrEquals(Force a, Force b) { return (Amount(a) <= Amount(b)); }
-
-Force Lerp(Force a, Force b, double t) { return FromAmount(a, Lerp(Amount(a), Amount(b), t)); }
-
-Force Multiply(Force x, double scalar) { return FromAmount(x, (Amount(x) * scalar)); }
-
-Force Divide(Force x, double scalar) { return FromAmount(x, (Amount(x) / scalar)); }
-
-Force Modulo(Force x, double scalar) { return FromAmount(x, fmodf(Amount(x), scalar)); }
-
-bool LessThan(Force a, Force b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(Force a, Force b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(Force a, Force b) { return LessThanOrEquals(b, a); }
-
-Force Lesser(Force a, Force b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Force Greater(Force a, Force b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(Force x, Force lower, Force upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
 Force Clamp(Force x, Force lower, Force upper) { return Lesser(Greater(x, lower), upper); }
 
 Force Min3(Force a, Force b, Force c) { return Lesser(Lesser(a, b), c); }
@@ -3003,7 +2927,7 @@ AffineTransform3D ToAffineTransform3D(AxisAngle x) { return ToAffineTransform3D(
 
 Pose3D Compose(AxisAngle first, AxisAngle second) { return Compose(ToPose3D(first), ToPose3D(second)); }
 
-Quaternion ChainRotations(RotationOrder order, Quaternion aboutX, Quaternion aboutY, Quaternion aboutZ) { return (IsXYZ(order) ? Multiply(aboutZ, Multiply(aboutY, aboutX)) : (IsXZY(order) ? Multiply(aboutY, Multiply(aboutZ, aboutX)) : (IsYXZ(order) ? Multiply(aboutZ, Multiply(aboutX, aboutY)) : (IsYZX(order) ? Multiply(aboutX, Multiply(aboutZ, aboutY)) : (IsZXY(order) ? Multiply(aboutY, Multiply(aboutX, aboutZ)) : Multiply(aboutX, Multiply(aboutY, aboutZ))))))); }
+Quaternion ChainRotations(RotationOrder order, Quaternion aboutX, Quaternion aboutY, Quaternion aboutZ) { return ((order.Kind == RotationOrder::Kind_XYZ) ? Multiply(aboutZ, Multiply(aboutY, aboutX)) : ((order.Kind == RotationOrder::Kind_XZY) ? Multiply(aboutY, Multiply(aboutZ, aboutX)) : ((order.Kind == RotationOrder::Kind_YXZ) ? Multiply(aboutZ, Multiply(aboutX, aboutY)) : ((order.Kind == RotationOrder::Kind_YZX) ? Multiply(aboutX, Multiply(aboutZ, aboutY)) : ((order.Kind == RotationOrder::Kind_ZXY) ? Multiply(aboutY, Multiply(aboutX, aboutZ)) : Multiply(aboutX, Multiply(aboutY, aboutZ))))))); }
 
 Quaternion ToQuaternion(EulerAngles e) { return ChainRotations(e.Order, CreateFromAxisAngle(Quaternion{}, Vector3D{ 1.0, 0.0, 0.0 }, e.Pitch), CreateFromAxisAngle(Quaternion{}, Vector3D{ 0.0, 1.0, 0.0 }, e.Yaw), CreateFromAxisAngle(Quaternion{}, Vector3D{ 0.0, 0.0, 1.0 }, e.Roll)); }
 
@@ -3957,7 +3881,7 @@ Vector2D CreateFromComponent(Vector2D _, double x) { return Vector2D{ x, x }; }
 
 Vector2D Reverse(Vector2D self) { return Vector2D{ self.Y, self.X }; }
 
-double Component(Vector2D v, Axis2D axis) { return (IsX(axis) ? v.X : v.Y); }
+double Component(Vector2D v, Axis2D axis) { return ((axis.Kind == Axis2D::Kind_X) ? v.X : v.Y); }
 
 Vector2D UnitX(Vector2D _) { return Vector2D{ 1.0, 0.0 }; }
 
@@ -4338,7 +4262,7 @@ Vector3D CreateFromComponent(Vector3D _, double x) { return Vector3D{ x, x, x };
 
 Vector3D Reverse(Vector3D self) { return Vector3D{ self.Z, self.Y, self.X }; }
 
-double Component(Vector3D v, Axis3D axis) { return (IsX(axis) ? v.X : (IsY(axis) ? v.Y : v.Z)); }
+double Component(Vector3D v, Axis3D axis) { return ((axis.Kind == Axis3D::Kind_X) ? v.X : ((axis.Kind == Axis3D::Kind_Y) ? v.Y : v.Z)); }
 
 Vector3D UnitX(Vector3D _) { return Vector3D{ 1.0, 0.0, 0.0 }; }
 
@@ -4446,7 +4370,7 @@ int32_t Hash(Vector3D self) { return BitwiseXor((BitwiseXor((Hash(self.X) * 31),
 
 double SumSquares3(Vector3D v) { return (((0.0 + (v.X * v.X)) + (v.Y * v.Y)) + (v.Z * v.Z)); }
 
-bool AnyBig(Vector3D v) { return (((1.0 <= v.X) ? (!(1.0 == v.X)) : false)) || (((1.0 <= v.Y) ? (!(1.0 == v.Y)) : false)) || (((1.0 <= v.Z) ? (!(1.0 == v.Z)) : false)); }
+bool AnyBig(Vector3D v) { return ((((1.0 <= v.X) ? (!(1.0 == v.X)) : false)) || (((1.0 <= v.Y) ? (!(1.0 == v.Y)) : false)) || (((1.0 <= v.Z) ? (!(1.0 == v.Z)) : false))); }
 
 int32_t ComponentCount(Vector3D v) { return 3; }
 
@@ -4990,6 +4914,86 @@ VectorN Barycentric(VectorN a, VectorN b, VectorN c, double u, double v)
     Array<double> _eval5 = _lp5;
     VectorN _eval7 = VectorN{ _eval5 };
     return ZipComponents(_eval6, _eval7, [=](double x, double y) -> double { return (x + y); });
+}
+
+VectorN Linear(VectorN m, VectorN b, double x)
+{
+    auto _s5a = ComponentArray(Multiply(m, x));
+    auto _s5b = ComponentArray(b);
+    int32_t _n5 = _s5a.count < _s5b.count ? _s5a.count : _s5b.count;
+    double* _a5 = plato::arena_alloc<double>(_n5);
+    for (int32_t _i5 = 0; _i5 < _n5; _i5++)
+    {
+        auto _eval0_5 = _s5a.data[_i5];
+        auto _eval1_5 = _s5b.data[_i5];
+        _a5[_i5] = (_eval0_5 + _eval1_5);
+    }
+    auto _lp5 = plato::make_array(_a5, _n5);
+    Array<double> _eval2 = _lp5;
+    return VectorN{ _eval2 };
+}
+
+VectorN LinearDerivative(VectorN m, VectorN b, double x) { return m; }
+
+VectorN LinearSecondDerivative(VectorN m, VectorN b, double x) { return Zero(m); }
+
+VectorN Quadratic(VectorN a, VectorN b, VectorN c, double x)
+{
+    auto _s6a = ComponentArray(Multiply(a, (x * x)));
+    auto _s6b = ComponentArray(Multiply(b, x));
+    int32_t _n6 = _s6a.count < _s6b.count ? _s6a.count : _s6b.count;
+    double* _a6 = plato::arena_alloc<double>(_n6);
+    for (int32_t _i6 = 0; _i6 < _n6; _i6++)
+    {
+        auto _eval0_6 = _s6a.data[_i6];
+        auto _eval1_6 = _s6b.data[_i6];
+        _a6[_i6] = (_eval0_6 + _eval1_6);
+    }
+    auto _lp6 = plato::make_array(_a6, _n6);
+    Array<double> _eval2 = _lp6;
+    VectorN _eval3 = VectorN{ _eval2 };
+    VectorN _eval4 = c;
+    return ZipComponents(_eval3, _eval4, [=](double x_1, double y) -> double { return (x_1 + y); });
+}
+
+VectorN QuadraticDerivative(VectorN a, VectorN b, VectorN c, double x)
+{
+    auto _s5a = ComponentArray(Multiply(a, (2.0 * x)));
+    auto _s5b = ComponentArray(b);
+    int32_t _n5 = _s5a.count < _s5b.count ? _s5a.count : _s5b.count;
+    double* _a5 = plato::arena_alloc<double>(_n5);
+    for (int32_t _i5 = 0; _i5 < _n5; _i5++)
+    {
+        auto _eval0_5 = _s5a.data[_i5];
+        auto _eval1_5 = _s5b.data[_i5];
+        _a5[_i5] = (_eval0_5 + _eval1_5);
+    }
+    auto _lp5 = plato::make_array(_a5, _n5);
+    Array<double> _eval2 = _lp5;
+    return VectorN{ _eval2 };
+}
+
+VectorN QuadraticSecondDerivative(VectorN a, VectorN b, VectorN c, double x) { return Multiply(a, 2.0); }
+
+VectorN Cubic(VectorN a, VectorN b, VectorN c, VectorN d, double x)
+{
+    auto _s7a = ComponentArray(Multiply(a, ((x * x) * x)));
+    auto _s7b = ComponentArray(Multiply(b, (x * x)));
+    int32_t _n7 = _s7a.count < _s7b.count ? _s7a.count : _s7b.count;
+    double* _a7 = plato::arena_alloc<double>(_n7);
+    for (int32_t _i7 = 0; _i7 < _n7; _i7++)
+    {
+        auto _eval0_7 = _s7a.data[_i7];
+        auto _eval1_7 = _s7b.data[_i7];
+        _a7[_i7] = (_eval0_7 + _eval1_7);
+    }
+    auto _lp7 = plato::make_array(_a7, _n7);
+    Array<double> _eval2 = _lp7;
+    VectorN _eval3 = VectorN{ _eval2 };
+    VectorN _eval4 = Multiply(c, x);
+    VectorN _eval5 = ZipComponents(_eval3, _eval4, [=](double x_1, double y) -> double { return (x_1 + y); });
+    VectorN _eval6 = d;
+    return ZipComponents(_eval5, _eval6, [=](double x_2, double y) -> double { return (x_2 + y); });
 }
 
 } // namespace plato

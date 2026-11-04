@@ -38,12 +38,6 @@ Axis3D Y(Axis3D _) { Axis3D r{}; r.Kind = Axis3D::Kind_Y; return r; }
 
 Axis3D Z(Axis3D _) { Axis3D r{}; r.Kind = Axis3D::Kind_Z; return r; }
 
-bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
-
-bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
-
-bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
-
 bool Equals(const Axis2D& a, const Axis2D& b) { return a == b; }
 
 bool NotEquals(const Axis2D& a, const Axis2D& b) { return a != b; }
@@ -55,10 +49,6 @@ int32_t GetHashCode(const Axis2D& a) { int32_t h = hash_(a.Kind); return h; }
 Axis2D X(Axis2D _) { Axis2D r{}; r.Kind = Axis2D::Kind_X; return r; }
 
 Axis2D Y(Axis2D _) { Axis2D r{}; r.Kind = Axis2D::Kind_Y; return r; }
-
-bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
-
-bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
 
 bool Equals(const SignedAxis3D& a, const SignedAxis3D& b) { return a == b; }
 
@@ -79,18 +69,6 @@ SignedAxis3D NegY(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kin
 SignedAxis3D PosZ(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kind_PosZ; return r; }
 
 SignedAxis3D NegZ(SignedAxis3D _) { SignedAxis3D r{}; r.Kind = SignedAxis3D::Kind_NegZ; return r; }
-
-bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
-
-bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
-
-bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
-
-bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
-
-bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
-
-bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
 
 bool Equals(const Color& a, const Color& b) { return a == b; }
 
@@ -305,18 +283,6 @@ GraphLayout Grid(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Gr
 GraphLayout Radial(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Radial; return r; }
 
 GraphLayout Spectral(GraphLayout _) { GraphLayout r{}; r.Kind = GraphLayout::Kind_Spectral; return r; }
-
-bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
-
-bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
-
-bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
-
-bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
-
-bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
-
-bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
 
 bool Equals(const NumberInterval& a, const NumberInterval& b) { return a == b; }
 
@@ -1308,18 +1274,6 @@ RotationOrder ZXY(RotationOrder _) { RotationOrder r{}; r.Kind = RotationOrder::
 
 RotationOrder ZYX(RotationOrder _) { RotationOrder r{}; r.Kind = RotationOrder::Kind_ZYX; return r; }
 
-bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
-
-bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
-
-bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
-
-bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
-
-bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
-
-bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
-
 bool Equals(const EulerAngles& a, const EulerAngles& b) { return a == b; }
 
 bool NotEquals(const EulerAngles& a, const EulerAngles& b) { return a != b; }
@@ -1438,12 +1392,6 @@ MovingAverage Exponential(MovingAverage _, Proportion p0) { MovingAverage r{}; r
 
 MovingAverage Gaussian(MovingAverage _, int32_t p0, double p1) { MovingAverage r{}; r.Kind = MovingAverage::Kind_Gaussian; r.Gaussian_WindowSize = p0; r.Gaussian_StandardDeviation = p1; return r; }
 
-bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
-
-bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
-
-bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
-
 bool Equals(const OutlierDetection& a, const OutlierDetection& b) { return a == b; }
 
 bool NotEquals(const OutlierDetection& a, const OutlierDetection& b) { return a != b; }
@@ -1457,12 +1405,6 @@ OutlierDetection ZScore(OutlierDetection _, double p0) { OutlierDetection r{}; r
 OutlierDetection Iqr(OutlierDetection _, double p0) { OutlierDetection r{}; r.Kind = OutlierDetection::Kind_Iqr; r.Iqr_Threshold = p0; return r; }
 
 OutlierDetection Mad(OutlierDetection _, double p0) { OutlierDetection r{}; r.Kind = OutlierDetection::Kind_Mad; r.Mad_Threshold = p0; return r; }
-
-bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
-
-bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
-
-bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
 
 bool Equals(const Covariance2D& a, const Covariance2D& b) { return a == b; }
 
@@ -1493,12 +1435,6 @@ CorrelationStatistic Pearson(CorrelationStatistic _) { CorrelationStatistic r{};
 CorrelationStatistic Spearman(CorrelationStatistic _) { CorrelationStatistic r{}; r.Kind = CorrelationStatistic::Kind_Spearman; return r; }
 
 CorrelationStatistic Kendall(CorrelationStatistic _) { CorrelationStatistic r{}; r.Kind = CorrelationStatistic::Kind_Kendall; return r; }
-
-bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
-
-bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
-
-bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
 
 bool Equals(const CorrelationCoefficient& a, const CorrelationCoefficient& b) { return a == b; }
 
@@ -2036,41 +1972,41 @@ String TypeName(const ScalingAbout3D& _) { return make_string_n("ScalingAbout3D"
 
 int32_t GetHashCode(const ScalingAbout3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Amount)); h = mix_(h, GetHashCode(a.Center)); return h; }
 
-Vector3D ToVector3D(Axis3D self) { return (IsX(self) ? Vector3D{ 1.0, 0.0, 0.0 } : (IsY(self) ? Vector3D{ 0.0, 1.0, 0.0 } : Vector3D{ 0.0, 0.0, 1.0 })); }
+Vector3D ToVector3D(Axis3D self) { return ((self.Kind == Axis3D::Kind_X) ? Vector3D{ 1.0, 0.0, 0.0 } : ((self.Kind == Axis3D::Kind_Y) ? Vector3D{ 0.0, 1.0, 0.0 } : Vector3D{ 0.0, 0.0, 1.0 })); }
 
 Direction3D ToDirection3D(Axis3D self) { return Direction3D{ ToVector3D(self) }; }
 
-Number3 ToNumber3(Axis3D self) { return ToNumber3((IsX(self) ? Tuple3{ 1.0, 0.0, 0.0 } : (IsY(self) ? Tuple3{ 0.0, 1.0, 0.0 } : Tuple3{ 0.0, 0.0, 1.0 }))); }
+Number3 ToNumber3(Axis3D self) { return ToNumber3(((self.Kind == Axis3D::Kind_X) ? Tuple3{ 1.0, 0.0, 0.0 } : ((self.Kind == Axis3D::Kind_Y) ? Tuple3{ 0.0, 1.0, 0.0 } : Tuple3{ 0.0, 0.0, 1.0 }))); }
 
-Point3D ToPoint3D(Axis3D self) { return ToPoint3D((IsX(self) ? Tuple3{ 1.0, 0.0, 0.0 } : (IsY(self) ? Tuple3{ 0.0, 1.0, 0.0 } : Tuple3{ 0.0, 0.0, 1.0 }))); }
+Point3D ToPoint3D(Axis3D self) { return ToPoint3D(((self.Kind == Axis3D::Kind_X) ? Tuple3{ 1.0, 0.0, 0.0 } : ((self.Kind == Axis3D::Kind_Y) ? Tuple3{ 0.0, 1.0, 0.0 } : Tuple3{ 0.0, 0.0, 1.0 }))); }
 
-int32_t Ordinal(Axis3D self) { return (IsX(self) ? 0 : (IsY(self) ? 1 : 2)); }
+int32_t Ordinal(Axis3D self) { return ((self.Kind == Axis3D::Kind_X) ? 0 : ((self.Kind == Axis3D::Kind_Y) ? 1 : 2)); }
 
-Axis3D Tangent(Axis3D self) { return (IsX(self) ? Y(Axis3D{}) : (IsY(self) ? Z(Axis3D{}) : X(Axis3D{}))); }
+Axis3D Tangent(Axis3D self) { return ((self.Kind == Axis3D::Kind_X) ? Y(Axis3D{}) : ((self.Kind == Axis3D::Kind_Y) ? Z(Axis3D{}) : X(Axis3D{}))); }
 
-Axis3D Bitangent(Axis3D self) { return (IsX(self) ? Z(Axis3D{}) : (IsY(self) ? X(Axis3D{}) : Y(Axis3D{}))); }
+Axis3D Bitangent(Axis3D self) { return ((self.Kind == Axis3D::Kind_X) ? Z(Axis3D{}) : ((self.Kind == Axis3D::Kind_Y) ? X(Axis3D{}) : Y(Axis3D{}))); }
 
-Vector2D ToVector2D(Axis2D self) { return (IsX(self) ? Vector2D{ 1.0, 0.0 } : Vector2D{ 0.0, 1.0 }); }
+Vector2D ToVector2D(Axis2D self) { return ((self.Kind == Axis2D::Kind_X) ? Vector2D{ 1.0, 0.0 } : Vector2D{ 0.0, 1.0 }); }
 
 Direction2D ToDirection2D(Axis2D self) { return Direction2D{ ToVector2D(self) }; }
 
-Number2 ToNumber2(Axis2D self) { return ToNumber2((IsX(self) ? Tuple2{ 1.0, 0.0 } : Tuple2{ 0.0, 1.0 })); }
+Number2 ToNumber2(Axis2D self) { return ToNumber2(((self.Kind == Axis2D::Kind_X) ? Tuple2{ 1.0, 0.0 } : Tuple2{ 0.0, 1.0 })); }
 
-Point2D ToPoint2D(Axis2D self) { return ToPoint2D((IsX(self) ? Tuple2{ 1.0, 0.0 } : Tuple2{ 0.0, 1.0 })); }
+Point2D ToPoint2D(Axis2D self) { return ToPoint2D(((self.Kind == Axis2D::Kind_X) ? Tuple2{ 1.0, 0.0 } : Tuple2{ 0.0, 1.0 })); }
 
-int32_t Ordinal(Axis2D self) { return (IsX(self) ? 0 : 1); }
+int32_t Ordinal(Axis2D self) { return ((self.Kind == Axis2D::Kind_X) ? 0 : 1); }
 
-Axis2D Perpendicular(Axis2D self) { return (IsX(self) ? Y(Axis2D{}) : X(Axis2D{})); }
+Axis2D Perpendicular(Axis2D self) { return ((self.Kind == Axis2D::Kind_X) ? Y(Axis2D{}) : X(Axis2D{})); }
 
-Axis3D ToAxis3D(SignedAxis3D self) { return (IsPosX(self) ? X(Axis3D{}) : (IsNegX(self) ? X(Axis3D{}) : (IsPosY(self) ? Y(Axis3D{}) : (IsNegY(self) ? Y(Axis3D{}) : (IsPosZ(self) ? Z(Axis3D{}) : Z(Axis3D{})))))); }
+Axis3D ToAxis3D(SignedAxis3D self) { return ((self.Kind == SignedAxis3D::Kind_PosX) ? X(Axis3D{}) : ((self.Kind == SignedAxis3D::Kind_NegX) ? X(Axis3D{}) : ((self.Kind == SignedAxis3D::Kind_PosY) ? Y(Axis3D{}) : ((self.Kind == SignedAxis3D::Kind_NegY) ? Y(Axis3D{}) : ((self.Kind == SignedAxis3D::Kind_PosZ) ? Z(Axis3D{}) : Z(Axis3D{})))))); }
 
-int32_t Sign(SignedAxis3D self) { return (IsPosX(self) ? 1 : (IsNegX(self) ? (-1) : (IsPosY(self) ? 1 : (IsNegY(self) ? (-1) : (IsPosZ(self) ? 1 : (-1)))))); }
+int32_t Sign(SignedAxis3D self) { return ((self.Kind == SignedAxis3D::Kind_PosX) ? 1 : ((self.Kind == SignedAxis3D::Kind_NegX) ? (-1) : ((self.Kind == SignedAxis3D::Kind_PosY) ? 1 : ((self.Kind == SignedAxis3D::Kind_NegY) ? (-1) : ((self.Kind == SignedAxis3D::Kind_PosZ) ? 1 : (-1)))))); }
 
-Vector3D ToVector3D(SignedAxis3D self) { return (IsPosX(self) ? Vector3D{ 1.0, 0.0, 0.0 } : (IsNegX(self) ? Vector3D{ (-1.0), 0.0, 0.0 } : (IsPosY(self) ? Vector3D{ 0.0, 1.0, 0.0 } : (IsNegY(self) ? Vector3D{ 0.0, (-1.0), 0.0 } : (IsPosZ(self) ? Vector3D{ 0.0, 0.0, 1.0 } : Vector3D{ 0.0, 0.0, (-1.0) }))))); }
+Vector3D ToVector3D(SignedAxis3D self) { return ((self.Kind == SignedAxis3D::Kind_PosX) ? Vector3D{ 1.0, 0.0, 0.0 } : ((self.Kind == SignedAxis3D::Kind_NegX) ? Vector3D{ (-1.0), 0.0, 0.0 } : ((self.Kind == SignedAxis3D::Kind_PosY) ? Vector3D{ 0.0, 1.0, 0.0 } : ((self.Kind == SignedAxis3D::Kind_NegY) ? Vector3D{ 0.0, (-1.0), 0.0 } : ((self.Kind == SignedAxis3D::Kind_PosZ) ? Vector3D{ 0.0, 0.0, 1.0 } : Vector3D{ 0.0, 0.0, (-1.0) }))))); }
 
 Direction3D ToDirection3D(SignedAxis3D self) { return Direction3D{ ToVector3D(self) }; }
 
-SignedAxis3D Opposite(SignedAxis3D self) { return (IsPosX(self) ? NegX(SignedAxis3D{}) : (IsNegX(self) ? PosX(SignedAxis3D{}) : (IsPosY(self) ? NegY(SignedAxis3D{}) : (IsNegY(self) ? PosY(SignedAxis3D{}) : (IsPosZ(self) ? NegZ(SignedAxis3D{}) : PosZ(SignedAxis3D{})))))); }
+SignedAxis3D Opposite(SignedAxis3D self) { return ((self.Kind == SignedAxis3D::Kind_PosX) ? NegX(SignedAxis3D{}) : ((self.Kind == SignedAxis3D::Kind_NegX) ? PosX(SignedAxis3D{}) : ((self.Kind == SignedAxis3D::Kind_PosY) ? NegY(SignedAxis3D{}) : ((self.Kind == SignedAxis3D::Kind_NegY) ? PosY(SignedAxis3D{}) : ((self.Kind == SignedAxis3D::Kind_PosZ) ? NegZ(SignedAxis3D{}) : PosZ(SignedAxis3D{})))))); }
 
 Color Add(Color a, Color b) { return Color{ (a.R + b.R), (a.G + b.G), (a.B + b.B), (a.A + b.A) }; }
 
@@ -5003,5 +4939,69 @@ Point2D Transform(Point2D p, Reflection2D r) { return FromOffset(r.Origin, Add(V
 Point2D Transform(Point2D p, RotationAbout2D r) { return FromOffset(r.Center, Add(Vector2D{ r.Center.X, r.Center.Y }, Transform(Subtract(Vector2D{ p.X, p.Y }, Vector2D{ r.Center.X, r.Center.Y }), r.Rotation))); }
 
 Point2D Transform(Point2D p, ScalingAbout2D s) { return FromOffset(s.Center, Add(Vector2D{ s.Center.X, s.Center.Y }, Multiply(Subtract(Vector2D{ p.X, p.Y }, Vector2D{ s.Center.X, s.Center.Y }), s.Amount))); }
+
+Vector2D Offset(Point2D p) { return Vector2D{ p.X, p.Y }; }
+
+Point2D FromOffset(Point2D _, Vector2D v) { return Point2D{ v.X, v.Y }; }
+
+Vector2D PositionVector(Point2D p) { return Vector2D{ p.X, p.Y }; }
+
+Point2D Transform(Point2D p, Pose2D pose) { return FromOffset(pose.Position, Add(Vector2D{ pose.Position.X, pose.Position.Y }, Transform(Vector2D{ p.X, p.Y }, pose.Rotation))); }
+
+Point2D Transform(Point2D p, Rotation2D r) { return ToPoint(Transform(Vector2D{ p.X, p.Y }, r)); }
+
+Point2D Transform(Point2D p, Rotor2D r) { return ToPoint(Transform(Vector2D{ p.X, p.Y }, r)); }
+
+Point2D Transform(Point2D p, TrsTransform2D t) { return ToPoint(Add(Transform(Multiply(Vector2D{ p.X, p.Y }, t.Scale), t.Rotation), t.Translation)); }
+
+Point2D MidPoint(Point2D a, Point2D b) { return Lerp(a, b, 0.5); }
+
+Point2D LerpClamped(Point2D a, Point2D b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+Point2D SmoothLerp(Point2D a, Point2D b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
+Array<Point2D> LinearSpace(Point2D a, Point2D b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Point2D* _a1 = plato::arena_alloc<Point2D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Array<Point2D> LinearSpaceExclusive(Point2D a, Point2D b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Point2D* _a1 = plato::arena_alloc<Point2D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Point2D Add(Point2D x, Vector2D delta) { return FromOffset(x, Add(Offset(x), delta)); }
+
+Vector2D Between(Point2D a, Point2D b) { return Subtract(Offset(b), Offset(a)); }
+
+Point2D Origin(Point2D x) { return FromOffset(x, Vector2D{ 0.0, 0.0 }); }
+
+Point2D Subtract(Point2D x, Vector2D delta) { return Add(x, Negative(delta)); }
+
+Vector2D Subtract(Point2D a, Point2D b) { return Between(b, a); }
+
+Point2D Lerp(Point2D a, Point2D b, double t) { return Add(a, Multiply(Between(a, b), t)); }
+
+bool IsNear(Point2D a, Point2D b, double tolerance) { return (Distance(a, b) <= tolerance); }
+
+bool IsNearerThan(Point2D reference, Point2D candidate, Point2D other) { return (Distance(reference, candidate) < Distance(reference, other)); }
 
 } // namespace plato

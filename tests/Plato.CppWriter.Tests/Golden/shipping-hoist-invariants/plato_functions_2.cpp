@@ -4,78 +4,6 @@
 
 namespace plato {
 
-double Pdf(GeometricDistribution x, double value) { std::abort(); }
-
-double Cdf(GeometricDistribution x, double value) { std::abort(); }
-
-double Mean(PoissonDistribution x) { std::abort(); }
-
-double Variance(PoissonDistribution x) { std::abort(); }
-
-double Pdf(PoissonDistribution x, double value) { std::abort(); }
-
-double Cdf(PoissonDistribution x, double value) { std::abort(); }
-
-double Mean(DiscreteDistribution x) { std::abort(); }
-
-double Variance(DiscreteDistribution x) { std::abort(); }
-
-double Pdf(DiscreteDistribution x, double value) { std::abort(); }
-
-double Cdf(DiscreteDistribution x, double value) { std::abort(); }
-
-Quaternion Square(Quaternion x) { return Multiply(x, x); }
-
-Quaternion Cube(Quaternion x) { return Multiply(Multiply(x, x), x); }
-
-Quaternion Pow4(Quaternion x) { return Square(Square(x)); }
-
-Quaternion Pow5(Quaternion x) { return Multiply(Square(Square(x)), x); }
-
-Quaternion MidPoint(Quaternion a, Quaternion b) { return Lerp(a, b, 0.5); }
-
-Quaternion LerpClamped(Quaternion a, Quaternion b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Quaternion SmoothLerp(Quaternion a, Quaternion b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Quaternion> LinearSpace(Quaternion a, Quaternion b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Quaternion* _a1 = plato::arena_alloc<Quaternion>(_n1);
-    if (_n1 > 0)
-    {
-        double _inv1_0 = ToNumber((count - 1));
-        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-        {
-            auto _eval0_1 = _i1;
-            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
-        }
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<Quaternion> LinearSpaceExclusive(Quaternion a, Quaternion b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Quaternion* _a1 = plato::arena_alloc<Quaternion>(_n1);
-    if (_n1 > 0)
-    {
-        double _inv1_0 = ToNumber(count);
-        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-        {
-            auto _eval0_1 = _i1;
-            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
-        }
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-AffineTransform3D ToAffineTransform3D(Quaternion x) { std::abort(); }
-
 Quaternion Lerp(Quaternion a, Quaternion b, double t) { std::abort(); }
 
 Quaternion Multiply(Quaternion a, Quaternion b) { std::abort(); }
@@ -1700,7 +1628,77 @@ Number8 FromComponents(Number8 _, Array<double> xs) { std::abort(); }
 
 Number8 Broadcast(Number8 self, double x) { std::abort(); }
 
-double HArea(HShape s) { return (IsHCircle(s) ? ((3.0 * s.HCircle_Radius) * s.HCircle_Radius) : (IsHRect(s) ? (s.HRect_Width * s.HRect_Height) : 0.0)); }
+double HArea(HShape s) { return ((s.Kind == HShape::Kind_HCircle) ? ((3.0 * s.HCircle_Radius) * s.HCircle_Radius) : ((s.Kind == HShape::Kind_HRect) ? (s.HRect_Width * s.HRect_Height) : 0.0)); }
+
+bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
+
+bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
+
+bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
+
+bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
+
+bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
+
+bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
+
+bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
+
+bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
+
+bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
+
+bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
+
+bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
+
+bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
+
+bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
+
+bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
+
+bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
+
+bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
+
+bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
+
+bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
+
+bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
+
+bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
+
+bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
+
+bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
+
+bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
+
+bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
+
+bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
+
+bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
+
+bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
+
+bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
+
+bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
+
+bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
+
+bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
+
+bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
+
+bool IsHCircle(const HShape& s) { return s.Kind == HShape::Kind_HCircle; }
+
+bool IsHRect(const HShape& s) { return s.Kind == HShape::Kind_HRect; }
+
+bool IsHDot(const HShape& s) { return s.Kind == HShape::Kind_HDot; }
 
 int32_t VertexCount(Graph self) { return self.VertexCount; }
 

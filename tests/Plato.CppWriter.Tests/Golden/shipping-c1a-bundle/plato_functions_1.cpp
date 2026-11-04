@@ -4,91 +4,6 @@
 
 namespace plato {
 
-Array<Inductance> LinearSpaceExclusive(Inductance a, Inductance b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Inductance* _a1 = plato::arena_alloc<Inductance>(_n1);
-    if (_n1 > 0)
-    {
-        double _inv1_0 = ToNumber(count);
-        for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-        {
-            auto _eval0_1 = _i1;
-            _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / _inv1_0));
-        }
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Inductance Add(Inductance a, Inductance b) { std::abort(); }
-
-Inductance Subtract(Inductance a, Inductance b) { std::abort(); }
-
-Inductance Negative(Inductance x) { std::abort(); }
-
-Inductance Zero(Inductance x) { std::abort(); }
-
-int32_t Hash(Inductance x) { std::abort(); }
-
-Inductance Lerp(Inductance a, Inductance b, double t) { std::abort(); }
-
-bool LessThanOrEquals(Inductance a, Inductance b) { std::abort(); }
-
-double Amount(Inductance x) { std::abort(); }
-
-Inductance FromAmount(Inductance _, double x) { std::abort(); }
-
-Inductance Multiply(Inductance x, double scalar) { std::abort(); }
-
-Inductance Divide(Inductance x, double scalar) { std::abort(); }
-
-Inductance Modulo(Inductance x, double scalar) { std::abort(); }
-
-double Turns(Angle x) { return (x.Radians / (2.0 * Pi(0.0))); }
-
-double Degrees(Angle x) { return ((x.Radians / (2.0 * Pi(0.0))) * 360.0); }
-
-double Gradians(Angle x) { return ((x.Radians / (2.0 * Pi(0.0))) * 400.0); }
-
-double ArcMinutes(Angle x) { return (((x.Radians / (2.0 * Pi(0.0))) * 360.0) * 60.0); }
-
-double ArcSeconds(Angle x) { return ((((x.Radians / (2.0 * Pi(0.0))) * 360.0) * 60.0) * 60.0); }
-
-double Sec(Angle x) { return (1.0 / Cos(x.Radians)); }
-
-double Csc(Angle x) { return (1.0 / Sin(x.Radians)); }
-
-double Cot(Angle x) { return (1.0 / (Sin(x.Radians) / Cos(x.Radians))); }
-
-Angle Normalize(Angle self)
-{
-    double tau = (2.0 * Pi(0.0));
-    double m = (self.Radians - (tau * Floor((self.Radians / tau))));
-    return Angle{ ((Pi(0.0) < m) ? (m - tau) : m) };
-}
-
-Angle Wrap(Angle self, Angle period) { return Angle{ (self.Radians - (period.Radians * Floor((self.Radians / period.Radians)))) }; }
-
-Angle LerpShortest(Angle a, Angle b, double t) { return Angle{ (a.Radians + (Normalize(Angle{ (b.Radians - a.Radians) }).Radians * t)) }; }
-
-bool EquivalentAngle(Angle a, Angle b) { return (Normalize(a).Radians == Normalize(b).Radians); }
-
-double Cos(Angle self) { return Cos(self.Radians); }
-
-double Sin(Angle self) { return Sin(self.Radians); }
-
-double Tan(Angle self) { return (Sin(self.Radians) / Cos(self.Radians)); }
-
-Tuple2<double, double> SinCos(Angle self) { return Tuple2<double, double>{ Sin(self.Radians), Cos(self.Radians) }; }
-
-double Cosh(Angle self) { return ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0); }
-
-double Sinh(Angle self) { return ((Exp(self.Radians) - Exp((-self.Radians))) / 2.0); }
-
-double Tanh(Angle self) { return (((Exp(self.Radians) - Exp((-self.Radians))) / 2.0) / ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0)); }
-
 Angle Add(Angle a, Angle b) { return Angle{ (a.Radians + b.Radians) }; }
 
 Angle Subtract(Angle a, Angle b) { return Angle{ (a.Radians - b.Radians) }; }
@@ -5002,5 +4917,89 @@ double Pdf(VonMisesDistribution x, double value) { std::abort(); }
 double Cdf(VonMisesDistribution x, double value) { std::abort(); }
 
 double Mean(GammaDistribution x) { std::abort(); }
+
+double Variance(GammaDistribution x) { std::abort(); }
+
+double Pdf(GammaDistribution x, double value) { std::abort(); }
+
+double Cdf(GammaDistribution x, double value) { std::abort(); }
+
+double Mean(BetaDistribution x) { std::abort(); }
+
+double Variance(BetaDistribution x) { std::abort(); }
+
+double Pdf(BetaDistribution x, double value) { std::abort(); }
+
+double Cdf(BetaDistribution x, double value) { std::abort(); }
+
+double Mean(ChiSquaredDistribution x) { std::abort(); }
+
+double Variance(ChiSquaredDistribution x) { std::abort(); }
+
+double Pdf(ChiSquaredDistribution x, double value) { std::abort(); }
+
+double Cdf(ChiSquaredDistribution x, double value) { std::abort(); }
+
+double Mean(StudentTDistribution x) { std::abort(); }
+
+double Variance(StudentTDistribution x) { std::abort(); }
+
+double Pdf(StudentTDistribution x, double value) { std::abort(); }
+
+double Cdf(StudentTDistribution x, double value) { std::abort(); }
+
+double Mean(BernoulliDistribution x) { std::abort(); }
+
+double Variance(BernoulliDistribution x) { std::abort(); }
+
+double Pdf(BernoulliDistribution x, double value) { std::abort(); }
+
+double Cdf(BernoulliDistribution x, double value) { std::abort(); }
+
+double Mean(BinomialDistribution x) { std::abort(); }
+
+double Variance(BinomialDistribution x) { std::abort(); }
+
+double Pdf(BinomialDistribution x, double value) { std::abort(); }
+
+double Cdf(BinomialDistribution x, double value) { std::abort(); }
+
+double Mean(GeometricDistribution x) { std::abort(); }
+
+double Variance(GeometricDistribution x) { std::abort(); }
+
+double Pdf(GeometricDistribution x, double value) { std::abort(); }
+
+double Cdf(GeometricDistribution x, double value) { std::abort(); }
+
+double Mean(PoissonDistribution x) { std::abort(); }
+
+double Variance(PoissonDistribution x) { std::abort(); }
+
+double Pdf(PoissonDistribution x, double value) { std::abort(); }
+
+double Cdf(PoissonDistribution x, double value) { std::abort(); }
+
+double Mean(DiscreteDistribution x) { std::abort(); }
+
+double Variance(DiscreteDistribution x) { std::abort(); }
+
+double Pdf(DiscreteDistribution x, double value) { std::abort(); }
+
+double Cdf(DiscreteDistribution x, double value) { std::abort(); }
+
+Quaternion Square(Quaternion x) { return Multiply(x, x); }
+
+Quaternion Cube(Quaternion x) { return Multiply(Multiply(x, x), x); }
+
+Quaternion Pow4(Quaternion x) { return Square(Square(x)); }
+
+Quaternion Pow5(Quaternion x) { return Multiply(Square(Square(x)), x); }
+
+Quaternion MidPoint(Quaternion a, Quaternion b) { return Lerp(a, b, 0.5); }
+
+Quaternion LerpClamped(Quaternion a, Quaternion b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+Quaternion SmoothLerp(Quaternion a, Quaternion b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
 } // namespace plato

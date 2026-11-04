@@ -4,88 +4,6 @@
 
 namespace plato {
 
-Array<Pose3D> LinearSpace(Pose3D a, Pose3D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Pose3D* _a1 = plato::arena_alloc<Pose3D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<Pose3D> LinearSpaceExclusive(Pose3D a, Pose3D b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Pose3D* _a1 = plato::arena_alloc<Pose3D>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-AffineTransform3D ToAffineTransform3D(Pose3D x) { std::abort(); }
-
-Pose3D Lerp(Pose3D a, Pose3D b, double t) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(TrsTransform2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(TrsTransform3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(Translation2D x) { std::abort(); }
-
-Pose2D ToPose2D(Translation2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(Translation3D x) { std::abort(); }
-
-Pose3D ToPose3D(Translation3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(Scaling2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(Scaling3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(UniformScaling2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(UniformScaling3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(Reflection2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(Reflection3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(RotationAbout2D x) { std::abort(); }
-
-Pose2D ToPose2D(RotationAbout2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(RotationAbout3D x) { std::abort(); }
-
-Pose3D ToPose3D(RotationAbout3D x) { std::abort(); }
-
-AffineTransform2D ToAffineTransform2D(ScalingAbout2D x) { std::abort(); }
-
-AffineTransform3D ToAffineTransform3D(ScalingAbout3D x) { std::abort(); }
-
-double At(Vector2D self, int32_t i) { return (i <= 0 ? self.X : self.Y); }
-
-int32_t ToCount(Vector2D self) { return 2; }
-
-int32_t NumComponents(Vector2D self) { return 2; }
-
-Array<double> Components(Vector2D self) { double* p = arena_alloc<double>(2); p[0] = self.X; p[1] = self.Y; return make_array(p, 2); }
-
-Vector2D CreateFromComponents(Vector2D _, Array<double> c) { return Vector2D{ c.data[0], c.data[1] }; }
-
-Vector2D CreateFromComponent(Vector2D _, double x) { return Vector2D{ x, x }; }
-
-Vector2D Reverse(Vector2D self) { return Vector2D{ self.Y, self.X }; }
-
 Vector2D UnitX(Vector2D _) { return Vector2D{ 1.0, 0.0 }; }
 
 Vector2D UnitY(Vector2D _) { return Vector2D{ 0.0, 1.0 }; }
@@ -1211,6 +1129,76 @@ double ToArea(Shape s)
         default: return 0.0;
     }
 }
+
+bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
+
+bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
+
+bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
+
+bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
+
+bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
+
+bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
+
+bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
+
+bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
+
+bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
+
+bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
+
+bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
+
+bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
+
+bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
+
+bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
+
+bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
+
+bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
+
+bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
+
+bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
+
+bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
+
+bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
+
+bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
+
+bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
+
+bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
+
+bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
+
+bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
+
+bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
+
+bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
+
+bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
+
+bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
+
+bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
+
+bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
+
+bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
+
+bool IsCircle(const Shape& s) { return s.Kind == Shape::Kind_Circle; }
+
+bool IsRect(const Shape& s) { return s.Kind == Shape::Kind_Rect; }
+
+bool IsDot(const Shape& s) { return s.Kind == Shape::Kind_Dot; }
 
 int32_t VertexCount(Graph self) { return self.VertexCount; }
 

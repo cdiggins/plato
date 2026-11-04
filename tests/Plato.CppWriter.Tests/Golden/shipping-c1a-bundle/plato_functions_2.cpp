@@ -4,90 +4,6 @@
 
 namespace plato {
 
-double Variance(GammaDistribution x) { std::abort(); }
-
-double Pdf(GammaDistribution x, double value) { std::abort(); }
-
-double Cdf(GammaDistribution x, double value) { std::abort(); }
-
-double Mean(BetaDistribution x) { std::abort(); }
-
-double Variance(BetaDistribution x) { std::abort(); }
-
-double Pdf(BetaDistribution x, double value) { std::abort(); }
-
-double Cdf(BetaDistribution x, double value) { std::abort(); }
-
-double Mean(ChiSquaredDistribution x) { std::abort(); }
-
-double Variance(ChiSquaredDistribution x) { std::abort(); }
-
-double Pdf(ChiSquaredDistribution x, double value) { std::abort(); }
-
-double Cdf(ChiSquaredDistribution x, double value) { std::abort(); }
-
-double Mean(StudentTDistribution x) { std::abort(); }
-
-double Variance(StudentTDistribution x) { std::abort(); }
-
-double Pdf(StudentTDistribution x, double value) { std::abort(); }
-
-double Cdf(StudentTDistribution x, double value) { std::abort(); }
-
-double Mean(BernoulliDistribution x) { std::abort(); }
-
-double Variance(BernoulliDistribution x) { std::abort(); }
-
-double Pdf(BernoulliDistribution x, double value) { std::abort(); }
-
-double Cdf(BernoulliDistribution x, double value) { std::abort(); }
-
-double Mean(BinomialDistribution x) { std::abort(); }
-
-double Variance(BinomialDistribution x) { std::abort(); }
-
-double Pdf(BinomialDistribution x, double value) { std::abort(); }
-
-double Cdf(BinomialDistribution x, double value) { std::abort(); }
-
-double Mean(GeometricDistribution x) { std::abort(); }
-
-double Variance(GeometricDistribution x) { std::abort(); }
-
-double Pdf(GeometricDistribution x, double value) { std::abort(); }
-
-double Cdf(GeometricDistribution x, double value) { std::abort(); }
-
-double Mean(PoissonDistribution x) { std::abort(); }
-
-double Variance(PoissonDistribution x) { std::abort(); }
-
-double Pdf(PoissonDistribution x, double value) { std::abort(); }
-
-double Cdf(PoissonDistribution x, double value) { std::abort(); }
-
-double Mean(DiscreteDistribution x) { std::abort(); }
-
-double Variance(DiscreteDistribution x) { std::abort(); }
-
-double Pdf(DiscreteDistribution x, double value) { std::abort(); }
-
-double Cdf(DiscreteDistribution x, double value) { std::abort(); }
-
-Quaternion Square(Quaternion x) { return Multiply(x, x); }
-
-Quaternion Cube(Quaternion x) { return Multiply(Multiply(x, x), x); }
-
-Quaternion Pow4(Quaternion x) { return Square(Square(x)); }
-
-Quaternion Pow5(Quaternion x) { return Multiply(Square(Square(x)), x); }
-
-Quaternion MidPoint(Quaternion a, Quaternion b) { return Lerp(a, b, 0.5); }
-
-Quaternion LerpClamped(Quaternion a, Quaternion b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Quaternion SmoothLerp(Quaternion a, Quaternion b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
 Array<Quaternion> LinearSpace(Quaternion a, Quaternion b, int32_t count)
 {
     auto _s1 = count;
@@ -1750,14 +1666,14 @@ Number8 FromComponents(Number8 _, Array<double> xs) { std::abort(); }
 
 Number8 Broadcast(Number8 self, double x) { std::abort(); }
 
-double ShapeArea(Shape s) { return (IsCircle(s) ? ((3.0 * s.Circle_Radius) * s.Circle_Radius) : (IsRect(s) ? (s.Rect_Width * s.Rect_Height) : 0.0)); }
+double ShapeArea(Shape s) { return ((s.Kind == Shape::Kind_Circle) ? ((3.0 * s.Circle_Radius) * s.Circle_Radius) : ((s.Kind == Shape::Kind_Rect) ? (s.Rect_Width * s.Rect_Height) : 0.0)); }
 
 Shape Same(Shape s) { return s; }
 
 double AreaAt(Shape s)
 {
     Shape _scrut0 = s;
-    return (IsCircle(_scrut0) ? ((3.0 * _scrut0.Circle_Radius) * _scrut0.Circle_Radius) : (IsRect(_scrut0) ? (_scrut0.Rect_Width * _scrut0.Rect_Height) : 0.0));
+    return ((_scrut0.Kind == Shape::Kind_Circle) ? ((3.0 * _scrut0.Circle_Radius) * _scrut0.Circle_Radius) : ((_scrut0.Kind == Shape::Kind_Rect) ? (_scrut0.Rect_Width * _scrut0.Rect_Height) : 0.0));
 }
 
 double Twice(Shape s)
@@ -1773,6 +1689,76 @@ double Wide(Shape s)
     double b = (_shared0 * 2.0);
     return (a + b);
 }
+
+bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
+
+bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
+
+bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
+
+bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
+
+bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
+
+bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
+
+bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
+
+bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
+
+bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
+
+bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
+
+bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
+
+bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
+
+bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
+
+bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
+
+bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
+
+bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
+
+bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
+
+bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
+
+bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
+
+bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
+
+bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
+
+bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
+
+bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
+
+bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
+
+bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
+
+bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
+
+bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
+
+bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
+
+bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
+
+bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
+
+bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
+
+bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
+
+bool IsCircle(const Shape& s) { return s.Kind == Shape::Kind_Circle; }
+
+bool IsRect(const Shape& s) { return s.Kind == Shape::Kind_Rect; }
+
+bool IsDot(const Shape& s) { return s.Kind == Shape::Kind_Dot; }
 
 int32_t VertexCount(Graph self) { return self.VertexCount; }
 

@@ -4,70 +4,6 @@
 
 namespace plato {
 
-int32_t Sign(ArealDensity self) { return Sign(Amount(self)); }
-
-ArealDensity Abs(ArealDensity self) { return (IsNegative(self) ? Negative(self) : self); }
-
-ArealDensity AbsoluteDifference(ArealDensity a, ArealDensity b) { return (((Subtract(a, b).KilogramsPerSquareMeter <= 0.0) ? (!(Subtract(a, b).KilogramsPerSquareMeter == 0.0)) : false) ? ArealDensity{ (-Subtract(a, b).KilogramsPerSquareMeter) } : Subtract(a, b)); }
-
-ArealDensity Add(ArealDensity a, ArealDensity b) { return FromAmount(a, (Amount(a) + Amount(b))); }
-
-ArealDensity Subtract(ArealDensity a, ArealDensity b) { return FromAmount(a, (Amount(a) - Amount(b))); }
-
-ArealDensity Negative(ArealDensity x) { return FromAmount(x, (-Amount(x))); }
-
-ArealDensity Zero(ArealDensity x) { return FromAmount(x, 0.0); }
-
-int32_t Hash(ArealDensity x) { return Hash(Amount(x)); }
-
-bool LessThanOrEquals(ArealDensity a, ArealDensity b) { return (Amount(a) <= Amount(b)); }
-
-ArealDensity Lerp(ArealDensity a, ArealDensity b, double t) { return FromAmount(a, Lerp(Amount(a), Amount(b), t)); }
-
-ArealDensity Multiply(ArealDensity x, double scalar) { return FromAmount(x, (Amount(x) * scalar)); }
-
-ArealDensity Divide(ArealDensity x, double scalar) { return FromAmount(x, (Amount(x) / scalar)); }
-
-ArealDensity Modulo(ArealDensity x, double scalar) { return FromAmount(x, fmodf(Amount(x), scalar)); }
-
-bool LessThan(ArealDensity a, ArealDensity b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(ArealDensity a, ArealDensity b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(ArealDensity a, ArealDensity b) { return LessThanOrEquals(b, a); }
-
-ArealDensity Lesser(ArealDensity a, ArealDensity b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-ArealDensity Greater(ArealDensity a, ArealDensity b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(ArealDensity x, ArealDensity lower, ArealDensity upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-ArealDensity Clamp(ArealDensity x, ArealDensity lower, ArealDensity upper) { return Lesser(Greater(x, lower), upper); }
-
-ArealDensity Min3(ArealDensity a, ArealDensity b, ArealDensity c) { return Lesser(Lesser(a, b), c); }
-
-ArealDensity Max3(ArealDensity a, ArealDensity b, ArealDensity c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ArealDensity a, ArealDensity b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-ArealDensity Double(ArealDensity x) { return Add(x, x); }
-
-ArealDensity Half(ArealDensity x) { return Divide(x, 2.0); }
-
-ArealDensity Third(ArealDensity x) { return Divide(x, 3.0); }
-
-ArealDensity Quarter(ArealDensity x) { return Divide(x, 4.0); }
-
-ArealDensity Eighth(ArealDensity x) { return Divide(x, 8.0); }
-
-ArealDensity Sixteenth(ArealDensity x) { return Divide(x, 16.0); }
-
-ArealDensity Tenth(ArealDensity x) { return Divide(x, 10.0); }
-
-ArealDensity Hundredth(ArealDensity x) { return Divide(x, 100.0); }
-
-ArealDensity Thousandth(ArealDensity x) { return Divide(x, 1000.0); }
-
 ArealDensity Millionth(ArealDensity x) { return Divide(x, 1000000.0); }
 
 ArealDensity Billionth(ArealDensity x) { return Divide(x, 1000000000.0); }
@@ -3201,7 +3137,7 @@ AffineTransform3D ToAffineTransform3D(AxisAngle x) { return ToAffineTransform3D(
 
 Pose3D Compose(AxisAngle first, AxisAngle second) { return Compose(ToPose3D(first), ToPose3D(second)); }
 
-Quaternion ChainRotations(RotationOrder order, Quaternion aboutX, Quaternion aboutY, Quaternion aboutZ) { return (IsXYZ(order) ? Multiply(aboutZ, Multiply(aboutY, aboutX)) : (IsXZY(order) ? Multiply(aboutY, Multiply(aboutZ, aboutX)) : (IsYXZ(order) ? Multiply(aboutZ, Multiply(aboutX, aboutY)) : (IsYZX(order) ? Multiply(aboutX, Multiply(aboutZ, aboutY)) : (IsZXY(order) ? Multiply(aboutY, Multiply(aboutX, aboutZ)) : Multiply(aboutX, Multiply(aboutY, aboutZ))))))); }
+Quaternion ChainRotations(RotationOrder order, Quaternion aboutX, Quaternion aboutY, Quaternion aboutZ) { return ((order.Kind == RotationOrder::Kind_XYZ) ? Multiply(aboutZ, Multiply(aboutY, aboutX)) : ((order.Kind == RotationOrder::Kind_XZY) ? Multiply(aboutY, Multiply(aboutZ, aboutX)) : ((order.Kind == RotationOrder::Kind_YXZ) ? Multiply(aboutZ, Multiply(aboutX, aboutY)) : ((order.Kind == RotationOrder::Kind_YZX) ? Multiply(aboutX, Multiply(aboutZ, aboutY)) : ((order.Kind == RotationOrder::Kind_ZXY) ? Multiply(aboutY, Multiply(aboutX, aboutZ)) : Multiply(aboutX, Multiply(aboutY, aboutZ))))))); }
 
 Quaternion ToQuaternion(EulerAngles e) { return ChainRotations(e.Order, CreateFromAxisAngle(Quaternion{}, Vector3D{ 1.0, 0.0, 0.0 }, e.Pitch), CreateFromAxisAngle(Quaternion{}, Vector3D{ 0.0, 1.0, 0.0 }, e.Yaw), CreateFromAxisAngle(Quaternion{}, Vector3D{ 0.0, 0.0, 1.0 }, e.Roll)); }
 
@@ -4155,7 +4091,7 @@ Vector2D CreateFromComponent(Vector2D _, double x) { return Vector2D{ x, x }; }
 
 Vector2D Reverse(Vector2D self) { return Vector2D{ self.Y, self.X }; }
 
-double Component(Vector2D v, Axis2D axis) { return (IsX(axis) ? v.X : v.Y); }
+double Component(Vector2D v, Axis2D axis) { return ((axis.Kind == Axis2D::Kind_X) ? v.X : v.Y); }
 
 Vector2D UnitX(Vector2D _) { return Vector2D{ 1.0, 0.0 }; }
 
@@ -4606,7 +4542,7 @@ Vector3D CreateFromComponent(Vector3D _, double x) { return Vector3D{ x, x, x };
 
 Vector3D Reverse(Vector3D self) { return Vector3D{ self.Z, self.Y, self.X }; }
 
-double Component(Vector3D v, Axis3D axis) { return (IsX(axis) ? v.X : (IsY(axis) ? v.Y : v.Z)); }
+double Component(Vector3D v, Axis3D axis) { return ((axis.Kind == Axis3D::Kind_X) ? v.X : ((axis.Kind == Axis3D::Kind_Y) ? v.Y : v.Z)); }
 
 Vector3D UnitX(Vector3D _) { return Vector3D{ 1.0, 0.0, 0.0 }; }
 
@@ -5002,5 +4938,69 @@ Vector3D Hermite(Vector3D p0, Vector3D p1, Vector3D m0, Vector3D m1, double t) {
 Vector3D HermiteDerivative(Vector3D p0, Vector3D p1, Vector3D m0, Vector3D m1, double t) { return Add(Add(Add(Multiply(p0, ((6.0 * (t * t)) - (6.0 * t))), Multiply(m0, (((3.0 * (t * t)) - (4.0 * t)) + 1.0))), Multiply(p1, ((6.0 * t) - (6.0 * (t * t))))), Multiply(m1, ((3.0 * (t * t)) - (2.0 * t)))); }
 
 Vector3D CatmullRom(Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3, double t) { return Multiply(Add(Add(Add(Multiply(p1, 2.0), Multiply(Subtract(p2, p0), t)), Multiply(Subtract(Subtract(Add(Multiply(p0, 2.0), Multiply(p2, 4.0)), Multiply(p1, 5.0)), p3), (t * t))), Multiply(Subtract(Subtract(Add(Multiply(p1, 3.0), p3), p0), Multiply(p2, 3.0)), ((t * t) * t))), 0.5); }
+
+Vector3D CatmullRomDerivative(Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3, double t) { return Multiply(Add(Add(Subtract(p2, p0), Multiply(Subtract(Subtract(Add(Multiply(p0, 2.0), Multiply(p2, 4.0)), Multiply(p1, 5.0)), p3), (2.0 * t))), Multiply(Subtract(Subtract(Add(Multiply(p1, 3.0), p3), p0), Multiply(p2, 3.0)), (3.0 * (t * t)))), 0.5); }
+
+Vector3D Double(Vector3D x) { return Add(x, x); }
+
+Vector3D Half(Vector3D x) { return Divide(x, 2.0); }
+
+Vector3D Third(Vector3D x) { return Divide(x, 3.0); }
+
+Vector3D Quarter(Vector3D x) { return Divide(x, 4.0); }
+
+Vector3D Eighth(Vector3D x) { return Divide(x, 8.0); }
+
+Vector3D Sixteenth(Vector3D x) { return Divide(x, 16.0); }
+
+Vector3D Tenth(Vector3D x) { return Divide(x, 10.0); }
+
+Vector3D Hundredth(Vector3D x) { return Divide(x, 100.0); }
+
+Vector3D Thousandth(Vector3D x) { return Divide(x, 1000.0); }
+
+Vector3D Millionth(Vector3D x) { return Divide(x, 1000000.0); }
+
+Vector3D Billionth(Vector3D x) { return Divide(x, 1000000000.0); }
+
+Vector3D Million(Vector3D x) { return Multiply(x, 1000000.0); }
+
+Vector3D Billion(Vector3D x) { return Multiply(x, 1000000000.0); }
+
+Vector3D ToPercent(Vector3D x, double percent) { return Multiply(x, (percent / 100.0)); }
+
+Vector3D MidPoint(Vector3D a, Vector3D b) { return Lerp(a, b, 0.5); }
+
+Vector3D LerpClamped(Vector3D a, Vector3D b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+Vector3D SmoothLerp(Vector3D a, Vector3D b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
+Array<Vector3D> LinearSpace(Vector3D a, Vector3D b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Vector3D* _a1 = plato::arena_alloc<Vector3D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Array<Vector3D> LinearSpaceExclusive(Vector3D a, Vector3D b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Vector3D* _a1 = plato::arena_alloc<Vector3D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
 
 } // namespace plato

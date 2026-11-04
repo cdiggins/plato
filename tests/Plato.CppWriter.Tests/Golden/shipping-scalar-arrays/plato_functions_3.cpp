@@ -4,86 +4,6 @@
 
 namespace plato {
 
-VectorN Linear(VectorN m, VectorN b, double x)
-{
-    auto _s5a = ComponentArray(Multiply(m, x));
-    auto _s5b = ComponentArray(b);
-    int32_t _n5 = _s5a.count < _s5b.count ? _s5a.count : _s5b.count;
-    double* _a5 = plato::arena_alloc<double>(_n5);
-    for (int32_t _i5 = 0; _i5 < _n5; _i5++)
-    {
-        auto _eval0_5 = _s5a.data[_i5];
-        auto _eval1_5 = _s5b.data[_i5];
-        _a5[_i5] = (_eval0_5 + _eval1_5);
-    }
-    auto _lp5 = plato::make_array(_a5, _n5);
-    Array<double> _eval2 = _lp5;
-    return VectorN{ _eval2 };
-}
-
-VectorN LinearDerivative(VectorN m, VectorN b, double x) { return m; }
-
-VectorN LinearSecondDerivative(VectorN m, VectorN b, double x) { return Zero(m); }
-
-VectorN Quadratic(VectorN a, VectorN b, VectorN c, double x)
-{
-    auto _s6a = ComponentArray(Multiply(a, (x * x)));
-    auto _s6b = ComponentArray(Multiply(b, x));
-    int32_t _n6 = _s6a.count < _s6b.count ? _s6a.count : _s6b.count;
-    double* _a6 = plato::arena_alloc<double>(_n6);
-    for (int32_t _i6 = 0; _i6 < _n6; _i6++)
-    {
-        auto _eval0_6 = _s6a.data[_i6];
-        auto _eval1_6 = _s6b.data[_i6];
-        _a6[_i6] = (_eval0_6 + _eval1_6);
-    }
-    auto _lp6 = plato::make_array(_a6, _n6);
-    Array<double> _eval2 = _lp6;
-    VectorN _eval3 = VectorN{ _eval2 };
-    VectorN _eval4 = c;
-    return ZipComponents(_eval3, _eval4, [=](double x_1, double y) -> double { return (x_1 + y); });
-}
-
-VectorN QuadraticDerivative(VectorN a, VectorN b, VectorN c, double x)
-{
-    auto _s5a = ComponentArray(Multiply(a, (2.0 * x)));
-    auto _s5b = ComponentArray(b);
-    int32_t _n5 = _s5a.count < _s5b.count ? _s5a.count : _s5b.count;
-    double* _a5 = plato::arena_alloc<double>(_n5);
-    for (int32_t _i5 = 0; _i5 < _n5; _i5++)
-    {
-        auto _eval0_5 = _s5a.data[_i5];
-        auto _eval1_5 = _s5b.data[_i5];
-        _a5[_i5] = (_eval0_5 + _eval1_5);
-    }
-    auto _lp5 = plato::make_array(_a5, _n5);
-    Array<double> _eval2 = _lp5;
-    return VectorN{ _eval2 };
-}
-
-VectorN QuadraticSecondDerivative(VectorN a, VectorN b, VectorN c, double x) { return Multiply(a, 2.0); }
-
-VectorN Cubic(VectorN a, VectorN b, VectorN c, VectorN d, double x)
-{
-    auto _s7a = ComponentArray(Multiply(a, ((x * x) * x)));
-    auto _s7b = ComponentArray(Multiply(b, (x * x)));
-    int32_t _n7 = _s7a.count < _s7b.count ? _s7a.count : _s7b.count;
-    double* _a7 = plato::arena_alloc<double>(_n7);
-    for (int32_t _i7 = 0; _i7 < _n7; _i7++)
-    {
-        auto _eval0_7 = _s7a.data[_i7];
-        auto _eval1_7 = _s7b.data[_i7];
-        _a7[_i7] = (_eval0_7 + _eval1_7);
-    }
-    auto _lp7 = plato::make_array(_a7, _n7);
-    Array<double> _eval2 = _lp7;
-    VectorN _eval3 = VectorN{ _eval2 };
-    VectorN _eval4 = Multiply(c, x);
-    VectorN _eval5 = ZipComponents(_eval3, _eval4, [=](double x_1, double y) -> double { return (x_1 + y); });
-    VectorN _eval6 = d;
-    return ZipComponents(_eval5, _eval6, [=](double x_2, double y) -> double { return (x_2 + y); });
-}
-
 VectorN CubicDerivative(VectorN a, VectorN b, VectorN c, VectorN d, double x)
 {
     auto _s6a = ComponentArray(Multiply(a, (3.0 * (x * x))));
@@ -1673,6 +1593,70 @@ bool IsSingleton(Number8 self) { return (8 == 1); }
 bool IsUnit(Number8 x, double tolerance) { return (Abs((MagnitudeSquared(x) - 1.0)) <= tolerance); }
 
 bool IsZeroLength(Number8 x, double tolerance) { return (MagnitudeSquared(x) <= tolerance); }
+
+bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
+
+bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
+
+bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
+
+bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
+
+bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
+
+bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
+
+bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
+
+bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
+
+bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
+
+bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
+
+bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
+
+bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
+
+bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
+
+bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
+
+bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
+
+bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
+
+bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
+
+bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
+
+bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
+
+bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
+
+bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
+
+bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
+
+bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
+
+bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
+
+bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
+
+bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
+
+bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
+
+bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
+
+bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
+
+bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
+
+bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
+
+bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
 
 int32_t VertexCount(Graph self) { return self.VertexCount; }
 

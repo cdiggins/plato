@@ -4,76 +4,6 @@
 
 namespace plato {
 
-Acceleration Third(Acceleration x) { return Divide(x, 3.0); }
-
-Acceleration Quarter(Acceleration x) { return Divide(x, 4.0); }
-
-Acceleration Eighth(Acceleration x) { return Divide(x, 8.0); }
-
-Acceleration Sixteenth(Acceleration x) { return Divide(x, 16.0); }
-
-Acceleration Tenth(Acceleration x) { return Divide(x, 10.0); }
-
-Acceleration Hundredth(Acceleration x) { return Divide(x, 100.0); }
-
-Acceleration Thousandth(Acceleration x) { return Divide(x, 1000.0); }
-
-Acceleration Millionth(Acceleration x) { return Divide(x, 1000000.0); }
-
-Acceleration Billionth(Acceleration x) { return Divide(x, 1000000000.0); }
-
-Acceleration Million(Acceleration x) { return Multiply(x, 1000000.0); }
-
-Acceleration Billion(Acceleration x) { return Multiply(x, 1000000000.0); }
-
-Acceleration ToPercent(Acceleration x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Acceleration MidPoint(Acceleration a, Acceleration b) { return Lerp(a, b, 0.5); }
-
-Acceleration LerpClamped(Acceleration a, Acceleration b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Acceleration SmoothLerp(Acceleration a, Acceleration b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Acceleration> LinearSpace(Acceleration a, Acceleration b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber((count - 1))); }), [=](double t) -> Acceleration { return Lerp(a, b, t); }); }
-
-Array<Acceleration> LinearSpaceExclusive(Acceleration a, Acceleration b, int32_t count) { return Map(Map(MapRange(count, [=](int32_t i_0) -> int32_t { return i_0; }), [=](int32_t i) -> double { return (ToNumber(i) / ToNumber(count)); }), [=](double t) -> Acceleration { return Lerp(a, b, t); }); }
-
-Acceleration Add(Acceleration a, Acceleration b) { std::abort(); }
-
-Acceleration Subtract(Acceleration a, Acceleration b) { std::abort(); }
-
-Acceleration Negative(Acceleration x) { std::abort(); }
-
-Acceleration Zero(Acceleration x) { std::abort(); }
-
-int32_t Hash(Acceleration x) { std::abort(); }
-
-Acceleration Lerp(Acceleration a, Acceleration b, double t) { std::abort(); }
-
-bool LessThanOrEquals(Acceleration a, Acceleration b) { std::abort(); }
-
-double Amount(Acceleration x) { std::abort(); }
-
-Acceleration FromAmount(Acceleration _, double x) { std::abort(); }
-
-Acceleration Multiply(Acceleration x, double scalar) { std::abort(); }
-
-Acceleration Divide(Acceleration x, double scalar) { std::abort(); }
-
-Acceleration Modulo(Acceleration x, double scalar) { std::abort(); }
-
-bool LessThan(Jerk a, Jerk b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
-
-bool GreaterThan(Jerk a, Jerk b) { return LessThan(b, a); }
-
-bool GreaterThanOrEquals(Jerk a, Jerk b) { return LessThanOrEquals(b, a); }
-
-Jerk Lesser(Jerk a, Jerk b) { return (LessThanOrEquals(a, b) ? a : b); }
-
-Jerk Greater(Jerk a, Jerk b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(Jerk x, Jerk lower, Jerk upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
 Jerk Clamp(Jerk x, Jerk lower, Jerk upper) { return Lesser(Greater(x, lower), upper); }
 
 Jerk Min3(Jerk a, Jerk b, Jerk c) { return Lesser(Lesser(a, b), c); }
@@ -4306,7 +4236,77 @@ double HugeSum(Huge h, int32_t i) { return ((h.B0 + h.B35) + i); }
 
 Huge CopyHuge(Huge h) { return h; }
 
-double ToArea(Shape s) { return (IsCircle(s) ? ((3.0 * s.Circle_Radius) * s.Circle_Radius) : (IsRect(s) ? (s.Rect_Width * s.Rect_Height) : 0.0)); }
+double ToArea(Shape s) { return ((s.Kind == Shape::Kind_Circle) ? ((3.0 * s.Circle_Radius) * s.Circle_Radius) : ((s.Kind == Shape::Kind_Rect) ? (s.Rect_Width * s.Rect_Height) : 0.0)); }
+
+bool IsX(const Axis3D& s) { return s.Kind == Axis3D::Kind_X; }
+
+bool IsY(const Axis3D& s) { return s.Kind == Axis3D::Kind_Y; }
+
+bool IsZ(const Axis3D& s) { return s.Kind == Axis3D::Kind_Z; }
+
+bool IsX(const Axis2D& s) { return s.Kind == Axis2D::Kind_X; }
+
+bool IsY(const Axis2D& s) { return s.Kind == Axis2D::Kind_Y; }
+
+bool IsPosX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosX; }
+
+bool IsNegX(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegX; }
+
+bool IsPosY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosY; }
+
+bool IsNegY(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegY; }
+
+bool IsPosZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_PosZ; }
+
+bool IsNegZ(const SignedAxis3D& s) { return s.Kind == SignedAxis3D::Kind_NegZ; }
+
+bool IsForceDirected(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_ForceDirected; }
+
+bool IsCircular(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Circular; }
+
+bool IsLayered(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Layered; }
+
+bool IsGrid(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Grid; }
+
+bool IsRadial(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Radial; }
+
+bool IsSpectral(const GraphLayout& s) { return s.Kind == GraphLayout::Kind_Spectral; }
+
+bool IsXYZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XYZ; }
+
+bool IsXZY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_XZY; }
+
+bool IsYXZ(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YXZ; }
+
+bool IsYZX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_YZX; }
+
+bool IsZXY(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZXY; }
+
+bool IsZYX(const RotationOrder& s) { return s.Kind == RotationOrder::Kind_ZYX; }
+
+bool IsSimple(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Simple; }
+
+bool IsExponential(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Exponential; }
+
+bool IsGaussian(const MovingAverage& s) { return s.Kind == MovingAverage::Kind_Gaussian; }
+
+bool IsZScore(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_ZScore; }
+
+bool IsIqr(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Iqr; }
+
+bool IsMad(const OutlierDetection& s) { return s.Kind == OutlierDetection::Kind_Mad; }
+
+bool IsPearson(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Pearson; }
+
+bool IsSpearman(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Spearman; }
+
+bool IsKendall(const CorrelationStatistic& s) { return s.Kind == CorrelationStatistic::Kind_Kendall; }
+
+bool IsCircle(const Shape& s) { return s.Kind == Shape::Kind_Circle; }
+
+bool IsRect(const Shape& s) { return s.Kind == Shape::Kind_Rect; }
+
+bool IsDot(const Shape& s) { return s.Kind == Shape::Kind_Dot; }
 
 int32_t VertexCount(Graph self) { return self.VertexCount; }
 

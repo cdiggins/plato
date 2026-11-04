@@ -4,76 +4,6 @@
 
 namespace plato {
 
-SolidAngle Clamp(ReadOnlyParameter<SolidAngle> x, ReadOnlyParameter<SolidAngle> lower, ReadOnlyParameter<SolidAngle> upper) { return Lesser(Greater(x, lower), upper); }
-
-SolidAngle Min3(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, ReadOnlyParameter<SolidAngle> c) { return Lesser(Lesser(a, b), c); }
-
-SolidAngle Max3(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, ReadOnlyParameter<SolidAngle> c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-SolidAngle Double(ReadOnlyParameter<SolidAngle> x) { return Add(x, x); }
-
-SolidAngle Half(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 2.0); }
-
-SolidAngle Third(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 3.0); }
-
-SolidAngle Quarter(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 4.0); }
-
-SolidAngle Eighth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 8.0); }
-
-SolidAngle Sixteenth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 16.0); }
-
-SolidAngle Tenth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 10.0); }
-
-SolidAngle Hundredth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 100.0); }
-
-SolidAngle Thousandth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 1000.0); }
-
-SolidAngle Millionth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 1000000.0); }
-
-SolidAngle Billionth(ReadOnlyParameter<SolidAngle> x) { return Divide(x, 1000000000.0); }
-
-SolidAngle Million(ReadOnlyParameter<SolidAngle> x) { return Multiply(x, 1000000.0); }
-
-SolidAngle Billion(ReadOnlyParameter<SolidAngle> x) { return Multiply(x, 1000000000.0); }
-
-SolidAngle ToPercent(ReadOnlyParameter<SolidAngle> x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-SolidAngle MidPoint(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b) { return Lerp(a, b, 0.5); }
-
-SolidAngle LerpClamped(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-SolidAngle SmoothLerp(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<SolidAngle> LinearSpace(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    SolidAngle* _a1 = plato::arena_alloc<SolidAngle>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
-Array<SolidAngle> LinearSpaceExclusive(ReadOnlyParameter<SolidAngle> a, ReadOnlyParameter<SolidAngle> b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    SolidAngle* _a1 = plato::arena_alloc<SolidAngle>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
-
 SolidAngle Add(SolidAngle a, SolidAngle b) { std::abort(); }
 
 SolidAngle Subtract(SolidAngle a, SolidAngle b) { std::abort(); }
@@ -4991,5 +4921,87 @@ Pose3D MidPoint(ReadOnlyParameter<Pose3D> a, ReadOnlyParameter<Pose3D> b) { retu
 Pose3D LerpClamped(ReadOnlyParameter<Pose3D> a, ReadOnlyParameter<Pose3D> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
 
 Pose3D SmoothLerp(ReadOnlyParameter<Pose3D> a, ReadOnlyParameter<Pose3D> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
+Array<Pose3D> LinearSpace(ReadOnlyParameter<Pose3D> a, ReadOnlyParameter<Pose3D> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Pose3D* _a1 = plato::arena_alloc<Pose3D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+Array<Pose3D> LinearSpaceExclusive(ReadOnlyParameter<Pose3D> a, ReadOnlyParameter<Pose3D> b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Pose3D* _a1 = plato::arena_alloc<Pose3D>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber(count)));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
+AffineTransform3D ToAffineTransform3D(Pose3D x) { std::abort(); }
+
+Pose3D Lerp(Pose3D a, Pose3D b, double t) { std::abort(); }
+
+AffineTransform2D ToAffineTransform2D(TrsTransform2D x) { std::abort(); }
+
+AffineTransform3D ToAffineTransform3D(TrsTransform3D x) { std::abort(); }
+
+AffineTransform2D ToAffineTransform2D(Translation2D x) { std::abort(); }
+
+Pose2D ToPose2D(Translation2D x) { std::abort(); }
+
+AffineTransform3D ToAffineTransform3D(Translation3D x) { std::abort(); }
+
+Pose3D ToPose3D(Translation3D x) { std::abort(); }
+
+AffineTransform2D ToAffineTransform2D(Scaling2D x) { std::abort(); }
+
+AffineTransform3D ToAffineTransform3D(Scaling3D x) { std::abort(); }
+
+AffineTransform2D ToAffineTransform2D(UniformScaling2D x) { std::abort(); }
+
+AffineTransform3D ToAffineTransform3D(UniformScaling3D x) { std::abort(); }
+
+AffineTransform2D ToAffineTransform2D(Reflection2D x) { std::abort(); }
+
+AffineTransform3D ToAffineTransform3D(Reflection3D x) { std::abort(); }
+
+AffineTransform2D ToAffineTransform2D(RotationAbout2D x) { std::abort(); }
+
+Pose2D ToPose2D(RotationAbout2D x) { std::abort(); }
+
+AffineTransform3D ToAffineTransform3D(RotationAbout3D x) { std::abort(); }
+
+Pose3D ToPose3D(RotationAbout3D x) { std::abort(); }
+
+AffineTransform2D ToAffineTransform2D(ScalingAbout2D x) { std::abort(); }
+
+AffineTransform3D ToAffineTransform3D(ScalingAbout3D x) { std::abort(); }
+
+double At(Vector2D self, int32_t i) { return (i <= 0 ? self.X : self.Y); }
+
+int32_t ToCount(Vector2D self) { return 2; }
+
+int32_t NumComponents(Vector2D self) { return 2; }
+
+Array<double> Components(Vector2D self) { double* p = arena_alloc<double>(2); p[0] = self.X; p[1] = self.Y; return make_array(p, 2); }
+
+Vector2D CreateFromComponents(Vector2D _, Array<double> c) { return Vector2D{ c.data[0], c.data[1] }; }
+
+Vector2D CreateFromComponent(Vector2D _, double x) { return Vector2D{ x, x }; }
+
+Vector2D Reverse(Vector2D self) { return Vector2D{ self.Y, self.X }; }
 
 } // namespace plato
