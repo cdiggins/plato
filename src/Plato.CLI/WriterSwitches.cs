@@ -79,14 +79,16 @@ public static class WriterSwitches
         new("hoist-invariants", CsCpu, CS, "loops"),
         new("cache-constants", CsCpu, CS),
         new("primitive-compare", CS, CS),
-        new("lower-more", CS, CS, "loops"),
+        new("lower-more", CsCpu, CS, "loops"),
         new("specialize-callbacks", CS, CS),
         new("specialize-callbacks-lean", CS, Requires: "specialize-callbacks"),
         // TKT-1152: off by default until each is measured and pinned in plato-brep.
-        new("scalar-arrays", CS),
+        new("scalar-arrays", CsCpu),
         new("owned-arrays", CS),
         new("stack-arrays", CS, Requires: "owned-arrays"),
         new("span-params", CS, Requires: "owned-arrays"),
+        // TKT-1186: a FlatMap of the filter idiom (x => cond ? [x] : []) is lowered as a Filter loop, so it needs lower-more.
+        new("filter-lowering", Cpu, Requires: "lower-more"),
         // C++ (Cpu dialect) only. --cpp-roots names the functions whose reachable set must all be emitted.
         new("cpp-roots", Cpu) { Parameter = SwitchParameter.AnyText },
         // Native copy removal (off by default; see CppCpuOptions): the parameter borrow rule and borrowed reads.

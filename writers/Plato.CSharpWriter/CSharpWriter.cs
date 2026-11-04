@@ -263,7 +263,7 @@ namespace Ara3D.Geometry.CSharpWriter
         /// switches, so the list names every pass the C# writer supports; <see cref="Registry"/> resolves the names.</summary>
         public static readonly IReadOnlyList<string> PassOrder = new[]
         {
-            CSharpPasses.InlineStatements, SharedPasses.Inline, CSharpPasses.SpecializeCallbacks, CSharpPasses.ConstantCounts,
+            CSharpPasses.InlineStatements, SharedPasses.Inline, CSharpPasses.SpecializeCallbacks, SharedPasses.ConstantCounts,
             SharedPasses.Fuse, CSharpPasses.ComponentUnroll, SharedPasses.FuseConsumers, SharedPasses.MaterializeArrays,
             SharedPasses.SinkBindings, SharedPasses.ShareCalls, SharedPasses.LowerLoops, SharedPasses.Presize,
             SharedPasses.InPlace, SharedPasses.HoistInvariants,

@@ -22,7 +22,7 @@ namespace Ara3D.Geometry.CppWriter
             // Presize matches the source loop `while (i < bound)`; once inlined, an Integer LessThan on plain names is
             // `(i <= bound) ? !(i == bound) : false` and no longer matches, so it runs first (TKT-1183).
             SharedPasses.Presize,
-            SharedPasses.Inline, SharedPasses.Fuse, SharedPasses.FuseConsumers, SharedPasses.SinkBindings, SharedPasses.ShareCalls,
+            SharedPasses.Inline, SharedPasses.ConstantCounts, SharedPasses.Fuse, SharedPasses.FuseConsumers, SharedPasses.SinkBindings, SharedPasses.ShareCalls,
             SharedPasses.LowerLoops, SharedPasses.HoistInvariants,
         };
 
@@ -42,6 +42,9 @@ namespace Ara3D.Geometry.CppWriter
             s.Set("exact-output", options.ExactOutput);
             s.Set("share-calls", options.ShareCalls);
             s.Set("presize", options.Presize);
+            s.Set("scalar-arrays", options.ScalarArrays);
+            s.Set("lower-more", options.LowerMore);
+            s.Set("filter-lowering", options.FilterLowering);
             return s;
         }
 

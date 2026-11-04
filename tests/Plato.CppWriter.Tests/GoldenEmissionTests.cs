@@ -50,18 +50,18 @@ public class GoldenEmissionTests
         "constants", "angles", "bytes", "sorting",
     };
 
-    private static bool IsInSlice(string path)
+    private static bool IsInSlice(string path, params string[] more)
     {
         var name = Path.GetFileName(path);
         return name == "primitives.plato" || name.EndsWith(".types.plato") || name.EndsWith(".concepts.plato")
-            || SliceLibraries.Any(l => name == l + ".library.plato");
+            || more.Contains("*") && name.EndsWith(".library.plato") || SliceLibraries.Concat(more).Any(l => name == l + ".library.plato");
     }
 
-    private static Compilation Compile(string fixtureFile)
+    private static Compilation Compile(string fixtureFile, params string[] moreLibraries)
     {
         var folder = PlatoSource.FindRepoFolder("stdlib/foundation");
         var fixture = Path.Combine(SourceFolder(), fixtureFile);
-        var asts = Directory.GetFiles(folder, "*.plato").Where(IsInSlice).Append(fixture).Select(PlatoSource.ParseFile).ToList();
+        var asts = Directory.GetFiles(folder, "*.plato").Where(f => IsInSlice(f, moreLibraries)).Append(fixture).Select(PlatoSource.ParseFile).ToList();
         var compilation = new Compilation(Ara3D.Logging.Logger.Null, asts);
         Assert.That(compilation.CompletedCompilation, Is.True);
         return compilation;
@@ -125,4 +125,25 @@ public class GoldenEmissionTests
 
     [TestCaseSource(nameof(C1bOptionSets))]
     public void C1b_emission_matches_snapshot(string set, CppCpuOptions options) => CheckSnapshot(set, options, SharedC1b.Value);
+
+    // Lane C1-c (TKT-1186): scalar-arrays, lower-more and filter-lowering, on their own fixture.
+    private static readonly Lazy<Compilation> SharedC1c = new(() => Compile("GoldenFixtureC1c.plato", "*"));
+
+    private static readonly string[] C1cRoots =
+    {
+        "SumSquares3", "AnyBig", "ComponentCount", "KeepEven", "KeepSmall", "Positives", "Grid", "Cube", "Products",
+    };
+
+    private static CppCpuOptions ShippingC1c => new(true, true, true, true, C1cRoots);
+
+    public static IEnumerable<TestCaseData> C1cOptionSets()
+    {
+        yield return new TestCaseData("shipping-c1c-base", ShippingC1c).SetName("Golden_shipping_c1c_base");
+        yield return new TestCaseData("shipping-scalar-arrays", ShippingC1c with { ScalarArrays = true }).SetName("Golden_shipping_scalar_arrays");
+        yield return new TestCaseData("shipping-lower-more", ShippingC1c with { LowerMore = true }).SetName("Golden_shipping_lower_more");
+        yield return new TestCaseData("shipping-filter-lowering", ShippingC1c with { LowerMore = true, FilterLowering = true }).SetName("Golden_shipping_filter_lowering");
+    }
+
+    [TestCaseSource(nameof(C1cOptionSets))]
+    public void C1c_emission_matches_snapshot(string set, CppCpuOptions options) => CheckSnapshot(set, options, SharedC1c.Value);
 }

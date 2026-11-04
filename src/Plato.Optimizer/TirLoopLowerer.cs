@@ -21,16 +21,21 @@ public static partial class TirLoopLowerer
     // (--lower-more, lambda removal L3). Set for the duration of one Rewrite, per thread.
     [System.ThreadStatic] private static bool _lowerMore;
 
+    // Whether a FlatMap of the filter idiom is lowered as a Filter loop (--filter-lowering, TKT-1186; needs --lower-more).
+    [System.ThreadStatic] private static bool _filterLowering;
+
     public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
         if (!pass.On("loops") || tir?.Body == null)
             return tir;
         var previousSort = _sortLoops;
         var previousMore = _lowerMore;
+        var previousFilter = _filterLowering;
         _sortLoops = pass.On("closure-free");
         _lowerMore = pass.On("lower-more");
+        _filterLowering = _lowerMore && pass.On("filter-lowering");
         try { return RewriteScoped(tir); }
-        finally { _sortLoops = previousSort; _lowerMore = previousMore; }
+        finally { _sortLoops = previousSort; _lowerMore = previousMore; _filterLowering = previousFilter; }
     }
 
     /// <summary>Whether a call is a single-source consumer whose receiver chain the lowerer walks
@@ -101,6 +106,7 @@ public static partial class TirLoopLowerer
                 break;
             case "FlatMap" when c.Args.Count == 2 && IsListTyped(c.Args[0]) && ResultIsList(c) && FnOk(c.Args[1], 1):
                 kind = "FlatMap"; sources = new List<TirNode> { c.Args[0] }; fn = c.Args[1];
+                if (_filterLowering && FilterPredicate(fn, c) is { } predicate) { kind = "Filter"; fn = predicate; }
                 break;
             case "Reverse" when c.Args.Count == 1 && IsListTyped(c.Args[0]) && ResultIsList(c):
                 kind = "Reverse"; sources = new List<TirNode> { c.Args[0] };

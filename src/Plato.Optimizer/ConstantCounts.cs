@@ -4,8 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Ara3D.Geometry.CSharpWriter;
+namespace Ara3D.Geometry.Optimizer;
 
 /// <summary>
 /// --scalar-arrays: a fixed-arity struct (<c>Vector3D</c>, <c>Number4</c>: an IArrayLike type of two or more
@@ -35,11 +36,11 @@ public static class ConstantCounts
     /// <summary>The node count past which a fold stops repeating a twice-read accumulator.</summary>
     public const int AccumulatorBudget = 128;
 
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer)
+    public static TirFunction Rewrite(TirFunction tir, PassContext pass)
     {
-        if (!writer.ScalarArrays || tir?.Body == null)
+        if (!pass.On("scalar-arrays") || tir?.Body == null)
             return tir;
-        var site = new Rewriter(writer);
+        var site = new Rewriter(pass.Compilation);
         var body = TirRewrite.Rewrite(tir.Body, n => n is TirCall c ? site.Visit(c) : n);
         return ReferenceEquals(body, tir.Body)
             ? tir
@@ -52,20 +53,20 @@ public static class ConstantCounts
     /// <summary>A stored component of a fixed-arity struct: the field and its Plato type.</summary>
     public sealed record ComponentField(string Name, string TypeName);
 
-    /// <summary>The fields of a fixed-arity struct type, or null. Fixed arity means the writer
+    /// <summary>The fields of a fixed-arity struct type, or null. Fixed arity means a writer
     /// synthesizes the type's <c>Count</c> (CSharpTypeWriter.GenerateFunc: the interface obligation has no
     /// implementation) as the field count: a concrete struct of two or more fields, not a primitive,
     /// whose <c>Count</c> and <c>At</c> no library function implements. One field is excluded
     /// because a single field that is itself indexable makes the type delegate its Count to it.</summary>
-    public static IReadOnlyList<ComponentField> FixedFields(CSharpWriter writer, string typeName)
+    public static IReadOnlyList<ComponentField> FixedFields(Ara3D.Geometry.Compiler.Compilation compilation, string typeName)
     {
         if (typeName == null)
             return null;
         Dictionary<string, IReadOnlyList<ComponentField>> table;
         lock (Tables)
         {
-            if (!Tables.TryGetValue(writer.Compilation, out table))
-                Tables.Add(writer.Compilation, table = BuildTable(writer.Compilation));
+            if (!Tables.TryGetValue(compilation, out table))
+                Tables.Add(compilation, table = BuildTable(compilation));
         }
         return table.TryGetValue(typeName, out var fields) ? fields : null;
     }
@@ -76,7 +77,7 @@ public static class ConstantCounts
         foreach (var ct in compilation.ConcreteTypes)
         {
             var fields = ct.TypeDef.Fields;
-            if (ct.TypeDef.TypeParameters.Count > 0 || fields.Count < 2 || CSharpWriter.PrimitiveTypes.ContainsKey(ct.Name)
+            if (ct.TypeDef.TypeParameters.Count > 0 || fields.Count < 2 || WriterPrimitiveNames.All.Contains(ct.Name)
                 || !ct.UnimplementedFunctions.Any(f => f.Name == "Count") || !ct.UnimplementedFunctions.Any(f => f.Name == "At"))
                 continue;
             table[ct.Name] = fields.Select(f => new ComponentField(f.Name, f.Type?.Name)).ToList();
@@ -86,14 +87,14 @@ public static class ConstantCounts
 
     private sealed class Rewriter
     {
-        private readonly CSharpWriter _writer;
+        private readonly Ara3D.Geometry.Compiler.Compilation _compilation;
         private readonly FusionContext _ctx;
         private readonly UnrollPolicy _policy;
 
-        public Rewriter(CSharpWriter writer)
+        public Rewriter(Ara3D.Geometry.Compiler.Compilation compilation)
         {
-            _writer = writer;
-            _ctx = new FusionContext(writer.Compilation);
+            _compilation = compilation;
+            _ctx = new FusionContext(compilation);
             _policy = new UnrollPolicy(IsRepeatable, AccumulatorBudget);
         }
 
@@ -121,7 +122,7 @@ public static class ConstantCounts
         private TirNode FoldCount(TirCall c)
         {
             var receiver = TirRewrite.StripCoerce(c.Args[0]);
-            var fields = FixedFields(_writer, receiver?.Type?.Name);
+            var fields = FixedFields(_compilation, receiver?.Type?.Name);
             // A leaf receiver only: a computed one might fault, and folding would drop that.
             // A Count with a body of its own is a user's, not the synthesized field count.
             if (fields == null || !TirRewrite.IsCheap(receiver) || c.Callee?.Body != null)
@@ -149,7 +150,7 @@ public static class ConstantCounts
         {
             var receiver = TirRewrite.StripCoerce(c.Args[0]);
             var typeName = receiver?.Type?.Name;
-            var fields = FixedFields(_writer, typeName);
+            var fields = FixedFields(_compilation, typeName);
             if (fields == null || !TirRewrite.IsCheap(receiver) || c.Type?.Name != typeName
                 || !IsLibrary(c.Callee, "FromComponents") || Literal(c.Args[1]) is not { } array
                 || array.Elements.Count != fields.Count)
@@ -163,11 +164,13 @@ public static class ConstantCounts
             var n = TirRewrite.StripCoerce(arg);
             if (n is TirArray literal)
                 return literal.Elements.Count <= TirFusion.UnrollLimit ? literal : null;
+            if (n is TirCall { Name: "Map", Args.Count: 2 } map && ExpandedComponentArray(map) is { } inlined)
+                return inlined;
             if (n is not TirCall { Name: "ComponentArray", Args.Count: 1 } call || !IsLibrary(call.Callee, "ComponentArray"))
                 return null;
             var receiver = TirRewrite.StripCoerce(call.Args[0]);
             var typeName = receiver?.Type?.Name;
-            var fields = FixedFields(_writer, typeName);
+            var fields = FixedFields(_compilation, typeName);
             if (fields == null || fields.Count > TirFusion.UnrollLimit || !TirRewrite.IsCheap(receiver))
                 return null;
             // The components are read as they are stored, so each must already be the array's element type.
@@ -178,10 +181,33 @@ public static class ConstantCounts
             return new TirArray(reads, call.Type, call.Origin);
         }
 
+        // ComponentArray after the inliner has expanded it: <c>v.Count.Range.Map(i => v[i])</c>, whose Count is now the
+        // literal arity. (The C++ pipeline inlines first; the C# one usually keeps the call.) The same literal of component reads.
+        private TirArray ExpandedComponentArray(TirCall map)
+        {
+            if (TirRewrite.StripCoerce(map.Args[0]) is not TirCall { Name: "MapRange", Args.Count: 2 } range)
+                return null;
+            var k = TirFusion.SmallLiteral(range.Args[0]);
+            if (k <= 0
+                || TirRewrite.StripCoerce(range.Args[1]) is not TirLambda { Parameters.Count: 1 } identity
+                || TirRewrite.StripCoerce(identity.Body) is not TirParameter ip || !ReferenceEquals(ip.Def, identity.Parameters[0])
+                || TirRewrite.StripCoerce(map.Args[1]) is not TirLambda { Parameters.Count: 1 } read
+                || TirRewrite.StripCoerce(read.Body) is not TirCall { Name: "At", Args.Count: 2 } at || at.Callee?.Body != null
+                || TirRewrite.StripCoerce(at.Args[1]) is not TirParameter index || !ReferenceEquals(index.Def, read.Parameters[0]))
+                return null;
+            var receiver = TirRewrite.StripCoerce(at.Args[0]);
+            var fields = FixedFields(_compilation, receiver?.Type?.Name);
+            var element = TirRewrite.ListElementType(map.Type);
+            if (fields == null || fields.Count != k || !TirRewrite.IsCheap(receiver) || element?.Name == null
+                || fields.Any(f => f.TypeName != element.Name))
+                return null;
+            return new TirArray(fields.Select(f => (TirNode)new TirComponentAccess(receiver, f.Name, null, null, element)).ToList(), map.Type, map.Origin);
+        }
+
         // The stdlib function (identity, not name): a user's own FromComponents or ComponentArray keeps its calls.
         private bool IsLibrary(FunctionDef callee, string name)
             => callee != null && callee.Name == name
-               && _writer.Compilation.LibraryDefinitionsByName.TryGetValue("NumericStructures", out var library)
+               && _compilation.LibraryDefinitionsByName.TryGetValue("NumericStructures", out var library)
                && library.Functions.Any(f => ReferenceEquals(f, callee));
 
         // A leaf, or a component read of one: repeating it re-reads a field.
