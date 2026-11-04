@@ -407,7 +407,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             var isRecord = def.Kind == TypeKind.ConcreteType && !def.IsSum && !def.Name.StartsWith("Function");
             if (!isArray && !isRecord)
                 return false;
-            if (!Unify(left, args[1], new Dictionary<string, TypeExpression>(Substitution), null, record: false))
+            if (!Unify(left, args[1], new TypeBindings(Substitution), null, record: false))
                 return false;
             var boolean = Compilation?.GetTypeDef("Boolean")?.ToTypeExpression();
             if (boolean == null)
