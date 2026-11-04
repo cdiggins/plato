@@ -12,7 +12,7 @@ namespace Ara3D.Geometry.CppWriter.Policies
     /// Lays out a sum as CSharpConcreteTypeWriter.WriteSumType does: an <c>int32_t Kind</c> (0-based,
     /// declaration order) and every case's fields as <c>Case_Field</c>, all present whichever case is active.
     /// </summary>
-    public sealed class FlattenedKindSumLayout : ISumLayout
+    public class FlattenedKindSumLayout : ISumLayout
     {
         public IReadOnlyList<CppField> Fields(IReadOnlyList<SumCaseDef> cases)
         {

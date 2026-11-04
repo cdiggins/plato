@@ -81,6 +81,14 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             WriteStatementContents(body);
             WriteEndBlock();
         }
+        else if (SwitchChainOf(body) is { } chain)
+        {
+            WriteLine();
+            WriteStartBlock();
+            WriteFunctorStructs();
+            WriteSwitchReturn(chain);
+            WriteEndBlock();
+        }
         else if (_functors.Count > 0)
         {
             WriteLine();
@@ -282,6 +290,10 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 WriteEndBlock();
                 return;
 
+            case TirReturn r when SwitchChainOf(r.Value) is { } chain:
+                WriteSwitchReturn(chain);
+                return;
+
             case TirReturn r:
                 Write("return ");
                 WriteReturnValue(r.Value);
@@ -481,6 +493,30 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         }
         else
             WriteNode(inner);
+    }
+
+    /// <summary>The chain of case predicates <paramref name="value"/> spells when the sum layout dispatches by switch; else null.</summary>
+    private SumSwitchChain SwitchChainOf(TirNode value)
+        => value == null || _w.Sums.SwitchOn == null ? null
+            : SumSwitchChain.TryRead(value, _w.SumCasesOf, n => CppWriter.PlatoTypeName(n.Type), StripCoerce);
+
+    /// <summary>Returns the arm of <paramref name="chain"/> that matches the value's tag.</summary>
+    private void WriteSwitchReturn(SumSwitchChain chain)
+    {
+        Write("switch (");
+        WriteNode(chain.Subject);
+        WriteLine($"{_w.Sums.SwitchOn})");
+        WriteStartBlock();
+        foreach (var arm in chain.Arms)
+        {
+            Write($"case {chain.TypeName}::{arm.Case.TagConstName}: return ");
+            WriteReturnValue(arm.Value);
+            WriteLine(";");
+        }
+        Write("default: return ");
+        WriteReturnValue(chain.Default);
+        WriteLine(";");
+        WriteEndBlock();
     }
 
     /// <summary>Writes a returned value, converted to the signature's return type.</summary>

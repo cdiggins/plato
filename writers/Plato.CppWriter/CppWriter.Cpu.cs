@@ -30,6 +30,9 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>--cpp-borrow-nontrivial (off by default): <c>ReadOnlyParameter</c> also borrows every record that is
         /// not trivially copyable (records holding String), whatever its size.</summary>
         public bool BorrowNonTrivial { get; init; }
+        /// <summary>Sum dispatch (off by default; tests only until the CLI row exists): a chain of case predicates on one
+        /// value in a returned expression is written as <c>switch (value.Kind)</c>.</summary>
+        public bool SwitchSumDispatch { get; init; }
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
@@ -71,6 +74,22 @@ namespace Ara3D.Geometry.CppWriter
                 return _policies;
             }
         }
+
+        /// <summary>The sum layout in force for <see cref="CpuOptions"/>.</summary>
+        public ISumLayout Sums => Policies.Sums;
+
+        private Dictionary<string, IReadOnlyList<SumCaseDef>> _sumCases;
+
+        /// <summary>The cases of the non-generic sum type named <paramref name="platoTypeName"/>, or null when it is not one.</summary>
+        public IReadOnlyList<SumCaseDef> SumCasesOf(string platoTypeName)
+        {
+            _sumCases ??= Compilation.ConcreteTypes
+                .Where(ct => ct.TypeDef.IsSum && ct.TypeDef.TypeParameters.Count == 0)
+                .GroupBy(ct => ct.TypeDef.Name)
+                .ToDictionary(g => g.Key, g => (IReadOnlyList<SumCaseDef>)g.First().TypeDef.Cases);
+            return platoTypeName != null && _sumCases.TryGetValue(platoTypeName, out var cases) ? cases : null;
+        }
+
         internal CppTirPipeline CpuPipeline { get; } = new CppTirPipeline();
 
         public bool IsCpu => Dialect == CppDialect.Cpu;
@@ -112,7 +131,7 @@ namespace Ara3D.Geometry.CppWriter
         private List<CppField> StructFieldsOf(ConcreteType c)
         {
             if (IsCpu && c.TypeDef.IsSum)
-                return Policies.Sums.Fields(c.TypeDef.Cases).ToList();
+                return Sums.Fields(c.TypeDef.Cases).ToList();
             return c.TypeDef.Fields.Select(f => new CppField(f.Name, f.Type)).ToList();
         }
 
@@ -408,7 +427,7 @@ namespace Ara3D.Geometry.CppWriter
                 var cs = ct.TypeDef.Cases.FirstOrDefault(c => c.Name == fi.Name);
                 if (cs != null && cs.Fields.Count == paramNames.Count)
                 {
-                    Add(label, sigKey, sig, sig + Policies.Sums.Construct(owner, cs, paramNames), null);
+                    Add(label, sigKey, sig, sig + Sums.Construct(owner, cs, paramNames), null);
                     return;
                 }
             }
@@ -622,7 +641,7 @@ namespace Ara3D.Geometry.CppWriter
             {
                 sb.Append($"{TemplatePrefix(s.Type)}struct {s.Name}\n{{\n");
                 if (s.Type != null && s.Type.TypeDef.IsSum)
-                    sb.Append(Policies.Sums.TagDeclarations(s.Type.TypeDef.Cases));
+                    sb.Append(Sums.TagDeclarations(s.Type.TypeDef.Cases));
                 using (ParamScope(s.Type))
                     foreach (var f in s.Fields)
                         sb.Append($"    {CppTypeName(f)} {EscapeName(f.Name)};\n");
@@ -666,7 +685,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                 var n = s.Name;
                 string cond;
                 if (s.Type != null && s.Type.TypeDef.IsSum)
-                    cond = Policies.Sums.EqualsCondition(n, s.Type.TypeDef.Cases);
+                    cond = Sums.EqualsCondition(n, s.Type.TypeDef.Cases);
                 else
                 {
                     cond = s.Fields.Count == 0 ? "true"
@@ -820,7 +839,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
 
                 string body;
                 if (s.Type != null && s.Type.TypeDef.IsSum)
-                    body = Policies.Sums.HashBody(n, s.Type.TypeDef.Cases, HashOf);
+                    body = Sums.HashBody(n, s.Type.TypeDef.Cases, HashOf);
                 else
                 {
                     body = " { int32_t h = 17;" + s.Fields.Select(f => $" h = mix_(h, {HashOf(f)});").JoinStrings("") + " return h; }";
@@ -834,12 +853,12 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
                         var fieldTypes = cs.Fields.Select(f => FieldCppOrNull(new CppField(f.FlatName, f.Type))).ToList();
                         var ps = fieldTypes.Select((t, i) => ParameterDeclaration(t, $"p{i}")).Prepend($"{n} _").JoinStringsWithComma();
                         AddGenerated(cs.Name, fieldTypes.Prepend(n).ToArray(), $"PLATO_FN {n} {FunctionName(cs.Name)}({ps})",
-                            Policies.Sums.Construct(n, cs, cs.Fields.Select((f, i) => $"p{i}").ToList()));
+                            Sums.Construct(n, cs, cs.Fields.Select((f, i) => $"p{i}").ToList()));
                     }
                 if (s.Type != null && s.Type.TypeDef.IsSum)
                     foreach (var cs in s.Type.TypeDef.Cases)
                         AddGenerated(cs.PredicateName, new[] { n }, $"PLATO_FN bool {cs.PredicateName}(const {n}& s)",
-                            Policies.Sums.PredicateBody(n, cs));
+                            Sums.PredicateBody(n, cs));
             }
         }
 
