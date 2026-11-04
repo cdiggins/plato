@@ -116,6 +116,40 @@ namespace Ara3D.Geometry.CSharpWriter
         public IReadOnlyList<string> ParameterModifiers { get; set; }
         public bool ReturnsRef { get; set; }
         private string ExtensionReturnType => ReturnsRef ? $"ref readonly {ReturnType}" : ReturnType;
+        /// <summary>--span-params: the C# parameter types of the span twin of this function, where <paramref name="borrowed"/>
+        /// marks the parameters taken as <c>ReadOnlySpan&lt;T&gt;</c> in place of <c>IReadOnlyList&lt;T&gt;</c>. Null when a
+        /// borrowed parameter is not spelled <c>IReadOnlyList&lt;T&gt;</c>, so no twin can be written.</summary>
+        public IReadOnlyList<string> TwinParameterTypes(IReadOnlyList<bool> borrowed)
+        {
+            const string list = "IReadOnlyList<";
+            var types = new List<string>(ParameterTypes.Count);
+            for (var i = 0; i < ParameterTypes.Count; i++)
+            {
+                var type = ParameterTypes[i];
+                if (i >= borrowed.Count || !borrowed[i])
+                    types.Add(type);
+                else if (type.StartsWith(list, StringComparison.Ordinal) && type.EndsWith(">", StringComparison.Ordinal))
+                    types.Add($"System.ReadOnlySpan<{type.Substring(list.Length, type.Length - list.Length - 1)}>");
+                else
+                    return null;
+            }
+            return types;
+        }
+
+        /// <summary>--span-params: the declaration of the span twin named <paramref name="twinName"/>, a plain static method
+        /// (never an extension) with the original's return type and, except for the borrowed parameters, its parameters and
+        /// <c>in</c> modifiers. Null when <see cref="TwinParameterTypes"/> is.</summary>
+        public string TwinSignature(string twinName, IReadOnlyList<bool> borrowed)
+        {
+            var types = TwinParameterTypes(borrowed);
+            if (types == null)
+                return null;
+            var parameters = ParameterNames.Select((name, i) =>
+                (ParameterModifiers != null && i < ParameterModifiers.Count && !(i < borrowed.Count && borrowed[i]) ? ParameterModifiers[i] : "")
+                + $"{types[i]} {name}");
+            return $"{Annotation}public static {ReturnType} {twinName}({parameters.JoinStringsWithComma()})";
+        }
+
         public IEnumerable<string> MethodParameters => MethodParameterNames.Zip(MethodParameterTypes, (n, t) => $"{t} {n}");
         public string GenericsString => Generics.Count > 0 ? $"<{Generics.JoinStringsWithComma()}>" : "";
         public string StaticParametersString => NumParameters > 0 ? $"({Parameters.JoinStringsWithComma()})" : EmitAsMethod ? "()" : "";

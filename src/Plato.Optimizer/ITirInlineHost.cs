@@ -1,0 +1,65 @@
+// Defines the compilation services shared typed-IR inlining needs from each backend.
+using System.Collections.Generic;
+using Ara3D.Geometry.Compiler.Checking;
+using Ara3D.Geometry.Compiler.Symbols;
+
+namespace Ara3D.Geometry.Optimizer;
+
+/// <summary>
+/// Minimal host surface for <see cref="TirInliner"/> so C# / C++ / CUDA (and later GLSL)
+/// can share β-reduction without depending on the full C# emitter.
+/// </summary>
+public interface ITirInlineHost
+{
+    bool InlineCalls { get; }
+
+    /// <summary>
+    /// When true the inliner runs even if <see cref="InlineCalls"/> is false, but in that case it
+    /// expands only callees whose every parameter type and return type is a Plato scalar that
+    /// lowers to a primitive: Number, Integer or Boolean (<see cref="IsScalarPrimitiveName"/>
+    /// minus Character and String, which never lower). The scalar-lowering pass needs the
+    /// stdlib's derived scalar helpers (GreaterThanOrEquals, LessThan, Abs, Min, Max, Square)
+    /// expanded so their arithmetic lowers with the caller's; nothing else is touched.
+    /// Every other inlining rule (expression bodies, cheap-argument discipline,
+    /// self-containment, budgets) still applies.
+    /// </summary>
+    bool InlineScalarBodies { get; }
+
+    /// <summary>Optional diagnostic aggregator; null means off.</summary>
+    InlineReport InlineReport { get; }
+
+    Compiler.Compilation Compilation { get; }
+
+    TirFunction TryGetGroundTirByTypeName(FunctionDef original, string concreteTypeName);
+
+    TirFunction TryGetStaticTir(FunctionDef original);
+
+    /// <summary>True when <paramref name="name"/> is a concrete emittable type (not an interface / type var).</summary>
+    bool IsConcreteTypeName(string name);
+
+    /// <summary>True for Plato scalar wrappers that erase (Number, Integer, Boolean, …).</summary>
+    bool IsScalarPrimitiveName(string name);
+
+    /// <summary>
+    /// Known instance/static member names on <paramref name="typeName"/>, or null when unknown
+    /// (treat as trusted — same as a missing C# extension plan).
+    /// </summary>
+    ISet<string> TryGetKnownMemberNames(string typeName);
+}
+
+/// <summary>
+/// What the experimental statement inliner (<c>--inline-policy</c>) needs beyond <see cref="ITirInlineHost"/>:
+/// the expansion budgets, and the backend's rewrites that expose more calls between expansion rounds
+/// (C#: combinator fusion and component unrolling).
+/// </summary>
+public interface IStatementInlineHost
+{
+    int StatementNodeBudget { get; }
+
+    /// <summary>The module-wide growth still allowed; each body's expansion spends from it.</summary>
+    int RemainingStatementGrowth { get; set; }
+
+    /// <summary>The body after the backend's exposing rewrites; <paramref name="functionInfo"/> is the backend's record
+    /// of the function (C#: its CSharpFunctionInfo) or null.</summary>
+    TirFunction ExposeForStatementInlining(TirFunction tir, object functionInfo);
+}

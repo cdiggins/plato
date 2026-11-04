@@ -84,7 +84,7 @@ public partial class TirCSharpBodyWriter
             case TirCall { Name: "Count", Args.Count: 1 } count when TirRewrite.IsListType(TirRewrite.StripCoerce(count.Args[0])?.Type):
                 // The runtime list's Count is already the int the Integer wrapper would hold.
                 WritePostfixReceiver(count.Args[0]);
-                Write(".Count");
+                Write(StorageOf(count.Args[0]) != ArrayStorage.List ? ".Length" : ".Count");
                 return;
             case TirCall external when !BindsToGeneratedCode(external) && ScalarOf(external.Type) is { } externalScalar:
                 // A call on a list, an interface or a type variable may bind outside the generated

@@ -98,7 +98,7 @@ public static class MultiConsumerFusionTests
         var on = GetProgram(true);
         var input = Input(on.Writer, "Pair");
         Assert.That(input.Body, Is.TypeOf<TirBlock>());
-        Assert.That(TirMultiConsumerFusion.Rewrite(input, on.Writer).AllNodes.OfType<TirMultiReduction>().Count(), Is.EqualTo(1));
+        Assert.That(TirMultiConsumerFusion.Rewrite(input, on.Writer.Passes).AllNodes.OfType<TirMultiReduction>().Count(), Is.EqualTo(1));
         Assert.That(Body(on, "Pair"), Does.Contain("_mc0_source"));
         Assert.That(Body(off, "Pair"), Does.Not.Contain("_mc"));
         Assert.That(LoopCount(off, "Pair"), Is.EqualTo(3));
@@ -143,7 +143,7 @@ public static class MultiConsumerFusionTests
     {
         var program = GetProgram(true);
         var input = Input(program.Writer, name);
-        Assert.That(TirMultiConsumerFusion.Rewrite(input, program.Writer), Is.SameAs(input));
+        Assert.That(TirMultiConsumerFusion.Rewrite(input, program.Writer.Passes), Is.SameAs(input));
         Assert.That(Body(program, name), Does.Not.Contain("_mc"));
     }
 
@@ -168,7 +168,7 @@ public static class MultiConsumerFusionTests
     {
         var program = GetProgram(true);
         var input = Input(program.Writer, "Pair");
-        var output = TirMultiConsumerFusion.Rewrite(input, program.Writer);
+        var output = TirMultiConsumerFusion.Rewrite(input, program.Writer.Passes);
         var marker = output.AllNodes.OfType<TirMultiReduction>().Single();
         var clone = (TirMultiReduction)marker.WithChildren(marker.Children.ToList());
         Assert.That(clone.Source, Is.SameAs(marker.Source));
@@ -191,7 +191,7 @@ public static class MultiConsumerFusionTests
             statements[1] = new TirLet(marker.First.Def, changedCall, marker.First.Type, marker.First.Origin);
             var changed = new TirFunction(input.Original, input.Parameters, input.ReturnType,
                 new TirBlock(statements, body.Origin), input.ZonkedParameterTypes, input.ZonkedReturnType);
-            Assert.That(TirMultiConsumerFusion.Rewrite(changed, program.Writer), Is.SameAs(changed));
+            Assert.That(TirMultiConsumerFusion.Rewrite(changed, program.Writer.Passes), Is.SameAs(changed));
         }
     }
 

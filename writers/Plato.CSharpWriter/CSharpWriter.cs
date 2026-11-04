@@ -11,7 +11,7 @@ using Ara3D.Geometry.Compiler.Types;
 
 namespace Ara3D.Geometry.CSharpWriter
 {
-    public class CSharpWriter : CodeBuilder<CSharpWriter>, ITirInlineHost
+    public class CSharpWriter : CodeBuilder<CSharpWriter>, ITirInlineHost, IStatementInlineHost
     {
         public CSharpWriter(Compiler.Compilation compilation, DirectoryPath outputFolder)
         {
@@ -240,38 +240,39 @@ namespace Ara3D.Geometry.CSharpWriter
                     prev = value;
                 }
             }
-            if (InlineStatements)
-            {
-                tir = TirInliner.InlineStatements(tir, this, fi?.OwnerType?.Name, EliminateKnownLambdas, SimplifyInlineStatements, fi);
-                Phase("experimental statement / callable expansion");
-            }
-            tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
-            Phase("inline (layer 7)");
-            tir = TirCallbackSpecializer.Rewrite(tir, this, fi?.OwnerType?.Name);
-            Phase("specialize-callbacks / clone the callee per lambda shape");
-            tir = TirFusion.Rewrite(tir, this);
-            Phase("fuse / combinator fusion (layer 7b)");
-            tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
-            Phase("optimize / component-unroll (layer 8)");
-            tir = TirMultiConsumerFusion.Rewrite(tir, this);
-            Phase("fuse-consumers / independent reductions");
-            tir = TirArrayMaterializer.Rewrite(tir, this);
-            Phase("optimize-arrays / materialize (layer 9)");
-            tir = TirSinkBindingsPass.Rewrite(tir, this);
-            Phase("sink-bindings / a local only one arm reads (TKT-1142)");
-            tir = TirSharedCalls.Rewrite(tir, this);
-            Phase("share-calls / a call a statement repeats (TKT-1136)");
-            tir = TirLoopLowerer.Rewrite(tir, this);
-            Phase("loops / lower (layer 10)");
-            tir = TirPresize.Rewrite(tir, this);
-            Phase("presize / counted List fills");
-            tir = TirInPlaceUpdates.Rewrite(tir, this);
-            Phase("in-place / last-use array updates (TKT-1132)");
-            tir = TirLoopInvariantHoister.Rewrite(tir, this, fi?.OwnerType?.Name);
-            Phase("hoist-invariants / loop-invariant callback work");
+            tir = PassRegistry.Run(tir, _passList ??= Registry.Resolve(PassOrder), Passes.ForBody(fi?.OwnerType?.Name, fi),
+                sb == null ? null : (label, after) => { tir = after; Phase(label); });
             sb?.AppendLine();
             return tir;
         }
+
+        /// <summary>The switches in force: the CLI's resolved table (<see cref="CSharpWriterExtensions.ToCSharp"/>), or the
+        /// ones a caller turned on through the boolean properties, which are views on this set. A pass reads it as
+        /// <c>ctx.On("name")</c>, an emitter as <c>Switches.On("name")</c>.</summary>
+        public SwitchSet Switches { get; } = new SwitchSet();
+
+        /// <summary>The counts the optimizer passes keep for this generation.</summary>
+        public PassStats Stats { get; } = new PassStats();
+
+        private PassContext _passes;
+
+        /// <summary>The context the optimizer passes run in: this writer's switches, stats and inline host.</summary>
+        public PassContext Passes => _passes ??= new PassContext(Compilation, Switches, this, Stats, this);
+
+        /// <summary>The C# writer's pass order (see docs/csharp-optimizer-pipeline.md). Each pass gates itself on its
+        /// switches, so the list names every pass the C# writer supports; <see cref="Registry"/> resolves the names.</summary>
+        public static readonly IReadOnlyList<string> PassOrder = new[]
+        {
+            CSharpPasses.InlineStatements, SharedPasses.Inline, CSharpPasses.SpecializeCallbacks, CSharpPasses.ConstantCounts,
+            SharedPasses.Fuse, CSharpPasses.ComponentUnroll, SharedPasses.FuseConsumers, SharedPasses.MaterializeArrays,
+            SharedPasses.SinkBindings, SharedPasses.ShareCalls, SharedPasses.LowerLoops, SharedPasses.Presize,
+            SharedPasses.InPlace, SharedPasses.HoistInvariants,
+        };
+
+        /// <summary>The backend-neutral passes plus the C# writer's own (<see cref="CSharpPasses"/>).</summary>
+        public static PassRegistry Registry { get; } = PassRegistry.Shared.With(CSharpPasses.All);
+
+        private IReadOnlyList<ITirPass> _passList;
 
         /// <summary>Restarts the counters behind every generated temporary name (`_var`, `_f`/`_r`,
         /// `_lp`/`_n`/`_i`/..., the inliner's `{p}_{N}`). They are per thread, so two programs
@@ -282,6 +283,97 @@ namespace Ara3D.Geometry.CSharpWriter
             TirInliner.NextRenameId = 0;
             TirFusion.NextId = 0;
             TirLoopLowerer.NextId = 0;
+        }
+
+        /// <summary>The four per-thread counters behind generated temporary names, as one value.
+        /// <see cref="Save"/> reads them; <see cref="Restore"/> writes them back.</summary>
+        public readonly struct TemporaryCounters
+        {
+            private readonly int _symbol, _inlinerRename, _fusion, _loops;
+
+            private TemporaryCounters(int symbol, int inlinerRename, int fusion, int loops)
+            {
+                _symbol = symbol;
+                _inlinerRename = inlinerRename;
+                _fusion = fusion;
+                _loops = loops;
+            }
+
+            public static TemporaryCounters Save()
+                => new TemporaryCounters(SymbolRewriter.NextId, TirInliner.NextRenameId, TirFusion.NextId, TirLoopLowerer.NextId);
+
+            public void Restore()
+            {
+                SymbolRewriter.NextId = _symbol;
+                TirInliner.NextRenameId = _inlinerRename;
+                TirFusion.NextId = _fusion;
+                TirLoopLowerer.NextId = _loops;
+            }
+        }
+
+        private sealed class OptimizedEntry
+        {
+            public TirFunction Tir;
+            public CSharpFunctionInfo Info;
+            public TemporaryCounters After;
+        }
+
+        private sealed class ReferencePairComparer : IEqualityComparer<(FunctionDef, TypeDef)>
+        {
+            public bool Equals((FunctionDef, TypeDef) a, (FunctionDef, TypeDef) b)
+                => ReferenceEquals(a.Item1, b.Item1) && ReferenceEquals(a.Item2, b.Item2);
+
+            public int GetHashCode((FunctionDef, TypeDef) k)
+                => System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(k.Item1) * 31
+                   + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(k.Item2);
+        }
+
+        private readonly Dictionary<(FunctionDef, TypeDef), OptimizedEntry> _optimized
+            = new Dictionary<(FunctionDef, TypeDef), OptimizedEntry>(new ReferencePairComparer());
+
+        /// <summary>The optimized TIR of a bodied function at a concrete type (ground TIR, else the
+        /// open-generic one, else for a null type the static one; null when none exists), memoised per (function, type). For inspecting a
+        /// callee while another body is being emitted: the passes run, and the temporary counters are
+        /// put back as they were, so the caller's numbering is untouched (TKT-1137). The passes
+        /// themselves restart the counters, so the tree is the one the function's own emission gets.
+        /// <paramref name="info"/> is the signature record the component unroller reads; pass it when
+        /// known. A tree first built without one is rebuilt when a later request supplies one.</summary>
+        public TirFunction OptimizedTir(FunctionDef function, TypeDef concreteType, CSharpFunctionInfo info = null)
+        {
+            var saved = TemporaryCounters.Save();
+            try
+            {
+                return OptimizedEntryFor(function, concreteType, info)?.Tir;
+            }
+            finally
+            {
+                saved.Restore();
+            }
+        }
+
+        /// <summary>The same memoised tree for the body-emit site, which runs the body writer next:
+        /// leaves the counters where the passes left them (also when the tree was memoised earlier),
+        /// exactly as <see cref="RunOptimizerPasses"/> does.</summary>
+        internal TirFunction OptimizedTirForEmission(FunctionDef function, TypeDef concreteType, CSharpFunctionInfo info)
+        {
+            var entry = OptimizedEntryFor(function, concreteType, info);
+            entry?.After.Restore();
+            return entry?.Tir;
+        }
+
+        private OptimizedEntry OptimizedEntryFor(FunctionDef function, TypeDef concreteType, CSharpFunctionInfo info)
+        {
+            var key = (function, concreteType);
+            if (_optimized.TryGetValue(key, out var hit) && (info == null || hit.Info != null))
+                return hit;
+            var tir = function.Body != null
+                    ? TryGetGroundTir(function, concreteType) ?? TryGetOpenGenericTir(function, concreteType)
+                      ?? (concreteType == null ? TryGetStaticTir(function) : null)
+                    : null;
+            if (tir == null)
+                return null;
+            tir = RunOptimizerPasses(tir, info);
+            return _optimized[key] = new OptimizedEntry { Tir = tir, Info = info, After = TemporaryCounters.Save() };
         }
 
         private static string SanitizeFileName(string s)
@@ -457,16 +549,16 @@ namespace Ara3D.Geometry.CSharpWriter
         // Reverse/WithNext/MapPairs/... on one-dimensional list receivers) are lowered to
         // for-loop statements filling materialized arrays (see TirLoopLowerer). Runs after the
         // other optimizer passes. Default (false) output is unchanged.
-        public bool LowerLoops;
+        public bool LowerLoops { get => Switches.On("loops"); set => Switches.Set("loops", value); }
 
         // When true (--fuse), array-combinator chains are fused before lowering (n.Range.Map(f)
         // to n.MapRange(f), xs.Map(g).Map(f) to one Map, xs.Take(k).Map(f) to k.MapRange) and
         // literal-count ranges of at most TirFusion.UnrollLimit are unrolled to straight-line
         // code (see TirFusion, TirLiteralUnroller). Pure rewrites: the output computes the same
         // values with fewer arrays. Usually combined with --loops.
-        public bool FuseCombinators;
-        public bool FuseConsumers { get; set; }
-        public bool ExactOutputAllocation { get; set; }
+        public bool FuseCombinators { get => Switches.On("fuse"); set => Switches.Set("fuse", value); }
+        public bool FuseConsumers { get => Switches.On("fuse-consumers"); set => Switches.Set("fuse-consumers", value); }
+        public bool ExactOutputAllocation { get => Switches.On("exact-output"); set => Switches.Set("exact-output", value); }
 
         // When true (--lower-scalars), every emitted body computes Number, Integer and Boolean values
         // as the primitives they wrap: scalar lets and loop locals are primitives, scalar intrinsics
@@ -478,62 +570,62 @@ namespace Ara3D.Geometry.CSharpWriter
         // plato-brep). Small Plato bodies whose signature is all scalars (GreaterThan, Abs, Min) are
         // inlined first so their arithmetic lowers too (TirInliner, InlineScalarBodies). Default
         // (false) output is unchanged. See ScalarLowering.cs and docs/csharp-optimizer-pipeline.md.
-        public bool LowerScalars { get; set; }
+        public bool LowerScalars { get => Switches.On("lower-scalars"); set => Switches.Set("lower-scalars", value); }
         public bool InlineScalarBodies => LowerScalars;
 
         // When true (--lean-inlining, TKT-1091), [MethodImpl(AggressiveInlining)] stays only on
         // one-line forwarding members (see LeanInliningPass); the handwritten intrinsics keep theirs.
         // Default (false) output is unchanged.
-        public bool LeanInlining { get; set; }
+        public bool LeanInlining { get => Switches.On("lean-inlining"); set => Switches.Set("lean-inlining", value); }
 
         // When true (--concrete-arrays, TKT-1093), every Count and single-index read of an
         // Array-typed (IReadOnlyList) value goes through ConcreteArrayAccess.g.cs, which tests
         // for an exact T[] and reads it directly; the JIT cannot devirtualize the array's
         // IReadOnlyList calls. Signatures and stored types are unchanged. Default (false) output
         // is unchanged.
-        public bool ConcreteArrays { get; set; }
+        public bool ConcreteArrays { get => Switches.On("concrete-arrays"); set => Switches.Set("concrete-arrays", value); }
 
         // When true (--presize, TKT-1131), a `new List<T>()` that a counted loop fills once per pass
         // is written `new List<T>(count)` (see TirPresize). Default (false) output is unchanged.
-        public bool Presize { get; set; }
+        public bool Presize { get => Switches.On("presize"); set => Switches.Set("presize", value); }
 
         // When true (--in-place, TKT-1132), a SetAt on an array that nothing can observe afterwards is
         // emitted as a write into the array's own storage (see TirInPlaceUpdates). Default (false)
         // output is unchanged.
-        public bool InPlaceUpdates { get; set; }
+        public bool InPlaceUpdates { get => Switches.On("in-place"); set => Switches.Set("in-place", value); }
 
         // When true (--share-calls, TKT-1136), a method call that one statement evaluates more than once
         // (a match on a call lowers to a test and a field read per case, each naming the call) is
         // evaluated once into a local (see TirSharedCalls). Default (false) output is unchanged.
-        public bool ShareCalls { get; set; }
+        public bool ShareCalls { get => Switches.On("share-calls"); set => Switches.Set("share-calls", value); }
         // When true (--in-params, TKT-1066), large readonly structs pass by reference: `in`
         // parameters, ref readonly element reads and table accessors (see LargeStructPassing).
         // Extension style only. Default (false) output is unchanged.
-        public bool InParameters { get; set; }
+        public bool InParameters { get => Switches.On("in-params"); set => Switches.Set("in-params", value); }
 
         // When true (--switch-match, TKT-1148), a chain of three or more tag tests on one sum value
         // (what a match lowers to) is a C# switch expression on its Kind (see
         // TirCSharpBodyWriter.MatchSwitch.cs). Default (false) output is unchanged.
-        public bool SwitchMatch { get; set; }
+        public bool SwitchMatch { get => Switches.On("switch-match"); set => Switches.Set("switch-match", value); }
         private LargeStructPassing _largeStructs;
         public LargeStructPassing LargeStructs
             => InParameters && ExtensionPlans != null ? _largeStructs ??= new LargeStructPassing(this) : null;
 
         // --sink-bindings (TKT-1142): a local that one arm of a conditional reads is evaluated on that arm
         // (TirSinkBindings), in the elaborated TIR and again after inlining. Default (false) output is unchanged.
-        public bool SinkBindings { get; set; }
+        public bool SinkBindings { get => Switches.On("sink-bindings"); set => Switches.Set("sink-bindings", value); }
 
         // --bind-scrutinee (TKT-1138): a match on a non-trivial expression evaluates it once, bound by the
         // elaborator (TirScrutineeBinding). Default (false) output is unchanged.
-        public bool BindScrutinees { get; set; }
+        public bool BindScrutinees { get => Switches.On("bind-scrutinee"); set => Switches.Set("bind-scrutinee", value); }
 
         // --share-calls-wide (TKT-1142): --share-calls also shares a call across the statements of a block
         // and inside lambda bodies. Default (false) output is unchanged.
-        public bool ShareCallsWide { get; set; }
+        public bool ShareCallsWide { get => Switches.On("share-calls-wide"); set => Switches.Set("share-calls-wide", value); }
 
         /// <summary>The sites the optimizing rewrites changed, for reports (the elaboration counts are filled
         /// when the first body is requested).</summary>
-        public WriterRewriteStats RewriteStats { get; } = new WriterRewriteStats();
+        public WriterRewriteStats RewriteStats => Stats.Rewrites;
 
         /// <summary>What the elaborator's rewrites changed in the bodies requested so far.</summary>
         public Compiler.Checking.ElaborationStats ElaborationStats => TirSource.ElaborationStats;
@@ -542,7 +634,7 @@ namespace Ara3D.Geometry.CSharpWriter
         // Take, Skip, ...) are written as block copies into a presized array (ClosureFreeArrays.g.cs),
         // and a Sort or SortedIndices call is lowered to a merge-sort loop with its comparator inlined
         // (TirLoopLowerer, kinds Sort and SortIdx; needs --loops). Default (false) output is unchanged.
-        public bool ClosureFree { get; set; }
+        public bool ClosureFree { get => Switches.On("closure-free"); set => Switches.Set("closure-free", value); }
 
         // When true (--lower-more, lambda removal L3; needs --loops), a MakeArray2D, MakeArray3D,
         // CartesianProduct or Filter call site is lowered to loops with its callback inline, the
@@ -550,37 +642,117 @@ namespace Ara3D.Geometry.CSharpWriter
         // kinds Make2D, Make3D, Cartesian and Filter). The grid is one presized element array
         // filled by nested loops and the Array2D/Array3D record built once. Default (false)
         // output is unchanged.
-        public bool LowerMore { get; set; }
+        public bool LowerMore { get => Switches.On("lower-more"); set => Switches.Set("lower-more", value); }
 
         // When true (--hoist-invariants, requires --loops), invariant work in a lowered loop's
         // callback is computed once ahead of the loop (see TirLoopInvariantHoister). The counts
         // are diagnostics for the generation log; default (false) output is unchanged.
-        public bool HoistInvariants { get; set; }
+        public bool HoistInvariants { get => Switches.On("hoist-invariants"); set => Switches.Set("hoist-invariants", value); }
 
         // --cache-constants: a nullary static whose body is a closed expression returns a static
         // readonly field of a lazily initialised holder class (TirCSharpBodyWriter.Constants.cs).
-        public bool CacheConstants { get; set; }
+        public bool CacheConstants { get => Switches.On("cache-constants"); set => Switches.Set("cache-constants", value); }
         // Counts for the generation log: holder classes written for closed sub-expressions, and their sites.
         public int CachedConstantHolders;
         public int CachedConstantSites;
 
         // --primitive-compare: a Number or Integer comparison call is written on the operands'
         // .Value (TirCSharpBodyWriter.PrimitiveCompare.cs), with the wrapper's exact semantics.
-        public bool PrimitiveCompare { get; set; }
+        public bool PrimitiveCompare { get => Switches.On("primitive-compare"); set => Switches.Set("primitive-compare", value); }
 
         // --specialize-callbacks (plato-brep lambda removal L2): a call passing a lambda literal to a
         // function-typed parameter calls a clone of the callee with the lambda body substituted and
         // its captures as extra parameters (TirCallbackSpecializer); the clones are written to
         // CallbackSpecializations.g.cs. Extension style only. Default (false) output is unchanged.
-        public bool SpecializeCallbacks { get; set; }
+        public bool SpecializeCallbacks { get => Switches.On("specialize-callbacks"); set => Switches.Set("specialize-callbacks", value); }
+
+        // --owned-arrays (TKT-1152): the storage layer. At the body writer's entry (after its own capture rewrite)
+        // TirStorageResolver covers the body with a storage plan and StorageChecker verifies it before anything
+        // prints; a violation discards the plan for that body and counts a refusal. Default (false) output is unchanged.
+        public bool OwnedArrays { get => Switches.On("owned-arrays"); set => Switches.Set("owned-arrays", value); }
+        // --stack-arrays (TKT-1152 chunk C6): the resolver may give a bounded owned array a hoisted stackalloc slot.
+        // Requires OwnedArrays. Default (false) output is unchanged.
+        public bool StackArrays { get => Switches.On("stack-arrays"); set => Switches.Set("stack-arrays", value); }
+        // Tests only: a checker violation throws instead of counting a refusal.
+        public bool OwnedArraysStrict { get; set; }
+        public int StorageBodiesChecked;
+        public int StorageRefusals;
+        public readonly List<string> StorageRefusalLog = new List<string>();
+        // The resolver to run in place of TirStorageResolver; set only by tests that need a plan the checker refuses.
+        public System.Func<TirNode, FunctionDef, TirStorageScope> StorageResolver { get; set; }
+        private CSharpStorageTarget _storageTarget;
+        private TirArrayIdentity _storageIdentity;
+
+        /// <summary>Passes 7 and 8 of the pipeline: resolves the storage of <paramref name="body"/> (already
+        /// capture-rewritten) and checks it. Returns the <see cref="TirStorageScope"/> to print, or the body
+        /// itself when the flag is off or the checker refused the plan.</summary>
+        /// <summary>The resolver <see cref="ResolveStorage"/> runs when <see cref="StorageResolver"/> is null.</summary>
+        public TirStorageScope DefaultStorageResolver(TirNode body, FunctionDef owner)
+            => TirStorageResolver.Resolve(body, owner, _storageIdentity ??= new TirArrayIdentity(Compilation),
+                StackArrays || SpanParams ? StorageTarget : null, StackArrays, SpanParams, TwinBodyBorrowed);
+
+        // The borrowed parameters of the span twin whose body is being written (BorrowedTwinWriter), or null.
+        internal IReadOnlyList<ParameterDef> TwinBodyBorrowed;
+
+        // --span-params: the twins the bodies printed so far name (BorrowedTwinWriter checks each was written), and how many
+        // calls were routed to one.
+        internal readonly List<string> RoutedTwins = new List<string>();
+        public int TwinCallsRouted;
+
+        /// <summary>The C# storage target of this writer's compilation (type sizes, call graph), made on first use.</summary>
+        internal CSharpStorageTarget StorageTarget => _storageTarget ??= new CSharpStorageTarget(this);
+
+        // --stack-arrays counts, over every body the resolver covered: slots placed, and the slots refused by reason.
+        public int StackSlotsPlaced;
+        public readonly SortedDictionary<string, int> StackRefusals = new SortedDictionary<string, int>(System.StringComparer.Ordinal);
+
+        public TirNode ResolveStorage(TirFunction tir, TirNode body)
+        {
+            if (!OwnedArrays || body == null)
+                return body;
+            var scope = (StorageResolver ?? DefaultStorageResolver)(body, tir?.Original);
+            StorageBodiesChecked++;
+            var violations = StorageChecker.Check(scope, StorageTarget);
+            if (violations.Count == 0)
+            {
+                StackSlotsPlaced += scope.Plan.Slots.Count;
+                TwinCallsRouted += System.Linq.Enumerable.Count(scope.Body.Descendants(), n => n is TirTwinCall);
+                foreach (var refusal in scope.Plan.Refusals)
+                {
+                    var at = refusal.IndexOf(TirStorageResolver.StackRefusal.Prefix, System.StringComparison.Ordinal);
+                    if (at < 0)
+                        continue;
+                    var reason = refusal.Substring(at + TirStorageResolver.StackRefusal.Prefix.Length);
+                    StackRefusals[reason] = StackRefusals.TryGetValue(reason, out var n) ? n + 1 : 1;
+                }
+                return scope;
+            }
+            var name = $"{tir?.Original?.OwnerType?.Name}.{tir?.Original?.Name}";
+            var text = $"{name}: {string.Join(", ", violations.Select(v => v.Rule))}";
+            if (OwnedArraysStrict)
+                throw new InvalidOperationException($"storage checker refused {text}");
+            StorageRefusals++;
+            StorageRefusalLog.Add(text);
+            return body;
+        }
+        // --span-params (TKT-1152 chunk C8): each function with a borrowable array parameter gets a twin taking
+        // ReadOnlySpan<T>, written last into BorrowedTwins.g.cs (BorrowedTwinWriter). Requires OwnedArrays and is
+        // rejected with statement inlining. No call site uses a twin yet. Default (false) output is unchanged.
+        public bool SpanParams { get => Switches.On("span-params"); set => Switches.Set("span-params", value); }
+        private BorrowedParameters _borrowed;
+        public BorrowedParameters Borrowed => _borrowed ??= new BorrowedParameters(this);
+        // The bodies a twin may be written for, recorded as their originals are written (only when SpanParams is on).
+        internal readonly List<TwinSite> TwinSites = new List<TwinSite>();
+        // --scalar-arrays (TKT-1152 chunk C0): see ConstantCounts. Default (false) output is unchanged.
+        public bool ScalarArrays { get => Switches.On("scalar-arrays"); set => Switches.Set("scalar-arrays", value); }
         // --specialize-callbacks-lean: see LoopOptimizationOptions.SpecializeCallbacksLean. Meaningless without SpecializeCallbacks.
-        public bool SpecializeCallbacksLean { get; set; }
+        public bool SpecializeCallbacksLean { get => Switches.On("specialize-callbacks-lean"); set => Switches.Set("specialize-callbacks-lean", value); }
         public CallbackSpecializations Specializations { get; } = new CallbackSpecializations();
         // The nesting depth of the clone whose body is being optimized (0 for an ordinary body).
         public int SpecializationDepth;
-        public int HoistedInvariants;
-        public int HoistExposingInlines;
-        public int HoistedLoops;
+        public int HoistedInvariants => Stats.HoistedInvariants;
+        public int HoistExposingInlines => Stats.HoistExposingInlines;
+        public int HoistedLoops => Stats.HoistedLoops;
 
         // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
         // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at
@@ -595,6 +767,10 @@ namespace Ara3D.Geometry.CSharpWriter
         public int StatementNodeBudget { get; set; } = 4096;
         public int StatementModuleNodeBudget { get; set; } = 1000000;
         internal int RemainingStatementGrowth = 1000000;
+        int IStatementInlineHost.RemainingStatementGrowth { get => RemainingStatementGrowth; set => RemainingStatementGrowth = value; }
+
+        TirFunction IStatementInlineHost.ExposeForStatementInlining(TirFunction tir, object functionInfo)
+            => TirComponentUnroller.UnrollFunction(TirFusion.Rewrite(tir, Passes), (CSharpFunctionInfo)functionInfo, this);
 
         // When true (--optimize-arrays, optimizer stage 2 increment 1), Map/MapRange call sites in
         // MATERIALIZATION positions (constructor / tuple arguments — results stored into structs —
@@ -602,13 +778,13 @@ namespace Ara3D.Geometry.CSharpWriter
         // intrinsics, so multi-consumed pipelines evaluate each element once instead of per access
         // (see TirArrayMaterializer + docs/design/optimizer-stage2-plan.md). TIR-path only; sound for the
         // pure language, gated on profitability shape. Default (false) output is unchanged.
-        public bool OptimizeArrays;
+        public bool OptimizeArrays { get => Switches.On("optimize-arrays"); set => Switches.Set("optimize-arrays", value); }
 
         // When true, applies the component-op unrolling optimization (--optimize, roadmap P3.1):
         // recognized MapComponents/ZipComponents/Reduce/All*/Any* call sites on statically-known
         // IArrayLike types are rewritten to direct field expressions at emission time (see
         // ComponentUnroller). Default (false) output is byte-identical to the original writer.
-        public bool Optimize;
+        public bool Optimize { get => Switches.On("optimize"); set => Switches.Set("optimize", value); }
 
         // Lazily-built table for ComponentUnroller: concrete IArrayLike type name -> field names.
         private Dictionary<string, IReadOnlyList<string>> _componentFields;
@@ -944,7 +1120,15 @@ namespace Ara3D.Geometry.CSharpWriter
             // names (`{p}_{N}`) draw from process-global counters; reset them per generation so
             // two WriteAll runs in one process produce identical output (a fresh CLI process
             // always started at 0, so file output is unchanged).
+            if (SpanParams && !OwnedArrays)
+                throw new InvalidOperationException("--span-params requires --owned-arrays.");
+            if (StackArrays && !OwnedArrays)
+                throw new InvalidOperationException("--stack-arrays requires --owned-arrays.");
             ResetTemporaryCounters();
+            _optimized.Clear();
+            TwinSites.Clear();
+            RoutedTwins.Clear();
+            _borrowed = null;
             RemainingStatementGrowth = StatementModuleNodeBudget;
 
             WriteFile("NumberProfile.g.cs", WriteNumberProfileCheck);
@@ -988,6 +1172,9 @@ namespace Ara3D.Geometry.CSharpWriter
 
             if (LargeStructs != null)
                 WriteFile(LargeStructPassing.HelperFile, () => { LargeStructPassing.WriteHelper(this); return this; });
+
+            if (SpanParams)
+                BorrowedTwinWriter.WriteFile(this);
 
             FlushTirDumps();
             return this;
@@ -1231,6 +1418,8 @@ namespace Ara3D.Geometry.CSharpWriter
                         $"{cfi.Name}{cfi.ExtensionGenericsString}({cfi.ParameterTypes.JoinStringsWithComma()})"))
                     continue;
                 interfaceWriter.WriteExtensionFunction(cfi);
+                if (SpanParams)
+                    TwinSites.Add(new TwinSite("Extensions", f, null, cfi, NewDefaultTypeWriter));
                 if (ExtensionStyle)
                     this.WriteWithLineStateSync(interfaceWriter.ToString());
                 else

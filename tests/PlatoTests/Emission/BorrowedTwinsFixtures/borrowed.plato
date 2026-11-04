@@ -1,0 +1,35 @@
+// Fixture for BorrowedTwinsTests (TKT-1152 chunk C8a): array parameters over a concrete struct element, in the shapes
+// a span twin can take (every use a Count, an At, or the source of a loop) and the shapes it cannot (the array escapes).
+
+type Pt { X: Integer; Y: Integer; }
+
+library BorrowedProbe
+{
+    // Count only.
+    CountOf(xs: Array<Pt>): Integer => xs.Count;
+
+    // At only.
+    FirstXOf(xs: Array<Pt>): Integer => xs[0].X;
+
+    // The source of a lowered loop.
+    SumXOf(xs: Array<Pt>): Integer => xs.Reduce(0, (a, p) => a + p.X);
+
+    // Two borrowed parameters.
+    BothOf(xs: Array<Pt>, ys: Array<Pt>): Integer => xs[0].X + ys.Count;
+
+    // A moved member (its receiver is the struct) with a borrowed array parameter beside a plain one.
+    ShiftBy(p: Pt, xs: Array<Pt>, k: Integer): Integer => p.X + xs[k].Y;
+
+    // The shape of the spline evaluator's LocalDerivativeSmallDegree: a guard on the count, then reads by index.
+    LocalSmall(local: Array<Pt>, p: Integer, k: Integer): Pt
+        => (p >= 0 && p <= 3 && local.Count == p + 1) ? local[p == 0 ? 0 : k] : local[0];
+
+    // The parameter is captured by the callback of a lowered loop.
+    GatherX(xs: Array<Pt>): Array<Integer> => xs.Count.MapRange(i => xs[i].X);
+
+    // Not borrowable: the array is the result.
+    Same(xs: Array<Pt>): Array<Pt> => xs;
+
+    // Not borrowable: the array is an argument of the structural comparison.
+    SameAs(xs: Array<Pt>, ys: Array<Pt>): Boolean => xs == ys;
+}

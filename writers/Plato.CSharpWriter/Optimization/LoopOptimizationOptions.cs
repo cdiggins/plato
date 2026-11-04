@@ -17,6 +17,48 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     bool HoistInvariants = false,
     bool CacheConstants = false, bool PrimitiveCompare = false)
 {
+    /// <summary>The whole resolved switch set when the options come from the CLI table (<see cref="From"/>); null when a
+    /// caller built the record from its booleans. <see cref="ToSwitches"/> gives a set either way.</summary>
+    public Ara3D.Geometry.Optimizer.SwitchSet Switches { get; init; }
+
+    /// <summary>The options a resolved switch set selects, carrying the set itself.</summary>
+    public static LoopOptimizationOptions From(Ara3D.Geometry.Optimizer.SwitchSet s)
+        => new(s.On("fuse-consumers"), s.On("exact-output"), s.On("concrete-arrays"), s.On("lean-inlining"), s.On("presize"), s.On("in-place"), s.On("share-calls"),
+            LowerScalars: s.On("lower-scalars"),
+            SinkBindings: s.On("sink-bindings"), BindScrutinees: s.On("bind-scrutinee"), ShareCallsWide: s.On("share-calls-wide"),
+            ClosureFree: s.On("closure-free"),
+            HoistInvariants: s.On("hoist-invariants"), CacheConstants: s.On("cache-constants"),
+            PrimitiveCompare: s.On("primitive-compare"))
+        {
+            InParameters = s.On("in-params"),
+            SwitchMatch = s.On("switch-match"),
+            LowerMore = s.On("lower-more"),
+            SpecializeCallbacks = s.On("specialize-callbacks"),
+            SpecializeCallbacksLean = s.On("specialize-callbacks-lean"),
+            ScalarArrays = s.On("scalar-arrays"),
+            OwnedArrays = s.On("owned-arrays"),
+            StackArrays = s.On("stack-arrays"),
+            SpanParams = s.On("span-params"),
+            Switches = s,
+        };
+
+    /// <summary>The switch set: <see cref="Switches"/> when the record came from one, else the set its booleans spell
+    /// (for callers that build the record by hand, such as tests).</summary>
+    public Ara3D.Geometry.Optimizer.SwitchSet ToSwitches()
+    {
+        if (Switches != null) return Switches.Copy();
+        var s = new Ara3D.Geometry.Optimizer.SwitchSet();
+        s.Set("fuse-consumers", FuseConsumers); s.Set("exact-output", ExactOutputAllocation); s.Set("concrete-arrays", ConcreteArrays);
+        s.Set("lean-inlining", LeanInlining); s.Set("presize", Presize); s.Set("in-place", InPlace); s.Set("share-calls", ShareCalls);
+        s.Set("lower-scalars", LowerScalars); s.Set("sink-bindings", SinkBindings); s.Set("bind-scrutinee", BindScrutinees);
+        s.Set("share-calls-wide", ShareCallsWide); s.Set("closure-free", ClosureFree); s.Set("hoist-invariants", HoistInvariants);
+        s.Set("cache-constants", CacheConstants); s.Set("primitive-compare", PrimitiveCompare); s.Set("in-params", InParameters);
+        s.Set("switch-match", SwitchMatch); s.Set("lower-more", LowerMore); s.Set("specialize-callbacks", SpecializeCallbacks);
+        s.Set("specialize-callbacks-lean", SpecializeCallbacksLean); s.Set("scalar-arrays", ScalarArrays); s.Set("owned-arrays", OwnedArrays);
+        s.Set("stack-arrays", StackArrays); s.Set("span-params", SpanParams);
+        return s;
+    }
+
     /// <summary>The elaboration rewrites these switches ask for (the interpreter and the writer elaborate alike).</summary>
     public Ara3D.Geometry.Compiler.Checking.ElaborationOptions Elaboration
         => new(BindScrutinees, SinkBindings);
@@ -34,6 +76,25 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     // --specialize-callbacks (plato-brep lambda removal L2): a lambda literal passed to a function-typed
     // parameter calls a clone of the callee with the lambda body substituted (TirCallbackSpecializer).
     public bool SpecializeCallbacks { get; init; }
+
+    // --owned-arrays (TKT-1152): a storage plan per body, verified by StorageChecker before printing
+    // (TirStorageResolver). Independent of the other switches; the resolver assigns List everywhere until
+    // later chunks add owned storage, so the output is unchanged.
+    public bool OwnedArrays { get; init; }
+
+    // --stack-arrays (TKT-1152 chunk C6): an owned, non-escaping, bounded array of an unmanaged element uses a
+    // hoisted stackalloc slot with a heap fallback. Requires OwnedArrays.
+    public bool StackArrays { get; init; }
+
+    // --span-params (TKT-1152 chunk C8): a function with a borrowable array parameter also gets a twin taking
+    // ReadOnlySpan<T> in BorrowedTwins.g.cs. Requires OwnedArrays; rejected with statement inlining.
+    public bool SpanParams { get; init; }
+
+    // --scalar-arrays (TKT-1152 chunk C0): the constant Count of a fixed-arity struct folds to a literal and
+    // the component arrays built over it are unrolled, so ComponentArray and its consumers need no array
+    // (ConstantCounts). Independent of the other switches; it unrolls through the literal rules, so it is
+    // useful with --fuse.
+    public bool ScalarArrays { get; init; }
     // --specialize-callbacks-lean (requires --specialize-callbacks): no clones for validation bodies (`Check_`),
     // and a lambda that uses its parameter twice gets a helper method instead of a refusal.
     public bool SpecializeCallbacksLean { get; init; }

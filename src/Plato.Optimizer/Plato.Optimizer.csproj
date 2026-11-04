@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- The C#-only passes (callback specialization, component unrolling) use the inliner's helpers. -->
+    <InternalsVisibleTo Include="Plato.CSharpWriter" />
+    <InternalsVisibleTo Include="Plato.CppWriter" />
+    <InternalsVisibleTo Include="PlatoTests" />
+    <InternalsVisibleTo Include="Plato.CppWriter.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
+    <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
+  </ItemGroup>
+</Project>

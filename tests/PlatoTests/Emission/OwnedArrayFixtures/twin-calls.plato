@@ -1,0 +1,105 @@
+// Fixture of the --span-params call routing tests (TKT-1152 C8b): library functions over arrays that a span twin can
+// borrow, callers that hand them an owned array (a Stack slot or a Heap array), and the shapes that stay on the original:
+// a parameter array, a generic callee, a callee whose array is returned. Each law states the result the immutable
+// meaning gives, so a wrong routing changes a value or stops compiling.
+library TwinProbe
+{
+    //== Callees
+
+    // Borrowed: At and Count.
+    Pick(xs: Array<Integer>, k: Integer): Integer => xs[k] * 100 + xs.Count;
+
+    // Borrowed: the source of a loop.
+    SumOf(xs: Array<Integer>): Integer => xs.Reduce(0, (a, x) => a + x);
+
+    // Two borrowed parameters.
+    Both(xs: Array<Integer>, ys: Array<Integer>): Integer => xs[0] + ys.Count;
+
+    // Not borrowed: the array is the result.
+    Same(xs: Array<Integer>): Array<Integer> => xs;
+
+    // Generic: no twin.
+    First(xs: Array<$T>): $T => xs[0];
+
+    // Hands its array on to the borrowed positions of two twins: borrowed in turn.
+    ViaPick(xs: Array<Integer>, k: Integer): Integer => Pick(xs, k) + SumOf(xs);
+
+    // Hands its array on to itself: a call cycle, so not borrowed (no twin).
+    Depth(xs: Array<Integer>, n: Integer): Integer => n < 1 ? xs.Count : Depth(xs, n - 1) + xs[0];
+
+    //== Callers
+
+    // A bounded array passed to two twins and counted: a Stack slot lent to both.
+    StackArg(k: Integer): Integer
+    {
+        var w = 12.MapRange(i => i * k);
+        return Pick(w, 3) + SumOf(w) + w.Count;
+    }
+
+    // An array that is also passed to a callee that keeps it: a Heap array lent to one twin.
+    HeapArg(n: Integer): Integer
+    {
+        var w = n.MapRange(i => i + 1);
+        return Pick(w, 1) + Same(w).Count;
+    }
+
+    // Both borrowed parameters of one call are owned.
+    TwoOwned(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i + 1);
+        var b = 12.MapRange(i => i * 2);
+        return Both(a, b) + a.Count;
+    }
+
+    // One borrowed argument is a parameter: the call stays on the original.
+    MixedOwned(n: Integer, ys: Array<Integer>): Integer
+    {
+        var a = n.MapRange(i => i + 1);
+        return Both(a, ys) + a.Count;
+    }
+
+    // A generic callee: no twin.
+    GenericCall(n: Integer): Integer => First(n.MapRange(i => i + 7));
+
+    // A recursive caller: no slot (a frame per call), but the Heap array is still lent to the twin.
+    RecursiveCaller(n: Integer): Integer
+    {
+        var w = 12.MapRange(i => i + n);
+        return n < 1 ? SumOf(w) : RecursiveCaller(n - 1) + SumOf(w);
+    }
+
+    // The array is lent to a twin that lends it on.
+    PassOnCaller(n: Integer): Integer
+    {
+        var w = n.MapRange(i => i * 2);
+        return ViaPick(w, 2);
+    }
+
+    // The array goes to a recursive callee: the original.
+    DepthCaller(n: Integer): Integer
+    {
+        var w = n.MapRange(i => i + 1);
+        return Depth(w, 2);
+    }
+
+    // A read past the end inside the twin.
+    PastEnd(k: Integer): Integer
+    {
+        var w = 12.MapRange(i => i * k);
+        return Pick(w, 40);
+    }
+
+    //== Laws: the result the immutable meaning gives
+
+    Law_StackArg(): Boolean => StackArg(2).Equals(600 + 12 + 132 + 12);
+    Law_StackArgNegative(): Boolean => StackArg(-1).Equals(-300 + 12 - 66 + 12);
+    Law_HeapArg(): Boolean => HeapArg(5).Equals(205 + 5);
+    Law_HeapArgLarge(): Boolean => HeapArg(40).Equals(240 + 40);
+    Law_TwoOwned(): Boolean => TwoOwned(3).Equals(1 + 12 + 3);
+    Law_MixedOwned(): Boolean => MixedOwned(3, [7, 8]).Equals(1 + 2 + 3);
+    Law_GenericCall(): Boolean => GenericCall(4).Equals(7);
+    Law_RecursiveCaller(): Boolean => RecursiveCaller(2).Equals(234);
+    Law_PassOnCaller(): Boolean => PassOnCaller(5).Equals(425);
+    Law_DepthCaller(): Boolean => DepthCaller(4).Equals(6);
+    Law_PastEnd(): Boolean => PastEnd(3).Equals(0);
+}

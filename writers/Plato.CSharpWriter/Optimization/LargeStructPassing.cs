@@ -33,20 +33,20 @@ public sealed class LargeStructPassing
     public const string HelperFile = "RefAccess.g.cs";
 
     private readonly CSharpWriter _writer;
-    private readonly Dictionary<TypeDef, (int Size, int Align)> _layouts = new();
-    private readonly HashSet<TypeDef> _inProgress = new();
+    private readonly StructLayouts _layouts;
     private readonly Dictionary<string, int> _sizesByName = new();
     private readonly Dictionary<(FunctionDef, TypeDef), bool> _refAccessors = new();
 
     public LargeStructPassing(CSharpWriter writer)
     {
         _writer = writer;
+        _layouts = new StructLayouts(writer);
         foreach (var c in writer.Compilation.ConcreteTypes)
         {
             var def = c.TypeDef;
-            if (!IsGeneratedStruct(def) || def.TypeParameters.Count > 0 || _sizesByName.ContainsKey(def.Name))
+            if (!_layouts.IsGeneratedStruct(def) || def.TypeParameters.Count > 0 || _sizesByName.ContainsKey(def.Name))
                 continue;
-            _sizesByName[def.Name] = Layout(def, null).Size;
+            _sizesByName[def.Name] = _layouts.SizeOf(def);
         }
     }
 
@@ -58,69 +58,6 @@ public sealed class LargeStructPassing
 
     public bool IsLarge(TypeExpression type)
         => type?.Def != null && type.TypeArgs.Count == 0 && IsLarge(type.Def.Name);
-
-    private bool IsGeneratedStruct(TypeDef def)
-        => def != null && !def.IsUnique && !CSharpWriter.IgnoredTypes.Contains(def.Name)
-           && !CSharpWriter.PrimitiveTypes.ContainsKey(def.Name)
-           && _writer.ExtensionPlans != null && _writer.ExtensionPlans.ContainsKey(def);
-
-    // --- sizes ---------------------------------------------------------------------------------
-
-    private (int Size, int Align) Layout(TypeExpression type, IReadOnlyDictionary<string, TypeExpression> bindings)
-    {
-        if (type?.Def == null)
-            return (8, 8);
-        if ((type.IsTypeParameter || type.IsTypeVariable) && bindings != null
-            && bindings.TryGetValue(type.Def.Name, out var bound))
-            return Layout(bound, null);
-        switch (type.Def.Name)
-        {
-            case "Number": return Scalar(_writer.Profile.NumberBits / 8);
-            case "Integer": return Scalar(_writer.Profile.IntegerBits / 8);
-            case "Boolean": return (1, 1);
-            case "Character": return (2, 2);
-        }
-        // A reference (string, array, list, delegate, interface, builder class) or an unknown type
-        // variable: one pointer.
-        if (!IsGeneratedStruct(type.Def))
-            return (8, 8);
-        Dictionary<string, TypeExpression> args = null;
-        if (type.Def.TypeParameters.Count > 0 && type.TypeArgs.Count == type.Def.TypeParameters.Count)
-        {
-            args = new Dictionary<string, TypeExpression>();
-            for (var i = 0; i < type.TypeArgs.Count; i++)
-                args[type.Def.TypeParameters[i].Name] = type.TypeArgs[i];
-        }
-        return Layout(type.Def, args);
-    }
-
-    private static (int Size, int Align) Scalar(int bytes) => (bytes, bytes);
-
-    private (int Size, int Align) Layout(TypeDef def, IReadOnlyDictionary<string, TypeExpression> bindings)
-    {
-        var cacheable = bindings == null;
-        if (cacheable && _layouts.TryGetValue(def, out var known))
-            return known;
-        // A struct cannot contain itself; a cycle can only pass through a reference.
-        if (!_inProgress.Add(def))
-            return (8, 8);
-        var fields = def.IsSum
-            ? new[] { (4, 4) }.Concat(def.Cases.SelectMany(c => c.Fields).Select(f => Layout(f.Type, bindings)))
-            : def.Fields.Select(f => Layout(f.Type, bindings));
-        int offset = 0, align = 1;
-        foreach (var (size, a) in fields)
-        {
-            offset = Round(offset, a) + size;
-            align = System.Math.Max(align, a);
-        }
-        _inProgress.Remove(def);
-        var result = (System.Math.Max(Round(offset, align), 1), align);
-        if (cacheable)
-            _layouts[def] = result;
-        return result;
-    }
-
-    private static int Round(int n, int a) => (n + a - 1) / a * a;
 
     // --- element reads ------------------------------------------------------------------------
 

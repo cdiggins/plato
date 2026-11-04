@@ -142,8 +142,13 @@ namespace Ara3D.Geometry.CppWriter
         public int FunctionsEmitted;
 
         private TirEmitSource _tirSource;
+
+        /// <summary>The one TIR source of this writer, shared with the Cpu pipeline's inliner (TKT-1172). The elaboration
+        /// rewrites follow the switch set as the C# writer's do (--bind-scrutinee, --sink-bindings); their table rows do
+        /// not name the Cpu target yet, so they are off for C++ until lane C1 turns them on.</summary>
         private TirEmitSource TirSource
-            => _tirSource ?? (_tirSource = new TirEmitSource(Compilation));
+            => _tirSource ?? (_tirSource = new TirEmitSource(Compilation, new Compiler.Checking.ElaborationOptions(
+                CpuOptions.Switches?.On("bind-scrutinee") ?? false, CpuOptions.Switches?.On("sink-bindings") ?? false)));
 
         /// <summary>One emitted free function: its prototype, its definition, and the callees it needs.</summary>
         private class Emitted
