@@ -36,4 +36,15 @@ namespace Ara3D.Geometry.CppWriter.Policies
             yield return sb.Append(tail).ToString();
         }
     }
+
+    public static class UnitLinePolicies
+    {
+        /// <summary>The policies with function units limited to <paramref name="lines"/> lines (--cpp-unit-lines=N).</summary>
+        public static CppPolicies WithUnitLines(this CppPolicies p, int lines) => new CppPolicies
+        {
+            Parameters = p.Parameters, Reads = p.Reads, Lambdas = p.Lambdas, Sums = p.Sums, Strings = p.Strings,
+            Units = new LineLimitPartitioner { MaxFunctionLines = lines },
+            Attributes = p.Attributes, Loops = p.Loops,
+        };
+    }
 }

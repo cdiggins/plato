@@ -107,6 +107,13 @@ internal static class GenerateCommand
             Console.Error.WriteLine("--cpp-borrow-min-bytes requires a positive integer.");
             return 1;
         }
+        var unitLinesArg = args.Where(a => a.StartsWith("--cpp-unit-lines=")).Select(a => a.Substring("--cpp-unit-lines=".Length)).LastOrDefault();
+        var unitLines = 20000;
+        if (unitLinesArg != null && (!int.TryParse(unitLinesArg, out unitLines) || unitLines < 1 || !cpu))
+        {
+            Console.Error.WriteLine("--cpp-unit-lines requires a positive integer and --cpp --profile=cpu64i32.");
+            return 1;
+        }
         if ((borrowParams || borrowReads || borrowNonTrivial || borrowMinBytesArg != null) && !cpu)
         {
             Console.Error.WriteLine("--cpp-borrow-params, --cpp-borrow-reads, --cpp-borrow-nontrivial and --cpp-borrow-min-bytes require --cpp --profile=cpu64i32.");
@@ -245,6 +252,8 @@ internal static class GenerateCommand
                     BorrowMinBytes = borrowMinBytes,
                 }
                 : null;
+            if (cpuOptions != null && unitLinesArg != null)
+                cpuOptions = cpuOptions with { Policies = Ara3D.Geometry.CppWriter.Policies.UnitLinePolicies.WithUnitLines(Ara3D.Geometry.CppWriter.Policies.CppPolicies.For(cpuOptions), unitLines) };
             var output = compilation.ToCpp(outputFolder, dialect, inline, cpuOptions);
             logger.Log($"{dialect.DisplayName()} functions emitted: {output.FunctionsEmitted}, skipped: {output.Skipped.Count}");
             GeneratedFiles.Write(output.Files, outputFolder, logger);
