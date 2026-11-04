@@ -311,6 +311,12 @@ namespace Ara3D.Geometry.Compiler.Checking
                     return true;
                 }
 
+                // `==` / `!=` between two values of one record or array type (TKT-1168). The
+                // interpreter (ShapeDerived) and the C# and C++ writers compare these structurally,
+                // as they do a sum (SumEquality); the checker declared no overload for them.
+                if (TryResolveStructuralEquality(oc, args))
+                    return true;
+
                 Report(DiagnosticSeverity.Error, "CHK201",
                     $"No overload of '{oc.Name}' matches argument types ({string.Join(", ", args)})", oc.Origin);
                 return true;
@@ -379,6 +385,34 @@ namespace Ara3D.Geometry.Compiler.Checking
                 Report(DiagnosticSeverity.Error, "CHK203",
                     $"Ambiguous call to '{oc.Name}': {winners.Count} equally-specific overloads with return types {string.Join(" | ", rets)}", oc.Origin);
             }
+            return true;
+        }
+
+        /// <summary>
+        /// Structural <c>Equals</c>/<c>NotEquals</c> on a record or an array (TKT-1168): the call
+        /// types as Boolean when both arguments are the same ground record or array type. Reached only
+        /// after every declared overload failed, so a declared <c>Equals</c> always wins; records nothing
+        /// in <see cref="ResolvedCalls"/>, as the writers emit the comparison from the syntax. Sums
+        /// have their own synthesized overload; functions and bare type parameters get nothing here.
+        /// </summary>
+        private bool TryResolveStructuralEquality(OverloadConstraint oc, IReadOnlyList<TypeExpression> args)
+        {
+            if ((oc.Name != "Equals" && oc.Name != "NotEquals") || args.Count != 2)
+                return false;
+            var left = args[0];
+            var def = left?.Def;
+            if (def == null || HasVar(left) || HasVar(args[1]))
+                return false;
+            var isArray = def.Name == "Array";
+            var isRecord = def.Kind == TypeKind.ConcreteType && !def.IsSum && !def.Name.StartsWith("Function");
+            if (!isArray && !isRecord)
+                return false;
+            if (!Unify(left, args[1], new Dictionary<string, TypeExpression>(Substitution), null, record: false))
+                return false;
+            var boolean = Compilation?.GetTypeDef("Boolean")?.ToTypeExpression();
+            if (boolean == null)
+                return false;
+            Unify(oc.Result, boolean, Substitution, oc.Origin, record: true);
             return true;
         }
 
