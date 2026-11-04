@@ -325,12 +325,30 @@ public partial class TirCppBodyWriter
         var t = ll.TempName;
         var arrayCount = n;
 
+        // --hoist-invariants: the loop's invariant locals are declared once, under `if (count > 0)`, around
+        // the first loop of the kind (the result declarations the emitter wrote before it stay outside), so
+        // a hoisted expression runs only when the first iteration would. The guard's block scopes the locals.
+        var hoistPending = ll.Hoisted.Count > 0;
         void For(string count, System.Action body)
         {
+            var guarded = hoistPending;
+            hoistPending = false;
+            if (guarded)
+            {
+                WriteLine($"if ({count} > 0)");
+                WriteStartBlock();
+                foreach (var hoisted in ll.Hoisted)
+                {
+                    WriteNode(hoisted);
+                    WriteLine(";");
+                }
+            }
             WriteLine($"for (int32_t {i} = 0; {i} < {count}; {i}++)");
             WriteStartBlock();
             body();
             WriteEndBlock();
+            if (guarded)
+                WriteEndBlock();
         }
 
         var fn = ll.Fn == null ? null : TirRewrite.StripCoerce(ll.Fn);

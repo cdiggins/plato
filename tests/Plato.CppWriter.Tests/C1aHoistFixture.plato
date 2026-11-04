@@ -1,0 +1,15 @@
+// Fixture for the hoist-invariants golden sets (TKT-1185), apart from C1aFixture so that file's snapshots stay as they are.
+type HShape = HCircle(Radius: Number) | HRect(Width: Number, Height: Number) | HDot;
+library C1aHoistFixture
+{
+    HArea(s: HShape): Number
+        => match (s) {
+            HCircle(r) => 3.0 * r * r;
+            HRect(w, h) => w * h;
+            HDot => 0.0;
+        };
+    // A call on loop-invariant values moves out of the loop, computed once when the loop runs at all.
+    Hoisty(xs: Array<Number>, t: HShape): Array<Number> => xs.Map((x) => x * HArea(t));
+    // A reduction whose callback has the same invariant.
+    HoistySum(xs: Array<Number>, t: HShape): Number => xs.Reduce(0.0, (acc, x) => acc + x * HArea(t));
+}

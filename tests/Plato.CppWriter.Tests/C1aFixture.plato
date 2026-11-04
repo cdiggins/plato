@@ -1,0 +1,36 @@
+// Fixture for C1aGoldenTests: one small program per rewrite the shared C1-a passes make.
+type Shape = Circle(Radius: Number) | Rect(Width: Number, Height: Number) | Dot;
+library C1aFixture
+{
+    ShapeArea(s: Shape): Number
+        => match (s) {
+            Circle(r) => 3.0 * r * r;
+            Rect(w, h) => w * h;
+            Dot => 0.0;
+        };
+    // bind-scrutinee: the matched value is an call, evaluated once instead of once per case predicate.
+    Same(s: Shape): Shape => s;
+    AreaAt(s: Shape): Number
+        => match (Same(s)) {
+            Circle(q) => 3.0 * q * q;
+            Rect(w, h) => w * h;
+            Dot => 0.0;
+        };
+    // sink-bindings: a local only one arm reads.
+    Pick(c: Boolean, s: Shape): Number
+    {
+        var t = ShapeArea(s) + 1.0;
+        return c ? t : 0.0;
+    }
+    // share-calls: a call the statement repeats.
+    Twice(s: Shape): Number => ShapeArea(s) + ShapeArea(s) * 2.0;
+    // share-calls-wide: a call repeated across the statements of a block.
+    Wide(s: Shape): Number
+    {
+        var a = ShapeArea(s);
+        var b = ShapeArea(s) * 2.0;
+        return a + b;
+    }
+    // share-calls in a lambda body, over an array.
+    Scaled(ss: Array<Shape>, k: Number): Array<Number> => ss.Map((s) => ShapeArea(s) * k + ShapeArea(s));
+}
