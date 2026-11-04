@@ -1,0 +1,21 @@
+Array.FromIntegers: intrinsic without a C++ (cpu64i32) mapping
+Angle.Zero: Angle intrinsic without a C++ (cpu64i32) mapping
+Angle.Lerp: Angle intrinsic without a C++ (cpu64i32) mapping
+Angle.LessThanOrEquals: Angle intrinsic without a C++ (cpu64i32) mapping
+Angle.Amount: Angle intrinsic without a C++ (cpu64i32) mapping
+Angle.FromAmount: Angle intrinsic without a C++ (cpu64i32) mapping
+Angle.Modulo: Angle intrinsic without a C++ (cpu64i32) mapping
+Angle.LessThan: calls 'LessThanOrEquals(Angle, Angle)', which is not emitted
+Angle.GreaterThan: calls 'LessThan(Angle, Angle)', which is not emitted
+Angle.GreaterThanOrEquals: calls 'LessThanOrEquals(Angle, Angle)', which is not emitted
+Angle.Lesser: calls 'LessThanOrEquals(Angle, Angle)', which is not emitted
+Angle.Greater: calls 'LessThanOrEquals(Angle, Angle)', which is not emitted
+Angle.Between: calls 'LessThanOrEquals(Angle, Angle)', which is not emitted
+Angle.Clamp: calls 'Lesser(Angle, Angle)', which is not emitted
+Angle.Min3: calls 'Lesser(Angle, Angle)', which is not emitted
+Angle.Max3: calls 'Greater(Angle, Angle)', which is not emitted
+Angle.MidPoint: calls 'Lerp(Angle, Angle, double)', which is not emitted
+Angle.LerpClamped: calls 'Lerp(Angle, Angle, double)', which is not emitted
+Angle.SmoothLerp: calls 'Lerp(Angle, Angle, double)', which is not emitted
+Angle.LinearSpace: calls 'Lerp(Angle, Angle, double)', which is not emitted
+Angle.LinearSpaceExclusive: calls 'Lerp(Angle, Angle, double)', which is not emitted
