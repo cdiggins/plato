@@ -1,0 +1,189 @@
+// Fixture of the --owned-arrays tests (TKT-1152 C2b): one function per place a lowered-loop temporary can sit,
+// the shapes TKT-505 hit. Each law states the result the immutable meaning gives, so a wrong storage choice
+// changes a value or stops compiling. The temporary of a lowered loop is Heap with the flag on where its
+// consumers read it, and is converted to the interface where they do not.
+type OwnedShape
+    = Short(Width: Integer)
+    | Wide(Width: Integer)
+    | Plain(Offset: Integer);
+
+library OwnedProbe
+{
+    // A checksum that depends on every element and its position.
+    Digest(xs: Array<Integer>): Integer
+        => xs.Reduce(0, (acc, x) => acc * 31 + x);
+
+    //== Consumers that accept the array itself
+
+    // Two owned temporaries are the sources of a Zip: read directly.
+    Zipped(n: Integer): Array<Integer>
+        => n.MapRange(i => i * 2).Zip(n.MapRange(i => i + 1), (x, y) => x * y);
+
+    // One owned temporary is the source of MapPairs.
+    Paired(n: Integer): Array<Integer>
+        => n.MapRange(i => i * i).MapPairs((a, b) => b - a);
+
+    // The temporary is bound to a name and read by Count and by a second lowered loop (Map).
+    ReadTwice(n: Integer): Integer
+    {
+        var kept = n.MapRange(i => i * 3);
+        return kept.Count + kept.Map(x => x * 2)[5];
+    }
+
+    // The temporary is the receiver of At and of Count.
+    DirectReads(n: Integer): Integer
+        => n.MapRange(i => i * 3).At(1) + n.MapRange(i => i).Count;
+
+    // The element of an owned temporary at an index.
+    ReadAt(n: Integer, k: Integer): Integer
+        => n.MapRange(i => i + 1).At(k);
+
+    //== Named locals that hold an owned array (C2c)
+
+    // A let-bound owned array read by two loops, a Count and an At: the local is the array itself.
+    TwoLoops(n: Integer): Integer
+    {
+        var kept = n.MapRange(i => i * 3);
+        var doubled = kept.Map(x => x * 2);
+        var shifted = kept.Map(x => x + 1);
+        return doubled[5] + shifted[2] + kept.Count;
+    }
+
+    // Two reductions over one owned local of Numbers: the paired loop reads the local directly.
+    Paired2(n: Integer, weight: Number): Number
+    {
+        var samples = n.MapRange(i => weight);
+        var sum = samples.Reduce(0.0, (acc, x) => acc + x);
+        var squares = samples.Reduce(1.0, (acc, x) => acc + x * x);
+        return sum * 10.0 + squares;
+    }
+
+    // A FlatMap whose pieces vary in length, over an owned source (no exact output width).
+    FlatMapRagged(n: Integer): Array<Integer>
+    {
+        var kept = n.MapRange(i => i + 1);
+        return kept.FlatMap(x => x.MapRange(i => i * x));
+    }
+
+    // A FlatMap of fixed width over an owned local (exact output).
+    FlatMapExact(n: Integer): Array<Integer>
+    {
+        var kept = n.MapRange(i => i * i);
+        return kept.FlatMap(x => [x, x + 1]);
+    }
+
+    // An owned local that is reassigned stays the interface.
+    Reassigned(n: Integer): Integer
+    {
+        var kept = n.MapRange(i => i);
+        kept = kept.Map(x => x + 1);
+        return kept.Count + kept[1];
+    }
+
+    //== Consumers that need the interface: the shapes of TKT-505
+
+    // The temporary is the seed of a Reduce whose step returns an array.
+    ReduceSeed(n: Integer): Array<Integer>
+        => [1, 2].Reduce(n.MapRange(i => i * 2), (acc, x) => acc.Map(y => y + x));
+
+    // The temporary is the source of a FlatMap.
+    FlatMapSource(n: Integer): Array<Integer>
+        => n.MapRange(i => i).Zip(n.MapRange(i => i + 1), (a, b) => a * b).FlatMap(x => [x, x + 1]);
+
+    // The two arms of a conditional are an owned temporary and a parameter.
+    Join(n: Integer, other: Array<Integer>): Array<Integer>
+        => n > 2 ? n.MapRange(i => i + 10) : other;
+
+    // The arms of a match are owned temporaries.
+    Pick(s: OwnedShape, n: Integer): Array<Integer>
+        => match (s)
+        {
+            Short(w) => n.MapRange(i => i);
+            Wide(w) => n.MapRange(i => i * w);
+            Plain(o) => n.MapRange(i => i + o);
+        };
+
+    Identity(xs: Array<$T>): Array<$T> => xs;
+
+    // The temporary is the argument of a generic function.
+    GenericArgument(n: Integer): Array<Integer>
+        => Identity(n.MapRange(i => i + 3));
+
+    // The temporary is returned.
+    Returned(n: Integer): Array<Integer>
+        => n.MapRange(i => i * i);
+
+    Probe(f: Function1<Integer, Integer>): Integer => f(0);
+
+    // A closure that is passed on reads a let-bound temporary.
+    Captured(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i + 1);
+        return Probe(j => a[j]) + a.Count;
+    }
+
+    // The temporary is made inside a closure.
+    MadeInClosure(n: Integer): Integer
+        => Probe(j => n.MapRange(i => i + j).Count);
+
+    // The array is assigned in a loop that does not declare it.
+    Carried(n: Integer): Array<Integer>
+    {
+        var last = n.MapRange(i => i);
+        var k = 0;
+        while (k < n)
+        {
+            last = n.MapRange(i => i + k);
+            k = k + 1;
+        }
+        return last;
+    }
+
+    // The array lives in one pass of the loop.
+    PerPass(n: Integer): Integer
+    {
+        var total = 0;
+        var k = 0;
+        while (k < n)
+        {
+            var row = n.MapRange(i => k + i);
+            total = total + row.Count + row[0];
+            k = k + 1;
+        }
+        return total;
+    }
+
+    // The temporary is updated in place: the plan keeps it List.
+    Updated(n: Integer): Array<Integer>
+        => n.MapRange(i => i).SetAt(0, 7).SetAt(1, 8);
+
+    //== Laws: the result the immutable meaning gives
+
+    Law_Zipped(): Boolean => Digest(Zipped(4)).Equals(Digest([0, 4, 12, 24]));
+    Law_Paired(): Boolean => Digest(Paired(4)).Equals(Digest([1, 5]));
+    Law_ReadTwice(): Boolean => ReadTwice(6).Equals(36);
+    Law_DirectReads(): Boolean => DirectReads(4).Equals(7);
+    Law_ReadInRange(): Boolean => ReadAt(3, 2).Equals(3);
+    Law_ReduceSeed(): Boolean => Digest(ReduceSeed(3)).Equals(Digest([3, 5, 7]));
+    Law_FlatMapSource(): Boolean => Digest(FlatMapSource(5)).Equals(Digest([0, 1, 2, 3, 6, 7, 12, 13, 20, 21]));
+    Law_JoinOwned(): Boolean => Digest(Join(4, [9])).Equals(Digest([10, 11, 12, 13]));
+    Law_JoinParameter(): Boolean => Digest(Join(1, [9, 8])).Equals(Digest([9, 8]));
+    Law_PickShort(): Boolean => Digest(Pick(Short(2), 4)).Equals(Digest([0, 1, 2, 3]));
+    Law_PickWide(): Boolean => Digest(Pick(Wide(2), 4)).Equals(Digest([0, 2, 4, 6]));
+    Law_PickPlain(): Boolean => Digest(Pick(Plain(100), 2)).Equals(Digest([100, 101]));
+    Law_GenericArgument(): Boolean => Digest(GenericArgument(3)).Equals(Digest([3, 4, 5]));
+    Law_Returned(): Boolean => Digest(Returned(4)).Equals(Digest([0, 1, 4, 9]));
+    Law_TwoLoops(): Boolean => TwoLoops(6).Equals(43);
+    Law_Paired2(): Boolean => Paired2(3, 2.0).Equals(73.0);
+    Law_FlatMapRagged(): Boolean => Digest(FlatMapRagged(3)).Equals(Digest([0, 0, 2, 0, 3, 6]));
+    Law_FlatMapExact(): Boolean => Digest(FlatMapExact(3)).Equals(Digest([0, 1, 1, 2, 4, 5]));
+    Law_Reassigned(): Boolean => Reassigned(4).Equals(6);
+    Law_Captured(): Boolean => Captured(4).Equals(5);
+    Law_MadeInClosure(): Boolean => MadeInClosure(4).Equals(4);
+    Law_Carried(): Boolean => Digest(Carried(4)).Equals(Digest([3, 4, 5, 6]));
+    Law_PerPass(): Boolean => PerPass(3).Equals(12);
+    Law_Updated(): Boolean => Digest(Updated(4)).Equals(Digest([7, 8, 2, 3]));
+
+    // An index past the end faults in every engine; the verdicts must agree.
+    Law_ReadPastTheEnd(): Boolean => ReadAt(3, 5).Equals(0);
+}

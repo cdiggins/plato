@@ -34,6 +34,25 @@ public sealed record LoopOptimizationOptions(bool FuseConsumers = false, bool Ex
     // --specialize-callbacks (plato-brep lambda removal L2): a lambda literal passed to a function-typed
     // parameter calls a clone of the callee with the lambda body substituted (TirCallbackSpecializer).
     public bool SpecializeCallbacks { get; init; }
+
+    // --owned-arrays (TKT-1152): a storage plan per body, verified by StorageChecker before printing
+    // (TirStorageResolver). Independent of the other switches; the resolver assigns List everywhere until
+    // later chunks add owned storage, so the output is unchanged.
+    public bool OwnedArrays { get; init; }
+
+    // --stack-arrays (TKT-1152 chunk C6): an owned, non-escaping, bounded array of an unmanaged element uses a
+    // hoisted stackalloc slot with a heap fallback. Requires OwnedArrays.
+    public bool StackArrays { get; init; }
+
+    // --span-params (TKT-1152 chunk C8): a function with a borrowable array parameter also gets a twin taking
+    // ReadOnlySpan<T> in BorrowedTwins.g.cs. Requires OwnedArrays; rejected with statement inlining.
+    public bool SpanParams { get; init; }
+
+    // --scalar-arrays (TKT-1152 chunk C0): the constant Count of a fixed-arity struct folds to a literal and
+    // the component arrays built over it are unrolled, so ComponentArray and its consumers need no array
+    // (ConstantCounts). Independent of the other switches; it unrolls through the literal rules, so it is
+    // useful with --fuse.
+    public bool ScalarArrays { get; init; }
     // --specialize-callbacks-lean (requires --specialize-callbacks): no clones for validation bodies (`Check_`),
     // and a lambda that uses its parameter twice gets a helper method instead of a refusal.
     public bool SpecializeCallbacksLean { get; init; }

@@ -47,6 +47,11 @@ public static class WriterSwitches
         new("lower-more", true, "loops"),
         new("specialize-callbacks", true),
         new("specialize-callbacks-lean", false, "specialize-callbacks"),
+        // TKT-1152: off by default until each is measured and pinned in plato-brep.
+        new("scalar-arrays", false),
+        new("owned-arrays", false),
+        new("stack-arrays", false, "owned-arrays"),
+        new("span-params", false, "owned-arrays"),
     };
 
     public static bool IsSwitch(string name) => Table.Any(s => s.Name == name);
@@ -99,6 +104,10 @@ public static class WriterSwitches
             LowerMore = s["lower-more"],
             SpecializeCallbacks = s["specialize-callbacks"],
             SpecializeCallbacksLean = s["specialize-callbacks-lean"],
+            ScalarArrays = s["scalar-arrays"],
+            OwnedArrays = s["owned-arrays"],
+            StackArrays = s["stack-arrays"],
+            SpanParams = s["span-params"],
         };
 }
 

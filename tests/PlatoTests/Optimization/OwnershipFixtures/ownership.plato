@@ -1,0 +1,71 @@
+// Fixture of OwnershipTests: each function holds one array binding whose facts the test states.
+library OwnershipProbe
+{
+    // A new array read twice and given to no one.
+    Fresh(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i);
+        return a[0] + a.Count;
+    }
+
+    // b names the array a names; c is assigned it after a fresh declaration.
+    Aliased(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i);
+        var b = a;
+        var c = n.MapRange(i => 2 * i);
+        c = a;
+        return b[0] + c[0];
+    }
+
+    Probe(f: Function1<Integer, Integer>): Integer => f(0);
+
+    // A closure that is passed on reads a.
+    RealLambda(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i);
+        return Probe(j => a[j]);
+    }
+
+    // The lambda is written into the loop body: a is read there, not captured.
+    LoopCallback(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i);
+        var b = n.MapRange(i => a[i] + 1);
+        return b[0];
+    }
+
+    // The array is threaded through a loop that does not declare it.
+    Carried(n: Integer): Array<Integer>
+    {
+        var xs = n.MapRange(i => 0);
+        var k = 0;
+        while (k < n)
+        {
+            xs = xs.SetAt(k, k);
+            k = k + 1;
+        }
+        return xs;
+    }
+
+    // The array lives in one pass of the loop.
+    PerPass(n: Integer): Integer
+    {
+        var total = 0;
+        var k = 0;
+        while (k < n)
+        {
+            var row = n.MapRange(i => k);
+            total = total + row[0];
+            k = k + 1;
+        }
+        return total;
+    }
+
+    // A parameter belongs to the caller; one closure reads it.
+    OfParameter(a: Array<Integer>): Integer => Probe(j => a[j]);
+
+    // The temporary of the lowered MapRange holds a new array that one place names.
+    OfTemp(n: Integer): Array<Integer>
+        => n.MapRange(i => i).SetAt(0, 7);
+}

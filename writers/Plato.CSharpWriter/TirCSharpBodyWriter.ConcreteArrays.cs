@@ -1,4 +1,5 @@
 // Spells array Count and element reads for --concrete-arrays (TKT-1093).
+using System.Collections.Generic;
 using Ara3D.Geometry.Compiler.Checking;
 
 namespace Ara3D.Geometry.CSharpWriter;
@@ -13,13 +14,82 @@ public partial class TirCSharpBodyWriter
     // the array directly; any other list, and an index out of range, takes the interface path, so
     // values and exceptions are unchanged. Off, the spelling is the interface's own.
 
-    /// <summary>The C# for a list's element count, as an <c>int</c>.</summary>
-    private string ListCount(string list)
-        => _tw.Writer.ConcreteArrays ? $"{CSharpWriter.ConcreteArrayAccessClass}.Count({list})" : $"{list}.Count";
+    /// <summary>The C# for a list's element count, as an <c>int</c>. A Heap, Stack or Borrowed receiver is a
+    /// <c>T[]</c> or a span and says <c>.Length</c>, with no type test (--owned-arrays).</summary>
+    private string ListCount(string list, ArrayStorage storage = ArrayStorage.List)
+        => storage != ArrayStorage.List ? $"{list}.Length"
+            : _tw.Writer.ConcreteArrays ? $"{CSharpWriter.ConcreteArrayAccessClass}.Count({list})" : $"{list}.Count";
 
-    /// <summary>The C# for a list's element at an <c>int</c> index.</summary>
-    private string ListAt(string list, string index)
-        => _tw.Writer.ConcreteArrays ? $"{CSharpWriter.ConcreteArrayAccessClass}.At({list}, {index})" : $"{list}[{index}]";
+    /// <summary>The C# for a list's element at an <c>int</c> index. A Heap, Stack or Borrowed receiver is indexed
+    /// directly: an index out of range throws <c>IndexOutOfRangeException</c> where the interface throws
+    /// <c>ArgumentOutOfRangeException</c> (plan open question 1).</summary>
+    private string ListAt(string list, string index, ArrayStorage storage = ArrayStorage.List)
+        => storage != ArrayStorage.List ? $"{list}[{index}]"
+            : _tw.Writer.ConcreteArrays ? $"{CSharpWriter.ConcreteArrayAccessClass}.At({list}, {index})" : $"{list}[{index}]";
+
+    /// <summary>The storage of the array a node produces, as the storage plan recorded it (List without a plan).
+    /// A coercion between two array types prints as its inner node, so it has the inner node's storage.</summary>
+    private ArrayStorage StorageOf(TirNode node)
+        => _plan == null || node == null ? ArrayStorage.List
+            : node is TirCoerce c && TirRewrite.IsListType(c.Type) && TirRewrite.IsListType(TirRewrite.StripCoerce(c.Inner)?.Type)
+                ? StorageOf(c.Inner)
+                : _plan.Of(node);
+
+    // The C# element type each lowered array loop declared its temporary with, and each Heap alias local of one, for
+    // the declaration of the alias and the cast of a Represent.
+    private readonly Dictionary<string, string> _tempElementTypes = new(System.StringComparer.Ordinal);
+    private readonly Dictionary<Ara3D.Geometry.Compiler.Symbols.VariableDef, string> _aliasElementTypes = new();
+
+    /// <summary>The C# element type of the Heap array a node names (a lowered-loop temporary or a Heap alias local
+    /// of one), or null when the node is neither.</summary>
+    private string HeapElementType(TirNode node)
+        => TirRewrite.StripCoerce(node) switch
+        {
+            TirTempRef t when _tempElementTypes.TryGetValue(t.Name, out var named) => named,
+            TirVariable { Def: { } def } when _aliasElementTypes.TryGetValue(def, out var aliased) => aliased,
+            _ => null,
+        };
+
+    /// <summary>Records <paramref name="def"/> as an owned alias (Heap or Stack) with the given element type and returns
+    /// its declared type: <c>T[]</c>, or <c>Span&lt;T&gt;</c> spelled out (never <c>var</c>).</summary>
+    private string RecordOwnedAlias(Ara3D.Geometry.Compiler.Symbols.VariableDef def, string element)
+    {
+        _aliasElementTypes[def] = element;
+        return _plan?.Of(def) == ArrayStorage.Stack ? $"System.Span<{element}>" : $"{element}[]";
+    }
+
+    /// <summary>Whether the plan holds a local as an array the body owns (Heap or Stack).</summary>
+    private bool IsOwnedLocal(Ara3D.Geometry.Compiler.Symbols.VariableDef def)
+        => _plan?.Of(def) is ArrayStorage.Heap or ArrayStorage.Stack;
+
+    /// <summary>Prints a <see cref="TirRepresent"/> as the conversion the table of the plan names: Heap to List is a
+    /// cast to the interface, Heap to Borrowed wraps the array, Stack to Borrowed casts the span.</summary>
+    private void WriteRepresent(TirRepresent r)
+    {
+        var elem = HeapElementType(r.Inner) ?? CSharpTypeName(TirRewrite.ListElementType(r.Type));
+        var (open, close) = (r.From, r.To) switch
+        {
+            (ArrayStorage.Heap, ArrayStorage.List) => ($"((IReadOnlyList<{elem}>)", ")"),
+            (ArrayStorage.Heap, ArrayStorage.Borrowed) => ($"new System.ReadOnlySpan<{elem}>(", ")"),
+            (ArrayStorage.Stack, ArrayStorage.Borrowed) => ($"((System.ReadOnlySpan<{elem}>)", ")"),
+            _ => throw new System.InvalidOperationException($"no conversion from {r.From} to {r.To}"),
+        };
+        Write(open);
+        WriteNode(r.Inner);
+        Write(close);
+    }
+
+    /// <summary>Whether the printer has a case for the node's class (as an expression or a statement), so printing it
+    /// never falls through to <c>/*?*/</c>. <see cref="StorageChecker"/> refuses a body under --owned-arrays that
+    /// holds a node for which this is false (rule S8): an array-bearing node without a case would otherwise print as a
+    /// comment and leave a hole in the program. A printer case for a new node class is added here.</summary>
+    public static bool PrintsAsNode(TirNode node)
+        => node is null or TirLiteral or TirParameter or TirVariable or TirTypeRef or TirLet or TirDefault or TirName
+            or TirCall or TirCoerce or TirSpecializedCall or TirTwinCall or TirInvoke or TirConditional or TirNew or TirArray or TirAssign
+            or TirLambda or TirComponentAccess or TirConstructorCall or TirTempRef or TirRepresent or TirInPlaceSet
+            or TirBooleanChain or TirUnresolved
+            or TirInlineRegion or TirInlineExit or TirInlineBinding or TirBlock or TirReturn or TirIf or TirGuardedLoop
+            or TirLoop or TirLoweredLoop or TirMultiReduction;
 
     /// <summary>Whether a node's emitted C# type is IReadOnlyList: a Plato Array that is not a
     /// struct coerced to one (a struct would be boxed by the helper's interface parameter).</summary>

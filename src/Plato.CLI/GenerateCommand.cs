@@ -63,10 +63,15 @@ internal static class GenerateCommand
             Console.Error.WriteLine("--specialize-callbacks-lean requires --specialize-callbacks.");
             return 1;
         }
-        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks)
+        if ((loopOptimizations.CacheConstants || loopOptimizations.PrimitiveCompare || loopOptimizations.SpecializeCallbacks || loopOptimizations.ScalarArrays || loopOptimizations.OwnedArrays)
             && (typeScript || rust || glsl || cpp || cuda))
         {
-            Console.Error.WriteLine("--cache-constants, --primitive-compare and --specialize-callbacks apply to C# generation only.");
+            Console.Error.WriteLine("--cache-constants, --primitive-compare, --specialize-callbacks, --scalar-arrays and --owned-arrays apply to C# generation only.");
+            return 1;
+        }
+        if (loopOptimizations.SpanParams && (!loopOptimizations.OwnedArrays || statementInlining != null || typeScript || rust || glsl || cpp || cuda))
+        {
+            Console.Error.WriteLine("--span-params requires C# generation with --owned-arrays and cannot be combined with --inline-policy.");
             return 1;
         }
         if (loopOptimizations.HoistInvariants && (!loops || typeScript || rust || glsl || cpp || cuda))
@@ -279,10 +284,19 @@ internal static class GenerateCommand
             }
             if (loopOptimizations.HoistInvariants)
                 logger.Log($"Loop invariants hoisted: {output.HoistedInvariants} in {output.HoistedLoops} loops ({output.HoistExposingInlines} forwarding calls expanded)");
-            if (loopOptimizations.SpecializeCallbacks)
+            if (loopOptimizations.SpanParams)
+                logger.Log($"Span twins: {output.Borrowed.TwinsWritten} written borrowing {output.Borrowed.ParametersBorrowed} parameters; refused: {output.Borrowed.Refusals.Count}");
+            if (loopOptimizations.SpecializeCallbacks || loopOptimizations.ScalarArrays || loopOptimizations.OwnedArrays)
             {
                 var s = output.Specializations;
                 logger.Log($"Callbacks specialized: {s.SitesSpecialized} sites into {s.Clones.Count} clones; refused: {string.Join(", ", s.Refusals.Select(r => $"{r.Key} {r.Value}"))}");
+            }
+            if (loopOptimizations.OwnedArrays)
+            {
+                // TKT-1152: the storage layer's counts; a checker violation prints that body with List storage.
+                logger.Log($"Storage: {output.StorageBodiesChecked} bodies checked, checker refusals {output.StorageRefusals}, stack slots {output.StackSlotsPlaced}, twin calls routed {output.TwinCallsRouted}; stack refused: {string.Join(", ", output.StackRefusals.Select(r => $"{r.Key} {r.Value}"))}");
+                foreach (var refusal in output.StorageRefusalLog)
+                    logger.Log($"  storage refused: {refusal}");
             }
             if (output.DegradedBodies.Count > 0)
             {

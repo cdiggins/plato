@@ -43,6 +43,8 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // --in-params (null when off): see LargeStructPassing.
     private LargeStructPassing _largeStructs => _tw.Writer.LargeStructs;
     private HashSet<VariableDef> _nonRefLocals;
+    // --owned-arrays: the storage plan of the body being written (null when the flag is off or the plan was refused).
+    private StoragePlan _plan;
 
     public TirCSharpBodyWriter(CSharpTypeWriter tw, TirFunction tir, bool isStatic = false,
         CSharpFunctionInfo fi = null)
@@ -248,7 +250,9 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
         // The reference writer hoists lambda-captured references into `var _var{N} = x;` blocks
         // before emitting (RewriteLambdasCapturingVars); mirror it, sharing the same counter.
-        var body = TirLambdaCaptureRewriter.Rewrite(_tir.Body);
+        var body = _tw.Writer.ResolveStorage(_tir, TirLambdaCaptureRewriter.Rewrite(_tir.Body));
+        if (body is TirStorageScope scope)
+            (_plan, body) = (scope.Plan, scope.Body);
         PlanLocalNames(body);
         var isBlock = body is TirBlock;
         if (_largeStructs != null)
@@ -319,7 +323,10 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     WriteLine(";");
                     return;
                 }
-                Write(CSharpTypeName(binding.Type));
+                Write(HeapElementType(binding.Value) is { } heapElement && IsOwnedLocal(binding.Def)
+                    ? RecordOwnedAlias(binding.Def, heapElement)
+                    : _plan?.Of(binding.Def) == ArrayStorage.Borrowed ? "var"   // a copy of a borrowed span parameter
+                    : CSharpTypeName(binding.Type));
                 Write($" {CSharpTypeWriter.Identifier(binding.Def.Name)} = ");
                 WriteNode(binding.Value);
                 WriteLine(";");
@@ -360,7 +367,9 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     WriteLine(";");
                     return;
                 }
-                Write("var ");
+                // A local the plan holds as Heap is the array itself, typed as one so that every read is direct.
+                Write(LetDeclaredType(let));
+                Write(" ");
                 Write(LocalName(let.Def));
                 Write(" = ");
                 WriteNode(let.Value);
@@ -539,8 +548,24 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         return true;
     }
 
+    // `var`, or the array type of a local the plan holds as Heap, so that every read of it is direct.
+    private string LetDeclaredType(TirLet let)
+        => IsOwnedLocal(let.Def)
+            ? RecordOwnedAlias(let.Def, HeapElementType(let.Value) ?? CSharpTypeName(TirRewrite.ListElementType(let.Type)))
+            : "var";
+
     private void WriteRefAt(TirCall read)
     {
+        if (StorageOf(read.Args[0]) != ArrayStorage.List)
+        {
+            // A Heap array element is a variable: `ref x[i]` needs no accessor, and an argument or receiver
+            // passed by `in` reads it in place. The caller supplies any `ref`.
+            WriteNode(read.Args[0]);
+            Write("[");
+            WriteIndexArgument(read.Args[1]);
+            Write("]");
+            return;
+        }
         Write($"{LargeStructPassing.HelperClass}.RefAt(");
         WriteNode(read.Args[0]);
         Write(", ");
@@ -609,7 +634,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // WriteStatement); the reference writes the same `var` form.
                 if (TryWriteRefLocal(let))
                     return;
-                Write($"var {LocalName(let.Def)} = ");
+                Write($"{LetDeclaredType(let)} {LocalName(let.Def)} = ");
                 WriteNode(let.Value);
                 return;
 
@@ -642,6 +667,15 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // --specialize-callbacks: a clone of the callee with the lambda substituted (TirCallbackSpecializer).
                 Write($"{CallbackSpecializations.ClassName}.{specialized.Name}(");
                 WriteArgs(specialized.Args);
+                Write(")");
+                return;
+
+            case TirTwinCall twin:
+                // --span-params: a call routed to the span twin of its callee (BorrowedTwinWriter), its borrowed arguments
+                // already converted to ReadOnlySpan by TirRepresent nodes.
+                _tw.Writer.RoutedTwins.Add(twin.TwinName);
+                Write($"{twin.TwinClass}.{twin.TwinName}(");
+                WriteArgs(twin.Call.Args);
                 Write(")");
                 return;
 
@@ -777,6 +811,10 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
             case TirTempRef tr:
                 Write(tr.Name);
+                return;
+
+            case TirRepresent represent:
+                WriteRepresent(represent);
                 return;
 
             case TirInPlaceSet ips:
@@ -1083,6 +1121,14 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (name == "Count" && args.Count == 1
             && TirRewrite.StripCoerce(args[0])?.Type?.Name == "Array")
         {
+            if (StorageOf(args[0]) != ArrayStorage.List)
+            {
+                // A Heap, Stack or Borrowed receiver is a T[] or a span: its length, no type test.
+                Write("((Integer)");
+                WritePostfixReceiver(args[0]);
+                Write(".Length)");
+                return;
+            }
             if (_tw.Writer.ConcreteArrays && IsInterfaceList(args[0]))
             {
                 Write($"((Integer){CSharpWriter.ConcreteArrayAccessClass}.Count(");
@@ -1112,7 +1158,7 @@ public partial class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write(")");
                 return;
             }
-            if (_tw.Writer.ConcreteArrays && args.Count == 2 && IsInterfaceList(args[0]))
+            if (_tw.Writer.ConcreteArrays && args.Count == 2 && StorageOf(args[0]) == ArrayStorage.List && IsInterfaceList(args[0]))
             {
                 Write($"{CSharpWriter.ConcreteArrayAccessClass}.At(");
                 WriteNode(args[0]);

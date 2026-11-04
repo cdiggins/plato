@@ -249,6 +249,8 @@ namespace Ara3D.Geometry.CSharpWriter
             Phase("inline (layer 7)");
             tir = TirCallbackSpecializer.Rewrite(tir, this, fi?.OwnerType?.Name);
             Phase("specialize-callbacks / clone the callee per lambda shape");
+            tir = ConstantCounts.Rewrite(tir, this);
+            Phase("scalar-arrays / constant counts and component arrays");
             tir = TirFusion.Rewrite(tir, this);
             Phase("fuse / combinator fusion (layer 7b)");
             tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
@@ -282,6 +284,97 @@ namespace Ara3D.Geometry.CSharpWriter
             TirInliner.NextRenameId = 0;
             TirFusion.NextId = 0;
             TirLoopLowerer.NextId = 0;
+        }
+
+        /// <summary>The four per-thread counters behind generated temporary names, as one value.
+        /// <see cref="Save"/> reads them; <see cref="Restore"/> writes them back.</summary>
+        public readonly struct TemporaryCounters
+        {
+            private readonly int _symbol, _inlinerRename, _fusion, _loops;
+
+            private TemporaryCounters(int symbol, int inlinerRename, int fusion, int loops)
+            {
+                _symbol = symbol;
+                _inlinerRename = inlinerRename;
+                _fusion = fusion;
+                _loops = loops;
+            }
+
+            public static TemporaryCounters Save()
+                => new TemporaryCounters(SymbolRewriter.NextId, TirInliner.NextRenameId, TirFusion.NextId, TirLoopLowerer.NextId);
+
+            public void Restore()
+            {
+                SymbolRewriter.NextId = _symbol;
+                TirInliner.NextRenameId = _inlinerRename;
+                TirFusion.NextId = _fusion;
+                TirLoopLowerer.NextId = _loops;
+            }
+        }
+
+        private sealed class OptimizedEntry
+        {
+            public TirFunction Tir;
+            public CSharpFunctionInfo Info;
+            public TemporaryCounters After;
+        }
+
+        private sealed class ReferencePairComparer : IEqualityComparer<(FunctionDef, TypeDef)>
+        {
+            public bool Equals((FunctionDef, TypeDef) a, (FunctionDef, TypeDef) b)
+                => ReferenceEquals(a.Item1, b.Item1) && ReferenceEquals(a.Item2, b.Item2);
+
+            public int GetHashCode((FunctionDef, TypeDef) k)
+                => System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(k.Item1) * 31
+                   + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(k.Item2);
+        }
+
+        private readonly Dictionary<(FunctionDef, TypeDef), OptimizedEntry> _optimized
+            = new Dictionary<(FunctionDef, TypeDef), OptimizedEntry>(new ReferencePairComparer());
+
+        /// <summary>The optimized TIR of a bodied function at a concrete type (ground TIR, else the
+        /// open-generic one, else for a null type the static one; null when none exists), memoised per (function, type). For inspecting a
+        /// callee while another body is being emitted: the passes run, and the temporary counters are
+        /// put back as they were, so the caller's numbering is untouched (TKT-1137). The passes
+        /// themselves restart the counters, so the tree is the one the function's own emission gets.
+        /// <paramref name="info"/> is the signature record the component unroller reads; pass it when
+        /// known. A tree first built without one is rebuilt when a later request supplies one.</summary>
+        public TirFunction OptimizedTir(FunctionDef function, TypeDef concreteType, CSharpFunctionInfo info = null)
+        {
+            var saved = TemporaryCounters.Save();
+            try
+            {
+                return OptimizedEntryFor(function, concreteType, info)?.Tir;
+            }
+            finally
+            {
+                saved.Restore();
+            }
+        }
+
+        /// <summary>The same memoised tree for the body-emit site, which runs the body writer next:
+        /// leaves the counters where the passes left them (also when the tree was memoised earlier),
+        /// exactly as <see cref="RunOptimizerPasses"/> does.</summary>
+        internal TirFunction OptimizedTirForEmission(FunctionDef function, TypeDef concreteType, CSharpFunctionInfo info)
+        {
+            var entry = OptimizedEntryFor(function, concreteType, info);
+            entry?.After.Restore();
+            return entry?.Tir;
+        }
+
+        private OptimizedEntry OptimizedEntryFor(FunctionDef function, TypeDef concreteType, CSharpFunctionInfo info)
+        {
+            var key = (function, concreteType);
+            if (_optimized.TryGetValue(key, out var hit) && (info == null || hit.Info != null))
+                return hit;
+            var tir = function.Body != null
+                    ? TryGetGroundTir(function, concreteType) ?? TryGetOpenGenericTir(function, concreteType)
+                      ?? (concreteType == null ? TryGetStaticTir(function) : null)
+                    : null;
+            if (tir == null)
+                return null;
+            tir = RunOptimizerPasses(tir, info);
+            return _optimized[key] = new OptimizedEntry { Tir = tir, Info = info, After = TemporaryCounters.Save() };
         }
 
         private static string SanitizeFileName(string s)
@@ -573,6 +666,86 @@ namespace Ara3D.Geometry.CSharpWriter
         // its captures as extra parameters (TirCallbackSpecializer); the clones are written to
         // CallbackSpecializations.g.cs. Extension style only. Default (false) output is unchanged.
         public bool SpecializeCallbacks { get; set; }
+
+        // --owned-arrays (TKT-1152): the storage layer. At the body writer's entry (after its own capture rewrite)
+        // TirStorageResolver covers the body with a storage plan and StorageChecker verifies it before anything
+        // prints; a violation discards the plan for that body and counts a refusal. Default (false) output is unchanged.
+        public bool OwnedArrays { get; set; }
+        // --stack-arrays (TKT-1152 chunk C6): the resolver may give a bounded owned array a hoisted stackalloc slot.
+        // Requires OwnedArrays. Default (false) output is unchanged.
+        public bool StackArrays { get; set; }
+        // Tests only: a checker violation throws instead of counting a refusal.
+        public bool OwnedArraysStrict { get; set; }
+        public int StorageBodiesChecked;
+        public int StorageRefusals;
+        public readonly List<string> StorageRefusalLog = new List<string>();
+        // The resolver to run in place of TirStorageResolver; set only by tests that need a plan the checker refuses.
+        public System.Func<TirNode, FunctionDef, TirStorageScope> StorageResolver { get; set; }
+        private CSharpStorageTarget _storageTarget;
+        private TirArrayIdentity _storageIdentity;
+
+        /// <summary>Passes 7 and 8 of the pipeline: resolves the storage of <paramref name="body"/> (already
+        /// capture-rewritten) and checks it. Returns the <see cref="TirStorageScope"/> to print, or the body
+        /// itself when the flag is off or the checker refused the plan.</summary>
+        /// <summary>The resolver <see cref="ResolveStorage"/> runs when <see cref="StorageResolver"/> is null.</summary>
+        public TirStorageScope DefaultStorageResolver(TirNode body, FunctionDef owner)
+            => TirStorageResolver.Resolve(body, owner, _storageIdentity ??= new TirArrayIdentity(Compilation),
+                StackArrays || SpanParams ? StorageTarget : null, StackArrays, SpanParams, TwinBodyBorrowed);
+
+        // The borrowed parameters of the span twin whose body is being written (BorrowedTwinWriter), or null.
+        internal IReadOnlyList<ParameterDef> TwinBodyBorrowed;
+
+        // --span-params: the twins the bodies printed so far name (BorrowedTwinWriter checks each was written), and how many
+        // calls were routed to one.
+        internal readonly List<string> RoutedTwins = new List<string>();
+        public int TwinCallsRouted;
+
+        /// <summary>The C# storage target of this writer's compilation (type sizes, call graph), made on first use.</summary>
+        internal CSharpStorageTarget StorageTarget => _storageTarget ??= new CSharpStorageTarget(this);
+
+        // --stack-arrays counts, over every body the resolver covered: slots placed, and the slots refused by reason.
+        public int StackSlotsPlaced;
+        public readonly SortedDictionary<string, int> StackRefusals = new SortedDictionary<string, int>(System.StringComparer.Ordinal);
+
+        public TirNode ResolveStorage(TirFunction tir, TirNode body)
+        {
+            if (!OwnedArrays || body == null)
+                return body;
+            var scope = (StorageResolver ?? DefaultStorageResolver)(body, tir?.Original);
+            StorageBodiesChecked++;
+            var violations = StorageChecker.Check(scope, StorageTarget);
+            if (violations.Count == 0)
+            {
+                StackSlotsPlaced += scope.Plan.Slots.Count;
+                TwinCallsRouted += System.Linq.Enumerable.Count(scope.Body.Descendants(), n => n is TirTwinCall);
+                foreach (var refusal in scope.Plan.Refusals)
+                {
+                    var at = refusal.IndexOf(TirStorageResolver.StackRefusal.Prefix, System.StringComparison.Ordinal);
+                    if (at < 0)
+                        continue;
+                    var reason = refusal.Substring(at + TirStorageResolver.StackRefusal.Prefix.Length);
+                    StackRefusals[reason] = StackRefusals.TryGetValue(reason, out var n) ? n + 1 : 1;
+                }
+                return scope;
+            }
+            var name = $"{tir?.Original?.OwnerType?.Name}.{tir?.Original?.Name}";
+            var text = $"{name}: {string.Join(", ", violations.Select(v => v.Rule))}";
+            if (OwnedArraysStrict)
+                throw new InvalidOperationException($"storage checker refused {text}");
+            StorageRefusals++;
+            StorageRefusalLog.Add(text);
+            return body;
+        }
+        // --span-params (TKT-1152 chunk C8): each function with a borrowable array parameter gets a twin taking
+        // ReadOnlySpan<T>, written last into BorrowedTwins.g.cs (BorrowedTwinWriter). Requires OwnedArrays and is
+        // rejected with statement inlining. No call site uses a twin yet. Default (false) output is unchanged.
+        public bool SpanParams { get; set; }
+        private BorrowedParameters _borrowed;
+        public BorrowedParameters Borrowed => _borrowed ??= new BorrowedParameters(this);
+        // The bodies a twin may be written for, recorded as their originals are written (only when SpanParams is on).
+        internal readonly List<TwinSite> TwinSites = new List<TwinSite>();
+        // --scalar-arrays (TKT-1152 chunk C0): see ConstantCounts. Default (false) output is unchanged.
+        public bool ScalarArrays { get; set; }
         // --specialize-callbacks-lean: see LoopOptimizationOptions.SpecializeCallbacksLean. Meaningless without SpecializeCallbacks.
         public bool SpecializeCallbacksLean { get; set; }
         public CallbackSpecializations Specializations { get; } = new CallbackSpecializations();
@@ -944,7 +1117,15 @@ namespace Ara3D.Geometry.CSharpWriter
             // names (`{p}_{N}`) draw from process-global counters; reset them per generation so
             // two WriteAll runs in one process produce identical output (a fresh CLI process
             // always started at 0, so file output is unchanged).
+            if (SpanParams && !OwnedArrays)
+                throw new InvalidOperationException("--span-params requires --owned-arrays.");
+            if (StackArrays && !OwnedArrays)
+                throw new InvalidOperationException("--stack-arrays requires --owned-arrays.");
             ResetTemporaryCounters();
+            _optimized.Clear();
+            TwinSites.Clear();
+            RoutedTwins.Clear();
+            _borrowed = null;
             RemainingStatementGrowth = StatementModuleNodeBudget;
 
             WriteFile("NumberProfile.g.cs", WriteNumberProfileCheck);
@@ -988,6 +1169,9 @@ namespace Ara3D.Geometry.CSharpWriter
 
             if (LargeStructs != null)
                 WriteFile(LargeStructPassing.HelperFile, () => { LargeStructPassing.WriteHelper(this); return this; });
+
+            if (SpanParams)
+                BorrowedTwinWriter.WriteFile(this);
 
             FlushTirDumps();
             return this;
@@ -1231,6 +1415,8 @@ namespace Ara3D.Geometry.CSharpWriter
                         $"{cfi.Name}{cfi.ExtensionGenericsString}({cfi.ParameterTypes.JoinStringsWithComma()})"))
                     continue;
                 interfaceWriter.WriteExtensionFunction(cfi);
+                if (SpanParams)
+                    TwinSites.Add(new TwinSite("Extensions", f, null, cfi, NewDefaultTypeWriter));
                 if (ExtensionStyle)
                     this.WriteWithLineStateSync(interfaceWriter.ToString());
                 else

@@ -16,11 +16,11 @@ public class WriterSwitchesTests
     private static string[] On(ResolvedWriterSwitches r) => Pinned.Where(n => r[n]).ToArray();
 
     [Test]
-    public void TableDefaultsExactlyTheTwentyOneRegenerationSwitchesOn()
+    public void TableHoldsTheTwentyOneRegenerationSwitchesDefaultedOnAndTheUnpinnedOff()
     {
+        // --specialize-callbacks-lean (not yet measured as a set) and TKT-1152's switches stay off by default until plato-brep measures and pins them.
         Assert.That(WriterSwitches.Table.Where(s => s.Default).Select(s => s.Name), Is.EquivalentTo(Pinned));
-        // A switch not yet measured as a set (--specialize-callbacks-lean) is in the table, off by default.
-        Assert.That(WriterSwitches.Table.Where(s => !s.Default).Select(s => s.Name), Is.EquivalentTo(new[] { "specialize-callbacks-lean" }));
+        Assert.That(WriterSwitches.Table.Where(s => !s.Default).Select(s => s.Name), Is.EquivalentTo(new[] { "specialize-callbacks-lean", "scalar-arrays", "owned-arrays", "stack-arrays", "span-params" }));
         var names = WriterSwitches.Table.Select(s => s.Name).ToList();
         foreach (var s in WriterSwitches.Table.Where(s => s.Requires != null))
             Assert.That(names.IndexOf(s.Requires!), Is.LessThan(names.IndexOf(s.Name)), s.Name + " must follow " + s.Requires);

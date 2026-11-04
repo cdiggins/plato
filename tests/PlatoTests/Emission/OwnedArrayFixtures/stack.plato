@@ -1,0 +1,146 @@
+// Fixture of the --stack-arrays tests (TKT-1152 C6): the places a bounded lowered-loop temporary can sit, and the ones
+// that keep it off the stack. Each law states the result the immutable meaning gives, so a wrong slot (stale values
+// from a reused slot, a missing fallback, a span that outlives its pass) changes a value or stops compiling.
+type StackSpec { Degree: Integer; }
+
+library StackProbe
+{
+    // The count is a field of a parameter: guarded, so a slot with a heap fallback.
+    FieldWindow(p: StackSpec): Integer
+    {
+        var w = (p.Degree + 1).MapRange(i => i * 2);
+        return w.Count * 100 + w[1];
+    }
+
+    // A checksum that depends on every element and its position.
+    Digest(xs: Array<Integer>): Integer
+        => xs.Reduce(0, (acc, x) => acc * 31 + x);
+
+    //== Candidates
+
+    // A constant count read by At and Count: one slot at the body, exactly the size of the array.
+    Constant(k: Integer): Integer
+    {
+        var w = 12.MapRange(i => i * k);
+        return w[1] + w[3] + w.Count;
+    }
+
+    // A count the caller chooses: a slot of the capacity, and a heap array when the count is larger.
+    Sized(n: Integer): Integer
+    {
+        var w = n.MapRange(i => i * 3);
+        return w.Count * 1000 + (n > 2 ? w[2] : 0);
+    }
+
+    // The allocation is inside a loop: its slot is declared before the outer loop and reused on every pass.
+    Rows(n: Integer): Array<Integer>
+        => n.MapRange(r => 12.MapRange(c => r * 10 + c).At(2) + 12.MapRange(c => r + c).Count + 12.MapRange(c => c * r).At(5));
+
+    // A Map over a parameter array: the count is the parameter's.
+    Doubled(xs: Array<Integer>): Integer
+    {
+        var w = xs.Map(x => x * 2);
+        return w.Count + (w.Count > 1 ? w[1] : 0);
+    }
+
+    // A callback that faults for one element, in the middle of the fill.
+    FaultMidFill(n: Integer): Integer
+    {
+        var w = n.MapRange(i => 100 % (2 - i));
+        return w.Count + w[0];
+    }
+
+    //== Over the body budget: ten windows of Number, 16 x 8 bytes each; eight fit in 1 KiB, two stay on the heap
+
+    Many(n: Integer, c: Number): Number
+    {
+        var a = n.MapRange(i => i.ToNumber * c);
+        var b = n.MapRange(i => i.ToNumber + c);
+        var d = n.MapRange(i => i.ToNumber * 2.0);
+        var e = n.MapRange(i => i.ToNumber * 3.0);
+        var f = n.MapRange(i => i.ToNumber * 4.0);
+        var g = n.MapRange(i => i.ToNumber * 5.0);
+        var h = n.MapRange(i => i.ToNumber * 6.0);
+        var j = n.MapRange(i => i.ToNumber * 7.0);
+        var k = n.MapRange(i => i.ToNumber * 8.0);
+        var l = n.MapRange(i => i.ToNumber * 9.0);
+        return a[1] + b[1] + d[1] + e[1] + f[1] + g[1] + h[1] + j[1] + k[1] + l[1] + a.Count.ToNumber;
+    }
+
+    //== Refused
+
+    // Self-recursion: a slot per frame would run away.
+    Recur(n: Integer): Integer
+    {
+        var w = 12.MapRange(i => i + n);
+        return n < 1 ? w[0] + w.Count : Recur(n - 1) + w[1];
+    }
+
+    // Mutual recursion.
+    Ping(n: Integer): Integer
+    {
+        var w = 12.MapRange(i => i + n);
+        return n < 1 ? w[0] : Pong(n - 1) + w[1];
+    }
+
+    Pong(n: Integer): Integer
+    {
+        var w = 12.MapRange(i => i * n);
+        return n < 1 ? w[0] : Ping(n - 1) + w[2];
+    }
+
+    Identity(xs: Array<$T>): Array<$T> => xs;
+
+    // The array is passed to a call: a span cannot go there.
+    Passed(n: Integer): Integer
+    {
+        var w = n.MapRange(i => i + 1);
+        return Identity(w).Count + w[0];
+    }
+
+    // The array is returned.
+    Returned(n: Integer): Array<Integer>
+        => n.MapRange(i => i * i);
+
+    Probe(f: Function1<Integer, Integer>): Integer => f(0);
+
+    // A real lambda reads the array.
+    Captured(n: Integer): Integer
+    {
+        var a = n.MapRange(i => i + 1);
+        return Probe(j => a[j]) + a.Count;
+    }
+
+    // A local that is assigned again.
+    Reassigned(n: Integer): Integer
+    {
+        var w = n.MapRange(i => i);
+        w = w.Map(x => x + 1);
+        return w.Count + w[1];
+    }
+
+    //== Laws: the result the immutable meaning gives
+
+    Law_FieldWindow(): Boolean => FieldWindow(StackSpec(3)).Equals(402);
+    Law_FieldWindowPastCapacity(): Boolean => FieldWindow(StackSpec(20)).Equals(2102);
+    Law_Constant(): Boolean => Constant(7).Equals(7 + 21 + 12);
+    Law_SizedSmall(): Boolean => Sized(5).Equals(5006);
+    Law_SizedEmpty(): Boolean => Sized(0).Equals(0);
+    Law_SizedNegative(): Boolean => Sized(-3).Equals(0);
+    Law_SizedAtCapacity(): Boolean => Sized(16).Equals(16006);
+    Law_SizedPastCapacity(): Boolean => Sized(40).Equals(40006);
+    Law_Rows(): Boolean => Digest(Rows(3)).Equals(Digest([2 + 12 + 0, 12 + 12 + 5, 22 + 12 + 10]));
+    Law_RowsEmpty(): Boolean => Rows(0).Count.Equals(0);
+    Law_Doubled(): Boolean => Doubled([4, 5, 6]).Equals(3 + 10);
+    Law_Many(): Boolean => Many(3, 2.0).Equals(52.0);
+    Law_Recur(): Boolean => Recur(2).Equals(17);
+    Law_Ping(): Boolean => Ping(2).Equals(5);
+    Law_Passed(): Boolean => Passed(4).Equals(5);
+    Law_Returned(): Boolean => Digest(Returned(4)).Equals(Digest([0, 1, 4, 9]));
+    Law_Captured(): Boolean => Captured(4).Equals(5);
+    Law_Reassigned(): Boolean => Reassigned(4).Equals(6);
+
+    // The callback faults for the third element: every engine faults.
+    Law_FaultMidFill(): Boolean => FaultMidFill(5).Equals(0);
+    Law_NoFault(): Boolean => FaultMidFill(2).Equals(2 + 0);
+}
