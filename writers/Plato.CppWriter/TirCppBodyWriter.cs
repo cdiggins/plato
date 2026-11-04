@@ -733,6 +733,8 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
 
             // Marker nodes the shared literal/component unrollers produce; rendered the way the C# writer does.
             case TirBooleanChain bc:
+                // The chain is one operand: without the outer parentheses a ! or == around it binds to its first term (TKT-1203).
+                Write("(");
                 for (var bi = 0; bi < bc.Terms.Count; bi++)
                 {
                     if (bi > 0)
@@ -741,6 +743,7 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                     WriteNode(bc.Terms[bi]);
                     Write(")");
                 }
+                Write(")");
                 return;
 
             case TirComponentAccess ca when ca.CastTo == null:
