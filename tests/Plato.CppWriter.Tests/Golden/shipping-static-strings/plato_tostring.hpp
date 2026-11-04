@@ -84,11 +84,11 @@
     inline String make_string_n(const char* s, int32_t n) { return StringFromUtf8(std::string(s, static_cast<size_t>(n < 0 ? 0 : n))); }
 #ifdef PLATO_STRING_PROBE
     // Probe build (-DPLATO_STRING_PROBE, with /FIcstdio): every later make_string_n call is counted; the count is printed at exit (TKT-1159).
-    // Single-threaded hosts only. The define comes after the definition, so the default prelude is unchanged.
+    // Single-threaded hosts only. The wrapper takes the report object's address so the linker keeps it. The define comes after the definition, so the default prelude is unchanged.
     inline long long plato_make_string_count = 0;
     struct PlatoMakeStringReport { ~PlatoMakeStringReport() { std::fprintf(stderr, "PLATO_STRING_PROBE make_string_n=%lld\n", plato_make_string_count); } };
     inline PlatoMakeStringReport plato_make_string_report;
-    inline String plato_make_string_n_counted(const char* s, int32_t n) { ++plato_make_string_count; return make_string_n(s, n); }
+    inline String plato_make_string_n_counted(const char* s, int32_t n) { (void)&plato_make_string_report; ++plato_make_string_count; return make_string_n(s, n); }
 #define make_string_n plato_make_string_n_counted
 #endif
     inline void string_clear(String* s) { s->clear(); }
