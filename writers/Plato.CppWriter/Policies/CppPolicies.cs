@@ -23,7 +23,7 @@ namespace Ara3D.Geometry.CppWriter.Policies
             Lambdas = new CaptureByValueLambdas(),
             Sums = options.CompactSums ? new CompactUnionSumLayout(options.SwitchSumDispatch)
                 : options.SwitchSumDispatch ? new SwitchKindSumLayout() : new FlattenedKindSumLayout(),
-            Strings = new MakeStringLiterals(),
+            Strings = options.StaticStringLiterals ? new StaticStringLiterals() : new MakeStringLiterals(),
             Units = new LineLimitPartitioner { MaxFunctionLines = options.UnitLines },
             Attributes = new NoFunctionAttributes(),
             Loops = BuiltInLoopEmitters.Create(),

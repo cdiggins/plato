@@ -30,15 +30,17 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>--cpp-borrow-nontrivial (off by default): <c>ReadOnlyParameter</c> also borrows every record that is
         /// not trivially copyable (records holding String), whatever its size.</summary>
         public bool BorrowNonTrivial { get; init; }
-        /// <summary>--cpp-sum-switch (off by default): sum dispatch;: a chain of case predicates on one
+        /// <summary>--cpp-sum-switch (off by default): sum dispatch: a chain of case predicates on one
         /// value in a returned expression is written as <c>switch (value.Kind)</c>.</summary>
         public bool SwitchSumDispatch { get; init; }
-        /// <summary>--cpp-sum-compact (off by default): compact sums;: a sum is an <c>int32_t Kind</c> and one
+        /// <summary>--cpp-sum-compact (off by default): compact sums: a sum is an <c>int32_t Kind</c> and one
         /// union of per-case structs instead of every case's fields side by side.</summary>
         public bool CompactSums { get; init; }
         /// <summary>--cpp-unit-lines=N: the most lines of definitions in one function unit (<see cref="DefaultUnitLines"/> when absent; 5000 since 2026-11-04: runtime unchanged with LTCG, one-unit rebuild 62 to 32 s).</summary>
         public int UnitLines { get; init; } = DefaultUnitLines;
         public const int DefaultUnitLines = 5000;
+        /// <summary>--cpp-static-strings (TKT-1159, off by default): static string literals: each constant is built once per use site.</summary>
+        public bool StaticStringLiterals { get; init; }
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
@@ -59,6 +61,7 @@ namespace Ara3D.Geometry.CppWriter
                 BorrowMinBytes = s.Int("cpp-borrow-min-bytes", 256),
                 SwitchSumDispatch = s.On("cpp-sum-switch"),
                 CompactSums = s.On("cpp-sum-compact"),
+                StaticStringLiterals = s.On("cpp-static-strings"),
                 UnitLines = s.Int("cpp-unit-lines", DefaultUnitLines),
                 Switches = s,
             };

@@ -145,8 +145,8 @@ public class WriterSwitchesTests
     {
         var off = WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu);
         Assert.That(off["cpp-sum-switch"] || off["cpp-sum-compact"], Is.False);
-        var on = WriterSwitches.Resolve(new[] { "--cpp-sum-switch", "--cpp-sum-compact" }, WriterTarget.Cpu);
-        Assert.That(on["cpp-sum-switch"] && on["cpp-sum-compact"]);
+        var on = WriterSwitches.Resolve(new[] { "--cpp-sum-switch", "--cpp-sum-compact", "--cpp-static-strings" }, WriterTarget.Cpu);
+        Assert.That(on["cpp-sum-switch"] && on["cpp-sum-compact"] && on["cpp-static-strings"] && !off["cpp-static-strings"]);
         Assert.That(WriterSwitches.Check(on, WriterTarget.Cpu), Is.Null);
         Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--cpp-sum-compact" }, WriterTarget.CSharp), WriterTarget.CSharp), Does.StartWith("--cpp-sum-compact applies to C++"));
     }
