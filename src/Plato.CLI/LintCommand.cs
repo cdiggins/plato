@@ -23,7 +23,7 @@ internal static class LintCommand
             Console.Error.WriteLine(inputError);
             return 1;
         }
-        var docs = files.Select(f => new Document(f, logger)).ToList();
+        var docs = DocumentLoader.ParseAll(files, logger);
         if (!docs.All(d => d.Parser.Succeeded))
         {
             Console.Error.WriteLine("Parsing failed for one of the input files, halting");

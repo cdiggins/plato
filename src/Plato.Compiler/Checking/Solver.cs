@@ -28,7 +28,7 @@ namespace Ara3D.Geometry.Compiler.Checking
     public partial class Solver
     {
         public Compilation Compilation { get; }
-        public Dictionary<string, TypeExpression> Substitution { get; } = new Dictionary<string, TypeExpression>();
+        public TypeBindings Substitution { get; } = new TypeBindings();
         public List<CheckDiagnostic> Diagnostics { get; } = new List<CheckDiagnostic>();
 
         /// <summary>The candidate the solver committed for each cleanly-resolved call. This is the
@@ -185,7 +185,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 if (f.Parameters.Count != args.Count)
                     continue;
                 var cand = InstantiateCandidate(f);
-                var scratch = new Dictionary<string, TypeExpression>(Substitution);
+                var scratch = new TypeBindings(Substitution);
                 var cost = 0;
                 var ok = true;
                 for (var i = 0; i < args.Count; i++)
@@ -223,7 +223,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// is judged by the bounds IT carries (which is what lets the recursive call inside the
         /// bounded function's own body resolve).
         /// </summary>
-        private bool BoundsSatisfied(Candidate cand, Dictionary<string, TypeExpression> sub)
+        private bool BoundsSatisfied(Candidate cand, TypeBindings sub)
         {
             if (cand.Bounds.Count == 0)
                 return true;
@@ -349,7 +349,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             // committing the first is an identity hint, not a semantic choice (type-checker handoff:
             // "re-dispatch is only an identity refinement").
             var zonkedRets = winners
-                .Select(w => Zonk(w.Ret, new Dictionary<string, TypeExpression>(Substitution)))
+                .Select(w => Zonk(w.Ret, new TypeBindings(Substitution)))
                 .ToList();
             var rets = zonkedRets.Select(r => r?.ToString() ?? "?").Distinct().ToList();
             var allVarReturns = zonkedRets.All(r => r != null && IsVar(r));
@@ -400,7 +400,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// </summary>
         private bool TryResolveFieldInvocation(OverloadConstraint oc, IReadOnlyList<TypeExpression> args)
         {
-            var winners = new List<(TypeExpression ret, int cost, Dictionary<string, TypeExpression> sub)>();
+            var winners = new List<(TypeExpression ret, int cost, TypeBindings sub)>();
             foreach (var f in oc.Candidates)
             {
                 var recvCount = f.Parameters.Count;
@@ -409,7 +409,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                     continue; // needs at least one trailing argument to invoke the field value
 
                 var cand = InstantiateCandidate(f);
-                var scratch = new Dictionary<string, TypeExpression>(Substitution);
+                var scratch = new TypeBindings(Substitution);
                 var cost = 0;
                 var ok = true;
 
@@ -511,7 +511,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// corresponding parameter of <paramref name="b"/>, and at least one is a strict subtype
         /// (implements/inherits it). Used to break equal-cost ties toward the most-derived overload,
         /// mirroring C#'s better-function-member rule.</summary>
-        private bool MoreSpecific(Candidate a, Candidate b, Dictionary<string, TypeExpression> sub)
+        private bool MoreSpecific(Candidate a, Candidate b, TypeBindings sub)
         {
             if (a.Ps.Length != b.Ps.Length)
                 return false;
@@ -535,7 +535,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <summary>The type used to compare a candidate's parameter for specificity: an interface
         /// parameter contributes its interface (the fresh interface var carries no usable name),
         /// everything else the instantiated parameter, zonked.</summary>
-        private TypeExpression SpecificityType(Candidate cand, int i, Dictionary<string, TypeExpression> sub)
+        private TypeExpression SpecificityType(Candidate cand, int i, TypeBindings sub)
         {
             var p = cand.Ps[i];
             if (p != null && IsVar(p) && cand.ConceptOf.TryGetValue(p.Name, out var iface))
@@ -549,7 +549,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// implicit cast. The ok/cost values are unchanged from before the kind was added, so
         /// overload ranking is unaffected.
         /// </summary>
-        private (bool ok, int cost, ArgMatchKind kind) MatchArg(TypeExpression argType, TypeExpression param, Candidate cand, Dictionary<string, TypeExpression> sub)
+        private (bool ok, int cost, ArgMatchKind kind) MatchArg(TypeExpression argType, TypeExpression param, Candidate cand, TypeBindings sub)
         {
             if (param == null || argType == null)
                 return (true, ExactCost, ArgMatchKind.Exact);
@@ -620,7 +620,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// (<see cref="BoundsPermit"/>); <c>Self</c> satisfies anything (the reifier decides what
         /// Self is).
         /// </summary>
-        private bool SatisfiesConcept(TypeExpression argType, TypeExpression iface, Dictionary<string, TypeExpression> sub)
+        private bool SatisfiesConcept(TypeExpression argType, TypeExpression iface, TypeBindings sub)
         {
             if (argType?.Def == null || iface?.Def == null)
                 return true;
@@ -654,7 +654,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <c>$T</c> would stop resolving), not a constraint check. So bounds RESTRICT where they are
         /// declared and change nothing where they are not.
         /// </summary>
-        private bool BoundsPermit(TypeExpression argType, TypeExpression iface, Dictionary<string, TypeExpression> sub)
+        private bool BoundsPermit(TypeExpression argType, TypeExpression iface, TypeBindings sub)
         {
             if (!_licenseBounds)
                 return true;
@@ -672,9 +672,9 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         /// <summary>Unify on a scratch copy; adopt the bindings only on full success. Returns
         /// whether unification succeeded (contrast <see cref="BindBestEffort"/>, which is void).</summary>
-        private bool UnifyAllOrNothing(TypeExpression a, TypeExpression b, Dictionary<string, TypeExpression> sub)
+        private bool UnifyAllOrNothing(TypeExpression a, TypeExpression b, TypeBindings sub)
         {
-            var scratch = new Dictionary<string, TypeExpression>(sub);
+            var scratch = new TypeBindings(sub);
             if (!Unify(a, b, scratch, null, record: false))
                 return false;
             foreach (var kv in scratch)

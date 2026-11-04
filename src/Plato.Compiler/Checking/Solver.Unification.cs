@@ -14,7 +14,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         private static bool IsVar(TypeExpression t)
             => t.Def != null && t.Def.Kind == TypeKind.TypeVariable;
 
-        public bool Unify(TypeExpression a, TypeExpression b, Dictionary<string, TypeExpression> sub, Symbol origin, bool record, int depth = 0)
+        public bool Unify(TypeExpression a, TypeExpression b, TypeBindings sub, Symbol origin, bool record, int depth = 0)
         {
             if (a == null || b == null || depth > MaxDepth)
                 return true;
@@ -83,7 +83,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             return ok;
         }
 
-        private bool Bind(TypeExpression var, TypeExpression t, Dictionary<string, TypeExpression> sub, Symbol origin, bool record)
+        private bool Bind(TypeExpression var, TypeExpression t, TypeBindings sub, Symbol origin, bool record)
         {
             if (IsVar(t) && t.Name == var.Name)
                 return true;
@@ -97,7 +97,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             return true;
         }
 
-        private bool Occurs(string name, TypeExpression t, Dictionary<string, TypeExpression> sub, int depth = 0)
+        private bool Occurs(string name, TypeExpression t, TypeBindings sub, int depth = 0)
         {
             if (t == null || depth > MaxDepth) return false;
             t = ResolveTop(t, sub);
@@ -106,7 +106,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             return t.TypeArgs.Any(a => Occurs(name, a, sub, depth + 1));
         }
 
-        private static TypeExpression ResolveTop(TypeExpression t, Dictionary<string, TypeExpression> sub)
+        private static TypeExpression ResolveTop(TypeExpression t, TypeBindings sub)
         {
             var depth = 0;
             while (t != null && IsVar(t) && sub.TryGetValue(t.Name, out var u) && depth++ < MaxDepth)
@@ -115,7 +115,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         /// <summary>Fully apply the substitution (deep), yielding a variable-free type where solved.</summary>
-        public TypeExpression Zonk(TypeExpression t, Dictionary<string, TypeExpression> sub = null, int depth = 0)
+        public TypeExpression Zonk(TypeExpression t, TypeBindings sub = null, int depth = 0)
         {
             sub ??= Substitution;
             if (t == null || depth > MaxDepth) return t;

@@ -136,7 +136,7 @@ namespace Ara3D.Geometry.CLI
                 return 1;
             }
 
-            var docs = files.Select(f => (File: f, Doc: new Document(f, Ara3D.Logging.Logger.Null))).ToList();
+            var docs = files.Zip(DocumentLoader.ParseAll(files, Ara3D.Logging.Logger.Null), (f, d) => (File: f, Doc: d)).ToList();
             var failed = docs.Where(d => d.Doc.Parser == null || !d.Doc.Parser.Succeeded).ToList();
             if (failed.Count > 0)
             {

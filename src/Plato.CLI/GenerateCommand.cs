@@ -140,7 +140,7 @@ internal static class GenerateCommand
             Console.Error.WriteLine(inputError);
             return 1;
         }
-        var docs = files.Select(f => new Document(f, logger)).ToList();
+        var docs = DocumentLoader.ParseAll(files, logger);
         var parsingSuccessful = docs.All(e => e.Parser.Succeeded);
         if (!parsingSuccessful)
         {
