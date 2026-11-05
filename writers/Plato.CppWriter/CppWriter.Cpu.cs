@@ -649,6 +649,7 @@ namespace Ara3D.Geometry.CppWriter
             WriteCpuReflection();
             CollectConstants();
             CollectMemberFunctions();
+            EmitDemanded();
             WriteCpuCasePredicates();
             PruneCpu();
 

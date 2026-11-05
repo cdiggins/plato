@@ -165,6 +165,7 @@ namespace Ara3D.Geometry.CppWriter
             public List<string> TemplateVars;  // type variables ($T, _T0) emitted as template parameters; null when none
             public bool Pruned;         // dropped because a callee was skipped
             public bool FromInterface;  // an interface member instantiated for its owner (a concrete overload of the same shape wins)
+            public int Ordinal;         // the place in whole-program emission order, which demand-driven emission restores
             public string Name => Key.StartsWith("template") ? Key : Key.Substring(0, Math.Max(0, Key.IndexOf('(')));
         }
 
@@ -1353,7 +1354,7 @@ namespace Ara3D.Geometry.CppWriter
                 {
                     foreach (var f in ct.ConcreteFunctions)
                         if (f.Implementation?.Body != null && !SkipFunction(ct, f))
-                            TryEmitFunction(f, ct);
+                            EmitOrDefer(f, ct);
                     continue;
                 }
 
@@ -1364,13 +1365,13 @@ namespace Ara3D.Geometry.CppWriter
                     catch (Exception) { continue; }
                     if (handled.Contains(f.Name)) continue;
                     if (!SkipFunction(ct, f))
-                        TryEmitFunction(f, ct);
+                        EmitOrDefer(f, ct);
                 }
                 foreach (var f in ct.UnimplementedFunctions)
                 {
                     if (handled.Contains(f.Name)) continue;
                     if (!SkipFunction(ct, f))
-                        TryEmitFunction(f, ct);
+                        EmitOrDefer(f, ct);
                 }
             }
         }
@@ -1552,6 +1553,7 @@ namespace Ara3D.Geometry.CppWriter
                 Definition = definition,
                 Callees = callees ?? new List<CallSite>(),
                 TemplateVars = templateVars != null && templateVars.Count > 0 ? templateVars : null,
+                Ordinal = NextOrdinal(),
             });
         }
 
