@@ -1,4 +1,5 @@
 // Moves loop-invariant callback work out of lowered loops (--hoist-invariants).
+using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
@@ -66,9 +67,9 @@ public static class TirLoopInvariantHoister
             if (ReferenceEquals(hoisted, loop))
                 return n;
             changed = true;
-            pass.Stats.HoistedInvariants += context.Hoisted;
-            pass.Stats.HoistExposingInlines += context.Inlined;
-            pass.Stats.HoistedLoops++;
+            Interlocked.Add(ref pass.Stats.HoistedInvariants, context.Hoisted);
+            Interlocked.Add(ref pass.Stats.HoistExposingInlines, context.Inlined);
+            Interlocked.Increment(ref pass.Stats.HoistedLoops);
             return hoisted;
         });
         return changed

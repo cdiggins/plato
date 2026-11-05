@@ -49,6 +49,7 @@ public sealed class PassContext
 /// <summary>The counts the passes keep across a generation.</summary>
 public sealed class PassStats
 {
+    // The C++ prepass runs passes on several threads, so these are added to with Interlocked.
     /// <summary>Sites the post-inlining rewrites changed (sinking, call sharing).</summary>
     public WriterRewriteStats Rewrites { get; } = new WriterRewriteStats();
 

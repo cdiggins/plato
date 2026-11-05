@@ -1,4 +1,5 @@
 // Runs the shared sinking rewrite on a function after inlining (--sink-bindings, TKT-1142).
+using System.Threading;
 using Ara3D.Geometry.Compiler.Checking;
 namespace Ara3D.Geometry.Optimizer;
 
@@ -23,7 +24,7 @@ public static class TirSinkBindingsPass
         if (!pass.On("sink-bindings") || tir?.Body == null)
             return tir;
         var body = TirSinkBindings.Rewrite(tir.Body, out var sunk);
-        pass.Stats.Rewrites.SunkAfterInlining += sunk;
+        Interlocked.Add(ref pass.Stats.Rewrites.SunkAfterInlining, sunk);
         return ReferenceEquals(body, tir.Body)
             ? tir
             : new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,

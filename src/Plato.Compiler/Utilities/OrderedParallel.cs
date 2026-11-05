@@ -18,13 +18,10 @@ namespace Ara3D.Geometry.Compiler.Utilities
         public static R[] Map<T, R>(IReadOnlyList<T> items, Func<T, R> f, int maxWorkers = DefaultMaxWorkers)
         {
             var results = new R[items.Count];
-            var workers = Math.Min(Math.Min(Environment.ProcessorCount, maxWorkers), items.Count);
-            if (workers <= 1)
-            {
-                for (var i = 0; i < items.Count; i++)
-                    results[i] = f(items[i]);
+            if (items.Count == 0)
                 return results;
-            }
+            // One worker still gets its own thread: the large stack is part of the contract.
+            var workers = Math.Max(1, Math.Min(Math.Min(Environment.ProcessorCount, maxWorkers), items.Count));
 
             var failures = new Exception[items.Count];
             var next = -1;

@@ -1,4 +1,5 @@
 // Evaluates a call that a statement repeats once (--share-calls, TKT-1136).
+using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -367,7 +368,7 @@ public static class TirSharedCalls
                 for (var k = a; k < list.Count; k++)
                     list[k] = ReplaceEverywhere(list[k], key, reference);
                 list.Insert(a, new TirInlineBinding(def, sample));
-                _stats.SharedAcrossStatements++;
+                Interlocked.Increment(ref _stats.SharedAcrossStatements);
                 return true;
             }
             return false;
@@ -402,8 +403,8 @@ public static class TirSharedCalls
                 var rewritten = Body(lambda.Body);
                 if (ReferenceEquals(rewritten, lambda.Body))
                     return n;
-                _stats.SharedInLambdas += rewritten.Descendants().Count(d => d is TirInlineBinding b && b.Def.Name.StartsWith("_shared"))
-                    - lambda.Body.Descendants().Count(d => d is TirInlineBinding b && b.Def.Name.StartsWith("_shared"));
+                Interlocked.Add(ref _stats.SharedInLambdas, rewritten.Descendants().Count(d => d is TirInlineBinding b && b.Def.Name.StartsWith("_shared"))
+                    - lambda.Body.Descendants().Count(d => d is TirInlineBinding b && b.Def.Name.StartsWith("_shared")));
                 return new TirLambda(lambda.Parameters, rewritten, lambda.Type, lambda.Origin);
             });
     }
