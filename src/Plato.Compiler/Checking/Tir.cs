@@ -40,13 +40,26 @@ namespace Ara3D.Geometry.Compiler.Checking
         public virtual TirNode WithChildren(IReadOnlyList<TirNode> children) => this;
 
         /// <summary>This node and every transitive child, pre-order.</summary>
+        /// <summary>This node and everything below it, parents first. One explicit stack: nested iterators
+        /// pass every node up through each of its ancestors, which is a real cost on deep inlined bodies.</summary>
         public IEnumerable<TirNode> Descendants()
         {
             yield return this;
-            foreach (var c in Children)
-                if (c != null)
-                    foreach (var d in c.Descendants())
-                        yield return d;
+            var pending = new Stack<IEnumerator<TirNode>>();
+            pending.Push(Children.GetEnumerator());
+            while (pending.Count > 0)
+            {
+                var children = pending.Peek();
+                if (!children.MoveNext())
+                {
+                    pending.Pop().Dispose();
+                    continue;
+                }
+                if (children.Current == null)
+                    continue;
+                yield return children.Current;
+                pending.Push(children.Current.Children.GetEnumerator());
+            }
         }
     }
 

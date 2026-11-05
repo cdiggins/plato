@@ -14,6 +14,13 @@ namespace Ara3D.Geometry.Compiler.Analysis
         public Dictionary<string, List<FunctionDef>> Lookup { get; } =
             new Dictionary<string, List<FunctionDef>>();
 
+        // The library functions by the name of their first parameter's type, each list in AllFunctions
+        // order: ConcreteType asks for every type and interface, so a scan of all functions costs seconds.
+        private readonly Dictionary<string, List<FunctionDef>> _byReceiverName = new();
+
+        private IEnumerable<FunctionDef> WithReceiver(string typeName)
+            => _byReceiverName.TryGetValue(typeName, out var functions) ? functions : Enumerable.Empty<FunctionDef>();
+
         public IEnumerable<FunctionDef> AllFunctions()
             => Lookup.Values.SelectMany(g => g);
 
@@ -42,11 +49,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
 
         public IEnumerable<FunctionDef> GetFunctionsForType(TypeExpression typeExpr)
         {
-            //var typeName = typeExpr.Name;
-            var r = AllFunctions()
-                .Where(f => f.Parameters.Count > 0 
-                    && MatchesType(f.Parameters[0].Type, typeExpr));
-            return r;
+            return WithReceiver(typeExpr.Name).Where(f => MatchesType(f.Parameters[0].Type, typeExpr));
         }
 
         /// <summary>The functions whose first parameter is a CLOSED instance of a generic type
@@ -56,9 +59,8 @@ namespace Ara3D.Geometry.Compiler.Analysis
         public IEnumerable<FunctionDef> GetFunctionsForClosedInstancesOf(TypeExpression genericType)
             => genericType.TypeArgs.Count == 0
                 ? Enumerable.Empty<FunctionDef>()
-                : AllFunctions().Where(f => f.Parameters.Count > 0
-                    && f.Parameters[0].Type.Name == genericType.Name
-                    && f.Parameters[0].Type.TypeArgs.Count == genericType.TypeArgs.Count
+                : WithReceiver(genericType.Name).Where(f =>
+                    f.Parameters[0].Type.TypeArgs.Count == genericType.TypeArgs.Count
                     && !MatchesType(f.Parameters[0].Type, genericType));
 
         public IEnumerable<FunctionDef> AllConstants()
@@ -76,6 +78,13 @@ namespace Ara3D.Geometry.Compiler.Analysis
                     list.Add(m.Function);
                 }
                 Lookup.Add(t.Name, list);
+            }
+            foreach (var f in AllFunctions().Where(f => f.Parameters.Count > 0))
+            {
+                var name = f.Parameters[0].Type.Name;
+                if (!_byReceiverName.TryGetValue(name, out var functions))
+                    _byReceiverName.Add(name, functions = new List<FunctionDef>());
+                functions.Add(f);
             }
         }
     }
