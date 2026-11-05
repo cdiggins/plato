@@ -1300,6 +1300,29 @@ namespace Ara3D.Geometry.CppWriter
             return false;
         }
 
+        private bool EmitsMembers(ConcreteType ct)
+        {
+            var name = ct.TypeDef.Name;
+            // Cpu: a function whose receiver is a function value (MinimizeOverDomain(eval: Function1<..>, ..))
+            // belongs to the FunctionN type; it is emitted as a template over the callable (F0, F1, ...).
+            var isFunctionOwner = IsCpu && name.StartsWith("Function") && name.Length > 8 && char.IsDigit(name[name.Length - 1]);
+            // Cpu: List, Buffer and TupleN are prelude or template types whose library functions
+            // (Holds(List<Integer>, ..), JaggedArray(Tuple2<..>)) are emitted like those of Array.
+            var isBuilderOrTuple = IsCpu && (name == "List" || name == "Buffer"
+                                             || (name.StartsWith("Tuple") && name.Length > 5 && char.IsDigit(name[name.Length - 1])));
+            if (IsIgnoredType(name) || (!isFunctionOwner && !isBuilderOrTuple && (IsExcludedTupleOrFunction(name) || name.StartsWith("Function"))))
+                return false;
+            // Cpu: library functions whose receiver is a concrete Array<X> (PlainLoop(Array<UvCoordinate>))
+            // belong to the generic Array type; the ones over a type variable skip with a reason.
+            return (IsCpu && name == "Array")
+                   || isFunctionOwner
+                   || isBuilderOrTuple
+                   || NativePrimitives.ContainsKey(name)
+                   || IsNativeVectorName(name)
+                   || IsPreambleType(name)
+                   || StructNames.Contains(name);
+        }
+
         private void CollectMemberFunctions()
         {
             // Cpu: the unique builder types (List, Buffer) have no ConcreteType in the compilation (they are
@@ -1320,28 +1343,11 @@ namespace Ara3D.Geometry.CppWriter
                     catch (Exception) { /* no analysis for this builder type: its library functions stay unemitted */ }
                 }
             }
+            if (IsCpu)
+                OptimizeMemberBodies(concreteTypes, uniqueOwners);
             foreach (var ct in concreteTypes)
             {
-                var name = ct.TypeDef.Name;
-                // Cpu: a function whose receiver is a function value (MinimizeOverDomain(eval: Function1<..>, ..))
-                // belongs to the FunctionN type; it is emitted as a template over the callable (F0, F1, ...).
-                var isFunctionOwner = IsCpu && name.StartsWith("Function") && name.Length > 8 && char.IsDigit(name[name.Length - 1]);
-                // Cpu: List, Buffer and TupleN are prelude or template types whose library functions
-                // (Holds(List<Integer>, ..), JaggedArray(Tuple2<..>)) are emitted like those of Array.
-                var isBuilderOrTuple = IsCpu && (name == "List" || name == "Buffer"
-                                                 || (name.StartsWith("Tuple") && name.Length > 5 && char.IsDigit(name[name.Length - 1])));
-                if (IsIgnoredType(name) || (!isFunctionOwner && !isBuilderOrTuple && (IsExcludedTupleOrFunction(name) || name.StartsWith("Function"))))
-                    continue;
-                // Cpu: library functions whose receiver is a concrete Array<X> (PlainLoop(Array<UvCoordinate>))
-                // belong to the generic Array type; the ones over a type variable skip with a reason.
-                var supported = (IsCpu && name == "Array")
-                                || isFunctionOwner
-                                || isBuilderOrTuple
-                                || NativePrimitives.ContainsKey(name)
-                                || IsNativeVectorName(name)
-                                || IsPreambleType(name)
-                                || StructNames.Contains(name);
-                if (!supported)
+                if (!EmitsMembers(ct))
                     continue;
 
                 // A concrete type implementing IArrayLike over N homogeneous fields is a
@@ -1582,7 +1588,7 @@ namespace Ara3D.Geometry.CppWriter
                         Skipped.Add($"{label}: no ground TIR (unresolved generics?)");
                         return;
                     }
-                    tir = IsCpu ? CppTirPipeline.Run(tir, this, owner) : TirInliner.Inline(tir, this, owner, out _);
+                    tir = IsCpu ? OptimizedBody(tir, owner) : TirInliner.Inline(tir, this, owner, out _);
                 }
 
                 var paramNames = (tir != null
