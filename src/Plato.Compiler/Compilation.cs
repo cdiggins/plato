@@ -269,6 +269,9 @@ namespace Ara3D.Geometry.Compiler
 
         public void AddLibraryFunctionsToReifiedTypes()
         {
+            // The reified types implementing each receiver, by the receiver's text: IsImplementing reads names and
+            // treats every type variable alike, so equal text gives equal answers, and most functions share a receiver.
+            var implementers = new Dictionary<string, List<ReifiedType>>();
             foreach (var library in LibraryDefinitionsByName.Values)
             {
                 foreach (var f in library.Functions)
@@ -288,13 +291,11 @@ namespace Ara3D.Geometry.Compiler
                     }
                     else if (firstParamType.Def.IsInterface())
                     {
-                        foreach (var rt in ReifiedTypes.Values)
-                        {
-                            if (rt.Type.Implements(firstParamType))
-                            {
-                                rt.AddConceptLibraryFunction(library, f);
-                            }
-                        }
+                        var key = firstParamType.ToString();
+                        if (!implementers.TryGetValue(key, out var types))
+                            implementers.Add(key, types = ReifiedTypes.Values.Where(rt => rt.Type.Implements(firstParamType)).ToList());
+                        foreach (var rt in types)
+                            rt.AddConceptLibraryFunction(library, f);
                     }
                     else
                     {
