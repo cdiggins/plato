@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Utilities;
 
 namespace Ara3D.Geometry.Compiler.Checking
 {
@@ -67,12 +68,17 @@ namespace Ara3D.Geometry.Compiler.Checking
             return set;
         }
 
-        /// <summary>Check every function with a body and return the per-function results.</summary>
+        /// <summary>Check every function with a body and return the per-function results, in definition
+        /// order. Functions are checked on several threads: a check owns its generator, solver and type variables,
+        /// and reads the compilation, whose normalized bodies are built here first.</summary>
         public IReadOnlyList<TypeCheckResult> CheckAll()
-            => (Compilation.FunctionDefinitions ?? Enumerable.Empty<FunctionDef>())
+        {
+            _ = Compilation.NormalizedFunctions;
+            var bodied = (Compilation.FunctionDefinitions ?? Enumerable.Empty<FunctionDef>())
                 .Where(f => f.Body != null)
-                .Select(Check)
                 .ToList();
+            return OrderedParallel.Map(bodied, Check);
+        }
     }
 
     public class TypeCheckResult
