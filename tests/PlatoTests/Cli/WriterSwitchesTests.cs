@@ -153,6 +153,16 @@ public class WriterSwitchesTests
     }
 
     [Test]
+    public void PruneToRootsIsACppParameterThatIsOffUnlessSpelled()
+    {
+        Assert.That(WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu).Value("cpp-prune-to-roots"), Is.Null);
+        var r = WriterSwitches.Resolve(new[] { "--cpp-prune-to-roots=A,B" }, WriterTarget.Cpu);
+        Assert.That(r.Value("cpp-prune-to-roots"), Is.EqualTo("A,B"));
+        Assert.That(WriterSwitches.Check(r, WriterTarget.Cpu), Is.Null);
+        Assert.That(WriterSwitches.Check(WriterSwitches.Resolve(new[] { "--cpp-prune-to-roots=A" }, WriterTarget.CSharp), WriterTarget.CSharp), Does.StartWith("--cpp-prune-to-roots applies to C++"));
+    }
+
+    [Test]
     public void SumLayoutRowsAreCppOnlyAndOnByDefaultForCpu()
     {
         var off = WriterSwitches.Resolve(new[] { "--cpp", "--no-cpp-sum-switch", "--no-cpp-sum-compact", "--no-cpp-static-strings" }, WriterTarget.Cpu);

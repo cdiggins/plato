@@ -106,6 +106,8 @@ public static class WriterSwitches
         new("cpp-static-strings", Cpu, Cpu),
         // The most lines of definitions in one emitted function unit; CppCpuOptions.DefaultUnitLines (5000) when absent.
         new("cpp-unit-lines", Cpu) { Parameter = SwitchParameter.PositiveInt },
+        // --cpp-prune-to-roots=A,B writes only what --cpp-roots and A,B (functions or types a host names) reach; absent, everything.
+        new("cpp-prune-to-roots", Cpu) { Parameter = SwitchParameter.AnyText },
     };
 
     private static WriterSwitch? Find(string name) => Table.FirstOrDefault(s => s.Name == name);

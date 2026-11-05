@@ -41,6 +41,8 @@ namespace Ara3D.Geometry.CppWriter
         public const int DefaultUnitLines = 5000;
         /// <summary>--cpp-static-strings (TKT-1159, on by default for Cpu since 2026-11-04): static string literals: each constant is built once per use site.</summary>
         public bool StaticStringLiterals { get; init; }
+        /// <summary>--cpp-prune-to-roots=A,B: when non-null, only what <see cref="Roots"/> and these names reach is written; the names are functions or types a host calls directly.</summary>
+        public IReadOnlyList<string> PruneRoots { get; init; }
         /// <summary>--scalar-arrays (TKT-1186; on for Cpu since timing window 2, 2026-11-04): a fixed-arity struct's Count is folded and its component arrays unrolled.</summary>
         public bool ScalarArrays { get; init; }
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
@@ -66,6 +68,7 @@ namespace Ara3D.Geometry.CppWriter
                 StaticStringLiterals = s.On("cpp-static-strings"),
                 ScalarArrays = s.On("scalar-arrays"),
                 UnitLines = s.Int("cpp-unit-lines", DefaultUnitLines),
+                PruneRoots = s.Value("cpp-prune-to-roots")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
                 Switches = s,
             };
     }
@@ -649,7 +652,7 @@ namespace Ara3D.Geometry.CppWriter
             WriteCpuCasePredicates();
             PruneCpu();
 
-            var live = _emitted.Where(e => !e.Pruned).ToList();
+            var live = KeptFromRoots(_emitted.Where(e => !e.Pruned).ToList());
             FunctionsEmitted = live.Count(e => !e.Provided);
 
             foreach (var file in CppCpuPrelude.FilesFor(CpuOptions))
@@ -674,6 +677,9 @@ namespace Ara3D.Geometry.CppWriter
 
         /// <summary>All emitted structs including the synthesized Angle, in dependency order.</summary>
         private IEnumerable<(string Name, List<CppField> Fields, ConcreteType Type)> CpuStructs()
+            => AllCpuStructs().Where(s => _keptStructs == null || _keptStructs.Contains(s.Name));
+
+        private IEnumerable<(string Name, List<CppField> Fields, ConcreteType Type)> AllCpuStructs()
         {
             yield return ("Angle", new List<CppField> { new CppField("Radians", null, "double") }, null);
             foreach (var c in _structTypes)
@@ -689,34 +695,7 @@ namespace Ara3D.Geometry.CppWriter
             sb.Append('\n');
 
             foreach (var s in CpuStructs())
-            {
-                sb.Append($"{TemplatePrefix(s.Type)}struct {s.Name}\n{{\n");
-                if (s.Type != null && s.Type.TypeDef.IsSum)
-                    sb.Append(Sums.TagDeclarations(s.Type.TypeDef.Cases));
-                using (ParamScope(s.Type))
-                {
-                    if (s.Type != null && s.Type.TypeDef.IsSum)
-                        sb.Append(Sums.MemberDeclarations(s.Name, s.Type.TypeDef.Cases, CppTypeName));
-                    else
-                        foreach (var f in s.Fields)
-                            sb.Append($"    {CppTypeName(f)} {EscapeName(f.Name)};\n");
-                }
-                // A one-field wrapper unwraps implicitly, as the C# struct's implicit operator does
-                // (a typed index passes where the intrinsic wants an int32_t).
-                if (s.Name.StartsWith("Tuple") && s.Name.Length > 5 && char.IsDigit(s.Name[s.Name.Length - 1]) && GenericParamNames(s.Type).Count == s.Fields.Count && s.Fields.Count >= 2)
-                {
-                    // (a, b) converts to any record built from its components, as the C# implicit conversion does.
-                    var ps = GenericParamNames(s.Type);
-                    var decl = ps.Select(p => $"std::declval<{p}>()").JoinStringsWithComma();
-                    var vals = s.Fields.Select(f => EscapeName(f.Name)).JoinStringsWithComma();
-                    sb.Append($"    template <class R, class = decltype(R{{ {decl} }})> operator R() const {{ return R{{ {vals} }}; }}\n");
-                }
-                if (s.Name != "Angle" && s.Fields.Count == 1 && !(s.Type != null && s.Type.TypeDef.IsSum) && GenericParamNames(s.Type).Count == 0)
-                    sb.Append($"    operator {CppTypeName(s.Fields[0])}() const {{ return {EscapeName(s.Fields[0].Name)}; }}\n");
-                sb.Append("};\n");
-                AppendDeductionGuide(sb, s);
-                sb.Append("\n");
-            }
+                AppendCpuStruct(sb, s);
 
             sb.Append(@"// Structural equality and hash helpers (arrays compare element-wise).
 template <class T> inline bool eq_(const T& a, const T& b) { return a == b; }
@@ -774,6 +753,37 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
             }
             sb.Append("\n} // namespace plato\n");
             return sb.ToString();
+        }
+
+        /// <summary>The definition of one struct as plato_types.hpp spells it.</summary>
+        private void AppendCpuStruct(StringBuilder sb, (string Name, List<CppField> Fields, ConcreteType Type) s)
+        {
+            sb.Append($"{TemplatePrefix(s.Type)}struct {s.Name}\n{{\n");
+            if (s.Type != null && s.Type.TypeDef.IsSum)
+                sb.Append(Sums.TagDeclarations(s.Type.TypeDef.Cases));
+            using (ParamScope(s.Type))
+            {
+                if (s.Type != null && s.Type.TypeDef.IsSum)
+                    sb.Append(Sums.MemberDeclarations(s.Name, s.Type.TypeDef.Cases, CppTypeName));
+                else
+                    foreach (var f in s.Fields)
+                        sb.Append($"    {CppTypeName(f)} {EscapeName(f.Name)};\n");
+            }
+            // A one-field wrapper unwraps implicitly, as the C# struct's implicit operator does
+            // (a typed index passes where the intrinsic wants an int32_t).
+            if (s.Name.StartsWith("Tuple") && s.Name.Length > 5 && char.IsDigit(s.Name[s.Name.Length - 1]) && GenericParamNames(s.Type).Count == s.Fields.Count && s.Fields.Count >= 2)
+            {
+                // (a, b) converts to any record built from its components, as the C# implicit conversion does.
+                var ps = GenericParamNames(s.Type);
+                var decl = ps.Select(p => $"std::declval<{p}>()").JoinStringsWithComma();
+                var vals = s.Fields.Select(f => EscapeName(f.Name)).JoinStringsWithComma();
+                sb.Append($"    template <class R, class = decltype(R{{ {decl} }})> operator R() const {{ return R{{ {vals} }}; }}\n");
+            }
+            if (s.Name != "Angle" && s.Fields.Count == 1 && !(s.Type != null && s.Type.TypeDef.IsSum) && GenericParamNames(s.Type).Count == 0)
+                sb.Append($"    operator {CppTypeName(s.Fields[0])}() const {{ return {EscapeName(s.Fields[0].Name)}; }}\n");
+            sb.Append("};\n");
+            AppendDeductionGuide(sb, s);
+            sb.Append("\n");
         }
 
         /// <summary>template &lt;class T&gt; Counted(T, WorkBudget) -&gt; Counted&lt;T&gt;; so Counted{ v, w } deduces its arguments (C++17 has no aggregate deduction).</summary>
@@ -1234,7 +1244,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
         /// </summary>
         public List<string> UnemittedReachableFromRoots()
         {
-            var report = new List<string>();
+            var report = _unknownPruneRoots.Select(r => $"root '{r}': names no emitted function or struct").ToList();
             var roots = CpuOptions.Roots;
             if (roots == null || roots.Count == 0)
                 return report;

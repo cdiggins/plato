@@ -52,7 +52,7 @@ public class GoldenEmissionTests
 
     // Compiling the library dominates the run, so the cases share one Compilation (emission leaves it unchanged;
     // the snapshots would differ between cases otherwise).
-    private static readonly Lazy<Compilation> Shared = new(() => Compile("GoldenFixture.plato"));
+    internal static readonly Lazy<Compilation> Shared = new(() => Compile("GoldenFixture.plato"));
 
     // The types and concepts of foundation (every library names them) plus the libraries the fixture reaches; the rest
     // of the standard library adds emitted text, not writer decisions.
