@@ -6,8 +6,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;x64</Platforms>
-    <ServerGarbageCollector>true</ServerGarbageCollector>
+    <!-- A generation retains about 1 GB of syntax and TIR, so collections are dominated by survivors: they need parallel
+         marking, which server GC gives and a larger gen0 does not. Eight heaps, not one per thread (22): 6 GB peak against 3.5 GB
+         for no gain. Tiered PGO instruments code a run this short never repays: 8 CPU seconds of about 47. -->
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <TieredPGO>false</TieredPGO>
   </PropertyGroup>
+
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.GC.HeapCount" Value="8" />
+    <RuntimeHostConfigurationOption Include="System.GC.NoAffinitize" Value="true" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
