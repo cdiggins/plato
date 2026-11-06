@@ -45,6 +45,10 @@ namespace Ara3D.Geometry.CppWriter
         public IReadOnlyList<string> PruneRoots { get; init; }
         /// <summary>--scalar-arrays (TKT-1186; on for Cpu since timing window 2, 2026-11-04): a fixed-arity struct's Count is folded and its component arrays unrolled.</summary>
         public bool ScalarArrays { get; init; }
+        /// <summary>--cpp-scalar-regions (TKT-1211, off by default): scalar regions: a call whose result holds no arena memory
+        /// (<see cref="CppWriter.HoldsNoArenaMemory"/>), made where the enclosing result does hold some, is written between
+        /// <c>plato::arena_mark</c> and <c>plato::arena_rollback</c>, so the scratch beneath it is reclaimed at once.</summary>
+        public bool ScalarRegions { get; init; }
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
@@ -67,6 +71,7 @@ namespace Ara3D.Geometry.CppWriter
                 CompactSums = s.On("cpp-sum-compact"),
                 StaticStringLiterals = s.On("cpp-static-strings"),
                 ScalarArrays = s.On("scalar-arrays"),
+                ScalarRegions = s.On("cpp-scalar-regions"),
                 UnitLines = s.Int("cpp-unit-lines", DefaultUnitLines),
                 PruneRoots = s.Value("cpp-prune-to-roots")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
                 Switches = s,
@@ -455,7 +460,7 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>Bodiless functions whose first parameter is an Array of a primitive but whose result is not: the prelude defines them (FromCharacters).</summary>
         private static readonly HashSet<string> CpuPreludeArrayIntrinsics = new HashSet<string> { "FromCharacters" };
 
-        private static bool IsPreludeArrayTemplate(string name, IReadOnlyList<string> paramTypes)
+        internal static bool IsPreludeArrayTemplate(string name, IReadOnlyList<string> paramTypes)
             => CpuPreludeArrayNames.Contains(name)
                && (paramTypes.Any(t => t.StartsWith("Array<")) || name == "Range" || name == "MapRange" || name == "EmptyList");
 

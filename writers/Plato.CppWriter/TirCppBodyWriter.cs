@@ -344,6 +344,8 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             if (!first)
                 Write(", ");
             first = false;
+            if (StripCoerce(a) is TirLambda lam)
+                _argumentLambdas.Add(lam);
             WriteNode(a);
         }
     }
@@ -913,14 +915,17 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                     Types = args.Select((a, i) => i == 0 ? tagType : _w.CppTypeNameOrNull(a.Type)).ToList(),
                 });
             }
-            Write($"{_w.FunctionName(name)}(");
-            Write(_w.DefaultValueExpr(tagType));
-            foreach (var arg in args.Skip(1))
+            WriteInRegion(call, () =>
             {
-                Write(", ");
-                WriteNode(arg);
-            }
-            Write(")");
+                Write($"{_w.FunctionName(name)}(");
+                Write(_w.DefaultValueExpr(tagType));
+                foreach (var arg in args.Skip(1))
+                {
+                    Write(", ");
+                    WriteNode(arg);
+                }
+                Write(")");
+            });
             return;
         }
 
@@ -960,9 +965,12 @@ public partial class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
 
         // Everything else: a free-function call.
         RecordCall(name, args);
-        Write($"{_w.FunctionName(name)}{ExplicitTemplateArguments(call)}(");
-        WriteArgs(args);
-        Write(")");
+        WriteInRegion(call, () =>
+        {
+            Write($"{_w.FunctionName(name)}{ExplicitTemplateArguments(call)}(");
+            WriteArgs(args);
+            Write(")");
+        });
     }
 
     /// <summary>
