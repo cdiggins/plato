@@ -18,7 +18,10 @@ public partial class TirCppBodyWriter
     //       it, and the regions sit at the outermost scalar-returning calls of the dynamic call tree;
     //   (c) some argument holds arena memory (an array, a record of arrays, a function value): a callee handed only
     //       scalars has little to build scratch from, and the small vector and comparison functions called in every
-    //       loop stay free of a mark.
+    //       loop stay free of a mark;
+    //   (d) the callee may allocate (CppWriter.MayAllocate, a transitive analysis of the TIR): without it the first
+    //       measurement wrapped 738 M calls for 152 M allocations on c211, most of them predicates and readers that
+    //       touch the arena not at all.
     // Excluded: a call to a function value (TirInvoke), a bodiless intrinsic, a prelude array template (Count, At,
     // Reduce, Contains, ...), a zero-argument call (a constant), and every call inside a lambda that is not written
     // directly as a call's argument (a lambda bound to a name or returned may escape; one that is an argument runs
@@ -46,6 +49,8 @@ public partial class TirCppBodyWriter
         if (call.Callee?.Body == null)
             return false;
         if (!_w.HoldsNoArenaMemory(call.Type ?? call.ReturnType))
+            return false;
+        if (_w.CpuOptions.ScalarRegionHeavy != null ? !_w.ReachesHeavyAllocator(call.Callee, _w.CpuOptions.ScalarRegionHeavy) : !_w.MayAllocate(call.Callee))
             return false;
         var argTypes = call.Args.Select(a => _w.CppTypeNameOrNull(a.Type) ?? "").ToList();
         if (CppWriter.IsPreludeArrayTemplate(call.Name, argTypes))

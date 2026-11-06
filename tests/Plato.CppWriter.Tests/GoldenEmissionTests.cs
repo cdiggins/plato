@@ -146,7 +146,7 @@ public class GoldenEmissionTests
     private static readonly string[] ScalarRegionRoots =
     {
         "RegionScaledBySum", "RegionTwiceSum", "RegionShifted", "RegionQuadrupled", "RegionApplied", "RegionAppliedArray",
-        "RegionPerElement", "RegionScaledByHyp", "RegionApplyScalar", "RegionApplyArray",
+        "RegionPerElement", "RegionScaledByHyp", "RegionScaledByFirst", "RegionApplyScalar", "RegionApplyArray",
     };
 
     public static IEnumerable<TestCaseData> ScalarRegionOptionSets()

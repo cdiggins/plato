@@ -4268,25 +4268,47 @@ double SumOf(Array<double> values)
 
 double RegionSum(Array<double> xs)
 {
+    auto _s0 = xs;
+    int32_t _n0 = _s0.count;
+    double* _a0 = plato::arena_alloc<double>(_n0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        const auto& _eval0_0 = _s0.data[_i0];
+        _a0[_i0] = (_eval0_0 * _eval0_0);
+    }
+    auto _lp0 = plato::make_array(_a0, _n0);
+    Array<double> sq = _lp0;
     double s = 0.0;
     int32_t i = 0;
-    while ((i < ToCount(xs)))
+    while ((i < ToCount(sq)))
     {
-        s = (s + plato::array_at_readonly(xs, i));
+        s = (s + plato::array_at_readonly(sq, i));
         i = (i + 1);
     }
     return s;
 }
 
+double RegionFirst(Array<double> xs) { return ((0 < ToCount(xs)) ? plato::array_at_readonly(xs, 0) : 0.0); }
+
 Stats RegionStats(Array<double> xs)
 {
-    double lo = plato::array_at_readonly(xs, 0);
-    double hi = plato::array_at_readonly(xs, 0);
-    int32_t i = 1;
-    while ((i < ToCount(xs)))
+    auto _s0 = xs;
+    int32_t _n0 = _s0.count;
+    double* _a0 = plato::arena_alloc<double>(_n0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
     {
-        lo = ((plato::array_at_readonly(xs, i) < lo) ? plato::array_at_readonly(xs, i) : lo);
-        hi = ((hi < plato::array_at_readonly(xs, i)) ? plato::array_at_readonly(xs, i) : hi);
+        const auto& _eval0_0 = _s0.data[_i0];
+        _a0[_i0] = (_eval0_0 + 0.0);
+    }
+    auto _lp0 = plato::make_array(_a0, _n0);
+    Array<double> ys = _lp0;
+    double lo = plato::array_at_readonly(ys, 0);
+    double hi = plato::array_at_readonly(ys, 0);
+    int32_t i = 1;
+    while ((i < ToCount(ys)))
+    {
+        lo = ((plato::array_at_readonly(ys, i) < lo) ? plato::array_at_readonly(ys, i) : lo);
+        hi = ((hi < plato::array_at_readonly(ys, i)) ? plato::array_at_readonly(ys, i) : hi);
         i = (i + 1);
     }
     return Stats{ lo, hi };
@@ -4374,6 +4396,8 @@ Array<double> RegionPerElement(Array<Array<double>> xss)
 }
 
 Array<double> RegionScaledByHyp(Array<double> xs) { return RegionScaledBy(xs, RegionHyp(3.0, 4.0)); }
+
+Array<double> RegionScaledByFirst(Array<double> xs) { return RegionScaledBy(xs, ((0 < ToCount(xs)) ? plato::array_at_readonly(xs, 0) : 0.0)); }
 
 bool LessThan(ReadOnlyParameter<ElectricCurrent> a, ReadOnlyParameter<ElectricCurrent> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
 
@@ -4978,25 +5002,5 @@ Inductance Eighth(ReadOnlyParameter<Inductance> x) { return Divide(x, 8.0); }
 Inductance Sixteenth(ReadOnlyParameter<Inductance> x) { return Divide(x, 16.0); }
 
 Inductance Tenth(ReadOnlyParameter<Inductance> x) { return Divide(x, 10.0); }
-
-Inductance Hundredth(ReadOnlyParameter<Inductance> x) { return Divide(x, 100.0); }
-
-Inductance Thousandth(ReadOnlyParameter<Inductance> x) { return Divide(x, 1000.0); }
-
-Inductance Millionth(ReadOnlyParameter<Inductance> x) { return Divide(x, 1000000.0); }
-
-Inductance Billionth(ReadOnlyParameter<Inductance> x) { return Divide(x, 1000000000.0); }
-
-Inductance Million(ReadOnlyParameter<Inductance> x) { return Multiply(x, 1000000.0); }
-
-Inductance Billion(ReadOnlyParameter<Inductance> x) { return Multiply(x, 1000000000.0); }
-
-Inductance ToPercent(ReadOnlyParameter<Inductance> x, double percent) { return Multiply(x, (percent / 100.0)); }
-
-Inductance MidPoint(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b) { return Lerp(a, b, 0.5); }
-
-Inductance LerpClamped(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Inductance SmoothLerp(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
 } // namespace plato

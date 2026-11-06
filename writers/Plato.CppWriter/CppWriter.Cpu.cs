@@ -49,6 +49,9 @@ namespace Ara3D.Geometry.CppWriter
         /// (<see cref="CppWriter.HoldsNoArenaMemory"/>), made where the enclosing result does hold some, is written between
         /// <c>plato::arena_mark</c> and <c>plato::arena_rollback</c>, so the scratch beneath it is reclaimed at once.</summary>
         public bool ScalarRegions { get; init; }
+        /// <summary>--cpp-scalar-region-heavy=A,B,...: with scalar regions on, wrap only calls whose callee is, or transitively calls, one of
+        /// these functions (the size-threshold form: the names a tally showed to allocate most); null wraps every callee that may allocate.</summary>
+        public IReadOnlyList<string> ScalarRegionHeavy { get; init; }
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
@@ -72,6 +75,7 @@ namespace Ara3D.Geometry.CppWriter
                 StaticStringLiterals = s.On("cpp-static-strings"),
                 ScalarArrays = s.On("scalar-arrays"),
                 ScalarRegions = s.On("cpp-scalar-regions"),
+                ScalarRegionHeavy = s.Value("cpp-scalar-region-heavy")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
                 UnitLines = s.Int("cpp-unit-lines", DefaultUnitLines),
                 PruneRoots = s.Value("cpp-prune-to-roots")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
                 Switches = s,

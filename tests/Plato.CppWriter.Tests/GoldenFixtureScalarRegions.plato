@@ -6,24 +6,28 @@ library GoldenFixtureScalarRegions
     // Scalar-returning callees taking an array: the shape a region wraps.
     RegionSum(xs: Array<Number>): Number
     {
+        var sq = xs.Map((x) => x * x);
         var s = 0.0;
         var i = 0;
-        while (i < xs.Count)
+        while (i < sq.Count)
         {
-            s = s + xs[i];
+            s = s + sq[i];
             i = i + 1;
         }
         return s;
     }
+    // Allocates nothing, so condition (d) leaves its calls bare even where the other conditions hold.
+    RegionFirst(xs: Array<Number>): Number => xs.Count > 0 ? xs[0] : 0.0;
     RegionStats(xs: Array<Number>): Stats
     {
-        var lo = xs[0];
-        var hi = xs[0];
+        var ys = xs.Map((x) => x + 0.0);
+        var lo = ys[0];
+        var hi = ys[0];
         var i = 1;
-        while (i < xs.Count)
+        while (i < ys.Count)
         {
-            lo = xs[i] < lo ? xs[i] : lo;
-            hi = xs[i] > hi ? xs[i] : hi;
+            lo = ys[i] < lo ? ys[i] : lo;
+            hi = ys[i] > hi ? ys[i] : hi;
             i = i + 1;
         }
         return new Stats(lo, hi);
@@ -65,4 +69,6 @@ library GoldenFixtureScalarRegions
     RegionPerElement(xss: Array<Array<Number>>): Array<Number> => xss.Map((ys) => RegionSum(ys));
     // Not wrapped: every argument is a scalar.
     RegionScaledByHyp(xs: Array<Number>): Array<Number> => RegionScaledBy(xs, RegionHyp(3.0, 4.0));
+    // Not wrapped: the callee allocates nothing (condition d).
+    RegionScaledByFirst(xs: Array<Number>): Array<Number> => RegionScaledBy(xs, RegionFirst(xs));
 }

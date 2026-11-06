@@ -1823,6 +1823,7 @@ template<class TV0, class F0> Array<TV0> Sort(Array<TV0> xs, F0 lessOrEqual);
 template<class TV0> JaggedArray<TV0> FromRows(Array<Array<TV0>> rows);
 double SumOf(Array<double> values);
 double RegionSum(Array<double> xs);
+double RegionFirst(Array<double> xs);
 Stats RegionStats(Array<double> xs);
 Array<double> RegionDoubled(Array<double> xs);
 Array<double> RegionScaledBy(Array<double> xs, double k);
@@ -1836,6 +1837,7 @@ Array<double> RegionApplied(Array<double> xs);
 Array<double> RegionAppliedArray(Array<double> xs);
 Array<double> RegionPerElement(Array<Array<double>> xss);
 Array<double> RegionScaledByHyp(Array<double> xs);
+Array<double> RegionScaledByFirst(Array<double> xs);
 template<class T> int32_t LastIndex(Array<T> self);
 template<class T> bool IsValidIndex(Array<T> self, int32_t index);
 template<class T, class TV2> bool IsValidIndex(Array<T> self, TV2 index);
@@ -4781,7 +4783,7 @@ template<class T> int32_t RowCount(JaggedArray<T> self) { return (ToCount(Offset
 
 template<class T> int32_t RowLength(JaggedArray<T> self, int32_t i) { return (plato::array_at_readonly(Offsets(self), (i + 1)) - plato::array_at_readonly(Offsets(self), i)); }
 
-template<class T> Array<T> Row(JaggedArray<T> self, int32_t i) { return SubArray(Values(self), plato::array_at_readonly(Offsets(self), i), [&]() { const auto _rm0 = plato::arena_mark(); auto _rv0 = RowLength(self, i); plato::arena_rollback(_rm0); return _rv0; }()); }
+template<class T> Array<T> Row(JaggedArray<T> self, int32_t i) { return SubArray(Values(self), plato::array_at_readonly(Offsets(self), i), RowLength(self, i)); }
 
 template<class T> T RowElement(JaggedArray<T> self, int32_t row, int32_t k) { return plato::array_at_readonly(Values(self), (plato::array_at_readonly(Offsets(self), row) + k)); }
 

@@ -4,6 +4,26 @@
 
 namespace plato {
 
+Inductance Hundredth(ReadOnlyParameter<Inductance> x) { return Divide(x, 100.0); }
+
+Inductance Thousandth(ReadOnlyParameter<Inductance> x) { return Divide(x, 1000.0); }
+
+Inductance Millionth(ReadOnlyParameter<Inductance> x) { return Divide(x, 1000000.0); }
+
+Inductance Billionth(ReadOnlyParameter<Inductance> x) { return Divide(x, 1000000000.0); }
+
+Inductance Million(ReadOnlyParameter<Inductance> x) { return Multiply(x, 1000000.0); }
+
+Inductance Billion(ReadOnlyParameter<Inductance> x) { return Multiply(x, 1000000000.0); }
+
+Inductance ToPercent(ReadOnlyParameter<Inductance> x, double percent) { return Multiply(x, (percent / 100.0)); }
+
+Inductance MidPoint(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b) { return Lerp(a, b, 0.5); }
+
+Inductance LerpClamped(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+Inductance SmoothLerp(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
 Array<Inductance> LinearSpace(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, int32_t count)
 {
     auto _s1 = count;
@@ -4982,25 +5002,5 @@ double Cdf(CauchyDistribution x, double value) { std::abort(); }
 double Mean(LaplaceDistribution x) { std::abort(); }
 
 double Variance(LaplaceDistribution x) { std::abort(); }
-
-double Pdf(LaplaceDistribution x, double value) { std::abort(); }
-
-double Cdf(LaplaceDistribution x, double value) { std::abort(); }
-
-double Mean(WeibullDistribution x) { std::abort(); }
-
-double Variance(WeibullDistribution x) { std::abort(); }
-
-double Pdf(WeibullDistribution x, double value) { std::abort(); }
-
-double Cdf(WeibullDistribution x, double value) { std::abort(); }
-
-double Mean(ParetoDistribution x) { std::abort(); }
-
-double Variance(ParetoDistribution x) { std::abort(); }
-
-double Pdf(ParetoDistribution x, double value) { std::abort(); }
-
-double Cdf(ParetoDistribution x, double value) { std::abort(); }
 
 } // namespace plato

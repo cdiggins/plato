@@ -4,6 +4,26 @@
 
 namespace plato {
 
+double Pdf(LaplaceDistribution x, double value) { std::abort(); }
+
+double Cdf(LaplaceDistribution x, double value) { std::abort(); }
+
+double Mean(WeibullDistribution x) { std::abort(); }
+
+double Variance(WeibullDistribution x) { std::abort(); }
+
+double Pdf(WeibullDistribution x, double value) { std::abort(); }
+
+double Cdf(WeibullDistribution x, double value) { std::abort(); }
+
+double Mean(ParetoDistribution x) { std::abort(); }
+
+double Variance(ParetoDistribution x) { std::abort(); }
+
+double Pdf(ParetoDistribution x, double value) { std::abort(); }
+
+double Cdf(ParetoDistribution x, double value) { std::abort(); }
+
 double Mean(TriangularDistribution x) { std::abort(); }
 
 double Variance(TriangularDistribution x) { std::abort(); }
