@@ -4,6 +4,20 @@
 
 namespace plato {
 
+double Cos(Angle self) { return Cos(self.Radians); }
+
+double Sin(Angle self) { return Sin(self.Radians); }
+
+double Tan(Angle self) { return (Sin(self.Radians) / Cos(self.Radians)); }
+
+Tuple2<double, double> SinCos(Angle self) { return Tuple2<double, double>{ Sin(self.Radians), Cos(self.Radians) }; }
+
+double Cosh(Angle self) { return ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0); }
+
+double Sinh(Angle self) { return ((Exp(self.Radians) - Exp((-self.Radians))) / 2.0); }
+
+double Tanh(Angle self) { return (((Exp(self.Radians) - Exp((-self.Radians))) / 2.0) / ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0)); }
+
 Angle Add(Angle a, Angle b) { return Angle{ (a.Radians + b.Radians) }; }
 
 Angle Subtract(Angle a, Angle b) { return Angle{ (a.Radians - b.Radians) }; }
@@ -4989,17 +5003,5 @@ double Pdf(DiscreteDistribution x, double value) { std::abort(); }
 double Cdf(DiscreteDistribution x, double value) { std::abort(); }
 
 Quaternion Square(Quaternion x) { return Multiply(x, x); }
-
-Quaternion Cube(Quaternion x) { return Multiply(Multiply(x, x), x); }
-
-Quaternion Pow4(Quaternion x) { return Square(Square(x)); }
-
-Quaternion Pow5(Quaternion x) { return Multiply(Square(Square(x)), x); }
-
-Quaternion MidPoint(Quaternion a, Quaternion b) { return Lerp(a, b, 0.5); }
-
-Quaternion LerpClamped(Quaternion a, Quaternion b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
-
-Quaternion SmoothLerp(Quaternion a, Quaternion b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
 
 } // namespace plato

@@ -16,6 +16,21 @@ library C1aFixture
             Rect(w, h) => w * h;
             Dot => 0.0;
         };
+    // bind-scrutinee in an arm (TKT-1199): the guard's return becomes an if, and the arm declares the local.
+    // Doubled is not inlined (its body is a conditional), so without the binding the call is emitted once per
+    // tag test and field read.
+    Doubled(s: Shape): Shape
+        => match (s) {
+            Circle(r) => Shape.Circle(r * 2.0);
+            Rect(w, h) => Shape.Rect(w * 2.0, h * 2.0);
+            Dot => Shape.Dot;
+        };
+    AreaOr(c: Boolean, s: Shape): Number
+        => c ? 0.0 : match (Doubled(s)) {
+            Circle(q) => 3.0 * q * q;
+            Rect(w, h) => w * h;
+            Dot => 0.0;
+        };
     // sink-bindings: a local only one arm reads.
     Pick(c: Boolean, s: Shape): Number
     {

@@ -64,20 +64,22 @@ public static class DecoderRewriteTests
 
     // --- TKT-1138: a match evaluates its scrutinee once ---------------------------------------------
 
-    [TestCase("MatchBody", 4, 1, Description = "a test and three field reads name the scrutinee")]
-    [TestCase("MatchInLocal", 4, 1, Description = "the match is the value of a local")]
-    [TestCase("MatchOperand", 4, 1, Description = "the match is an operand of a call")]
-    public static void ScrutineeIsBoundOnce(string name, int before, int after)
+    [TestCase("MatchBody", 4, 1, 1, Description = "a test and three field reads name the scrutinee")]
+    [TestCase("MatchInLocal", 4, 1, 1, Description = "the match is the value of a local")]
+    [TestCase("MatchOperand", 4, 1, 1, Description = "the match is an operand of a call")]
+    [TestCase("MatchInArm", 4, 1, 1, Description = "the match is an arm of the returned conditional (TKT-1199)")]
+    [TestCase("MatchInMatchArm", 11, 2, 2, Description = "a match in the arm of a match, on a field of its binder (TKT-1199): four inner reads each holding the outer call, plus three outer")]
+    public static void ScrutineeIsBoundOnce(string name, int before, int after, int locals)
     {
         Assert.That(Calls(Lower(name), "Row"), Is.EqualTo(before));
         var bound = Lower(name, bind: true);
         Assert.That(Calls(bound, "Row"), Is.EqualTo(after));
-        Assert.That(Locals(bound, "_scrut").ToList(), Has.Count.EqualTo(1));
+        Assert.That(Locals(bound, "_scrut").ToList(), Has.Count.EqualTo(locals));
         Assert.That(Calls(Lower(name, bind: true, share: true), "Row"), Is.EqualTo(after));
     }
 
     [TestCase("MatchOnParameter", Description = "a parameter costs nothing to repeat")]
-    [TestCase("MatchInArm", Description = "an arm of a conditional is not evaluated on every path")]
+    [TestCase("MatchInLocalArm", Description = "an arm of a local's conditional can declare nothing")]
     [TestCase("MatchInLambda", Description = "a lambda body is evaluated when the lambda is called")]
     public static void ScrutineeStaysAsWritten(string name)
     {
@@ -96,6 +98,26 @@ public static class DecoderRewriteTests
         Assert.That(body.Statements[0], Is.TypeOf<TirLet>());
         Assert.That(((TirLet)body.Statements[0]).Value, Is.TypeOf<TirCall>());
         Assert.That(body.Statements[1], Is.TypeOf<TirReturn>());
+    }
+
+    /// <summary>TKT-1199: <c>return c ? x : match (E) {...}</c> becomes <c>if (c) { return x; } else { var _scrut0 = E; return ...; }</c>.</summary>
+    [Test]
+    public static void AMatchInAnArmIsBoundInsideTheArmOfAnIf()
+    {
+        var body = (TirBlock)Lower("MatchInArm", bind: true).Body;
+        Assert.That(body.Statements, Has.Count.EqualTo(1));
+        Assert.That(body.Statements[0], Is.TypeOf<TirIf>());
+        var iff = (TirIf)body.Statements[0];
+        // The writer's later passes put each branch in a block.
+        static IReadOnlyList<TirNode> Branch(TirNode n) => n is TirBlock b ? b.Statements : new[] { n };
+        Assert.That(Branch(iff.IfTrue).Single(), Is.TypeOf<TirReturn>());
+        Assert.That(Names(iff.IfTrue), Does.Not.Contain("Row"));
+        var arm = Branch(iff.IfFalse);
+        Assert.That(arm, Has.Count.EqualTo(2));
+        Assert.That(arm[0], Is.TypeOf<TirLet>());
+        Assert.That(((TirLet)arm[0]).Def.Name, Is.EqualTo("_scrut0"));
+        Assert.That(((TirLet)arm[0]).Value, Is.TypeOf<TirCall>());
+        Assert.That(arm[1], Is.TypeOf<TirReturn>());
     }
 
     // --- TKT-1142: a local is evaluated on the arm that reads it -----------------------------------

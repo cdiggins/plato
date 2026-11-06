@@ -14,7 +14,7 @@ namespace PlatoCppWriterTests;
 [TestFixture]
 public class C1aGoldenTests
 {
-    private static readonly string[] Roots = { "ShapeArea", "Same", "AreaAt", "Pick", "Twice", "Wide", "Scaled" };
+    private static readonly string[] Roots = { "ShapeArea", "Same", "AreaAt", "Doubled", "AreaOr", "Pick", "Twice", "Wide", "Scaled" };
 
     private static readonly string[] HoistRoots = { "HArea", "Hoisty", "HoistySum" };
     private const string HoistFixture = "C1aHoistFixture.plato";

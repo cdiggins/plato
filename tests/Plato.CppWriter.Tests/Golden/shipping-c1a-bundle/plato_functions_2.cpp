@@ -4,6 +4,18 @@
 
 namespace plato {
 
+Quaternion Cube(Quaternion x) { return Multiply(Multiply(x, x), x); }
+
+Quaternion Pow4(Quaternion x) { return Square(Square(x)); }
+
+Quaternion Pow5(Quaternion x) { return Multiply(Square(Square(x)), x); }
+
+Quaternion MidPoint(Quaternion a, Quaternion b) { return Lerp(a, b, 0.5); }
+
+Quaternion LerpClamped(Quaternion a, Quaternion b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
+
+Quaternion SmoothLerp(Quaternion a, Quaternion b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
+
 Array<Quaternion> LinearSpace(Quaternion a, Quaternion b, int32_t count)
 {
     auto _s1 = count;
@@ -1675,6 +1687,8 @@ double AreaAt(Shape s)
     Shape _scrut0 = s;
     return ((_scrut0.Kind == Shape::Kind_Circle) ? ((3.0 * _scrut0.Circle_Radius) * _scrut0.Circle_Radius) : ((_scrut0.Kind == Shape::Kind_Rect) ? (_scrut0.Rect_Width * _scrut0.Rect_Height) : 0.0));
 }
+
+Shape Doubled(Shape s) { return ((s.Kind == Shape::Kind_Circle) ? Circle(Shape{}, (s.Circle_Radius * 2.0)) : ((s.Kind == Shape::Kind_Rect) ? Rect(Shape{}, (s.Rect_Width * 2.0), (s.Rect_Height * 2.0)) : Dot(Shape{}))); }
 
 double Twice(Shape s)
 {

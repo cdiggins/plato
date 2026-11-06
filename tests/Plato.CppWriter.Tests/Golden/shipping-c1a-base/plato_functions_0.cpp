@@ -3876,6 +3876,8 @@ bool ExclusiveOr(bool a, bool b) { return (!((a ? b : false) ? true : ((!a) ? (!
 
 int32_t Hash(bool self) { return (self ? 1 : 0); }
 
+double AreaOr(bool c, Shape s) { return (c ? 0.0 : ((Doubled(s).Kind == Shape::Kind_Circle) ? ((3.0 * Doubled(s).Circle_Radius) * Doubled(s).Circle_Radius) : ((Doubled(s).Kind == Shape::Kind_Rect) ? (Doubled(s).Rect_Width * Doubled(s).Rect_Height) : 0.0))); }
+
 double Pick(bool c, Shape s)
 {
     double t = (ShapeArea(s) + 1.0);
