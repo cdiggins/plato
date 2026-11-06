@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
-using Ara3D.Geometry.CSharpWriter;
 
 namespace Ara3D.Geometry.CppWriter.Policies
 {

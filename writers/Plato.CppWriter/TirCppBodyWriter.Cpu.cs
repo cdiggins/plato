@@ -4,7 +4,6 @@ using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.CppWriter.Policies;
-using Ara3D.Geometry.CSharpWriter;
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.CppWriter;
