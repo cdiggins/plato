@@ -8,6 +8,9 @@
     <EmbeddedResource Include="prelude\*.hpp" LogicalName="prelude/%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Plato.CppWriter.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
     <ProjectReference Include="..\..\src\Plato.Compiler\Plato.Compiler.csproj" />
     <ProjectReference Include="..\..\src\Plato.Optimizer\Plato.Optimizer.csproj" />

@@ -25,6 +25,10 @@ namespace Ara3D.Geometry.CppWriter
 
         private static readonly IReadOnlyList<ITirPass> Passes = PassRegistry.Shared.Resolve(PassOrder);
 
+        /// <summary>A pass the tests run after <see cref="PassOrder"/> to inject a fault (TKT-1209); null in every real
+        /// generation, so the list above is the whole pipeline.</summary>
+        internal ITirPass ProbePass { get; set; }
+
         private PassContext _context;
         private Compiler.Compilation _contextCompilation;
         private CppCpuOptions _contextOptions;
@@ -63,9 +67,12 @@ namespace Ara3D.Geometry.CppWriter
         {
             if (tir == null || !IsCpu(w))
                 return tir;
-            var ctx = w.CpuPipeline.Context(w).ForBody(ownerTypeName);
+            var pipeline = w.CpuPipeline;
+            var ctx = pipeline.Context(w).ForBody(ownerTypeName);
+            var probe = pipeline.ProbePass;
+            var passes = probe == null ? Passes : new List<ITirPass>(Passes) { probe };
             using (PassCounters.Scope())
-                return PassRegistry.Run(tir, Passes, ctx);
+                return PassRegistry.Run(tir, passes, ctx);
         }
 
         /// <summary>
@@ -84,6 +91,8 @@ namespace Ara3D.Geometry.CppWriter
 
             public bool InlineCalls => true;
             public bool InlineScalarBodies => false;
+            // Null, and this host is not an IStatementInlineHost: both are sequential-only state the prepass's worker
+            // threads must not reach (the ITirPass contract, TKT-1209).
             public InlineReport InlineReport => null;
             public Compiler.Compilation Compilation => _writer.Compilation;
 
