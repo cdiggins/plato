@@ -47,6 +47,25 @@ library RewriteProbe
             Bad(c, a) => c - a;
         };
 
+    // The match is an arm of a conditional (TKT-1199): its scrutinee is not evaluated on every path, so the
+    // return becomes an if whose arm declares the local.
+    MatchInArm(n: Integer): Integer
+        => n > 100 ? 0 : match (Row(n)) {
+            Good(v) => v + 1;
+            Bad(c, a) => c + a;
+        };
+
+    // The match is an arm of another match, on a field of its binder: the outer scrutinee is bound before
+    // the statement and the inner one in the arm (TKT-1199).
+    MatchInMatchArm(n: Integer): Integer
+        => match (Row(n)) {
+            Good(v) => match (Row(v - 2)) {
+                Good(w) => w + 10;
+                Bad(c, a) => c - a;
+            };
+            Bad(c, a) => c + a;
+        };
+
     //== Match scrutinee: kept as written
 
     // A parameter costs nothing to repeat.
@@ -56,12 +75,15 @@ library RewriteProbe
             Bad(c, a) => c + a;
         };
 
-    // The match is an arm of a conditional: its scrutinee is not evaluated on every path.
-    MatchInArm(n: Integer): Integer
-        => n > 100 ? 0 : match (Row(n)) {
+    // The match is an arm of a conditional that is the value of a local: no local can be declared in its arm.
+    MatchInLocalArm(n: Integer): Integer
+    {
+        var r = n > 100 ? 0 : match (Row(n)) {
             Good(v) => v + 1;
             Bad(c, a) => c + a;
         };
+        return r * 2;
+    }
 
     // A lambda body is evaluated when the lambda is called.
     MatchInLambda(n: Integer): Array<Integer>
@@ -216,6 +238,8 @@ library RewriteProbe
     Probe_MatchInLocal(): Integer => MatchInLocal(0 - 2);
     Probe_MatchOperand(): Integer => MatchOperand(0 - 2);
     Probe_MatchInArm(): Integer => MatchInArm(0 - 2);
+    Probe_MatchInMatchArm(): Integer => MatchInMatchArm(1);
+    Probe_MatchInLocalArm(): Integer => MatchInLocalArm(0 - 2);
     Probe_SunkOneArm(): Integer => SunkOneArm(2);
     Probe_SunkChain(): Integer => SunkChain(10);
     Probe_SunkTwoReads(): Integer => SunkTwoReads(2);
@@ -230,6 +254,8 @@ library RewriteProbe
     Law_MatchOperand(): Boolean => MatchOperand(4).Equals(14) && MatchOperand(0 - 2).Equals(7);
     Law_MatchOnParameter(): Boolean => MatchOnParameter(Row(4)).Equals(5) && MatchOnParameter(Row(0 - 2)).Equals(0 - 1);
     Law_MatchInArm(): Boolean => MatchInArm(4).Equals(5) && MatchInArm(200).Equals(0) && MatchInArm(0 - 2).Equals(0 - 1);
+    Law_MatchInMatchArm(): Boolean => MatchInMatchArm(4).Equals(12) && MatchInMatchArm(1).Equals(0 - 2) && MatchInMatchArm(0 - 2).Equals(0 - 1);
+    Law_MatchInLocalArm(): Boolean => MatchInLocalArm(4).Equals(10) && MatchInLocalArm(200).Equals(0) && MatchInLocalArm(0 - 2).Equals(0 - 2);
     Law_MatchInLambda(): Boolean => MatchInLambda(3).Equals([1, 2, 3]);
     Law_SunkOneArm(): Boolean => SunkOneArm(4).Equals(18) && SunkOneArm(2).Equals(0);
     Law_SunkChain(): Boolean => SunkChain(4).Equals(17) && SunkChain(6).Equals(2) && SunkChain(10).Equals(1) && SunkChain(2).Equals(4);

@@ -1022,6 +1022,8 @@ Shape Same(Shape s) { return s; }
 
 double AreaAt(Shape s) { return ((s.Kind == Shape::Kind_Circle) ? ((3.0 * s.Circle_Radius) * s.Circle_Radius) : ((s.Kind == Shape::Kind_Rect) ? (s.Rect_Width * s.Rect_Height) : 0.0)); }
 
+Shape Doubled(Shape s) { return ((s.Kind == Shape::Kind_Circle) ? Circle(Shape{}, (s.Circle_Radius * 2.0)) : ((s.Kind == Shape::Kind_Rect) ? Rect(Shape{}, (s.Rect_Width * 2.0), (s.Rect_Height * 2.0)) : Dot(Shape{}))); }
+
 double Twice(Shape s) { return (ShapeArea(s) + (ShapeArea(s) * 2.0)); }
 
 double Wide(Shape s)

@@ -4,6 +4,20 @@
 
 namespace plato {
 
+Vector2D Pow4(Vector2D x) { return Square(Square(x)); }
+
+Vector2D Pow5(Vector2D x) { return Multiply(Square(Square(x)), x); }
+
+int32_t LastIndex(Vector2D self) { return (ToCount(self) - 1); }
+
+bool IsValidIndex(Vector2D self, int32_t index) { return ((0 <= index) ? (index < ToCount(self)) : false); }
+
+double First(Vector2D self) { return At(self, 0); }
+
+double Last(Vector2D self) { return At(self, (ToCount(self) - 1)); }
+
+double Middle(Vector2D self) { return At(self, (ToCount(self) / 2)); }
+
 bool IsEmpty(Vector2D self) { return (ToCount(self) == 0); }
 
 bool IsNotEmpty(Vector2D self) { return (0 < ToCount(self)); }
@@ -1025,6 +1039,8 @@ double AreaAt(Shape s)
     const Shape& _scrut0 = s;
     return ((_scrut0.Kind == Shape::Kind_Circle) ? ((3.0 * _scrut0.Circle_Radius) * _scrut0.Circle_Radius) : ((_scrut0.Kind == Shape::Kind_Rect) ? (_scrut0.Rect_Width * _scrut0.Rect_Height) : 0.0));
 }
+
+Shape Doubled(Shape s) { return ((s.Kind == Shape::Kind_Circle) ? Circle(Shape{}, (s.Circle_Radius * 2.0)) : ((s.Kind == Shape::Kind_Rect) ? Rect(Shape{}, (s.Rect_Width * 2.0), (s.Rect_Height * 2.0)) : Dot(Shape{}))); }
 
 double Twice(Shape s) { return (ShapeArea(s) + (ShapeArea(s) * 2.0)); }
 

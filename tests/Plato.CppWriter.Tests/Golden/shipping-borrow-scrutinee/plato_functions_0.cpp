@@ -3876,6 +3876,19 @@ bool ExclusiveOr(bool a, bool b) { return (!((a ? b : false) ? true : ((!a) ? (!
 
 int32_t Hash(bool self) { return (self ? 1 : 0); }
 
+double AreaOr(bool c, Shape s)
+{
+    if (c)
+    {
+        return 0.0;
+    }
+    else
+    {
+        Shape _scrut0 = Doubled(s);
+        return ((_scrut0.Kind == Shape::Kind_Circle) ? ((3.0 * _scrut0.Circle_Radius) * _scrut0.Circle_Radius) : ((_scrut0.Kind == Shape::Kind_Rect) ? (_scrut0.Rect_Width * _scrut0.Rect_Height) : 0.0));
+    }
+}
+
 double Pick(bool c, Shape s)
 {
     double t = (ShapeArea(s) + 1.0);
@@ -4985,19 +4998,5 @@ Length MidPoint(Length a, Length b) { return Lerp(a, b, 0.5); }
 Length LerpClamped(Length a, Length b, double t) { return Lerp(a, b, Lesser(((t <= 0.0) ? 0.0 : t), 1.0)); }
 
 Length SmoothLerp(Length a, Length b, double t) { return Lerp(a, b, ((t * t) * (3.0 - (2.0 * t)))); }
-
-Array<Length> LinearSpace(Length a, Length b, int32_t count)
-{
-    auto _s1 = count;
-    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
-    Length* _a1 = plato::arena_alloc<Length>(_n1);
-    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
-    {
-        auto _eval0_1 = _i1;
-        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
-    }
-    auto _lp1 = plato::make_array(_a1, _n1);
-    return _lp1;
-}
 
 } // namespace plato

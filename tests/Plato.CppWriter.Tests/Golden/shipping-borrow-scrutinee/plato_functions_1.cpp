@@ -4,6 +4,20 @@
 
 namespace plato {
 
+Array<Length> LinearSpace(Length a, Length b, int32_t count)
+{
+    auto _s1 = count;
+    int32_t _n1 = (_s1 > 0 ? _s1 : 0);
+    Length* _a1 = plato::arena_alloc<Length>(_n1);
+    for (int32_t _i1 = 0; _i1 < _n1; _i1++)
+    {
+        auto _eval0_1 = _i1;
+        _a1[_i1] = Lerp(a, b, (ToNumber(_eval0_1) / ToNumber((count - 1))));
+    }
+    auto _lp1 = plato::make_array(_a1, _n1);
+    return _lp1;
+}
+
 Array<Length> LinearSpaceExclusive(Length a, Length b, int32_t count)
 {
     auto _s1 = count;
@@ -4989,19 +5003,5 @@ Array<Vector2D> LinearSpaceExclusive(Vector2D a, Vector2D b, int32_t count)
 Vector2D Square(Vector2D x) { return Multiply(x, x); }
 
 Vector2D Cube(Vector2D x) { return Multiply(Multiply(x, x), x); }
-
-Vector2D Pow4(Vector2D x) { return Square(Square(x)); }
-
-Vector2D Pow5(Vector2D x) { return Multiply(Square(Square(x)), x); }
-
-int32_t LastIndex(Vector2D self) { return (ToCount(self) - 1); }
-
-bool IsValidIndex(Vector2D self, int32_t index) { return ((0 <= index) ? (index < ToCount(self)) : false); }
-
-double First(Vector2D self) { return At(self, 0); }
-
-double Last(Vector2D self) { return At(self, (ToCount(self) - 1)); }
-
-double Middle(Vector2D self) { return At(self, (ToCount(self) / 2)); }
 
 } // namespace plato

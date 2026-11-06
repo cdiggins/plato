@@ -4,6 +4,8 @@
 
 namespace plato {
 
+Length Third(Length x) { return Divide(x, 3.0); }
+
 Length Quarter(Length x) { return Divide(x, 4.0); }
 
 Length Eighth(Length x) { return Divide(x, 8.0); }

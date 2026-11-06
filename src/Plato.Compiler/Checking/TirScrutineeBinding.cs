@@ -1,4 +1,4 @@
-// Binds the scrutinee of a match to one local (TKT-1138).
+// Binds the scrutinee of a match to one local (TKT-1138, TKT-1199).
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
@@ -15,10 +15,18 @@ namespace Ara3D.Geometry.Compiler.Checking
     /// A scrutinee is bound only where evaluating it first adds no work: it must be evaluated on every
     /// path through the statement's expression (an operand of calls, constructors and conversions, the
     /// condition of a conditional, never a branch of one, never inside a lambda), and the expression
-    /// must assign nothing. A match inside the arm of another match, or of a conditional, keeps its
-    /// scrutinee as written. The statements considered are those of the function body reached through
+    /// must assign nothing. The statements considered are those of the function body reached through
     /// blocks and <c>if</c> branches: a return, a local, an <c>if</c> condition, and a body that is one
     /// expression (which becomes a block ending in a return).
+    ///
+    /// A match that is an arm of a conditional (<c>c ? x : match (E) { ... }</c>, the shape of an
+    /// expression-bodied guard, TKT-1199) is not evaluated on every path, so its scrutinee cannot be
+    /// declared before the statement. When the statement is a return, the conditional becomes an
+    /// <c>if</c> whose branches return and the arm that holds the match declares the local:
+    /// <c>if (c) { return x; } else { var _scrutN = E; return ...; }</c>. The tag chain of a match is
+    /// itself a conditional, so a match in the arm of a match is reached the same way. A match in the
+    /// arm of a conditional that is the value of a local, or of an <c>if</c> condition, keeps its
+    /// scrutinee as written: no local can be declared there.
     /// </summary>
     internal sealed class TirScrutineeBinding
     {
@@ -45,9 +53,11 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return body;
             if (body is TirBlock or TirReturn or TirIf or TirLoop)
                 return One(Statement(body));
-            var before = new List<TirNode>();
-            var value = Hoist(body, before);
-            return before.Count == 0 ? body : new TirBlock(before.Append(new TirReturn(value, body.Origin)).ToList(), body.Origin);
+            // A body that is one expression is the value of its return.
+            var statements = Statement(new TirReturn(body, body.Origin));
+            if (statements.Count == 1 && statements[0] is TirReturn r && ReferenceEquals(r.Value, body))
+                return body;
+            return statements.Count == 1 && statements[0] is TirBlock ? statements[0] : new TirBlock(statements.ToList(), body.Origin);
         }
 
         private static TirNode One(IReadOnlyList<TirNode> statements)
@@ -63,7 +73,10 @@ namespace Ara3D.Geometry.Compiler.Checking
                 case TirReturn r:
                 {
                     var value = Hoist(r.Value, before);
-                    before.Add(ReferenceEquals(value, r.Value) ? r : new TirReturn(value, r.Origin));
+                    if (value is TirConditional c && !Assigns(value) && (WouldBind(c.IfTrue) || WouldBind(c.IfFalse)))
+                        before.Add(new TirIf(c.Condition, Arm(c.IfTrue, r), Arm(c.IfFalse, r), r.Origin));
+                    else
+                        before.Add(ReferenceEquals(value, r.Value) ? r : new TirReturn(value, r.Origin));
                     return before;
                 }
                 case TirLet l:
@@ -87,11 +100,28 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         private TirNode Branch(TirNode s) => s == null ? null : One(Statement(s));
 
+        /// <summary>An arm of a returned conditional as a branch of the <c>if</c> it becomes: a return of the
+        /// arm's value, with the scrutinees the arm evaluates on every path bound before it.</summary>
+        private TirNode Arm(TirNode value, TirReturn of) => One(Statement(new TirReturn(value, of.Origin)));
+
+        private static bool Assigns(TirNode e) => e.Descendants().Any(n => n is TirAssign);
+
+        /// <summary>Whether the expression, as the value of a return, declares a local: it holds a scrutinee
+        /// on every path, or it is a conditional with such an arm.</summary>
+        private bool WouldBind(TirNode e)
+        {
+            if (e == null || Assigns(e))
+                return false;
+            var found = new List<TirNode>();
+            Find(e, true, found);
+            return found.Count > 0 || e is TirConditional c && (WouldBind(c.IfTrue) || WouldBind(c.IfFalse));
+        }
+
         /// <summary>The expression with each strictly evaluated scrutinee replaced by a local; the locals
         /// are appended to <paramref name="before"/> in the order they must run.</summary>
         private TirNode Hoist(TirNode expression, List<TirNode> before, bool inside = false)
         {
-            if (expression == null || expression.Descendants().Any(n => n is TirAssign))
+            if (expression == null || Assigns(expression))
                 return expression;
             var found = new List<TirNode>();
             Find(expression, true, found, inside);
@@ -129,23 +159,36 @@ namespace Ara3D.Geometry.Compiler.Checking
                 Find(child, strict, found);
         }
 
-        private static TirNode Replace(TirNode n, TirNode target, TirNode reference)
+        private TirNode Replace(TirNode n, TirNode target, TirNode reference)
+            => Replace(n, target, reference, new Dictionary<TirNode, TirNode>(ReferenceEqualityComparer.Instance));
+
+        // A node the elaborator shares between positions (a match's subject, a binder's field read) is
+        // rebuilt once and shared again, so a scrutinee that holds the replaced one (a match in the arm
+        // of a match, on a field of the outer binder) keeps one identity, and that identity joins the
+        // set so a later statement still finds it.
+        private TirNode Replace(TirNode n, TirNode target, TirNode reference, Dictionary<TirNode, TirNode> rebuilt)
         {
             if (n == null)
                 return null;
             if (ReferenceEquals(n, target))
                 return reference;
+            if (rebuilt.TryGetValue(n, out var done))
+                return done;
             var children = n.Children.ToArray();
             TirNode[] replaced = null;
             for (var i = 0; i < children.Length; i++)
             {
-                var child = Replace(children[i], target, reference);
+                var child = Replace(children[i], target, reference, rebuilt);
                 if (ReferenceEquals(child, children[i]))
                     continue;
                 replaced ??= (TirNode[])children.Clone();
                 replaced[i] = child;
             }
-            return replaced == null ? n : n.WithChildren(replaced);
+            var result = replaced == null ? n : n.WithChildren(replaced);
+            if (replaced != null && _scrutinees.Contains(n))
+                _scrutinees.Add(result);
+            rebuilt[n] = result;
+            return result;
         }
     }
 }

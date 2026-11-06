@@ -49,7 +49,7 @@ public class DecoderRewriteProgramTests
     public void Every_law_passes_interpreted_and_compiled_with_the_switches_off_and_on()
     {
         var (off, on) = Runs.Value;
-        Assert.That(off.Interpreted, Has.Count.EqualTo(25));
+        Assert.That(off.Interpreted, Has.Count.EqualTo(27));
         var all = off.Interpreted.Concat(off.Compiled).Concat(on.Interpreted).Concat(on.Compiled);
         Assert.That(all.Where(r => r.Status != LawStatus.Pass).Select(r => r.Name), Is.Empty);
     }
@@ -84,7 +84,9 @@ public class DecoderRewriteProgramTests
     [TestCase("Probe_MatchBody", "Row", 3, 1, Description = "the test and two field reads name the scrutinee")]
     [TestCase("Probe_MatchInLocal", "Row", 3, 1)]
     [TestCase("Probe_MatchOperand", "Row", 3, 1)]
-    [TestCase("Probe_MatchInArm", "Row", 3, 3, Description = "an arm of a conditional keeps its scrutinee as written")]
+    [TestCase("Probe_MatchInArm", "Row", 3, 1, Description = "an arm of the returned conditional declares the local (TKT-1199)")]
+    [TestCase("Probe_MatchInMatchArm", "Row", 7, 2, Description = "the outer scrutinee before the statement, the inner in the arm; as written, each inner read evaluates the outer call again")]
+    [TestCase("Probe_MatchInLocalArm", "Row", 3, 3, Description = "an arm of a local's conditional keeps its scrutinee as written")]
     [TestCase("Probe_SunkOneArm", "Cost", 1, 0, Description = "the arm is not taken: the local is not evaluated")]
     [TestCase("Probe_SunkChain", "Cost", 1, 0)]
     [TestCase("Probe_SunkTwoReads", "Cost", 1, 0)]
@@ -123,7 +125,7 @@ public class DecoderRewriteProgramTests
     [TestCase("MatchBody", "Row", 1, 1)]
     [TestCase("MatchInLocal", "Row", 1, 1)]
     [TestCase("MatchOperand", "Row", 1, 1)]
-    [TestCase("MatchInArm", "Row", 4, 4)]
+    [TestCase("MatchInArm", "Row", 4, 1)]
     [TestCase("AcrossStatements", "Cost", 2, 1)]
     [TestCase("AcrossBranch", "Cost", 2, 1)]
     [TestCase("AcrossKind", "IsKind", 2, 1)]
@@ -141,7 +143,9 @@ public class DecoderRewriteProgramTests
     [TestCase("MatchBody", "Row", 4, 1)]
     [TestCase("MatchInLocal", "Row", 4, 1)]
     [TestCase("MatchOperand", "Row", 4, 1)]
-    [TestCase("MatchInArm", "Row", 4, 4)]
+    [TestCase("MatchInArm", "Row", 4, 1)]
+    [TestCase("MatchInMatchArm", "Row", 11, 2)]
+    [TestCase("MatchInLocalArm", "Row", 4, 4)]
     public void The_elaborator_binds_a_scrutinee_without_the_writer_pass(string method, string callee, int off, int on)
     {
         var compilation = Runs.Value.Off.Compilation;

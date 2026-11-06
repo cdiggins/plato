@@ -4043,6 +4043,19 @@ bool ExclusiveOr(bool a, bool b) { return (!((a ? b : false) ? true : ((!a) ? (!
 
 int32_t Hash(bool self) { return (self ? 1 : 0); }
 
+double AreaOr(bool c, Shape s)
+{
+    if (c)
+    {
+        return 0.0;
+    }
+    else
+    {
+        Shape _scrut0 = Doubled(s);
+        return ((_scrut0.Kind == Shape::Kind_Circle) ? ((3.0 * _scrut0.Circle_Radius) * _scrut0.Circle_Radius) : ((_scrut0.Kind == Shape::Kind_Rect) ? (_scrut0.Rect_Width * _scrut0.Rect_Height) : 0.0));
+    }
+}
+
 double Pick(bool c, Shape s)
 {
     return (c ? (ShapeArea(s) + 1.0) : 0.0);
@@ -4989,19 +5002,5 @@ Angle Wrap(Angle self, Angle period) { return Angle{ (self.Radians - (period.Rad
 Angle LerpShortest(Angle a, Angle b, double t) { return Angle{ (a.Radians + (Normalize(Angle{ (b.Radians - a.Radians) }).Radians * t)) }; }
 
 bool EquivalentAngle(Angle a, Angle b) { return (Normalize(a).Radians == Normalize(b).Radians); }
-
-double Cos(Angle self) { return Cos(self.Radians); }
-
-double Sin(Angle self) { return Sin(self.Radians); }
-
-double Tan(Angle self) { return (Sin(self.Radians) / Cos(self.Radians)); }
-
-Tuple2<double, double> SinCos(Angle self) { return Tuple2<double, double>{ Sin(self.Radians), Cos(self.Radians) }; }
-
-double Cosh(Angle self) { return ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0); }
-
-double Sinh(Angle self) { return ((Exp(self.Radians) - Exp((-self.Radians))) / 2.0); }
-
-double Tanh(Angle self) { return (((Exp(self.Radians) - Exp((-self.Radians))) / 2.0) / ((Exp(self.Radians) + Exp((-self.Radians))) / 2.0)); }
 
 } // namespace plato
