@@ -35,11 +35,23 @@ namespace Ara3D.Geometry.Compiler.Utilities
                 }
             }
 
+            // Every worker that started is joined even when a later Start throws (TKT-1209), so no worker outlives
+            // the call or keeps writing results and failures after the caller has given up on them.
             var threads = new Thread[workers];
-            for (var w = 0; w < workers; w++)
-                (threads[w] = new Thread(Work, StackBytes)).Start();
-            foreach (var t in threads)
-                t.Join();
+            var started = 0;
+            try
+            {
+                for (var w = 0; w < workers; w++)
+                {
+                    (threads[w] = new Thread(Work, StackBytes)).Start();
+                    started++;
+                }
+            }
+            finally
+            {
+                for (var w = 0; w < started; w++)
+                    threads[w].Join();
+            }
 
             foreach (var e in failures)
                 if (e != null)

@@ -185,14 +185,16 @@ namespace Ara3D.Geometry.Compiler
         {
             get
             {
-                if (_normalizedFunctions == null)
-                {
-                    var normalizer = new Checking.Normalizer();
-                    _normalizedFunctions = new Dictionary<FunctionDef, FunctionDef>();
-                    foreach (var fd in FunctionDefinitions ?? Enumerable.Empty<FunctionDef>())
-                        _normalizedFunctions[fd] = normalizer.NormalizeFunction(fd);
-                }
-                return _normalizedFunctions;
+                // TKT-1209: the type checker's worker threads read this; it is filled in a local and published once
+                // complete, so no reader ever sees a dictionary another thread is still adding to.
+                var published = System.Threading.Volatile.Read(ref _normalizedFunctions);
+                if (published != null)
+                    return published;
+                var normalizer = new Checking.Normalizer();
+                var built = new Dictionary<FunctionDef, FunctionDef>();
+                foreach (var fd in FunctionDefinitions ?? Enumerable.Empty<FunctionDef>())
+                    built[fd] = normalizer.NormalizeFunction(fd);
+                return System.Threading.Interlocked.CompareExchange(ref _normalizedFunctions, built, null) ?? built;
             }
         }
 

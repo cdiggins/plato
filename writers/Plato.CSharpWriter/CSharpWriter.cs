@@ -277,38 +277,21 @@ namespace Ara3D.Geometry.CSharpWriter
         /// <summary>Restarts the counters behind every generated temporary name (`_var`, `_f`/`_r`,
         /// `_lp`/`_n`/`_i`/..., the inliner's `{p}_{N}`). They are per thread, so two programs
         /// emitted at once do not disturb each other.</summary>
-        internal static void ResetTemporaryCounters()
+        internal static void ResetTemporaryCounters() => PassCounters.Reset();
+
+        /// <summary>The four per-thread counters behind generated temporary names, as one value
+        /// (<see cref="PassCounters.Saved"/>, which owns the list; TKT-1209). <see cref="Save"/> reads them;
+        /// <see cref="Restore"/> writes them back.</summary>
+        public readonly struct TemporaryCounters : IEquatable<TemporaryCounters>
         {
-            SymbolRewriter.NextId = 0;
-            TirInliner.NextRenameId = 0;
-            TirFusion.NextId = 0;
-            TirLoopLowerer.NextId = 0;
-        }
-
-        /// <summary>The four per-thread counters behind generated temporary names, as one value.
-        /// <see cref="Save"/> reads them; <see cref="Restore"/> writes them back.</summary>
-        public readonly struct TemporaryCounters
-        {
-            private readonly int _symbol, _inlinerRename, _fusion, _loops;
-
-            private TemporaryCounters(int symbol, int inlinerRename, int fusion, int loops)
-            {
-                _symbol = symbol;
-                _inlinerRename = inlinerRename;
-                _fusion = fusion;
-                _loops = loops;
-            }
-
-            public static TemporaryCounters Save()
-                => new TemporaryCounters(SymbolRewriter.NextId, TirInliner.NextRenameId, TirFusion.NextId, TirLoopLowerer.NextId);
-
-            public void Restore()
-            {
-                SymbolRewriter.NextId = _symbol;
-                TirInliner.NextRenameId = _inlinerRename;
-                TirFusion.NextId = _fusion;
-                TirLoopLowerer.NextId = _loops;
-            }
+            private readonly PassCounters.Saved _saved;
+            private TemporaryCounters(PassCounters.Saved saved) => _saved = saved;
+            public static TemporaryCounters Save() => new TemporaryCounters(PassCounters.Saved.Take());
+            public void Restore() => _saved.Restore();
+            public bool Equals(TemporaryCounters o) => _saved.Equals(o._saved);
+            public override bool Equals(object o) => o is TemporaryCounters t && Equals(t);
+            public override int GetHashCode() => _saved.GetHashCode();
+            public override string ToString() => _saved.ToString();
         }
 
         private sealed class OptimizedEntry
