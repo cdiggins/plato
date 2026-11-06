@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
-using Ara3D.Geometry.CSharpWriter;
 
 namespace Ara3D.Geometry.CppWriter.Policies
 {
