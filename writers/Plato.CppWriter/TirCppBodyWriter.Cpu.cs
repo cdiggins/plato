@@ -145,6 +145,7 @@ public partial class TirCppBodyWriter
         if (ret != null)
             Write($"-> {ret} ");
         _lambdaReturns.Push((ret, ret == null ? null : CppWriter.PlatoTypeName(retType)));
+        _regionScopes.Push(LambdaAdmitsRegions(lam, retType));
         if (IsStatementNode(lam.Body))
         {
             WriteLine();
@@ -156,6 +157,7 @@ public partial class TirCppBodyWriter
             WriteLambdaReturnValue(lam.Body);
             Write("; }");
         }
+        _regionScopes.Pop();
         _lambdaReturns.Pop();
     }
 

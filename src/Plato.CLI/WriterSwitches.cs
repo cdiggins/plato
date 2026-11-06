@@ -104,6 +104,10 @@ public static class WriterSwitches
         new("cpp-sum-compact", Cpu, Cpu),
         // String literals (on for Cpu since timing window 1): each constant is built once per use site.
         new("cpp-static-strings", Cpu, Cpu),
+        // TKT-1211, off by default until measured: a call whose result holds no arena memory, made inside a function whose result does, runs between an arena mark and a rollback.
+        new("cpp-scalar-regions", Cpu),
+        // TKT-1211: with cpp-scalar-regions, wrap only calls that reach one of these functions (the heaviest allocators of a tally).
+        new("cpp-scalar-region-heavy", Cpu, Requires: "cpp-scalar-regions") { Parameter = SwitchParameter.AnyText },
         // The most lines of definitions in one emitted function unit; CppCpuOptions.DefaultUnitLines (5000) when absent.
         new("cpp-unit-lines", Cpu) { Parameter = SwitchParameter.PositiveInt },
         // --cpp-prune-to-roots=A,B writes only what --cpp-roots and A,B (functions or types a host names) reach; absent, everything.

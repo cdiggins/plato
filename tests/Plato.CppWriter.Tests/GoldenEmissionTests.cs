@@ -25,9 +25,9 @@ public class GoldenEmissionTests
 
     /// <summary>The options the CLI selects for <c>--cpp --profile=cpu64i32</c> with no switch spelled: the switch table's
     /// Cpu defaults, resolved by the table itself, so flipping a default changes the cpu-defaults snapshot (TKT-1193).</summary>
-    internal static CppCpuOptions CpuDefaults(IEnumerable<string> roots)
+    internal static CppCpuOptions CpuDefaults(IEnumerable<string> roots, params string[] switches)
     {
-        var resolved = WriterSwitches.Resolve(new[] { "--cpp-roots=" + string.Join(",", roots) }, WriterTarget.Cpu);
+        var resolved = WriterSwitches.Resolve(switches.Prepend("--cpp-roots=" + string.Join(",", roots)), WriterTarget.Cpu);
         Assert.That(WriterSwitches.Check(resolved, WriterTarget.Cpu), Is.Null);
         return CppCpuOptions.From(resolved.Switches);
     }
@@ -139,4 +139,22 @@ public class GoldenEmissionTests
 
     [TestCaseSource(nameof(C1cOptionSets))]
     public void C1c_emission_matches_snapshot(string set, CppCpuOptions options) => CheckSnapshot(set, options, SharedC1c.Value);
+
+    // TKT-1211: --cpp-scalar-regions on top of the Cpu defaults, on its own fixture (one function per case of the rule).
+    private static readonly Lazy<Compilation> SharedScalarRegions = new(() => Compile("GoldenFixtureScalarRegions.plato"));
+
+    private static readonly string[] ScalarRegionRoots =
+    {
+        "RegionScaledBySum", "RegionTwiceSum", "RegionShifted", "RegionQuadrupled", "RegionApplied", "RegionAppliedArray",
+        "RegionPerElement", "RegionScaledByHyp", "RegionScaledByFirst", "RegionApplyScalar", "RegionApplyArray",
+    };
+
+    public static IEnumerable<TestCaseData> ScalarRegionOptionSets()
+    {
+        yield return new TestCaseData("cpu-defaults-regions-base", CpuDefaults(ScalarRegionRoots)).SetName("Golden_cpu_defaults_regions_base");
+        yield return new TestCaseData("cpu-defaults-scalar-regions", CpuDefaults(ScalarRegionRoots, "--cpp-scalar-regions")).SetName("Golden_cpu_defaults_scalar_regions");
+    }
+
+    [TestCaseSource(nameof(ScalarRegionOptionSets))]
+    public void Scalar_region_emission_matches_snapshot(string set, CppCpuOptions options) => CheckSnapshot(set, options, SharedScalarRegions.Value);
 }

@@ -1,0 +1,74 @@
+// Fixture for the scalar-region golden sets (TKT-1211, --cpp-scalar-regions): one function per case of the rule.
+// The callees are loops so that the Cpu defaults do not inline them away.
+type Stats { Low: Number; High: Number; }
+library GoldenFixtureScalarRegions
+{
+    // Scalar-returning callees taking an array: the shape a region wraps.
+    RegionSum(xs: Array<Number>): Number
+    {
+        var sq = xs.Map((x) => x * x);
+        var s = 0.0;
+        var i = 0;
+        while (i < sq.Count)
+        {
+            s = s + sq[i];
+            i = i + 1;
+        }
+        return s;
+    }
+    // Allocates nothing, so condition (d) leaves its calls bare even where the other conditions hold.
+    RegionFirst(xs: Array<Number>): Number => xs.Count > 0 ? xs[0] : 0.0;
+    RegionStats(xs: Array<Number>): Stats
+    {
+        var ys = xs.Map((x) => x + 0.0);
+        var lo = ys[0];
+        var hi = ys[0];
+        var i = 1;
+        while (i < ys.Count)
+        {
+            lo = ys[i] < lo ? ys[i] : lo;
+            hi = ys[i] > hi ? ys[i] : hi;
+            i = i + 1;
+        }
+        return new Stats(lo, hi);
+    }
+    RegionDoubled(xs: Array<Number>): Array<Number> => xs.Map((x) => x * 2.0);
+    RegionScaledBy(xs: Array<Number>, k: Number): Array<Number> => xs.Map((x) => x * k);
+    RegionHyp(a: Number, b: Number): Number
+    {
+        var x = a + b;
+        var i = 0;
+        while (i < 20)
+        {
+            x = x - (x * x - a * a - b * b) / (2.0 * x);
+            i = i + 1;
+        }
+        return x;
+    }
+    RegionApplyScalar(xs: Array<Number>, f: Function1<Array<Number>, Number>): Array<Number> => RegionScaledBy(xs, f(xs));
+    RegionApplyArray(xs: Array<Number>, f: Function1<Array<Number>, Array<Number>>): Array<Number> => f(xs);
+
+    // Wrapped: a scalar call inside an array-returning function.
+    RegionScaledBySum(xs: Array<Number>): Array<Number> => RegionScaledBy(xs, RegionSum(xs));
+    // Not wrapped: the enclosing function returns a scalar, so a region on its own callers covers this call.
+    RegionTwiceSum(xs: Array<Number>): Number => RegionSum(xs) * 2.0;
+    // Wrapped: a record of scalars holds no arena memory.
+    RegionShifted(xs: Array<Number>): Array<Number>
+    {
+        var st = RegionStats(xs);
+        return xs.Map((x) => x - st.Low);
+    }
+    // Never wrapped: the callee returns an array.
+    RegionQuadrupled(xs: Array<Number>): Array<Number> => RegionDoubled(RegionDoubled(xs));
+    // Not wrapped: f(xs) is a call to a function value (RegionApplyScalar and RegionApplyArray are roots, so their bodies show it).
+    // In the two callers the Cpu defaults specialise the callback away, and the RegionSum call lands in the caller's own body, wrapped;
+    // a lambda the writer still emits admits a region only when it is a call's argument and its result holds arena memory.
+    RegionApplied(xs: Array<Number>): Array<Number> => RegionApplyScalar(xs, (ys) => RegionSum(ys) + 1.0);
+    RegionAppliedArray(xs: Array<Number>): Array<Number> => RegionApplyArray(xs, (ys) => RegionScaledBy(ys, RegionSum(ys)));
+    // Wrapped per element: the lowered Map body is the function's own body.
+    RegionPerElement(xss: Array<Array<Number>>): Array<Number> => xss.Map((ys) => RegionSum(ys));
+    // Not wrapped: every argument is a scalar.
+    RegionScaledByHyp(xs: Array<Number>): Array<Number> => RegionScaledBy(xs, RegionHyp(3.0, 4.0));
+    // Not wrapped: the callee allocates nothing (condition d).
+    RegionScaledByFirst(xs: Array<Number>): Array<Number> => RegionScaledBy(xs, RegionFirst(xs));
+}
