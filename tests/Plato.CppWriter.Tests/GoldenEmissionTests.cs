@@ -151,7 +151,7 @@ public class GoldenEmissionTests
 
     public static IEnumerable<TestCaseData> ScalarRegionOptionSets()
     {
-        yield return new TestCaseData("cpu-defaults-regions-base", CpuDefaults(ScalarRegionRoots)).SetName("Golden_cpu_defaults_regions_base");
+        yield return new TestCaseData("cpu-defaults-regions-base", CpuDefaults(ScalarRegionRoots, "--no-cpp-scalar-regions")).SetName("Golden_cpu_defaults_regions_base");
         yield return new TestCaseData("cpu-defaults-scalar-regions", CpuDefaults(ScalarRegionRoots, "--cpp-scalar-regions")).SetName("Golden_cpu_defaults_scalar_regions");
     }
 

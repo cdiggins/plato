@@ -45,7 +45,7 @@ namespace Ara3D.Geometry.CppWriter
         public IReadOnlyList<string> PruneRoots { get; init; }
         /// <summary>--scalar-arrays (TKT-1186; on for Cpu since timing window 2, 2026-11-04): a fixed-arity struct's Count is folded and its component arrays unrolled.</summary>
         public bool ScalarArrays { get; init; }
-        /// <summary>--cpp-scalar-regions (TKT-1211, off by default): scalar regions: a call whose result holds no arena memory
+        /// <summary>--cpp-scalar-regions (TKT-1211, on for Cpu since 2026-11-06): scalar regions: a call whose result holds no arena memory
         /// (<see cref="CppWriter.HoldsNoArenaMemory"/>), made where the enclosing result does hold some, is written between
         /// <c>plato::arena_mark</c> and <c>plato::arena_rollback</c>, so the scratch beneath it is reclaimed at once.</summary>
         public bool ScalarRegions { get; init; }
