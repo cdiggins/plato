@@ -56,6 +56,22 @@ public static class TirFactsTests
         Assert.That(facts.NodesVisited, Is.LessThanOrEqualTo(3 * distinct), "three facts, each at most once per node");
     }
 
+    [Test]
+    public static void StructuralKeyOfASharedCallChainIsLinear()
+    {
+        // Both arguments of level k are the one call of level k-1, so the paths number 2^depth and the nodes depth + 1.
+        const int depth = 16;
+        TirNode node = new TirLiteral(0, LiteralTypesEnum.Integer, null, null);
+        for (var k = 0; k < depth; k++)
+            node = new TirCall(null, EmissionKind.StaticMethod, null, null, new List<TirNode> { node, node }, null, null, "Pair");
+        var facts = new TirFacts();
+        var key = facts.StructuralKey((TirCall)node, true);
+        Assert.That(key, Is.Not.Null);
+        Assert.That(facts.NodesVisited, Is.EqualTo(depth + 1), "every inner node is computed once");
+        Assert.That(facts.StructuralKey((TirCall)node, true), Is.EqualTo(key));
+        Assert.That(facts.NodesVisited, Is.EqualTo(depth + 1), "a repeated request is a cache hit and counts nothing");
+    }
+
     // --- equivalence with the walks the table replaces -----------------------------------------
 
     private static Ara3D.Geometry.Compiler.Compilation Compile(string folder, string file)

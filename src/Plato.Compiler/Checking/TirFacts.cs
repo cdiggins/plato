@@ -30,10 +30,12 @@ namespace Ara3D.Geometry.Compiler.Checking
         private readonly Dictionary<TirNode, DefSet> _defs = new(ReferenceEqualityComparer.Instance);
         private TirStructuralKey _key;
         private TirStructuralKey _wideKey;
+        private int _visited;
 
-        /// <summary>The number of (fact, node) computations so far: a node is computed at most once per fact, so over
-        /// a shared-subtree DAG this is linear in the distinct nodes, not in the paths. For tests.</summary>
-        public int NodesVisited { get; private set; }
+        /// <summary>The number of (fact, node) computations so far: a node is computed at most once per fact (a
+        /// structural key counts every node it computes, inner nodes included, once per key table), so over a
+        /// shared-subtree DAG this is linear in the distinct nodes, not in the paths. For tests.</summary>
+        public int NodesVisited => _visited + (_key?.Computed ?? 0) + (_wideKey?.Computed ?? 0);
 
         /// <summary>The number of nodes in the subtree of <paramref name="n"/>, itself included, counting a shared node
         /// once per path (what <c>n.Descendants().Count()</c> returns); 0 for null.</summary>
@@ -43,7 +45,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return 0;
             if (_size.TryGetValue(n, out var size))
                 return size;
-            NodesVisited++;
+            _visited++;
             size = 1;
             foreach (var child in n.Children)
                 size += Size(child);
@@ -60,7 +62,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 _contains[typeof(T)] = memo = new Dictionary<TirNode, bool>(ReferenceEqualityComparer.Instance);
             if (memo.TryGetValue(n, out var found))
                 return found;
-            NodesVisited++;
+            _visited++;
             found = n is T || n.Children.Any(ContainsKind<T>);
             return memo[n] = found;
         }
@@ -85,7 +87,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return DefSet.Empty;
             if (_defs.TryGetValue(n, out var defs))
                 return defs;
-            NodesVisited++;
+            _visited++;
             defs = n switch
             {
                 TirVariable v when v.Def != null => DefSet.Of(v.Def),
@@ -105,7 +107,6 @@ namespace Ara3D.Geometry.Compiler.Checking
         {
             if (call == null)
                 return null;
-            NodesVisited++;
             return wide
                 ? (_wideKey ??= new TirStructuralKey(true)).Key(call)
                 : (_key ??= new TirStructuralKey(false)).Key(call);
@@ -189,6 +190,9 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <c>--share-calls-wide</c> does.</param>
         public TirStructuralKey(bool wide) => _wide = wide;
 
+        /// <summary>The number of nodes whose key this table has computed (not answered from its memo).</summary>
+        public int Computed { get; private set; }
+
         /// <summary>The key of <paramref name="n"/>, or null (see the class summary).</summary>
         public string Key(TirNode n)
         {
@@ -196,6 +200,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return null;
             if (_keys.TryGetValue(n, out var key))
                 return key;
+            Computed++;
             return _keys[n] = Write(n);
         }
 
