@@ -144,7 +144,7 @@ public static class TirFactsTests
                     if (d is TirVariable v && v.Def != null) naive.Add(v.Def);
                     if (d is TirParameter p && p.Def != null) naive.Add(p.Def);
                 }
-                Assert.That(facts.MentionedDefs(n).SetEquals(naive), Is.True, name);
+                Assert.That(facts.MentionedDefs(n), Is.EquivalentTo(naive).Using<object>((x, y) => ReferenceEquals(x, y)), name);
                 Assert.That(facts.MentionedDefs(n).Count, Is.EqualTo(naive.Count), name);
                 foreach (var def in naive)
                     Assert.That(facts.Mentions(n, def), Is.True, name);

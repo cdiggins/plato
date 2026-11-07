@@ -16,6 +16,10 @@ namespace Ara3D.Geometry.Compiler.Checking
     /// node reached by several parents, as inlining and the shared-calls pass produce) is therefore sized once where a
     /// <see cref="TirNode.Descendants"/> walk visits it once per path.
     /// <para>
+    /// Retention: a table lives as long as its body's context and holds the nodes (and definition sets) of every
+    /// intermediate tree of the body, so it is dropped with the body.
+    /// </para>
+    /// <para>
     /// Contract: one instance per body, on one thread. The optimizer carries one in its per-body pass context and
     /// the elaborator makes one per function; a table is never shared between bodies that run at once, and never
     /// needs to be, since a fact is a function of the node. Nodes of a body's earlier trees stay in the table
@@ -76,7 +80,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <summary>The binding definitions the subtree of <paramref name="n"/> reads: the <see cref="VariableDef"/> of
         /// every <see cref="TirVariable"/> and the <see cref="ParameterDef"/> of every <see cref="TirParameter"/>,
         /// compared by identity. Lambda bodies are included (a read under a lambda is a read). Empty for null.</summary>
-        public IReadOnlySet<object> MentionedDefs(TirNode n) => Defs(n);
+        public IReadOnlyCollection<object> MentionedDefs(TirNode n) => Defs(n);
 
         /// <summary>Whether the subtree of <paramref name="n"/> reads <paramref name="def"/> (see <see cref="MentionedDefs"/>).</summary>
         public bool Mentions(TirNode n, object def) => def != null && Defs(n).Contains(def);
@@ -88,15 +92,13 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (_defs.TryGetValue(n, out var defs))
                 return defs;
             _visited++;
-            defs = n switch
+            var own = n switch
             {
-                TirVariable v when v.Def != null => DefSet.Of(v.Def),
-                TirParameter p when p.Def != null => DefSet.Of(p.Def),
-                _ => DefSet.Empty
+                TirVariable v => (object)v.Def,
+                TirParameter p => p.Def,
+                _ => null
             };
-            foreach (var child in n.Children)
-                defs = defs.Union(Defs(child));
-            return _defs[n] = defs;
+            return _defs[n] = DefSet.Of(own, n.Children.Select(Defs));
         }
 
         /// <summary>The structural identity of a call for the shared-calls pass (<see cref="TirStructuralKey"/>), or
@@ -112,9 +114,10 @@ namespace Ara3D.Geometry.Compiler.Checking
                 : (_key ??= new TirStructuralKey(false)).Key(call);
         }
 
-        /// <summary>An immutable set of definitions compared by identity, built from a child's set without walking it: an
-        /// empty set and a single-member set allocate nothing when united with a set that already holds them.</summary>
-        private sealed class DefSet : IReadOnlySet<object>
+        /// <summary>An immutable set of definitions compared by identity. A node's set is built once from all its
+        /// children's sets; when one set already holds the rest (the common case: a single non-empty child, or a child
+        /// that reads everything its siblings do) that set is reused and nothing is allocated.</summary>
+        private sealed class DefSet : IReadOnlyCollection<object>
         {
             public static readonly DefSet Empty = new(null, null);
 
@@ -123,27 +126,30 @@ namespace Ara3D.Geometry.Compiler.Checking
 
             private DefSet(object single, HashSet<object> many) => (_single, _many) = (single, many);
 
-            public static DefSet Of(object def) => new(def, null);
-
             public int Count => _many?.Count ?? (_single == null ? 0 : 1);
 
             public bool Contains(object item)
                 => _many != null ? _many.Contains(item) : _single != null && ReferenceEquals(_single, item);
 
-            public DefSet Union(DefSet other)
+            /// <summary>The set of <paramref name="own"/> (when not null) and every member of <paramref name="children"/>.</summary>
+            public static DefSet Of(object own, IEnumerable<DefSet> children)
             {
-                if (other.Count == 0 || ReferenceEquals(this, other))
-                    return this;
-                if (Count == 0)
-                    return other;
-                if (other.Count <= Count && other.IsSubsetOf(this))
-                    return this;
-                if (Count <= other.Count && IsSubsetOf(other))
-                    return other;
-                var set = new HashSet<object>(this, ReferenceEqualityComparer.Instance);
-                set.UnionWith(other);
+                var parts = children.Where(c => c.Count > 0).Distinct().ToList();
+                if (parts.Count == 0)
+                    return own == null ? Empty : new DefSet(own, null);
+                var largest = parts.MaxBy(p => p.Count);
+                if ((own == null || largest.Contains(own)) && parts.All(p => ReferenceEquals(p, largest) || p.IsSubsetOf(largest)))
+                    return largest;
+                var set = new HashSet<object>(ReferenceEqualityComparer.Instance);
+                if (own != null)
+                    set.Add(own);
+                foreach (var part in parts)
+                    set.UnionWith(part);
                 return new DefSet(null, set);
             }
+
+            /// <summary>Whether every member is in <paramref name="other"/>; walks this set, so call it on the smaller.</summary>
+            private bool IsSubsetOf(DefSet other) => this.All(other.Contains);
 
             public IEnumerator<object> GetEnumerator()
                 => _many != null ? _many.GetEnumerator()
@@ -151,22 +157,6 @@ namespace Ara3D.Geometry.Compiler.Checking
                     : Enumerable.Empty<object>().GetEnumerator();
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-            public bool IsSubsetOf(IEnumerable<object> other)
-            {
-                if (_many != null)
-                    return _many.IsSubsetOf(other);
-                return _single == null || other.Any(o => ReferenceEquals(o, _single));
-            }
-
-            public bool IsSupersetOf(IEnumerable<object> other) => other.All(Contains);
-            public bool IsProperSubsetOf(IEnumerable<object> other) => IsSubsetOf(other) && Materialize(other).Count > Count;
-            public bool IsProperSupersetOf(IEnumerable<object> other) => IsSupersetOf(other) && Materialize(other).Count < Count;
-            public bool Overlaps(IEnumerable<object> other) => other.Any(Contains);
-            public bool SetEquals(IEnumerable<object> other) => IsSupersetOf(other) && Materialize(other).Count == Count;
-
-            private static HashSet<object> Materialize(IEnumerable<object> other)
-                => other as HashSet<object> ?? new HashSet<object>(other, ReferenceEqualityComparer.Instance);
         }
     }
 
