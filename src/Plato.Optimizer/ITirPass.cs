@@ -29,6 +29,10 @@ namespace Ara3D.Geometry.Optimizer;
 /// the statement host (the Cpu pipeline's host does neither).</item>
 /// <item><see cref="PassContext.FunctionInfo"/> and <see cref="PassContext.Backend"/> belong to the body's own
 /// emission; a pass reads them and never writes to the backend.</item>
+/// <item>A fact about a subtree (its size, what it mentions, a call's structural key) is asked of
+/// <see cref="PassContext.Facts"/>, not recounted. The table is not thread-safe: it belongs to the per-body context
+/// <see cref="PassContext.ForBody"/> makes, so each worker thread's body has its own; a pass never keeps one past the
+/// body or hands it to another thread.</item>
 /// <item>A pass that cannot handle a body throws. The Cpu prepass reruns such a body sequentially and fails the
 /// generation when the rerun succeeds, since a result that depends on the thread is a broken rule above.</item>
 /// </list>
