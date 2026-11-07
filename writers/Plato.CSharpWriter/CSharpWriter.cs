@@ -753,7 +753,7 @@ namespace Ara3D.Geometry.CSharpWriter
         int IStatementInlineHost.RemainingStatementGrowth { get => RemainingStatementGrowth; set => RemainingStatementGrowth = value; }
 
         TirFunction IStatementInlineHost.ExposeForStatementInlining(TirFunction tir, object functionInfo)
-            => TirComponentUnroller.UnrollFunction(TirFusion.Rewrite(tir, Passes), (CSharpFunctionInfo)functionInfo, this);
+            => TirComponentUnroller.UnrollFunction(TirFusion.Rewrite(tir, Passes.ForBody(((CSharpFunctionInfo)functionInfo)?.OwnerType?.Name, functionInfo)), (CSharpFunctionInfo)functionInfo, this);
 
         // When true (--optimize-arrays, optimizer stage 2 increment 1), Map/MapRange call sites in
         // MATERIALIZATION positions (constructor / tuple arguments — results stored into structs —

@@ -32,7 +32,9 @@ namespace Ara3D.Geometry.Optimizer;
 /// <item>A fact about a subtree (its size, what it mentions, a call's structural key) is asked of
 /// <see cref="PassContext.Facts"/>, not recounted. The table is not thread-safe: it belongs to the per-body context
 /// <see cref="PassContext.ForBody"/> makes, so each worker thread's body has its own; a pass never keeps one past the
-/// body or hands it to another thread.</item>
+/// body or hands it to another thread. Only a per-body context has a table: the generation-wide context throws
+/// <see cref="System.InvalidOperationException"/> from <see cref="PassContext.Facts"/>, so a caller applies a pass
+/// to a body through <see cref="PassContext.ForBody"/>, never through the generation context.</item>
 /// <item>A pass that cannot handle a body throws. The Cpu prepass reruns such a body sequentially and fails the
 /// generation when the rerun succeeds, since a result that depends on the thread is a broken rule above.</item>
 /// </list>

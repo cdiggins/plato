@@ -1,5 +1,6 @@
 // What an optimizer pass may read: the compilation, the switches in force, the inlining host, the counters it
 // adds to, the body's fact table, and (for a backend's own passes) the backend and the body being optimised.
+using System;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Checking;
 
@@ -8,18 +9,25 @@ namespace Ara3D.Geometry.Optimizer;
 /// <summary>
 /// The context every <see cref="ITirPass"/> runs in. One context serves a whole generation; <see cref="ForBody"/>
 /// gives the per-body copy that carries the owner type name, the backend's function record and a fresh
-/// <see cref="Facts"/> table.
+/// <see cref="Facts"/> table (the only context that has one).
 /// </summary>
 public sealed class PassContext
 {
+    private readonly TirFacts _facts;
+
     public PassContext(Compilation compilation, SwitchSet switches, ITirInlineHost inlineHost, PassStats stats = null, object backend = null)
+        : this(compilation, switches, inlineHost, stats, backend, null)
+    {
+    }
+
+    private PassContext(Compilation compilation, SwitchSet switches, ITirInlineHost inlineHost, PassStats stats, object backend, TirFacts facts)
     {
         Compilation = compilation;
         Switches = switches ?? new SwitchSet();
         InlineHost = inlineHost;
         Stats = stats ?? new PassStats();
         Backend = backend;
-        Facts = new TirFacts();
+        _facts = facts;
     }
 
     public Compilation Compilation { get; }
@@ -38,10 +46,12 @@ public sealed class PassContext
 
     /// <summary>The subtree facts of the body being optimised, memoized by node identity (compiler-546). A pass asks
     /// it for a size, a mention or a structural key instead of walking the tree; the answers hold across passes because
-    /// the nodes are immutable. <see cref="ForBody"/> makes a fresh table, so a table belongs to one body and one thread
-    /// (the Cpu prepass optimises one body per worker thread, each through its own per-body context); the generation
-    /// context's own table serves only a caller that runs passes without <see cref="ForBody"/>, sequentially.</summary>
-    public TirFacts Facts { get; }
+    /// the nodes are immutable. Only a per-body context has a table, a fresh one from <see cref="ForBody"/>: a table
+    /// belongs to one body and one thread (the Cpu prepass optimises one body per worker thread, each through its own
+    /// per-body context), so the generation context, which many threads share, throws instead of lending one.</summary>
+    /// <exception cref="InvalidOperationException">This is the generation context; call <see cref="ForBody"/> first.</exception>
+    public TirFacts Facts => _facts ?? throw new InvalidOperationException(
+        "The generation-wide PassContext has no fact table; run the pass on the context PassContext.ForBody returns.");
 
     /// <summary>The name of the type that owns the body being optimised (null for a static function).</summary>
     public string OwnerTypeName { get; private init; }
@@ -53,7 +63,7 @@ public sealed class PassContext
 
     /// <summary>This context for one body.</summary>
     public PassContext ForBody(string ownerTypeName, object functionInfo = null)
-        => new(Compilation, Switches, InlineHost, Stats, Backend) { OwnerTypeName = ownerTypeName, FunctionInfo = functionInfo };
+        => new(Compilation, Switches, InlineHost, Stats, Backend, new TirFacts()) { OwnerTypeName = ownerTypeName, FunctionInfo = functionInfo };
 }
 
 /// <summary>The counts the passes keep across a generation.</summary>
