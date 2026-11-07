@@ -41,7 +41,7 @@ namespace Ara3D.Geometry.CppWriter
         public const int DefaultUnitLines = 5000;
         /// <summary>--cpp-static-strings (TKT-1159, on by default for Cpu since 2026-11-04): static string literals: each constant is built once per use site.</summary>
         public bool StaticStringLiterals { get; init; }
-        /// <summary>--cpp-string-pool (TKT-1223): the program's distinct string constants are one namespace-scope table
+        /// <summary>--cpp-string-pool (TKT-1223, on by default for Cpu since 2026-11-07): the program's distinct string constants are one namespace-scope table
         /// (plato_strings.cpp) filled by one initializer before main, and each use site is an index into it (<c>PLATO_SP(i)</c>);
         /// takes precedence over <see cref="StaticStringLiterals"/>.</summary>
         public bool StringPool { get; init; }

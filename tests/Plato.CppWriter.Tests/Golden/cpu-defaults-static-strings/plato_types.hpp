@@ -6,11 +6,6 @@
 
 namespace plato {
 
-// String constants (--cpp-string-pool): one table of the program's distinct constants, filled by one initializer
-// before main (plato_strings.cpp); PLATO_SP(i) reads constant i as a const String&.
-extern const String string_pool[];
-#define PLATO_SP(i) (::plato::string_pool[i])
-
 struct Angle;
 struct Axis3D;
 struct Axis2D;
