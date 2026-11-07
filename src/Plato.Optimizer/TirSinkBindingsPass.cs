@@ -23,7 +23,7 @@ public static class TirSinkBindingsPass
     {
         if (!pass.On("sink-bindings") || tir?.Body == null)
             return tir;
-        var body = TirSinkBindings.Rewrite(tir.Body, out var sunk);
+        var body = TirSinkBindings.Rewrite(tir.Body, pass.Facts, out var sunk);
         Interlocked.Add(ref pass.Stats.Rewrites.SunkAfterInlining, sunk);
         return ReferenceEquals(body, tir.Body)
             ? tir

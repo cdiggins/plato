@@ -30,17 +30,19 @@ namespace Ara3D.Geometry.Compiler.Checking
     /// </summary>
     public static class TirSinkBindings
     {
-        /// <summary>The body with its sinkable locals moved; <paramref name="sunk"/> counts the locals moved.</summary>
-        public static TirNode Rewrite(TirNode body, out int sunk)
+        /// <summary>The body with its sinkable locals moved; <paramref name="sunk"/> counts the locals moved.
+        /// <paramref name="facts"/> is the body's fact table (one per body; the optimizer's pass context carries it, the
+        /// elaborator makes one per function): every mention test goes through it instead of rescanning the tree.</summary>
+        public static TirNode Rewrite(TirNode body, TirFacts facts, out int sunk)
         {
             sunk = 0;
-            if (body == null || body.Descendants().Any(n => n is TirAssign or TirLoop))
+            if (body == null || facts.ContainsAssign(body) || facts.ContainsLoop(body))
                 return body;
             var nodes = body.Descendants().ToList();
             var duplicated = nodes.OfType<TirLet>().Select(l => l.Def?.Name)
                 .Concat(nodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Select(p => p.Name))
                 .Where(n => n != null).GroupBy(n => n).Where(g => g.Count() > 1).Select(g => g.Key).ToHashSet();
-            var sinker = new Sinker(duplicated);
+            var sinker = new Sinker(duplicated, facts);
             var result = sinker.Statement(body);
             sunk = sinker.Sunk;
             return result;
@@ -49,9 +51,10 @@ namespace Ara3D.Geometry.Compiler.Checking
         private sealed class Sinker
         {
             private readonly HashSet<string> _duplicated;
+            private readonly TirFacts _facts;
             public int Sunk;
 
-            public Sinker(HashSet<string> duplicated) => _duplicated = duplicated;
+            public Sinker(HashSet<string> duplicated, TirFacts facts) => (_duplicated, _facts) = (duplicated, facts);
 
             public TirNode Statement(TirNode s)
             {
@@ -163,7 +166,7 @@ namespace Ara3D.Geometry.Compiler.Checking
 
             /// <summary>The expression with the single read of the local replaced by its value, when the read
             /// is under an arm of a conditional; null otherwise.</summary>
-            private static TirNode PlaceInExpression(TirNode e, TirLet let, bool underArm)
+            private TirNode PlaceInExpression(TirNode e, TirLet let, bool underArm)
             {
                 if (e == null)
                     return null;
@@ -198,8 +201,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return Mentions(rebuilt, let.Def) ? null : rebuilt;
             }
 
-            private static bool Mentions(TirNode root, VariableDef def)
-                => root != null && root.Descendants().Any(n => n is TirVariable v && ReferenceEquals(v.Def, def));
+            private bool Mentions(TirNode root, VariableDef def) => _facts.Mentions(root, def);
         }
     }
 }
