@@ -41,6 +41,7 @@ public class GoldenEmissionTests
         yield return new TestCaseData("shipping-sum-switch", Shipping with { SwitchSumDispatch = true }).SetName("Golden_shipping_sum_switch");
         yield return new TestCaseData("shipping-compact-sums", Shipping with { CompactSums = true, SwitchSumDispatch = true }).SetName("Golden_shipping_compact_sums");
         yield return new TestCaseData("shipping-static-strings", Shipping with { StaticStringLiterals = true }).SetName("Golden_shipping_static_strings");
+        yield return new TestCaseData("cpu-defaults-string-pool", CpuDefaults(Roots, "--cpp-string-pool")).SetName("Golden_cpu_defaults_string_pool");
         yield return new TestCaseData("shipping-w2", Shipping with
         {
             BorrowLargeParameters = true, BorrowReads = true, BorrowNonTrivial = true, BorrowMinBytes = 32,

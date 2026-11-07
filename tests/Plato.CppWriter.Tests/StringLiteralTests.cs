@@ -22,6 +22,29 @@ public class StringLiteralTests
     }
 
     [Test]
+    public void The_pool_policy_numbers_distinct_texts_once_and_wins_over_the_static_policy()
+    {
+        var strings = CppPolicies.For(CppCpuOptions.Default with { StaticStringLiterals = true, StringPool = true }).Strings;
+        Assert.That(strings, Is.TypeOf<PooledStringLiterals>());
+        Assert.That(strings.Literal("", 0), Is.EqualTo("String()"));
+        Assert.That(strings.Literal("abc", 3), Is.EqualTo("PLATO_SP(0)"));
+        Assert.That(strings.Literal("xyz", 3), Is.EqualTo("PLATO_SP(1)"));
+        Assert.That(strings.Literal("abc", 3), Is.EqualTo("PLATO_SP(0)"));
+        Assert.That(((PooledStringLiterals)strings).Texts, Is.EqualTo(new[] { "abc", "xyz" }));
+    }
+
+    [Test]
+    public void The_u16_escape_splits_a_literal_where_a_hex_digit_follows_an_escape()
+    {
+        Assert.That(CppWriter.EscapeCppU16String("a\"b\\c?"), Is.EqualTo("a\\\"b\\\\c\\?"));
+        Assert.That(CppWriter.EscapeCppU16String("caf\u00e9"), Is.EqualTo("caf\\x00E9"));
+        Assert.That(CppWriter.EscapeCppU16String("\u00e9a"), Is.EqualTo("\\x00E9\" u\"a"));
+        Assert.That(CppWriter.EscapeCppU16String("\u00e9-"), Is.EqualTo("\\x00E9-"));
+        Assert.That(CppWriter.EscapeCppU16String("\uD83D\uDE00\n"), Is.EqualTo("\\xD83D\\xDE00\\n"));
+        Assert.That(CppWriter.EscapeCppU16String("a\0b"), Is.EqualTo("a\\x0000\" u\"b"));
+    }
+
+    [Test]
     public void The_static_literal_macro_compiles_and_holds_on_threads()
     {
         var vcvars = Toolchain.FindVcVars();

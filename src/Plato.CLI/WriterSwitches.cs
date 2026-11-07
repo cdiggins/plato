@@ -104,6 +104,8 @@ public static class WriterSwitches
         new("cpp-sum-compact", Cpu, Cpu),
         // String literals (on for Cpu since timing window 1): each constant is built once per use site.
         new("cpp-static-strings", Cpu, Cpu),
+        // TKT-1223: the program's distinct string constants are one table with one initializer (plato_strings.cpp) and each site an index; replaces the per-site static when on.
+        new("cpp-string-pool", Cpu),
         // TKT-1211, on for Cpu since 2026-11-06 (c211 at 22 threads x0.62, peak 102 MB to 25 MB, ten files identical): a call whose result holds no arena memory, made inside a function whose result does, runs between an arena mark and a rollback.
         new("cpp-scalar-regions", Cpu, Cpu),
         // TKT-1211: with cpp-scalar-regions, wrap only calls that reach one of these functions (the heaviest allocators of a tally).
