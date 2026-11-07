@@ -16,6 +16,10 @@ namespace Ara3D.Geometry.Compiler.Checking
     /// node reached by several parents, as inlining and the shared-calls pass produce) is therefore sized once where a
     /// <see cref="TirNode.Descendants"/> walk visits it once per path.
     /// <para>
+    /// Lists: a node keeps the caller's lists (<c>Args</c>, <c>Statements</c>) rather than copying them, and a memoized
+    /// fact assumes no list is mutated after its node is built; a caller that edits a list in place makes the table stale.
+    /// </para>
+    /// <para>
     /// Retention: a table lives as long as its body's context and holds the nodes (and definition sets) of every
     /// intermediate tree of the body, so it is dropped with the body.
     /// </para>
