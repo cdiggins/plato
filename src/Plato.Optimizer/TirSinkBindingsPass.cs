@@ -10,6 +10,9 @@ public sealed class WriterRewriteStats
     public int SunkAfterInlining;
     public int SharedAcrossStatements;
     public int SharedInLambdas;
+    /// <summary>--refine-sums: case tests replaced by a literal, and conditionals or ifs reduced to one arm.</summary>
+    public int SumTestsDecided;
+    public int SumArmsFolded;
 }
 
 /// <summary>

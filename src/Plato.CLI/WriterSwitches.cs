@@ -88,6 +88,8 @@ public static class WriterSwitches
         // TKT-1152: off by default until each is measured and pinned in plato-brep.
         // On for Cpu since timing window 2 (2026-11-04, geomean 0.951 with bind-component-receivers); C# keeps it off.
         new("scalar-arrays", CsCpu, Cpu),
+        // A case test inside a match arm on the same name folds (the Cpu list runs it after inlining); on for Cpu since 2026-11-07.
+        new("refine-sums", Cpu, Cpu),
         new("owned-arrays", CS),
         new("stack-arrays", CS, Requires: "owned-arrays"),
         new("span-params", CS, Requires: "owned-arrays"),

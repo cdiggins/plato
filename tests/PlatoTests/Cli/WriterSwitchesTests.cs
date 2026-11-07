@@ -103,7 +103,7 @@ public class WriterSwitchesTests
         // loops with them, so hoist-invariants is not silently off; --no-loops turns it off, and --no-writer-defaults still gives the empty set.
         var cpu = WriterSwitches.Resolve(new[] { "--cpp" }, WriterTarget.Cpu);
         Assert.That(cpu.Switches.Names, Is.EquivalentTo(new[] { "loops", "hoist-invariants", "share-calls", "sink-bindings", "bind-scrutinee", "share-calls-wide",
-            "cpp-borrow-params", "cpp-borrow-reads", "cpp-borrow-nontrivial", "cpp-sum-switch", "cpp-sum-compact", "cpp-static-strings", "cpp-borrow-min-bytes=32", "scalar-arrays", "cpp-scalar-regions" }));
+            "cpp-borrow-params", "cpp-borrow-reads", "cpp-borrow-nontrivial", "cpp-sum-switch", "cpp-sum-compact", "cpp-static-strings", "cpp-borrow-min-bytes=32", "scalar-arrays", "refine-sums", "cpp-scalar-regions" }));
         Assert.That(cpu.Switches.Int("cpp-borrow-min-bytes", 256), Is.EqualTo(32));
         Assert.That(cpu["hoist-invariants"]);
         Assert.That(WriterSwitches.Resolve(new[] { "--cpp", "--no-loops" }, WriterTarget.Cpu)["hoist-invariants"], Is.False);
