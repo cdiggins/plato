@@ -164,7 +164,14 @@ public static class TirFactsTests
                 var facts = new TirFacts();
                 var naive = new NaiveKey(w);
                 foreach (var call in body.Descendants().OfType<TirCall>())
-                    Assert.That(facts.StructuralKey(call, w), Is.EqualTo(naive.Key(call)), $"{name}, wide {w}, {call}");
+                {
+                    var expected = naive.Key(call);
+                    Assert.That(facts.StructuralKey(call, w), Is.EqualTo(expected), $"{name}, wide {w}, {call}");
+                    // A key covers every leaf of its call, so the definitions the writer numbered are exactly the ones read.
+                    if (expected != null)
+                        Assert.That(facts.MentionedDefs(call), Is.EquivalentTo(naive.Defs).Using<object>((x, y) => ReferenceEquals(x, y)),
+                            $"{name}, wide {w}, {call}");
+                }
             }
         }
     }
@@ -177,8 +184,12 @@ public static class TirFactsTests
 
         public NaiveKey(bool wide) => _wide = wide;
 
+        /// <summary>The definitions the last <see cref="Key"/> call met (complete only when that key is not null).</summary>
+        public HashSet<object> Defs { get; } = new(ReferenceEqualityComparer.Instance);
+
         public string? Key(TirCall call)
         {
+            Defs.Clear();
             var sb = new StringBuilder();
             return Write(call, sb) ? sb.ToString() : null;
         }
@@ -197,9 +208,11 @@ public static class TirFactsTests
             switch (n)
             {
                 case TirParameter p when p.Def != null && !IsUnique(p.Type):
+                    Defs.Add(p.Def);
                     sb.Append("P").Append(Id(p.Def));
                     return true;
                 case TirVariable v when v.Def != null && !IsUnique(v.Type):
+                    Defs.Add(v.Def);
                     sb.Append("V").Append(Id(v.Def));
                     return true;
                 case TirLiteral l:
