@@ -37,6 +37,8 @@ public class GoldenEmissionTests
         yield return new TestCaseData("default", new CppCpuOptions(false, false, false, false, Roots)).SetName("Golden_default");
         yield return new TestCaseData("shipping", Shipping).SetName("Golden_shipping");
         yield return new TestCaseData("cpu-defaults", CpuDefaults(Roots)).SetName("Golden_cpu_defaults");
+        // TKT-1208: array literals as make_literal calls on top of the Cpu defaults; the diff against cpu-defaults is the switch's effect.
+        yield return new TestCaseData("cpu-defaults-literal-calls", CpuDefaults(Roots, "--cpp-literal-calls")).SetName("Golden_cpu_defaults_literal_calls");
         yield return new TestCaseData("shipping-share-calls", Shipping with { ShareCalls = true }).SetName("Golden_shipping_share_calls");
         yield return new TestCaseData("shipping-sum-switch", Shipping with { SwitchSumDispatch = true }).SetName("Golden_shipping_sum_switch");
         yield return new TestCaseData("shipping-compact-sums", Shipping with { CompactSums = true, SwitchSumDispatch = true }).SetName("Golden_shipping_compact_sums");

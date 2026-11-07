@@ -52,6 +52,10 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>--cpp-scalar-region-heavy=A,B,...: with scalar regions on, wrap only calls whose callee is, or transitively calls, one of
         /// these functions (the size-threshold form: the names a tally showed to allocate most); null wraps every callee that may allocate.</summary>
         public IReadOnlyList<string> ScalarRegionHeavy { get; init; }
+        /// <summary>--cpp-literal-calls (TKT-1208): an array literal is one call to <c>plato::make_literal&lt;T&gt;(a, b, ...)</c>, which
+        /// allocates in the arena and stores the elements in order, instead of an immediately invoked <c>[&amp;]() -> Array&lt;T&gt; {...}()</c>
+        /// lambda; the output is the same, the linked program has one lambda <c>operator()</c> fewer per literal.</summary>
+        public bool LiteralCalls { get; init; }
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
@@ -75,6 +79,7 @@ namespace Ara3D.Geometry.CppWriter
                 StaticStringLiterals = s.On("cpp-static-strings"),
                 ScalarArrays = s.On("scalar-arrays"),
                 ScalarRegions = s.On("cpp-scalar-regions"),
+                LiteralCalls = s.On("cpp-literal-calls"),
                 ScalarRegionHeavy = s.Value("cpp-scalar-region-heavy")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
                 UnitLines = s.Int("cpp-unit-lines", DefaultUnitLines),
                 PruneRoots = s.Value("cpp-prune-to-roots")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
