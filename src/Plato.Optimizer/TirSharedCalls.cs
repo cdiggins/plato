@@ -29,7 +29,7 @@ namespace Ara3D.Geometry.Optimizer;
 /// The largest such node goes first; the rest are searched again on what is left, so a shared call whose
 /// argument is also shared gets two locals in dependency order. A lambda body is a separate expression
 /// and is not entered. Runs before the loop lowerer, which takes the new bindings as statements.
-/// The identity of a call (<see cref="TirStructuralKey"/>), its size and whether an expression assigns come from
+/// The identity of a call (the key table inside <see cref="TirFacts"/>), its size and whether an expression assigns come from
 /// the body's fact table (<see cref="PassContext.Facts"/>), computed once per node (compiler-546).
 /// </summary>
 public static class TirSharedCalls
@@ -206,9 +206,7 @@ public static class TirSharedCalls
         private static bool IsCandidate(TirCall c)
             => c.Callee != null
                && c.EmissionKind is EmissionKind.InstanceMethod or EmissionKind.StaticMethod
-               && c.Type != null && !TirRewrite.IsListType(c.Type) && !IsUnique(c.Type);
-
-        private static bool IsUnique(TypeExpression t) => TirRewrite.IsUniqueType(t);
+               && c.Type != null && !TirRewrite.IsListType(c.Type) && !UniqueTypes.IsUniqueType(c.Type);
 
         /// <summary>Structural identity of a candidate, or null when something below it is not known to be pure
         /// and repeatable; memoized per node by the body's fact table. When the key is not null, the definitions

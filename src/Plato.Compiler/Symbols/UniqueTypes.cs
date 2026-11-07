@@ -1,5 +1,6 @@
 // Defines unique builder types and the observation, mutation, and consumption effects of their methods.
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ara3D.Geometry.Compiler.Symbols
 {
@@ -36,6 +37,11 @@ namespace Ara3D.Geometry.Compiler.Symbols
     {
         /// <summary>The only type names allowed to carry the "unique" modifier.</summary>
         public static readonly HashSet<string> Names = new HashSet<string> { "List", "Buffer" };
+
+        /// <summary>Whether a type is affine or holds one: a value of it is owned by one use, so it must not be shared.
+        /// The one definition the optimizer's rewrites and the shared-calls and sink-bindings passes use.</summary>
+        public static bool IsUniqueType(TypeExpression t)
+            => t != null && ((t.Def?.IsUnique ?? false) || t.TypeArgs.Any(IsUniqueType));
 
         public static bool IsUniqueTypeName(string name)
             => name != null && Names.Contains(name);

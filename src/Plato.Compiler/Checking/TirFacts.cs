@@ -101,7 +101,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             return _defs[n] = DefSet.Of(own, n.Children.Select(Defs));
         }
 
-        /// <summary>The structural identity of a call for the shared-calls pass (<see cref="TirStructuralKey"/>), or
+        /// <summary>The structural identity of a call for the shared-calls pass (see <c>TirStructuralKey</c> below), or
         /// null when something below it is not known to be pure and repeatable. <paramref name="wide"/> admits the
         /// factory calls that <c>--share-calls-wide</c> shares. Two keys compare only within one table: the
         /// definitions and callees they name are numbered in the order this table first met them.</summary>
@@ -158,102 +158,99 @@ namespace Ara3D.Geometry.Compiler.Checking
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
-    }
 
-    /// <summary>
-    /// The structural key of the shared-calls pass: two calls with the same callee, emission kind and type, and
-    /// arguments that are the same definitions (by identity), the same literals (by value), the same type
-    /// references and the same conversions of such, get the same string. A key is null when the call or something
-    /// below it is not known to be pure and repeatable: an affine (unique) type anywhere, a lambda, an unresolved
-    /// call, or any node the writer does not list. Keys are memoized per node and composed from the children's keys,
-    /// so a key costs its children after the first visit. Definitions and callees are numbered in the order they are
-    /// first met, so keys compare only within one instance; the numbering follows the pre-order of the first request,
-    /// which is what the pass's one-pass writer did.
-    /// </summary>
-    public sealed class TirStructuralKey
-    {
-        private readonly bool _wide;
-        private readonly Dictionary<object, int> _ids = new(ReferenceEqualityComparer.Instance);
-        private readonly Dictionary<TirNode, string> _keys = new(ReferenceEqualityComparer.Instance);
-
-        /// <param name="wide">Admits a sum case written as a factory (an unresolved static call by name), as
-        /// <c>--share-calls-wide</c> does.</param>
-        public TirStructuralKey(bool wide) => _wide = wide;
-
-        /// <summary>The number of nodes whose key this table has computed (not answered from its memo).</summary>
-        public int Computed { get; private set; }
-
-        /// <summary>The key of <paramref name="n"/>, or null (see the class summary).</summary>
-        public string Key(TirNode n)
+        /// <summary>
+        /// The structural key of the shared-calls pass: two calls with the same callee, emission kind and type, and
+        /// arguments that are the same definitions (by identity), the same literals (by value), the same type
+        /// references and the same conversions of such, get the same string. A key is null when the call or something
+        /// below it is not known to be pure and repeatable: an affine (unique) type anywhere, a lambda, an unresolved
+        /// call, or any node the writer does not list. Keys are memoized per node and composed from the children's keys,
+        /// so a key costs its children after the first visit. Definitions and callees are numbered in the order they are
+        /// first met, so keys compare only within one instance; the numbering follows the pre-order of the first request,
+        /// which is what the pass's one-pass writer did.
+        /// </summary>
+        private sealed class TirStructuralKey
         {
-            if (n == null)
-                return null;
-            if (_keys.TryGetValue(n, out var key))
-                return key;
-            Computed++;
-            return _keys[n] = Write(n);
-        }
+            private readonly bool _wide;
+            private readonly Dictionary<object, int> _ids = new(ReferenceEqualityComparer.Instance);
+            private readonly Dictionary<TirNode, string> _keys = new(ReferenceEqualityComparer.Instance);
 
-        private int Id(object o)
-        {
-            if (!_ids.TryGetValue(o, out var id))
-                _ids[o] = id = _ids.Count;
-            return id;
-        }
+            /// <param name="wide">Admits a sum case written as a factory (an unresolved static call by name), as
+            /// <c>--share-calls-wide</c> does.</param>
+            public TirStructuralKey(bool wide) => _wide = wide;
 
-        private static bool IsUnique(TypeExpression t)
-            => t != null && ((t.Def?.IsUnique ?? false) || t.TypeArgs.Any(IsUnique));
+            /// <summary>The number of nodes whose key this table has computed (not answered from its memo).</summary>
+            public int Computed { get; private set; }
 
-        private string Write(TirNode n)
-        {
-            switch (n)
+            /// <summary>The key of <paramref name="n"/>, or null (see the class summary).</summary>
+            public string Key(TirNode n)
             {
-                case TirParameter p when p.Def != null && !IsUnique(p.Type):
-                    return "P" + Id(p.Def);
-                case TirVariable v when v.Def != null && !IsUnique(v.Type):
-                    return "V" + Id(v.Def);
-                case TirLiteral l:
-                    return $"L{l.LiteralType}:{l.Type}:{l.Value}";
-                case TirTypeRef t:
-                    return $"T{t.TypeDef?.Name}{t.NamespaceQualified}";
-                case TirDefault d:
-                    return $"D{d.Type}";
-                case TirCoerce c:
-                {
-                    var inner = Key(c.Inner);
-                    return inner == null ? null : $"K{c.ToType}({inner})";
-                }
-                case TirCall c when c.Callee != null && !IsUnique(c.Type) && !c.Args.Any(a => IsUnique(a?.Type)):
-                    return Args(c.Args, $"C{Id(c.Callee)}:{c.EmissionKind}:{c.Type}(");
-                case TirCall c when c.Callee == null && c.EmissionKind == EmissionKind.Property
-                                    && c.Args.Count == 1 && !IsUnique(c.Type):
-                {
-                    // A syntactic field projection (a match binder or a case test) of a shared value.
-                    var inner = c.Args[0] != null ? Key(c.Args[0]) : null;
-                    return inner == null ? null : $"F{c.Name}:{c.Type}({inner})";
-                }
-                case TirCall c when _wide && c.Callee == null && c.EmissionKind == EmissionKind.StaticMethod
-                                    && c.Name != null && !IsUnique(c.Type) && !c.Args.Any(a => a == null || IsUnique(a.Type)):
-                    // A sum case written as a factory (Kind.EdgeLoop): a pure value, compared by name and payload.
-                    return Args(c.Args, $"S{c.Name}:{c.Type}(");
-                default:
+                if (n == null)
                     return null;
+                if (_keys.TryGetValue(n, out var key))
+                    return key;
+                Computed++;
+                return _keys[n] = Write(n);
             }
-        }
 
-        /// <summary>The head followed by each argument's key and a comma, then the closing parenthesis; null as soon
-        /// as an argument has no key, so the arguments after it are not numbered (as the one-pass writer left them).</summary>
-        private string Args(IReadOnlyList<TirNode> args, string head)
-        {
-            var sb = new StringBuilder(head);
-            foreach (var a in args)
+            private int Id(object o)
             {
-                var key = Key(a);
-                if (key == null)
-                    return null;
-                sb.Append(key).Append(',');
+                if (!_ids.TryGetValue(o, out var id))
+                    _ids[o] = id = _ids.Count;
+                return id;
             }
-            return sb.Append(')').ToString();
+
+                        private string Write(TirNode n)
+            {
+                switch (n)
+                {
+                    case TirParameter p when p.Def != null && !UniqueTypes.IsUniqueType(p.Type):
+                        return "P" + Id(p.Def);
+                    case TirVariable v when v.Def != null && !UniqueTypes.IsUniqueType(v.Type):
+                        return "V" + Id(v.Def);
+                    case TirLiteral l:
+                        return $"L{l.LiteralType}:{l.Type}:{l.Value}";
+                    case TirTypeRef t:
+                        return $"T{t.TypeDef?.Name}{t.NamespaceQualified}";
+                    case TirDefault d:
+                        return $"D{d.Type}";
+                    case TirCoerce c:
+                    {
+                        var inner = Key(c.Inner);
+                        return inner == null ? null : $"K{c.ToType}({inner})";
+                    }
+                    case TirCall c when c.Callee != null && !UniqueTypes.IsUniqueType(c.Type) && !c.Args.Any(a => UniqueTypes.IsUniqueType(a?.Type)):
+                        return Args(c.Args, $"C{Id(c.Callee)}:{c.EmissionKind}:{c.Type}(");
+                    case TirCall c when c.Callee == null && c.EmissionKind == EmissionKind.Property
+                                        && c.Args.Count == 1 && !UniqueTypes.IsUniqueType(c.Type):
+                    {
+                        // A syntactic field projection (a match binder or a case test) of a shared value.
+                        var inner = c.Args[0] != null ? Key(c.Args[0]) : null;
+                        return inner == null ? null : $"F{c.Name}:{c.Type}({inner})";
+                    }
+                    case TirCall c when _wide && c.Callee == null && c.EmissionKind == EmissionKind.StaticMethod
+                                        && c.Name != null && !UniqueTypes.IsUniqueType(c.Type) && !c.Args.Any(a => a == null || UniqueTypes.IsUniqueType(a.Type)):
+                        // A sum case written as a factory (Kind.EdgeLoop): a pure value, compared by name and payload.
+                        return Args(c.Args, $"S{c.Name}:{c.Type}(");
+                    default:
+                        return null;
+                }
+            }
+
+            /// <summary>The head followed by each argument's key and a comma, then the closing parenthesis; null as soon
+            /// as an argument has no key, so the arguments after it are not numbered (as the one-pass writer left them).</summary>
+            private string Args(IReadOnlyList<TirNode> args, string head)
+            {
+                var sb = new StringBuilder(head);
+                foreach (var a in args)
+                {
+                    var key = Key(a);
+                    if (key == null)
+                        return null;
+                    sb.Append(key).Append(',');
+                }
+                return sb.Append(')').ToString();
+            }
         }
     }
 }

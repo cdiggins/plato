@@ -215,7 +215,7 @@ public static class TirLoopInvariantHoister
         foreach (var d in n.Descendants())
         {
             // An affine builder belongs to one iteration: one hoisted List or Buffer would be shared by them all (TKT-1202).
-            if (TirRewrite.IsUniqueType(d.Type)) return false;
+            if (UniqueTypes.IsUniqueType(d.Type)) return false;
             switch (d)
             {
                 case TirParameter p:

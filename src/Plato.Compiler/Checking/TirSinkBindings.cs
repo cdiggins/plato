@@ -101,11 +101,8 @@ namespace Ara3D.Geometry.Compiler.Checking
                     plain = c.Inner;
                 if (plain is TirVariable or TirParameter or TirLiteral or TirTypeRef or TirDefault or TirLambda)
                     return false;
-                return !IsUnique(let.Def.Type) && !IsUnique(value.Type);
+                return !UniqueTypes.IsUniqueType(let.Def.Type) && !UniqueTypes.IsUniqueType(value.Type);
             }
-
-            private static bool IsUnique(TypeExpression t)
-                => t != null && ((t.Def?.IsUnique ?? false) || t.TypeArgs.Any(IsUnique));
 
             /// <summary>The statement with the local moved into it, or null when it cannot go any deeper
             /// than before it.</summary>

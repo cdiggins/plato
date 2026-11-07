@@ -190,7 +190,7 @@ public static class TirFactsTests
             return id;
         }
 
-        private static bool IsUnique(TypeExpression? t) => TirRewrite.IsUniqueType(t!);
+        private static bool IsUnique(TypeExpression? t) => UniqueTypes.IsUniqueType(t);
 
         private bool Write(TirNode n, StringBuilder sb)
         {
