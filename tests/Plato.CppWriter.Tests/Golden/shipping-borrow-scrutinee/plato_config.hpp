@@ -34,3 +34,14 @@
 #ifndef PLATO_ARENA_UNINIT
 #define PLATO_ARENA_UNINIT PLATO_ARENA_FAST
 #endif
+
+// 1: the AVX2 kernels of plato_simd.hpp replace the scalar bodies of the functions in Policies/SimdKernels.cs (the tree
+// must have been written with --cpp-simd-kernels, and the build must pass /arch:AVX2). 0: the scalar bodies.
+#ifndef PLATO_SIMD
+#define PLATO_SIMD 0
+#endif
+// 1: the kernels fuse a multiply with the add that follows it (one rounding; last bits move; the stated-tolerance regime
+// of 2026-11-07). 0: lane-wise operations in the scalar body's order, bit-identical to the scalar build.
+#ifndef PLATO_SIMD_FMA
+#define PLATO_SIMD_FMA PLATO_SIMD
+#endif

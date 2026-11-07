@@ -108,6 +108,8 @@ public static class WriterSwitches
         new("cpp-scalar-regions", Cpu, Cpu),
         // TKT-1211: with cpp-scalar-regions, wrap only calls that reach one of these functions (the heaviest allocators of a tally).
         new("cpp-scalar-region-heavy", Cpu, Requires: "cpp-scalar-regions") { Parameter = SwitchParameter.AnyText },
+        // 2026-11-07 (plato-brep docs/plans/cpp-simd-under-tolerance-2026-11-07.md): the record arithmetic of Policies/SimdKernels.cs is also written as AVX2 kernel calls under #if PLATO_SIMD.
+        new("cpp-simd-kernels", Cpu),
         // The most lines of definitions in one emitted function unit; CppCpuOptions.DefaultUnitLines (5000) when absent.
         new("cpp-unit-lines", Cpu) { Parameter = SwitchParameter.PositiveInt },
         // --cpp-prune-to-roots=A,B writes only what --cpp-roots and A,B (functions or types a host names) reach; absent, everything.

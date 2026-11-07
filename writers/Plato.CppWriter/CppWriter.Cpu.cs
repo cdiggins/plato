@@ -52,6 +52,9 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>--cpp-scalar-region-heavy=A,B,...: with scalar regions on, wrap only calls whose callee is, or transitively calls, one of
         /// these functions (the size-threshold form: the names a tally showed to allocate most); null wraps every callee that may allocate.</summary>
         public IReadOnlyList<string> ScalarRegionHeavy { get; init; }
+        /// <summary>--cpp-simd-kernels (2026-11-07, off by default): the functions of <see cref="Policies.SimdKernels"/> are also written as
+        /// calls into the AVX2 kernels of prelude/plato_simd.hpp under <c>#if PLATO_SIMD</c>; the scalar body stays in the <c>#else</c>.</summary>
+        public bool SimdKernels { get; init; }
         /// <summary>The code-shape decisions; null means <see cref="CppPolicies.For"/> of these options.</summary>
         public CppPolicies Policies { get; init; }
         public static readonly CppCpuOptions Default = new CppCpuOptions(false, false, false, false, Array.Empty<string>());
@@ -76,6 +79,7 @@ namespace Ara3D.Geometry.CppWriter
                 ScalarArrays = s.On("scalar-arrays"),
                 ScalarRegions = s.On("cpp-scalar-regions"),
                 ScalarRegionHeavy = s.Value("cpp-scalar-region-heavy")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
+                SimdKernels = s.On("cpp-simd-kernels"),
                 UnitLines = s.Int("cpp-unit-lines", DefaultUnitLines),
                 PruneRoots = s.Value("cpp-prune-to-roots")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
                 Switches = s,
