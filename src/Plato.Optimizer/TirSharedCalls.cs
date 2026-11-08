@@ -65,14 +65,7 @@ public static class TirSharedCalls
             _wide = wide;
             _stats = stats ?? new WriterRewriteStats();
             _parameters = function.Parameters.Cast<object>().ToHashSet(ReferenceEqualityComparer.Instance);
-            _names = function.AllNodes.Select(n => n switch
-            {
-                TirVariable v => v.Def?.Name, TirParameter p => p.Def?.Name,
-                TirLet l => l.Def?.Name, TirInlineBinding b => b.Def.Name,
-                TirInlineRegion r => r.Result.Name, TirTempRef t => t.Name, _ => null
-            }).Concat(function.Parameters.Select(p => p.Name))
-                .Concat(function.AllNodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Select(p => p.Name))
-                .Where(n => n != null).ToHashSet();
+            _names = facts.BoundNames(function);
         }
 
         private VariableDef Fresh(TypeExpression type)

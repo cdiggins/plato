@@ -17,12 +17,9 @@ public static class TirMultiConsumerFusion
         {
             TirVariable v => (DefSymbol)v.Def, TirParameter p => p.Def, _ => null
         }).ToHashSet();
-        var names = nodes.Select(n => n switch
-        {
-            TirVariable v => v.Def.Name, TirParameter p => p.Def.Name,
-            TirLet l => l.Def.Name, TirInlineBinding b => b.Def.Name, TirInlineRegion r => r.Result.Name, _ => null
-        }).Where(n => n != null).Concat(tir.Parameters.Select(p => p.Name))
-            .Concat(nodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Select(p => p.Name)).ToList();
+        // The names an `_mc{id}_` prefix must not collide with (compiler-546: the table's set also holds the loop
+        // temporaries, which never carry that prefix, so the id sequence is unchanged).
+        var names = pass.Facts.BoundNames(tir);
         var statements = new List<TirNode>();
         var id = 0;
         for (var i = 0; i < block.Statements.Count; i++)

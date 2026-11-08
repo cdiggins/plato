@@ -29,7 +29,7 @@ public static class ComponentReceiverBinding
     {
         if (!pass.On("scalar-arrays") || tir?.Body == null)
             return tir;
-        var binder = new Binder(tir, pass.Compilation);
+        var binder = new Binder(tir, pass.Compilation, pass.Facts);
         var body = binder.Body(tir.Body);
         return binder.Bound == 0
             ? tir
@@ -56,17 +56,12 @@ public static class ComponentReceiverBinding
 
         public int Bound { get; private set; }
 
-        public Binder(TirFunction function, Ara3D.Geometry.Compiler.Compilation compilation)
+        /// <param name="facts">The body's fact table, whose <see cref="TirFacts.BoundNames(TirFunction)"/> is the
+        /// set of names a fresh local must avoid (compiler-546).</param>
+        public Binder(TirFunction function, Ara3D.Geometry.Compiler.Compilation compilation, TirFacts facts)
         {
             _compilation = compilation;
-            _names = function.AllNodes.Select(n => n switch
-            {
-                TirVariable v => v.Def?.Name, TirParameter p => p.Def?.Name,
-                TirLet l => l.Def?.Name, TirInlineBinding b => b.Def.Name,
-                TirInlineRegion r => r.Result.Name, TirTempRef t => t.Name, _ => null
-            }).Concat(function.Parameters.Select(p => p.Name))
-                .Concat(function.AllNodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Select(p => p.Name))
-                .Where(n => n != null).ToHashSet();
+            _names = facts.BoundNames(function);
         }
 
         public TirNode Body(TirNode node)
