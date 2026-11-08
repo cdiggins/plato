@@ -132,8 +132,6 @@ public static class TirPresize
             && facts.Assigns(body, list).Count == 1
             && facts.Assigns(body, counter).Count == 1;
 
-    private static VariableDef Target(TirAssign assign) => (assign.LValue as TirVariable)?.Def;
-
     private static bool IsAppend(TirNode statement, VariableDef list)
         => statement is TirAssign { LValue: TirVariable target, RValue: TirCall { Name: "Add", Args.Count: 2 } add }
             && target.Def == list && add.Args[0] is TirVariable receiver && receiver.Def == list;
