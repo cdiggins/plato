@@ -49,8 +49,7 @@ public static partial class TirInliner
                 return _known.TryGetValue(variable.Def, out var known) ? known : null;
             if (value is not TirLambda lambda || IsEtaShaped(lambda))
                 return null;
-            return lambda.Body.Descendants().Any(n => n is TirVariable v && _assigned.Contains(v.Def)
-                || n is TirParameter p && _assigned.Contains(p.Def)) ? null : lambda;
+            return _facts.MentionedDefs(lambda.Body).Any(_assigned.Contains) ? null : lambda;
         }
 
         private void Remember(VariableDef def, TirNode value)
