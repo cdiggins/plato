@@ -62,7 +62,7 @@ public static class TirLoopInvariantHoister
             if (n is not TirLoweredLoop loop)
                 return n;
             var context = new Context(tir, pass.InlineHost, ownerTypeName,
-                () => callerNames ??= TirInliner.BoundNamesForHoisting(tir));
+                () => callerNames ??= TirInliner.BoundNamesForHoisting(tir), pass.Facts);
             var hoisted = HoistLoop(loop, context);
             if (ReferenceEquals(hoisted, loop))
                 return n;
@@ -84,11 +84,13 @@ public static class TirLoopInvariantHoister
         public readonly string OwnerTypeName;
         public readonly System.Func<HashSet<string>> CallerNames;
         public readonly HashSet<object> Bound = new();
+        /// <summary>The body's fact table: which definitions a candidate mentions (compiler-546).</summary>
+        public readonly TirFacts Facts;
         public int Hoisted;
         public int Inlined;
 
-        public Context(TirFunction tir, ITirInlineHost writer, string ownerTypeName, System.Func<HashSet<string>> callerNames)
-            => (Tir, Writer, OwnerTypeName, CallerNames) = (tir, writer, ownerTypeName, callerNames);
+        public Context(TirFunction tir, ITirInlineHost writer, string ownerTypeName, System.Func<HashSet<string>> callerNames, TirFacts facts)
+            => (Tir, Writer, OwnerTypeName, CallerNames, Facts) = (tir, writer, ownerTypeName, callerNames, facts);
     }
 
     private static TirNode HoistLoop(TirLoweredLoop loop, Context context)
@@ -210,7 +212,24 @@ public static class TirLoopInvariantHoister
            && IsInvariant(n, context)
            && !TirInliner.IsCheapProjection(context.Writer, n);
 
+    /// <summary>Invariant: mentions no definition the loop context binds (read from the fact table) and is built
+    /// only from the node kinds the class remarks list.</summary>
     private static bool IsInvariant(TirNode n, Context context)
+        => !MentionsBound(n, context) && HasInvariantShape(n);
+
+    /// <summary>Whether the subtree reads a definition in <see cref="Context.Bound"/>: the smaller of the two sets
+    /// is walked against the other.</summary>
+    private static bool MentionsBound(TirNode n, Context context)
+    {
+        var mentioned = context.Facts.MentionedDefs(n);
+        return mentioned.Count <= context.Bound.Count
+            ? mentioned.Any(context.Bound.Contains)
+            : context.Bound.Any(def => context.Facts.Mentions(n, def));
+    }
+
+    // The shape rule alone (no fact table holds it): every descendant is one of the listed kinds, no affine
+    // type anywhere, every parameter and variable resolved, no tuple call, every invocation of a parameter or local.
+    private static bool HasInvariantShape(TirNode n)
     {
         foreach (var d in n.Descendants())
         {
@@ -219,10 +238,10 @@ public static class TirLoopInvariantHoister
             switch (d)
             {
                 case TirParameter p:
-                    if (p.Def == null || context.Bound.Contains(p.Def)) return false;
+                    if (p.Def == null) return false;
                     break;
                 case TirVariable v:
-                    if (v.Def == null || context.Bound.Contains(v.Def)) return false;
+                    if (v.Def == null) return false;
                     break;
                 case TirLiteral or TirTypeRef or TirTempRef or TirCoerce or TirNew or TirConstructorCall or TirComponentAccess:
                     break;
