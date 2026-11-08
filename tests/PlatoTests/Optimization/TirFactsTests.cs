@@ -56,6 +56,62 @@ public static class TirFactsTests
         Assert.That(facts.NodesVisited, Is.LessThanOrEqualTo(3 * distinct), "three facts, each at most once per node");
     }
 
+    /// <summary>The shared chain over a leaf, so that every path ends at one definition: <paramref name="paths"/>
+    /// is 2^<see cref="Depth"/>.</summary>
+    private static TirNode SharedChainOver(TirNode leaf, out int distinct, out int paths)
+    {
+        var node = leaf;
+        distinct = 1;
+        for (var k = 0; k < Depth; k++)
+        {
+            node = new TirConditional(new TirLiteral(true, LiteralTypesEnum.Boolean, null, null), node, node, null, null);
+            distinct += 2;
+        }
+        paths = 1 << Depth;
+        return node;
+    }
+
+    [Test]
+    public static void BoundNamesOfASharedChainAreLinear()
+    {
+        var def = new VariableDef(null, "x", null, null);
+        var root = SharedChainOver(new TirVariable(def, null, null), out var distinct, out _);
+        var facts = new TirFacts();
+        Assert.That(facts.BoundNames(root), Is.EquivalentTo(new[] { "x" }));
+        Assert.That(facts.NodesVisited, Is.EqualTo(distinct));
+        Assert.That(facts.BoundNames(root), Has.Count.EqualTo(1));
+        Assert.That(facts.NodesVisited, Is.EqualTo(distinct), "a repeated request is a cache hit");
+    }
+
+    [Test]
+    public static void UsesOfASharedChainCountEveryPathButVisitOnce()
+    {
+        var def = new VariableDef(null, "x", null, null);
+        var root = SharedChainOver(new TirVariable(def, null, null), out var distinct, out var paths);
+        var facts = new TirFacts();
+        Assert.That(facts.Uses(root, def), Is.EqualTo(new TirUse(paths, false, false)), "a shared use counts once per path, as a walk counts it");
+        Assert.That(facts.NodesVisited, Is.EqualTo(distinct));
+        var lambda = new TirLambda(new List<ParameterDef>(), root, null, null);
+        Assert.That(facts.Uses(lambda, def), Is.EqualTo(new TirUse(paths, true, false)), "a lambda root puts its body under the lambda");
+        var loop = new TirLoop(new TirLiteral(true, LiteralTypesEnum.Boolean, null, null), root, null);
+        Assert.That(facts.Uses(loop, def), Is.EqualTo(new TirUse(paths, false, true)), "a loop root puts its body under the loop");
+        Assert.That(facts.NodesVisited, Is.EqualTo(distinct + 3), "the two new roots and the loop's condition");
+        Assert.That(facts.Uses(root, new VariableDef(null, "y", null, null)), Is.EqualTo(default(TirUse)));
+    }
+
+    [Test]
+    public static void AssignmentsOfASharedChainCountEveryPathButVisitOnce()
+    {
+        var def = new VariableDef(null, "x", null, null);
+        var assign = new TirAssign(new TirVariable(def, null, null), new TirLiteral(0, LiteralTypesEnum.Integer, null, null), null, null);
+        var root = SharedChainOver(assign, out var distinct, out var paths);
+        var facts = new TirFacts();
+        Assert.That(facts.Assigns(root, def), Is.EqualTo(new TirUse(paths, false, false)));
+        Assert.That(facts.AssignedDefs(root), Is.EquivalentTo(new object[] { def }));
+        Assert.That(facts.NodesVisited, Is.EqualTo(distinct + 2), "the assignment's two children are nodes too");
+        Assert.That(facts.Uses(root, def).Count, Is.EqualTo(paths), "the target of an assignment is an occurrence");
+    }
+
     [Test]
     public static void StructuralKeyOfASharedCallChainIsLinear()
     {
@@ -85,15 +141,33 @@ public static class TirFactsTests
 
     private static readonly Lazy<Ara3D.Geometry.Compiler.Compilation> SharedCalls = new(() => Compile("SharedCallsFixtures", "shared-calls.plato"));
     private static readonly Lazy<Ara3D.Geometry.Compiler.Compilation> Rewrites = new(() => Compile("DecoderRewriteFixtures", "rewrites.plato"));
+    private static readonly Lazy<Ara3D.Geometry.Compiler.Compilation> Hoist = new(() => Compile("HoistInvariantsFixtures", "hoist.plato"));
+
+    /// <summary>The optimizer's node kinds as a <see cref="TirNodeModel"/>: the binders and temporaries its four
+    /// name scans list, the temporary reference as a use by name, and the guarded loop as a loop.</summary>
+    private sealed class OptimizerNodeModel : TirNodeModel
+    {
+        public override IEnumerable<string> Names(TirNode n) => n switch
+        {
+            TirInlineBinding b => new[] { b.Def.Name },
+            TirInlineRegion r => new[] { r.Result.Name },
+            TirTempRef t => new[] { t.Name },
+            _ => base.Names(n)
+        };
+
+        public override object UseKey(TirNode n) => n is TirTempRef t ? t.Name : base.UseKey(n);
+
+        public override bool IsLoop(TirNode n) => n is TirGuardedLoop || base.IsLoop(n);
+    }
 
     /// <summary>Every function of the fixture library, elaborated and after the writer's passes with the named switches on.</summary>
-    private static IEnumerable<(string Name, TirNode Body)> Bodies(Ara3D.Geometry.Compiler.Compilation compilation, string library,
-        bool sink, bool share, bool wide)
+    private static IEnumerable<(string Name, TirFunction Function)> Functions(Ara3D.Geometry.Compiler.Compilation compilation, string library,
+        bool sink, bool share, bool wide, bool hoist = false)
     {
         var writer = new CSharpWriter(compilation, "unused-tir-facts")
         {
             ExtensionStyle = true, LowerLoops = true, FuseCombinators = true,
-            SinkBindings = sink, ShareCalls = share, ShareCallsWide = wide
+            SinkBindings = sink, ShareCalls = share, ShareCallsWide = wide, HoistInvariants = hoist
         };
         foreach (var definition in compilation.LibraryDefinitionsByName[library].Functions)
         {
@@ -101,17 +175,147 @@ public static class TirFactsTests
             var tir = writer.TryGetStaticTir(definition);
             if (tir?.Body == null)
                 continue;
-            yield return (definition.Name + " (elaborated)", tir.Body);
+            yield return (definition.Name + " (elaborated)", tir);
             var optimized = writer.RunOptimizerPasses(tir, null);
             if (optimized?.Body != null)
-                yield return (definition.Name + " (optimized)", optimized.Body);
+                yield return (definition.Name + " (optimized)", optimized);
         }
     }
+
+    private static IEnumerable<(string Name, TirNode Body)> Bodies(Ara3D.Geometry.Compiler.Compilation compilation, string library,
+        bool sink, bool share, bool wide, bool hoist = false)
+        => Functions(compilation, library, sink, share, wide, hoist).Select(f => (f.Name, f.Function.Body));
 
     private static IEnumerable<TestCaseData> Fixtures()
     {
         yield return new TestCaseData(SharedCalls, "SharedProbe", false, true, false).SetName("{m}(shared-calls)");
         yield return new TestCaseData(Rewrites, "RewriteProbe", true, true, true).SetName("{m}(rewrites, sink and wide)");
+    }
+
+    /// <summary>The fixtures above and the hoist fixture, whose lowered loops carry hoisted bindings and temporaries.</summary>
+    private static IEnumerable<TestCaseData> FixturesWithHoist()
+    {
+        foreach (var fixture in Fixtures())
+            yield return new TestCaseData(fixture.Arguments.Append(false).ToArray()).SetName(fixture.TestName);
+        yield return new TestCaseData(Hoist, "HoistProbe", false, false, false, true).SetName("{m}(hoist)");
+    }
+
+    [TestCaseSource(nameof(FixturesWithHoist))]
+    public static void BoundNamesAgreeWithTheFourScans(Lazy<Ara3D.Geometry.Compiler.Compilation> compilation, string library, bool sink, bool share, bool wide, bool hoist)
+    {
+        foreach (var (name, function) in Functions(compilation.Value, library, sink, share, wide, hoist))
+        {
+            var facts = new TirFacts(new OptimizerNodeModel());
+            foreach (var n in function.Body.Descendants())
+            {
+                // The scan of TirLoopLowerer.Scopes, TirSharedCalls and ComponentReceiverBinding (the same text in all three), over the subtree.
+                var nodes = n.Descendants().ToList();
+                var scan = nodes.Select(d => d switch
+                {
+                    TirVariable v => v.Def?.Name, TirParameter p => p.Def?.Name,
+                    TirLet l => l.Def?.Name, TirInlineBinding b => b.Def.Name,
+                    TirInlineRegion r => r.Result.Name, TirTempRef t => t.Name, _ => null
+                }).Concat(nodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Select(p => p.Name))
+                    .Where(s => s != null).ToHashSet();
+                Assert.That(facts.BoundNames(n), Is.EquivalentTo(scan), name);
+                Assert.That(facts.BoundNames(n).Count, Is.EqualTo(scan.Count), name);
+                // TirMultiConsumerFusion's scan leaves out the temporaries: a subset.
+                var fusion = nodes.Select(d => d switch
+                {
+                    TirVariable v => v.Def.Name, TirParameter p => p.Def.Name,
+                    TirLet l => l.Def.Name, TirInlineBinding b => b.Def.Name, TirInlineRegion r => r.Result.Name, _ => null
+                }).Where(s => s != null).Concat(nodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Select(p => p.Name)).ToList();
+                Assert.That(fusion.Distinct(), Is.SubsetOf(facts.BoundNames(n)), name);
+                // TirInliner.CollectBoundNames keeps the binders alone: a subset.
+                var binders = new HashSet<string>();
+                foreach (var d in nodes)
+                {
+                    if (d is TirLambda lam) foreach (var p in lam.Parameters) if (p?.Name != null) binders.Add(p.Name);
+                    if (d is TirLet let && let.Def?.Name != null) binders.Add(let.Def.Name);
+                    if (d is TirInlineBinding binding) binders.Add(binding.Def.Name);
+                    if (d is TirInlineRegion region) binders.Add(region.Result.Name);
+                }
+                Assert.That(binders, Is.SubsetOf(facts.BoundNames(n)), name);
+            }
+            // The whole-function set is the body's scan with the parameter names, mutable.
+            var expected = facts.BoundNames(function.Body).Concat(function.Parameters.Select(p => p.Name)).ToHashSet();
+            var whole = facts.BoundNames(function);
+            Assert.That(whole, Is.EquivalentTo(expected), name);
+            Assert.That(whole.Add("_tir_facts_fresh"), Is.True, name);
+            Assert.That(facts.BoundNames(function), Does.Not.Contain("_tir_facts_fresh"), name);
+        }
+    }
+
+    [TestCaseSource(nameof(FixturesWithHoist))]
+    public static void UsesAgreeWithTheCountingWalks(Lazy<Ara3D.Geometry.Compiler.Compilation> compilation, string library, bool sink, bool share, bool wide, bool hoist)
+    {
+        foreach (var (name, body) in Bodies(compilation.Value, library, sink, share, wide, hoist))
+        {
+            var facts = new TirFacts(new OptimizerNodeModel());
+            foreach (var n in body.Descendants())
+            {
+                // TirRewrite.CountParamUses: the parameters, with under-lambda.
+                var parameters = TirRewrite.CountParamUses(n);
+                foreach (var (def, (count, underLambda)) in parameters)
+                {
+                    Assert.That(facts.UseCount(n, def), Is.EqualTo(count), $"{name}: {def.Name}");
+                    Assert.That(facts.UsesUnderLambda(n, def), Is.EqualTo(underLambda), $"{name}: {def.Name}");
+                }
+                // The walk of TirArrayMaterializer.CountRefs, extended with the guarded loop and the temporaries by name.
+                var naive = new Dictionary<object, TirUse>(ReferenceEqualityComparer.Instance);
+                var names = new Dictionary<string, TirUse>(StringComparer.Ordinal);
+                void Walk(TirNode node, bool underLambda, bool underLoop)
+                {
+                    if (node == null)
+                        return;
+                    var use = new TirUse(1, underLambda, underLoop);
+                    if (node is TirVariable v && v.Def != null)
+                        naive[v.Def] = naive.TryGetValue(v.Def, out var sofar) ? sofar.Plus(use) : use;
+                    if (node is TirParameter p && p.Def != null)
+                        naive[p.Def] = naive.TryGetValue(p.Def, out var sofar2) ? sofar2.Plus(use) : use;
+                    if (node is TirTempRef t)
+                        names[t.Name] = names.TryGetValue(t.Name, out var sofar3) ? sofar3.Plus(use) : use;
+                    var lambda = underLambda || node is TirLambda;
+                    var loop = underLoop || node is TirLoop || node is TirGuardedLoop;
+                    foreach (var child in node.Children)
+                        Walk(child, lambda, loop);
+                }
+                Walk(n, false, false);
+                foreach (var (def, use) in naive)
+                    Assert.That(facts.Uses(n, def), Is.EqualTo(use), $"{name}: {def}");
+                foreach (var (temp, use) in names)
+                    Assert.That(facts.Uses(n, new string(temp.AsSpan())), Is.EqualTo(use), $"{name}: {temp} (compared by value)");
+                Assert.That(facts.Uses(n).Count, Is.EqualTo(naive.Count + names.Count), name);
+                Assert.That(facts.Uses(n).Sum(kv => kv.Value.Count), Is.EqualTo(naive.Values.Sum(u => u.Count) + names.Values.Sum(u => u.Count)), name);
+                Assert.That(parameters.Count, Is.EqualTo(naive.Keys.OfType<ParameterDef>().Count()), name);
+                foreach (var d in n.Descendants().OfType<TirLet>())
+                    if (!naive.ContainsKey(d.Def))
+                        Assert.That(facts.Uses(n, d.Def), Is.EqualTo(default(TirUse)), name);
+            }
+        }
+    }
+
+    [TestCaseSource(nameof(FixturesWithHoist))]
+    public static void AssignmentsAgreeWithAScan(Lazy<Ara3D.Geometry.Compiler.Compilation> compilation, string library, bool sink, bool share, bool wide, bool hoist)
+    {
+        foreach (var (name, body) in Bodies(compilation.Value, library, sink, share, wide, hoist))
+        {
+            var facts = new TirFacts(new OptimizerNodeModel());
+            foreach (var n in body.Descendants())
+            {
+                // TirMultiConsumerFusion's set and TirPresize.IsCountedFill's per-target count, over the subtree.
+                var assigns = n.Descendants().OfType<TirAssign>().ToList();
+                var targets = assigns.Select(a => a.LValue switch { TirVariable v => (object)v.Def, TirParameter p => p.Def, _ => null })
+                    .Where(d => d != null).ToList();
+                Assert.That(facts.AssignedDefs(n), Is.EquivalentTo(targets.Distinct()).Using<object>((x, y) => ReferenceEquals(x, y)), name);
+                foreach (var def in targets.Distinct())
+                    Assert.That(facts.Assigns(n, def).Count, Is.EqualTo(targets.Count(t => ReferenceEquals(t, def))), name);
+                Assert.That(facts.ContainsAssign(n), Is.EqualTo(assigns.Count > 0), name);
+                foreach (var d in n.Descendants().OfType<TirLet>())
+                    if (!targets.Contains(d.Def))
+                        Assert.That(facts.Assigns(n, d.Def), Is.EqualTo(default(TirUse)), name);
+            }
+        }
     }
 
     [TestCaseSource(nameof(Fixtures))]
