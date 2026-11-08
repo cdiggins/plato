@@ -24,6 +24,12 @@ public class SumRefinementTests
                     Rect(w, h) => s.Measure + w;
                     Dot => s.Measure;
                 };
+            Helper(b: Box): Number
+            {
+                var m = b.Inner.Measure;
+                return m * 2.0;
+            }
+            Outer(b: Box): Number => b.Helper + b.Tag;
             ViaRead(b: Box): Number
                 => match (b.Inner) {
                     Circle(r) => match (b.Inner) { Circle(q) => q + r; Rect(w, h) => w; Dot => 1.0; };
@@ -45,9 +51,11 @@ public class SumRefinementTests
         }
         """;
 
-    private static readonly string[] Roots = { "Measure", "Nested", "Twice", "ViaRead" };
+    private static readonly string[] Roots = { "Measure", "Nested", "Twice", "ViaRead", "Outer", "Helper" };
 
-    private static string Emit(bool refine)
+    private static string Emit(bool refine) => Emit(refine, null, out _);
+
+    private static string Emit(bool refine, string split, out CppWriter writer)
     {
         var output = Path.Combine(Path.GetTempPath(), $"plato-refine-sums-{Guid.NewGuid():N}");
         Directory.CreateDirectory(output);
@@ -60,22 +68,47 @@ public class SumRefinementTests
         var switches = new List<string> { "bind-scrutinee" };
         if (refine)
             switches.Add(TirSumRefinement.Switch);
-        var options = new CppCpuOptions(false, false, false, false, Roots) { Switches = new SwitchSet(switches.ToArray()) };
-        var writer = compilation.ToCpp(new DirectoryPath(output), CppDialect.Cpu, true, options);
+        var values = split == null ? null : new Dictionary<string, string> { [TirSumRefinement.SplitSwitch] = split };
+        var options = new CppCpuOptions(false, false, false, false, Roots) { Switches = new SwitchSet(switches.ToArray(), values) };
+        writer = compilation.ToCpp(new DirectoryPath(output), CppDialect.Cpu, true, options);
         Assert.That(writer.Skipped.Where(l => Roots.Any(r => l.Contains(r))), Is.Empty, "every root is emitted");
         return string.Join("\n", writer.Files.Where(f => f.Key.EndsWith(".cpp") || f.Key.EndsWith(".hpp")).Select(f => f.Value.ToString()));
     }
 
-    /// <summary>The one-line definition of <paramref name="name"/>: its signature line through its closing brace.</summary>
+    /// <summary>The definition of <paramref name="name"/>: an expression body is one line; a block body opens its brace on
+    /// the next line and closes at column 0.</summary>
     private static string Body(string text, string name)
     {
         var m = Regex.Match(text, @"^[^\r\n;]*\b" + name + @"\([^\r\n;]*\)\s*\{(.*)\}[ \t]*\r?$", RegexOptions.Multiline);
+        if (!m.Success)
+            m = Regex.Match(text, @"^[^\r\n;]*\b" + name + @"\([^\r\n;]*\)[ \t]*\r?\n\{(.*?)\r?\n\}", RegexOptions.Multiline | RegexOptions.Singleline);
         var at = text.IndexOf(name + "(", StringComparison.Ordinal);
         Assert.That(m.Success, Is.True, $"{name} emitted; first mention: {(at < 0 ? "none" : text.Substring(at, Math.Min(400, text.Length - at)))}");
         return m.Groups[1].Value;
     }
 
     private static int KindTests(string body) => Regex.Matches(body, @"\.Kind == ").Count;
+
+    [Test]
+    public void A_split_root_dispatches_once_and_its_callees_are_cloned_per_case()
+    {
+        var plain = Emit(true, null, out var before);
+        Assert.That(before.SumClones, Is.Empty, "no clone without a split root: nothing above Outer knows the case");
+        Assert.That(KindTests(Body(plain, "Outer")), Is.EqualTo(0));
+        var split = Emit(true, "Outer", out var writer);
+        var outer = Body(split, "Outer");
+        Assert.That(KindTests(outer), Is.EqualTo(2), "Outer tests b.Inner once per call, Circle and Rect with Dot as the else");
+        Assert.That(outer, Does.Contain("Helper__r"), "each arm calls a clone of Helper");
+        Assert.That(writer.SumClones.Select(c => c.Callee.Name).Distinct(), Is.EquivalentTo(new[] { "Helper" }));
+        Assert.That(writer.SumClones.Count, Is.EqualTo(3), "one clone of Helper per case");
+        foreach (var clone in writer.SumClones)
+        {
+            var body = Body(split, clone.Name);
+            Assert.That(KindTests(body), Is.EqualTo(0), clone.Name + " knows its case");
+            Assert.That(body, Does.Not.Contain("Measure("), clone.Name + " holds its case's measure in place");
+        }
+        Assert.That(Body(split, "Helper"), Is.EqualTo(Body(plain, "Helper")), "the original Helper stays for other callers");
+    }
 
     [Test]
     public void The_inner_match_in_each_arm_is_gone()

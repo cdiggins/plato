@@ -1565,10 +1565,13 @@ namespace Ara3D.Geometry.CppWriter
         private string ParameterDeclaration(string type, string name)
             => $"{(IsCpu && type == "String" ? "const String&" : type)} {name}";
 
-        private void TryEmitFunction(FunctionInstance fi, ConcreteType ct)
+        private void TryEmitFunction(FunctionInstance fi, ConcreteType ct, SumClone clone = null)
         {
             var owner = ct.TypeDef.Name;
-            var label = $"{owner}.{fi.Name}";
+            // A clone (the refinement pass's specialization) is the same function emitted again under its own name, its
+            // body optimized from the clone's facts instead of the prepass result.
+            var emitName = clone?.Name ?? fi.Name;
+            var label = clone == null ? $"{owner}.{fi.Name}" : $"{owner}.{fi.Name}#{clone.Name}";
             BeginCpuTemplateVars(ct);
             try
             {
@@ -1589,7 +1592,8 @@ namespace Ara3D.Geometry.CppWriter
                         Skipped.Add($"{label}: no ground TIR (unresolved generics?)");
                         return;
                     }
-                    tir = IsCpu ? OptimizedBody(tir, owner) : TirInliner.Inline(tir, this, owner, out _);
+                    tir = clone != null ? CppTirPipeline.Run(clone.Tir, this, owner, clone.Facts)
+                        : IsCpu ? OptimizedBody(tir, owner) : TirInliner.Inline(tir, this, owner, out _);
                 }
 
                 var paramNames = (tir != null
@@ -1621,7 +1625,7 @@ namespace Ara3D.Geometry.CppWriter
                     ? PlatoTypeName(tir.ZonkedReturnType)
                     : fi.ReturnType?.Name;
 
-                var sigKey = $"{fi.Name}({paramTypes.JoinStringsWithComma()})";
+                var sigKey = $"{emitName}({paramTypes.JoinStringsWithComma()})";
                 if (IsCpu && (IsPreludeArrayTemplate(fi.Name, paramTypes)
                     || (fi.Name == "ToInteger" && ret == "int32_t"
                         && paramTypes.SequenceEqual(new[] { "int32_t" }))))
@@ -1649,7 +1653,7 @@ namespace Ara3D.Geometry.CppWriter
                     }
                 }).JoinStringsWithComma();
                 var attributes = Policies.Attributes.For(fi.Name, paramTypes, ret);
-                var sig = $"{TemplateHeader(templateNames)}PLATO_FN {attributes}{ret} {FunctionName(fi.Name)}({parameters})";
+                var sig = $"{TemplateHeader(templateNames)}PLATO_FN {attributes}{ret} {FunctionName(emitName)}({parameters})";
 
                 string definition;
                 List<CallSite> callees = null;
@@ -1685,13 +1689,13 @@ namespace Ara3D.Geometry.CppWriter
                     // The body can name more type variables than the signature; the header lists them all.
                     typeVars = CpuTemplateVarsInUse();
                     if (typeVars.Count > 0)
-                        sig = $"{TemplateHeader(typeVars.Concat(templateNames).ToList())}PLATO_FN {attributes}{ret} {FunctionName(fi.Name)}({parameters})";
+                        sig = $"{TemplateHeader(typeVars.Concat(templateNames).ToList())}PLATO_FN {attributes}{ret} {FunctionName(emitName)}({parameters})";
                     definition = sig + bodyText;
                 }
                 if (tir == null)
                     typeVars = null;
 
-                Add(label, SignatureKey(fi.Name, paramTypes), sig, definition, callees, typeVars);
+                Add(label, SignatureKey(emitName, paramTypes), sig, definition, callees, typeVars);
                 _emitted[_emitted.Count - 1].FromInterface = fi.Kind != FunctionInstanceKind.ConcreteType;
             }
             catch (CppUnsupportedException e)

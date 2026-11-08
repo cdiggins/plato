@@ -659,6 +659,9 @@ namespace Ara3D.Geometry.CppWriter
             CollectConstants();
             CollectMemberFunctions();
             EmitDemanded();
+            // The refinement pass's clones: each emitted body may name deferred functions and request further clones.
+            while (DrainSumClones())
+                EmitDemanded();
             WriteCpuCasePredicates();
             PruneCpu();
 

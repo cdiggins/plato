@@ -63,12 +63,12 @@ namespace Ara3D.Geometry.CppWriter
         /// lowered loops. The pass counters restart for this body and the caller's are restored after it, so another
         /// writer on this thread cannot affect emitted names. Other dialects: the identity.
         /// </summary>
-        public static TirFunction Run(TirFunction tir, CppWriter w, string ownerTypeName)
+        public static TirFunction Run(TirFunction tir, CppWriter w, string ownerTypeName, IReadOnlyList<Ara3D.Geometry.Optimizer.SumFact> seed = null)
         {
             if (tir == null || !IsCpu(w))
                 return tir;
             var pipeline = w.CpuPipeline;
-            var ctx = pipeline.Context(w).ForBody(ownerTypeName);
+            var ctx = pipeline.Context(w).ForBody(ownerTypeName, null, seed);
             var probe = pipeline.ProbePass;
             var passes = probe == null ? Passes : new List<ITirPass>(Passes) { probe };
             using (PassCounters.Scope())

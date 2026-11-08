@@ -90,6 +90,10 @@ public static class WriterSwitches
         new("scalar-arrays", CsCpu, Cpu),
         // A case test inside a match arm on the same name folds (the Cpu list runs it after inlining); on for Cpu since 2026-11-07.
         new("refine-sums", Cpu, Cpu),
+        // --refine-split=A,B: each named function is wrapped at entry in a match on the sum value its callees test most, and the
+        // calls below it go to clones specialized per case; --refine-clones=N caps the clones (default 2000). Off until measured.
+        new("refine-split", Cpu, Requires: "refine-sums") { Parameter = SwitchParameter.AnyText },
+        new("refine-clones", Cpu, Requires: "refine-sums") { Parameter = SwitchParameter.PositiveInt },
         new("owned-arrays", CS),
         new("stack-arrays", CS, Requires: "owned-arrays"),
         new("span-params", CS, Requires: "owned-arrays"),

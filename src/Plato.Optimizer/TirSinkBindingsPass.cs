@@ -15,6 +15,9 @@ public sealed class WriterRewriteStats
     public int SumArmsFolded;
     /// <summary>--refine-sums: calls to a function that is one match on a parameter, expanded because the argument's cases were known.</summary>
     public int SumMatchesInlined;
+    /// <summary>--refine-sums with a host: calls redirected to a clone specialized to known cases, and bodies split at entry.</summary>
+    public int SumClonesRequested;
+    public int SumSplits;
 }
 
 /// <summary>
