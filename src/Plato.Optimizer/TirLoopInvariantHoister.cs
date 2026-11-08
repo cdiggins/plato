@@ -177,7 +177,7 @@ public static class TirLoopInvariantHoister
             return n;
         if (depth < MaxExposeDepth && n is TirCall call && call.Args.Count > 0
             && TirInliner.TryInlineForHoisting(call, context.Tir, context.Writer, context.OwnerTypeName,
-                context.CallerNames(), out var inlined)
+                context.CallerNames(), context.Facts, out var inlined)
             && IsForwardingBody(inlined))
         {
             var expanded = Expose(inlined, context, depth + 1);
