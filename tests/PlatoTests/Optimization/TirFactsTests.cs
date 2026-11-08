@@ -143,22 +143,9 @@ public static class TirFactsTests
     private static readonly Lazy<Ara3D.Geometry.Compiler.Compilation> Rewrites = new(() => Compile("DecoderRewriteFixtures", "rewrites.plato"));
     private static readonly Lazy<Ara3D.Geometry.Compiler.Compilation> Hoist = new(() => Compile("HoistInvariantsFixtures", "hoist.plato"));
 
-    /// <summary>The optimizer's node kinds as a <see cref="TirNodeModel"/>: the binders and temporaries its four
-    /// name scans list, the temporary reference as a use by name, and the guarded loop as a loop.</summary>
-    private sealed class OptimizerNodeModel : TirNodeModel
-    {
-        public override IEnumerable<string> Names(TirNode n) => n switch
-        {
-            TirInlineBinding b => new[] { b.Def.Name },
-            TirInlineRegion r => new[] { r.Result.Name },
-            TirTempRef t => new[] { t.Name },
-            _ => base.Names(n)
-        };
-
-        public override object UseKey(TirNode n) => n is TirTempRef t ? t.Name : base.UseKey(n);
-
-        public override bool IsLoop(TirNode n) => n is TirGuardedLoop || base.IsLoop(n);
-    }
+    /// <summary>The optimizer's node kinds as the table sees them in a pass: <see cref="OptimizerNodeModel.Instance"/>,
+    /// the model <see cref="PassContext.ForBody"/> installs.</summary>
+    private static TirFacts OptimizerFacts() => new(OptimizerNodeModel.Instance);
 
     /// <summary>Every function of the fixture library, elaborated and after the writer's passes with the named switches on.</summary>
     private static IEnumerable<(string Name, TirFunction Function)> Functions(Ara3D.Geometry.Compiler.Compilation compilation, string library,
@@ -205,7 +192,7 @@ public static class TirFactsTests
     {
         foreach (var (name, function) in Functions(compilation.Value, library, sink, share, wide, hoist))
         {
-            var facts = new TirFacts(new OptimizerNodeModel());
+            var facts = OptimizerFacts();
             foreach (var n in function.Body.Descendants())
             {
                 // The scan of TirLoopLowerer.Scopes, TirSharedCalls and ComponentReceiverBinding (the same text in all three), over the subtree.
@@ -251,7 +238,7 @@ public static class TirFactsTests
     {
         foreach (var (name, body) in Bodies(compilation.Value, library, sink, share, wide, hoist))
         {
-            var facts = new TirFacts(new OptimizerNodeModel());
+            var facts = OptimizerFacts();
             foreach (var n in body.Descendants())
             {
                 // TirRewrite.CountParamUses: the parameters, with under-lambda.
@@ -300,7 +287,7 @@ public static class TirFactsTests
     {
         foreach (var (name, body) in Bodies(compilation.Value, library, sink, share, wide, hoist))
         {
-            var facts = new TirFacts(new OptimizerNodeModel());
+            var facts = OptimizerFacts();
             foreach (var n in body.Descendants())
             {
                 // TirMultiConsumerFusion's set and TirPresize.IsCountedFill's per-target count, over the subtree.

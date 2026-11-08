@@ -63,7 +63,7 @@ public sealed class PassContext
 
     /// <summary>This context for one body.</summary>
     public PassContext ForBody(string ownerTypeName, object functionInfo = null)
-        => new(Compilation, Switches, InlineHost, Stats, Backend, new TirFacts()) { OwnerTypeName = ownerTypeName, FunctionInfo = functionInfo };
+        => new(Compilation, Switches, InlineHost, Stats, Backend, new TirFacts(OptimizerNodeModel.Instance)) { OwnerTypeName = ownerTypeName, FunctionInfo = functionInfo };
 }
 
 /// <summary>The counts the passes keep across a generation.</summary>
