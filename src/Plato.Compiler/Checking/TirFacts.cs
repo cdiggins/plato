@@ -10,7 +10,8 @@ namespace Ara3D.Geometry.Compiler.Checking
 {
     /// <summary>
     /// The facts about a subtree that follow from the subtree alone: its size, whether it holds a node of some kind,
-    /// which binding definitions it reads, and the structural key of a call. A <see cref="TirNode"/> is immutable, so
+    /// which binding definitions it reads, which names it binds or mentions, how often and under what it uses or
+    /// assigns each definition, and the structural key of a call. A <see cref="TirNode"/> is immutable, so
     /// such a fact is intrinsic to the node object: it is computed once per node, bottom-up from the children's facts,
     /// and can never go stale, because a rewrite builds new nodes and never changes old ones. A shared subtree (one
     /// node reached by several parents, as inlining and the shared-calls pass produce) is therefore sized once where a
@@ -35,7 +36,11 @@ namespace Ara3D.Geometry.Compiler.Checking
     {
         private readonly Dictionary<TirNode, int> _size = new(ReferenceEqualityComparer.Instance);
         private readonly Dictionary<Type, Dictionary<TirNode, bool>> _contains = new();
-        private readonly Dictionary<TirNode, DefSet> _defs = new(ReferenceEqualityComparer.Instance);
+        private readonly Dictionary<TirNode, TirFactSet<object>> _defs = new(ReferenceEqualityComparer.Instance);
+        private readonly Dictionary<TirNode, TirFactSet<string>> _names = new(ReferenceEqualityComparer.Instance);
+        private readonly Dictionary<TirNode, TirUseMap> _uses = new(ReferenceEqualityComparer.Instance);
+        private readonly Dictionary<TirNode, TirUseMap> _assigns = new(ReferenceEqualityComparer.Instance);
+        private readonly TirNodeModel _model;
         private TirStructuralKey _key;
         private TirStructuralKey _wideKey;
         private int _visited;
@@ -44,6 +49,13 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// structural key counts every node it computes, inner nodes included, once per key table), so over a
         /// shared-subtree DAG this is linear in the distinct nodes, not in the paths. For tests.</summary>
         public int NodesVisited => _visited + (_key?.Computed ?? 0) + (_wideKey?.Computed ?? 0);
+
+        /// <summary>A table that knows the checker's node kinds alone (<see cref="TirNodeModel.Default"/>).</summary>
+        public TirFacts() : this(TirNodeModel.Default) { }
+
+        /// <summary>A table whose name, use and loop facts also understand the node kinds <paramref name="model"/>
+        /// describes (the optimizer's, which this project cannot name).</summary>
+        public TirFacts(TirNodeModel model) => _model = model ?? TirNodeModel.Default;
 
         /// <summary>The number of nodes in the subtree of <paramref name="n"/>, itself included, counting a shared node
         /// once per path (what <c>n.Descendants().Count()</c> returns); 0 for null.</summary>
@@ -89,10 +101,10 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <summary>Whether the subtree of <paramref name="n"/> reads <paramref name="def"/> (see <see cref="MentionedDefs"/>).</summary>
         public bool Mentions(TirNode n, object def) => def != null && Defs(n).Contains(def);
 
-        private DefSet Defs(TirNode n)
+        private TirFactSet<object> Defs(TirNode n)
         {
             if (n == null)
-                return DefSet.Empty;
+                return TirFactSet<object>.Empty;
             if (_defs.TryGetValue(n, out var defs))
                 return defs;
             _visited++;
@@ -102,7 +114,89 @@ namespace Ara3D.Geometry.Compiler.Checking
                 TirParameter p => p.Def,
                 _ => null
             };
-            return _defs[n] = DefSet.Of(own, n.Children.Select(Defs));
+            return _defs[n] = TirFactSet<object>.Of(ReferenceEqualityComparer.Instance, own, n.Children.Select(Defs));
+        }
+
+        /// <summary>The names the subtree of <paramref name="n"/> binds or mentions: the name of every definition a
+        /// <see cref="TirVariable"/> or <see cref="TirParameter"/> reads, of every <see cref="TirLet"/>, of every
+        /// lambda parameter, and of the optimizer's binders and temporaries as its <see cref="TirNodeModel"/> lists
+        /// them. A pass that invents a local picks a name outside this set. The function's own parameter names are not
+        /// a fact of the body; <see cref="BoundNames(TirFunction)"/> adds them. Empty for null.</summary>
+        public IReadOnlyCollection<string> BoundNames(TirNode n) => Names(n);
+
+        /// <summary>A fresh, mutable set of <see cref="BoundNames(TirNode)"/> of the body together with the function's
+        /// parameter names: what a pass starts from and adds its fresh names to.</summary>
+        public HashSet<string> BoundNames(TirFunction function)
+        {
+            var names = new HashSet<string>(Names(function?.Body), StringComparer.Ordinal);
+            if (function?.Parameters != null)
+                foreach (var p in function.Parameters)
+                    if (p?.Name != null)
+                        names.Add(p.Name);
+            return names;
+        }
+
+        private TirFactSet<string> Names(TirNode n)
+        {
+            if (n == null)
+                return TirFactSet<string>.Empty;
+            if (_names.TryGetValue(n, out var names))
+                return names;
+            _visited++;
+            return _names[n] = TirFactSet<string>.Of(StringComparer.Ordinal, _model.Names(n), n.Children.Select(Names));
+        }
+
+        /// <summary>How the subtree of <paramref name="n"/> uses <paramref name="def"/>: the number of occurrences
+        /// (every <see cref="TirVariable"/> and <see cref="TirParameter"/> node whose definition it is, the target of
+        /// an assignment included, and every temporary reference by name) and whether any occurrence sits under a
+        /// <see cref="TirLambda"/> or under a loop that is strictly inside <paramref name="n"/>, or is
+        /// <paramref name="n"/> itself: a lambda root counts its body as under the lambda. A loop is a
+        /// <see cref="TirLoop"/> or whatever the model names (a guarded loop); a lowered loop is not one, since its
+        /// sources run once and its repeated part is a lambda. Keys are <c>VariableDef</c>, <c>ParameterDef</c> and
+        /// the temporary's name string. The default (no use) for null or an unknown key.</summary>
+        public TirUse Uses(TirNode n, object def) => def == null ? default : UseMap(n).Get(def);
+
+        /// <summary>Every definition the subtree uses with its <see cref="TirUse"/> (see <see cref="Uses(TirNode, object)"/>).</summary>
+        public IReadOnlyCollection<KeyValuePair<object, TirUse>> Uses(TirNode n) => UseMap(n);
+
+        /// <summary>The number of occurrences of <paramref name="def"/> in the subtree (see <see cref="Uses(TirNode, object)"/>).</summary>
+        public int UseCount(TirNode n, object def) => Uses(n, def).Count;
+
+        /// <summary>Whether an occurrence of <paramref name="def"/> sits under a lambda (see <see cref="Uses(TirNode, object)"/>).</summary>
+        public bool UsesUnderLambda(TirNode n, object def) => Uses(n, def).UnderLambda;
+
+        /// <summary>How the subtree of <paramref name="n"/> assigns <paramref name="def"/>: the number of
+        /// <see cref="TirAssign"/> nodes whose target is the variable or parameter, and whether any sits under a lambda
+        /// or a loop, with the same rules as <see cref="Uses(TirNode, object)"/>. An assignment whose target is
+        /// neither is not counted. The default for null or an unknown key.</summary>
+        public TirUse Assigns(TirNode n, object def) => def == null ? default : AssignMap(n).Get(def);
+
+        /// <summary>Every definition the subtree assigns with its <see cref="TirUse"/> (see <see cref="Assigns"/>).</summary>
+        public IReadOnlyCollection<KeyValuePair<object, TirUse>> Assignments(TirNode n) => AssignMap(n);
+
+        /// <summary>The definitions (<c>VariableDef</c> or <c>ParameterDef</c>) that some <see cref="TirAssign"/> in the
+        /// subtree targets. Empty for null.</summary>
+        public IReadOnlyCollection<object> AssignedDefs(TirNode n) => AssignMap(n).Keys;
+
+        private TirUseMap UseMap(TirNode n) => Counts(n, _uses, _model.UseKey);
+
+        private TirUseMap AssignMap(TirNode n) => Counts(n, _assigns, _model.AssignedKey);
+
+        /// <summary>The per-definition counts of <paramref name="key"/> occurrences over the subtree, marked under
+        /// lambda or loop by the node that is one, memoized in <paramref name="memo"/>.</summary>
+        private TirUseMap Counts(TirNode n, Dictionary<TirNode, TirUseMap> memo, Func<TirNode, object> key)
+        {
+            if (n == null)
+                return TirUseMap.Empty;
+            if (memo.TryGetValue(n, out var map))
+                return map;
+            _visited++;
+            map = TirUseMap.Of(key(n), n.Children.Select(c => Counts(c, memo, key)));
+            if (n is TirLambda)
+                map = map.UnderLambda();
+            if (_model.IsLoop(n))
+                map = map.UnderLoop();
+            return memo[n] = map;
         }
 
         /// <summary>The structural identity of a call for the shared-calls pass (see <c>TirStructuralKey</c> below), or
@@ -116,51 +210,6 @@ namespace Ara3D.Geometry.Compiler.Checking
             return wide
                 ? (_wideKey ??= new TirStructuralKey(true)).Key(call)
                 : (_key ??= new TirStructuralKey(false)).Key(call);
-        }
-
-        /// <summary>An immutable set of definitions compared by identity. A node's set is built once from all its
-        /// children's sets; when one set already holds the rest (the common case: a single non-empty child, or a child
-        /// that reads everything its siblings do) that set is reused and nothing is allocated.</summary>
-        private sealed class DefSet : IReadOnlyCollection<object>
-        {
-            public static readonly DefSet Empty = new(null, null);
-
-            private readonly object _single;
-            private readonly HashSet<object> _many;
-
-            private DefSet(object single, HashSet<object> many) => (_single, _many) = (single, many);
-
-            public int Count => _many?.Count ?? (_single == null ? 0 : 1);
-
-            public bool Contains(object item)
-                => _many != null ? _many.Contains(item) : _single != null && ReferenceEquals(_single, item);
-
-            /// <summary>The set of <paramref name="own"/> (when not null) and every member of <paramref name="children"/>.</summary>
-            public static DefSet Of(object own, IEnumerable<DefSet> children)
-            {
-                var parts = children.Where(c => c.Count > 0).Distinct().ToList();
-                if (parts.Count == 0)
-                    return own == null ? Empty : new DefSet(own, null);
-                var largest = parts.MaxBy(p => p.Count);
-                if ((own == null || largest.Contains(own)) && parts.All(p => ReferenceEquals(p, largest) || p.IsSubsetOf(largest)))
-                    return largest;
-                var set = new HashSet<object>(ReferenceEqualityComparer.Instance);
-                if (own != null)
-                    set.Add(own);
-                foreach (var part in parts)
-                    set.UnionWith(part);
-                return new DefSet(null, set);
-            }
-
-            /// <summary>Whether every member is in <paramref name="other"/>; walks this set, so call it on the smaller.</summary>
-            private bool IsSubsetOf(DefSet other) => this.All(other.Contains);
-
-            public IEnumerator<object> GetEnumerator()
-                => _many != null ? _many.GetEnumerator()
-                    : _single != null ? Enumerable.Repeat(_single, 1).GetEnumerator()
-                    : Enumerable.Empty<object>().GetEnumerator();
-
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
         /// <summary>
@@ -256,5 +305,53 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return sb.Append(')').ToString();
             }
         }
+    }
+
+    /// <summary>
+    /// What <see cref="TirFacts"/> asks of a node kind. The optimizer adds node kinds (an inline binding, an inline
+    /// region, a temporary reference, a guarded loop) in a project this one cannot reference, so the knowledge of which
+    /// node binds a name, reads a key, or repeats its children is one overridable object: the optimizer's model answers
+    /// for its own kinds and defers to the base for the checker's, and hands itself to its table. The default knows the
+    /// checker's nodes alone. A model is pure and stateless, so a table's facts stay intrinsic to the node.
+    /// </summary>
+    public class TirNodeModel
+    {
+        public static readonly TirNodeModel Default = new();
+
+        /// <summary>The names the node itself binds or mentions (its children are asked separately): the definition
+        /// read by a <see cref="TirVariable"/> or <see cref="TirParameter"/>, the local of a <see cref="TirLet"/>, the
+        /// parameters of a <see cref="TirLambda"/>. Nulls are dropped.</summary>
+        public virtual IEnumerable<string> Names(TirNode n) => n switch
+        {
+            TirVariable v => One(v.Def?.Name),
+            TirParameter p => One(p.Def?.Name),
+            TirLet l => One(l.Def?.Name),
+            TirLambda l => l.Parameters.Select(p => p?.Name),
+            _ => Enumerable.Empty<string>()
+        };
+
+        /// <summary>The key the node itself is one use of (a <c>VariableDef</c>, a <c>ParameterDef</c>, or a
+        /// temporary's name), or null.</summary>
+        public virtual object UseKey(TirNode n) => n switch
+        {
+            TirVariable v => v.Def,
+            TirParameter p => p.Def,
+            _ => null
+        };
+
+        /// <summary>The definition the node assigns (the variable or parameter a <see cref="TirAssign"/> targets), or null.</summary>
+        public virtual object AssignedKey(TirNode n) => n is TirAssign a ? Target(a.LValue) : null;
+
+        /// <summary>Whether the node runs its children once per iteration (<see cref="TirLoop"/>: condition and body).</summary>
+        public virtual bool IsLoop(TirNode n) => n is TirLoop;
+
+        private static object Target(TirNode lvalue) => lvalue switch
+        {
+            TirVariable v => v.Def,
+            TirParameter p => p.Def,
+            _ => null
+        };
+
+        private static IEnumerable<string> One(string name) => name == null ? Enumerable.Empty<string>() : Enumerable.Repeat(name, 1);
     }
 }
