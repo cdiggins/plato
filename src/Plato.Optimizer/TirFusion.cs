@@ -289,13 +289,13 @@ public sealed class FusionContext
     public TypeExpression BooleanType { get; }
 
     /// <summary>The fact table of the body being fused (compiler-546): the rules read a lambda parameter's
-    /// uses from it. A context made without one gets a fresh table.</summary>
+    /// uses from it.</summary>
     public TirFacts Facts { get; }
 
-    public FusionContext(Compiler.Compilation compilation, TirFacts facts = null)
+    public FusionContext(Compiler.Compilation compilation, TirFacts facts)
     {
         _compilation = compilation;
-        Facts = facts ?? new TirFacts(OptimizerNodeModel.Instance);
+        Facts = facts;
         IntegerType = compilation.GetTypeDef("Integer")?.ToTypeExpression();
         BooleanType = compilation.GetTypeDef("Boolean")?.ToTypeExpression();
     }
