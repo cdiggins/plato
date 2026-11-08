@@ -79,14 +79,8 @@ public static class TirRewrite
     /// lambda literal, the arity disagrees, or a substitution would change how many times an argument
     /// is evaluated (a non-cheap argument bound to a parameter used more than once, or used under a
     /// nested lambda). A coercion wrapping the lambda target — the delegate target-typing this
-    /// reduction eliminates — is transparent.</summary>
-    public static bool TryBetaReduce(TirInvoke invoke, out TirNode reduced,
-        System.Func<TirNode, bool> isCheap = null)
-        => TryBetaReduce(invoke, new TirFacts(OptimizerNodeModel.Instance), out reduced, isCheap);
-
-    /// <summary>As above, reading each parameter's use count and under-lambda flag from the body's fact table
-    /// <paramref name="facts"/> (compiler-546) instead of walking the lambda body per reduction. The
-    /// table-less overload serves a caller with no body table and makes a fresh one per call.</summary>
+    /// reduction eliminates — is transparent. Each parameter's use count and under-lambda flag come from the
+    /// body's fact table <paramref name="facts"/> (compiler-546) instead of a walk of the lambda body per reduction.</summary>
     public static bool TryBetaReduce(TirInvoke invoke, TirFacts facts, out TirNode reduced,
         System.Func<TirNode, bool> isCheap = null)
     {

@@ -28,7 +28,7 @@ public static class OwnershipTests
             { ExtensionStyle = true, LowerLoops = true, FuseCombinators = true };
         var definition = Compilation.Value.LibraryDefinitionsByName["OwnershipProbe"].Functions.Single(f => f.Name == name);
         var tir = writer.RunOptimizerPasses(writer.TryGetStaticTir(definition), null);
-        return (tir.Body, TirOwnership.Analyze(tir.Body, new TirArrayIdentity(Compilation.Value)));
+        return (tir.Body, TirOwnership.Analyze(tir.Body, new TirArrayIdentity(Compilation.Value), new TirFacts(OptimizerNodeModel.Instance)));
     }
 
     private static BindingFacts Variable(string function, string variable)

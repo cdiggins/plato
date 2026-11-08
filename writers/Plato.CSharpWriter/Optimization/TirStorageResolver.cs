@@ -24,12 +24,8 @@ public static class TirStorageResolver
     public static TirStorageScope Resolve(TirNode body, FunctionDef owner)
         => new(body, new StoragePlan(owner));
 
-    /// <summary>Resolves <paramref name="body"/> with Heap storage for the owned lowered-loop temporaries.
-    /// Returns the very same body inside the scope when no temporary qualifies.</summary>
-    public static TirStorageScope Resolve(TirNode body, FunctionDef owner, TirArrayIdentity identity)
-        => Resolve(body, owner, identity, null, false, false, new TirFacts(OptimizerNodeModel.Instance));
-
-    /// <summary>As above; with <paramref name="stackArrays"/> (--stack-arrays) an owned temporary whose count is bounded and
+    /// <summary>Resolves <paramref name="body"/> with Heap storage for the owned lowered-loop temporaries, returning the very
+    /// same body inside the scope when no temporary qualifies. With <paramref name="stackArrays"/> (--stack-arrays) an owned temporary whose count is bounded and
     /// whose every use only reads it takes a hoisted <c>stackalloc</c> slot instead (<see cref="AssignStack"/>), and with
     /// <paramref name="twins"/> (--span-params) a call whose every borrowed argument is an owned array goes to the span twin
     /// of its callee (<see cref="FindRoutes"/>). <paramref name="target"/> answers the type and call questions of both.
