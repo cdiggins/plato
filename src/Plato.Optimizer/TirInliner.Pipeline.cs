@@ -16,13 +16,13 @@ public static partial class TirInliner
         private readonly StatementExpansion _expansion;
 
         public StatementPipeline(TirFunction input, ITirInlineHost host, string owner,
-            bool eliminateLambdas, bool simplify, object info)
+            bool eliminateLambdas, bool simplify, object info, TirFacts facts)
         {
             (_input, _host, _info, _simplify) = (input, host, info, simplify);
             var limit = host is IStatementInlineHost w ? Math.Min(w.StatementNodeBudget, w.RemainingStatementGrowth)
                 : InlineExpansionBudget.DefaultGrowth;
             _budget = new InlineExpansionBudget(limit);
-            _expansion = new StatementExpansion(input, host, owner, eliminateLambdas, simplify, _budget);
+            _expansion = new StatementExpansion(input, host, owner, eliminateLambdas, simplify, _budget, facts);
         }
 
         private TirFunction WithBody(TirNode body)

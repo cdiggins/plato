@@ -34,12 +34,9 @@ public static partial class TirInliner
             return TirRewrite.Rewrite(body, n => n is TirBlock b ? RemoveUnusedCallables(b) : n);
         }
 
+        /// <summary>Adds the variables and parameters the tree assigns, from the fact table (compiler-546).</summary>
         private void RecordAssignments(TirNode node)
-        {
-            foreach (var assignment in node.Descendants().OfType<TirAssign>())
-                if (assignment.LValue is TirVariable v) _assigned.Add(v.Def);
-                else if (assignment.LValue is TirParameter p) _assigned.Add(p.Def);
-        }
+            => _assigned.UnionWith(_facts.AssignedDefs(node));
 
         private TirLambda Known(TirNode value)
         {
@@ -75,7 +72,9 @@ public static partial class TirInliner
         {
             if (!_eliminateLambdas && !_simplify)
                 return block;
-            var used = new HashSet<VariableDef>();
+            // The definitions the kept suffix reads, each statement's set from the fact table (compiler-546); the
+            // table's set holds parameters too, which a binding's Def never is.
+            var used = new HashSet<object>(ReferenceEqualityComparer.Instance);
             var live = new List<TirNode>();
             for (var i = block.Statements.Count - 1; i >= 0; i--)
             {
@@ -88,7 +87,7 @@ public static partial class TirInliner
                 };
                 if (discard) continue;
                 live.Add(statement);
-                used.UnionWith(statement.Descendants().OfType<TirVariable>().Select(v => v.Def));
+                used.UnionWith(_facts.MentionedDefs(statement));
             }
             if (live.Count == block.Statements.Count)
                 return block;

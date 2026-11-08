@@ -26,7 +26,7 @@ public static class CSharpPasses
     {
         var w = Writer(ctx);
         return w.InlineStatements
-            ? TirInliner.InlineStatements(tir, w, ctx.OwnerTypeName, w.EliminateKnownLambdas, w.SimplifyInlineStatements, ctx.FunctionInfo)
+            ? TirInliner.InlineStatements(tir, w, ctx.OwnerTypeName, w.EliminateKnownLambdas, w.SimplifyInlineStatements, ctx.FunctionInfo, ctx.Facts)
             : tir;
     }
 

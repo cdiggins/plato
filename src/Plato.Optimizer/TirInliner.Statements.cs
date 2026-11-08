@@ -8,10 +8,12 @@ namespace Ara3D.Geometry.Optimizer;
 public static partial class TirInliner
 {
     /// <summary>Experimental call expansion with ordered evaluation and lexical result regions.</summary>
+    /// <param name="facts">The body's fact table (compiler-546), from the per-body pass context; a caller without
+    /// one (the tests) gets a fresh table for this body.</param>
     public static TirFunction InlineStatements(TirFunction tir, ITirInlineHost host, string owner,
-        bool eliminateLambdas = false, bool simplify = false, object functionInfo = null)
+        bool eliminateLambdas = false, bool simplify = false, object functionInfo = null, TirFacts facts = null)
         => tir?.Body == null ? tir : new StatementPipeline(tir, host, owner,
-            eliminateLambdas, simplify, functionInfo).Run();
+            eliminateLambdas, simplify, functionInfo, facts ?? new TirFacts(OptimizerNodeModel.Instance)).Run();
 
     private sealed partial class StatementExpansion
     {
@@ -21,12 +23,17 @@ public static partial class TirInliner
         private readonly HashSet<string> _names;
         private readonly HashSet<FunctionDef> _ancestry = new();
         private readonly InlineExpansionBudget _budget;
+        private readonly TirFacts _facts;
         public int Version { get; private set; }
         private int _next;
 
-        public StatementExpansion(TirFunction caller, ITirInlineHost host, string owner, bool eliminateLambdas, bool simplify, InlineExpansionBudget budget)
+        /// <param name="facts">The body's fact table (compiler-546): the definitions a statement mentions and the
+        /// definitions a tree assigns are read from it rather than walked.</param>
+        public StatementExpansion(TirFunction caller, ITirInlineHost host, string owner, bool eliminateLambdas, bool simplify,
+            InlineExpansionBudget budget, TirFacts facts)
         {
             _budget = budget;
+            _facts = facts;
             (_caller, _host, _owner) = (caller, host, owner);
             _names = CollectBoundNames(caller, caller.Body);
             _ancestry.Add(caller.Original);
