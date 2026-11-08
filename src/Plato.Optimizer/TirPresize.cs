@@ -37,14 +37,16 @@ public static class TirPresize
     {
         if (!pass.On("presize") || tir?.Body == null)
             return tir;
-        var body = Visit(tir.Body);
+        var body = Visit(tir.Body, pass.Facts);
         return ReferenceEquals(body, tir.Body)
             ? tir
             : new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,
                 tir.ZonkedParameterTypes, tir.ZonkedReturnType);
     }
 
-    private static TirNode Visit(TirNode n)
+    /// <param name="facts">The body's fact table (compiler-546): a loop body's early exits and assignments per
+    /// definition are read from it rather than walked per candidate.</param>
+    private static TirNode Visit(TirNode n, TirFacts facts)
     {
         if (n == null)
             return null;
@@ -52,17 +54,17 @@ public static class TirPresize
         TirNode[] replacements = null;
         for (var i = 0; i < children.Length; i++)
         {
-            var child = Visit(children[i]);
+            var child = Visit(children[i], facts);
             if (ReferenceEquals(child, children[i]))
                 continue;
             replacements ??= (TirNode[])children.Clone();
             replacements[i] = child;
         }
         var rebuilt = replacements == null ? n : n.WithChildren(replacements);
-        return rebuilt is TirBlock block ? PresizeBlock(block) : rebuilt;
+        return rebuilt is TirBlock block ? PresizeBlock(block, facts) : rebuilt;
     }
 
-    private static TirNode PresizeBlock(TirBlock block)
+    private static TirNode PresizeBlock(TirBlock block, TirFacts facts)
     {
         var statements = block.Statements;
         List<TirNode> changed = null;
@@ -70,7 +72,7 @@ public static class TirPresize
         {
             if (!IsEmptyList(statements[k], out var let))
                 continue;
-            var capacity = CapacityFor(statements, k, let.Def);
+            var capacity = CapacityFor(statements, k, let.Def, facts);
             if (capacity == null)
                 continue;
             changed ??= statements.ToList();
@@ -87,13 +89,13 @@ public static class TirPresize
         return let?.Value is TirNew created && created.Args.Count == 0 && created.NewType?.Name == "List";
     }
 
-    private static TirNode CapacityFor(IReadOnlyList<TirNode> statements, int k, VariableDef list)
+    private static TirNode CapacityFor(IReadOnlyList<TirNode> statements, int k, VariableDef list, TirFacts facts)
     {
         for (var at = k + 1; at < statements.Count; at++)
         {
             if (statements[at] is not TirLoop loop || !TryMatchCondition(loop.Condition, out var counter, out var bound))
                 continue;
-            if (loop.Body is not TirBlock body || !IsCountedFill(body, list, counter.Def))
+            if (loop.Body is not TirBlock body || !IsCountedFill(body, list, counter.Def, facts))
                 continue;
             var start = CounterStart(statements, at, counter.Def);
             if (start == null)
@@ -120,17 +122,15 @@ public static class TirPresize
     }
 
     /// <summary>The body appends to the list once at its top level, bumps the counter by one once at
-    /// its top level, assigns neither anywhere else, and has no early exit.</summary>
-    private static bool IsCountedFill(TirBlock body, VariableDef list, VariableDef counter)
-    {
-        if (body.Descendants().Any(d => d is TirReturn))
-            return false;
-        var assigns = body.Descendants().OfType<TirAssign>().ToList();
-        return body.Statements.Count(s => IsAppend(s, list)) == 1
+    /// its top level, assigns neither anywhere else, and has no early exit. The early exit and the per-definition
+    /// assignment counts come from the fact table (a parameter target can never be the list or counter, which are
+    /// locals, so the table's count is the old walk's count).</summary>
+    private static bool IsCountedFill(TirBlock body, VariableDef list, VariableDef counter, TirFacts facts)
+        => !facts.ContainsKind<TirReturn>(body)
+            && body.Statements.Count(s => IsAppend(s, list)) == 1
             && body.Statements.Count(s => IsBump(s, counter)) == 1
-            && assigns.Count(a => Target(a) == list) == 1
-            && assigns.Count(a => Target(a) == counter) == 1;
-    }
+            && facts.Assigns(body, list).Count == 1
+            && facts.Assigns(body, counter).Count == 1;
 
     private static VariableDef Target(TirAssign assign) => (assign.LValue as TirVariable)?.Def;
 
