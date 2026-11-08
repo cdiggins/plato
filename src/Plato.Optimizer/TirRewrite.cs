@@ -82,6 +82,13 @@ public static class TirRewrite
     /// reduction eliminates — is transparent.</summary>
     public static bool TryBetaReduce(TirInvoke invoke, out TirNode reduced,
         System.Func<TirNode, bool> isCheap = null)
+        => TryBetaReduce(invoke, new TirFacts(OptimizerNodeModel.Instance), out reduced, isCheap);
+
+    /// <summary>As above, reading each parameter's use count and under-lambda flag from the body's fact table
+    /// <paramref name="facts"/> (compiler-546) instead of walking the lambda body per reduction. The
+    /// table-less overload serves a caller with no body table and makes a fresh one per call.</summary>
+    public static bool TryBetaReduce(TirInvoke invoke, TirFacts facts, out TirNode reduced,
+        System.Func<TirNode, bool> isCheap = null)
     {
         isCheap = isCheap ?? IsCheap;
         reduced = null;
@@ -93,13 +100,12 @@ public static class TirRewrite
         if (pars == null || lam.Body == null || pars.Count != invoke.Args.Count)
             return false;
 
-        Dictionary<ParameterDef, (int Count, bool UnderLambda)> uses = null;
         for (var i = 0; i < pars.Count; i++)
         {
             if (isCheap(invoke.Args[i]))
                 continue;
-            uses = uses ?? CountParamUses(lam.Body);
-            if (uses.TryGetValue(pars[i], out var u) && (u.Count > 1 || u.UnderLambda))
+            var u = facts.Uses(lam.Body, pars[i]);
+            if (u.Count > 1 || u.UnderLambda)
                 return false;
         }
 
@@ -144,7 +150,10 @@ public static class TirRewrite
 
     /// <summary>Per-parameter reference statistics over a body: occurrence count and whether any
     /// occurrence sits under a lambda (where a substituted compound expression would be re-evaluated
-    /// per invocation and captured).</summary>
+    /// per invocation and captured). The walked form, kept for a caller that has no body fact table
+    /// (<see cref="TirFusion.CanSubstitute(TirNode, ParameterDef, TirNode)"/> from the literal and component
+    /// unrollers) and as the oracle the fact-table tests compare against; a pass with a table reads
+    /// <see cref="TirFacts.Uses(TirNode, object)"/>, which has exactly this meaning (compiler-546).</summary>
     public static Dictionary<ParameterDef, (int Count, bool UnderLambda)> CountParamUses(TirNode body)
     {
         var uses = new Dictionary<ParameterDef, (int, bool)>();

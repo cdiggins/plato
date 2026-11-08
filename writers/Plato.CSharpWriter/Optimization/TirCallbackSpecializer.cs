@@ -125,11 +125,12 @@ public sealed class CallbackSpecializations
 /// </summary>
 public static class TirCallbackSpecializer
 {
-    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer, string ownerTypeName)
+    /// <param name="facts">The body's fact table (compiler-546), read for the beta-reductions' parameter uses.</param>
+    public static TirFunction Rewrite(TirFunction tir, CSharpWriter writer, string ownerTypeName, TirFacts facts)
     {
         if (!writer.SpecializeCallbacks || tir?.Body == null || writer.ExtensionPlans == null)
             return tir;
-        var context = new Context(writer, tir, ownerTypeName);
+        var context = new Context(writer, tir, ownerTypeName, facts);
         var body = TirRewrite.Rewrite(tir.Body, n => n is TirCall call ? context.TrySpecialize(call) ?? n : n);
         return ReferenceEquals(body, tir.Body)
             ? tir
@@ -150,13 +151,15 @@ public static class TirCallbackSpecializer
         private readonly TirFunction _caller;
         private readonly string _owner;
         private readonly CallbackSpecializations _registry;
+        private readonly TirFacts _facts;
 
-        public Context(CSharpWriter writer, TirFunction caller, string owner)
+        public Context(CSharpWriter writer, TirFunction caller, string owner, TirFacts facts)
         {
             _writer = writer;
             _caller = caller;
             _owner = owner;
             _registry = writer.Specializations;
+            _facts = facts;
         }
 
         private static readonly bool Trace = System.Environment.GetEnvironmentVariable("PLATO_SPECIALIZE_TRACE") == "1";
@@ -576,7 +579,7 @@ public static class TirCallbackSpecializer
                     invoke = RetypeArguments(invoke, target, ref failure);
                     if (failure != null)
                         return n;
-                    if (TirRewrite.TryBetaReduce(invoke, out var reduced, CheapToRepeat))
+                    if (TirRewrite.TryBetaReduce(invoke, _facts, out var reduced, CheapToRepeat))
                         return reduced;
                     if (_writer.SpecializeCallbacksLean && helperOf.TryGetValue(target, out var position))
                     {

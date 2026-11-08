@@ -47,7 +47,7 @@ public static class TirFusion
     {
         if (!pass.On("fuse") || tir?.Body == null)
             return tir;
-        var ctx = new FusionContext(pass.Compilation);
+        var ctx = new FusionContext(pass.Compilation, pass.Facts);
         var body = TirRewrite.Rewrite(tir.Body, n => n is TirCall c ? FuseCall(c, ctx) : n);
         return new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,
             tir.ZonkedParameterTypes, tir.ZonkedReturnType);
@@ -113,7 +113,7 @@ public static class TirFusion
         TirNode Ref() => new TirParameter(x, element, c.Origin);
         TirNode keep = new TirInvoke(c.Args[1], new[] { Ref() }, ctx.BooleanType, c.Origin);
         if (TirRewrite.StripCoerce(c.Args[1]) is TirLambda && keep is TirInvoke invoke
-            && TirRewrite.TryBetaReduce(invoke, out var reduced))
+            && TirRewrite.TryBetaReduce(invoke, ctx.Facts, out var reduced))
             keep = reduced;
         var one = new TirArray(new[] { Ref() }, c.Type, c.Origin);
         var none = new TirCall(take, EmissionKind.InstanceMethod,
@@ -196,7 +196,7 @@ public static class TirFusion
         if (fLam == null || gLam == null || fLam.Parameters.Count <= paramIndex)
             return null;
         var target = fLam.Parameters[paramIndex];
-        if (!CanSubstitute(fLam.Body, target, gLam.Body))
+        if (!CanSubstitute(fLam.Body, target, gLam.Body, ctx.Facts))
             return null;
 
         // g's parameter is bound around f's body now; a lambda inside f's body binding the same
@@ -246,6 +246,17 @@ public static class TirFusion
         return !uses.TryGetValue(p, out var u) || (u.Count <= 1 && !u.UnderLambda);
     }
 
+    /// <summary>As above, reading the parameter's uses from the body's fact table (compiler-546). The
+    /// table-less overload remains for the literal and component unrollers, whose policy entry points
+    /// (<see cref="UnrollPolicy"/>, <c>TirComponentUnroller.UnrollFunction</c>) carry no table.</summary>
+    public static bool CanSubstitute(TirNode body, ParameterDef p, TirNode replacement, TirFacts facts)
+    {
+        if (TirRewrite.IsCheap(replacement))
+            return true;
+        var u = facts.Uses(body, p);
+        return u.Count <= 1 && !u.UnderLambda;
+    }
+
     public static bool IsMapRange(TirNode n, out TirCall call)
     {
         call = TirRewrite.StripCoerce(n) as TirCall;
@@ -277,9 +288,14 @@ public sealed class FusionContext
     public TypeExpression IntegerType { get; }
     public TypeExpression BooleanType { get; }
 
-    public FusionContext(Compiler.Compilation compilation)
+    /// <summary>The fact table of the body being fused (compiler-546): the rules read a lambda parameter's
+    /// uses from it. A context made without one gets a fresh table.</summary>
+    public TirFacts Facts { get; }
+
+    public FusionContext(Compiler.Compilation compilation, TirFacts facts = null)
     {
         _compilation = compilation;
+        Facts = facts ?? new TirFacts(OptimizerNodeModel.Instance);
         IntegerType = compilation.GetTypeDef("Integer")?.ToTypeExpression();
         BooleanType = compilation.GetTypeDef("Boolean")?.ToTypeExpression();
     }

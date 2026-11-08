@@ -34,7 +34,7 @@ public static class CSharpPasses
     {
         new TirPass(InlineStatements, "experimental statement / callable expansion", RunInlineStatements),
         new TirPass(SpecializeCallbacks, "specialize-callbacks / clone the callee per lambda shape",
-            (tir, ctx) => TirCallbackSpecializer.Rewrite(tir, Writer(ctx), ctx.OwnerTypeName)),
+            (tir, ctx) => TirCallbackSpecializer.Rewrite(tir, Writer(ctx), ctx.OwnerTypeName, ctx.Facts)),
         new TirPass(ComponentUnroll, "optimize / component-unroll (layer 8)",
             (tir, ctx) => TirComponentUnroller.UnrollFunction(tir, (CSharpFunctionInfo)ctx.FunctionInfo, Writer(ctx))),
     };
