@@ -670,9 +670,12 @@ namespace Ara3D.Geometry.CSharpWriter
         /// capture-rewritten) and checks it. Returns the <see cref="TirStorageScope"/> to print, or the body
         /// itself when the flag is off or the checker refused the plan.</summary>
         /// <summary>The resolver <see cref="ResolveStorage"/> runs when <see cref="StorageResolver"/> is null.</summary>
+        /// <remarks>The resolver runs after the passes, whose per-body context is gone, on a body the capture rewrite has
+        /// rebuilt, so it gets a fact table of its own per body (compiler-546).</remarks>
         public TirStorageScope DefaultStorageResolver(TirNode body, FunctionDef owner)
             => TirStorageResolver.Resolve(body, owner, _storageIdentity ??= new TirArrayIdentity(Compilation),
-                StackArrays || SpanParams ? StorageTarget : null, StackArrays, SpanParams, TwinBodyBorrowed);
+                StackArrays || SpanParams ? StorageTarget : null, StackArrays, SpanParams,
+                new TirFacts(OptimizerNodeModel.Instance), TwinBodyBorrowed);
 
         // The borrowed parameters of the span twin whose body is being written (BorrowedTwinWriter), or null.
         internal IReadOnlyList<ParameterDef> TwinBodyBorrowed;

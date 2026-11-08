@@ -62,8 +62,14 @@ public sealed class TirOwnership
 
     internal TirOwnership() { }
 
+    /// <summary>The ownership facts of <paramref name="body"/>, read with its fact table <paramref name="facts"/>
+    /// (compiler-546).</summary>
+    public static TirOwnership Analyze(TirNode body, TirArrayIdentity identity, TirFacts facts)
+        => TirUpdateFlow.Analyze(body, identity, facts).Ownership;
+
+    /// <summary>As above for a caller with no body table (the tests): a fresh table serves this body.</summary>
     public static TirOwnership Analyze(TirNode body, TirArrayIdentity identity)
-        => TirUpdateFlow.Analyze(body, identity).Ownership;
+        => Analyze(body, identity, new TirFacts(OptimizerNodeModel.Instance));
 
     /// <summary>The facts of a local variable; null when the body never mentions it.</summary>
     public BindingFacts Of(VariableDef def)

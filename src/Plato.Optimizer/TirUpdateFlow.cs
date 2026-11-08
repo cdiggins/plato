@@ -101,10 +101,12 @@ public sealed class TirUpdateFlow
 
     private TirUpdateFlow(TirArrayIdentity identity) => _identity = identity;
 
-    public static TirUpdateFlow Analyze(TirNode body, TirArrayIdentity identity)
+    /// <param name="facts">The body's fact table (compiler-546): a lowered loop temporary's reference count is
+    /// read from it by name.</param>
+    public static TirUpdateFlow Analyze(TirNode body, TirArrayIdentity identity, TirFacts facts)
     {
         var flow = new TirUpdateFlow(identity);
-        flow.FindFreshTemps(body);
+        flow.FindFreshTemps(body, facts);
         flow.Visit(body, true);
         if (TirRewrite.StripCoerce(body) is TirVariable { Def: { } def })
             flow.Get(def).UseList.Add(new Use { Kind = UseKind.Escape, Leaf = flow._time, Consumer = flow._time, Loops = Array.Empty<int>() });
@@ -112,21 +114,13 @@ public sealed class TirUpdateFlow
     }
 
     /// <summary>The temporaries of lowered array loops that are referenced exactly once: the array they
-    /// name is new and one place holds it.</summary>
-    private void FindFreshTemps(TirNode body)
+    /// name is new and one place holds it. The count is the table's use count of the temporary's name
+    /// (every <see cref="TirTempRef"/> of that name in the body).</summary>
+    private void FindFreshTemps(TirNode body, TirFacts facts)
     {
-        var producing = new HashSet<string>(StringComparer.Ordinal);
-        var references = new Dictionary<string, int>(StringComparer.Ordinal);
-        foreach (var n in body.Descendants())
-        {
-            if (n is TirLoweredLoop ll && TirLoopLowerer.ProducesArray(ll.Kind))
-                producing.Add(ll.TempName);
-            else if (n is TirTempRef tr)
-                references[tr.Name] = references.TryGetValue(tr.Name, out var c) ? c + 1 : 1;
-        }
-        foreach (var name in producing)
-            if (references.TryGetValue(name, out var count) && count == 1)
-                _freshTemps.Add(name);
+        foreach (var loop in body.Descendants().OfType<TirLoweredLoop>())
+            if (TirLoopLowerer.ProducesArray(loop.Kind) && facts.UseCount(body, loop.TempName) == 1)
+                _freshTemps.Add(loop.TempName);
     }
 
     /// <summary>Whether the value of <paramref name="e"/> is a new array that no other name or field holds.

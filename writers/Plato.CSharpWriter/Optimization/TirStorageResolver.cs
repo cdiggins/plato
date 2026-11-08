@@ -27,21 +27,23 @@ public static class TirStorageResolver
     /// <summary>Resolves <paramref name="body"/> with Heap storage for the owned lowered-loop temporaries.
     /// Returns the very same body inside the scope when no temporary qualifies.</summary>
     public static TirStorageScope Resolve(TirNode body, FunctionDef owner, TirArrayIdentity identity)
-        => Resolve(body, owner, identity, null, false, false);
+        => Resolve(body, owner, identity, null, false, false, new TirFacts(OptimizerNodeModel.Instance));
 
     /// <summary>As above; with <paramref name="stackArrays"/> (--stack-arrays) an owned temporary whose count is bounded and
     /// whose every use only reads it takes a hoisted <c>stackalloc</c> slot instead (<see cref="AssignStack"/>), and with
     /// <paramref name="twins"/> (--span-params) a call whose every borrowed argument is an owned array goes to the span twin
-    /// of its callee (<see cref="FindRoutes"/>). <paramref name="target"/> answers the type and call questions of both.</summary>
+    /// of its callee (<see cref="FindRoutes"/>). <paramref name="target"/> answers the type and call questions of both.
+    /// <paramref name="facts"/> is a fact table for this body (compiler-546): the resolver runs at the body writer's entry,
+    /// after the passes and their per-body context, on the capture-rewritten tree, so the writer makes one per body.</summary>
     public static TirStorageScope Resolve(TirNode body, FunctionDef owner, TirArrayIdentity identity, IStorageTarget target,
-        bool stackArrays, bool twins, IReadOnlyList<ParameterDef> borrowed = null)
+        bool stackArrays, bool twins, TirFacts facts, IReadOnlyList<ParameterDef> borrowed = null)
     {
         var plan = new StoragePlan(owner);
         // The body of a span twin: its borrowed parameters are known before anything is routed, since a call that hands one on
         // to the twin of its callee needs no conversion.
         if (borrowed is { Count: > 0 })
             BorrowedParameters.Plan(plan, body, borrowed);
-        var ownership = TirOwnership.Analyze(body, identity);
+        var ownership = TirOwnership.Analyze(body, identity, facts);
         foreach (var loop in body.Descendants().OfType<TirLoweredLoop>())
         {
             if (!TirLoopLowerer.ProducesArray(loop.Kind) || plan.OfTemp(loop.TempName) != ArrayStorage.List)
