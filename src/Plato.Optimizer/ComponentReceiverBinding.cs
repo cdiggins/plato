@@ -52,15 +52,17 @@ public static class ComponentReceiverBinding
     {
         private readonly Ara3D.Geometry.Compiler.Compilation _compilation;
         private readonly HashSet<string> _names;
+        private readonly TirFacts _facts;
         private int _next;
 
         public int Bound { get; private set; }
 
         /// <param name="facts">The body's fact table, whose <see cref="TirFacts.BoundNames(TirFunction)"/> is the
-        /// set of names a fresh local must avoid (compiler-546).</param>
+        /// set of names a fresh local must avoid, and which answers whether an expression assigns (compiler-546).</param>
         public Binder(TirFunction function, Ara3D.Geometry.Compiler.Compilation compilation, TirFacts facts)
         {
             _compilation = compilation;
+            _facts = facts;
             _names = facts.BoundNames(function);
         }
 
@@ -78,7 +80,7 @@ public static class ComponentReceiverBinding
                 .SelectMany(n => TirStatementRewriter.Rewrite(n, Value, Scope)).ToArray(), node.Origin);
 
         private TirNode Value(TirNode expression, List<TirNode> before)
-            => expression == null || expression.Descendants().Any(n => n is TirAssign)
+            => expression == null || _facts.ContainsAssign(expression)
                 ? expression
                 : Walk(expression, true, before);
 

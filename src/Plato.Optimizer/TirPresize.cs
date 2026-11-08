@@ -97,11 +97,11 @@ public static class TirPresize
                 continue;
             if (loop.Body is not TirBlock body || !IsCountedFill(body, list, counter.Def, facts))
                 continue;
-            var start = CounterStart(statements, at, counter.Def);
+            var start = CounterStart(statements, at, counter.Def, facts);
             if (start == null)
                 return null;
             var gap = statements.Skip(k + 1).Take(at - k - 1).ToList();
-            if (!IsStable(bound, gap.Append(loop).ToList(), gap))
+            if (!IsStable(bound, gap.Append(loop).ToList(), gap, facts))
                 return null;
             return start.Value == 0
                 ? bound
@@ -144,15 +144,15 @@ public static class TirPresize
             && add.Args[1] is TirLiteral { Value: 1L };
 
     /// <summary>The literal the counter starts at: its let comes before the loop, and nothing assigns
-    /// it between the let and the loop.</summary>
-    private static long? CounterStart(IReadOnlyList<TirNode> statements, int loopAt, VariableDef counter)
+    /// it between the let and the loop (the fact table's assignment count of the counter per statement).</summary>
+    private static long? CounterStart(IReadOnlyList<TirNode> statements, int loopAt, VariableDef counter, TirFacts facts)
     {
         for (var at = loopAt - 1; at >= 0; at--)
         {
             if (statements[at] is TirLet { Value: TirLiteral { Value: long start } } let && let.Def == counter)
             {
                 var gap = statements.Skip(at + 1).Take(loopAt - at - 1);
-                return start >= 0 && !gap.Any(s => s.Descendants().OfType<TirAssign>().Any(a => Target(a) == counter))
+                return start >= 0 && !gap.Any(s => facts.Assigns(s, counter).Count > 0)
                     ? start
                     : null;
             }
@@ -162,12 +162,11 @@ public static class TirPresize
 
     /// <summary>Whether the bound can be computed where the list is created and still be the loop's
     /// bound: made only of total integer operations, and its variables are declared before the
-    /// list and assigned nowhere from there to the end of the loop.</summary>
-    private static bool IsStable(TirNode bound, List<TirNode> through, List<TirNode> afterList)
+    /// list and assigned nowhere from there to the end of the loop. The assigned definitions come from
+    /// the fact table; the declared locals have no fact and are still walked.</summary>
+    private static bool IsStable(TirNode bound, List<TirNode> through, List<TirNode> afterList, TirFacts facts)
     {
-        var assigned = through.SelectMany(s => s.Descendants()).OfType<TirAssign>()
-            .Select(a => a.LValue is TirVariable v ? (object)v.Def : a.LValue is TirParameter p ? p.Def : null)
-            .Where(d => d != null).ToHashSet();
+        var assigned = new HashSet<object>(through.SelectMany(facts.AssignedDefs), ReferenceEqualityComparer.Instance);
         var declared = afterList.SelectMany(s => s.Descendants()).OfType<TirLet>().Select(l => l.Def).ToHashSet();
         return IsTotal(bound);
 

@@ -12,11 +12,8 @@ public static class TirMultiConsumerFusion
         var writer = pass.Compilation;
         if (!pass.On("fuse-consumers") || !pass.On("loops") || tir?.Body is not TirBlock block)
             return tir;
-        var nodes = tir.AllNodes.ToList();
-        var assigned = nodes.OfType<TirAssign>().Select(a => a.LValue).Select(n => n switch
-        {
-            TirVariable v => (DefSymbol)v.Def, TirParameter p => p.Def, _ => null
-        }).ToHashSet();
+        // The variables and parameters the body assigns, from the fact table (compiler-546).
+        var assigned = new HashSet<object>(pass.Facts.AssignedDefs(tir.Body), ReferenceEqualityComparer.Instance);
         // The names an `_mc{id}_` prefix must not collide with (compiler-546: the table's set also holds the loop
         // temporaries, which never carry that prefix, so the id sequence is unchanged).
         var names = pass.Facts.BoundNames(tir);
@@ -66,7 +63,7 @@ public static class TirMultiConsumerFusion
            && Equals(call.ReturnType, call.Type));
 
     private static bool Reduction(TirLet binding, VariableDef source, TirFunction function,
-        HashSet<DefSymbol> assigned, Compiler.Compilation writer)
+        HashSet<object> assigned, Compiler.Compilation writer)
         => binding.Value is TirCall call && Intrinsic(call, writer, "Reduce")
            && Number(call.Type, writer) && Equals(call.ReturnType, call.Type)
            && call.Args.Count == 3 && call.ParameterTypes.Count == 3
@@ -79,7 +76,7 @@ public static class TirMultiConsumerFusion
            && Total(lambda.Body, function.Parameters.Concat(lambda.Parameters).ToHashSet(), assigned, writer);
 
     private static bool Total(TirNode node, HashSet<ParameterDef> parameters,
-        HashSet<DefSymbol> assigned, Compiler.Compilation writer)
+        HashSet<object> assigned, Compiler.Compilation writer)
         => Number(node.Type, writer) && (node switch
         {
             TirLiteral => true,
