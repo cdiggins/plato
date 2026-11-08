@@ -44,3 +44,10 @@ The remaining counters: `TirRewrite.CountParamUses`, `TirInliner.AllUsesConsumin
 `TirLambdaCaptureRewriter.CapturedRefs`, and the `AllNodes` name-set scans in `TirLoopLowerer.Scopes`,
 `TirSharedCalls`, `ComponentReceiverBinding`, `TirMultiConsumerFusion`. Some are intrinsic (move unchanged),
 some need a context-dependent fact, some a per-def use index; the lane 1 report sorts them.
+
+## Debt: use-map copying
+
+`TirUseMap.Of` copies a dictionary at each node that combines its own use with a child's, or merges two non-empty
+children. A left-deep chain of n operands therefore holds O(n²) entries in total, where the old root-only walks
+were O(n). `NodesVisited` counts nodes, not entries, so it does not see this. Measure it once on the largest body
+before the next lane; if it shows, replace the copy with a persistent map or a shared-tail map.
