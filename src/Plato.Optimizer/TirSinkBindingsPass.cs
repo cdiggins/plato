@@ -13,6 +13,8 @@ public sealed class WriterRewriteStats
     /// <summary>--refine-sums: case tests replaced by a literal, and conditionals or ifs reduced to one arm.</summary>
     public int SumTestsDecided;
     public int SumArmsFolded;
+    /// <summary>--refine-sums: calls to a function that is one match on a parameter, expanded because the argument's cases were known.</summary>
+    public int SumMatchesInlined;
 }
 
 /// <summary>

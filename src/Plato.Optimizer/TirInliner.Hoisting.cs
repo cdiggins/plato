@@ -21,6 +21,6 @@ public static partial class TirInliner
         if (call.Args.Count == 0)
             return false;
         return TryInlineCall(call, callerTir, host, ownerTypeName, insideLambda: true, callerNames,
-            new HashSet<(object Callee, string ReceiverType)>(), new List<(object, string)>(), forHoisting: true, out inlined);
+            new HashSet<(object Callee, string ReceiverType)>(), new List<(object, string)>(), forHoisting: true, MaxBodyNodes, allowSumSyntactic: false, out inlined);
     }
 }

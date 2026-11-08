@@ -15,8 +15,21 @@ public class SumRefinementTests
     // elaborate in this fixture, "no ground TIR", with or without the pass, so the let-binding rule has no emission test here.)
     private const string Source = """
         type Shape = Circle(Radius: Number) | Rect(Width: Number, Height: Number) | Dot;
+        type Box { Inner: Shape; Tag: Number; }
         library RefineFixture
         {
+            Twice(s: Shape): Number
+                => match (s) {
+                    Circle(r) => s.Measure + r;
+                    Rect(w, h) => s.Measure + w;
+                    Dot => s.Measure;
+                };
+            ViaRead(b: Box): Number
+                => match (b.Inner) {
+                    Circle(r) => match (b.Inner) { Circle(q) => q + r; Rect(w, h) => w; Dot => 1.0; };
+                    Rect(w, h) => b.Inner.Measure + b.Tag;
+                    Dot => 3.0;
+                };
             Measure(s: Shape): Number
                 => match (s) {
                     Circle(r) => 3.0 * r * r;
@@ -32,7 +45,7 @@ public class SumRefinementTests
         }
         """;
 
-    private static readonly string[] Roots = { "Measure", "Nested" };
+    private static readonly string[] Roots = { "Measure", "Nested", "Twice", "ViaRead" };
 
     private static string Emit(bool refine)
     {
@@ -72,6 +85,16 @@ public class SumRefinementTests
         Assert.That(KindTests(Body(plain, "Nested")), Is.EqualTo(2 + 3 * 2), "every arm re-tests the subject without the switch");
         Assert.That(KindTests(Body(refined, "Nested")), Is.EqualTo(2), "Nested keeps only its own two tests");
         Assert.That(Body(refined, "Measure"), Is.EqualTo(Body(plain, "Measure")), "a single match is untouched");
+        // Step 2: Measure is one match on its parameter, so in an arm that knows s it is expanded and collapses to that arm.
+        Assert.That(Body(plain, "Twice"), Does.Contain("Measure"), "without the pass Measure stays a call");
+        var twice = Body(refined, "Twice");
+        Assert.That(KindTests(twice), Is.EqualTo(2));
+        Assert.That(twice, Does.Not.Contain("Measure").And.Contain("3.0 *").And.Contain("Rect_Width * "), "each arm holds its own case's measure");
+        // A pure read is a value: b.Inner inside the arm is the same value the arm matched on.
+        Assert.That(KindTests(Body(plain, "ViaRead")), Is.EqualTo(4));
+        var viaRead = Body(refined, "ViaRead");
+        Assert.That(KindTests(viaRead), Is.EqualTo(2));
+        Assert.That(viaRead, Does.Not.Contain("Measure").And.Contain("Rect_Height"), "the rect arm's measure is w * h in place");
         // The live arm's field reads survive: circle radius in the circle arm, width and height in the rect arm.
         var nested = Body(refined, "Nested");
         Assert.That(nested, Does.Contain("Circle_Radius").And.Contain("Rect_Width").And.Contain("Rect_Height"));

@@ -90,7 +90,7 @@ public static partial class TirInliner
             body = TirRewrite.Rewrite(body, n =>
                 etaDepth == 0 && n is TirCall call
                 && TryInlineCall(call, tir, host, ownerTypeName, lambdaDepth > 0, callerNames,
-                    inlinedPairs, passPairs, forHoisting: false, out var inlined)
+                    inlinedPairs, passPairs, forHoisting: false, MaxBodyNodes, allowSumSyntactic: false, out var inlined)
                     ? Bump(count, inlined)
                     : n,
                 enter: n => { if (n is TirLambda l) { lambdaDepth++; if (IsEtaShaped(l)) etaDepth++; } },
@@ -121,7 +121,7 @@ public static partial class TirInliner
     private static bool TryInlineCall(TirCall call, TirFunction callerTir, ITirInlineHost host,
         string ownerTypeName, bool insideLambda, HashSet<string> callerNames,
         HashSet<(object Callee, string ReceiverType)> inlinedPairs, List<(object, string)> passPairs,
-        bool forHoisting, out TirNode inlined)
+        bool forHoisting, int bodyNodeLimit, bool allowSumSyntactic, out TirNode inlined)
     {
         inlined = null;
 
@@ -205,7 +205,7 @@ public static partial class TirInliner
             || (!arrayLiteralInline && (bodyTypeName == null
                 || (bodyTypeName != returnTypeName && !tupleCtorRewrite))))
             return Refuse(InlineRefusal.ReturnTypeMismatch);
-        if (!IsSelfContained(host, calleeBody, tupleCtorRewrite, out var calleeHasLambda))
+        if (!IsSelfContained(host, calleeBody, tupleCtorRewrite, bodyNodeLimit, allowSumSyntactic, out var calleeHasLambda))
             return Refuse(InlineRefusal.NotSelfContained);
 
         // Under a lambda at the CALL SITE: only lambda-free callee bodies with all-cheap
@@ -551,11 +551,11 @@ public static partial class TirInliner
     /// SYNTACTIC calls (null callee: only trustworthy in the body's HOME emission context — e.g.
     /// the library Dot's body for Vector3 references a Sum overload that does not exist there;
     /// the handwritten intrinsic Dot is what actually ships for that type).</summary>
-    private static bool IsSelfContained(ITirInlineHost host, TirNode calleeBody, bool allowRootTuple, out bool hasLambda)
+    private static bool IsSelfContained(ITirInlineHost host, TirNode calleeBody, bool allowRootTuple, int bodyNodeLimit, bool allowSumSyntactic, out bool hasLambda)
     {
         hasLambda = false;
         var nodes = calleeBody.Descendants().ToList();
-        if (nodes.Count > MaxBodyNodes)
+        if (nodes.Count > bodyNodeLimit)
             return false;
         foreach (var n in nodes)
         {
@@ -588,11 +588,34 @@ public static partial class TirInliner
             {
                 var isRootTuple = allowRootTuple && ReferenceEquals(n, calleeBody)
                     && tc.Name != null && tc.Name.StartsWith("Tuple");
-                if (!isRootTuple && (tc.Callee == null || (tc.Name != null && tc.Name.StartsWith("Tuple"))))
+                // The refinement pass may bring in a lowered match: its case tests, case-field projections and case
+                // constructors are members of the sum type itself, so they render the same in any emission context.
+                if (!isRootTuple && (tc.Callee == null || (tc.Name != null && tc.Name.StartsWith("Tuple")))
+                    && !(allowSumSyntactic && IsSumMemberCall(tc)))
                     return false;
             }
         }
         return true;
+    }
+
+    /// <summary>A null-callee call the elaborator makes for a sum: <c>IsCase(s)</c>, <c>s.Case_Field</c>, or a case constructor
+    /// <c>Sum.Case(args)</c> (the match lowering in Elaborator.ElaborateMatch and ElaborateCaseConstruction).</summary>
+    private static bool IsSumMemberCall(TirCall c)
+    {
+        if (c.Callee != null || c.Name == null)
+            return false;
+        if (c.EmissionKind == EmissionKind.Property && c.Args.Count == 1)
+        {
+            var sum = TirRewrite.StripCoerce(c.Args[0])?.Type?.Def;
+            return sum != null && sum.IsSum
+                && sum.Cases.Any(k => k.PredicateName == c.Name || k.Fields.Any(f => f.FlatName == c.Name));
+        }
+        if (c.EmissionKind == EmissionKind.StaticMethod)
+        {
+            var sum = c.Type?.Def;
+            return sum != null && sum.IsSum && sum.Cases.Any(k => k.Name == c.Name);
+        }
+        return false;
     }
 
     // Scaffolding members every generated concrete type has, which the extension plans do not
@@ -766,7 +789,7 @@ public static partial class TirInliner
         var returnTypeName = (calleeTir.ZonkedReturnType ?? calleeTir.ReturnType)?.Name;
         if (bodyTypeName == null || returnTypeName == null || bodyTypeName != returnTypeName)
             return false;
-        if (!IsSelfContained(host, body, false, out var hasLambda) || (insideLambda && hasLambda))
+        if (!IsSelfContained(host, body, false, MaxBodyNodes, false, out var hasLambda) || (insideLambda && hasLambda))
             return false;
         inlined = body;
         return true;
