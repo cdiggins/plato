@@ -13,7 +13,11 @@ namespace Ara3D.Geometry.Optimizer;
 ///
 /// Positions: a direct argument of a constructor (<see cref="TirNew"/>) or of a <c>TupleN</c> call
 /// (a tuple building a struct), looking through <see cref="TirCoerce"/>; the value of a local binding
-/// (<see cref="TirLet"/>) referenced more than once or under a lambda or loop.
+/// (<see cref="TirLet"/>) referenced more than once or under a lambda or loop. The reference count
+/// and the under-lambda and under-loop flags are the fact table's <see cref="TirFacts.Uses(TirNode, object)"/>
+/// (compiler-546), whose loop is a <see cref="TirLoop"/> or a <c>TirGuardedLoop</c>: the old walk knew
+/// only <see cref="TirLoop"/>, so a binding read under a guarded loop is now eligible too, which is
+/// the conservative direction (eager rather than lazy) and unreachable on the default routes.
 ///
 /// STALE AS OF 2026-10-23 (TKT-508): this pass was written (2026-07-10) when <c>Map</c>/<c>MapRange</c>
 /// returned lazy views that re-ran the function on every read. Since TKT-350 <c>MapRange</c> is eager
@@ -30,19 +34,19 @@ public static class TirArrayMaterializer
     {
         if (!pass.On("optimize-arrays") || tir?.Body == null)
             return tir;
-        var body = RewriteBody(tir.Body);
+        var body = RewriteBody(tir.Body, pass.Facts);
         return ReferenceEquals(body, tir.Body)
             ? tir
             : new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,
                 tir.ZonkedParameterTypes, tir.ZonkedReturnType);
     }
 
-    private static TirNode RewriteBody(TirNode body)
+    private static TirNode RewriteBody(TirNode body, TirFacts facts)
     {
-        // Multi-consumed locals: definition -> eligible, computed over the whole body up front.
-        var refCounts = new Dictionary<VariableDef, int>();
-        var refsUnderLambdaOrLoop = new HashSet<VariableDef>();
-        CountRefs(body, false, refCounts, refsUnderLambdaOrLoop);
+        // Multi-consumed locals: a binding is eligible when the whole body reads it more than once or
+        // under a lambda or loop (the fact table's uses of its definition).
+        bool MultiConsumed(VariableDef def)
+            => def != null && facts.Uses(body, def) is var u && (u.Count > 1 || u.UnderLambda || u.UnderLoop);
 
         var changed = false;
 
@@ -76,10 +80,7 @@ public static class TirArrayMaterializer
 
                 case TirLet let:
                 {
-                    var eligible = let.Def != null
-                        && (refCounts.TryGetValue(let.Def, out var cnt) && cnt > 1
-                            || refsUnderLambdaOrLoop.Contains(let.Def));
-                    return new TirLet(let.Def, Rw(let.Value, eligible), let.Type, let.Origin);
+                    return new TirLet(let.Def, Rw(let.Value, MultiConsumed(let.Def)), let.Type, let.Origin);
                 }
 
                 case TirInvoke inv:
@@ -125,21 +126,5 @@ public static class TirArrayMaterializer
         else if (c.Name == "MapRange")
             eager = "MapRangeEager";
         return eager != null;
-    }
-
-    private static void CountRefs(TirNode n, bool underLambdaOrLoop,
-        Dictionary<VariableDef, int> counts, HashSet<VariableDef> underSet)
-    {
-        if (n == null)
-            return;
-        if (n is TirVariable v && v.Def != null)
-        {
-            counts[v.Def] = counts.TryGetValue(v.Def, out var c) ? c + 1 : 1;
-            if (underLambdaOrLoop)
-                underSet.Add(v.Def);
-        }
-        var inner = underLambdaOrLoop || n is TirLambda || n is TirLoop;
-        foreach (var child in n.Children)
-            CountRefs(child, inner, counts, underSet);
     }
 }
