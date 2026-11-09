@@ -104,9 +104,9 @@ public static class StatementInliningTests
             new object[] { (Integer)3 })!).Select(n => (int)n), Is.EqualTo(new[] { 0, 1, 2 }));
         Assert.That(((IReadOnlyList<Integer>)library.GetMethod("EmptyCallback")!.Invoke(null,
             new object[] { (Integer)0 })!), Is.Empty, "An empty outer loop must not evaluate callback prerequisites.");
-        var nestedRanges = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "NestedRanges"), writer.Passes);
+        var nestedRanges = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "NestedRanges"), writer.Passes.ForBody(null));
         Assert.That(nestedRanges.AllNodes.OfType<TirLoweredLoop>().Count(), Is.EqualTo(2));
-        var producer = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "ProducerStatements"), writer.Passes);
+        var producer = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "ProducerStatements"), writer.Passes.ForBody(null));
         Assert.That(producer.AllNodes.OfType<TirLoweredLoop>().Count(), Is.EqualTo(1),
             "A statement-bodied producer must stay fused into the consumer loop.");
         if (inline)
@@ -118,7 +118,7 @@ public static class StatementInliningTests
             new object[] { (Integer)3 })!, Is.EqualTo(6));
         Assert.That(((IReadOnlyList<Integer>)library.GetMethod("NestedReturns")!.Invoke(null,
             new object[] { (Integer)3 })!).Select(n => (int)n), Is.EqualTo(new[] { 1, 2, 3 }));
-        var sum = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "StatementSum"), writer.Passes);
+        var sum = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "StatementSum"), writer.Passes.ForBody(null));
         Assert.That(sum.AllNodes.OfType<TirLoweredLoop>().Any(l => l.Kind == "Reduce"), Is.True,
             "Statement callbacks must retain reduction loop lowering.");
         Assert.That(((IReadOnlyList<Integer>)library.GetMethod("ArrayCalls")!.Invoke(null,
@@ -132,7 +132,7 @@ public static class StatementInliningTests
                 var expanded = TirInliner.InlineStatements(writer.TestGetGroundTir("Integer", name), writer, "Integer", lambdas, simplify);
                 Assert.That(expanded.AllNodes.OfType<Ara3D.Geometry.Compiler.Checking.TirCall>().Any(c => c.Name == "Twice"), Is.False);
             }
-        var computed = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "ComputedRange"), writer.Passes);
+        var computed = TirLoopLowerer.Rewrite(writer.TestGetGroundTir("Integer", "ComputedRange"), writer.Passes.ForBody(null));
         Assert.That(computed.AllNodes.OfType<TirLoweredLoop>().Count(), Is.EqualTo(1),
             "Turning on statement inlining must retain loops with computed arguments.");
         Assert.That(((IReadOnlyList<Integer>)library.GetMethod("ComputedRange")!.Invoke(null,
@@ -149,7 +149,7 @@ public static class StatementInliningTests
         {
             var original = writer.TestGetGroundTir("Integer", "StatementRange");
             var expanded = TirInliner.InlineStatements(original, writer, "Integer", true, simplify);
-            var lowered = TirLoopLowerer.Rewrite(expanded, writer.Passes);
+            var lowered = TirLoopLowerer.Rewrite(expanded, writer.Passes.ForBody(null));
             Assert.That(lowered.AllNodes.OfType<TirLoweredLoop>(), Is.Not.Empty, "Statement callback must become a loop.");
             Assert.That(source, Does.Contain("_callback"), "Statement callback must emit a scoped result.");
         }
