@@ -464,7 +464,7 @@ public static class TirSumRefinement
             if (key == null || !env.TryGetValue(key, out var set) || set == All(sum))
                 return null;
             _callerNames ??= TirInliner.CollectBoundNames(_tir, _tir.Body);
-            if (!TirInliner.TryInlineForRefinement(call, _tir, _host, _owner, insideLambda: false, _callerNames, out var inlined))
+            if (!TirInliner.TryInlineForRefinement(call, _tir, _host, _owner, insideLambda: false, _callerNames, _ctx.Facts, out var inlined))
                 return null;
             var size = inlined.Descendants().Count();
             if (_inlinedNodes + size > InlineNodeBudget)

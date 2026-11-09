@@ -53,7 +53,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 body = new TirScrutineeBinding(_scrutinees, Stats).Body(body);
             if (Options.SinkBindings)
             {
-                body = TirSinkBindings.Rewrite(body, out var sunk);
+                body = TirSinkBindings.Rewrite(body, new TirFacts(), out var sunk);
                 Stats.SunkBindings += sunk;
             }
             var zonkedParams = f?.Parameters?.Select(p => result.Solver.Zonk(p.Type)).ToList();

@@ -40,7 +40,7 @@ public static class SharedPasses
 
     public static IReadOnlyList<ITirPass> All { get; } = new ITirPass[]
     {
-        new TirPass(Inline, "inline (layer 7)", (tir, ctx) => TirInliner.Inline(tir, ctx.InlineHost, ctx.OwnerTypeName, out _)),
+        new TirPass(Inline, "inline (layer 7)", (tir, ctx) => TirInliner.Inline(tir, ctx.InlineHost, ctx.OwnerTypeName, out _, ctx.Facts)),
         new TirPass(RefineSums, "refine-sums / case tests decided by the enclosing arm", TirSumRefinement.Rewrite),
         new TirPass(BindComponentReceivers, "scalar-arrays / computed component-array receivers bound (TKT-1187)", ComponentReceiverBinding.Rewrite),
         new TirPass(ConstantCounts, "scalar-arrays / constant counts and component arrays", Ara3D.Geometry.Optimizer.ConstantCounts.Rewrite),

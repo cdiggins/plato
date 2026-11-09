@@ -26,7 +26,7 @@ public static class CSharpPasses
     {
         var w = Writer(ctx);
         return w.InlineStatements
-            ? TirInliner.InlineStatements(tir, w, ctx.OwnerTypeName, w.EliminateKnownLambdas, w.SimplifyInlineStatements, ctx.FunctionInfo)
+            ? TirInliner.InlineStatements(tir, w, ctx.OwnerTypeName, w.EliminateKnownLambdas, w.SimplifyInlineStatements, ctx.FunctionInfo, ctx.Facts)
             : tir;
     }
 
@@ -34,7 +34,7 @@ public static class CSharpPasses
     {
         new TirPass(InlineStatements, "experimental statement / callable expansion", RunInlineStatements),
         new TirPass(SpecializeCallbacks, "specialize-callbacks / clone the callee per lambda shape",
-            (tir, ctx) => TirCallbackSpecializer.Rewrite(tir, Writer(ctx), ctx.OwnerTypeName)),
+            (tir, ctx) => TirCallbackSpecializer.Rewrite(tir, Writer(ctx), ctx.OwnerTypeName, ctx.Facts)),
         new TirPass(ComponentUnroll, "optimize / component-unroll (layer 8)",
             (tir, ctx) => TirComponentUnroller.UnrollFunction(tir, (CSharpFunctionInfo)ctx.FunctionInfo, Writer(ctx))),
     };

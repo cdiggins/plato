@@ -40,7 +40,7 @@ public static class ConstantCounts
     {
         if (!pass.On("scalar-arrays") || tir?.Body == null)
             return tir;
-        var site = new Rewriter(pass.Compilation);
+        var site = new Rewriter(pass.Compilation, pass.Facts);
         var body = TirRewrite.Rewrite(tir.Body, n => n is TirCall c ? site.Visit(c) : n);
         return ReferenceEquals(body, tir.Body)
             ? tir
@@ -114,10 +114,10 @@ public static class ConstantCounts
         private readonly FusionContext _ctx;
         private readonly UnrollPolicy _policy;
 
-        public Rewriter(Ara3D.Geometry.Compiler.Compilation compilation)
+        public Rewriter(Ara3D.Geometry.Compiler.Compilation compilation, TirFacts facts)
         {
             _compilation = compilation;
-            _ctx = new FusionContext(compilation);
+            _ctx = new FusionContext(compilation, facts);
             _policy = new UnrollPolicy(IsRepeatable, AccumulatorBudget);
         }
 

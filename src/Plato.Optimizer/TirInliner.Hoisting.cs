@@ -15,12 +15,12 @@ public static partial class TirInliner
     /// independent of --inline. Used by <see cref="TirLoopInvariantHoister"/>, which keeps the
     /// expansion only when it exposes an invariant expression.</summary>
     internal static bool TryInlineForHoisting(TirCall call, TirFunction callerTir, ITirInlineHost host,
-        string ownerTypeName, HashSet<string> callerNames, out TirNode inlined)
+        string ownerTypeName, HashSet<string> callerNames, TirFacts facts, out TirNode inlined)
     {
         inlined = null;
         if (call.Args.Count == 0)
             return false;
         return TryInlineCall(call, callerTir, host, ownerTypeName, insideLambda: true, callerNames,
-            new HashSet<(object Callee, string ReceiverType)>(), new List<(object, string)>(), forHoisting: true, MaxBodyNodes, allowSumSyntactic: false, out inlined);
+            new HashSet<(object Callee, string ReceiverType)>(), new List<(object, string)>(), forHoisting: true, MaxBodyNodes, allowSumSyntactic: false, facts, out inlined);
     }
 }

@@ -79,8 +79,9 @@ public static class TirRewrite
     /// lambda literal, the arity disagrees, or a substitution would change how many times an argument
     /// is evaluated (a non-cheap argument bound to a parameter used more than once, or used under a
     /// nested lambda). A coercion wrapping the lambda target — the delegate target-typing this
-    /// reduction eliminates — is transparent.</summary>
-    public static bool TryBetaReduce(TirInvoke invoke, out TirNode reduced,
+    /// reduction eliminates — is transparent. Each parameter's use count and under-lambda flag come from the
+    /// body's fact table <paramref name="facts"/> (compiler-546) instead of a walk of the lambda body per reduction.</summary>
+    public static bool TryBetaReduce(TirInvoke invoke, TirFacts facts, out TirNode reduced,
         System.Func<TirNode, bool> isCheap = null)
     {
         isCheap = isCheap ?? IsCheap;
@@ -93,13 +94,12 @@ public static class TirRewrite
         if (pars == null || lam.Body == null || pars.Count != invoke.Args.Count)
             return false;
 
-        Dictionary<ParameterDef, (int Count, bool UnderLambda)> uses = null;
         for (var i = 0; i < pars.Count; i++)
         {
             if (isCheap(invoke.Args[i]))
                 continue;
-            uses = uses ?? CountParamUses(lam.Body);
-            if (uses.TryGetValue(pars[i], out var u) && (u.Count > 1 || u.UnderLambda))
+            var u = facts.Uses(lam.Body, pars[i]);
+            if (u.Count > 1 || u.UnderLambda)
                 return false;
         }
 
@@ -121,10 +121,6 @@ public static class TirRewrite
     /// modern-stdlib program (TKT-505).</summary>
     public static bool IsListType(TypeExpression t)
         => t != null && (t.Name == "Array" || t.Name == "IArray") && t.TypeArgs.Count == 1;
-
-    /// <summary>Whether a type is affine or holds one: a value of it is owned by one use, so it must not be shared.</summary>
-    public static bool IsUniqueType(TypeExpression t)
-        => t != null && ((t.Def?.IsUnique ?? false) || t.TypeArgs.Any(IsUniqueType));
 
     /// <summary>The element type of a list type (see <see cref="IsListType"/>), or null.</summary>
     public static TypeExpression ListElementType(TypeExpression t)
@@ -148,7 +144,10 @@ public static class TirRewrite
 
     /// <summary>Per-parameter reference statistics over a body: occurrence count and whether any
     /// occurrence sits under a lambda (where a substituted compound expression would be re-evaluated
-    /// per invocation and captured).</summary>
+    /// per invocation and captured). The walked form, kept for a caller that has no body fact table
+    /// (<see cref="TirFusion.CanSubstitute(TirNode, ParameterDef, TirNode)"/> from the literal and component
+    /// unrollers) and as the oracle the fact-table tests compare against; a pass with a table reads
+    /// <see cref="TirFacts.Uses(TirNode, object)"/>, which has exactly this meaning (compiler-546).</summary>
     public static Dictionary<ParameterDef, (int Count, bool UnderLambda)> CountParamUses(TirNode body)
     {
         var uses = new Dictionary<ParameterDef, (int, bool)>();

@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
 namespace Ara3D.Geometry.Optimizer;
@@ -30,6 +29,8 @@ namespace Ara3D.Geometry.Optimizer;
 /// The largest such node goes first; the rest are searched again on what is left, so a shared call whose
 /// argument is also shared gets two locals in dependency order. A lambda body is a separate expression
 /// and is not entered. Runs before the loop lowerer, which takes the new bindings as statements.
+/// The identity of a call (the key table inside <see cref="TirFacts"/>), its size and whether an expression assigns come from
+/// the body's fact table (<see cref="PassContext.Facts"/>), computed once per node (compiler-546).
 /// </summary>
 public static class TirSharedCalls
 {
@@ -37,7 +38,7 @@ public static class TirSharedCalls
     {
         if (!pass.On("share-calls") || tir?.Body == null)
             return tir;
-        var sharing = new Sharing(tir, pass.On("share-calls-wide"), pass.Stats.Rewrites);
+        var sharing = new Sharing(tir, pass.Facts, pass.On("share-calls-wide"), pass.Stats.Rewrites);
         var body = tir.Body;
         if (pass.On("share-calls-wide"))
             body = sharing.Lambdas(sharing.Statements(body));
@@ -51,26 +52,20 @@ public static class TirSharedCalls
     private sealed class Sharing
     {
         private readonly HashSet<string> _names;
-        private readonly Dictionary<object, int> _ids = new(ReferenceEqualityComparer.Instance);
         private int _next;
 
+        private readonly TirFacts _facts;
         private readonly bool _wide;
         private readonly WriterRewriteStats _stats;
         private readonly HashSet<object> _parameters;
 
-        public Sharing(TirFunction function, bool wide = false, WriterRewriteStats stats = null)
+        public Sharing(TirFunction function, TirFacts facts, bool wide = false, WriterRewriteStats stats = null)
         {
+            _facts = facts;
             _wide = wide;
             _stats = stats ?? new WriterRewriteStats();
             _parameters = function.Parameters.Cast<object>().ToHashSet(ReferenceEqualityComparer.Instance);
-            _names = function.AllNodes.Select(n => n switch
-            {
-                TirVariable v => v.Def?.Name, TirParameter p => p.Def?.Name,
-                TirLet l => l.Def?.Name, TirInlineBinding b => b.Def.Name,
-                TirInlineRegion r => r.Result.Name, TirTempRef t => t.Name, _ => null
-            }).Concat(function.Parameters.Select(p => p.Name))
-                .Concat(function.AllNodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Select(p => p.Name))
-                .Where(n => n != null).ToHashSet();
+            _names = facts.BoundNames(function);
         }
 
         private VariableDef Fresh(TypeExpression type)
@@ -105,7 +100,7 @@ public static class TirSharedCalls
         /// <paramref name="before"/> in the order they must run.</summary>
         private TirNode Value(TirNode expression, List<TirNode> before)
         {
-            if (expression == null || expression.Descendants().Any(n => n is TirAssign))
+            if (expression == null || _facts.ContainsAssign(expression))
                 return expression;
             var items = new List<(VariableDef Def, TirNode Value)>();
             var current = expression;
@@ -177,7 +172,7 @@ public static class TirSharedCalls
                 {
                     if (!sites.TryGetValue(key, out var site))
                     {
-                        sites[key] = site = new Site { Size = call.Descendants().Count(), First = order };
+                        sites[key] = site = new Site { Size = _facts.Size(call), First = order };
                         samples[key] = call;
                     }
                     site.Count++;
@@ -204,89 +199,12 @@ public static class TirSharedCalls
         private static bool IsCandidate(TirCall c)
             => c.Callee != null
                && c.EmissionKind is EmissionKind.InstanceMethod or EmissionKind.StaticMethod
-               && c.Type != null && !TirRewrite.IsListType(c.Type) && !IsUnique(c.Type);
-
-        private static bool IsUnique(TypeExpression t) => TirRewrite.IsUniqueType(t);
+               && c.Type != null && !TirRewrite.IsListType(c.Type) && !UniqueTypes.IsUniqueType(c.Type);
 
         /// <summary>Structural identity of a candidate, or null when something below it is not known to be pure
-        /// and repeatable.</summary>
-        private string Key(TirCall call, HashSet<object> defs = null)
-        {
-            var sb = new StringBuilder();
-            _keyDefs = defs;
-            try { return Write(call, sb) ? sb.ToString() : null; }
-            finally { _keyDefs = null; }
-        }
-
-        // The definitions the key being written reads, collected for the scope check of wide sharing.
-        private HashSet<object> _keyDefs;
-
-        private int Id(object o)
-        {
-            if (!_ids.TryGetValue(o, out var id))
-                _ids[o] = id = _ids.Count;
-            return id;
-        }
-
-        private bool Write(TirNode n, StringBuilder sb)
-        {
-            switch (n)
-            {
-                case TirParameter p when p.Def != null && !IsUnique(p.Type):
-                    _keyDefs?.Add(p.Def);
-                    sb.Append("P").Append(Id(p.Def));
-                    return true;
-                case TirVariable v when v.Def != null && !IsUnique(v.Type):
-                    _keyDefs?.Add(v.Def);
-                    sb.Append("V").Append(Id(v.Def));
-                    return true;
-                case TirLiteral l:
-                    sb.Append("L").Append(l.LiteralType).Append(':').Append(l.Type).Append(':').Append(l.Value);
-                    return true;
-                case TirTypeRef t:
-                    sb.Append("T").Append(t.TypeDef?.Name).Append(t.NamespaceQualified);
-                    return true;
-                case TirDefault d:
-                    sb.Append("D").Append(d.Type);
-                    return true;
-                case TirCoerce c:
-                    sb.Append("K").Append(c.ToType).Append('(');
-                    var ok = Write(c.Inner, sb);
-                    sb.Append(')');
-                    return ok;
-                case TirCall c when c.Callee != null && !IsUnique(c.Type) && !c.Args.Any(a => IsUnique(a?.Type)):
-                    sb.Append("C").Append(Id(c.Callee)).Append(':').Append(c.EmissionKind).Append(':').Append(c.Type).Append('(');
-                    foreach (var a in c.Args)
-                    {
-                        if (a == null || !Write(a, sb))
-                            return false;
-                        sb.Append(',');
-                    }
-                    sb.Append(')');
-                    return true;
-                case TirCall c when c.Callee == null && c.EmissionKind == EmissionKind.Property
-                                    && c.Args.Count == 1 && !IsUnique(c.Type):
-                    // A syntactic field projection (a match binder or a case test) of a shared value.
-                    sb.Append("F").Append(c.Name).Append(':').Append(c.Type).Append('(');
-                    var inner = c.Args[0] != null && Write(c.Args[0], sb);
-                    sb.Append(')');
-                    return inner;
-                case TirCall c when _wide && c.Callee == null && c.EmissionKind == EmissionKind.StaticMethod
-                                    && c.Name != null && !IsUnique(c.Type) && !c.Args.Any(a => a == null || IsUnique(a.Type)):
-                    // A sum case written as a factory (Kind.EdgeLoop): a pure value, compared by name and payload.
-                    sb.Append("S").Append(c.Name).Append(':').Append(c.Type).Append('(');
-                    foreach (var a in c.Args)
-                    {
-                        if (!Write(a, sb))
-                            return false;
-                        sb.Append(',');
-                    }
-                    sb.Append(')');
-                    return true;
-                default:
-                    return false;
-            }
-        }
+        /// and repeatable; memoized per node by the body's fact table. When the key is not null, the definitions
+        /// it reads are exactly <c>_facts.MentionedDefs(call)</c>: a key covers every leaf of the call or is null.</summary>
+        private string Key(TirCall call) => _facts.StructuralKey(call, _wide);
 
         // --- --share-calls-wide: across the statements of a block, and inside lambda bodies ---------
 
@@ -294,7 +212,7 @@ public static class TirSharedCalls
         /// later statement (or a lambda or branch of its own) names again, bound once before the first.</summary>
         public TirNode Statements(TirNode body)
         {
-            if (body is not TirBlock block || body.Descendants().Any(n => n is TirAssign or TirLoop))
+            if (body is not TirBlock block || _facts.ContainsAssign(body) || _facts.ContainsLoop(body))
                 return body;
             return Block(block, new HashSet<object>(_parameters, ReferenceEqualityComparer.Instance));
         }
@@ -353,9 +271,7 @@ public static class TirSharedCalls
                          .ThenBy(s => s.Value.First).Select(s => s.Key).ToList())
             {
                 var sample = samples[key];
-                var defs = new HashSet<object>(ReferenceEqualityComparer.Instance);
-                Key(sample, defs);
-                if (!defs.All(available.Contains))
+                if (!_facts.MentionedDefs(sample).All(available.Contains))
                     continue;
                 var total = 0;
                 for (var k = a; k < list.Count; k++)

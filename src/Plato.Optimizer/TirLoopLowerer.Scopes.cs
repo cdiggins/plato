@@ -8,9 +8,9 @@ namespace Ara3D.Geometry.Optimizer;
 
 public static partial class TirLoopLowerer
 {
-    private static TirFunction RewriteScoped(TirFunction function)
+    private static TirFunction RewriteScoped(TirFunction function, TirFacts facts)
     {
-        var lowering = new ScopedLoopLowering(function);
+        var lowering = new ScopedLoopLowering(function, facts);
         var body = lowering.Body(function.Body);
         return new TirFunction(function.Original, function.Parameters, function.ReturnType, body,
             function.ZonkedParameterTypes, function.ZonkedReturnType);
@@ -22,16 +22,11 @@ public static partial class TirLoopLowerer
         private readonly HashSet<int> _reservedIds;
         private int _next;
 
-        public ScopedLoopLowering(TirFunction function)
+        /// <param name="facts">The body's fact table, whose <see cref="TirFacts.BoundNames(TirFunction)"/> is the
+        /// set of names a fresh local must avoid (compiler-546).</param>
+        public ScopedLoopLowering(TirFunction function, TirFacts facts)
         {
-            _names = function.AllNodes.Select(n => n switch
-            {
-                TirVariable v => v.Def?.Name, TirParameter p => p.Def?.Name,
-                TirLet l => l.Def?.Name, TirInlineBinding b => b.Def.Name,
-                TirInlineRegion r => r.Result.Name, TirTempRef t => t.Name, _ => null
-            }).Concat(function.Parameters.Select(p => p.Name))
-                .Concat(function.AllNodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Select(p => p.Name))
-                .Where(n => n != null).ToHashSet();
+            _names = facts.BoundNames(function);
             _reservedIds = _names.SelectMany(n => Regex.Matches(n, @"\d+").Cast<Match>())
                 .Select(m => int.TryParse(m.Value, out var value) ? value : -1).ToHashSet();
         }

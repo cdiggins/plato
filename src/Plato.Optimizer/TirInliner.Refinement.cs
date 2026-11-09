@@ -24,13 +24,13 @@ public static partial class TirInliner
     /// the refinement pass asks for it only when the callee's root match is on a parameter whose argument's cases it
     /// knows, so most of the expanded body is dead on arrival.</summary>
     internal static bool TryInlineForRefinement(TirCall call, TirFunction callerTir, ITirInlineHost host,
-        string ownerTypeName, bool insideLambda, HashSet<string> callerNames, out TirNode inlined)
+        string ownerTypeName, bool insideLambda, HashSet<string> callerNames, TirFacts facts, out TirNode inlined)
     {
         inlined = null;
         if (call.Args.Count == 0)
             return false;
         return TryInlineCall(call, callerTir, host, ownerTypeName, insideLambda, callerNames,
             new HashSet<(object Callee, string ReceiverType)>(), new List<(object, string)>(), forHoisting: false,
-            RefinementBodyNodes, allowSumSyntactic: true, out inlined);
+            RefinementBodyNodes, allowSumSyntactic: true, facts, out inlined);
     }
 }

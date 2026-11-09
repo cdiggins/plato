@@ -19,7 +19,7 @@ public static class TirInPlaceUpdates
     {
         if (!pass.On("in-place") || tir?.Body == null)
             return tir;
-        var body = Apply(tir.Body, new TirArrayIdentity(pass.Compilation), out _);
+        var body = Apply(tir.Body, new TirArrayIdentity(pass.Compilation), pass.Facts, out _);
         return ReferenceEquals(body, tir.Body)
             ? tir
             : new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, body,
@@ -27,11 +27,11 @@ public static class TirInPlaceUpdates
     }
 
     /// <summary>The body with every provable <c>SetAt</c> made in place, or the body itself when none is;
-    /// <paramref name="count"/> is the number of calls rewritten.</summary>
-    public static TirNode Apply(TirNode body, TirArrayIdentity identity, out int count)
+    /// <paramref name="count"/> is the number of calls rewritten; <paramref name="facts"/> is the body's fact table.</summary>
+    public static TirNode Apply(TirNode body, TirArrayIdentity identity, TirFacts facts, out int count)
     {
         count = 0;
-        var flow = TirUpdateFlow.Analyze(body, identity);
+        var flow = TirUpdateFlow.Analyze(body, identity, facts);
         var decisions = flow.Sites.Select(flow.CanWriteInPlace).ToArray();
         if (!decisions.Any(d => d))
             return body;

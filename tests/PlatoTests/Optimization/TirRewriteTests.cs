@@ -101,6 +101,9 @@ namespace PlatoTests
 
         // --- TryBetaReduce ----------------------------------------------------
 
+        private static bool BetaReduce(TirInvoke invoke, out TirNode reduced)
+            => TirRewrite.TryBetaReduce(invoke, new TirFacts(OptimizerNodeModel.Instance), out reduced);
+
         [Test]
         public static void BetaReduce_AppliesLambdaToArgument()
         {
@@ -108,7 +111,7 @@ namespace PlatoTests
             var lam = Lambda(Ref(x), x);             // (x) => x
             var arg = Int(99);
 
-            Assert.IsTrue(TirRewrite.TryBetaReduce(Invoke(lam, arg), out var reduced));
+            Assert.IsTrue(BetaReduce(Invoke(lam, arg), out var reduced));
             Assert.AreSame(arg, reduced, "(x => x)(99) reduces to 99");
         }
 
@@ -119,7 +122,7 @@ namespace PlatoTests
             var lam = Lambda(Call("add", Ref(x), Ref(x)), x);   // (x) => add(x, x)
             var arg = Int(3);                                    // cheap literal: dup is free
 
-            Assert.IsTrue(TirRewrite.TryBetaReduce(Invoke(lam, arg), out var reduced));
+            Assert.IsTrue(BetaReduce(Invoke(lam, arg), out var reduced));
             var call = (TirCall)reduced;
             Assert.AreSame(arg, call.Args[0]);
             Assert.AreSame(arg, call.Args[1]);
@@ -132,7 +135,7 @@ namespace PlatoTests
             var lam = Lambda(Call("add", Ref(x), Ref(x)), x);   // uses x twice
             var arg = Call("expensive");                        // non-cheap: would duplicate work
 
-            Assert.IsFalse(TirRewrite.TryBetaReduce(Invoke(lam, arg), out var reduced));
+            Assert.IsFalse(BetaReduce(Invoke(lam, arg), out var reduced));
             Assert.IsNull(reduced);
         }
 
@@ -143,7 +146,7 @@ namespace PlatoTests
             var lam = Lambda(Call("wrap", Ref(x)), x);          // uses x once
             var arg = Call("expensive");
 
-            Assert.IsTrue(TirRewrite.TryBetaReduce(Invoke(lam, arg), out var reduced));
+            Assert.IsTrue(BetaReduce(Invoke(lam, arg), out var reduced));
             Assert.AreSame(arg, ((TirCall)reduced).Args[0]);
         }
 
@@ -155,7 +158,7 @@ namespace PlatoTests
             var coerced = new TirCoerce(lam, null, null, null, null);   // delegate target-typing
             var arg = Int(5);
 
-            Assert.IsTrue(TirRewrite.TryBetaReduce(Invoke(coerced, arg), out var reduced));
+            Assert.IsTrue(BetaReduce(Invoke(coerced, arg), out var reduced));
             Assert.AreSame(arg, reduced);
         }
 
@@ -163,7 +166,7 @@ namespace PlatoTests
         public static void BetaReduce_NonLambdaTargetIsRefused()
         {
             var f = Param("f");
-            Assert.IsFalse(TirRewrite.TryBetaReduce(Invoke(Ref(f), Int(1)), out var reduced));
+            Assert.IsFalse(BetaReduce(Invoke(Ref(f), Int(1)), out var reduced));
             Assert.IsNull(reduced);
         }
 
@@ -172,7 +175,7 @@ namespace PlatoTests
         {
             var x = Param("x");
             var lam = Lambda(Ref(x), x);                        // one parameter
-            Assert.IsFalse(TirRewrite.TryBetaReduce(Invoke(lam, Int(1), Int(2)), out _));
+            Assert.IsFalse(BetaReduce(Invoke(lam, Int(1), Int(2)), out _));
         }
 
         // --- small primitives -------------------------------------------------

@@ -54,9 +54,13 @@ public static partial class TirInliner
     // programs emitted at once (the warm law server) must not reset each other's names.
     [System.ThreadStatic] public static int NextRenameId;
 
-    public static TirFunction Inline(TirFunction tir, ITirInlineHost host, string ownerTypeName, out int inlinedCalls)
+    /// <param name="facts">The body's fact table (compiler-546), from the per-body pass context; a caller
+    /// without one (the C++ writer's non-Cpu route, the tests) gets a fresh table for this body.</param>
+    public static TirFunction Inline(TirFunction tir, ITirInlineHost host, string ownerTypeName, out int inlinedCalls,
+        TirFacts facts = null)
     {
         inlinedCalls = 0;
+        facts ??= new TirFacts(OptimizerNodeModel.Instance);
         // Two switches: the general inliner (--inline) and the scalar-only mode the scalar
         // lowering asks for (InlineScalarBodies), which expands only all-scalar callees so their
         // arithmetic lowers with the caller's; see the gate in TryInlineCall.
@@ -90,7 +94,7 @@ public static partial class TirInliner
             body = TirRewrite.Rewrite(body, n =>
                 etaDepth == 0 && n is TirCall call
                 && TryInlineCall(call, tir, host, ownerTypeName, lambdaDepth > 0, callerNames,
-                    inlinedPairs, passPairs, forHoisting: false, MaxBodyNodes, allowSumSyntactic: false, out var inlined)
+                    inlinedPairs, passPairs, forHoisting: false, MaxBodyNodes, allowSumSyntactic: false, facts, out var inlined)
                     ? Bump(count, inlined)
                     : n,
                 enter: n => { if (n is TirLambda l) { lambdaDepth++; if (IsEtaShaped(l)) etaDepth++; } },
@@ -118,10 +122,13 @@ public static partial class TirInliner
         return n;
     }
 
+    /// <param name="facts">The caller body's fact table (compiler-546): the callee body's parameter uses
+    /// (<see cref="TirFacts.Uses(TirNode, object)"/>) and lambda sizes are read from it; a callee body is
+    /// immutable, so its facts are valid in any table.</param>
     private static bool TryInlineCall(TirCall call, TirFunction callerTir, ITirInlineHost host,
         string ownerTypeName, bool insideLambda, HashSet<string> callerNames,
         HashSet<(object Callee, string ReceiverType)> inlinedPairs, List<(object, string)> passPairs,
-        bool forHoisting, int bodyNodeLimit, bool allowSumSyntactic, out TirNode inlined)
+        bool forHoisting, int bodyNodeLimit, bool allowSumSyntactic, TirFacts facts, out TirNode inlined)
     {
         inlined = null;
 
@@ -223,7 +230,6 @@ public static partial class TirInliner
         var paramDefs = calleeTir.Parameters;
         if (paramDefs == null || paramDefs.Count != call.Args.Count)
             return Refuse(InlineRefusal.ArityMismatch);
-        Dictionary<ParameterDef, (int Count, bool UnderLambda)> uses = null;
         for (var i = 0; i < call.Args.Count; i++)
         {
             var arg = call.Args[i];
@@ -239,8 +245,7 @@ public static partial class TirInliner
 
             if (TirRewrite.IsCheap(arg))
                 continue;
-            uses = uses ?? TirRewrite.CountParamUses(calleeBody);
-            uses.TryGetValue(paramDefs[i], out var u);
+            var u = facts.Uses(calleeBody, paramDefs[i]);
 
             if (TirRewrite.StripCoerce(arg) is TirLambda lamArg)
             {
@@ -263,7 +268,7 @@ public static partial class TirInliner
                 // is the case). Converting positions (tuple/ctor args) are fine and stay inlinable.
                 if (InvokeResultNavigated(calleeBody, paramDefs[i]))
                     return Refuse(InlineRefusal.LambdaArgRefused);
-                if (u.Count * lamArg.Descendants().Count() > MaxBodyNodes)
+                if (u.Count * facts.Size(lamArg) > MaxBodyNodes)
                     return Refuse(InlineRefusal.LambdaArgRefused);
                 continue;
             }
@@ -310,7 +315,7 @@ public static partial class TirInliner
             // lambda body is the caller's own (no callee params / Self inside), so the reduced
             // node needs no further callee-side rewriting.
             if (n is TirInvoke invk
-                && TirRewrite.TryBetaReduce(invk, out var reduced, x => IsCheapProjection(host, x)))
+                && TirRewrite.TryBetaReduce(invk, facts, out var reduced, x => IsCheapProjection(host, x)))
             {
                 if (report != null) report.BetaReductions++;
                 return reduced;

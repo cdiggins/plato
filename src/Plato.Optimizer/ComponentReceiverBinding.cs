@@ -29,7 +29,7 @@ public static class ComponentReceiverBinding
     {
         if (!pass.On("scalar-arrays") || tir?.Body == null)
             return tir;
-        var binder = new Binder(tir, pass.Compilation);
+        var binder = new Binder(tir, pass.Compilation, pass.Facts);
         var body = binder.Body(tir.Body);
         return binder.Bound == 0
             ? tir
@@ -52,21 +52,18 @@ public static class ComponentReceiverBinding
     {
         private readonly Ara3D.Geometry.Compiler.Compilation _compilation;
         private readonly HashSet<string> _names;
+        private readonly TirFacts _facts;
         private int _next;
 
         public int Bound { get; private set; }
 
-        public Binder(TirFunction function, Ara3D.Geometry.Compiler.Compilation compilation)
+        /// <param name="facts">The body's fact table, whose <see cref="TirFacts.BoundNames(TirFunction)"/> is the
+        /// set of names a fresh local must avoid, and which answers whether an expression assigns (compiler-546).</param>
+        public Binder(TirFunction function, Ara3D.Geometry.Compiler.Compilation compilation, TirFacts facts)
         {
             _compilation = compilation;
-            _names = function.AllNodes.Select(n => n switch
-            {
-                TirVariable v => v.Def?.Name, TirParameter p => p.Def?.Name,
-                TirLet l => l.Def?.Name, TirInlineBinding b => b.Def.Name,
-                TirInlineRegion r => r.Result.Name, TirTempRef t => t.Name, _ => null
-            }).Concat(function.Parameters.Select(p => p.Name))
-                .Concat(function.AllNodes.OfType<TirLambda>().SelectMany(l => l.Parameters).Select(p => p.Name))
-                .Where(n => n != null).ToHashSet();
+            _facts = facts;
+            _names = facts.BoundNames(function);
         }
 
         public TirNode Body(TirNode node)
@@ -83,7 +80,7 @@ public static class ComponentReceiverBinding
                 .SelectMany(n => TirStatementRewriter.Rewrite(n, Value, Scope)).ToArray(), node.Origin);
 
         private TirNode Value(TirNode expression, List<TirNode> before)
-            => expression == null || expression.Descendants().Any(n => n is TirAssign)
+            => expression == null || _facts.ContainsAssign(expression)
                 ? expression
                 : Walk(expression, true, before);
 

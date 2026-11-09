@@ -29,7 +29,7 @@ public static partial class TirLoopLowerer
         var previousMore = _lowerMore;
         _sortLoops = pass.On("closure-free");
         _lowerMore = pass.On("lower-more");
-        try { return RewriteScoped(tir); }
+        try { return RewriteScoped(tir, pass.Facts); }
         finally { _sortLoops = previousSort; _lowerMore = previousMore; }
     }
 
