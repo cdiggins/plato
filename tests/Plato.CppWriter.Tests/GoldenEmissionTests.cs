@@ -43,6 +43,8 @@ public class GoldenEmissionTests
         yield return new TestCaseData("shipping-sum-switch", Shipping with { SwitchSumDispatch = true }).SetName("Golden_shipping_sum_switch");
         yield return new TestCaseData("shipping-compact-sums", Shipping with { CompactSums = true, SwitchSumDispatch = true }).SetName("Golden_shipping_compact_sums");
         yield return new TestCaseData("shipping-static-strings", Shipping with { StaticStringLiterals = true }).SetName("Golden_shipping_static_strings");
+        // TKT-1223: the pool is on for Cpu, so cpu-defaults shows it; this set spells --no-cpp-string-pool and shows the per-site statics it replaced.
+        yield return new TestCaseData("cpu-defaults-static-strings", CpuDefaults(Roots, "--no-cpp-string-pool")).SetName("Golden_cpu_defaults_static_strings");
         yield return new TestCaseData("shipping-w2", Shipping with
         {
             BorrowLargeParameters = true, BorrowReads = true, BorrowNonTrivial = true, BorrowMinBytes = 32,

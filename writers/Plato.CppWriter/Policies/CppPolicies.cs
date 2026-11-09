@@ -24,7 +24,8 @@ namespace Ara3D.Geometry.CppWriter.Policies
             Lambdas = new CaptureByValueLambdas(),
             Sums = options.CompactSums ? new CompactUnionSumLayout(options.SwitchSumDispatch)
                 : options.SwitchSumDispatch ? new SwitchKindSumLayout() : new FlattenedKindSumLayout(),
-            Strings = options.StaticStringLiterals ? new StaticStringLiterals() : new MakeStringLiterals(),
+            Strings = options.StringPool ? new PooledStringLiterals()
+                : options.StaticStringLiterals ? new StaticStringLiterals() : new MakeStringLiterals(),
             Units = new LineLimitPartitioner { MaxFunctionLines = options.UnitLines },
             Attributes = new NoFunctionAttributes(),
             Kernels = options.SimdKernels ? new SimdKernels() : new NoKernelOverrides(),
