@@ -14,6 +14,7 @@ namespace Ara3D.Geometry.CppWriter.Policies
         public IStringLiteralPolicy Strings { get; init; }
         public IUnitPartitioner Units { get; init; }
         public IFunctionAttributes Attributes { get; init; }
+        public IKernelOverrides Kernels { get; init; }
         public LoweredLoopEmitters Loops { get; init; }
 
         public static CppPolicies For(CppCpuOptions options) => new CppPolicies
@@ -26,6 +27,7 @@ namespace Ara3D.Geometry.CppWriter.Policies
             Strings = options.StaticStringLiterals ? new StaticStringLiterals() : new MakeStringLiterals(),
             Units = new LineLimitPartitioner { MaxFunctionLines = options.UnitLines },
             Attributes = new NoFunctionAttributes(),
+            Kernels = options.SimdKernels ? new SimdKernels() : new NoKernelOverrides(),
             Loops = BuiltInLoopEmitters.Create(),
         };
     }

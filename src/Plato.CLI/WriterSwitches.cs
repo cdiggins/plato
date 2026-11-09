@@ -117,6 +117,8 @@ public static class WriterSwitches
         // TKT-1208: an array literal is one call to plato::make_literal<T>(a, b, ...) instead of an immediately invoked lambda
         // (1,360 of the mesher's 2,904 lambda literals); off until plato-brep measures the link and pins it.
         new("cpp-literal-calls", Cpu),
+        // 2026-11-07 (plato-brep docs/plans/cpp-simd-under-tolerance-2026-11-07.md): the record arithmetic of Policies/SimdKernels.cs is also written as AVX2 kernel calls under #if PLATO_SIMD.
+        new("cpp-simd-kernels", Cpu),
         // The most lines of definitions in one emitted function unit; CppCpuOptions.DefaultUnitLines (5000) when absent.
         new("cpp-unit-lines", Cpu) { Parameter = SwitchParameter.PositiveInt },
         // --cpp-prune-to-roots=A,B writes only what --cpp-roots and A,B (functions or types a host names) reach; absent, everything.

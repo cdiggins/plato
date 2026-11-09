@@ -1691,6 +1691,12 @@ namespace Ara3D.Geometry.CppWriter
                     if (typeVars.Count > 0)
                         sig = $"{TemplateHeader(typeVars.Concat(templateNames).ToList())}PLATO_FN {attributes}{ret} {FunctionName(emitName)}({parameters})";
                     definition = sig + bodyText;
+                    // A kernel override (Policies.Kernels): the definition twice, the prelude kernel under its macro and the body otherwise.
+                    var kernel = typeVars.Count == 0 && templateNames.Count == 0
+                        ? Policies.Kernels.Call(fi.Name, paramTypes, ret, paramNames)
+                        : null;
+                    if (kernel != null)
+                        definition = $"#if {Policies.Kernels.Condition}\n{StripQualifier(sig)} {{ return {kernel}; }}\n#else\n{definition}\n#endif";  // Add strips the other PLATO_FN
                 }
                 if (tir == null)
                     typeVars = null;

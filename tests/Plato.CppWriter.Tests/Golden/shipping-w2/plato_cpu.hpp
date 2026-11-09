@@ -21,6 +21,9 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+#if PLATO_SIMD
+#include <immintrin.h>
+#endif
 
 #ifndef PLATO_ASSERT
 #define PLATO_ASSERT(c) assert(c)
@@ -33,6 +36,7 @@ namespace plato
 #include "plato_array.hpp"
 #include "plato_builders.hpp"
 #include "plato_scalar.hpp"
+#include "plato_simd.hpp"
 #include "plato_string.hpp"
 #include "plato_bytes.hpp"
 #include "plato_helpers.hpp"
