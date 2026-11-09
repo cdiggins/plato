@@ -177,8 +177,20 @@ public partial class TirCppBodyWriter
             Write($"plato::Array<{elem}>{{ nullptr, 0 }}");
             return;
         }
-        var p = $"_lit{_nextArrayId++}";
         var elemPlato = elemType != null ? CppWriter.PlatoTypeName(elemType) : null;
+        if (UsesCpuLambdas && _w.CpuOptions.LiteralCalls)
+        {
+            // One call, no lambda: make_literal allocates and stores in order (TKT-1208).
+            Write($"plato::make_literal<{elem}>(");
+            for (var i = 0; i < arr.Elements.Count; i++)
+            {
+                if (i > 0) Write(", ");
+                WriteConvertedTo(arr.Elements[i], elem, elemPlato);
+            }
+            Write(")");
+            return;
+        }
+        var p = $"_lit{_nextArrayId++}";
         Write($"({_w.Policies.Lambdas.Capture(LambdaSite.ArrayLiteral)}() -> plato::Array<{elem}> {{ {elem}* {p} = plato::arena_alloc<{elem}>({arr.Elements.Count}); ");
         for (var i = 0; i < arr.Elements.Count; i++)
         {

@@ -38,6 +38,18 @@
         return Array<T>{ p, n };
     }
 
+    // make_literal<T>(a, b, ...): the array literal [a, b, ...] in the arena, each element stored in order with the
+    // assignment the lambda form used (--cpp-literal-calls, TKT-1208). The empty literal is Array<T>{ nullptr, 0 } inline.
+    template <class T, class... Es>
+    inline Array<T> make_literal(const Es&... es)
+    {
+        constexpr int32_t n = static_cast<int32_t>(sizeof...(Es));
+        T* p = arena_alloc<T>(n);
+        int32_t i = 0;
+        ((p[i++] = es), ...);
+        return Array<T>{ p, n };
+    }
+
     template <class T> inline int32_t ToCount(Array<T> xs) { return xs.count; }
     // Internal immutable read: large values may bind directly to borrowed call
     // parameters. The reference is valid only while the array's region is alive.

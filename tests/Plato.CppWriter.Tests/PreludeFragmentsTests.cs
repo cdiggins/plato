@@ -13,6 +13,7 @@ namespace PlatoCppWriterTests;
 public class PreludeFragmentsTests
 {
     private const string OldCommit = "8b6efe01";
+    private const string NL = "\n";
 
     private static readonly CppCpuOptions W2 = CppCpuOptions.Default with { BorrowMinBytes = 32, BorrowNonTrivial = true, BorrowReads = true };
 
@@ -31,6 +32,18 @@ public class PreludeFragmentsTests
         if (o.BorrowReads)
             text = text.Replace("template <class T> inline ReadOnlyParameter<T> array_at_readonly(Array<T> xs, int32_t i)",
                 "template <class T> inline const T& array_at_readonly(Array<T> xs, int32_t i)");
+        // TKT-1208: make_literal was added to plato_array.hpp after the split (--cpp-literal-calls).
+        text = text.Replace("    template <class T> inline int32_t ToCount(Array<T> xs) { return xs.count; }",
+            "    template <class T, class... Es>" + NL +
+            "    inline Array<T> make_literal(const Es&... es)" + NL +
+            "    {" + NL +
+            "        constexpr int32_t n = static_cast<int32_t>(sizeof...(Es));" + NL +
+            "        T* p = arena_alloc<T>(n);" + NL +
+            "        int32_t i = 0;" + NL +
+            "        ((p[i++] = es), ...);" + NL +
+            "        return Array<T>{ p, n };" + NL +
+            "    }" + NL + NL +
+            "    template <class T> inline int32_t ToCount(Array<T> xs) { return xs.count; }");
         return text;
     }
 
