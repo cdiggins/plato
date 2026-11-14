@@ -10,9 +10,9 @@ namespace Ara3D.Geometry.CppWriter
     {
         /// <summary>
         /// True when no value of <paramref name="type"/> can hold a pointer into the arena: the Cpu primitives, Angle,
-        /// String (a <c>std::u16string</c> that owns its heap text), and non-generic records and sums whose fields are all
-        /// such types. An Array, Bytes, list, buffer or function value holds one, as does any record containing one, and
-        /// so does any type the dialect cannot spell (a type variable, an interface).
+        /// and non-generic records and sums whose fields are all such types. A String (a view whose code units are in the
+        /// arena unless they are a constant's), an Array, Bytes, list, buffer or function value holds one, as does any
+        /// record containing one, and so does any type the dialect cannot spell (a type variable, an interface).
         /// </summary>
         public bool HoldsNoArenaMemory(TypeExpression type)
             => type != null && HoldsNoArenaMemory(TypeInstance.Create(type), new HashSet<string>());
@@ -22,8 +22,10 @@ namespace Ara3D.Geometry.CppWriter
             var cpp = CppTypeNameOrNull(ti);
             if (cpp == null)
                 return false;
-            if (CpuPrimitives.ContainsValue(cpp) || cpp == "Angle" || cpp == "String")
+            if (CpuPrimitives.ContainsValue(cpp) || cpp == "Angle")
                 return true;
+            if (cpp == "String")
+                return false;
             if (ti.Args.Count > 0 || !StructNames.Contains(ti.Name))
                 return false;
             var c = ConcreteNamed(ti.Name);

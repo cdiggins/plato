@@ -4,6 +4,30 @@
 
 namespace plato {
 
+bool Between(ReadOnlyParameter<Inductance> x, ReadOnlyParameter<Inductance> lower, ReadOnlyParameter<Inductance> upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
+
+Inductance Clamp(ReadOnlyParameter<Inductance> x, ReadOnlyParameter<Inductance> lower, ReadOnlyParameter<Inductance> upper) { return Lesser(Greater(x, lower), upper); }
+
+Inductance Min3(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, ReadOnlyParameter<Inductance> c) { return Lesser(Lesser(a, b), c); }
+
+Inductance Max3(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, ReadOnlyParameter<Inductance> c) { return Greater(Greater(a, b), c); }
+
+int32_t Compare(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
+
+Inductance Double(ReadOnlyParameter<Inductance> x) { return Add(x, x); }
+
+Inductance Half(ReadOnlyParameter<Inductance> x) { return Divide(x, 2.0); }
+
+Inductance Third(ReadOnlyParameter<Inductance> x) { return Divide(x, 3.0); }
+
+Inductance Quarter(ReadOnlyParameter<Inductance> x) { return Divide(x, 4.0); }
+
+Inductance Eighth(ReadOnlyParameter<Inductance> x) { return Divide(x, 8.0); }
+
+Inductance Sixteenth(ReadOnlyParameter<Inductance> x) { return Divide(x, 16.0); }
+
+Inductance Tenth(ReadOnlyParameter<Inductance> x) { return Divide(x, 10.0); }
+
 Inductance Hundredth(ReadOnlyParameter<Inductance> x) { return Divide(x, 100.0); }
 
 Inductance Thousandth(ReadOnlyParameter<Inductance> x) { return Divide(x, 1000.0); }
@@ -4978,29 +5002,5 @@ double Cdf(NormalDistribution x, double value) { std::abort(); }
 double Mean(LogNormalDistribution x) { std::abort(); }
 
 double Variance(LogNormalDistribution x) { std::abort(); }
-
-double Pdf(LogNormalDistribution x, double value) { std::abort(); }
-
-double Cdf(LogNormalDistribution x, double value) { std::abort(); }
-
-double Mean(ExponentialDistribution x) { std::abort(); }
-
-double Variance(ExponentialDistribution x) { std::abort(); }
-
-double Pdf(ExponentialDistribution x, double value) { std::abort(); }
-
-double Cdf(ExponentialDistribution x, double value) { std::abort(); }
-
-double Mean(CauchyDistribution x) { std::abort(); }
-
-double Variance(CauchyDistribution x) { std::abort(); }
-
-double Pdf(CauchyDistribution x, double value) { std::abort(); }
-
-double Cdf(CauchyDistribution x, double value) { std::abort(); }
-
-double Mean(LaplaceDistribution x) { std::abort(); }
-
-double Variance(LaplaceDistribution x) { std::abort(); }
 
 } // namespace plato

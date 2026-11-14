@@ -307,10 +307,12 @@
     inline void from_json(const Json& j, char16_t& v)
     {
         if (!j.is_string()) std::abort();
-        const auto text = StringFromUtf8(j.s);
-        if (text.size() != 1) std::abort();
-        v = text[0];
+        // One UTF-16 code unit is at most three UTF-8 bytes, and three bytes are at most three units: no allocation.
+        char16_t units[3];
+        if (j.s.size() > 3 || utf16_from_utf8(j.s.data(), j.s.size(), units) != 1) std::abort();
+        v = units[0];
     }
+    // The String is in this thread's arena, like the elements of an Array read from JSON.
     inline void from_json(const Json& j, String& v) { v = j.is_string() ? StringFromUtf8(j.s) : String(); }
     // Bytes use the managed Latin-1 JSON string representation; Json strings store UTF-8.
     inline void from_json(const Json& j, Bytes& value)
@@ -348,7 +350,7 @@
     inline Json to_json(double v) { return Json::Number(v); }
     inline Json to_json(int32_t v) { return Json::Number(static_cast<double>(v)); }
     inline Json to_json(bool v) { return Json::Bool(v); }
-    inline Json to_json(char16_t v) { return Json::String(StringToUtf8(String(1, v))); }
+    inline Json to_json(char16_t v) { return Json::String(StringToUtf8(String(&v, 1))); }
     inline Json to_json(const String& v) { return Json::String(StringToUtf8(v)); }
     inline Json to_json(const Bytes& value)
     {

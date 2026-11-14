@@ -58,11 +58,11 @@
     inline bool TryParseNumberBytes(Bytes t, double& value) { return TryParseNumber(reinterpret_cast<const char*>(t.data), static_cast<size_t>(t.count), value); }
     inline double NumberFromBytes(Bytes b) { double v; return TryParseNumberBytes(b, v) ? v : std::numeric_limits<double>::quiet_NaN(); }
 
-    // Each byte maps to the same-valued Latin-1 UTF-16 code unit (never UTF-8 decoding).
+    // Each byte maps to the same-valued Latin-1 UTF-16 code unit (never UTF-8 decoding). The String is in the arena.
     inline String ToText(Bytes b)
     {
-        String text;
-        text.reserve(static_cast<size_t>(b.count));
-        for (int32_t i = 0; i < b.count; ++i) text.push_back(static_cast<char16_t>(b.data[i]));
-        return text;
+        if (b.count <= 0) return String();
+        char16_t* units = string_alloc(static_cast<size_t>(b.count));
+        for (int32_t i = 0; i < b.count; ++i) units[i] = static_cast<char16_t>(b.data[i]);
+        return String(units, static_cast<size_t>(b.count));
     }

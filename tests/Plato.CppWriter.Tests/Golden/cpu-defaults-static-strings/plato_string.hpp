@@ -1,9 +1,35 @@
 // string: String indexing, text forms, number and integer parsing.
 // A fragment of plato_cpu.hpp: included by it, in order, inside namespace plato. Not self-contained.
 
-    // PLATO_STR("utf-8 text", byte length): a String constant built once per use site (the writer's StaticStringLiterals policy).
-    // The function-local static is initialised thread-safely on first use; the expression is a const String&.
-#define PLATO_STR(text, n) ([]() -> const ::plato::String& { static const ::plato::String s = ::plato::make_string_n(text, n); return s; }())
+    // PLATO_STR(u"text", n): a String constant of n UTF-16 code units (the writer's StaticStringLiterals policy). The
+    // String views the literal itself, which has static storage: nothing is built or allocated when the site is
+    // evaluated, the constant outlives every arena_reset(), and every thread may read it. The string pool's entries
+    // (plato_strings.cpp) are the same kind of String. make_string_n is the form that allocates, in the arena.
+#define PLATO_STR(text, n) (::plato::String(text, static_cast<size_t>(n)))
+
+    inline char16_t* string_alloc(size_t n)
+    {
+        if (n > static_cast<size_t>(INT32_MAX)) std::abort();
+        return arena_alloc<char16_t>(static_cast<int32_t>(n));
+    }
+    inline String string_copy(const char16_t* p, size_t n)
+    {
+        if (n == 0) return String();
+        char16_t* units = string_alloc(n);
+        std::memcpy(units, p, n * sizeof(char16_t));
+        return String(units, n);
+    }
+    inline String string_copy(const String& s) { return string_copy(s.chars, s.size()); }
+    inline String operator+(const String& a, const String& b)
+    {
+        if (a.length == 0) return b;
+        if (b.length == 0) return a;
+        const size_t n = a.size() + b.size();
+        char16_t* units = string_alloc(n);
+        std::memcpy(units, a.chars, a.size() * sizeof(char16_t));
+        std::memcpy(units + a.length, b.chars, b.size() * sizeof(char16_t));
+        return String(units, n);
+    }
 
     // String.Count / At index UTF-16 code units, including surrogate halves.
     inline int32_t ToCount(const String& s) { return static_cast<int32_t>(s.size()); }
@@ -14,10 +40,12 @@
     inline int32_t ToInteger(int32_t x) { return x; }
     inline char16_t ToCharacter(int32_t n) { return static_cast<char16_t>(n); }
 
-    // FromCharacters: the String of the array's characters, in order.
+    // FromCharacters: the String of the array's characters, in order. It views the array's elements (both are immutable
+    // and live as long as each other); nothing is copied.
     inline String FromCharacters(Array<char16_t> cs) { return cs.count > 0 ? String(cs.data, static_cast<size_t>(cs.count)) : String(); }
 
-    // Substring: the characters at start .. start + count - 1 that exist; clamped at both ends, never fails.
+    // Substring: the characters at start .. start + count - 1 that exist; clamped at both ends, never fails. It views
+    // the units of s; nothing is copied.
     inline String Substring(const String& s, int32_t start, int32_t count)
     {
         int64_t first = start;
@@ -26,7 +54,7 @@
         if (first < 0) { n += first; first = 0; }
         if (n <= 0 || first >= length) return String();
         if (n > length - first) n = length - first;
-        return s.substr(static_cast<size_t>(first), static_cast<size_t>(n));
+        return String(s.chars + first, static_cast<size_t>(n));
     }
 
     // IsNumberText / NumberFromText: the P21 real forms, checked by hand (sign, digits with an optional point,

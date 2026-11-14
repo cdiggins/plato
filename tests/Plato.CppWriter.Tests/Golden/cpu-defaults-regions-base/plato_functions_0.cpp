@@ -4399,6 +4399,30 @@ Array<double> RegionScaledByHyp(Array<double> xs) { return RegionScaledBy(xs, Re
 
 Array<double> RegionScaledByFirst(Array<double> xs) { return RegionScaledBy(xs, ((0 < ToCount(xs)) ? plato::array_at_readonly(xs, 0) : 0.0)); }
 
+String RegionText(Array<int32_t> codes)
+{
+    auto _s0 = codes;
+    int32_t _n0 = _s0.count;
+    char16_t* _a0 = plato::arena_alloc<char16_t>(_n0);
+    for (int32_t _i0 = 0; _i0 < _n0; _i0++)
+    {
+        const auto& _eval0_0 = _s0.data[_i0];
+        _a0[_i0] = ToCharacter(_eval0_0);
+    }
+    auto _lp0 = plato::make_array(_a0, _n0);
+    Array<char16_t> units = _lp0;
+    int32_t n = 0;
+    int32_t i = 0;
+    while ((i < ToCount(units)))
+    {
+        n = ((0 < ToInteger(plato::array_at_readonly(units, i))) ? (i + 1) : n);
+        i = (i + 1);
+    }
+    return Substring(FromCharacters(units), 0, n);
+}
+
+Array<String> RegionTexts(Array<int32_t> a, Array<int32_t> b) { return ([&]() -> plato::Array<String> { String* _lit0 = plato::arena_alloc<String>(2); _lit0[0] = RegionText(a); _lit0[1] = RegionText(b); return plato::make_array(_lit0, 2); }()); }
+
 bool LessThan(ReadOnlyParameter<ElectricCurrent> a, ReadOnlyParameter<ElectricCurrent> b) { return (LessThanOrEquals(a, b) ? (a != b) : false); }
 
 bool GreaterThan(ReadOnlyParameter<ElectricCurrent> a, ReadOnlyParameter<ElectricCurrent> b) { return LessThan(b, a); }
@@ -4978,29 +5002,5 @@ bool GreaterThanOrEquals(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Indu
 Inductance Lesser(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b) { return (LessThanOrEquals(a, b) ? a : b); }
 
 Inductance Greater(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b) { return (LessThanOrEquals(a, b) ? b : a); }
-
-bool Between(ReadOnlyParameter<Inductance> x, ReadOnlyParameter<Inductance> lower, ReadOnlyParameter<Inductance> upper) { return (LessThanOrEquals(lower, x) ? LessThanOrEquals(x, upper) : false); }
-
-Inductance Clamp(ReadOnlyParameter<Inductance> x, ReadOnlyParameter<Inductance> lower, ReadOnlyParameter<Inductance> upper) { return Lesser(Greater(x, lower), upper); }
-
-Inductance Min3(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, ReadOnlyParameter<Inductance> c) { return Lesser(Lesser(a, b), c); }
-
-Inductance Max3(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b, ReadOnlyParameter<Inductance> c) { return Greater(Greater(a, b), c); }
-
-int32_t Compare(ReadOnlyParameter<Inductance> a, ReadOnlyParameter<Inductance> b) { return ((a == b) ? 0 : (LessThanOrEquals(a, b) ? (-1) : 1)); }
-
-Inductance Double(ReadOnlyParameter<Inductance> x) { return Add(x, x); }
-
-Inductance Half(ReadOnlyParameter<Inductance> x) { return Divide(x, 2.0); }
-
-Inductance Third(ReadOnlyParameter<Inductance> x) { return Divide(x, 3.0); }
-
-Inductance Quarter(ReadOnlyParameter<Inductance> x) { return Divide(x, 4.0); }
-
-Inductance Eighth(ReadOnlyParameter<Inductance> x) { return Divide(x, 8.0); }
-
-Inductance Sixteenth(ReadOnlyParameter<Inductance> x) { return Divide(x, 16.0); }
-
-Inductance Tenth(ReadOnlyParameter<Inductance> x) { return Divide(x, 10.0); }
 
 } // namespace plato

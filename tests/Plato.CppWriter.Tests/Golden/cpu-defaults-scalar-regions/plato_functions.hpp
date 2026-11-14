@@ -1838,6 +1838,8 @@ Array<double> RegionAppliedArray(Array<double> xs);
 Array<double> RegionPerElement(Array<Array<double>> xss);
 Array<double> RegionScaledByHyp(Array<double> xs);
 Array<double> RegionScaledByFirst(Array<double> xs);
+String RegionText(Array<int32_t> codes);
+Array<String> RegionTexts(Array<int32_t> a, Array<int32_t> b);
 template<class T> int32_t LastIndex(Array<T> self);
 template<class T> bool IsValidIndex(Array<T> self, int32_t index);
 template<class T, class TV2> bool IsValidIndex(Array<T> self, TV2 index);

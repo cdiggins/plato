@@ -1,7 +1,8 @@
 // plato_cpu.hpp: the CPU prelude of the Plato C++ writer, dialect cpu64i32 (TKT-1097).
 // Mirrors the C# runtime (Intrinsics/*.cs of Ara3D.StepBrep) name for name: Number is double,
-// Integer is int32_t, Boolean is bool, Character is char16_t, String is std::u16string, and an
-// Array<T> is an immutable view into a thread-local bump arena. No exceptions, no RTTI, no iostream.
+// Integer is int32_t, Boolean is bool, Character is char16_t, and a String and an Array<T>
+// are immutable views, into a thread-local bump arena or static storage (a String's lifetime rule is at its
+// definition in plato_core.hpp). No exceptions, no RTTI, no iostream.
 //
 // The runtime is these fragments (plato_core.hpp, plato_arena.hpp, ...), included below in order inside
 // namespace plato; its options are the PLATO_* macros of plato_config.hpp, each overridable with -D.

@@ -126,7 +126,18 @@ The presence bit does not change element counts or array indexing. Hosts must us
 constructors rather than fill a default view's pointer/count fields directly.
 
 CPU text contract: `Character` is an unsigned UTF-16 code unit (`char16_t`) and
-`String` owns UTF-16 code units (`std::u16string`). Count, indexing, substring,
+`String` is an immutable view of UTF-16 code units: a pointer and a length,
+trivially copyable and trivially destructible, like `Array<T>`. The code units
+are in static storage (a `u"..."` literal, `PLATO_STR`, the string pool), in the
+arena of the thread that made the String (`operator+`, `ToString`, `ToText`,
+`StringFromUtf8`, `make_string_n`, `from_json`; `Substring` and `FromCharacters`
+view units that already exist), or in storage the host owns. A String in an arena
+is valid until that thread resets its arena, rolls it back past the allocation, or
+exits: a host that keeps one across a reset or hands it to another thread
+deep-copies it first (`string_copy` into the calling thread's arena, or a
+`std::u16string` or `StringToUtf8` of its own). Equality, order and hashing read
+the code units. A call that returns a String or a record holding one is not a
+scalar region (`--cpp-scalar-regions`). Count, indexing, substring,
 comparison and integer conversion use code units, matching C#. Supplementary
 characters occupy surrogate pairs. JSON and host byte streams use UTF-8;
 `StringFromUtf8` rejects malformed UTF-8, and `StringToUtf8` replaces unpaired

@@ -95,11 +95,16 @@ public class BorrowReadsTests
             int main()
             {
                 using namespace plato;
-                using TaggedArg = std::conditional_t<PLATO_TEST_BORROW != 0, const Tagged&, Tagged>;
-                static_assert(std::is_same_v<decltype(&NameLength), int32_t(*)(TaggedArg)>);
+                // Tagged is a String and a Number: 24 bytes and, String being a view, trivially copyable. It is under the
+                // size threshold, so it is passed by value with or without --cpp-borrow-nontrivial; that switch borrows
+                // a record that is not trivially copyable, which is now only a host's own type.
+                static_assert(std::is_trivially_copyable_v<Tagged> && sizeof(Tagged) < PLATO_BORROW_MIN_BYTES);
+                static_assert(std::is_same_v<decltype(&NameLength), int32_t(*)(Tagged)>);
+                struct Owning { std::u16string text; };
+                static_assert(std::is_same_v<ReadOnlyParameter<Owning>, std::conditional_t<PLATO_TEST_BORROW != 0, const Owning&, Owning>>);
                 static_assert(std::is_same_v<decltype(&PairSum), double(*)(Pair)>);
                 auto rows = arena_alloc<Tagged>(3);
-                rows[0].Name = u"a heap-backed name longer than the small-string buffer"; rows[0].X = 1;
+                rows[0].Name = u"a name of fifty-four UTF-16 code units, held as a view"; rows[0].X = 1;
                 rows[1].Name = u"bb"; rows[1].X = 2;
                 rows[2].Name = u"ccc"; rows[2].X = 4;
                 Array<Tagged> xs{ rows, 3 };
@@ -108,14 +113,15 @@ public class BorrowReadsTests
                 if (lengths.count != 3 || lengths.data[1] != 2 || lengths.data[2] != 3) return 2;
                 auto name = FirstName(xs);
                 auto kept = KeepFirst(xs);
-                rows[0].Name[0] = u'x';
+                rows[0].Name = u"x";   // a String's units are never written: the element is given another String
                 if (name[0] != u'a' || kept.Name[0] != u'a') return 3;
                 if (Alias(rows[1]) != 2) return 4;
                 if (Rewritten(rows[1], rows[2]) != 6) return 5;
                 if (PairSum(Pair{ 2, 3 }) != 5) return 6;
                 if (PickOr(xs, 2).X != 4 || PickOr(xs, 7).X != 1) return 8;
+                // The name is a literal (static storage), so the copies taken before the reset still read it.
                 arena_reset();
-                if (kept.Name.size() != 54 || name.size() != 54) return 7;
+                if (kept.Name.size() != 54 || name.size() != 54 || kept.Name[53] != u'w' || name != kept.Name) return 7;
                 return 0;
             }
             """);

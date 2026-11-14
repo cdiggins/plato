@@ -71,4 +71,20 @@ library GoldenFixtureScalarRegions
     RegionScaledByHyp(xs: Array<Number>): Array<Number> => RegionScaledBy(xs, RegionHyp(3.0, 4.0));
     // Not wrapped: the callee allocates nothing (condition d).
     RegionScaledByFirst(xs: Array<Number>): Array<Number> => RegionScaledBy(xs, RegionFirst(xs));
+
+    // A String-returning callee taking an array, which allocates: the String views the mapped characters, in the arena.
+    RegionText(codes: Array<Integer>): String
+    {
+        var units = codes.Map((c) => c.ToCharacter);
+        var n = 0;
+        var i = 0;
+        while (i < units.Count)
+        {
+            n = units[i].ToInteger > 0 ? i + 1 : n;
+            i = i + 1;
+        }
+        return Substring(FromCharacters(units), 0, n);
+    }
+    // Never wrapped: a String is a view, and its code units may be in the span a region would roll back.
+    RegionTexts(a: Array<Integer>, b: Array<Integer>): Array<String> => [RegionText(a), RegionText(b)];
 }

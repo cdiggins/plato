@@ -52,5 +52,11 @@ runtime-provided conversions and emitted Plato bodies; it does not certify runti
 values or the full BREP corpus.
 
 `StringBorrowingTests` checks the const-reference function signature and runs calls
-with stored and temporary strings. Returned strings remain values, so later input
-changes cannot alter a saved result. This does not validate the full BREP corpus.
+with stored and temporary strings under each literal policy (`make_string_n`,
+`PLATO_STR`, the pool). A String is an immutable view, so a saved result is not
+changed when the caller's variable is given another String; a constant that views
+a literal outlives an arena reset; and a call that returns a String is not wrapped
+in a scalar region. `StringLiteralTests` builds `StringLiteralCheck.cpp`, the
+native check of the view itself (trivially copyable, contents-based comparison and
+hashing, constants across resets and threads), with and without the arena fast
+path. This does not validate the full BREP corpus.

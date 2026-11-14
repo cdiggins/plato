@@ -5,6 +5,8 @@
 #include <vector>
 
 struct Rec { double x = 7, y = 8; };      // trivially copyable, not trivially default constructible
+struct Named { plato::String name; double x; };
+static_assert(std::is_trivially_copyable<Named>::value && std::is_trivially_destructible<Named>::value, "a record of Strings is plain data");
 static int destroyed = 0;
 struct Counted { int id = 0; ~Counted() { destroyed++; } };
 
@@ -62,6 +64,11 @@ int main()
     Rec* r = arena_alloc<Rec>(4);
     for (int i = 0; i < 4; i++) { r[i].x = i; r[i].y = -i; }
     for (int i = 0; i < 4; i++) CHECK(r[i].x == i && r[i].y == -i);
+    // a record of Strings is such a record: String is a view, trivially copyable, so with PLATO_ARENA_UNINIT its
+    // constructor does not run and every member is written before it is read
+    Named* named = arena_alloc<Named>(4);
+    for (int i = 0; i < 4; i++) { named[i].name = i % 2 ? String(u"odd") : String(); named[i].x = i; }
+    for (int i = 0; i < 4; i++) CHECK(named[i].name == (i % 2 ? String(u"odd") : String()) && named[i].x == i);
     {
         const ArenaMark m2 = arena_mark();
         Counted* c = arena_alloc<Counted>(5);

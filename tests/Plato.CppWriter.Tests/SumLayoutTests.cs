@@ -86,8 +86,10 @@ public class SumLayoutTests
                 Shape zero{};
                 if (zero.Kind != 0) return 8;
                 // Label holds a String, so it keeps flat members; the other five cases share one union (largest: Seg, 32 bytes).
-                if (SUM_COMPACT ? sizeof(Shape) > 96 : sizeof(Shape) < 128) return 9;
+                // A String is a pointer and a length, 16 bytes: flat, the six cases' fields are 104 bytes after Kind.
+                if (SUM_COMPACT ? sizeof(Shape) > 80 : sizeof(Shape) < 112) return 9;
                 if (SUM_COMPACT && !std::is_trivially_copyable_v<Pt>) return 10;
+                if (!std::is_trivially_copyable_v<Shape> || !std::is_trivially_destructible_v<Shape>) return 11;
                 return 0;
             }
             """);

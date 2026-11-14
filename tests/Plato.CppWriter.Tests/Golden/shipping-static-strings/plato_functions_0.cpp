@@ -20,7 +20,7 @@ bool Equals(const Angle& a, const Angle& b) { return a == b; }
 
 bool NotEquals(const Angle& a, const Angle& b) { return a != b; }
 
-String TypeName(const Angle& _) { return PLATO_STR("Angle", 5); }
+String TypeName(const Angle& _) { return PLATO_STR(u"Angle", 5); }
 
 int32_t GetHashCode(const Angle& a) { int32_t h = 17; h = mix_(h, hash_(a.Radians)); return h; }
 
@@ -28,7 +28,7 @@ bool Equals(const Axis3D& a, const Axis3D& b) { return a == b; }
 
 bool NotEquals(const Axis3D& a, const Axis3D& b) { return a != b; }
 
-String TypeName(const Axis3D& _) { return PLATO_STR("Axis3D", 6); }
+String TypeName(const Axis3D& _) { return PLATO_STR(u"Axis3D", 6); }
 
 int32_t GetHashCode(const Axis3D& a) { int32_t h = hash_(a.Kind); return h; }
 
@@ -42,7 +42,7 @@ bool Equals(const Axis2D& a, const Axis2D& b) { return a == b; }
 
 bool NotEquals(const Axis2D& a, const Axis2D& b) { return a != b; }
 
-String TypeName(const Axis2D& _) { return PLATO_STR("Axis2D", 6); }
+String TypeName(const Axis2D& _) { return PLATO_STR(u"Axis2D", 6); }
 
 int32_t GetHashCode(const Axis2D& a) { int32_t h = hash_(a.Kind); return h; }
 
@@ -54,7 +54,7 @@ bool Equals(const SignedAxis3D& a, const SignedAxis3D& b) { return a == b; }
 
 bool NotEquals(const SignedAxis3D& a, const SignedAxis3D& b) { return a != b; }
 
-String TypeName(const SignedAxis3D& _) { return PLATO_STR("SignedAxis3D", 12); }
+String TypeName(const SignedAxis3D& _) { return PLATO_STR(u"SignedAxis3D", 12); }
 
 int32_t GetHashCode(const SignedAxis3D& a) { int32_t h = hash_(a.Kind); return h; }
 
@@ -74,7 +74,7 @@ bool Equals(const Color& a, const Color& b) { return a == b; }
 
 bool NotEquals(const Color& a, const Color& b) { return a != b; }
 
-String TypeName(const Color& _) { return PLATO_STR("Color", 5); }
+String TypeName(const Color& _) { return PLATO_STR(u"Color", 5); }
 
 int32_t GetHashCode(const Color& a) { int32_t h = 17; h = mix_(h, hash_(a.R)); h = mix_(h, hash_(a.G)); h = mix_(h, hash_(a.B)); h = mix_(h, hash_(a.A)); return h; }
 
@@ -82,7 +82,7 @@ bool Equals(const Color8& a, const Color8& b) { return a == b; }
 
 bool NotEquals(const Color8& a, const Color8& b) { return a != b; }
 
-String TypeName(const Color8& _) { return PLATO_STR("Color8", 6); }
+String TypeName(const Color8& _) { return PLATO_STR(u"Color8", 6); }
 
 int32_t GetHashCode(const Color8& a) { int32_t h = 17; h = mix_(h, hash_(a.R)); h = mix_(h, hash_(a.G)); h = mix_(h, hash_(a.B)); h = mix_(h, hash_(a.A)); return h; }
 
@@ -90,7 +90,7 @@ bool Equals(const ColorHSV& a, const ColorHSV& b) { return a == b; }
 
 bool NotEquals(const ColorHSV& a, const ColorHSV& b) { return a != b; }
 
-String TypeName(const ColorHSV& _) { return PLATO_STR("ColorHSV", 8); }
+String TypeName(const ColorHSV& _) { return PLATO_STR(u"ColorHSV", 8); }
 
 int32_t GetHashCode(const ColorHSV& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Hue)); h = mix_(h, hash_(a.Saturation)); h = mix_(h, hash_(a.Value)); return h; }
 
@@ -98,7 +98,7 @@ bool Equals(const ColorHSL& a, const ColorHSL& b) { return a == b; }
 
 bool NotEquals(const ColorHSL& a, const ColorHSL& b) { return a != b; }
 
-String TypeName(const ColorHSL& _) { return PLATO_STR("ColorHSL", 8); }
+String TypeName(const ColorHSL& _) { return PLATO_STR(u"ColorHSL", 8); }
 
 int32_t GetHashCode(const ColorHSL& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Hue)); h = mix_(h, hash_(a.Saturation)); h = mix_(h, hash_(a.Lightness)); return h; }
 
@@ -106,7 +106,7 @@ bool Equals(const ColorStop& a, const ColorStop& b) { return a == b; }
 
 bool NotEquals(const ColorStop& a, const ColorStop& b) { return a != b; }
 
-String TypeName(const ColorStop& _) { return PLATO_STR("ColorStop", 9); }
+String TypeName(const ColorStop& _) { return PLATO_STR(u"ColorStop", 9); }
 
 int32_t GetHashCode(const ColorStop& a) { int32_t h = 17; h = mix_(h, hash_(a.Position)); h = mix_(h, GetHashCode(a.Color)); return h; }
 
@@ -114,7 +114,7 @@ bool Equals(const ColorGradient& a, const ColorGradient& b) { return a == b; }
 
 bool NotEquals(const ColorGradient& a, const ColorGradient& b) { return a != b; }
 
-String TypeName(const ColorGradient& _) { return PLATO_STR("ColorGradient", 13); }
+String TypeName(const ColorGradient& _) { return PLATO_STR(u"ColorGradient", 13); }
 
 int32_t GetHashCode(const ColorGradient& a) { int32_t h = 17; h = mix_(h, hash_(a.Stops)); return h; }
 
@@ -122,7 +122,7 @@ bool Equals(const GraphVertexIndex& a, const GraphVertexIndex& b) { return a == 
 
 bool NotEquals(const GraphVertexIndex& a, const GraphVertexIndex& b) { return a != b; }
 
-String TypeName(const GraphVertexIndex& _) { return PLATO_STR("GraphVertexIndex", 16); }
+String TypeName(const GraphVertexIndex& _) { return PLATO_STR(u"GraphVertexIndex", 16); }
 
 int32_t Value(const GraphVertexIndex& x) { return x.Value; }
 
@@ -132,7 +132,7 @@ bool Equals(const GraphEdge& a, const GraphEdge& b) { return a == b; }
 
 bool NotEquals(const GraphEdge& a, const GraphEdge& b) { return a != b; }
 
-String TypeName(const GraphEdge& _) { return PLATO_STR("GraphEdge", 9); }
+String TypeName(const GraphEdge& _) { return PLATO_STR(u"GraphEdge", 9); }
 
 int32_t GetHashCode(const GraphEdge& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Source)); h = mix_(h, GetHashCode(a.Target)); return h; }
 
@@ -140,7 +140,7 @@ bool Equals(const Graph& a, const Graph& b) { return a == b; }
 
 bool NotEquals(const Graph& a, const Graph& b) { return a != b; }
 
-String TypeName(const Graph& _) { return PLATO_STR("Graph", 5); }
+String TypeName(const Graph& _) { return PLATO_STR(u"Graph", 5); }
 
 int32_t GetHashCode(const Graph& a) { int32_t h = 17; h = mix_(h, hash_(a.VertexCount)); h = mix_(h, hash_(a.Edges)); h = mix_(h, hash_(a.Directed)); return h; }
 
@@ -148,7 +148,7 @@ bool Equals(const WeightedEdge& a, const WeightedEdge& b) { return a == b; }
 
 bool NotEquals(const WeightedEdge& a, const WeightedEdge& b) { return a != b; }
 
-String TypeName(const WeightedEdge& _) { return PLATO_STR("WeightedEdge", 12); }
+String TypeName(const WeightedEdge& _) { return PLATO_STR(u"WeightedEdge", 12); }
 
 int32_t GetHashCode(const WeightedEdge& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Source)); h = mix_(h, GetHashCode(a.Target)); h = mix_(h, hash_(a.Weight)); return h; }
 
@@ -156,7 +156,7 @@ bool Equals(const WeightedGraph& a, const WeightedGraph& b) { return a == b; }
 
 bool NotEquals(const WeightedGraph& a, const WeightedGraph& b) { return a != b; }
 
-String TypeName(const WeightedGraph& _) { return PLATO_STR("WeightedGraph", 13); }
+String TypeName(const WeightedGraph& _) { return PLATO_STR(u"WeightedGraph", 13); }
 
 int32_t GetHashCode(const WeightedGraph& a) { int32_t h = 17; h = mix_(h, hash_(a.VertexCount)); h = mix_(h, hash_(a.Edges)); h = mix_(h, hash_(a.Directed)); return h; }
 
@@ -164,7 +164,7 @@ bool Equals(const AdjacencyMatrix& a, const AdjacencyMatrix& b) { return a == b;
 
 bool NotEquals(const AdjacencyMatrix& a, const AdjacencyMatrix& b) { return a != b; }
 
-String TypeName(const AdjacencyMatrix& _) { return PLATO_STR("AdjacencyMatrix", 15); }
+String TypeName(const AdjacencyMatrix& _) { return PLATO_STR(u"AdjacencyMatrix", 15); }
 
 int32_t GetHashCode(const AdjacencyMatrix& a) { int32_t h = 17; h = mix_(h, hash_(a.VertexCount)); h = mix_(h, hash_(a.Weights)); return h; }
 
@@ -172,7 +172,7 @@ bool Equals(const AdjacencyStructure& a, const AdjacencyStructure& b) { return a
 
 bool NotEquals(const AdjacencyStructure& a, const AdjacencyStructure& b) { return a != b; }
 
-String TypeName(const AdjacencyStructure& _) { return PLATO_STR("AdjacencyStructure", 18); }
+String TypeName(const AdjacencyStructure& _) { return PLATO_STR(u"AdjacencyStructure", 18); }
 
 int32_t GetHashCode(const AdjacencyStructure& a) { int32_t h = 17; h = mix_(h, hash_(a.VertexCount)); h = mix_(h, hash_(a.NeighborOffsets)); h = mix_(h, hash_(a.NeighborIndices)); return h; }
 
@@ -180,7 +180,7 @@ bool Equals(const Hypergraph& a, const Hypergraph& b) { return a == b; }
 
 bool NotEquals(const Hypergraph& a, const Hypergraph& b) { return a != b; }
 
-String TypeName(const Hypergraph& _) { return PLATO_STR("Hypergraph", 10); }
+String TypeName(const Hypergraph& _) { return PLATO_STR(u"Hypergraph", 10); }
 
 int32_t GetHashCode(const Hypergraph& a) { int32_t h = 17; h = mix_(h, hash_(a.VertexCount)); h = mix_(h, hash_(a.HyperedgeOffsets)); h = mix_(h, hash_(a.HyperedgeVertices)); return h; }
 
@@ -188,7 +188,7 @@ bool Equals(const GraphPath& a, const GraphPath& b) { return a == b; }
 
 bool NotEquals(const GraphPath& a, const GraphPath& b) { return a != b; }
 
-String TypeName(const GraphPath& _) { return PLATO_STR("GraphPath", 9); }
+String TypeName(const GraphPath& _) { return PLATO_STR(u"GraphPath", 9); }
 
 int32_t GetHashCode(const GraphPath& a) { int32_t h = 17; h = mix_(h, hash_(a.VertexIndices)); h = mix_(h, hash_(a.TotalWeight)); return h; }
 
@@ -196,7 +196,7 @@ bool Equals(const ShortestPathTree& a, const ShortestPathTree& b) { return a == 
 
 bool NotEquals(const ShortestPathTree& a, const ShortestPathTree& b) { return a != b; }
 
-String TypeName(const ShortestPathTree& _) { return PLATO_STR("ShortestPathTree", 16); }
+String TypeName(const ShortestPathTree& _) { return PLATO_STR(u"ShortestPathTree", 16); }
 
 int32_t GetHashCode(const ShortestPathTree& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.SourceIndex)); h = mix_(h, hash_(a.ParentIndices)); h = mix_(h, hash_(a.Distances)); return h; }
 
@@ -204,7 +204,7 @@ bool Equals(const SpanningTree& a, const SpanningTree& b) { return a == b; }
 
 bool NotEquals(const SpanningTree& a, const SpanningTree& b) { return a != b; }
 
-String TypeName(const SpanningTree& _) { return PLATO_STR("SpanningTree", 12); }
+String TypeName(const SpanningTree& _) { return PLATO_STR(u"SpanningTree", 12); }
 
 int32_t GetHashCode(const SpanningTree& a) { int32_t h = 17; h = mix_(h, hash_(a.ParentIndices)); h = mix_(h, GetHashCode(a.RootIndex)); return h; }
 
@@ -212,7 +212,7 @@ bool Equals(const ConnectedComponents& a, const ConnectedComponents& b) { return
 
 bool NotEquals(const ConnectedComponents& a, const ConnectedComponents& b) { return a != b; }
 
-String TypeName(const ConnectedComponents& _) { return PLATO_STR("ConnectedComponents", 19); }
+String TypeName(const ConnectedComponents& _) { return PLATO_STR(u"ConnectedComponents", 19); }
 
 int32_t GetHashCode(const ConnectedComponents& a) { int32_t h = 17; h = mix_(h, hash_(a.ComponentLabels)); h = mix_(h, hash_(a.ComponentCount)); return h; }
 
@@ -220,7 +220,7 @@ bool Equals(const TopologicalOrder& a, const TopologicalOrder& b) { return a == 
 
 bool NotEquals(const TopologicalOrder& a, const TopologicalOrder& b) { return a != b; }
 
-String TypeName(const TopologicalOrder& _) { return PLATO_STR("TopologicalOrder", 16); }
+String TypeName(const TopologicalOrder& _) { return PLATO_STR(u"TopologicalOrder", 16); }
 
 int32_t GetHashCode(const TopologicalOrder& a) { int32_t h = 17; h = mix_(h, hash_(a.OrderedVertexIndices)); h = mix_(h, hash_(a.IsValid)); return h; }
 
@@ -228,7 +228,7 @@ bool Equals(const GraphColoring& a, const GraphColoring& b) { return a == b; }
 
 bool NotEquals(const GraphColoring& a, const GraphColoring& b) { return a != b; }
 
-String TypeName(const GraphColoring& _) { return PLATO_STR("GraphColoring", 13); }
+String TypeName(const GraphColoring& _) { return PLATO_STR(u"GraphColoring", 13); }
 
 int32_t GetHashCode(const GraphColoring& a) { int32_t h = 17; h = mix_(h, hash_(a.VertexColors)); h = mix_(h, hash_(a.ColorCount)); return h; }
 
@@ -236,7 +236,7 @@ bool Equals(const GraphPartition& a, const GraphPartition& b) { return a == b; }
 
 bool NotEquals(const GraphPartition& a, const GraphPartition& b) { return a != b; }
 
-String TypeName(const GraphPartition& _) { return PLATO_STR("GraphPartition", 14); }
+String TypeName(const GraphPartition& _) { return PLATO_STR(u"GraphPartition", 14); }
 
 int32_t GetHashCode(const GraphPartition& a) { int32_t h = 17; h = mix_(h, hash_(a.PartLabels)); h = mix_(h, hash_(a.PartCount)); h = mix_(h, hash_(a.CutEdgeCount)); return h; }
 
@@ -244,7 +244,7 @@ bool Equals(const FlowNetwork& a, const FlowNetwork& b) { return a == b; }
 
 bool NotEquals(const FlowNetwork& a, const FlowNetwork& b) { return a != b; }
 
-String TypeName(const FlowNetwork& _) { return PLATO_STR("FlowNetwork", 11); }
+String TypeName(const FlowNetwork& _) { return PLATO_STR(u"FlowNetwork", 11); }
 
 int32_t GetHashCode(const FlowNetwork& a) { int32_t h = 17; h = mix_(h, hash_(a.VertexCount)); h = mix_(h, hash_(a.Edges)); h = mix_(h, GetHashCode(a.SourceIndex)); h = mix_(h, GetHashCode(a.SinkIndex)); return h; }
 
@@ -252,7 +252,7 @@ bool Equals(const MaxFlowResult& a, const MaxFlowResult& b) { return a == b; }
 
 bool NotEquals(const MaxFlowResult& a, const MaxFlowResult& b) { return a != b; }
 
-String TypeName(const MaxFlowResult& _) { return PLATO_STR("MaxFlowResult", 13); }
+String TypeName(const MaxFlowResult& _) { return PLATO_STR(u"MaxFlowResult", 13); }
 
 int32_t GetHashCode(const MaxFlowResult& a) { int32_t h = 17; h = mix_(h, hash_(a.TotalFlow)); h = mix_(h, hash_(a.EdgeFlows)); h = mix_(h, hash_(a.SourceSideVertices)); return h; }
 
@@ -260,7 +260,7 @@ bool Equals(const BipartiteMatching& a, const BipartiteMatching& b) { return a =
 
 bool NotEquals(const BipartiteMatching& a, const BipartiteMatching& b) { return a != b; }
 
-String TypeName(const BipartiteMatching& _) { return PLATO_STR("BipartiteMatching", 17); }
+String TypeName(const BipartiteMatching& _) { return PLATO_STR(u"BipartiteMatching", 17); }
 
 int32_t GetHashCode(const BipartiteMatching& a) { int32_t h = 17; h = mix_(h, hash_(a.LeftVertexCount)); h = mix_(h, hash_(a.RightVertexCount)); h = mix_(h, hash_(a.MatchedRightIndices)); return h; }
 
@@ -268,7 +268,7 @@ bool Equals(const GraphLayout& a, const GraphLayout& b) { return a == b; }
 
 bool NotEquals(const GraphLayout& a, const GraphLayout& b) { return a != b; }
 
-String TypeName(const GraphLayout& _) { return PLATO_STR("GraphLayout", 11); }
+String TypeName(const GraphLayout& _) { return PLATO_STR(u"GraphLayout", 11); }
 
 int32_t GetHashCode(const GraphLayout& a) { int32_t h = hash_(a.Kind); return h; }
 
@@ -288,7 +288,7 @@ bool Equals(const NumberInterval& a, const NumberInterval& b) { return a == b; }
 
 bool NotEquals(const NumberInterval& a, const NumberInterval& b) { return a != b; }
 
-String TypeName(const NumberInterval& _) { return PLATO_STR("NumberInterval", 14); }
+String TypeName(const NumberInterval& _) { return PLATO_STR(u"NumberInterval", 14); }
 
 int32_t GetHashCode(const NumberInterval& a) { int32_t h = 17; h = mix_(h, hash_(a.Start)); h = mix_(h, hash_(a.End)); return h; }
 
@@ -296,7 +296,7 @@ bool Equals(const AngleInterval& a, const AngleInterval& b) { return a == b; }
 
 bool NotEquals(const AngleInterval& a, const AngleInterval& b) { return a != b; }
 
-String TypeName(const AngleInterval& _) { return PLATO_STR("AngleInterval", 13); }
+String TypeName(const AngleInterval& _) { return PLATO_STR(u"AngleInterval", 13); }
 
 int32_t GetHashCode(const AngleInterval& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Start)); h = mix_(h, GetHashCode(a.End)); return h; }
 
@@ -304,7 +304,7 @@ bool Equals(const IntegerInterval& a, const IntegerInterval& b) { return a == b;
 
 bool NotEquals(const IntegerInterval& a, const IntegerInterval& b) { return a != b; }
 
-String TypeName(const IntegerInterval& _) { return PLATO_STR("IntegerInterval", 15); }
+String TypeName(const IntegerInterval& _) { return PLATO_STR(u"IntegerInterval", 15); }
 
 int32_t GetHashCode(const IntegerInterval& a) { int32_t h = 17; h = mix_(h, hash_(a.Start)); h = mix_(h, hash_(a.End)); return h; }
 
@@ -312,7 +312,7 @@ bool Equals(const Size2D& a, const Size2D& b) { return a == b; }
 
 bool NotEquals(const Size2D& a, const Size2D& b) { return a != b; }
 
-String TypeName(const Size2D& _) { return PLATO_STR("Size2D", 6); }
+String TypeName(const Size2D& _) { return PLATO_STR(u"Size2D", 6); }
 
 int32_t GetHashCode(const Size2D& a) { int32_t h = 17; h = mix_(h, hash_(a.Width)); h = mix_(h, hash_(a.Height)); return h; }
 
@@ -320,7 +320,7 @@ bool Equals(const Size3D& a, const Size3D& b) { return a == b; }
 
 bool NotEquals(const Size3D& a, const Size3D& b) { return a != b; }
 
-String TypeName(const Size3D& _) { return PLATO_STR("Size3D", 6); }
+String TypeName(const Size3D& _) { return PLATO_STR(u"Size3D", 6); }
 
 int32_t GetHashCode(const Size3D& a) { int32_t h = 17; h = mix_(h, hash_(a.Width)); h = mix_(h, hash_(a.Height)); h = mix_(h, hash_(a.Depth)); return h; }
 
@@ -328,7 +328,7 @@ bool Equals(const IntegerSize2D& a, const IntegerSize2D& b) { return a == b; }
 
 bool NotEquals(const IntegerSize2D& a, const IntegerSize2D& b) { return a != b; }
 
-String TypeName(const IntegerSize2D& _) { return PLATO_STR("IntegerSize2D", 13); }
+String TypeName(const IntegerSize2D& _) { return PLATO_STR(u"IntegerSize2D", 13); }
 
 int32_t GetHashCode(const IntegerSize2D& a) { int32_t h = 17; h = mix_(h, hash_(a.Width)); h = mix_(h, hash_(a.Height)); return h; }
 
@@ -336,7 +336,7 @@ bool Equals(const IntegerSize3D& a, const IntegerSize3D& b) { return a == b; }
 
 bool NotEquals(const IntegerSize3D& a, const IntegerSize3D& b) { return a != b; }
 
-String TypeName(const IntegerSize3D& _) { return PLATO_STR("IntegerSize3D", 13); }
+String TypeName(const IntegerSize3D& _) { return PLATO_STR(u"IntegerSize3D", 13); }
 
 int32_t GetHashCode(const IntegerSize3D& a) { int32_t h = 17; h = mix_(h, hash_(a.Width)); h = mix_(h, hash_(a.Height)); h = mix_(h, hash_(a.Depth)); return h; }
 
@@ -344,7 +344,7 @@ bool Equals(const SymmetricMatrix3x3& a, const SymmetricMatrix3x3& b) { return a
 
 bool NotEquals(const SymmetricMatrix3x3& a, const SymmetricMatrix3x3& b) { return a != b; }
 
-String TypeName(const SymmetricMatrix3x3& _) { return PLATO_STR("SymmetricMatrix3x3", 18); }
+String TypeName(const SymmetricMatrix3x3& _) { return PLATO_STR(u"SymmetricMatrix3x3", 18); }
 
 int32_t GetHashCode(const SymmetricMatrix3x3& a) { int32_t h = 17; h = mix_(h, hash_(a.M11)); h = mix_(h, hash_(a.M12)); h = mix_(h, hash_(a.M13)); h = mix_(h, hash_(a.M22)); h = mix_(h, hash_(a.M23)); h = mix_(h, hash_(a.M33)); return h; }
 
@@ -352,7 +352,7 @@ bool Equals(const MatrixN& a, const MatrixN& b) { return a == b; }
 
 bool NotEquals(const MatrixN& a, const MatrixN& b) { return a != b; }
 
-String TypeName(const MatrixN& _) { return PLATO_STR("MatrixN", 7); }
+String TypeName(const MatrixN& _) { return PLATO_STR(u"MatrixN", 7); }
 
 int32_t GetHashCode(const MatrixN& a) { int32_t h = 17; h = mix_(h, hash_(a.NumRows)); h = mix_(h, hash_(a.NumColumns)); h = mix_(h, hash_(a.Components)); return h; }
 
@@ -360,7 +360,7 @@ bool Equals(const Tensor& a, const Tensor& b) { return a == b; }
 
 bool NotEquals(const Tensor& a, const Tensor& b) { return a != b; }
 
-String TypeName(const Tensor& _) { return PLATO_STR("Tensor", 6); }
+String TypeName(const Tensor& _) { return PLATO_STR(u"Tensor", 6); }
 
 int32_t GetHashCode(const Tensor& a) { int32_t h = 17; h = mix_(h, hash_(a.Extents)); h = mix_(h, hash_(a.Components)); return h; }
 
@@ -368,7 +368,7 @@ bool Equals(const SparseMatrixEntry& a, const SparseMatrixEntry& b) { return a =
 
 bool NotEquals(const SparseMatrixEntry& a, const SparseMatrixEntry& b) { return a != b; }
 
-String TypeName(const SparseMatrixEntry& _) { return PLATO_STR("SparseMatrixEntry", 17); }
+String TypeName(const SparseMatrixEntry& _) { return PLATO_STR(u"SparseMatrixEntry", 17); }
 
 int32_t GetHashCode(const SparseMatrixEntry& a) { int32_t h = 17; h = mix_(h, hash_(a.Row)); h = mix_(h, hash_(a.Column)); h = mix_(h, hash_(a.Value)); return h; }
 
@@ -376,7 +376,7 @@ bool Equals(const SparseMatrix& a, const SparseMatrix& b) { return a == b; }
 
 bool NotEquals(const SparseMatrix& a, const SparseMatrix& b) { return a != b; }
 
-String TypeName(const SparseMatrix& _) { return PLATO_STR("SparseMatrix", 12); }
+String TypeName(const SparseMatrix& _) { return PLATO_STR(u"SparseMatrix", 12); }
 
 int32_t GetHashCode(const SparseMatrix& a) { int32_t h = 17; h = mix_(h, hash_(a.NumRows)); h = mix_(h, hash_(a.NumColumns)); h = mix_(h, hash_(a.Entries)); return h; }
 
@@ -384,7 +384,7 @@ bool Equals(const BandedMatrix& a, const BandedMatrix& b) { return a == b; }
 
 bool NotEquals(const BandedMatrix& a, const BandedMatrix& b) { return a != b; }
 
-String TypeName(const BandedMatrix& _) { return PLATO_STR("BandedMatrix", 12); }
+String TypeName(const BandedMatrix& _) { return PLATO_STR(u"BandedMatrix", 12); }
 
 int32_t GetHashCode(const BandedMatrix& a) { int32_t h = 17; h = mix_(h, hash_(a.NumRows)); h = mix_(h, hash_(a.NumColumns)); h = mix_(h, hash_(a.LowerBandwidth)); h = mix_(h, hash_(a.UpperBandwidth)); h = mix_(h, hash_(a.Values)); return h; }
 
@@ -392,7 +392,7 @@ bool Equals(const Complex& a, const Complex& b) { return a == b; }
 
 bool NotEquals(const Complex& a, const Complex& b) { return a != b; }
 
-String TypeName(const Complex& _) { return PLATO_STR("Complex", 7); }
+String TypeName(const Complex& _) { return PLATO_STR(u"Complex", 7); }
 
 int32_t GetHashCode(const Complex& a) { int32_t h = 17; h = mix_(h, hash_(a.Real)); h = mix_(h, hash_(a.Imaginary)); return h; }
 
@@ -400,7 +400,7 @@ bool Equals(const Rational& a, const Rational& b) { return a == b; }
 
 bool NotEquals(const Rational& a, const Rational& b) { return a != b; }
 
-String TypeName(const Rational& _) { return PLATO_STR("Rational", 8); }
+String TypeName(const Rational& _) { return PLATO_STR(u"Rational", 8); }
 
 int32_t GetHashCode(const Rational& a) { int32_t h = 17; h = mix_(h, hash_(a.Numerator)); h = mix_(h, hash_(a.Denominator)); return h; }
 
@@ -408,7 +408,7 @@ bool Equals(const Proportion& a, const Proportion& b) { return a == b; }
 
 bool NotEquals(const Proportion& a, const Proportion& b) { return a != b; }
 
-String TypeName(const Proportion& _) { return PLATO_STR("Proportion", 10); }
+String TypeName(const Proportion& _) { return PLATO_STR(u"Proportion", 10); }
 
 int32_t GetHashCode(const Proportion& a) { int32_t h = 17; h = mix_(h, hash_(a.Value)); return h; }
 
@@ -416,7 +416,7 @@ bool Equals(const Percent& a, const Percent& b) { return a == b; }
 
 bool NotEquals(const Percent& a, const Percent& b) { return a != b; }
 
-String TypeName(const Percent& _) { return PLATO_STR("Percent", 7); }
+String TypeName(const Percent& _) { return PLATO_STR(u"Percent", 7); }
 
 int32_t GetHashCode(const Percent& a) { int32_t h = 17; h = mix_(h, hash_(a.Value)); return h; }
 
@@ -424,7 +424,7 @@ bool Equals(const Probability& a, const Probability& b) { return a == b; }
 
 bool NotEquals(const Probability& a, const Probability& b) { return a != b; }
 
-String TypeName(const Probability& _) { return PLATO_STR("Probability", 11); }
+String TypeName(const Probability& _) { return PLATO_STR(u"Probability", 11); }
 
 int32_t GetHashCode(const Probability& a) { int32_t h = 17; h = mix_(h, hash_(a.Value)); return h; }
 
@@ -432,7 +432,7 @@ bool Equals(const ItemIndex& a, const ItemIndex& b) { return a == b; }
 
 bool NotEquals(const ItemIndex& a, const ItemIndex& b) { return a != b; }
 
-String TypeName(const ItemIndex& _) { return PLATO_STR("ItemIndex", 9); }
+String TypeName(const ItemIndex& _) { return PLATO_STR(u"ItemIndex", 9); }
 
 int32_t Value(const ItemIndex& x) { return x.Value; }
 
@@ -442,7 +442,7 @@ bool Equals(const Cardinal& a, const Cardinal& b) { return a == b; }
 
 bool NotEquals(const Cardinal& a, const Cardinal& b) { return a != b; }
 
-String TypeName(const Cardinal& _) { return PLATO_STR("Cardinal", 8); }
+String TypeName(const Cardinal& _) { return PLATO_STR(u"Cardinal", 8); }
 
 int32_t GetHashCode(const Cardinal& a) { int32_t h = 17; h = mix_(h, hash_(a.Value)); return h; }
 
@@ -450,7 +450,7 @@ bool Equals(const ComparisonTolerance& a, const ComparisonTolerance& b) { return
 
 bool NotEquals(const ComparisonTolerance& a, const ComparisonTolerance& b) { return a != b; }
 
-String TypeName(const ComparisonTolerance& _) { return PLATO_STR("ComparisonTolerance", 19); }
+String TypeName(const ComparisonTolerance& _) { return PLATO_STR(u"ComparisonTolerance", 19); }
 
 int32_t GetHashCode(const ComparisonTolerance& a) { int32_t h = 17; h = mix_(h, hash_(a.Absolute)); h = mix_(h, hash_(a.Relative)); return h; }
 
@@ -458,7 +458,7 @@ bool Equals(const DualNumber& a, const DualNumber& b) { return a == b; }
 
 bool NotEquals(const DualNumber& a, const DualNumber& b) { return a != b; }
 
-String TypeName(const DualNumber& _) { return PLATO_STR("DualNumber", 10); }
+String TypeName(const DualNumber& _) { return PLATO_STR(u"DualNumber", 10); }
 
 int32_t GetHashCode(const DualNumber& a) { int32_t h = 17; h = mix_(h, hash_(a.Value)); h = mix_(h, hash_(a.Derivative)); return h; }
 
@@ -466,7 +466,7 @@ bool Equals(const Point2D& a, const Point2D& b) { return a == b; }
 
 bool NotEquals(const Point2D& a, const Point2D& b) { return a != b; }
 
-String TypeName(const Point2D& _) { return PLATO_STR("Point2D", 7); }
+String TypeName(const Point2D& _) { return PLATO_STR(u"Point2D", 7); }
 
 int32_t GetHashCode(const Point2D& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); return h; }
 
@@ -474,7 +474,7 @@ bool Equals(const Point3D& a, const Point3D& b) { return a == b; }
 
 bool NotEquals(const Point3D& a, const Point3D& b) { return a != b; }
 
-String TypeName(const Point3D& _) { return PLATO_STR("Point3D", 7); }
+String TypeName(const Point3D& _) { return PLATO_STR(u"Point3D", 7); }
 
 int32_t GetHashCode(const Point3D& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); h = mix_(h, hash_(a.Z)); return h; }
 
@@ -482,7 +482,7 @@ bool Equals(const PointN& a, const PointN& b) { return a == b; }
 
 bool NotEquals(const PointN& a, const PointN& b) { return a != b; }
 
-String TypeName(const PointN& _) { return PLATO_STR("PointN", 6); }
+String TypeName(const PointN& _) { return PLATO_STR(u"PointN", 6); }
 
 int32_t GetHashCode(const PointN& a) { int32_t h = 17; h = mix_(h, hash_(a.Components)); return h; }
 
@@ -490,7 +490,7 @@ bool Equals(const HomogeneousPoint2D& a, const HomogeneousPoint2D& b) { return a
 
 bool NotEquals(const HomogeneousPoint2D& a, const HomogeneousPoint2D& b) { return a != b; }
 
-String TypeName(const HomogeneousPoint2D& _) { return PLATO_STR("HomogeneousPoint2D", 18); }
+String TypeName(const HomogeneousPoint2D& _) { return PLATO_STR(u"HomogeneousPoint2D", 18); }
 
 int32_t GetHashCode(const HomogeneousPoint2D& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); h = mix_(h, hash_(a.W)); return h; }
 
@@ -498,7 +498,7 @@ bool Equals(const HomogeneousPoint3D& a, const HomogeneousPoint3D& b) { return a
 
 bool NotEquals(const HomogeneousPoint3D& a, const HomogeneousPoint3D& b) { return a != b; }
 
-String TypeName(const HomogeneousPoint3D& _) { return PLATO_STR("HomogeneousPoint3D", 18); }
+String TypeName(const HomogeneousPoint3D& _) { return PLATO_STR(u"HomogeneousPoint3D", 18); }
 
 int32_t GetHashCode(const HomogeneousPoint3D& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); h = mix_(h, hash_(a.Z)); h = mix_(h, hash_(a.W)); return h; }
 
@@ -506,7 +506,7 @@ bool Equals(const PolarCoordinate& a, const PolarCoordinate& b) { return a == b;
 
 bool NotEquals(const PolarCoordinate& a, const PolarCoordinate& b) { return a != b; }
 
-String TypeName(const PolarCoordinate& _) { return PLATO_STR("PolarCoordinate", 15); }
+String TypeName(const PolarCoordinate& _) { return PLATO_STR(u"PolarCoordinate", 15); }
 
 int32_t GetHashCode(const PolarCoordinate& a) { int32_t h = 17; h = mix_(h, hash_(a.Radius)); h = mix_(h, GetHashCode(a.Angle)); return h; }
 
@@ -514,7 +514,7 @@ bool Equals(const CylindricalCoordinate& a, const CylindricalCoordinate& b) { re
 
 bool NotEquals(const CylindricalCoordinate& a, const CylindricalCoordinate& b) { return a != b; }
 
-String TypeName(const CylindricalCoordinate& _) { return PLATO_STR("CylindricalCoordinate", 21); }
+String TypeName(const CylindricalCoordinate& _) { return PLATO_STR(u"CylindricalCoordinate", 21); }
 
 int32_t GetHashCode(const CylindricalCoordinate& a) { int32_t h = 17; h = mix_(h, hash_(a.Radius)); h = mix_(h, GetHashCode(a.Azimuth)); h = mix_(h, hash_(a.Height)); return h; }
 
@@ -522,7 +522,7 @@ bool Equals(const SphericalCoordinate& a, const SphericalCoordinate& b) { return
 
 bool NotEquals(const SphericalCoordinate& a, const SphericalCoordinate& b) { return a != b; }
 
-String TypeName(const SphericalCoordinate& _) { return PLATO_STR("SphericalCoordinate", 19); }
+String TypeName(const SphericalCoordinate& _) { return PLATO_STR(u"SphericalCoordinate", 19); }
 
 int32_t GetHashCode(const SphericalCoordinate& a) { int32_t h = 17; h = mix_(h, hash_(a.Radius)); h = mix_(h, GetHashCode(a.Azimuth)); h = mix_(h, GetHashCode(a.Inclination)); return h; }
 
@@ -530,7 +530,7 @@ bool Equals(const BarycentricCoordinate& a, const BarycentricCoordinate& b) { re
 
 bool NotEquals(const BarycentricCoordinate& a, const BarycentricCoordinate& b) { return a != b; }
 
-String TypeName(const BarycentricCoordinate& _) { return PLATO_STR("BarycentricCoordinate", 21); }
+String TypeName(const BarycentricCoordinate& _) { return PLATO_STR(u"BarycentricCoordinate", 21); }
 
 int32_t GetHashCode(const BarycentricCoordinate& a) { int32_t h = 17; h = mix_(h, hash_(a.U)); h = mix_(h, hash_(a.V)); h = mix_(h, hash_(a.W)); return h; }
 
@@ -538,7 +538,7 @@ bool Equals(const UvCoordinate& a, const UvCoordinate& b) { return a == b; }
 
 bool NotEquals(const UvCoordinate& a, const UvCoordinate& b) { return a != b; }
 
-String TypeName(const UvCoordinate& _) { return PLATO_STR("UvCoordinate", 12); }
+String TypeName(const UvCoordinate& _) { return PLATO_STR(u"UvCoordinate", 12); }
 
 int32_t GetHashCode(const UvCoordinate& a) { int32_t h = 17; h = mix_(h, hash_(a.U)); h = mix_(h, hash_(a.V)); return h; }
 
@@ -546,7 +546,7 @@ bool Equals(const UvwCoordinate& a, const UvwCoordinate& b) { return a == b; }
 
 bool NotEquals(const UvwCoordinate& a, const UvwCoordinate& b) { return a != b; }
 
-String TypeName(const UvwCoordinate& _) { return PLATO_STR("UvwCoordinate", 13); }
+String TypeName(const UvwCoordinate& _) { return PLATO_STR(u"UvwCoordinate", 13); }
 
 int32_t GetHashCode(const UvwCoordinate& a) { int32_t h = 17; h = mix_(h, hash_(a.U)); h = mix_(h, hash_(a.V)); h = mix_(h, hash_(a.W)); return h; }
 
@@ -554,7 +554,7 @@ bool Equals(const Polynomial& a, const Polynomial& b) { return a == b; }
 
 bool NotEquals(const Polynomial& a, const Polynomial& b) { return a != b; }
 
-String TypeName(const Polynomial& _) { return PLATO_STR("Polynomial", 10); }
+String TypeName(const Polynomial& _) { return PLATO_STR(u"Polynomial", 10); }
 
 int32_t GetHashCode(const Polynomial& a) { int32_t h = 17; h = mix_(h, hash_(a.Coefficients)); return h; }
 
@@ -562,7 +562,7 @@ bool Equals(const Monomial& a, const Monomial& b) { return a == b; }
 
 bool NotEquals(const Monomial& a, const Monomial& b) { return a != b; }
 
-String TypeName(const Monomial& _) { return PLATO_STR("Monomial", 8); }
+String TypeName(const Monomial& _) { return PLATO_STR(u"Monomial", 8); }
 
 int32_t GetHashCode(const Monomial& a) { int32_t h = 17; h = mix_(h, hash_(a.Coefficient)); h = mix_(h, hash_(a.Power)); return h; }
 
@@ -570,7 +570,7 @@ bool Equals(const SparsePolynomial& a, const SparsePolynomial& b) { return a == 
 
 bool NotEquals(const SparsePolynomial& a, const SparsePolynomial& b) { return a != b; }
 
-String TypeName(const SparsePolynomial& _) { return PLATO_STR("SparsePolynomial", 16); }
+String TypeName(const SparsePolynomial& _) { return PLATO_STR(u"SparsePolynomial", 16); }
 
 int32_t GetHashCode(const SparsePolynomial& a) { int32_t h = 17; h = mix_(h, hash_(a.Powers)); h = mix_(h, hash_(a.Coefficients)); return h; }
 
@@ -578,7 +578,7 @@ bool Equals(const QuadraticPolynomial& a, const QuadraticPolynomial& b) { return
 
 bool NotEquals(const QuadraticPolynomial& a, const QuadraticPolynomial& b) { return a != b; }
 
-String TypeName(const QuadraticPolynomial& _) { return PLATO_STR("QuadraticPolynomial", 19); }
+String TypeName(const QuadraticPolynomial& _) { return PLATO_STR(u"QuadraticPolynomial", 19); }
 
 int32_t GetHashCode(const QuadraticPolynomial& a) { int32_t h = 17; h = mix_(h, hash_(a.A)); h = mix_(h, hash_(a.B)); h = mix_(h, hash_(a.C)); return h; }
 
@@ -586,7 +586,7 @@ bool Equals(const CubicPolynomial& a, const CubicPolynomial& b) { return a == b;
 
 bool NotEquals(const CubicPolynomial& a, const CubicPolynomial& b) { return a != b; }
 
-String TypeName(const CubicPolynomial& _) { return PLATO_STR("CubicPolynomial", 15); }
+String TypeName(const CubicPolynomial& _) { return PLATO_STR(u"CubicPolynomial", 15); }
 
 int32_t GetHashCode(const CubicPolynomial& a) { int32_t h = 17; h = mix_(h, hash_(a.A)); h = mix_(h, hash_(a.B)); h = mix_(h, hash_(a.C)); h = mix_(h, hash_(a.D)); return h; }
 
@@ -594,7 +594,7 @@ bool Equals(const QuarticPolynomial& a, const QuarticPolynomial& b) { return a =
 
 bool NotEquals(const QuarticPolynomial& a, const QuarticPolynomial& b) { return a != b; }
 
-String TypeName(const QuarticPolynomial& _) { return PLATO_STR("QuarticPolynomial", 17); }
+String TypeName(const QuarticPolynomial& _) { return PLATO_STR(u"QuarticPolynomial", 17); }
 
 int32_t GetHashCode(const QuarticPolynomial& a) { int32_t h = 17; h = mix_(h, hash_(a.A)); h = mix_(h, hash_(a.B)); h = mix_(h, hash_(a.C)); h = mix_(h, hash_(a.D)); h = mix_(h, hash_(a.E)); return h; }
 
@@ -602,7 +602,7 @@ bool Equals(const PolynomialRoots& a, const PolynomialRoots& b) { return a == b;
 
 bool NotEquals(const PolynomialRoots& a, const PolynomialRoots& b) { return a != b; }
 
-String TypeName(const PolynomialRoots& _) { return PLATO_STR("PolynomialRoots", 15); }
+String TypeName(const PolynomialRoots& _) { return PLATO_STR(u"PolynomialRoots", 15); }
 
 int32_t GetHashCode(const PolynomialRoots& a) { int32_t h = 17; h = mix_(h, hash_(a.RealRoots)); h = mix_(h, hash_(a.ComplexRoots)); return h; }
 
@@ -610,7 +610,7 @@ bool Equals(const RationalFunction& a, const RationalFunction& b) { return a == 
 
 bool NotEquals(const RationalFunction& a, const RationalFunction& b) { return a != b; }
 
-String TypeName(const RationalFunction& _) { return PLATO_STR("RationalFunction", 16); }
+String TypeName(const RationalFunction& _) { return PLATO_STR(u"RationalFunction", 16); }
 
 int32_t GetHashCode(const RationalFunction& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Numerator)); h = mix_(h, GetHashCode(a.Denominator)); return h; }
 
@@ -618,7 +618,7 @@ bool Equals(const PiecewisePolynomial& a, const PiecewisePolynomial& b) { return
 
 bool NotEquals(const PiecewisePolynomial& a, const PiecewisePolynomial& b) { return a != b; }
 
-String TypeName(const PiecewisePolynomial& _) { return PLATO_STR("PiecewisePolynomial", 19); }
+String TypeName(const PiecewisePolynomial& _) { return PLATO_STR(u"PiecewisePolynomial", 19); }
 
 int32_t GetHashCode(const PiecewisePolynomial& a) { int32_t h = 17; h = mix_(h, hash_(a.Breakpoints)); h = mix_(h, hash_(a.Pieces)); return h; }
 
@@ -626,7 +626,7 @@ bool Equals(const PadeApproximant& a, const PadeApproximant& b) { return a == b;
 
 bool NotEquals(const PadeApproximant& a, const PadeApproximant& b) { return a != b; }
 
-String TypeName(const PadeApproximant& _) { return PLATO_STR("PadeApproximant", 15); }
+String TypeName(const PadeApproximant& _) { return PLATO_STR(u"PadeApproximant", 15); }
 
 int32_t GetHashCode(const PadeApproximant& a) { int32_t h = 17; h = mix_(h, hash_(a.Center)); h = mix_(h, GetHashCode(a.Numerator)); h = mix_(h, GetHashCode(a.Denominator)); return h; }
 
@@ -634,7 +634,7 @@ bool Equals(const SturmChain& a, const SturmChain& b) { return a == b; }
 
 bool NotEquals(const SturmChain& a, const SturmChain& b) { return a != b; }
 
-String TypeName(const SturmChain& _) { return PLATO_STR("SturmChain", 10); }
+String TypeName(const SturmChain& _) { return PLATO_STR(u"SturmChain", 10); }
 
 int32_t GetHashCode(const SturmChain& a) { int32_t h = 17; h = mix_(h, hash_(a.Polynomials)); return h; }
 
@@ -642,7 +642,7 @@ bool Equals(const PowerSeries& a, const PowerSeries& b) { return a == b; }
 
 bool NotEquals(const PowerSeries& a, const PowerSeries& b) { return a != b; }
 
-String TypeName(const PowerSeries& _) { return PLATO_STR("PowerSeries", 11); }
+String TypeName(const PowerSeries& _) { return PLATO_STR(u"PowerSeries", 11); }
 
 int32_t GetHashCode(const PowerSeries& a) { int32_t h = 17; h = mix_(h, hash_(a.Center)); h = mix_(h, hash_(a.Coefficients)); return h; }
 
@@ -650,7 +650,7 @@ bool Equals(const ChebyshevSeries& a, const ChebyshevSeries& b) { return a == b;
 
 bool NotEquals(const ChebyshevSeries& a, const ChebyshevSeries& b) { return a != b; }
 
-String TypeName(const ChebyshevSeries& _) { return PLATO_STR("ChebyshevSeries", 15); }
+String TypeName(const ChebyshevSeries& _) { return PLATO_STR(u"ChebyshevSeries", 15); }
 
 int32_t GetHashCode(const ChebyshevSeries& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Interval)); h = mix_(h, hash_(a.Coefficients)); return h; }
 
@@ -658,7 +658,7 @@ bool Equals(const LegendreSeries& a, const LegendreSeries& b) { return a == b; }
 
 bool NotEquals(const LegendreSeries& a, const LegendreSeries& b) { return a != b; }
 
-String TypeName(const LegendreSeries& _) { return PLATO_STR("LegendreSeries", 14); }
+String TypeName(const LegendreSeries& _) { return PLATO_STR(u"LegendreSeries", 14); }
 
 int32_t GetHashCode(const LegendreSeries& a) { int32_t h = 17; h = mix_(h, hash_(a.Coefficients)); return h; }
 
@@ -666,7 +666,7 @@ bool Equals(const HermiteSeries& a, const HermiteSeries& b) { return a == b; }
 
 bool NotEquals(const HermiteSeries& a, const HermiteSeries& b) { return a != b; }
 
-String TypeName(const HermiteSeries& _) { return PLATO_STR("HermiteSeries", 13); }
+String TypeName(const HermiteSeries& _) { return PLATO_STR(u"HermiteSeries", 13); }
 
 int32_t GetHashCode(const HermiteSeries& a) { int32_t h = 17; h = mix_(h, hash_(a.Coefficients)); return h; }
 
@@ -674,7 +674,7 @@ bool Equals(const BernsteinPolynomial& a, const BernsteinPolynomial& b) { return
 
 bool NotEquals(const BernsteinPolynomial& a, const BernsteinPolynomial& b) { return a != b; }
 
-String TypeName(const BernsteinPolynomial& _) { return PLATO_STR("BernsteinPolynomial", 19); }
+String TypeName(const BernsteinPolynomial& _) { return PLATO_STR(u"BernsteinPolynomial", 19); }
 
 int32_t GetHashCode(const BernsteinPolynomial& a) { int32_t h = 17; h = mix_(h, hash_(a.Coefficients)); return h; }
 
@@ -682,7 +682,7 @@ bool Equals(const Dimension& a, const Dimension& b) { return a == b; }
 
 bool NotEquals(const Dimension& a, const Dimension& b) { return a != b; }
 
-String TypeName(const Dimension& _) { return PLATO_STR("Dimension", 9); }
+String TypeName(const Dimension& _) { return PLATO_STR(u"Dimension", 9); }
 
 int32_t GetHashCode(const Dimension& a) { int32_t h = 17; h = mix_(h, hash_(a.LengthPower)); h = mix_(h, hash_(a.MassPower)); h = mix_(h, hash_(a.TimePower)); h = mix_(h, hash_(a.CurrentPower)); h = mix_(h, hash_(a.TemperaturePower)); h = mix_(h, hash_(a.AmountPower)); h = mix_(h, hash_(a.LuminosityPower)); return h; }
 
@@ -690,7 +690,7 @@ bool Equals(const UnitOfMeasure& a, const UnitOfMeasure& b) { return a == b; }
 
 bool NotEquals(const UnitOfMeasure& a, const UnitOfMeasure& b) { return a != b; }
 
-String TypeName(const UnitOfMeasure& _) { return PLATO_STR("UnitOfMeasure", 13); }
+String TypeName(const UnitOfMeasure& _) { return PLATO_STR(u"UnitOfMeasure", 13); }
 
 int32_t GetHashCode(const UnitOfMeasure& a) { int32_t h = 17; h = mix_(h, hash_(a.Name)); h = mix_(h, hash_(a.Symbol)); h = mix_(h, GetHashCode(a.Dimension)); h = mix_(h, hash_(a.ScaleToSI)); h = mix_(h, hash_(a.OffsetToSI)); return h; }
 
@@ -698,7 +698,7 @@ bool Equals(const DynamicQuantity& a, const DynamicQuantity& b) { return a == b;
 
 bool NotEquals(const DynamicQuantity& a, const DynamicQuantity& b) { return a != b; }
 
-String TypeName(const DynamicQuantity& _) { return PLATO_STR("DynamicQuantity", 15); }
+String TypeName(const DynamicQuantity& _) { return PLATO_STR(u"DynamicQuantity", 15); }
 
 int32_t GetHashCode(const DynamicQuantity& a) { int32_t h = 17; h = mix_(h, hash_(a.Amount)); h = mix_(h, GetHashCode(a.Unit)); return h; }
 
@@ -706,7 +706,7 @@ bool Equals(const ElectricCurrent& a, const ElectricCurrent& b) { return a == b;
 
 bool NotEquals(const ElectricCurrent& a, const ElectricCurrent& b) { return a != b; }
 
-String TypeName(const ElectricCurrent& _) { return PLATO_STR("ElectricCurrent", 15); }
+String TypeName(const ElectricCurrent& _) { return PLATO_STR(u"ElectricCurrent", 15); }
 
 int32_t GetHashCode(const ElectricCurrent& a) { int32_t h = 17; h = mix_(h, hash_(a.Amperes)); return h; }
 
@@ -714,7 +714,7 @@ bool Equals(const ElectricCharge& a, const ElectricCharge& b) { return a == b; }
 
 bool NotEquals(const ElectricCharge& a, const ElectricCharge& b) { return a != b; }
 
-String TypeName(const ElectricCharge& _) { return PLATO_STR("ElectricCharge", 14); }
+String TypeName(const ElectricCharge& _) { return PLATO_STR(u"ElectricCharge", 14); }
 
 int32_t GetHashCode(const ElectricCharge& a) { int32_t h = 17; h = mix_(h, hash_(a.Coulombs)); return h; }
 
@@ -722,7 +722,7 @@ bool Equals(const Voltage& a, const Voltage& b) { return a == b; }
 
 bool NotEquals(const Voltage& a, const Voltage& b) { return a != b; }
 
-String TypeName(const Voltage& _) { return PLATO_STR("Voltage", 7); }
+String TypeName(const Voltage& _) { return PLATO_STR(u"Voltage", 7); }
 
 int32_t GetHashCode(const Voltage& a) { int32_t h = 17; h = mix_(h, hash_(a.Volts)); return h; }
 
@@ -730,7 +730,7 @@ bool Equals(const Resistance& a, const Resistance& b) { return a == b; }
 
 bool NotEquals(const Resistance& a, const Resistance& b) { return a != b; }
 
-String TypeName(const Resistance& _) { return PLATO_STR("Resistance", 10); }
+String TypeName(const Resistance& _) { return PLATO_STR(u"Resistance", 10); }
 
 int32_t GetHashCode(const Resistance& a) { int32_t h = 17; h = mix_(h, hash_(a.Ohms)); return h; }
 
@@ -738,7 +738,7 @@ bool Equals(const Capacitance& a, const Capacitance& b) { return a == b; }
 
 bool NotEquals(const Capacitance& a, const Capacitance& b) { return a != b; }
 
-String TypeName(const Capacitance& _) { return PLATO_STR("Capacitance", 11); }
+String TypeName(const Capacitance& _) { return PLATO_STR(u"Capacitance", 11); }
 
 int32_t GetHashCode(const Capacitance& a) { int32_t h = 17; h = mix_(h, hash_(a.Farads)); return h; }
 
@@ -746,7 +746,7 @@ bool Equals(const Inductance& a, const Inductance& b) { return a == b; }
 
 bool NotEquals(const Inductance& a, const Inductance& b) { return a != b; }
 
-String TypeName(const Inductance& _) { return PLATO_STR("Inductance", 10); }
+String TypeName(const Inductance& _) { return PLATO_STR(u"Inductance", 10); }
 
 int32_t GetHashCode(const Inductance& a) { int32_t h = 17; h = mix_(h, hash_(a.Henries)); return h; }
 
@@ -754,7 +754,7 @@ bool Equals(const SolidAngle& a, const SolidAngle& b) { return a == b; }
 
 bool NotEquals(const SolidAngle& a, const SolidAngle& b) { return a != b; }
 
-String TypeName(const SolidAngle& _) { return PLATO_STR("SolidAngle", 10); }
+String TypeName(const SolidAngle& _) { return PLATO_STR(u"SolidAngle", 10); }
 
 int32_t GetHashCode(const SolidAngle& a) { int32_t h = 17; h = mix_(h, hash_(a.Steradians)); return h; }
 
@@ -762,7 +762,7 @@ bool Equals(const Length& a, const Length& b) { return a == b; }
 
 bool NotEquals(const Length& a, const Length& b) { return a != b; }
 
-String TypeName(const Length& _) { return PLATO_STR("Length", 6); }
+String TypeName(const Length& _) { return PLATO_STR(u"Length", 6); }
 
 int32_t GetHashCode(const Length& a) { int32_t h = 17; h = mix_(h, hash_(a.Meters)); return h; }
 
@@ -770,7 +770,7 @@ bool Equals(const Area& a, const Area& b) { return a == b; }
 
 bool NotEquals(const Area& a, const Area& b) { return a != b; }
 
-String TypeName(const Area& _) { return PLATO_STR("Area", 4); }
+String TypeName(const Area& _) { return PLATO_STR(u"Area", 4); }
 
 int32_t GetHashCode(const Area& a) { int32_t h = 17; h = mix_(h, hash_(a.SquareMeters)); return h; }
 
@@ -778,7 +778,7 @@ bool Equals(const Volume& a, const Volume& b) { return a == b; }
 
 bool NotEquals(const Volume& a, const Volume& b) { return a != b; }
 
-String TypeName(const Volume& _) { return PLATO_STR("Volume", 6); }
+String TypeName(const Volume& _) { return PLATO_STR(u"Volume", 6); }
 
 int32_t GetHashCode(const Volume& a) { int32_t h = 17; h = mix_(h, hash_(a.CubicMeters)); return h; }
 
@@ -786,7 +786,7 @@ bool Equals(const WaveNumber& a, const WaveNumber& b) { return a == b; }
 
 bool NotEquals(const WaveNumber& a, const WaveNumber& b) { return a != b; }
 
-String TypeName(const WaveNumber& _) { return PLATO_STR("WaveNumber", 10); }
+String TypeName(const WaveNumber& _) { return PLATO_STR(u"WaveNumber", 10); }
 
 int32_t GetHashCode(const WaveNumber& a) { int32_t h = 17; h = mix_(h, hash_(a.CyclesPerMeter)); return h; }
 
@@ -794,7 +794,7 @@ bool Equals(const Curvature& a, const Curvature& b) { return a == b; }
 
 bool NotEquals(const Curvature& a, const Curvature& b) { return a != b; }
 
-String TypeName(const Curvature& _) { return PLATO_STR("Curvature", 9); }
+String TypeName(const Curvature& _) { return PLATO_STR(u"Curvature", 9); }
 
 int32_t GetHashCode(const Curvature& a) { int32_t h = 17; h = mix_(h, hash_(a.PerMeter)); return h; }
 
@@ -802,7 +802,7 @@ bool Equals(const Speed& a, const Speed& b) { return a == b; }
 
 bool NotEquals(const Speed& a, const Speed& b) { return a != b; }
 
-String TypeName(const Speed& _) { return PLATO_STR("Speed", 5); }
+String TypeName(const Speed& _) { return PLATO_STR(u"Speed", 5); }
 
 int32_t GetHashCode(const Speed& a) { int32_t h = 17; h = mix_(h, hash_(a.MetersPerSecond)); return h; }
 
@@ -810,7 +810,7 @@ bool Equals(const Acceleration& a, const Acceleration& b) { return a == b; }
 
 bool NotEquals(const Acceleration& a, const Acceleration& b) { return a != b; }
 
-String TypeName(const Acceleration& _) { return PLATO_STR("Acceleration", 12); }
+String TypeName(const Acceleration& _) { return PLATO_STR(u"Acceleration", 12); }
 
 int32_t GetHashCode(const Acceleration& a) { int32_t h = 17; h = mix_(h, hash_(a.MetersPerSecondSquared)); return h; }
 
@@ -818,7 +818,7 @@ bool Equals(const Jerk& a, const Jerk& b) { return a == b; }
 
 bool NotEquals(const Jerk& a, const Jerk& b) { return a != b; }
 
-String TypeName(const Jerk& _) { return PLATO_STR("Jerk", 4); }
+String TypeName(const Jerk& _) { return PLATO_STR(u"Jerk", 4); }
 
 int32_t GetHashCode(const Jerk& a) { int32_t h = 17; h = mix_(h, hash_(a.MetersPerSecondCubed)); return h; }
 
@@ -826,7 +826,7 @@ bool Equals(const AngularVelocity& a, const AngularVelocity& b) { return a == b;
 
 bool NotEquals(const AngularVelocity& a, const AngularVelocity& b) { return a != b; }
 
-String TypeName(const AngularVelocity& _) { return PLATO_STR("AngularVelocity", 15); }
+String TypeName(const AngularVelocity& _) { return PLATO_STR(u"AngularVelocity", 15); }
 
 int32_t GetHashCode(const AngularVelocity& a) { int32_t h = 17; h = mix_(h, hash_(a.RadiansPerSecond)); return h; }
 
@@ -834,7 +834,7 @@ bool Equals(const AngularAcceleration& a, const AngularAcceleration& b) { return
 
 bool NotEquals(const AngularAcceleration& a, const AngularAcceleration& b) { return a != b; }
 
-String TypeName(const AngularAcceleration& _) { return PLATO_STR("AngularAcceleration", 19); }
+String TypeName(const AngularAcceleration& _) { return PLATO_STR(u"AngularAcceleration", 19); }
 
 int32_t GetHashCode(const AngularAcceleration& a) { int32_t h = 17; h = mix_(h, hash_(a.RadiansPerSecondSquared)); return h; }
 
@@ -842,7 +842,7 @@ bool Equals(const Frequency& a, const Frequency& b) { return a == b; }
 
 bool NotEquals(const Frequency& a, const Frequency& b) { return a != b; }
 
-String TypeName(const Frequency& _) { return PLATO_STR("Frequency", 9); }
+String TypeName(const Frequency& _) { return PLATO_STR(u"Frequency", 9); }
 
 int32_t GetHashCode(const Frequency& a) { int32_t h = 17; h = mix_(h, hash_(a.Hertz)); return h; }
 
@@ -850,7 +850,7 @@ bool Equals(const Pressure& a, const Pressure& b) { return a == b; }
 
 bool NotEquals(const Pressure& a, const Pressure& b) { return a != b; }
 
-String TypeName(const Pressure& _) { return PLATO_STR("Pressure", 8); }
+String TypeName(const Pressure& _) { return PLATO_STR(u"Pressure", 8); }
 
 int32_t GetHashCode(const Pressure& a) { int32_t h = 17; h = mix_(h, hash_(a.Pascals)); return h; }
 
@@ -858,7 +858,7 @@ bool Equals(const Stiffness& a, const Stiffness& b) { return a == b; }
 
 bool NotEquals(const Stiffness& a, const Stiffness& b) { return a != b; }
 
-String TypeName(const Stiffness& _) { return PLATO_STR("Stiffness", 9); }
+String TypeName(const Stiffness& _) { return PLATO_STR(u"Stiffness", 9); }
 
 int32_t GetHashCode(const Stiffness& a) { int32_t h = 17; h = mix_(h, hash_(a.NewtonsPerMeter)); return h; }
 
@@ -866,7 +866,7 @@ bool Equals(const DampingCoefficient& a, const DampingCoefficient& b) { return a
 
 bool NotEquals(const DampingCoefficient& a, const DampingCoefficient& b) { return a != b; }
 
-String TypeName(const DampingCoefficient& _) { return PLATO_STR("DampingCoefficient", 18); }
+String TypeName(const DampingCoefficient& _) { return PLATO_STR(u"DampingCoefficient", 18); }
 
 int32_t GetHashCode(const DampingCoefficient& a) { int32_t h = 17; h = mix_(h, hash_(a.NewtonSecondsPerMeter)); return h; }
 
@@ -874,7 +874,7 @@ bool Equals(const DynamicViscosity& a, const DynamicViscosity& b) { return a == 
 
 bool NotEquals(const DynamicViscosity& a, const DynamicViscosity& b) { return a != b; }
 
-String TypeName(const DynamicViscosity& _) { return PLATO_STR("DynamicViscosity", 16); }
+String TypeName(const DynamicViscosity& _) { return PLATO_STR(u"DynamicViscosity", 16); }
 
 int32_t GetHashCode(const DynamicViscosity& a) { int32_t h = 17; h = mix_(h, hash_(a.PascalSeconds)); return h; }
 
@@ -882,7 +882,7 @@ bool Equals(const KinematicViscosity& a, const KinematicViscosity& b) { return a
 
 bool NotEquals(const KinematicViscosity& a, const KinematicViscosity& b) { return a != b; }
 
-String TypeName(const KinematicViscosity& _) { return PLATO_STR("KinematicViscosity", 18); }
+String TypeName(const KinematicViscosity& _) { return PLATO_STR(u"KinematicViscosity", 18); }
 
 int32_t GetHashCode(const KinematicViscosity& a) { int32_t h = 17; h = mix_(h, hash_(a.SquareMetersPerSecond)); return h; }
 
@@ -890,7 +890,7 @@ bool Equals(const MassFlowRate& a, const MassFlowRate& b) { return a == b; }
 
 bool NotEquals(const MassFlowRate& a, const MassFlowRate& b) { return a != b; }
 
-String TypeName(const MassFlowRate& _) { return PLATO_STR("MassFlowRate", 12); }
+String TypeName(const MassFlowRate& _) { return PLATO_STR(u"MassFlowRate", 12); }
 
 int32_t GetHashCode(const MassFlowRate& a) { int32_t h = 17; h = mix_(h, hash_(a.KilogramsPerSecond)); return h; }
 
@@ -898,7 +898,7 @@ bool Equals(const VolumetricFlowRate& a, const VolumetricFlowRate& b) { return a
 
 bool NotEquals(const VolumetricFlowRate& a, const VolumetricFlowRate& b) { return a != b; }
 
-String TypeName(const VolumetricFlowRate& _) { return PLATO_STR("VolumetricFlowRate", 18); }
+String TypeName(const VolumetricFlowRate& _) { return PLATO_STR(u"VolumetricFlowRate", 18); }
 
 int32_t GetHashCode(const VolumetricFlowRate& a) { int32_t h = 17; h = mix_(h, hash_(a.CubicMetersPerSecond)); return h; }
 
@@ -906,7 +906,7 @@ bool Equals(const Strain& a, const Strain& b) { return a == b; }
 
 bool NotEquals(const Strain& a, const Strain& b) { return a != b; }
 
-String TypeName(const Strain& _) { return PLATO_STR("Strain", 6); }
+String TypeName(const Strain& _) { return PLATO_STR(u"Strain", 6); }
 
 int32_t GetHashCode(const Strain& a) { int32_t h = 17; h = mix_(h, hash_(a.Ratio)); return h; }
 
@@ -914,7 +914,7 @@ bool Equals(const Mass& a, const Mass& b) { return a == b; }
 
 bool NotEquals(const Mass& a, const Mass& b) { return a != b; }
 
-String TypeName(const Mass& _) { return PLATO_STR("Mass", 4); }
+String TypeName(const Mass& _) { return PLATO_STR(u"Mass", 4); }
 
 int32_t GetHashCode(const Mass& a) { int32_t h = 17; h = mix_(h, hash_(a.Kilograms)); return h; }
 
@@ -922,7 +922,7 @@ bool Equals(const Density& a, const Density& b) { return a == b; }
 
 bool NotEquals(const Density& a, const Density& b) { return a != b; }
 
-String TypeName(const Density& _) { return PLATO_STR("Density", 7); }
+String TypeName(const Density& _) { return PLATO_STR(u"Density", 7); }
 
 int32_t GetHashCode(const Density& a) { int32_t h = 17; h = mix_(h, hash_(a.KilogramsPerCubicMeter)); return h; }
 
@@ -930,7 +930,7 @@ bool Equals(const ArealDensity& a, const ArealDensity& b) { return a == b; }
 
 bool NotEquals(const ArealDensity& a, const ArealDensity& b) { return a != b; }
 
-String TypeName(const ArealDensity& _) { return PLATO_STR("ArealDensity", 12); }
+String TypeName(const ArealDensity& _) { return PLATO_STR(u"ArealDensity", 12); }
 
 int32_t GetHashCode(const ArealDensity& a) { int32_t h = 17; h = mix_(h, hash_(a.KilogramsPerSquareMeter)); return h; }
 
@@ -938,7 +938,7 @@ bool Equals(const LinearDensity& a, const LinearDensity& b) { return a == b; }
 
 bool NotEquals(const LinearDensity& a, const LinearDensity& b) { return a != b; }
 
-String TypeName(const LinearDensity& _) { return PLATO_STR("LinearDensity", 13); }
+String TypeName(const LinearDensity& _) { return PLATO_STR(u"LinearDensity", 13); }
 
 int32_t GetHashCode(const LinearDensity& a) { int32_t h = 17; h = mix_(h, hash_(a.KilogramsPerMeter)); return h; }
 
@@ -946,7 +946,7 @@ bool Equals(const Force& a, const Force& b) { return a == b; }
 
 bool NotEquals(const Force& a, const Force& b) { return a != b; }
 
-String TypeName(const Force& _) { return PLATO_STR("Force", 5); }
+String TypeName(const Force& _) { return PLATO_STR(u"Force", 5); }
 
 int32_t GetHashCode(const Force& a) { int32_t h = 17; h = mix_(h, hash_(a.Newtons)); return h; }
 
@@ -954,7 +954,7 @@ bool Equals(const Torque& a, const Torque& b) { return a == b; }
 
 bool NotEquals(const Torque& a, const Torque& b) { return a != b; }
 
-String TypeName(const Torque& _) { return PLATO_STR("Torque", 6); }
+String TypeName(const Torque& _) { return PLATO_STR(u"Torque", 6); }
 
 int32_t GetHashCode(const Torque& a) { int32_t h = 17; h = mix_(h, hash_(a.NewtonMeters)); return h; }
 
@@ -962,7 +962,7 @@ bool Equals(const Impulse& a, const Impulse& b) { return a == b; }
 
 bool NotEquals(const Impulse& a, const Impulse& b) { return a != b; }
 
-String TypeName(const Impulse& _) { return PLATO_STR("Impulse", 7); }
+String TypeName(const Impulse& _) { return PLATO_STR(u"Impulse", 7); }
 
 int32_t GetHashCode(const Impulse& a) { int32_t h = 17; h = mix_(h, hash_(a.NewtonSeconds)); return h; }
 
@@ -970,7 +970,7 @@ bool Equals(const Momentum& a, const Momentum& b) { return a == b; }
 
 bool NotEquals(const Momentum& a, const Momentum& b) { return a != b; }
 
-String TypeName(const Momentum& _) { return PLATO_STR("Momentum", 8); }
+String TypeName(const Momentum& _) { return PLATO_STR(u"Momentum", 8); }
 
 int32_t GetHashCode(const Momentum& a) { int32_t h = 17; h = mix_(h, hash_(a.KilogramMetersPerSecond)); return h; }
 
@@ -978,7 +978,7 @@ bool Equals(const AngularMomentum& a, const AngularMomentum& b) { return a == b;
 
 bool NotEquals(const AngularMomentum& a, const AngularMomentum& b) { return a != b; }
 
-String TypeName(const AngularMomentum& _) { return PLATO_STR("AngularMomentum", 15); }
+String TypeName(const AngularMomentum& _) { return PLATO_STR(u"AngularMomentum", 15); }
 
 int32_t GetHashCode(const AngularMomentum& a) { int32_t h = 17; h = mix_(h, hash_(a.KilogramSquareMetersPerSecond)); return h; }
 
@@ -986,7 +986,7 @@ bool Equals(const MomentOfInertia& a, const MomentOfInertia& b) { return a == b;
 
 bool NotEquals(const MomentOfInertia& a, const MomentOfInertia& b) { return a != b; }
 
-String TypeName(const MomentOfInertia& _) { return PLATO_STR("MomentOfInertia", 15); }
+String TypeName(const MomentOfInertia& _) { return PLATO_STR(u"MomentOfInertia", 15); }
 
 int32_t GetHashCode(const MomentOfInertia& a) { int32_t h = 17; h = mix_(h, hash_(a.KilogramSquareMeters)); return h; }
 
@@ -994,7 +994,7 @@ bool Equals(const Energy& a, const Energy& b) { return a == b; }
 
 bool NotEquals(const Energy& a, const Energy& b) { return a != b; }
 
-String TypeName(const Energy& _) { return PLATO_STR("Energy", 6); }
+String TypeName(const Energy& _) { return PLATO_STR(u"Energy", 6); }
 
 int32_t GetHashCode(const Energy& a) { int32_t h = 17; h = mix_(h, hash_(a.Joules)); return h; }
 
@@ -1002,7 +1002,7 @@ bool Equals(const Power& a, const Power& b) { return a == b; }
 
 bool NotEquals(const Power& a, const Power& b) { return a != b; }
 
-String TypeName(const Power& _) { return PLATO_STR("Power", 5); }
+String TypeName(const Power& _) { return PLATO_STR(u"Power", 5); }
 
 int32_t GetHashCode(const Power& a) { int32_t h = 17; h = mix_(h, hash_(a.Watts)); return h; }
 
@@ -1010,7 +1010,7 @@ bool Equals(const LuminousIntensity& a, const LuminousIntensity& b) { return a =
 
 bool NotEquals(const LuminousIntensity& a, const LuminousIntensity& b) { return a != b; }
 
-String TypeName(const LuminousIntensity& _) { return PLATO_STR("LuminousIntensity", 17); }
+String TypeName(const LuminousIntensity& _) { return PLATO_STR(u"LuminousIntensity", 17); }
 
 int32_t GetHashCode(const LuminousIntensity& a) { int32_t h = 17; h = mix_(h, hash_(a.Candelas)); return h; }
 
@@ -1018,7 +1018,7 @@ bool Equals(const LuminousFlux& a, const LuminousFlux& b) { return a == b; }
 
 bool NotEquals(const LuminousFlux& a, const LuminousFlux& b) { return a != b; }
 
-String TypeName(const LuminousFlux& _) { return PLATO_STR("LuminousFlux", 12); }
+String TypeName(const LuminousFlux& _) { return PLATO_STR(u"LuminousFlux", 12); }
 
 int32_t GetHashCode(const LuminousFlux& a) { int32_t h = 17; h = mix_(h, hash_(a.Lumens)); return h; }
 
@@ -1026,7 +1026,7 @@ bool Equals(const Illuminance& a, const Illuminance& b) { return a == b; }
 
 bool NotEquals(const Illuminance& a, const Illuminance& b) { return a != b; }
 
-String TypeName(const Illuminance& _) { return PLATO_STR("Illuminance", 11); }
+String TypeName(const Illuminance& _) { return PLATO_STR(u"Illuminance", 11); }
 
 int32_t GetHashCode(const Illuminance& a) { int32_t h = 17; h = mix_(h, hash_(a.Lux)); return h; }
 
@@ -1034,7 +1034,7 @@ bool Equals(const Luminance& a, const Luminance& b) { return a == b; }
 
 bool NotEquals(const Luminance& a, const Luminance& b) { return a != b; }
 
-String TypeName(const Luminance& _) { return PLATO_STR("Luminance", 9); }
+String TypeName(const Luminance& _) { return PLATO_STR(u"Luminance", 9); }
 
 int32_t GetHashCode(const Luminance& a) { int32_t h = 17; h = mix_(h, hash_(a.CandelasPerSquareMeter)); return h; }
 
@@ -1042,7 +1042,7 @@ bool Equals(const Irradiance& a, const Irradiance& b) { return a == b; }
 
 bool NotEquals(const Irradiance& a, const Irradiance& b) { return a != b; }
 
-String TypeName(const Irradiance& _) { return PLATO_STR("Irradiance", 10); }
+String TypeName(const Irradiance& _) { return PLATO_STR(u"Irradiance", 10); }
 
 int32_t GetHashCode(const Irradiance& a) { int32_t h = 17; h = mix_(h, hash_(a.WattsPerSquareMeter)); return h; }
 
@@ -1050,7 +1050,7 @@ bool Equals(const Temperature& a, const Temperature& b) { return a == b; }
 
 bool NotEquals(const Temperature& a, const Temperature& b) { return a != b; }
 
-String TypeName(const Temperature& _) { return PLATO_STR("Temperature", 11); }
+String TypeName(const Temperature& _) { return PLATO_STR(u"Temperature", 11); }
 
 int32_t GetHashCode(const Temperature& a) { int32_t h = 17; h = mix_(h, hash_(a.Kelvin)); return h; }
 
@@ -1058,7 +1058,7 @@ bool Equals(const TemperatureDelta& a, const TemperatureDelta& b) { return a == 
 
 bool NotEquals(const TemperatureDelta& a, const TemperatureDelta& b) { return a != b; }
 
-String TypeName(const TemperatureDelta& _) { return PLATO_STR("TemperatureDelta", 16); }
+String TypeName(const TemperatureDelta& _) { return PLATO_STR(u"TemperatureDelta", 16); }
 
 int32_t GetHashCode(const TemperatureDelta& a) { int32_t h = 17; h = mix_(h, hash_(a.Kelvin)); return h; }
 
@@ -1066,7 +1066,7 @@ bool Equals(const HeatCapacity& a, const HeatCapacity& b) { return a == b; }
 
 bool NotEquals(const HeatCapacity& a, const HeatCapacity& b) { return a != b; }
 
-String TypeName(const HeatCapacity& _) { return PLATO_STR("HeatCapacity", 12); }
+String TypeName(const HeatCapacity& _) { return PLATO_STR(u"HeatCapacity", 12); }
 
 int32_t GetHashCode(const HeatCapacity& a) { int32_t h = 17; h = mix_(h, hash_(a.JoulesPerKelvin)); return h; }
 
@@ -1074,7 +1074,7 @@ bool Equals(const ThermalConductivity& a, const ThermalConductivity& b) { return
 
 bool NotEquals(const ThermalConductivity& a, const ThermalConductivity& b) { return a != b; }
 
-String TypeName(const ThermalConductivity& _) { return PLATO_STR("ThermalConductivity", 19); }
+String TypeName(const ThermalConductivity& _) { return PLATO_STR(u"ThermalConductivity", 19); }
 
 int32_t GetHashCode(const ThermalConductivity& a) { int32_t h = 17; h = mix_(h, hash_(a.WattsPerMeterKelvin)); return h; }
 
@@ -1082,7 +1082,7 @@ bool Equals(const AmountOfSubstance& a, const AmountOfSubstance& b) { return a =
 
 bool NotEquals(const AmountOfSubstance& a, const AmountOfSubstance& b) { return a != b; }
 
-String TypeName(const AmountOfSubstance& _) { return PLATO_STR("AmountOfSubstance", 17); }
+String TypeName(const AmountOfSubstance& _) { return PLATO_STR(u"AmountOfSubstance", 17); }
 
 int32_t GetHashCode(const AmountOfSubstance& a) { int32_t h = 17; h = mix_(h, hash_(a.Moles)); return h; }
 
@@ -1090,7 +1090,7 @@ bool Equals(const RandomState& a, const RandomState& b) { return a == b; }
 
 bool NotEquals(const RandomState& a, const RandomState& b) { return a != b; }
 
-String TypeName(const RandomState& _) { return PLATO_STR("RandomState", 11); }
+String TypeName(const RandomState& _) { return PLATO_STR(u"RandomState", 11); }
 
 int32_t GetHashCode(const RandomState& a) { int32_t h = 17; h = mix_(h, hash_(a.State)); h = mix_(h, hash_(a.Stream)); return h; }
 
@@ -1098,7 +1098,7 @@ bool Equals(const UniformDistribution& a, const UniformDistribution& b) { return
 
 bool NotEquals(const UniformDistribution& a, const UniformDistribution& b) { return a != b; }
 
-String TypeName(const UniformDistribution& _) { return PLATO_STR("UniformDistribution", 19); }
+String TypeName(const UniformDistribution& _) { return PLATO_STR(u"UniformDistribution", 19); }
 
 int32_t GetHashCode(const UniformDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Min)); h = mix_(h, hash_(a.Max)); return h; }
 
@@ -1106,7 +1106,7 @@ bool Equals(const NormalDistribution& a, const NormalDistribution& b) { return a
 
 bool NotEquals(const NormalDistribution& a, const NormalDistribution& b) { return a != b; }
 
-String TypeName(const NormalDistribution& _) { return PLATO_STR("NormalDistribution", 18); }
+String TypeName(const NormalDistribution& _) { return PLATO_STR(u"NormalDistribution", 18); }
 
 int32_t GetHashCode(const NormalDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Mean)); h = mix_(h, hash_(a.StandardDeviation)); return h; }
 
@@ -1114,7 +1114,7 @@ bool Equals(const LogNormalDistribution& a, const LogNormalDistribution& b) { re
 
 bool NotEquals(const LogNormalDistribution& a, const LogNormalDistribution& b) { return a != b; }
 
-String TypeName(const LogNormalDistribution& _) { return PLATO_STR("LogNormalDistribution", 21); }
+String TypeName(const LogNormalDistribution& _) { return PLATO_STR(u"LogNormalDistribution", 21); }
 
 int32_t GetHashCode(const LogNormalDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.LogMean)); h = mix_(h, hash_(a.LogStandardDeviation)); return h; }
 
@@ -1122,7 +1122,7 @@ bool Equals(const ExponentialDistribution& a, const ExponentialDistribution& b) 
 
 bool NotEquals(const ExponentialDistribution& a, const ExponentialDistribution& b) { return a != b; }
 
-String TypeName(const ExponentialDistribution& _) { return PLATO_STR("ExponentialDistribution", 23); }
+String TypeName(const ExponentialDistribution& _) { return PLATO_STR(u"ExponentialDistribution", 23); }
 
 int32_t GetHashCode(const ExponentialDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Rate)); return h; }
 
@@ -1130,7 +1130,7 @@ bool Equals(const CauchyDistribution& a, const CauchyDistribution& b) { return a
 
 bool NotEquals(const CauchyDistribution& a, const CauchyDistribution& b) { return a != b; }
 
-String TypeName(const CauchyDistribution& _) { return PLATO_STR("CauchyDistribution", 18); }
+String TypeName(const CauchyDistribution& _) { return PLATO_STR(u"CauchyDistribution", 18); }
 
 int32_t GetHashCode(const CauchyDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Location)); h = mix_(h, hash_(a.Scale)); return h; }
 
@@ -1138,7 +1138,7 @@ bool Equals(const LaplaceDistribution& a, const LaplaceDistribution& b) { return
 
 bool NotEquals(const LaplaceDistribution& a, const LaplaceDistribution& b) { return a != b; }
 
-String TypeName(const LaplaceDistribution& _) { return PLATO_STR("LaplaceDistribution", 19); }
+String TypeName(const LaplaceDistribution& _) { return PLATO_STR(u"LaplaceDistribution", 19); }
 
 int32_t GetHashCode(const LaplaceDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Location)); h = mix_(h, hash_(a.Scale)); return h; }
 
@@ -1146,7 +1146,7 @@ bool Equals(const WeibullDistribution& a, const WeibullDistribution& b) { return
 
 bool NotEquals(const WeibullDistribution& a, const WeibullDistribution& b) { return a != b; }
 
-String TypeName(const WeibullDistribution& _) { return PLATO_STR("WeibullDistribution", 19); }
+String TypeName(const WeibullDistribution& _) { return PLATO_STR(u"WeibullDistribution", 19); }
 
 int32_t GetHashCode(const WeibullDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Shape)); h = mix_(h, hash_(a.Scale)); return h; }
 
@@ -1154,7 +1154,7 @@ bool Equals(const ParetoDistribution& a, const ParetoDistribution& b) { return a
 
 bool NotEquals(const ParetoDistribution& a, const ParetoDistribution& b) { return a != b; }
 
-String TypeName(const ParetoDistribution& _) { return PLATO_STR("ParetoDistribution", 18); }
+String TypeName(const ParetoDistribution& _) { return PLATO_STR(u"ParetoDistribution", 18); }
 
 int32_t GetHashCode(const ParetoDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.MinimumValue)); h = mix_(h, hash_(a.Shape)); return h; }
 
@@ -1162,7 +1162,7 @@ bool Equals(const TriangularDistribution& a, const TriangularDistribution& b) { 
 
 bool NotEquals(const TriangularDistribution& a, const TriangularDistribution& b) { return a != b; }
 
-String TypeName(const TriangularDistribution& _) { return PLATO_STR("TriangularDistribution", 22); }
+String TypeName(const TriangularDistribution& _) { return PLATO_STR(u"TriangularDistribution", 22); }
 
 int32_t GetHashCode(const TriangularDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Min)); h = mix_(h, hash_(a.Mode)); h = mix_(h, hash_(a.Max)); return h; }
 
@@ -1170,7 +1170,7 @@ bool Equals(const VonMisesDistribution& a, const VonMisesDistribution& b) { retu
 
 bool NotEquals(const VonMisesDistribution& a, const VonMisesDistribution& b) { return a != b; }
 
-String TypeName(const VonMisesDistribution& _) { return PLATO_STR("VonMisesDistribution", 20); }
+String TypeName(const VonMisesDistribution& _) { return PLATO_STR(u"VonMisesDistribution", 20); }
 
 int32_t GetHashCode(const VonMisesDistribution& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.MeanDirection)); h = mix_(h, hash_(a.Concentration)); return h; }
 
@@ -1178,7 +1178,7 @@ bool Equals(const GammaDistribution& a, const GammaDistribution& b) { return a =
 
 bool NotEquals(const GammaDistribution& a, const GammaDistribution& b) { return a != b; }
 
-String TypeName(const GammaDistribution& _) { return PLATO_STR("GammaDistribution", 17); }
+String TypeName(const GammaDistribution& _) { return PLATO_STR(u"GammaDistribution", 17); }
 
 int32_t GetHashCode(const GammaDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Shape)); h = mix_(h, hash_(a.Scale)); return h; }
 
@@ -1186,7 +1186,7 @@ bool Equals(const BetaDistribution& a, const BetaDistribution& b) { return a == 
 
 bool NotEquals(const BetaDistribution& a, const BetaDistribution& b) { return a != b; }
 
-String TypeName(const BetaDistribution& _) { return PLATO_STR("BetaDistribution", 16); }
+String TypeName(const BetaDistribution& _) { return PLATO_STR(u"BetaDistribution", 16); }
 
 int32_t GetHashCode(const BetaDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Alpha)); h = mix_(h, hash_(a.Beta)); return h; }
 
@@ -1194,7 +1194,7 @@ bool Equals(const ChiSquaredDistribution& a, const ChiSquaredDistribution& b) { 
 
 bool NotEquals(const ChiSquaredDistribution& a, const ChiSquaredDistribution& b) { return a != b; }
 
-String TypeName(const ChiSquaredDistribution& _) { return PLATO_STR("ChiSquaredDistribution", 22); }
+String TypeName(const ChiSquaredDistribution& _) { return PLATO_STR(u"ChiSquaredDistribution", 22); }
 
 int32_t GetHashCode(const ChiSquaredDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.DegreesOfFreedom)); return h; }
 
@@ -1202,7 +1202,7 @@ bool Equals(const StudentTDistribution& a, const StudentTDistribution& b) { retu
 
 bool NotEquals(const StudentTDistribution& a, const StudentTDistribution& b) { return a != b; }
 
-String TypeName(const StudentTDistribution& _) { return PLATO_STR("StudentTDistribution", 20); }
+String TypeName(const StudentTDistribution& _) { return PLATO_STR(u"StudentTDistribution", 20); }
 
 int32_t GetHashCode(const StudentTDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.DegreesOfFreedom)); return h; }
 
@@ -1210,7 +1210,7 @@ bool Equals(const BernoulliDistribution& a, const BernoulliDistribution& b) { re
 
 bool NotEquals(const BernoulliDistribution& a, const BernoulliDistribution& b) { return a != b; }
 
-String TypeName(const BernoulliDistribution& _) { return PLATO_STR("BernoulliDistribution", 21); }
+String TypeName(const BernoulliDistribution& _) { return PLATO_STR(u"BernoulliDistribution", 21); }
 
 int32_t GetHashCode(const BernoulliDistribution& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.SuccessProbability)); return h; }
 
@@ -1218,7 +1218,7 @@ bool Equals(const BinomialDistribution& a, const BinomialDistribution& b) { retu
 
 bool NotEquals(const BinomialDistribution& a, const BinomialDistribution& b) { return a != b; }
 
-String TypeName(const BinomialDistribution& _) { return PLATO_STR("BinomialDistribution", 20); }
+String TypeName(const BinomialDistribution& _) { return PLATO_STR(u"BinomialDistribution", 20); }
 
 int32_t GetHashCode(const BinomialDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.TrialCount)); h = mix_(h, GetHashCode(a.SuccessProbability)); return h; }
 
@@ -1226,7 +1226,7 @@ bool Equals(const GeometricDistribution& a, const GeometricDistribution& b) { re
 
 bool NotEquals(const GeometricDistribution& a, const GeometricDistribution& b) { return a != b; }
 
-String TypeName(const GeometricDistribution& _) { return PLATO_STR("GeometricDistribution", 21); }
+String TypeName(const GeometricDistribution& _) { return PLATO_STR(u"GeometricDistribution", 21); }
 
 int32_t GetHashCode(const GeometricDistribution& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.SuccessProbability)); return h; }
 
@@ -1234,7 +1234,7 @@ bool Equals(const PoissonDistribution& a, const PoissonDistribution& b) { return
 
 bool NotEquals(const PoissonDistribution& a, const PoissonDistribution& b) { return a != b; }
 
-String TypeName(const PoissonDistribution& _) { return PLATO_STR("PoissonDistribution", 19); }
+String TypeName(const PoissonDistribution& _) { return PLATO_STR(u"PoissonDistribution", 19); }
 
 int32_t GetHashCode(const PoissonDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Rate)); return h; }
 
@@ -1242,7 +1242,7 @@ bool Equals(const DiscreteDistribution& a, const DiscreteDistribution& b) { retu
 
 bool NotEquals(const DiscreteDistribution& a, const DiscreteDistribution& b) { return a != b; }
 
-String TypeName(const DiscreteDistribution& _) { return PLATO_STR("DiscreteDistribution", 20); }
+String TypeName(const DiscreteDistribution& _) { return PLATO_STR(u"DiscreteDistribution", 20); }
 
 int32_t GetHashCode(const DiscreteDistribution& a) { int32_t h = 17; h = mix_(h, hash_(a.Weights)); return h; }
 
@@ -1250,7 +1250,7 @@ bool Equals(const Quaternion& a, const Quaternion& b) { return a == b; }
 
 bool NotEquals(const Quaternion& a, const Quaternion& b) { return a != b; }
 
-String TypeName(const Quaternion& _) { return PLATO_STR("Quaternion", 10); }
+String TypeName(const Quaternion& _) { return PLATO_STR(u"Quaternion", 10); }
 
 int32_t GetHashCode(const Quaternion& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); h = mix_(h, hash_(a.Z)); h = mix_(h, hash_(a.W)); return h; }
 
@@ -1258,7 +1258,7 @@ bool Equals(const RotationOrder& a, const RotationOrder& b) { return a == b; }
 
 bool NotEquals(const RotationOrder& a, const RotationOrder& b) { return a != b; }
 
-String TypeName(const RotationOrder& _) { return PLATO_STR("RotationOrder", 13); }
+String TypeName(const RotationOrder& _) { return PLATO_STR(u"RotationOrder", 13); }
 
 int32_t GetHashCode(const RotationOrder& a) { int32_t h = hash_(a.Kind); return h; }
 
@@ -1278,7 +1278,7 @@ bool Equals(const EulerAngles& a, const EulerAngles& b) { return a == b; }
 
 bool NotEquals(const EulerAngles& a, const EulerAngles& b) { return a != b; }
 
-String TypeName(const EulerAngles& _) { return PLATO_STR("EulerAngles", 11); }
+String TypeName(const EulerAngles& _) { return PLATO_STR(u"EulerAngles", 11); }
 
 int32_t GetHashCode(const EulerAngles& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Yaw)); h = mix_(h, GetHashCode(a.Pitch)); h = mix_(h, GetHashCode(a.Roll)); h = mix_(h, GetHashCode(a.Order)); return h; }
 
@@ -1286,7 +1286,7 @@ bool Equals(const Rotation2D& a, const Rotation2D& b) { return a == b; }
 
 bool NotEquals(const Rotation2D& a, const Rotation2D& b) { return a != b; }
 
-String TypeName(const Rotation2D& _) { return PLATO_STR("Rotation2D", 10); }
+String TypeName(const Rotation2D& _) { return PLATO_STR(u"Rotation2D", 10); }
 
 int32_t GetHashCode(const Rotation2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Angle)); return h; }
 
@@ -1294,7 +1294,7 @@ bool Equals(const Bivector2D& a, const Bivector2D& b) { return a == b; }
 
 bool NotEquals(const Bivector2D& a, const Bivector2D& b) { return a != b; }
 
-String TypeName(const Bivector2D& _) { return PLATO_STR("Bivector2D", 10); }
+String TypeName(const Bivector2D& _) { return PLATO_STR(u"Bivector2D", 10); }
 
 int32_t GetHashCode(const Bivector2D& a) { int32_t h = 17; h = mix_(h, hash_(a.XY)); return h; }
 
@@ -1302,7 +1302,7 @@ bool Equals(const Bivector3D& a, const Bivector3D& b) { return a == b; }
 
 bool NotEquals(const Bivector3D& a, const Bivector3D& b) { return a != b; }
 
-String TypeName(const Bivector3D& _) { return PLATO_STR("Bivector3D", 10); }
+String TypeName(const Bivector3D& _) { return PLATO_STR(u"Bivector3D", 10); }
 
 int32_t GetHashCode(const Bivector3D& a) { int32_t h = 17; h = mix_(h, hash_(a.YZ)); h = mix_(h, hash_(a.ZX)); h = mix_(h, hash_(a.XY)); return h; }
 
@@ -1310,7 +1310,7 @@ bool Equals(const Rotor2D& a, const Rotor2D& b) { return a == b; }
 
 bool NotEquals(const Rotor2D& a, const Rotor2D& b) { return a != b; }
 
-String TypeName(const Rotor2D& _) { return PLATO_STR("Rotor2D", 7); }
+String TypeName(const Rotor2D& _) { return PLATO_STR(u"Rotor2D", 7); }
 
 int32_t GetHashCode(const Rotor2D& a) { int32_t h = 17; h = mix_(h, hash_(a.Scalar)); h = mix_(h, hash_(a.XY)); return h; }
 
@@ -1318,7 +1318,7 @@ bool Equals(const Rotor3D& a, const Rotor3D& b) { return a == b; }
 
 bool NotEquals(const Rotor3D& a, const Rotor3D& b) { return a != b; }
 
-String TypeName(const Rotor3D& _) { return PLATO_STR("Rotor3D", 7); }
+String TypeName(const Rotor3D& _) { return PLATO_STR(u"Rotor3D", 7); }
 
 int32_t GetHashCode(const Rotor3D& a) { int32_t h = 17; h = mix_(h, hash_(a.Scalar)); h = mix_(h, GetHashCode(a.Bivector)); return h; }
 
@@ -1326,7 +1326,7 @@ bool Equals(const SummaryStatistics& a, const SummaryStatistics& b) { return a =
 
 bool NotEquals(const SummaryStatistics& a, const SummaryStatistics& b) { return a != b; }
 
-String TypeName(const SummaryStatistics& _) { return PLATO_STR("SummaryStatistics", 17); }
+String TypeName(const SummaryStatistics& _) { return PLATO_STR(u"SummaryStatistics", 17); }
 
 int32_t GetHashCode(const SummaryStatistics& a) { int32_t h = 17; h = mix_(h, hash_(a.Count)); h = mix_(h, hash_(a.Sum)); h = mix_(h, hash_(a.Mean)); h = mix_(h, hash_(a.Variance)); h = mix_(h, hash_(a.StandardDeviation)); h = mix_(h, hash_(a.Minimum)); h = mix_(h, hash_(a.Maximum)); h = mix_(h, hash_(a.Skewness)); h = mix_(h, hash_(a.Kurtosis)); return h; }
 
@@ -1334,7 +1334,7 @@ bool Equals(const RunningStatistics& a, const RunningStatistics& b) { return a =
 
 bool NotEquals(const RunningStatistics& a, const RunningStatistics& b) { return a != b; }
 
-String TypeName(const RunningStatistics& _) { return PLATO_STR("RunningStatistics", 17); }
+String TypeName(const RunningStatistics& _) { return PLATO_STR(u"RunningStatistics", 17); }
 
 int32_t GetHashCode(const RunningStatistics& a) { int32_t h = 17; h = mix_(h, hash_(a.Count)); h = mix_(h, hash_(a.Mean)); h = mix_(h, hash_(a.M2)); return h; }
 
@@ -1342,7 +1342,7 @@ bool Equals(const Histogram& a, const Histogram& b) { return a == b; }
 
 bool NotEquals(const Histogram& a, const Histogram& b) { return a != b; }
 
-String TypeName(const Histogram& _) { return PLATO_STR("Histogram", 9); }
+String TypeName(const Histogram& _) { return PLATO_STR(u"Histogram", 9); }
 
 int32_t GetHashCode(const Histogram& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Range)); h = mix_(h, hash_(a.Counts)); return h; }
 
@@ -1350,7 +1350,7 @@ bool Equals(const Histogram2D& a, const Histogram2D& b) { return a == b; }
 
 bool NotEquals(const Histogram2D& a, const Histogram2D& b) { return a != b; }
 
-String TypeName(const Histogram2D& _) { return PLATO_STR("Histogram2D", 11); }
+String TypeName(const Histogram2D& _) { return PLATO_STR(u"Histogram2D", 11); }
 
 int32_t GetHashCode(const Histogram2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.RangeX)); h = mix_(h, GetHashCode(a.RangeY)); h = mix_(h, hash_(a.Counts)); return h; }
 
@@ -1358,7 +1358,7 @@ bool Equals(const Quantiles& a, const Quantiles& b) { return a == b; }
 
 bool NotEquals(const Quantiles& a, const Quantiles& b) { return a != b; }
 
-String TypeName(const Quantiles& _) { return PLATO_STR("Quantiles", 9); }
+String TypeName(const Quantiles& _) { return PLATO_STR(u"Quantiles", 9); }
 
 int32_t GetHashCode(const Quantiles& a) { int32_t h = 17; h = mix_(h, hash_(a.Levels)); h = mix_(h, hash_(a.Values)); return h; }
 
@@ -1366,7 +1366,7 @@ bool Equals(const FiveNumberSummary& a, const FiveNumberSummary& b) { return a =
 
 bool NotEquals(const FiveNumberSummary& a, const FiveNumberSummary& b) { return a != b; }
 
-String TypeName(const FiveNumberSummary& _) { return PLATO_STR("FiveNumberSummary", 17); }
+String TypeName(const FiveNumberSummary& _) { return PLATO_STR(u"FiveNumberSummary", 17); }
 
 int32_t GetHashCode(const FiveNumberSummary& a) { int32_t h = 17; h = mix_(h, hash_(a.Minimum)); h = mix_(h, hash_(a.LowerQuartile)); h = mix_(h, hash_(a.Median)); h = mix_(h, hash_(a.UpperQuartile)); h = mix_(h, hash_(a.Maximum)); return h; }
 
@@ -1374,7 +1374,7 @@ bool Equals(const BoxPlotStatistics& a, const BoxPlotStatistics& b) { return a =
 
 bool NotEquals(const BoxPlotStatistics& a, const BoxPlotStatistics& b) { return a != b; }
 
-String TypeName(const BoxPlotStatistics& _) { return PLATO_STR("BoxPlotStatistics", 17); }
+String TypeName(const BoxPlotStatistics& _) { return PLATO_STR(u"BoxPlotStatistics", 17); }
 
 int32_t GetHashCode(const BoxPlotStatistics& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Summary)); h = mix_(h, hash_(a.LowerWhisker)); h = mix_(h, hash_(a.UpperWhisker)); h = mix_(h, hash_(a.Outliers)); return h; }
 
@@ -1382,7 +1382,7 @@ bool Equals(const MovingAverage& a, const MovingAverage& b) { return a == b; }
 
 bool NotEquals(const MovingAverage& a, const MovingAverage& b) { return a != b; }
 
-String TypeName(const MovingAverage& _) { return PLATO_STR("MovingAverage", 13); }
+String TypeName(const MovingAverage& _) { return PLATO_STR(u"MovingAverage", 13); }
 
 int32_t GetHashCode(const MovingAverage& a) { int32_t h = hash_(a.Kind); if (a.Kind == MovingAverage::Kind_Simple) { h = mix_(h, hash_(a.Simple_WindowSize)); } if (a.Kind == MovingAverage::Kind_Exponential) { h = mix_(h, GetHashCode(a.Exponential_Alpha)); } if (a.Kind == MovingAverage::Kind_Gaussian) { h = mix_(h, hash_(a.Gaussian_WindowSize)); h = mix_(h, hash_(a.Gaussian_StandardDeviation)); } return h; }
 
@@ -1396,7 +1396,7 @@ bool Equals(const OutlierDetection& a, const OutlierDetection& b) { return a == 
 
 bool NotEquals(const OutlierDetection& a, const OutlierDetection& b) { return a != b; }
 
-String TypeName(const OutlierDetection& _) { return PLATO_STR("OutlierDetection", 16); }
+String TypeName(const OutlierDetection& _) { return PLATO_STR(u"OutlierDetection", 16); }
 
 int32_t GetHashCode(const OutlierDetection& a) { int32_t h = hash_(a.Kind); if (a.Kind == OutlierDetection::Kind_ZScore) { h = mix_(h, hash_(a.ZScore_Threshold)); } if (a.Kind == OutlierDetection::Kind_Iqr) { h = mix_(h, hash_(a.Iqr_Threshold)); } if (a.Kind == OutlierDetection::Kind_Mad) { h = mix_(h, hash_(a.Mad_Threshold)); } return h; }
 
@@ -1410,7 +1410,7 @@ bool Equals(const Covariance2D& a, const Covariance2D& b) { return a == b; }
 
 bool NotEquals(const Covariance2D& a, const Covariance2D& b) { return a != b; }
 
-String TypeName(const Covariance2D& _) { return PLATO_STR("Covariance2D", 12); }
+String TypeName(const Covariance2D& _) { return PLATO_STR(u"Covariance2D", 12); }
 
 int32_t GetHashCode(const Covariance2D& a) { int32_t h = 17; h = mix_(h, hash_(a.Xx)); h = mix_(h, hash_(a.Xy)); h = mix_(h, hash_(a.Yy)); return h; }
 
@@ -1418,7 +1418,7 @@ bool Equals(const Covariance3D& a, const Covariance3D& b) { return a == b; }
 
 bool NotEquals(const Covariance3D& a, const Covariance3D& b) { return a != b; }
 
-String TypeName(const Covariance3D& _) { return PLATO_STR("Covariance3D", 12); }
+String TypeName(const Covariance3D& _) { return PLATO_STR(u"Covariance3D", 12); }
 
 int32_t GetHashCode(const Covariance3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Matrix)); return h; }
 
@@ -1426,7 +1426,7 @@ bool Equals(const CorrelationStatistic& a, const CorrelationStatistic& b) { retu
 
 bool NotEquals(const CorrelationStatistic& a, const CorrelationStatistic& b) { return a != b; }
 
-String TypeName(const CorrelationStatistic& _) { return PLATO_STR("CorrelationStatistic", 20); }
+String TypeName(const CorrelationStatistic& _) { return PLATO_STR(u"CorrelationStatistic", 20); }
 
 int32_t GetHashCode(const CorrelationStatistic& a) { int32_t h = hash_(a.Kind); return h; }
 
@@ -1440,7 +1440,7 @@ bool Equals(const CorrelationCoefficient& a, const CorrelationCoefficient& b) { 
 
 bool NotEquals(const CorrelationCoefficient& a, const CorrelationCoefficient& b) { return a != b; }
 
-String TypeName(const CorrelationCoefficient& _) { return PLATO_STR("CorrelationCoefficient", 22); }
+String TypeName(const CorrelationCoefficient& _) { return PLATO_STR(u"CorrelationCoefficient", 22); }
 
 int32_t GetHashCode(const CorrelationCoefficient& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Statistic)); h = mix_(h, hash_(a.Value)); h = mix_(h, hash_(a.SampleCount)); return h; }
 
@@ -1448,7 +1448,7 @@ bool Equals(const LinearFit& a, const LinearFit& b) { return a == b; }
 
 bool NotEquals(const LinearFit& a, const LinearFit& b) { return a != b; }
 
-String TypeName(const LinearFit& _) { return PLATO_STR("LinearFit", 9); }
+String TypeName(const LinearFit& _) { return PLATO_STR(u"LinearFit", 9); }
 
 int32_t GetHashCode(const LinearFit& a) { int32_t h = 17; h = mix_(h, hash_(a.Slope)); h = mix_(h, hash_(a.Intercept)); h = mix_(h, hash_(a.RSquared)); return h; }
 
@@ -1456,7 +1456,7 @@ bool Equals(const PolynomialFit& a, const PolynomialFit& b) { return a == b; }
 
 bool NotEquals(const PolynomialFit& a, const PolynomialFit& b) { return a != b; }
 
-String TypeName(const PolynomialFit& _) { return PLATO_STR("PolynomialFit", 13); }
+String TypeName(const PolynomialFit& _) { return PLATO_STR(u"PolynomialFit", 13); }
 
 int32_t GetHashCode(const PolynomialFit& a) { int32_t h = 17; h = mix_(h, hash_(a.Coefficients)); h = mix_(h, hash_(a.RSquared)); return h; }
 
@@ -1464,7 +1464,7 @@ bool Equals(const NumberParse& a, const NumberParse& b) { return a == b; }
 
 bool NotEquals(const NumberParse& a, const NumberParse& b) { return a != b; }
 
-String TypeName(const NumberParse& _) { return PLATO_STR("NumberParse", 11); }
+String TypeName(const NumberParse& _) { return PLATO_STR(u"NumberParse", 11); }
 
 int32_t GetHashCode(const NumberParse& a) { int32_t h = 17; h = mix_(h, hash_(a.Value)); h = mix_(h, hash_(a.Ok)); return h; }
 
@@ -1472,7 +1472,7 @@ bool Equals(const IntegerParse& a, const IntegerParse& b) { return a == b; }
 
 bool NotEquals(const IntegerParse& a, const IntegerParse& b) { return a != b; }
 
-String TypeName(const IntegerParse& _) { return PLATO_STR("IntegerParse", 12); }
+String TypeName(const IntegerParse& _) { return PLATO_STR(u"IntegerParse", 12); }
 
 int32_t GetHashCode(const IntegerParse& a) { int32_t h = 17; h = mix_(h, hash_(a.Value)); h = mix_(h, hash_(a.Ok)); return h; }
 
@@ -1480,7 +1480,7 @@ bool Equals(const Duration& a, const Duration& b) { return a == b; }
 
 bool NotEquals(const Duration& a, const Duration& b) { return a != b; }
 
-String TypeName(const Duration& _) { return PLATO_STR("Duration", 8); }
+String TypeName(const Duration& _) { return PLATO_STR(u"Duration", 8); }
 
 int32_t GetHashCode(const Duration& a) { int32_t h = 17; h = mix_(h, hash_(a.Seconds)); return h; }
 
@@ -1488,7 +1488,7 @@ bool Equals(const Instant& a, const Instant& b) { return a == b; }
 
 bool NotEquals(const Instant& a, const Instant& b) { return a != b; }
 
-String TypeName(const Instant& _) { return PLATO_STR("Instant", 7); }
+String TypeName(const Instant& _) { return PLATO_STR(u"Instant", 7); }
 
 int32_t GetHashCode(const Instant& a) { int32_t h = 17; h = mix_(h, hash_(a.SecondsSinceEpoch)); return h; }
 
@@ -1496,7 +1496,7 @@ bool Equals(const TimeInterval& a, const TimeInterval& b) { return a == b; }
 
 bool NotEquals(const TimeInterval& a, const TimeInterval& b) { return a != b; }
 
-String TypeName(const TimeInterval& _) { return PLATO_STR("TimeInterval", 12); }
+String TypeName(const TimeInterval& _) { return PLATO_STR(u"TimeInterval", 12); }
 
 int32_t GetHashCode(const TimeInterval& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Start)); h = mix_(h, GetHashCode(a.End)); return h; }
 
@@ -1504,7 +1504,7 @@ bool Equals(const FrameRate& a, const FrameRate& b) { return a == b; }
 
 bool NotEquals(const FrameRate& a, const FrameRate& b) { return a != b; }
 
-String TypeName(const FrameRate& _) { return PLATO_STR("FrameRate", 9); }
+String TypeName(const FrameRate& _) { return PLATO_STR(u"FrameRate", 9); }
 
 int32_t GetHashCode(const FrameRate& a) { int32_t h = 17; h = mix_(h, hash_(a.FramesPerSecond)); return h; }
 
@@ -1512,7 +1512,7 @@ bool Equals(const FrameTime& a, const FrameTime& b) { return a == b; }
 
 bool NotEquals(const FrameTime& a, const FrameTime& b) { return a != b; }
 
-String TypeName(const FrameTime& _) { return PLATO_STR("FrameTime", 9); }
+String TypeName(const FrameTime& _) { return PLATO_STR(u"FrameTime", 9); }
 
 int32_t GetHashCode(const FrameTime& a) { int32_t h = 17; h = mix_(h, hash_(a.Frame)); h = mix_(h, GetHashCode(a.Rate)); return h; }
 
@@ -1520,7 +1520,7 @@ bool Equals(const Timecode& a, const Timecode& b) { return a == b; }
 
 bool NotEquals(const Timecode& a, const Timecode& b) { return a != b; }
 
-String TypeName(const Timecode& _) { return PLATO_STR("Timecode", 8); }
+String TypeName(const Timecode& _) { return PLATO_STR(u"Timecode", 8); }
 
 int32_t GetHashCode(const Timecode& a) { int32_t h = 17; h = mix_(h, hash_(a.Hours)); h = mix_(h, hash_(a.Minutes)); h = mix_(h, hash_(a.Seconds)); h = mix_(h, hash_(a.Frames)); h = mix_(h, GetHashCode(a.Rate)); return h; }
 
@@ -1528,7 +1528,7 @@ bool Equals(const Tempo& a, const Tempo& b) { return a == b; }
 
 bool NotEquals(const Tempo& a, const Tempo& b) { return a != b; }
 
-String TypeName(const Tempo& _) { return PLATO_STR("Tempo", 5); }
+String TypeName(const Tempo& _) { return PLATO_STR(u"Tempo", 5); }
 
 int32_t GetHashCode(const Tempo& a) { int32_t h = 17; h = mix_(h, hash_(a.BeatsPerMinute)); return h; }
 
@@ -1536,7 +1536,7 @@ bool Equals(const BeatTime& a, const BeatTime& b) { return a == b; }
 
 bool NotEquals(const BeatTime& a, const BeatTime& b) { return a != b; }
 
-String TypeName(const BeatTime& _) { return PLATO_STR("BeatTime", 8); }
+String TypeName(const BeatTime& _) { return PLATO_STR(u"BeatTime", 8); }
 
 int32_t GetHashCode(const BeatTime& a) { int32_t h = 17; h = mix_(h, hash_(a.Beats)); return h; }
 
@@ -1544,7 +1544,7 @@ bool Equals(const Motor3D& a, const Motor3D& b) { return a == b; }
 
 bool NotEquals(const Motor3D& a, const Motor3D& b) { return a != b; }
 
-String TypeName(const Motor3D& _) { return PLATO_STR("Motor3D", 7); }
+String TypeName(const Motor3D& _) { return PLATO_STR(u"Motor3D", 7); }
 
 int32_t GetHashCode(const Motor3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Real)); h = mix_(h, GetHashCode(a.Dual)); return h; }
 
@@ -1552,7 +1552,7 @@ bool Equals(const Pose2D& a, const Pose2D& b) { return a == b; }
 
 bool NotEquals(const Pose2D& a, const Pose2D& b) { return a != b; }
 
-String TypeName(const Pose2D& _) { return PLATO_STR("Pose2D", 6); }
+String TypeName(const Pose2D& _) { return PLATO_STR(u"Pose2D", 6); }
 
 int32_t GetHashCode(const Pose2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Position)); h = mix_(h, GetHashCode(a.Rotation)); return h; }
 
@@ -1560,7 +1560,7 @@ bool Equals(const Pose3D& a, const Pose3D& b) { return a == b; }
 
 bool NotEquals(const Pose3D& a, const Pose3D& b) { return a != b; }
 
-String TypeName(const Pose3D& _) { return PLATO_STR("Pose3D", 6); }
+String TypeName(const Pose3D& _) { return PLATO_STR(u"Pose3D", 6); }
 
 int32_t GetHashCode(const Pose3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Position)); h = mix_(h, GetHashCode(a.Orientation)); return h; }
 
@@ -1568,7 +1568,7 @@ bool Equals(const UniformScaling2D& a, const UniformScaling2D& b) { return a == 
 
 bool NotEquals(const UniformScaling2D& a, const UniformScaling2D& b) { return a != b; }
 
-String TypeName(const UniformScaling2D& _) { return PLATO_STR("UniformScaling2D", 16); }
+String TypeName(const UniformScaling2D& _) { return PLATO_STR(u"UniformScaling2D", 16); }
 
 int32_t GetHashCode(const UniformScaling2D& a) { int32_t h = 17; h = mix_(h, hash_(a.Amount)); return h; }
 
@@ -1576,7 +1576,7 @@ bool Equals(const UniformScaling3D& a, const UniformScaling3D& b) { return a == 
 
 bool NotEquals(const UniformScaling3D& a, const UniformScaling3D& b) { return a != b; }
 
-String TypeName(const UniformScaling3D& _) { return PLATO_STR("UniformScaling3D", 16); }
+String TypeName(const UniformScaling3D& _) { return PLATO_STR(u"UniformScaling3D", 16); }
 
 int32_t GetHashCode(const UniformScaling3D& a) { int32_t h = 17; h = mix_(h, hash_(a.Amount)); return h; }
 
@@ -1584,7 +1584,7 @@ bool Equals(const RotationAbout2D& a, const RotationAbout2D& b) { return a == b;
 
 bool NotEquals(const RotationAbout2D& a, const RotationAbout2D& b) { return a != b; }
 
-String TypeName(const RotationAbout2D& _) { return PLATO_STR("RotationAbout2D", 15); }
+String TypeName(const RotationAbout2D& _) { return PLATO_STR(u"RotationAbout2D", 15); }
 
 int32_t GetHashCode(const RotationAbout2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Rotation)); h = mix_(h, GetHashCode(a.Center)); return h; }
 
@@ -1592,7 +1592,7 @@ bool Equals(const RotationAbout3D& a, const RotationAbout3D& b) { return a == b;
 
 bool NotEquals(const RotationAbout3D& a, const RotationAbout3D& b) { return a != b; }
 
-String TypeName(const RotationAbout3D& _) { return PLATO_STR("RotationAbout3D", 15); }
+String TypeName(const RotationAbout3D& _) { return PLATO_STR(u"RotationAbout3D", 15); }
 
 int32_t GetHashCode(const RotationAbout3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Rotation)); h = mix_(h, GetHashCode(a.Center)); return h; }
 
@@ -1600,7 +1600,7 @@ bool Equals(const Vector2D& a, const Vector2D& b) { return a == b; }
 
 bool NotEquals(const Vector2D& a, const Vector2D& b) { return a != b; }
 
-String TypeName(const Vector2D& _) { return PLATO_STR("Vector2D", 8); }
+String TypeName(const Vector2D& _) { return PLATO_STR(u"Vector2D", 8); }
 
 int32_t GetHashCode(const Vector2D& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); return h; }
 
@@ -1608,7 +1608,7 @@ bool Equals(const Vector3D& a, const Vector3D& b) { return a == b; }
 
 bool NotEquals(const Vector3D& a, const Vector3D& b) { return a != b; }
 
-String TypeName(const Vector3D& _) { return PLATO_STR("Vector3D", 8); }
+String TypeName(const Vector3D& _) { return PLATO_STR(u"Vector3D", 8); }
 
 int32_t GetHashCode(const Vector3D& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); h = mix_(h, hash_(a.Z)); return h; }
 
@@ -1616,7 +1616,7 @@ bool Equals(const VectorN& a, const VectorN& b) { return a == b; }
 
 bool NotEquals(const VectorN& a, const VectorN& b) { return a != b; }
 
-String TypeName(const VectorN& _) { return PLATO_STR("VectorN", 7); }
+String TypeName(const VectorN& _) { return PLATO_STR(u"VectorN", 7); }
 
 int32_t GetHashCode(const VectorN& a) { int32_t h = 17; h = mix_(h, hash_(a.Components)); return h; }
 
@@ -1624,7 +1624,7 @@ bool Equals(const Direction2D& a, const Direction2D& b) { return a == b; }
 
 bool NotEquals(const Direction2D& a, const Direction2D& b) { return a != b; }
 
-String TypeName(const Direction2D& _) { return PLATO_STR("Direction2D", 11); }
+String TypeName(const Direction2D& _) { return PLATO_STR(u"Direction2D", 11); }
 
 int32_t GetHashCode(const Direction2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Vector)); return h; }
 
@@ -1632,7 +1632,7 @@ bool Equals(const Direction3D& a, const Direction3D& b) { return a == b; }
 
 bool NotEquals(const Direction3D& a, const Direction3D& b) { return a != b; }
 
-String TypeName(const Direction3D& _) { return PLATO_STR("Direction3D", 11); }
+String TypeName(const Direction3D& _) { return PLATO_STR(u"Direction3D", 11); }
 
 int32_t GetHashCode(const Direction3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Vector)); return h; }
 
@@ -1640,7 +1640,7 @@ bool Equals(const IntegerVector2& a, const IntegerVector2& b) { return a == b; }
 
 bool NotEquals(const IntegerVector2& a, const IntegerVector2& b) { return a != b; }
 
-String TypeName(const IntegerVector2& _) { return PLATO_STR("IntegerVector2", 14); }
+String TypeName(const IntegerVector2& _) { return PLATO_STR(u"IntegerVector2", 14); }
 
 int32_t GetHashCode(const IntegerVector2& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); return h; }
 
@@ -1648,7 +1648,7 @@ bool Equals(const IntegerVector3& a, const IntegerVector3& b) { return a == b; }
 
 bool NotEquals(const IntegerVector3& a, const IntegerVector3& b) { return a != b; }
 
-String TypeName(const IntegerVector3& _) { return PLATO_STR("IntegerVector3", 14); }
+String TypeName(const IntegerVector3& _) { return PLATO_STR(u"IntegerVector3", 14); }
 
 int32_t GetHashCode(const IntegerVector3& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); h = mix_(h, hash_(a.Z)); return h; }
 
@@ -1656,7 +1656,7 @@ bool Equals(const IntegerVector4& a, const IntegerVector4& b) { return a == b; }
 
 bool NotEquals(const IntegerVector4& a, const IntegerVector4& b) { return a != b; }
 
-String TypeName(const IntegerVector4& _) { return PLATO_STR("IntegerVector4", 14); }
+String TypeName(const IntegerVector4& _) { return PLATO_STR(u"IntegerVector4", 14); }
 
 int32_t GetHashCode(const IntegerVector4& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); h = mix_(h, hash_(a.Z)); h = mix_(h, hash_(a.W)); return h; }
 
@@ -1664,7 +1664,7 @@ bool Equals(const Number2& a, const Number2& b) { return a == b; }
 
 bool NotEquals(const Number2& a, const Number2& b) { return a != b; }
 
-String TypeName(const Number2& _) { return PLATO_STR("Number2", 7); }
+String TypeName(const Number2& _) { return PLATO_STR(u"Number2", 7); }
 
 int32_t GetHashCode(const Number2& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); return h; }
 
@@ -1672,7 +1672,7 @@ bool Equals(const Number3& a, const Number3& b) { return a == b; }
 
 bool NotEquals(const Number3& a, const Number3& b) { return a != b; }
 
-String TypeName(const Number3& _) { return PLATO_STR("Number3", 7); }
+String TypeName(const Number3& _) { return PLATO_STR(u"Number3", 7); }
 
 int32_t GetHashCode(const Number3& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); h = mix_(h, hash_(a.Z)); return h; }
 
@@ -1680,7 +1680,7 @@ bool Equals(const Number4& a, const Number4& b) { return a == b; }
 
 bool NotEquals(const Number4& a, const Number4& b) { return a != b; }
 
-String TypeName(const Number4& _) { return PLATO_STR("Number4", 7); }
+String TypeName(const Number4& _) { return PLATO_STR(u"Number4", 7); }
 
 int32_t GetHashCode(const Number4& a) { int32_t h = 17; h = mix_(h, hash_(a.X)); h = mix_(h, hash_(a.Y)); h = mix_(h, hash_(a.Z)); h = mix_(h, hash_(a.W)); return h; }
 
@@ -1688,7 +1688,7 @@ bool Equals(const Number8& a, const Number8& b) { return a == b; }
 
 bool NotEquals(const Number8& a, const Number8& b) { return a != b; }
 
-String TypeName(const Number8& _) { return PLATO_STR("Number8", 7); }
+String TypeName(const Number8& _) { return PLATO_STR(u"Number8", 7); }
 
 int32_t GetHashCode(const Number8& a) { int32_t h = 17; h = mix_(h, hash_(a.X0)); h = mix_(h, hash_(a.X1)); h = mix_(h, hash_(a.X2)); h = mix_(h, hash_(a.X3)); h = mix_(h, hash_(a.X4)); h = mix_(h, hash_(a.X5)); h = mix_(h, hash_(a.X6)); h = mix_(h, hash_(a.X7)); return h; }
 
@@ -1696,7 +1696,7 @@ bool Equals(const Tagged& a, const Tagged& b) { return a == b; }
 
 bool NotEquals(const Tagged& a, const Tagged& b) { return a != b; }
 
-String TypeName(const Tagged& _) { return PLATO_STR("Tagged", 6); }
+String TypeName(const Tagged& _) { return PLATO_STR(u"Tagged", 6); }
 
 int32_t GetHashCode(const Tagged& a) { int32_t h = 17; h = mix_(h, hash_(a.Name)); h = mix_(h, hash_(a.X)); return h; }
 
@@ -1704,7 +1704,7 @@ bool Equals(const Pair& a, const Pair& b) { return a == b; }
 
 bool NotEquals(const Pair& a, const Pair& b) { return a != b; }
 
-String TypeName(const Pair& _) { return PLATO_STR("Pair", 4); }
+String TypeName(const Pair& _) { return PLATO_STR(u"Pair", 4); }
 
 int32_t GetHashCode(const Pair& a) { int32_t h = 17; h = mix_(h, hash_(a.A)); h = mix_(h, hash_(a.B)); return h; }
 
@@ -1712,7 +1712,7 @@ bool Equals(const Wide& a, const Wide& b) { return a == b; }
 
 bool NotEquals(const Wide& a, const Wide& b) { return a != b; }
 
-String TypeName(const Wide& _) { return PLATO_STR("Wide", 4); }
+String TypeName(const Wide& _) { return PLATO_STR(u"Wide", 4); }
 
 int32_t GetHashCode(const Wide& a) { int32_t h = 17; h = mix_(h, hash_(a.A0)); h = mix_(h, hash_(a.A1)); h = mix_(h, hash_(a.A2)); h = mix_(h, hash_(a.A3)); h = mix_(h, hash_(a.A4)); h = mix_(h, hash_(a.A5)); h = mix_(h, hash_(a.A6)); h = mix_(h, hash_(a.A7)); h = mix_(h, hash_(a.A8)); h = mix_(h, hash_(a.A9)); h = mix_(h, hash_(a.A10)); h = mix_(h, hash_(a.A11)); h = mix_(h, hash_(a.A12)); h = mix_(h, hash_(a.A13)); h = mix_(h, hash_(a.A14)); h = mix_(h, hash_(a.A15)); h = mix_(h, hash_(a.A16)); h = mix_(h, hash_(a.A17)); h = mix_(h, hash_(a.A18)); h = mix_(h, hash_(a.A19)); h = mix_(h, hash_(a.A20)); h = mix_(h, hash_(a.A21)); h = mix_(h, hash_(a.A22)); h = mix_(h, hash_(a.A23)); h = mix_(h, hash_(a.A24)); h = mix_(h, hash_(a.A25)); h = mix_(h, hash_(a.A26)); h = mix_(h, hash_(a.A27)); h = mix_(h, hash_(a.A28)); h = mix_(h, hash_(a.A29)); h = mix_(h, hash_(a.A30)); h = mix_(h, hash_(a.A31)); h = mix_(h, hash_(a.A32)); h = mix_(h, hash_(a.A33)); h = mix_(h, hash_(a.A34)); h = mix_(h, hash_(a.A35)); h = mix_(h, hash_(a.A36)); h = mix_(h, hash_(a.A37)); h = mix_(h, hash_(a.A38)); h = mix_(h, hash_(a.A39)); return h; }
 
@@ -1720,7 +1720,7 @@ bool Equals(const Huge& a, const Huge& b) { return a == b; }
 
 bool NotEquals(const Huge& a, const Huge& b) { return a != b; }
 
-String TypeName(const Huge& _) { return PLATO_STR("Huge", 4); }
+String TypeName(const Huge& _) { return PLATO_STR(u"Huge", 4); }
 
 int32_t GetHashCode(const Huge& a) { int32_t h = 17; h = mix_(h, hash_(a.B0)); h = mix_(h, hash_(a.B1)); h = mix_(h, hash_(a.B2)); h = mix_(h, hash_(a.B3)); h = mix_(h, hash_(a.B4)); h = mix_(h, hash_(a.B5)); h = mix_(h, hash_(a.B6)); h = mix_(h, hash_(a.B7)); h = mix_(h, hash_(a.B8)); h = mix_(h, hash_(a.B9)); h = mix_(h, hash_(a.B10)); h = mix_(h, hash_(a.B11)); h = mix_(h, hash_(a.B12)); h = mix_(h, hash_(a.B13)); h = mix_(h, hash_(a.B14)); h = mix_(h, hash_(a.B15)); h = mix_(h, hash_(a.B16)); h = mix_(h, hash_(a.B17)); h = mix_(h, hash_(a.B18)); h = mix_(h, hash_(a.B19)); h = mix_(h, hash_(a.B20)); h = mix_(h, hash_(a.B21)); h = mix_(h, hash_(a.B22)); h = mix_(h, hash_(a.B23)); h = mix_(h, hash_(a.B24)); h = mix_(h, hash_(a.B25)); h = mix_(h, hash_(a.B26)); h = mix_(h, hash_(a.B27)); h = mix_(h, hash_(a.B28)); h = mix_(h, hash_(a.B29)); h = mix_(h, hash_(a.B30)); h = mix_(h, hash_(a.B31)); h = mix_(h, hash_(a.B32)); h = mix_(h, hash_(a.B33)); h = mix_(h, hash_(a.B34)); h = mix_(h, hash_(a.B35)); return h; }
 
@@ -1728,7 +1728,7 @@ bool Equals(const Shape& a, const Shape& b) { return a == b; }
 
 bool NotEquals(const Shape& a, const Shape& b) { return a != b; }
 
-String TypeName(const Shape& _) { return PLATO_STR("Shape", 5); }
+String TypeName(const Shape& _) { return PLATO_STR(u"Shape", 5); }
 
 int32_t GetHashCode(const Shape& a) { int32_t h = hash_(a.Kind); if (a.Kind == Shape::Kind_Circle) { h = mix_(h, hash_(a.Circle_Radius)); } if (a.Kind == Shape::Kind_Rect) { h = mix_(h, hash_(a.Rect_Width)); h = mix_(h, hash_(a.Rect_Height)); } return h; }
 
@@ -1742,7 +1742,7 @@ bool Equals(const LayoutedGraph& a, const LayoutedGraph& b) { return a == b; }
 
 bool NotEquals(const LayoutedGraph& a, const LayoutedGraph& b) { return a != b; }
 
-String TypeName(const LayoutedGraph& _) { return PLATO_STR("LayoutedGraph", 13); }
+String TypeName(const LayoutedGraph& _) { return PLATO_STR(u"LayoutedGraph", 13); }
 
 int32_t GetHashCode(const LayoutedGraph& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Graph)); h = mix_(h, hash_(a.Positions)); return h; }
 
@@ -1750,7 +1750,7 @@ bool Equals(const LengthInterval& a, const LengthInterval& b) { return a == b; }
 
 bool NotEquals(const LengthInterval& a, const LengthInterval& b) { return a != b; }
 
-String TypeName(const LengthInterval& _) { return PLATO_STR("LengthInterval", 14); }
+String TypeName(const LengthInterval& _) { return PLATO_STR(u"LengthInterval", 14); }
 
 int32_t GetHashCode(const LengthInterval& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Start)); h = mix_(h, GetHashCode(a.End)); return h; }
 
@@ -1758,7 +1758,7 @@ bool Equals(const Bounds2D& a, const Bounds2D& b) { return a == b; }
 
 bool NotEquals(const Bounds2D& a, const Bounds2D& b) { return a != b; }
 
-String TypeName(const Bounds2D& _) { return PLATO_STR("Bounds2D", 8); }
+String TypeName(const Bounds2D& _) { return PLATO_STR(u"Bounds2D", 8); }
 
 int32_t GetHashCode(const Bounds2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Min)); h = mix_(h, GetHashCode(a.Max)); return h; }
 
@@ -1766,7 +1766,7 @@ bool Equals(const Bounds3D& a, const Bounds3D& b) { return a == b; }
 
 bool NotEquals(const Bounds3D& a, const Bounds3D& b) { return a != b; }
 
-String TypeName(const Bounds3D& _) { return PLATO_STR("Bounds3D", 8); }
+String TypeName(const Bounds3D& _) { return PLATO_STR(u"Bounds3D", 8); }
 
 int32_t GetHashCode(const Bounds3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Min)); h = mix_(h, GetHashCode(a.Max)); return h; }
 
@@ -1774,7 +1774,7 @@ bool Equals(const IntegerBounds2D& a, const IntegerBounds2D& b) { return a == b;
 
 bool NotEquals(const IntegerBounds2D& a, const IntegerBounds2D& b) { return a != b; }
 
-String TypeName(const IntegerBounds2D& _) { return PLATO_STR("IntegerBounds2D", 15); }
+String TypeName(const IntegerBounds2D& _) { return PLATO_STR(u"IntegerBounds2D", 15); }
 
 int32_t GetHashCode(const IntegerBounds2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Min)); h = mix_(h, GetHashCode(a.Max)); return h; }
 
@@ -1782,7 +1782,7 @@ bool Equals(const IntegerBounds3D& a, const IntegerBounds3D& b) { return a == b;
 
 bool NotEquals(const IntegerBounds3D& a, const IntegerBounds3D& b) { return a != b; }
 
-String TypeName(const IntegerBounds3D& _) { return PLATO_STR("IntegerBounds3D", 15); }
+String TypeName(const IntegerBounds3D& _) { return PLATO_STR(u"IntegerBounds3D", 15); }
 
 int32_t GetHashCode(const IntegerBounds3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Min)); h = mix_(h, GetHashCode(a.Max)); return h; }
 
@@ -1790,7 +1790,7 @@ bool Equals(const Rect2D& a, const Rect2D& b) { return a == b; }
 
 bool NotEquals(const Rect2D& a, const Rect2D& b) { return a != b; }
 
-String TypeName(const Rect2D& _) { return PLATO_STR("Rect2D", 6); }
+String TypeName(const Rect2D& _) { return PLATO_STR(u"Rect2D", 6); }
 
 int32_t GetHashCode(const Rect2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Center)); h = mix_(h, GetHashCode(a.Size)); return h; }
 
@@ -1798,7 +1798,7 @@ bool Equals(const Matrix2x2& a, const Matrix2x2& b) { return a == b; }
 
 bool NotEquals(const Matrix2x2& a, const Matrix2x2& b) { return a != b; }
 
-String TypeName(const Matrix2x2& _) { return PLATO_STR("Matrix2x2", 9); }
+String TypeName(const Matrix2x2& _) { return PLATO_STR(u"Matrix2x2", 9); }
 
 int32_t GetHashCode(const Matrix2x2& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Row1)); h = mix_(h, GetHashCode(a.Row2)); return h; }
 
@@ -1806,7 +1806,7 @@ bool Equals(const Matrix3x3& a, const Matrix3x3& b) { return a == b; }
 
 bool NotEquals(const Matrix3x3& a, const Matrix3x3& b) { return a != b; }
 
-String TypeName(const Matrix3x3& _) { return PLATO_STR("Matrix3x3", 9); }
+String TypeName(const Matrix3x3& _) { return PLATO_STR(u"Matrix3x3", 9); }
 
 int32_t GetHashCode(const Matrix3x3& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Row1)); h = mix_(h, GetHashCode(a.Row2)); h = mix_(h, GetHashCode(a.Row3)); return h; }
 
@@ -1814,7 +1814,7 @@ bool Equals(const Matrix4x4& a, const Matrix4x4& b) { return a == b; }
 
 bool NotEquals(const Matrix4x4& a, const Matrix4x4& b) { return a != b; }
 
-String TypeName(const Matrix4x4& _) { return PLATO_STR("Matrix4x4", 9); }
+String TypeName(const Matrix4x4& _) { return PLATO_STR(u"Matrix4x4", 9); }
 
 int32_t GetHashCode(const Matrix4x4& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Row1)); h = mix_(h, GetHashCode(a.Row2)); h = mix_(h, GetHashCode(a.Row3)); h = mix_(h, GetHashCode(a.Row4)); return h; }
 
@@ -1822,7 +1822,7 @@ bool Equals(const Matrix3x2& a, const Matrix3x2& b) { return a == b; }
 
 bool NotEquals(const Matrix3x2& a, const Matrix3x2& b) { return a != b; }
 
-String TypeName(const Matrix3x2& _) { return PLATO_STR("Matrix3x2", 9); }
+String TypeName(const Matrix3x2& _) { return PLATO_STR(u"Matrix3x2", 9); }
 
 int32_t GetHashCode(const Matrix3x2& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Row1)); h = mix_(h, GetHashCode(a.Row2)); h = mix_(h, GetHashCode(a.Row3)); return h; }
 
@@ -1830,7 +1830,7 @@ bool Equals(const Matrix4x3& a, const Matrix4x3& b) { return a == b; }
 
 bool NotEquals(const Matrix4x3& a, const Matrix4x3& b) { return a != b; }
 
-String TypeName(const Matrix4x3& _) { return PLATO_STR("Matrix4x3", 9); }
+String TypeName(const Matrix4x3& _) { return PLATO_STR(u"Matrix4x3", 9); }
 
 int32_t GetHashCode(const Matrix4x3& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Row1)); h = mix_(h, GetHashCode(a.Row2)); h = mix_(h, GetHashCode(a.Row3)); h = mix_(h, GetHashCode(a.Row4)); return h; }
 
@@ -1838,7 +1838,7 @@ bool Equals(const GeoCoordinate& a, const GeoCoordinate& b) { return a == b; }
 
 bool NotEquals(const GeoCoordinate& a, const GeoCoordinate& b) { return a != b; }
 
-String TypeName(const GeoCoordinate& _) { return PLATO_STR("GeoCoordinate", 13); }
+String TypeName(const GeoCoordinate& _) { return PLATO_STR(u"GeoCoordinate", 13); }
 
 int32_t GetHashCode(const GeoCoordinate& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Latitude)); h = mix_(h, GetHashCode(a.Longitude)); h = mix_(h, GetHashCode(a.Altitude)); return h; }
 
@@ -1846,7 +1846,7 @@ bool Equals(const BivariatePolynomial& a, const BivariatePolynomial& b) { return
 
 bool NotEquals(const BivariatePolynomial& a, const BivariatePolynomial& b) { return a != b; }
 
-String TypeName(const BivariatePolynomial& _) { return PLATO_STR("BivariatePolynomial", 19); }
+String TypeName(const BivariatePolynomial& _) { return PLATO_STR(u"BivariatePolynomial", 19); }
 
 int32_t GetHashCode(const BivariatePolynomial& a) { int32_t h = 17; h = mix_(h, hash_(a.Coefficients)); return h; }
 
@@ -1854,7 +1854,7 @@ bool Equals(const FourierSeries& a, const FourierSeries& b) { return a == b; }
 
 bool NotEquals(const FourierSeries& a, const FourierSeries& b) { return a != b; }
 
-String TypeName(const FourierSeries& _) { return PLATO_STR("FourierSeries", 13); }
+String TypeName(const FourierSeries& _) { return PLATO_STR(u"FourierSeries", 13); }
 
 int32_t GetHashCode(const FourierSeries& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Fundamental)); h = mix_(h, hash_(a.CosineCoefficients)); h = mix_(h, hash_(a.SineCoefficients)); return h; }
 
@@ -1862,7 +1862,7 @@ bool Equals(const NormalDistribution2D& a, const NormalDistribution2D& b) { retu
 
 bool NotEquals(const NormalDistribution2D& a, const NormalDistribution2D& b) { return a != b; }
 
-String TypeName(const NormalDistribution2D& _) { return PLATO_STR("NormalDistribution2D", 20); }
+String TypeName(const NormalDistribution2D& _) { return PLATO_STR(u"NormalDistribution2D", 20); }
 
 int32_t GetHashCode(const NormalDistribution2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Mean)); h = mix_(h, GetHashCode(a.Covariance)); return h; }
 
@@ -1870,7 +1870,7 @@ bool Equals(const NormalDistribution3D& a, const NormalDistribution3D& b) { retu
 
 bool NotEquals(const NormalDistribution3D& a, const NormalDistribution3D& b) { return a != b; }
 
-String TypeName(const NormalDistribution3D& _) { return PLATO_STR("NormalDistribution3D", 20); }
+String TypeName(const NormalDistribution3D& _) { return PLATO_STR(u"NormalDistribution3D", 20); }
 
 int32_t GetHashCode(const NormalDistribution3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Mean)); h = mix_(h, GetHashCode(a.Covariance)); return h; }
 
@@ -1878,7 +1878,7 @@ bool Equals(const AxisAngle& a, const AxisAngle& b) { return a == b; }
 
 bool NotEquals(const AxisAngle& a, const AxisAngle& b) { return a != b; }
 
-String TypeName(const AxisAngle& _) { return PLATO_STR("AxisAngle", 9); }
+String TypeName(const AxisAngle& _) { return PLATO_STR(u"AxisAngle", 9); }
 
 int32_t GetHashCode(const AxisAngle& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Axis)); h = mix_(h, GetHashCode(a.Angle)); return h; }
 
@@ -1886,7 +1886,7 @@ bool Equals(const AffineTransform2D& a, const AffineTransform2D& b) { return a =
 
 bool NotEquals(const AffineTransform2D& a, const AffineTransform2D& b) { return a != b; }
 
-String TypeName(const AffineTransform2D& _) { return PLATO_STR("AffineTransform2D", 17); }
+String TypeName(const AffineTransform2D& _) { return PLATO_STR(u"AffineTransform2D", 17); }
 
 int32_t GetHashCode(const AffineTransform2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Matrix)); return h; }
 
@@ -1894,7 +1894,7 @@ bool Equals(const AffineTransform3D& a, const AffineTransform3D& b) { return a =
 
 bool NotEquals(const AffineTransform3D& a, const AffineTransform3D& b) { return a != b; }
 
-String TypeName(const AffineTransform3D& _) { return PLATO_STR("AffineTransform3D", 17); }
+String TypeName(const AffineTransform3D& _) { return PLATO_STR(u"AffineTransform3D", 17); }
 
 int32_t GetHashCode(const AffineTransform3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Matrix)); return h; }
 
@@ -1902,7 +1902,7 @@ bool Equals(const Transform2D& a, const Transform2D& b) { return a == b; }
 
 bool NotEquals(const Transform2D& a, const Transform2D& b) { return a != b; }
 
-String TypeName(const Transform2D& _) { return PLATO_STR("Transform2D", 11); }
+String TypeName(const Transform2D& _) { return PLATO_STR(u"Transform2D", 11); }
 
 int32_t GetHashCode(const Transform2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Matrix)); return h; }
 
@@ -1910,7 +1910,7 @@ bool Equals(const Transform3D& a, const Transform3D& b) { return a == b; }
 
 bool NotEquals(const Transform3D& a, const Transform3D& b) { return a != b; }
 
-String TypeName(const Transform3D& _) { return PLATO_STR("Transform3D", 11); }
+String TypeName(const Transform3D& _) { return PLATO_STR(u"Transform3D", 11); }
 
 int32_t GetHashCode(const Transform3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Matrix)); return h; }
 
@@ -1918,7 +1918,7 @@ bool Equals(const Frame2D& a, const Frame2D& b) { return a == b; }
 
 bool NotEquals(const Frame2D& a, const Frame2D& b) { return a != b; }
 
-String TypeName(const Frame2D& _) { return PLATO_STR("Frame2D", 7); }
+String TypeName(const Frame2D& _) { return PLATO_STR(u"Frame2D", 7); }
 
 int32_t GetHashCode(const Frame2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Origin)); h = mix_(h, GetHashCode(a.XAxis)); h = mix_(h, GetHashCode(a.YAxis)); return h; }
 
@@ -1926,7 +1926,7 @@ bool Equals(const Frame3D& a, const Frame3D& b) { return a == b; }
 
 bool NotEquals(const Frame3D& a, const Frame3D& b) { return a != b; }
 
-String TypeName(const Frame3D& _) { return PLATO_STR("Frame3D", 7); }
+String TypeName(const Frame3D& _) { return PLATO_STR(u"Frame3D", 7); }
 
 int32_t GetHashCode(const Frame3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Origin)); h = mix_(h, GetHashCode(a.XAxis)); h = mix_(h, GetHashCode(a.YAxis)); h = mix_(h, GetHashCode(a.ZAxis)); return h; }
 
@@ -1934,7 +1934,7 @@ bool Equals(const Basis3D& a, const Basis3D& b) { return a == b; }
 
 bool NotEquals(const Basis3D& a, const Basis3D& b) { return a != b; }
 
-String TypeName(const Basis3D& _) { return PLATO_STR("Basis3D", 7); }
+String TypeName(const Basis3D& _) { return PLATO_STR(u"Basis3D", 7); }
 
 int32_t GetHashCode(const Basis3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.X)); h = mix_(h, GetHashCode(a.Y)); h = mix_(h, GetHashCode(a.Z)); return h; }
 
@@ -1942,7 +1942,7 @@ bool Equals(const TrsTransform2D& a, const TrsTransform2D& b) { return a == b; }
 
 bool NotEquals(const TrsTransform2D& a, const TrsTransform2D& b) { return a != b; }
 
-String TypeName(const TrsTransform2D& _) { return PLATO_STR("TrsTransform2D", 14); }
+String TypeName(const TrsTransform2D& _) { return PLATO_STR(u"TrsTransform2D", 14); }
 
 int32_t GetHashCode(const TrsTransform2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Translation)); h = mix_(h, GetHashCode(a.Rotation)); h = mix_(h, GetHashCode(a.Scale)); return h; }
 
@@ -1950,7 +1950,7 @@ bool Equals(const TrsTransform3D& a, const TrsTransform3D& b) { return a == b; }
 
 bool NotEquals(const TrsTransform3D& a, const TrsTransform3D& b) { return a != b; }
 
-String TypeName(const TrsTransform3D& _) { return PLATO_STR("TrsTransform3D", 14); }
+String TypeName(const TrsTransform3D& _) { return PLATO_STR(u"TrsTransform3D", 14); }
 
 int32_t GetHashCode(const TrsTransform3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Translation)); h = mix_(h, GetHashCode(a.Rotation)); h = mix_(h, GetHashCode(a.Scale)); return h; }
 
@@ -1958,7 +1958,7 @@ bool Equals(const Translation2D& a, const Translation2D& b) { return a == b; }
 
 bool NotEquals(const Translation2D& a, const Translation2D& b) { return a != b; }
 
-String TypeName(const Translation2D& _) { return PLATO_STR("Translation2D", 13); }
+String TypeName(const Translation2D& _) { return PLATO_STR(u"Translation2D", 13); }
 
 int32_t GetHashCode(const Translation2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Vector)); return h; }
 
@@ -1966,7 +1966,7 @@ bool Equals(const Translation3D& a, const Translation3D& b) { return a == b; }
 
 bool NotEquals(const Translation3D& a, const Translation3D& b) { return a != b; }
 
-String TypeName(const Translation3D& _) { return PLATO_STR("Translation3D", 13); }
+String TypeName(const Translation3D& _) { return PLATO_STR(u"Translation3D", 13); }
 
 int32_t GetHashCode(const Translation3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Vector)); return h; }
 
@@ -1974,7 +1974,7 @@ bool Equals(const Scaling2D& a, const Scaling2D& b) { return a == b; }
 
 bool NotEquals(const Scaling2D& a, const Scaling2D& b) { return a != b; }
 
-String TypeName(const Scaling2D& _) { return PLATO_STR("Scaling2D", 9); }
+String TypeName(const Scaling2D& _) { return PLATO_STR(u"Scaling2D", 9); }
 
 int32_t GetHashCode(const Scaling2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Amount)); return h; }
 
@@ -1982,7 +1982,7 @@ bool Equals(const Scaling3D& a, const Scaling3D& b) { return a == b; }
 
 bool NotEquals(const Scaling3D& a, const Scaling3D& b) { return a != b; }
 
-String TypeName(const Scaling3D& _) { return PLATO_STR("Scaling3D", 9); }
+String TypeName(const Scaling3D& _) { return PLATO_STR(u"Scaling3D", 9); }
 
 int32_t GetHashCode(const Scaling3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Amount)); return h; }
 
@@ -1990,7 +1990,7 @@ bool Equals(const Reflection2D& a, const Reflection2D& b) { return a == b; }
 
 bool NotEquals(const Reflection2D& a, const Reflection2D& b) { return a != b; }
 
-String TypeName(const Reflection2D& _) { return PLATO_STR("Reflection2D", 12); }
+String TypeName(const Reflection2D& _) { return PLATO_STR(u"Reflection2D", 12); }
 
 int32_t GetHashCode(const Reflection2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Origin)); h = mix_(h, GetHashCode(a.Direction)); return h; }
 
@@ -1998,7 +1998,7 @@ bool Equals(const Reflection3D& a, const Reflection3D& b) { return a == b; }
 
 bool NotEquals(const Reflection3D& a, const Reflection3D& b) { return a != b; }
 
-String TypeName(const Reflection3D& _) { return PLATO_STR("Reflection3D", 12); }
+String TypeName(const Reflection3D& _) { return PLATO_STR(u"Reflection3D", 12); }
 
 int32_t GetHashCode(const Reflection3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Origin)); h = mix_(h, GetHashCode(a.Normal)); return h; }
 
@@ -2006,7 +2006,7 @@ bool Equals(const ScalingAbout2D& a, const ScalingAbout2D& b) { return a == b; }
 
 bool NotEquals(const ScalingAbout2D& a, const ScalingAbout2D& b) { return a != b; }
 
-String TypeName(const ScalingAbout2D& _) { return PLATO_STR("ScalingAbout2D", 14); }
+String TypeName(const ScalingAbout2D& _) { return PLATO_STR(u"ScalingAbout2D", 14); }
 
 int32_t GetHashCode(const ScalingAbout2D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Amount)); h = mix_(h, GetHashCode(a.Center)); return h; }
 
@@ -2014,7 +2014,7 @@ bool Equals(const ScalingAbout3D& a, const ScalingAbout3D& b) { return a == b; }
 
 bool NotEquals(const ScalingAbout3D& a, const ScalingAbout3D& b) { return a != b; }
 
-String TypeName(const ScalingAbout3D& _) { return PLATO_STR("ScalingAbout3D", 14); }
+String TypeName(const ScalingAbout3D& _) { return PLATO_STR(u"ScalingAbout3D", 14); }
 
 int32_t GetHashCode(const ScalingAbout3D& a) { int32_t h = 17; h = mix_(h, GetHashCode(a.Amount)); h = mix_(h, GetHashCode(a.Center)); return h; }
 

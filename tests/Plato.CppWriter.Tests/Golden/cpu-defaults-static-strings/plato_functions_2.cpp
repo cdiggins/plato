@@ -1772,7 +1772,7 @@ Number8 Broadcast(Number8 self, double x) { std::abort(); }
 
 int32_t NameLength(ReadOnlyParameter<Tagged> t) { return ToCount(t.Name); }
 
-String Greeting(ReadOnlyParameter<Tagged> t) { return ((0 < ToCount(t.Name)) ? PLATO_STR("Hello, world", 12) : String()); }
+String Greeting(ReadOnlyParameter<Tagged> t) { return ((0 < ToCount(t.Name)) ? PLATO_STR(u"Hello, world", 12) : String()); }
 
 double PairSum(ReadOnlyParameter<Pair> p) { return (p.A + p.B); }
 

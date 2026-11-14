@@ -145,12 +145,12 @@ public class GoldenEmissionTests
     public void C1c_emission_matches_snapshot(string set, CppCpuOptions options) => CheckSnapshot(set, options, SharedC1c.Value);
 
     // TKT-1211: --cpp-scalar-regions on top of the Cpu defaults, on its own fixture (one function per case of the rule).
-    private static readonly Lazy<Compilation> SharedScalarRegions = new(() => Compile("GoldenFixtureScalarRegions.plato"));
+    internal static readonly Lazy<Compilation> SharedScalarRegions = new(() => Compile("GoldenFixtureScalarRegions.plato"));
 
-    private static readonly string[] ScalarRegionRoots =
+    internal static readonly string[] ScalarRegionRoots =
     {
         "RegionScaledBySum", "RegionTwiceSum", "RegionShifted", "RegionQuadrupled", "RegionApplied", "RegionAppliedArray",
-        "RegionPerElement", "RegionScaledByHyp", "RegionScaledByFirst", "RegionApplyScalar", "RegionApplyArray",
+        "RegionPerElement", "RegionScaledByHyp", "RegionScaledByFirst", "RegionApplyScalar", "RegionApplyArray", "RegionTexts",
     };
 
     public static IEnumerable<TestCaseData> ScalarRegionOptionSets()

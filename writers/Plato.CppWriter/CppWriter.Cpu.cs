@@ -28,7 +28,8 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>--cpp-borrow-min-bytes=N: <c>ReadOnlyParameter</c> borrows records of at least N bytes (256 here; the CLI defaults Cpu to 32).</summary>
         public int BorrowMinBytes { get; init; } = 256;
         /// <summary>--cpp-borrow-nontrivial (on by default for Cpu since 2026-11-04): <c>ReadOnlyParameter</c> also borrows every record that is
-        /// not trivially copyable (records holding String), whatever its size.</summary>
+        /// not trivially copyable, whatever its size. A record holding a String was one while String owned its text; String
+        /// is a view now, so such a record is borrowed by its size alone.</summary>
         public bool BorrowNonTrivial { get; init; }
         /// <summary>--cpp-sum-switch (on by default for Cpu since 2026-11-04): sum dispatch: a chain of case predicates on one
         /// value in a returned expression is written as <c>switch (value.Kind)</c>.</summary>
@@ -42,7 +43,7 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>--cpp-static-strings (TKT-1159, on by default for Cpu since 2026-11-04): static string literals: each constant is built once per use site.</summary>
         public bool StaticStringLiterals { get; init; }
         /// <summary>--cpp-string-pool (TKT-1223, on by default for Cpu since 2026-11-07): the program's distinct string constants are one namespace-scope table
-        /// (plato_strings.cpp) filled by one initializer before main, and each use site is an index into it (<c>PLATO_SP(i)</c>);
+        /// (plato_strings.cpp), each entry a view of a UTF-16 literal, and each use site is an index into it (<c>PLATO_SP(i)</c>);
         /// takes precedence over <see cref="StaticStringLiterals"/>.</summary>
         public bool StringPool { get; init; }
         /// <summary>--cpp-prune-to-roots=A,B: when non-null, only what <see cref="Roots"/> and these names reach is written; the names are functions or types a host calls directly.</summary>
@@ -709,19 +710,18 @@ namespace Ara3D.Geometry.CppWriter
 
         /// <summary>The declaration the types header carries when the pool is on: the table and the macro every site spells.</summary>
         private const string StringPoolDeclaration =
-            "// String constants (--cpp-string-pool): one table of the program's distinct constants, filled by one initializer\n"
-            + "// before main (plato_strings.cpp); PLATO_SP(i) reads constant i as a const String&.\n"
+            "// String constants (--cpp-string-pool): one table of the program's distinct constants, each a view of a UTF-16\n"
+            + "// literal (plato_strings.cpp); PLATO_SP(i) reads constant i as a const String&.\n"
             + "extern const String string_pool[];\n"
             + "#define PLATO_SP(i) (::plato::string_pool[i])\n\n";
 
         /// <summary>
         /// With <see cref="PooledStringLiterals"/> in force, renumbers the <c>PLATO_SP(n)</c> sites over every emitted file so the
         /// table holds only the constants the surviving functions spell, numbered by first appearance (files in name order),
-        /// and writes plato_strings.cpp: <c>const String string_pool[N]</c> initialized from UTF-16 literals. One
-        /// namespace-scope object means one dynamic initializer and one atexit destructor for the whole program, against
-        /// one of each per site under <see cref="StaticStringLiterals"/>; the <c>u"..."</c> literals hold the code units
-        /// themselves, so building the table is N memcpys and no UTF-8 decode. The harness and the laws driver start their
-        /// threads in main, after every namespace-scope initializer has run.
+        /// and writes plato_strings.cpp: <c>const String string_pool[N]</c> initialized from UTF-16 literals. A String is a
+        /// view, so each entry is a pointer to its <c>u"..."</c> literal and a length: the table is constant-initialized
+        /// (no code runs before main, nothing is allocated or destroyed), the code units are in static storage and outlive
+        /// every arena reset, and every thread may read them.
         /// </summary>
         private void EmitStringPool()
         {
@@ -751,7 +751,7 @@ namespace Ara3D.Geometry.CppWriter
             Files["plato_types.hpp"].Replace("\nnamespace plato {\n\n", "\nnamespace plato {\n\n" + StringPoolDeclaration);
             var sb = new StringBuilder();
             sb.Append(Banner)
-              .Append($"// The program's string constants (--cpp-string-pool): {texts.Count} distinct texts, one table, one initializer.\n")
+              .Append($"// The program's string constants (--cpp-string-pool): {texts.Count} distinct texts, one table of views of literals.\n")
               .Append("#include \"plato_types.hpp\"\n\nnamespace plato {\n\n")
               .Append($"const String string_pool[{Math.Max(texts.Count, 1)}] = {{\n");
             if (texts.Count == 0)
@@ -1128,7 +1128,7 @@ template <class T> inline int32_t hash_(const Array<T>& a) { return a.count; }
         /// <summary>A call the prelude answers: higher-order array helpers, and any array method no Plato function of that name shadows.</summary>
         private bool PreludeAnswers(CallSite c, ILookup<string, Emitted> byName)
         {
-            // String.At: the host's own (ICountable), which the prelude defines on std::string.
+            // String.At: the host's own (ICountable), which the prelude defines on String.
             if (c.Name == "At" && c.Types.Count == 2 && c.Types[0] == "String")
                 return true;
             var onArray2D = c.Types.Count > 0 && c.Types[0] != null && (c.Types[0].StartsWith("Array2D<") || c.Types[0].StartsWith("Array3D<"));

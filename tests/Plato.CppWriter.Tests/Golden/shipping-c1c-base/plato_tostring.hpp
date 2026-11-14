@@ -75,13 +75,15 @@
 
     inline String ToString(int32_t v) { return StringFromUtf8(NumberTextUtf8(v)); }
     inline String ToString(double v) { return StringFromUtf8(NumberTextUtf8(v)); }
-    inline String ToString(bool v) { return v ? u"True" : u"False"; }
-    inline String ToString(char16_t v) { return String(1, v); }
+    inline String ToString(bool v) { return v ? String(u"True") : String(u"False"); }
+    inline String ToString(char16_t v) { return string_copy(&v, 1); }
     inline String ToString(const String& v) { return v; }
     inline String NumberToShortestString(double v) { return ToString(v); }
 
-    // Generated UTF-8 literals carry their byte length, including embedded NULs.
-    inline String make_string_n(const char* s, int32_t n) { return StringFromUtf8(std::string(s, static_cast<size_t>(n < 0 ? 0 : n))); }
+    // Generated UTF-8 literals carry their byte length, including embedded NULs. The String is decoded into this
+    // thread's arena at every call, so it lasts until that arena is reset or rolled back: not a value for a static or
+    // for another thread. A constant that must be either is PLATO_STR or a string pool entry.
+    inline String make_string_n(const char* s, int32_t n) { return StringFromUtf8(s, static_cast<size_t>(n < 0 ? 0 : n)); }
 #ifdef PLATO_STRING_PROBE
     // Probe build (-DPLATO_STRING_PROBE, with /FIcstdio): every later make_string_n call is counted; the count is printed at exit (TKT-1159).
     // Single-threaded hosts only. The report is a function-local static of the wrapper, so it exists once the first call has happened. The define comes after the definition, so the default prelude is unchanged.
@@ -90,8 +92,11 @@
     inline String plato_make_string_n_counted(const char* s, int32_t n) { static PlatoMakeStringReport report; ++plato_make_string_count; return make_string_n(s, n); }
 #define make_string_n plato_make_string_n_counted
 #endif
-    inline void string_clear(String* s) { s->clear(); }
-    inline void string_append_char(String* s, char16_t c) { s->push_back(c); }
-    inline void string_append_cstr(String* s, const char* p) { if (p) s->append(StringFromUtf8(p)); }
-    inline void string_append_int(String* s, int32_t v) { s->append(ToString(v)); }
-    inline void string_append_float(String* s, double v) { s->append(ToString(v)); }
+    // The append helpers rebind *s to a longer String in this thread's arena: a String's units are never written, so
+    // each call copies what *s held. string_append_char copies c first: *s + String(&c, 1) would return a view of the
+    // local when *s is empty.
+    inline void string_clear(String* s) { *s = String(); }
+    inline void string_append_char(String* s, char16_t c) { *s = *s + string_copy(&c, 1); }
+    inline void string_append_cstr(String* s, const char* p) { if (p) *s = *s + StringFromUtf8(p, std::strlen(p)); }
+    inline void string_append_int(String* s, int32_t v) { *s = *s + ToString(v); }
+    inline void string_append_float(String* s, double v) { *s = *s + ToString(v); }

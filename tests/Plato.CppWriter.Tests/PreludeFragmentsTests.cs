@@ -44,8 +44,51 @@ public class PreludeFragmentsTests
             "        return Array<T>{ p, n };" + NL +
             "    }" + NL + NL +
             "    template <class T> inline int32_t ToCount(Array<T> xs) { return xs.count; }");
+        // String became a view (a pointer and a length) after the split; the old text has std::u16string. Each span the
+        // change touched is taken from the fragments as they are now, so the comparison still gates everything else:
+        // the type and its operators, UTF-8 decoding into the arena, the arena string functions, and the bodies that
+        // built or changed a std::u16string. A span that is not found exactly once fails the test.
+        var now = CppCpuPrelude.FilesFor(o).ToDictionary(f => f.Key, f => f.Value);
+        string core = now["plato_core.hpp"], strings = now["plato_string.hpp"], tostring = now["plato_tostring.hpp"],
+            bytes = now["plato_bytes.hpp"], json = now["plato_json.hpp"];
+        const string functionValue = "    // A function value:", countAt = "    // String.Count / At index";
+        text = Patch(text, "    using String = std::u16string;", Span(core, "    struct String", "    #include \"plato_borrow.hpp\"").TrimEnd());
+        text = Patch(text, Span(text, "    inline String StringFromUtf8(const std::string& bytes)", functionValue),
+            Span(core, "    inline size_t utf16_from_utf8(", functionValue));
+        text = Patch(text, countAt, Span(strings, "    inline char16_t* string_alloc(size_t n)", countAt) + countAt);
+        text = Patch(text, "return s.substr(static_cast<size_t>(first), static_cast<size_t>(n));", "return String(s.chars + first, static_cast<size_t>(n));");
+        text = Patch(text, Through(text, "        String text;", "        return text;"),
+            Through(bytes, "        if (b.count <= 0) return String();", "        return String(units, static_cast<size_t>(b.count));"));
+        text = Patch(text, Through(text, "    inline String ToString(bool v)", "{ return String(1, v); }"),
+            Through(tostring, "    inline String ToString(bool v)", "{ return string_copy(&v, 1); }"));
+        text = Patch(text, "StringFromUtf8(std::string(s, static_cast<size_t>(n < 0 ? 0 : n)))", "StringFromUtf8(s, static_cast<size_t>(n < 0 ? 0 : n))");
+        text = Patch(text, Through(text, "    inline void string_clear(String* s)", "string_append_float(String* s, double v) { s->append(ToString(v)); }"),
+            Through(tostring, "    inline void string_clear(String* s)", "string_append_float(String* s, double v) { *s = *s + ToString(v); }"));
+        text = Patch(text, Through(text, "        const auto text = StringFromUtf8(j.s);", "        v = text[0];"),
+            Through(json, "        char16_t units[3];", "        v = units[0];"));
+        text = Patch(text, "StringToUtf8(String(1, v))", "StringToUtf8(String(&v, 1))");
         return text;
     }
+
+    /// <summary><paramref name="text"/> with its one occurrence of <paramref name="old"/> replaced.</summary>
+    private static string Patch(string text, string old, string replacement)
+    {
+        var at = text.IndexOf(old, StringComparison.Ordinal);
+        Assert.That(at >= 0 && text.IndexOf(old, at + 1, StringComparison.Ordinal) < 0, Is.True, $"expected exactly once in the old prelude: {old}");
+        return text.Substring(0, at) + replacement + text.Substring(at + old.Length);
+    }
+
+    /// <summary>The part of <paramref name="text"/> from <paramref name="from"/> up to, not including, the next <paramref name="to"/>.</summary>
+    private static string Span(string text, string from, string to)
+    {
+        var start = text.IndexOf(from, StringComparison.Ordinal);
+        var end = start < 0 ? -1 : text.IndexOf(to, start + from.Length, StringComparison.Ordinal);
+        Assert.That(end, Is.GreaterThan(0), $"no span from '{from}' to '{to}'");
+        return text.Substring(start, end - start);
+    }
+
+    /// <summary>The part of <paramref name="text"/> from <paramref name="from"/> through the next <paramref name="to"/>.</summary>
+    private static string Through(string text, string from, string to) => Span(text, from, to) + to;
 
     private static string Preprocess(string vcvars, string folder, string name, string defines)
     {

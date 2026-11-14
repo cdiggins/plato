@@ -21,8 +21,9 @@ namespace Ara3D.Geometry.CppWriter
         /// <summary>
         /// True when every field of <paramref name="c"/> is trivially copyable and trivially destructible (what a union member
         /// needs) and no field is named like a type the case spells (a nested struct's member may not change the meaning
-        /// of a name it has already used). Arrays are views and Bytes a pointer and a count; a String, a function value or
-        /// any record holding one is not.
+        /// of a name it has already used). Arrays are views and Bytes a pointer and a count; a function value or any record
+        /// holding one is not. A String is a view as well, and could share storage; it keeps flat members for now, so the
+        /// layout of a sum with a String case is the one it had when String owned its text.
         /// </summary>
         private bool MayShareSumStorage(SumCaseDef c)
         {

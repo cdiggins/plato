@@ -1,4 +1,4 @@
-// A string-literal policy that pools the program's constants: one table, one initializer, an index per use site (TKT-1223).
+// A string-literal policy that pools the program's constants: one table, an index per use site (TKT-1223).
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,10 +6,9 @@ namespace Ara3D.Geometry.CppWriter.Policies
 {
     /// <summary>
     /// Each use of a constant is <c>PLATO_SP(i)</c>: a read of entry <c>i</c> of <c>plato::string_pool</c>, a namespace-scope
-    /// array of the program's distinct constants that one initializer fills before <c>main</c> (the writer emits it as
+    /// array of the program's distinct constants, each a view of a UTF-16 literal (the writer emits it as
     /// plato_strings.cpp, see <c>CppWriter.EmitStringPool</c>). Constants are deduplicated by text, so a text the program
-    /// spells at many sites is one String, and the per-site function-local static of <see cref="StaticStringLiterals"/>, with its
-    /// guard, initializer and atexit destructor, is gone. The empty constant is <c>String()</c>, which allocates nothing.
+    /// spells at many sites is one String and one literal. The empty constant is <c>String()</c>.
     /// The indices this policy hands out are provisional: the writer renumbers them over the emitted text, so the table holds
     /// only the constants of the functions that survive pruning, in order of first appearance.
     /// </summary>

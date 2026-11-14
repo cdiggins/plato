@@ -73,7 +73,7 @@ public class LargeParameterTests
                 static_assert(std::is_same_v<decltype(&CopyWide), Wide(*)(WideArg)>);
                 Wide a{}; a.A0 = 3; a.A39 = 4; a.Text = u"original";
                 if (ReadWide(a) != 7 || ReadWide(Wide{}) != 0) return 1;
-                auto copy = CopyWide(a); a.Text[0] = u'x';
+                auto copy = CopyWide(a); a.Text = u"xriginal";   // a String's units are never written: a is given another String
                 if (copy.Text != u"original") return 2;
                 Wide replacement{}; replacement.Text = u"replacement";
                 if (ReplaceWide(a, replacement).Text != u"replacement" || a.Text != u"xriginal") return 3;
@@ -81,14 +81,14 @@ public class LargeParameterTests
                 if (ReadNarrow(Narrow{2, 3}) != 5) return 5;
                 auto rows = arena_alloc<Wide>(1);
                 rows[0].A0 = 9; rows[0].A39 = 2;
-                rows[0].Text = u"a heap-backed string payload that must survive scratch reset";
+                rows[0].Text = u"a literal's code units are static, so they survive the reset";
                 Array<Wide> xs{rows, 1};
                 if (ReadWideArray(xs) != 11) return 6;
                 auto saved = CopyWideArray(xs);
                 if (ReplaceWideArray(xs, replacement).Text != u"replacement") return 7;
                 if (rows[0].Text != saved.Text) return 8;
                 arena_reset();
-                if (saved.Text != u"a heap-backed string payload that must survive scratch reset") return 9;
+                if (saved.Text != u"a literal's code units are static, so they survive the reset") return 9;
                 return 0;
             }
             """);
